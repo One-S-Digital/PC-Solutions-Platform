@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-21T15:30:24.272Z",
+  "timestamp": "2025-12-21T15:31:06.791Z",
   "totalKeys": 1857,
   "byNamespace": {
     "common": 2683,
@@ -10397,256 +10397,496 @@
       "context": "<th className=\"px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase\">{t('supplierAnalyticsPage.table.estRevenueImpact')}</th>"
     },
     {
-      "key": "stockStatus.instock",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 57,
-      "context": "if (status === 'ACTIVE' || !status) return t('stockStatus.instock', 'In Stock');"
+      "key": "common:loading",
+      "file": "pages/profile/OrganizationProfileViewPage.tsx",
+      "line": 135,
+      "context": "<LoadingSpinner text={t('common:loading', 'Loading...')} />"
     },
     {
-      "key": "partnerDetailPage.productOutOfStock",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 64,
-      "context": "alert(t('partnerDetailPage.productOutOfStock', { productName: product.title }));"
+      "key": "common:loading",
+      "file": "pages/profile/OrganizationProfileViewPage.tsx",
+      "line": 135,
+      "context": "<LoadingSpinner text={t('common:loading', 'Loading...')} />"
     },
     {
-      "key": "partnerDetailPage.productAddedToOrder",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 68,
-      "context": "alert(t('partnerDetailPage.productAddedToOrder', { quantity, productName: product.title }));"
+      "key": "profile:organization.notFound",
+      "file": "pages/profile/OrganizationProfileViewPage.tsx",
+      "line": 146,
+      "context": "<p className=\"text-red-600\">{error || t('profile:organization.notFound', 'Organization not found')}</p>"
     },
     {
-      "key": "partnerDetailPage.addToOrderButton",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 110,
-      "context": "{t('partnerDetailPage.addToOrderButton')}"
-    },
-    {
-      "key": "partnerDetailPage.promoCodeValid",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 170,
-      "context": "message: t('partnerDetailPage.promoCodeValid', 'Promo code applied!'),"
-    },
-    {
-      "key": "partnerDetailPage.promoCodeInvalid",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 176,
-      "context": "message: t('partnerDetailPage.promoCodeInvalid', 'Invalid or expired promo code'),"
-    },
-    {
-      "key": "partnerDetailPage.promoCodeError",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 183,
-      "context": "message: t('partnerDetailPage.promoCodeError', 'Failed to validate promo code'),"
-    },
-    {
-      "key": "partnerDetailPage.promoCodeTitle",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 194,
-      "context": "{t('partnerDetailPage.promoCodeTitle')}"
-    },
-    {
-      "key": "partnerDetailPage.promoCodePlaceholder",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 204,
-      "context": "placeholder={t('partnerDetailPage.promoCodePlaceholder')}"
-    },
-    {
-      "key": "partnerDetailPage.applyPromoButton",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 214,
-      "context": "{isValidating ? '...' : t('partnerDetailPage.applyPromoButton')}"
-    },
-    {
-      "key": "partnerDetailPage.onlyFoundationsRequestService",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 317,
-      "context": "alert(t('partnerDetailPage.onlyFoundationsRequestService'));"
-    },
-    {
-      "key": "partnerDetailPage.requestSubmittedAlert",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 339,
-      "context": "alert(t('partnerDetailPage.requestSubmittedAlert', { serviceName: newRequest.serviceName }));"
+      "key": "profile:organization.notFound",
+      "file": "pages/profile/OrganizationProfileViewPage.tsx",
+      "line": 146,
+      "context": "<p className=\"text-red-600\">{error || t('profile:organization.notFound', 'Organization not found')}</p>"
     },
     {
       "key": "common:buttons.goBack",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 347,
-      "context": "{t('common:buttons.goBack')}"
+      "file": "pages/profile/OrganizationProfileViewPage.tsx",
+      "line": 149,
+      "context": "{t('common:buttons.goBack', 'Go Back')}"
     },
     {
       "key": "common:buttons.goBack",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 347,
-      "context": "{t('common:buttons.goBack')}"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 393,
-      "context": "{t('common:buttons.goBack')}"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 393,
-      "context": "{t('common:buttons.goBack')}"
-    },
-    {
-      "key": "partnerDetailPage.invalidPartnerIdMessage",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 398,
-      "context": "<p className=\"mt-4 text-gray-600\">{error || t('partnerDetailPage.invalidPartnerIdMessage')}</p>"
+      "file": "pages/profile/OrganizationProfileViewPage.tsx",
+      "line": 149,
+      "context": "{t('common:buttons.goBack', 'Go Back')}"
     },
     {
       "key": "common:buttons.retry",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 405,
+      "file": "pages/profile/OrganizationProfileViewPage.tsx",
+      "line": 152,
       "context": "{t('common:buttons.retry', 'Retry')}"
     },
     {
       "key": "common:buttons.retry",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 405,
+      "file": "pages/profile/OrganizationProfileViewPage.tsx",
+      "line": 152,
       "context": "{t('common:buttons.retry', 'Retry')}"
     },
     {
-      "key": "common:userRoles.Product Supplier",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 413,
-      "context": "? t('common:userRoles.Product Supplier')"
-    },
-    {
-      "key": "common:userRoles.Product Supplier",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 413,
-      "context": "? t('common:userRoles.Product Supplier')"
-    },
-    {
-      "key": "common:userRoles.Service Provider",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 415,
-      "context": "? t('common:userRoles.Service Provider')"
-    },
-    {
-      "key": "common:userRoles.Service Provider",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 415,
-      "context": "? t('common:userRoles.Service Provider')"
-    },
-    {
-      "key": "common:userRoles.Foundation",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 416,
-      "context": ": t('common:userRoles.Foundation');"
-    },
-    {
-      "key": "common:userRoles.Foundation",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 416,
-      "context": ": t('common:userRoles.Foundation');"
+      "key": "common:buttons.goBack",
+      "file": "pages/profile/OrganizationProfileViewPage.tsx",
+      "line": 164,
+      "context": "{t('common:buttons.goBack', 'Go Back')}"
     },
     {
       "key": "common:buttons.goBack",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 424,
-      "context": "{t('common:buttons.goBack')}"
+      "file": "pages/profile/OrganizationProfileViewPage.tsx",
+      "line": 164,
+      "context": "{t('common:buttons.goBack', 'Go Back')}"
+    },
+    {
+      "key": "common:buttons.sendMessage",
+      "file": "pages/profile/OrganizationProfileViewPage.tsx",
+      "line": 218,
+      "context": "{t('common:buttons.sendMessage', 'Send Message')}"
+    },
+    {
+      "key": "common:buttons.sendMessage",
+      "file": "pages/profile/OrganizationProfileViewPage.tsx",
+      "line": 218,
+      "context": "{t('common:buttons.sendMessage', 'Send Message')}"
+    },
+    {
+      "key": "common:loading",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 111,
+      "context": "<LoadingSpinner text={t('common:loading', 'Loading...')} />"
+    },
+    {
+      "key": "common:loading",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 111,
+      "context": "<LoadingSpinner text={t('common:loading', 'Loading...')} />"
+    },
+    {
+      "key": "profile:educator.notFound",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 125,
+      "context": "{t('profile:educator.notFound', 'Educator not found')}"
+    },
+    {
+      "key": "profile:educator.notFound",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 125,
+      "context": "{t('profile:educator.notFound', 'Educator not found')}"
+    },
+    {
+      "key": "profile:educator.notFoundMessage",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 128,
+      "context": "{error || t('profile:educator.notFoundMessage', 'The profile you are looking for does not exist.')}"
+    },
+    {
+      "key": "profile:educator.notFoundMessage",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 128,
+      "context": "{error || t('profile:educator.notFoundMessage', 'The profile you are looking for does not exist.')}"
     },
     {
       "key": "common:buttons.goBack",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 424,
-      "context": "{t('common:buttons.goBack')}"
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 133,
+      "context": "{t('common:buttons.goBack', 'Go Back')}"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 133,
+      "context": "{t('common:buttons.goBack', 'Go Back')}"
+    },
+    {
+      "key": "common:buttons.retry",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 136,
+      "context": "{t('common:buttons.retry', 'Retry')}"
+    },
+    {
+      "key": "common:buttons.retry",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 136,
+      "context": "{t('common:buttons.retry', 'Retry')}"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 169,
+      "context": "{t('common:buttons.goBack', 'Go Back')}"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 169,
+      "context": "{t('common:buttons.goBack', 'Go Back')}"
+    },
+    {
+      "key": "profile:educator.inviteToApply",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 223,
+      "context": "{t('profile:educator.inviteToApply', 'Invite to Apply')}"
+    },
+    {
+      "key": "profile:educator.inviteToApply",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 223,
+      "context": "{t('profile:educator.inviteToApply', 'Invite to Apply')}"
     },
     {
       "key": "common:buttons.sendMessage",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 466,
-      "context": "{t('common:buttons.sendMessage')}"
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 231,
+      "context": "{t('common:buttons.sendMessage', 'Send Message')}"
     },
     {
       "key": "common:buttons.sendMessage",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 466,
-      "context": "{t('common:buttons.sendMessage')}"
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 231,
+      "context": "{t('common:buttons.sendMessage', 'Send Message')}"
     },
     {
-      "key": "partnerDetailPage.contactInfoTitle",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 481,
-      "context": "{t('partnerDetailPage.contactInfoTitle')}"
+      "key": "profile:educator.bio",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 242,
+      "context": "<SectionCard title={t('profile:educator.bio', 'About')} icon={UserCircleIcon}>"
     },
     {
-      "key": "partnerDetailPage.directOrderButton",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 525,
-      "context": "{t('partnerDetailPage.directOrderButton')}"
+      "key": "profile:educator.bio",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 242,
+      "context": "<SectionCard title={t('profile:educator.bio', 'About')} icon={UserCircleIcon}>"
     },
     {
-      "key": "partnerDetailPage.aboutTitle",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 533,
-      "context": "{t('partnerDetailPage.aboutTitle', { partnerName: partner.name })}"
+      "key": "profile:educator.experience",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 247,
+      "context": "<SectionCard title={t('profile:educator.experience', 'Work Experience')} icon={BriefcaseIcon}>"
     },
     {
-      "key": "partnerDetailPage.ratingsReviewsTitle",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 541,
-      "context": "{t('partnerDetailPage.ratingsReviewsTitle')}"
+      "key": "profile:educator.experience",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 247,
+      "context": "<SectionCard title={t('profile:educator.experience', 'Work Experience')} icon={BriefcaseIcon}>"
     },
     {
-      "key": "partnerDetailPage.ratingText",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 552,
-      "context": "{t('partnerDetailPage.ratingText', { rating: partner.rating.toFixed(1) })}"
+      "key": "profile:educator.noExperience",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 268,
+      "context": "{t('profile:educator.noExperience', 'No experience listed yet.')}"
     },
     {
-      "key": "partnerDetailPage.reviewsPlaceholder",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 556,
-      "context": "<p className=\"text-sm text-gray-500\">{t('partnerDetailPage.reviewsPlaceholder')}</p>"
+      "key": "profile:educator.noExperience",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 268,
+      "context": "{t('profile:educator.noExperience', 'No experience listed yet.')}"
     },
     {
-      "key": "dashboard:sidebar.products",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 568,
-      "context": "{isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}"
+      "key": "profile:educator.education",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 274,
+      "context": "<SectionCard title={t('profile:educator.education', 'Education')} icon={AcademicCapIcon}>"
     },
     {
-      "key": "dashboard:sidebar.services",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 568,
-      "context": "{isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}"
+      "key": "profile:educator.education",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 274,
+      "context": "<SectionCard title={t('profile:educator.education', 'Education')} icon={AcademicCapIcon}>"
     },
     {
-      "key": "dashboard:sidebar.products",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 568,
-      "context": "{isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}"
+      "key": "profile:educator.graduated",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 282,
+      "context": "{t('profile:educator.graduated', 'Graduated')}: {edu.graduationYear}"
     },
     {
-      "key": "dashboard:sidebar.services",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 568,
-      "context": "{isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}"
+      "key": "profile:educator.graduated",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 282,
+      "context": "{t('profile:educator.graduated', 'Graduated')}: {edu.graduationYear}"
     },
     {
-      "key": "partnerDetailPage.noProductsListed",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 587,
-      "context": "<p className=\"text-gray-500\">{t('partnerDetailPage.noProductsListed')}</p>"
+      "key": "profile:educator.noEducation",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 289,
+      "context": "{t('profile:educator.noEducation', 'No education details yet.')}"
     },
     {
-      "key": "partnerDetailPage.requestServiceButton",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 629,
-      "context": "{t('partnerDetailPage.requestServiceButton')}"
+      "key": "profile:educator.noEducation",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 289,
+      "context": "{t('profile:educator.noEducation', 'No education details yet.')}"
     },
     {
-      "key": "partnerDetailPage.noServicesListed",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 638,
-      "context": "<p className=\"text-gray-500\">{t('partnerDetailPage.noServicesListed')}</p>"
+      "key": "profile:educator.certifications",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 295,
+      "context": "<SectionCard title={t('profile:educator.certifications', 'Certifications')} icon={StarIcon}>"
+    },
+    {
+      "key": "profile:educator.certifications",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 295,
+      "context": "<SectionCard title={t('profile:educator.certifications', 'Certifications')} icon={StarIcon}>"
+    },
+    {
+      "key": "profile:educator.issued",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 303,
+      "context": "{t('profile:educator.issued', 'Issued')}: {cert.issueDate}"
+    },
+    {
+      "key": "profile:educator.issued",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 303,
+      "context": "{t('profile:educator.issued', 'Issued')}: {cert.issueDate}"
+    },
+    {
+      "key": "profile:educator.expires",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 304,
+      "context": "{cert.expiryDate && ` - ${t('profile:educator.expires', 'Expires')}: ${cert.expiryDate}`}"
+    },
+    {
+      "key": "profile:educator.expires",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 304,
+      "context": "{cert.expiryDate && ` - ${t('profile:educator.expires', 'Expires')}: ${cert.expiryDate}`}"
+    },
+    {
+      "key": "profile:educator.viewCredential",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 313,
+      "context": "{t('profile:educator.viewCredential', 'View Credential')}"
+    },
+    {
+      "key": "profile:educator.viewCredential",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 313,
+      "context": "{t('profile:educator.viewCredential', 'View Credential')}"
+    },
+    {
+      "key": "profile:educator.noCertifications",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 320,
+      "context": "{t('profile:educator.noCertifications', 'No certifications listed yet.')}"
+    },
+    {
+      "key": "profile:educator.noCertifications",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 320,
+      "context": "{t('profile:educator.noCertifications', 'No certifications listed yet.')}"
+    },
+    {
+      "key": "profile:educator.skills",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 328,
+      "context": "<SectionCard title={t('profile:educator.skills', 'Skills & Specialties')} icon={StarIcon}>"
+    },
+    {
+      "key": "profile:educator.skills",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 328,
+      "context": "<SectionCard title={t('profile:educator.skills', 'Skills & Specialties')} icon={StarIcon}>"
+    },
+    {
+      "key": "profile:educator.noSkills",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 341,
+      "context": "{t('profile:educator.noSkills', 'No skills listed yet.')}"
+    },
+    {
+      "key": "profile:educator.noSkills",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 341,
+      "context": "{t('profile:educator.noSkills', 'No skills listed yet.')}"
+    },
+    {
+      "key": "profile:educator.availability",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 348,
+      "context": "title={t('profile:educator.availability', 'Availability & Preferences')}"
+    },
+    {
+      "key": "profile:educator.availability",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 348,
+      "context": "title={t('profile:educator.availability', 'Availability & Preferences')}"
+    },
+    {
+      "key": "profile:educator.preferredDays",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 353,
+      "context": "<strong>{t('profile:educator.preferredDays', 'Preferred Days')}:</strong>{' '}"
+    },
+    {
+      "key": "profile:educator.preferredDays",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 353,
+      "context": "<strong>{t('profile:educator.preferredDays', 'Preferred Days')}:</strong>{' '}"
+    },
+    {
+      "key": "profile:educator.notProvided",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 354,
+      "context": "{availabilityPreferences?.days?.join(', ') ?? t('profile:educator.notProvided', 'Not provided')}"
+    },
+    {
+      "key": "profile:educator.notProvided",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 354,
+      "context": "{availabilityPreferences?.days?.join(', ') ?? t('profile:educator.notProvided', 'Not provided')}"
+    },
+    {
+      "key": "profile:educator.preferredTimes",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 357,
+      "context": "<strong>{t('profile:educator.preferredTimes', 'Preferred Times')}:</strong>{' '}"
+    },
+    {
+      "key": "profile:educator.preferredTimes",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 357,
+      "context": "<strong>{t('profile:educator.preferredTimes', 'Preferred Times')}:</strong>{' '}"
+    },
+    {
+      "key": "profile:educator.notProvided",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 358,
+      "context": "{availabilityPreferences?.times ?? t('profile:educator.notProvided', 'Not provided')}"
+    },
+    {
+      "key": "profile:educator.notProvided",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 358,
+      "context": "{availabilityPreferences?.times ?? t('profile:educator.notProvided', 'Not provided')}"
+    },
+    {
+      "key": "profile:educator.contractType",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 361,
+      "context": "<strong>{t('profile:educator.contractType', 'Contract Type')}:</strong>{' '}"
+    },
+    {
+      "key": "profile:educator.contractType",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 361,
+      "context": "<strong>{t('profile:educator.contractType', 'Contract Type')}:</strong>{' '}"
+    },
+    {
+      "key": "profile:educator.notProvided",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 362,
+      "context": "{availabilityPreferences?.contractType ?? t('profile:educator.notProvided', 'Not provided')}"
+    },
+    {
+      "key": "profile:educator.notProvided",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 362,
+      "context": "{availabilityPreferences?.contractType ?? t('profile:educator.notProvided', 'Not provided')}"
+    },
+    {
+      "key": "profile:educator.preferredAgeGroups",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 365,
+      "context": "<strong>{t('profile:educator.preferredAgeGroups', 'Preferred Age Groups')}:</strong>{' '}"
+    },
+    {
+      "key": "profile:educator.preferredAgeGroups",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 365,
+      "context": "<strong>{t('profile:educator.preferredAgeGroups', 'Preferred Age Groups')}:</strong>{' '}"
+    },
+    {
+      "key": "profile:educator.notProvided",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 367,
+      "context": "t('profile:educator.notProvided', 'Not provided')}"
+    },
+    {
+      "key": "profile:educator.notProvided",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 367,
+      "context": "t('profile:educator.notProvided', 'Not provided')}"
+    },
+    {
+      "key": "profile:educator.documents",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 372,
+      "context": "<SectionCard title={t('profile:educator.documents', 'CV & Documents')} icon={PaperClipIcon}>"
+    },
+    {
+      "key": "profile:educator.documents",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 372,
+      "context": "<SectionCard title={t('profile:educator.documents', 'CV & Documents')} icon={PaperClipIcon}>"
+    },
+    {
+      "key": "profile:educator.noDocuments",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 392,
+      "context": "{t('profile:educator.noDocuments', 'No documents uploaded yet.')}"
+    },
+    {
+      "key": "profile:educator.noDocuments",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 392,
+      "context": "{t('profile:educator.noDocuments', 'No documents uploaded yet.')}"
+    },
+    {
+      "key": "profile:educator.contact",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 399,
+      "context": "<SectionCard title={t('profile:educator.contact', 'Contact')} icon={EnvelopeIcon}>"
+    },
+    {
+      "key": "profile:educator.contact",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 399,
+      "context": "<SectionCard title={t('profile:educator.contact', 'Contact')} icon={EnvelopeIcon}>"
+    },
+    {
+      "key": "profile:educator.inviteToApply",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 428,
+      "context": "{t('profile:educator.inviteToApply', 'Invite to Apply')}"
+    },
+    {
+      "key": "profile:educator.inviteToApply",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 428,
+      "context": "{t('profile:educator.inviteToApply', 'Invite to Apply')}"
+    },
+    {
+      "key": "common:buttons.sendMessage",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 432,
+      "context": "{t('common:buttons.sendMessage', 'Send Message')}"
+    },
+    {
+      "key": "common:buttons.sendMessage",
+      "file": "pages/profile/EducatorProfileViewPage.tsx",
+      "line": 432,
+      "context": "{t('common:buttons.sendMessage', 'Send Message')}"
     },
     {
       "key": "common:errors.fetchFailed",
@@ -11313,6 +11553,258 @@
       "file": "pages/parent/ParentDashboardPage.tsx",
       "line": 92,
       "context": "<Button variant=\"secondary\" className=\"bg-amber-600 hover:bg-amber-700 text-white\" onClick={() => alert('View Favorites TBD')}>{t('parentDashboard.favorites.button')}</Button>"
+    },
+    {
+      "key": "stockStatus.instock",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 57,
+      "context": "if (status === 'ACTIVE' || !status) return t('stockStatus.instock', 'In Stock');"
+    },
+    {
+      "key": "partnerDetailPage.productOutOfStock",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 64,
+      "context": "alert(t('partnerDetailPage.productOutOfStock', { productName: product.title }));"
+    },
+    {
+      "key": "partnerDetailPage.productAddedToOrder",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 68,
+      "context": "alert(t('partnerDetailPage.productAddedToOrder', { quantity, productName: product.title }));"
+    },
+    {
+      "key": "partnerDetailPage.addToOrderButton",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 110,
+      "context": "{t('partnerDetailPage.addToOrderButton')}"
+    },
+    {
+      "key": "partnerDetailPage.promoCodeValid",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 170,
+      "context": "message: t('partnerDetailPage.promoCodeValid', 'Promo code applied!'),"
+    },
+    {
+      "key": "partnerDetailPage.promoCodeInvalid",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 176,
+      "context": "message: t('partnerDetailPage.promoCodeInvalid', 'Invalid or expired promo code'),"
+    },
+    {
+      "key": "partnerDetailPage.promoCodeError",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 183,
+      "context": "message: t('partnerDetailPage.promoCodeError', 'Failed to validate promo code'),"
+    },
+    {
+      "key": "partnerDetailPage.promoCodeTitle",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 194,
+      "context": "{t('partnerDetailPage.promoCodeTitle')}"
+    },
+    {
+      "key": "partnerDetailPage.promoCodePlaceholder",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 204,
+      "context": "placeholder={t('partnerDetailPage.promoCodePlaceholder')}"
+    },
+    {
+      "key": "partnerDetailPage.applyPromoButton",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 214,
+      "context": "{isValidating ? '...' : t('partnerDetailPage.applyPromoButton')}"
+    },
+    {
+      "key": "partnerDetailPage.onlyFoundationsRequestService",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 317,
+      "context": "alert(t('partnerDetailPage.onlyFoundationsRequestService'));"
+    },
+    {
+      "key": "partnerDetailPage.requestSubmittedAlert",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 339,
+      "context": "alert(t('partnerDetailPage.requestSubmittedAlert', { serviceName: newRequest.serviceName }));"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 347,
+      "context": "{t('common:buttons.goBack')}"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 347,
+      "context": "{t('common:buttons.goBack')}"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 393,
+      "context": "{t('common:buttons.goBack')}"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 393,
+      "context": "{t('common:buttons.goBack')}"
+    },
+    {
+      "key": "partnerDetailPage.invalidPartnerIdMessage",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 398,
+      "context": "<p className=\"mt-4 text-gray-600\">{error || t('partnerDetailPage.invalidPartnerIdMessage')}</p>"
+    },
+    {
+      "key": "common:buttons.retry",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 405,
+      "context": "{t('common:buttons.retry', 'Retry')}"
+    },
+    {
+      "key": "common:buttons.retry",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 405,
+      "context": "{t('common:buttons.retry', 'Retry')}"
+    },
+    {
+      "key": "common:userRoles.Product Supplier",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 413,
+      "context": "? t('common:userRoles.Product Supplier')"
+    },
+    {
+      "key": "common:userRoles.Product Supplier",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 413,
+      "context": "? t('common:userRoles.Product Supplier')"
+    },
+    {
+      "key": "common:userRoles.Service Provider",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 415,
+      "context": "? t('common:userRoles.Service Provider')"
+    },
+    {
+      "key": "common:userRoles.Service Provider",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 415,
+      "context": "? t('common:userRoles.Service Provider')"
+    },
+    {
+      "key": "common:userRoles.Foundation",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 416,
+      "context": ": t('common:userRoles.Foundation');"
+    },
+    {
+      "key": "common:userRoles.Foundation",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 416,
+      "context": ": t('common:userRoles.Foundation');"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 424,
+      "context": "{t('common:buttons.goBack')}"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 424,
+      "context": "{t('common:buttons.goBack')}"
+    },
+    {
+      "key": "common:buttons.sendMessage",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 466,
+      "context": "{t('common:buttons.sendMessage')}"
+    },
+    {
+      "key": "common:buttons.sendMessage",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 466,
+      "context": "{t('common:buttons.sendMessage')}"
+    },
+    {
+      "key": "partnerDetailPage.contactInfoTitle",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 481,
+      "context": "{t('partnerDetailPage.contactInfoTitle')}"
+    },
+    {
+      "key": "partnerDetailPage.directOrderButton",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 525,
+      "context": "{t('partnerDetailPage.directOrderButton')}"
+    },
+    {
+      "key": "partnerDetailPage.aboutTitle",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 533,
+      "context": "{t('partnerDetailPage.aboutTitle', { partnerName: partner.name })}"
+    },
+    {
+      "key": "partnerDetailPage.ratingsReviewsTitle",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 541,
+      "context": "{t('partnerDetailPage.ratingsReviewsTitle')}"
+    },
+    {
+      "key": "partnerDetailPage.ratingText",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 552,
+      "context": "{t('partnerDetailPage.ratingText', { rating: partner.rating.toFixed(1) })}"
+    },
+    {
+      "key": "partnerDetailPage.reviewsPlaceholder",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 556,
+      "context": "<p className=\"text-sm text-gray-500\">{t('partnerDetailPage.reviewsPlaceholder')}</p>"
+    },
+    {
+      "key": "dashboard:sidebar.products",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 568,
+      "context": "{isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}"
+    },
+    {
+      "key": "dashboard:sidebar.services",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 568,
+      "context": "{isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}"
+    },
+    {
+      "key": "dashboard:sidebar.products",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 568,
+      "context": "{isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}"
+    },
+    {
+      "key": "dashboard:sidebar.services",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 568,
+      "context": "{isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}"
+    },
+    {
+      "key": "partnerDetailPage.noProductsListed",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 587,
+      "context": "<p className=\"text-gray-500\">{t('partnerDetailPage.noProductsListed')}</p>"
+    },
+    {
+      "key": "partnerDetailPage.requestServiceButton",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 629,
+      "context": "{t('partnerDetailPage.requestServiceButton')}"
+    },
+    {
+      "key": "partnerDetailPage.noServicesListed",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 638,
+      "context": "<p className=\"text-gray-500\">{t('partnerDetailPage.noServicesListed')}</p>"
     },
     {
       "key": "common:errors.fetchFailed",
@@ -20685,498 +21177,6 @@
       "file": "src/components/verification/VerificationProgress.tsx",
       "line": 113,
       "context": "{t('verificationProgress.messages.redirectingToDashboard')}"
-    },
-    {
-      "key": "common:loading",
-      "file": "pages/profile/OrganizationProfileViewPage.tsx",
-      "line": 135,
-      "context": "<LoadingSpinner text={t('common:loading', 'Loading...')} />"
-    },
-    {
-      "key": "common:loading",
-      "file": "pages/profile/OrganizationProfileViewPage.tsx",
-      "line": 135,
-      "context": "<LoadingSpinner text={t('common:loading', 'Loading...')} />"
-    },
-    {
-      "key": "profile:organization.notFound",
-      "file": "pages/profile/OrganizationProfileViewPage.tsx",
-      "line": 146,
-      "context": "<p className=\"text-red-600\">{error || t('profile:organization.notFound', 'Organization not found')}</p>"
-    },
-    {
-      "key": "profile:organization.notFound",
-      "file": "pages/profile/OrganizationProfileViewPage.tsx",
-      "line": 146,
-      "context": "<p className=\"text-red-600\">{error || t('profile:organization.notFound', 'Organization not found')}</p>"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/profile/OrganizationProfileViewPage.tsx",
-      "line": 149,
-      "context": "{t('common:buttons.goBack', 'Go Back')}"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/profile/OrganizationProfileViewPage.tsx",
-      "line": 149,
-      "context": "{t('common:buttons.goBack', 'Go Back')}"
-    },
-    {
-      "key": "common:buttons.retry",
-      "file": "pages/profile/OrganizationProfileViewPage.tsx",
-      "line": 152,
-      "context": "{t('common:buttons.retry', 'Retry')}"
-    },
-    {
-      "key": "common:buttons.retry",
-      "file": "pages/profile/OrganizationProfileViewPage.tsx",
-      "line": 152,
-      "context": "{t('common:buttons.retry', 'Retry')}"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/profile/OrganizationProfileViewPage.tsx",
-      "line": 164,
-      "context": "{t('common:buttons.goBack', 'Go Back')}"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/profile/OrganizationProfileViewPage.tsx",
-      "line": 164,
-      "context": "{t('common:buttons.goBack', 'Go Back')}"
-    },
-    {
-      "key": "common:buttons.sendMessage",
-      "file": "pages/profile/OrganizationProfileViewPage.tsx",
-      "line": 218,
-      "context": "{t('common:buttons.sendMessage', 'Send Message')}"
-    },
-    {
-      "key": "common:buttons.sendMessage",
-      "file": "pages/profile/OrganizationProfileViewPage.tsx",
-      "line": 218,
-      "context": "{t('common:buttons.sendMessage', 'Send Message')}"
-    },
-    {
-      "key": "common:loading",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 111,
-      "context": "<LoadingSpinner text={t('common:loading', 'Loading...')} />"
-    },
-    {
-      "key": "common:loading",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 111,
-      "context": "<LoadingSpinner text={t('common:loading', 'Loading...')} />"
-    },
-    {
-      "key": "profile:educator.notFound",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 125,
-      "context": "{t('profile:educator.notFound', 'Educator not found')}"
-    },
-    {
-      "key": "profile:educator.notFound",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 125,
-      "context": "{t('profile:educator.notFound', 'Educator not found')}"
-    },
-    {
-      "key": "profile:educator.notFoundMessage",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 128,
-      "context": "{error || t('profile:educator.notFoundMessage', 'The profile you are looking for does not exist.')}"
-    },
-    {
-      "key": "profile:educator.notFoundMessage",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 128,
-      "context": "{error || t('profile:educator.notFoundMessage', 'The profile you are looking for does not exist.')}"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 133,
-      "context": "{t('common:buttons.goBack', 'Go Back')}"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 133,
-      "context": "{t('common:buttons.goBack', 'Go Back')}"
-    },
-    {
-      "key": "common:buttons.retry",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 136,
-      "context": "{t('common:buttons.retry', 'Retry')}"
-    },
-    {
-      "key": "common:buttons.retry",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 136,
-      "context": "{t('common:buttons.retry', 'Retry')}"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 169,
-      "context": "{t('common:buttons.goBack', 'Go Back')}"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 169,
-      "context": "{t('common:buttons.goBack', 'Go Back')}"
-    },
-    {
-      "key": "profile:educator.inviteToApply",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 223,
-      "context": "{t('profile:educator.inviteToApply', 'Invite to Apply')}"
-    },
-    {
-      "key": "profile:educator.inviteToApply",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 223,
-      "context": "{t('profile:educator.inviteToApply', 'Invite to Apply')}"
-    },
-    {
-      "key": "common:buttons.sendMessage",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 231,
-      "context": "{t('common:buttons.sendMessage', 'Send Message')}"
-    },
-    {
-      "key": "common:buttons.sendMessage",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 231,
-      "context": "{t('common:buttons.sendMessage', 'Send Message')}"
-    },
-    {
-      "key": "profile:educator.bio",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 242,
-      "context": "<SectionCard title={t('profile:educator.bio', 'About')} icon={UserCircleIcon}>"
-    },
-    {
-      "key": "profile:educator.bio",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 242,
-      "context": "<SectionCard title={t('profile:educator.bio', 'About')} icon={UserCircleIcon}>"
-    },
-    {
-      "key": "profile:educator.experience",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 247,
-      "context": "<SectionCard title={t('profile:educator.experience', 'Work Experience')} icon={BriefcaseIcon}>"
-    },
-    {
-      "key": "profile:educator.experience",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 247,
-      "context": "<SectionCard title={t('profile:educator.experience', 'Work Experience')} icon={BriefcaseIcon}>"
-    },
-    {
-      "key": "profile:educator.noExperience",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 268,
-      "context": "{t('profile:educator.noExperience', 'No experience listed yet.')}"
-    },
-    {
-      "key": "profile:educator.noExperience",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 268,
-      "context": "{t('profile:educator.noExperience', 'No experience listed yet.')}"
-    },
-    {
-      "key": "profile:educator.education",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 274,
-      "context": "<SectionCard title={t('profile:educator.education', 'Education')} icon={AcademicCapIcon}>"
-    },
-    {
-      "key": "profile:educator.education",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 274,
-      "context": "<SectionCard title={t('profile:educator.education', 'Education')} icon={AcademicCapIcon}>"
-    },
-    {
-      "key": "profile:educator.graduated",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 282,
-      "context": "{t('profile:educator.graduated', 'Graduated')}: {edu.graduationYear}"
-    },
-    {
-      "key": "profile:educator.graduated",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 282,
-      "context": "{t('profile:educator.graduated', 'Graduated')}: {edu.graduationYear}"
-    },
-    {
-      "key": "profile:educator.noEducation",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 289,
-      "context": "{t('profile:educator.noEducation', 'No education details yet.')}"
-    },
-    {
-      "key": "profile:educator.noEducation",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 289,
-      "context": "{t('profile:educator.noEducation', 'No education details yet.')}"
-    },
-    {
-      "key": "profile:educator.certifications",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 295,
-      "context": "<SectionCard title={t('profile:educator.certifications', 'Certifications')} icon={StarIcon}>"
-    },
-    {
-      "key": "profile:educator.certifications",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 295,
-      "context": "<SectionCard title={t('profile:educator.certifications', 'Certifications')} icon={StarIcon}>"
-    },
-    {
-      "key": "profile:educator.issued",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 303,
-      "context": "{t('profile:educator.issued', 'Issued')}: {cert.issueDate}"
-    },
-    {
-      "key": "profile:educator.issued",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 303,
-      "context": "{t('profile:educator.issued', 'Issued')}: {cert.issueDate}"
-    },
-    {
-      "key": "profile:educator.expires",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 304,
-      "context": "{cert.expiryDate && ` - ${t('profile:educator.expires', 'Expires')}: ${cert.expiryDate}`}"
-    },
-    {
-      "key": "profile:educator.expires",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 304,
-      "context": "{cert.expiryDate && ` - ${t('profile:educator.expires', 'Expires')}: ${cert.expiryDate}`}"
-    },
-    {
-      "key": "profile:educator.viewCredential",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 313,
-      "context": "{t('profile:educator.viewCredential', 'View Credential')}"
-    },
-    {
-      "key": "profile:educator.viewCredential",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 313,
-      "context": "{t('profile:educator.viewCredential', 'View Credential')}"
-    },
-    {
-      "key": "profile:educator.noCertifications",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 320,
-      "context": "{t('profile:educator.noCertifications', 'No certifications listed yet.')}"
-    },
-    {
-      "key": "profile:educator.noCertifications",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 320,
-      "context": "{t('profile:educator.noCertifications', 'No certifications listed yet.')}"
-    },
-    {
-      "key": "profile:educator.skills",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 328,
-      "context": "<SectionCard title={t('profile:educator.skills', 'Skills & Specialties')} icon={StarIcon}>"
-    },
-    {
-      "key": "profile:educator.skills",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 328,
-      "context": "<SectionCard title={t('profile:educator.skills', 'Skills & Specialties')} icon={StarIcon}>"
-    },
-    {
-      "key": "profile:educator.noSkills",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 341,
-      "context": "{t('profile:educator.noSkills', 'No skills listed yet.')}"
-    },
-    {
-      "key": "profile:educator.noSkills",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 341,
-      "context": "{t('profile:educator.noSkills', 'No skills listed yet.')}"
-    },
-    {
-      "key": "profile:educator.availability",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 348,
-      "context": "title={t('profile:educator.availability', 'Availability & Preferences')}"
-    },
-    {
-      "key": "profile:educator.availability",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 348,
-      "context": "title={t('profile:educator.availability', 'Availability & Preferences')}"
-    },
-    {
-      "key": "profile:educator.preferredDays",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 353,
-      "context": "<strong>{t('profile:educator.preferredDays', 'Preferred Days')}:</strong>{' '}"
-    },
-    {
-      "key": "profile:educator.preferredDays",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 353,
-      "context": "<strong>{t('profile:educator.preferredDays', 'Preferred Days')}:</strong>{' '}"
-    },
-    {
-      "key": "profile:educator.notProvided",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 354,
-      "context": "{availabilityPreferences?.days?.join(', ') ?? t('profile:educator.notProvided', 'Not provided')}"
-    },
-    {
-      "key": "profile:educator.notProvided",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 354,
-      "context": "{availabilityPreferences?.days?.join(', ') ?? t('profile:educator.notProvided', 'Not provided')}"
-    },
-    {
-      "key": "profile:educator.preferredTimes",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 357,
-      "context": "<strong>{t('profile:educator.preferredTimes', 'Preferred Times')}:</strong>{' '}"
-    },
-    {
-      "key": "profile:educator.preferredTimes",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 357,
-      "context": "<strong>{t('profile:educator.preferredTimes', 'Preferred Times')}:</strong>{' '}"
-    },
-    {
-      "key": "profile:educator.notProvided",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 358,
-      "context": "{availabilityPreferences?.times ?? t('profile:educator.notProvided', 'Not provided')}"
-    },
-    {
-      "key": "profile:educator.notProvided",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 358,
-      "context": "{availabilityPreferences?.times ?? t('profile:educator.notProvided', 'Not provided')}"
-    },
-    {
-      "key": "profile:educator.contractType",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 361,
-      "context": "<strong>{t('profile:educator.contractType', 'Contract Type')}:</strong>{' '}"
-    },
-    {
-      "key": "profile:educator.contractType",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 361,
-      "context": "<strong>{t('profile:educator.contractType', 'Contract Type')}:</strong>{' '}"
-    },
-    {
-      "key": "profile:educator.notProvided",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 362,
-      "context": "{availabilityPreferences?.contractType ?? t('profile:educator.notProvided', 'Not provided')}"
-    },
-    {
-      "key": "profile:educator.notProvided",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 362,
-      "context": "{availabilityPreferences?.contractType ?? t('profile:educator.notProvided', 'Not provided')}"
-    },
-    {
-      "key": "profile:educator.preferredAgeGroups",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 365,
-      "context": "<strong>{t('profile:educator.preferredAgeGroups', 'Preferred Age Groups')}:</strong>{' '}"
-    },
-    {
-      "key": "profile:educator.preferredAgeGroups",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 365,
-      "context": "<strong>{t('profile:educator.preferredAgeGroups', 'Preferred Age Groups')}:</strong>{' '}"
-    },
-    {
-      "key": "profile:educator.notProvided",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 367,
-      "context": "t('profile:educator.notProvided', 'Not provided')}"
-    },
-    {
-      "key": "profile:educator.notProvided",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 367,
-      "context": "t('profile:educator.notProvided', 'Not provided')}"
-    },
-    {
-      "key": "profile:educator.documents",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 372,
-      "context": "<SectionCard title={t('profile:educator.documents', 'CV & Documents')} icon={PaperClipIcon}>"
-    },
-    {
-      "key": "profile:educator.documents",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 372,
-      "context": "<SectionCard title={t('profile:educator.documents', 'CV & Documents')} icon={PaperClipIcon}>"
-    },
-    {
-      "key": "profile:educator.noDocuments",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 392,
-      "context": "{t('profile:educator.noDocuments', 'No documents uploaded yet.')}"
-    },
-    {
-      "key": "profile:educator.noDocuments",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 392,
-      "context": "{t('profile:educator.noDocuments', 'No documents uploaded yet.')}"
-    },
-    {
-      "key": "profile:educator.contact",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 399,
-      "context": "<SectionCard title={t('profile:educator.contact', 'Contact')} icon={EnvelopeIcon}>"
-    },
-    {
-      "key": "profile:educator.contact",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 399,
-      "context": "<SectionCard title={t('profile:educator.contact', 'Contact')} icon={EnvelopeIcon}>"
-    },
-    {
-      "key": "profile:educator.inviteToApply",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 428,
-      "context": "{t('profile:educator.inviteToApply', 'Invite to Apply')}"
-    },
-    {
-      "key": "profile:educator.inviteToApply",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 428,
-      "context": "{t('profile:educator.inviteToApply', 'Invite to Apply')}"
-    },
-    {
-      "key": "common:buttons.sendMessage",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 432,
-      "context": "{t('common:buttons.sendMessage', 'Send Message')}"
-    },
-    {
-      "key": "common:buttons.sendMessage",
-      "file": "pages/profile/EducatorProfileViewPage.tsx",
-      "line": 432,
-      "context": "{t('common:buttons.sendMessage', 'Send Message')}"
     },
     {
       "key": "settingsTeamPermissions.confirmRemoveMember",

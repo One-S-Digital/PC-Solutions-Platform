@@ -94,14 +94,6 @@ const subscriptionStatusOptions = [
   { value: SubscriptionStatus.GRACE_PERIOD, labelKey: 'grace_period', color: SubscriptionStatusColors[SubscriptionStatus.GRACE_PERIOD] },
 ];
 
-// Subscription plan billing period options for plan editor dropdown
-// NOTE: We intentionally include the user-requested options verbatim.
-const subscriptionPlanBillingPeriodOptions = [
-  { value: '30 days', label: '30 days' },
-  { value: 'monthly recurring', label: 'monthly recurring' },
-  { value: '1 year', label: '1 year' },
-];
-
 // Edit Subscription Modal Component
 interface EditSubscriptionModalProps {
   isOpen: boolean;
@@ -126,6 +118,35 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
   const [status, setStatus] = useState<SubscriptionStatus>(subscription?.status || SubscriptionStatus.INACTIVE);
   const [selectedPlanId, setSelectedPlanId] = useState<string>(subscription?.planId || '');
   const [notes, setNotes] = useState<string>(subscription?.notes || '');
+
+  const billingPeriodLabel = React.useCallback(
+    (period: string | null | undefined) => {
+      const normalized = (period || '').trim().toLowerCase().replace(/\s+/g, ' ');
+      switch (normalized) {
+        case '30 days':
+        case '30 day':
+        case '30-day':
+          return t('admin:subscriptions.planEditor.billingOptions.thirtyDays', '30 Days');
+        case 'monthly recurring':
+          return t('admin:subscriptions.planEditor.billingOptions.monthlyRecurring', 'Monthly Recurring');
+        case '1 year':
+        case '1 yr':
+        case 'one year':
+          return t('admin:subscriptions.planEditor.billingOptions.oneYear', '1 Year');
+        case 'monthly':
+          return t('admin:subscriptions.planEditor.billingOptions.monthly', 'Monthly');
+        case 'quarterly':
+          return t('admin:subscriptions.planEditor.billingOptions.quarterly', 'Quarterly');
+        case 'yearly':
+        case 'annual':
+        case 'annually':
+          return t('admin:subscriptions.planEditor.billingOptions.yearly', 'Yearly');
+        default:
+          return period || t('common:notAvailable', 'N/A');
+      }
+    },
+    [t]
+  );
 
   React.useEffect(() => {
     if (subscription) {
@@ -237,7 +258,7 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
                   {plan.name} - {new Intl.NumberFormat(CURRENCY_LOCALE, {
                     style: 'currency',
                     currency: plan.currency,
-                  }).format(plan.price)}/{plan.billingPeriod}
+                  }).format(plan.price)}/{billingPeriodLabel(plan.billingPeriod)}
                 </option>
               ))}
             </select>
@@ -312,6 +333,35 @@ const EditSubscriptionPlanModal: React.FC<EditSubscriptionPlanModalProps> = ({
   const [selectedPlanId, setSelectedPlanId] = useState<string>('');
   const [billingPeriod, setBillingPeriod] = useState<string>('');
 
+  const billingPeriodLabel = React.useCallback(
+    (period: string | null | undefined) => {
+      const normalized = (period || '').trim().toLowerCase().replace(/\s+/g, ' ');
+      switch (normalized) {
+        case '30 days':
+        case '30 day':
+        case '30-day':
+          return t('admin:subscriptions.planEditor.billingOptions.thirtyDays', '30 Days');
+        case 'monthly recurring':
+          return t('admin:subscriptions.planEditor.billingOptions.monthlyRecurring', 'Monthly Recurring');
+        case '1 year':
+        case '1 yr':
+        case 'one year':
+          return t('admin:subscriptions.planEditor.billingOptions.oneYear', '1 Year');
+        case 'monthly':
+          return t('admin:subscriptions.planEditor.billingOptions.monthly', 'Monthly');
+        case 'quarterly':
+          return t('admin:subscriptions.planEditor.billingOptions.quarterly', 'Quarterly');
+        case 'yearly':
+        case 'annual':
+        case 'annually':
+          return t('admin:subscriptions.planEditor.billingOptions.yearly', 'Yearly');
+        default:
+          return period || t('common:notAvailable', 'N/A');
+      }
+    },
+    [t]
+  );
+
   const selectedPlan = React.useMemo(
     () => plans.find((p) => p.id === selectedPlanId) || null,
     [plans, selectedPlanId]
@@ -329,7 +379,8 @@ const EditSubscriptionPlanModal: React.FC<EditSubscriptionPlanModalProps> = ({
 
   React.useEffect(() => {
     if (selectedPlan) {
-      setBillingPeriod(selectedPlan.billingPeriod || '');
+      // Normalize to canonical stored values (lowercase) while displaying translated labels.
+      setBillingPeriod((selectedPlan.billingPeriod || '').trim());
     }
   }, [selectedPlan]);
 
@@ -348,13 +399,23 @@ const EditSubscriptionPlanModal: React.FC<EditSubscriptionPlanModalProps> = ({
   if (!isOpen) return null;
 
   const mergedBillingOptions = React.useMemo(() => {
-    const opts = [...subscriptionPlanBillingPeriodOptions];
+    const opts = [
+      { value: '30 days', label: billingPeriodLabel('30 days') },
+      { value: 'monthly recurring', label: billingPeriodLabel('monthly recurring') },
+      { value: '1 year', label: billingPeriodLabel('1 year') },
+      // legacy / existing values we still support
+      { value: 'monthly', label: billingPeriodLabel('monthly') },
+      { value: 'quarterly', label: billingPeriodLabel('quarterly') },
+      { value: 'yearly', label: billingPeriodLabel('yearly') },
+    ];
+
     const current = billingPeriod?.trim();
     if (current && !opts.some((o) => o.value === current)) {
-      opts.unshift({ value: current, label: current });
+      // Keep current value selectable, but display a nicer label if we know it
+      opts.unshift({ value: current, label: billingPeriodLabel(current) });
     }
     return opts;
-  }, [billingPeriod]);
+  }, [billingPeriod, billingPeriodLabel]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -440,7 +501,7 @@ const EditSubscriptionPlanModal: React.FC<EditSubscriptionPlanModalProps> = ({
                 }).format(selectedPlan.price)}
               </p>
               <p className="text-blue-600">
-                {t('admin:subscriptions.planEditor.currentBillingPeriod', 'Current Subscription')}: {selectedPlan.billingPeriod || t('common:notAvailable', 'N/A')}
+                {t('admin:subscriptions.planEditor.currentBillingPeriod', 'Current Subscription')}: {billingPeriodLabel(selectedPlan.billingPeriod)}
               </p>
             </div>
           )}

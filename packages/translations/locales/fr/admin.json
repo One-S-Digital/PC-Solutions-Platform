@@ -1661,6 +1661,14 @@
       "plan": "Forfait",
       "billingPeriod": "Abonnement",
       "billingPeriodHelp": "Sélectionnez la périodicité d’abonnement affichée pour ce forfait.",
+      "billingOptions": {
+        "thirtyDays": "30 jours",
+        "monthlyRecurring": "Mensuel récurrent",
+        "oneYear": "1 an",
+        "monthly": "Mensuel",
+        "quarterly": "Trimestriel",
+        "yearly": "Annuel"
+      },
       "currentInfo": "Infos du forfait actuel",
       "price": "Prix",
       "currentBillingPeriod": "Abonnement actuel",

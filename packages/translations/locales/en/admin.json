@@ -1653,6 +1653,14 @@
       "plan": "Plan",
       "billingPeriod": "Subscription",
       "billingPeriodHelp": "Select the subscription billing period shown for this plan.",
+      "billingOptions": {
+        "thirtyDays": "30 Days",
+        "monthlyRecurring": "Monthly Recurring",
+        "oneYear": "1 Year",
+        "monthly": "Monthly",
+        "quarterly": "Quarterly",
+        "yearly": "Yearly"
+      },
       "currentInfo": "Current Plan Info",
       "price": "Price",
       "currentBillingPeriod": "Current Subscription",
