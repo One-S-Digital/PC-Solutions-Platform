@@ -1,0 +1,88 @@
+{
+  "paywall": {
+    "requiredTitle": "Abonnement erforderlich",
+    "requiredMessage": "Ein aktives Abonnement ist erforderlich, um auf diese Funktion zuzugreifen. Wählen Sie einen Plan, um zu beginnen.",
+    "pendingTitle": "Abonnement ausstehend",
+    "pendingMessage": "Ihre Abonnementanfrage wird bearbeitet. Unser Team wird Sie in Kürze kontaktieren, um Ihr Konto zu aktivieren.",
+    "expiredTitle": "Abonnement abgelaufen",
+    "expiredMessage": "Ihr Abonnement ist abgelaufen. Erneuern Sie jetzt, um wieder Zugang zu allen Funktionen zu erhalten.",
+    "cancelledTitle": "Abonnement gekündigt",
+    "cancelledMessage": "Ihr Abonnement wurde gekündigt. Abonnieren Sie erneut, um die Plattform weiter zu nutzen.",
+    "pausedTitle": "Abonnement pausiert",
+    "pausedMessage": "Ihr Abonnement ist derzeit pausiert. Kontaktieren Sie den Support, um den Zugang fortzusetzen.",
+    "pastDueTitle": "Zahlung erforderlich",
+    "pastDueMessage": "Ihre Zahlung ist überfällig. Bitte aktualisieren Sie Ihre Zahlungsmethode, um den Zugang wiederherzustellen.",
+    "graceTitle": "Karenzzeit",
+    "graceMessage": "Ihr Abonnement befindet sich in der Karenzzeit. Bitte erneuern Sie bald, um den Zugang nicht zu verlieren.",
+    "viewPlans": "Abonnementpläne ansehen",
+    "manageBilling": "Abrechnung verwalten",
+    "contactSupport": "Support kontaktieren",
+    "manageSubscription": "Ihr Abonnement verwalten",
+    "needHelp": "Brauchen Sie Hilfe?",
+    "contactUs": "Kontaktieren Sie uns"
+  },
+  "featureGate": {
+    "locked": "Diese Funktion erfordert ein Plan-Upgrade",
+    "upgrade": "Plan upgraden"
+  },
+  "status": {
+    "active": "Aktiv",
+    "inactive": "Inaktiv",
+    "paused": "Pausiert",
+    "cancelled": "Gekündigt",
+    "expired": "Abgelaufen",
+    "trial": "Testversion",
+    "pastDue": "Überfällig",
+    "pending": "Ausstehend",
+    "gracePeriod": "Karenzzeit"
+  },
+  "request": {
+    "title": "Abonnement anfordern",
+    "selectPlan": "Plan auswählen",
+    "billingPeriod": "Abrechnungszeitraum",
+    "monthly": "Monatlich",
+    "yearly": "Jährlich",
+    "yearlyDiscount": "10% sparen",
+    "notes": "Zusätzliche Anmerkungen",
+    "notesPlaceholder": "Besondere Anforderungen oder Fragen...",
+    "submit": "Anfrage senden",
+    "submitting": "Wird gesendet...",
+    "successTitle": "Anfrage gesendet",
+    "successMessage": "Ihre Abonnementanfrage wurde erfolgreich gesendet. Unser Team wird Sie in Kürze kontaktieren.",
+    "errorTitle": "Anfrage fehlgeschlagen",
+    "errorMessage": "Beim Senden Ihrer Anfrage ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
+  },
+  "info": {
+    "currentPlan": "Aktueller Plan",
+    "noPlan": "Kein aktiver Plan",
+    "expiresOn": "Läuft ab am {{date}}",
+    "trialEndsOn": "Testversion endet am {{date}}",
+    "daysRemaining": "{{days}} Tage verbleibend",
+    "trialDaysRemaining": "{{days}} Testtage verbleibend",
+    "cancelAtPeriodEnd": "Kündigung zum Periodenende",
+    "features": "Funktionen",
+    "limits": "Nutzungslimits",
+    "unlimited": "Unbegrenzt"
+  },
+  "actions": {
+    "upgrade": "Plan upgraden",
+    "downgrade": "Plan herabstufen",
+    "renew": "Abonnement erneuern",
+    "cancel": "Abonnement kündigen",
+    "resume": "Abonnement fortsetzen",
+    "managePayment": "Zahlungsmethode verwalten"
+  },
+  "errors": {
+    "fetchFailed": "Fehler beim Laden der Abonnementinformationen",
+    "requestFailed": "Fehler beim Senden der Abonnementanfrage",
+    "contextMissing": "useSubscription muss innerhalb eines SubscriptionProvider verwendet werden",
+    "featureNotAvailable": "Diese Funktion ist in Ihrem aktuellen Plan nicht verfügbar"
+  },
+  "badge": {
+    "trial": "Testversion",
+    "active": "Aktiv",
+    "expiringSoon": "Läuft bald ab",
+    "expired": "Abgelaufen",
+    "pending": "Ausstehend"
+  }
+}
