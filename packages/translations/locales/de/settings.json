@@ -98,6 +98,8 @@
     "cv": "Lebenslauf / CV",
     "cvDragDrop": "Ziehen Sie Ihren CV hierher",
     "cvHint": "Akzeptierte Formate: PDF, DOC, DOCX (Max 5 MB). Dies wird mit Stiftungen geteilt, wenn Sie sich auf Stellen bewerben.",
+    "cvDocument": "CV-Dokument",
+    "viewDocument": "Dokument anzeigen",
     "cvUpload": "CV hochladen",
     "cvUrl": "CV-URL",
     "cvUrlHint": "Link zu Ihrem Lebenslauf oder CV-Dokument",

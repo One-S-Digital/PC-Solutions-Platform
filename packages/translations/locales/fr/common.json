@@ -1741,10 +1741,14 @@
     }
   },
   "settingsAnalyticsPreferences": {
-    "benchmarkData": "[FR] Benchmark Data",
-    "benchmarkDataHelpText": "[FR] Benchmark Data Help Text",
-    "currency": "[FR] Currency",
-    "timeZone": "[FR] Time Zone"
+    "benchmarkData": "Données de référence (benchmark)",
+    "benchmarkDataHelpText": "Partagez vos données de manière anonymisée pour améliorer les statistiques comparatives.",
+    "currency": "Devise",
+    "timeZone": "Fuseau horaire",
+    "currencies": {
+      "chf": "CHF",
+      "eur": "EUR"
+    }
   },
   "settingsBillingSubscription": {
     "cancelSubscription": "Annuler l'Abonnement",

@@ -21,6 +21,8 @@
     "noFileUrl": "Document URL not available.",
     "preview": "Preview",
     "title": "Documents & Resources",
+    "untitledDocument": "Untitled document",
+    "previewIframeTitle": "Document preview",
     "types": {
       "brochure": "Brochure",
       "catalog": "Product Catalog",

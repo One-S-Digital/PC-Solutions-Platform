@@ -98,6 +98,8 @@
     "cv": "CV / Curriculum Vitae",
     "cvDragDrop": "Glissez et déposez votre CV ici",
     "cvHint": "Formats acceptés: PDF, DOC, DOCX (Max 5 Mo). Ceci sera partagé avec les fondations lorsque vous postulez à des emplois.",
+    "cvDocument": "Document CV",
+    "viewDocument": "Voir le document",
     "cvUpload": "Télécharger le CV",
     "cvUrl": "URL du CV",
     "cvUrlHint": "Lien vers votre document CV ou curriculum vitae",

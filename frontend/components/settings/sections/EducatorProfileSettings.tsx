@@ -461,7 +461,7 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
                     <DocumentTextIcon className="w-6 h-6 text-green-600 mr-3" />
                     <div>
                       <p className="text-sm font-medium text-gray-900">
-                        {profileData.cvUrl.split('/').pop() || 'CV Document'}
+                        {profileData.cvUrl.split('/').pop() || t('settings:educatorProfile.cvDocument', 'CV document')}
                       </p>
                       <a 
                         href={profileData.cvUrl} 
@@ -469,7 +469,7 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
                         rel="noopener noreferrer" 
                         className="text-xs text-green-700 hover:underline"
                       >
-                        View Document
+                        {t('settings:educatorProfile.viewDocument', 'View document')}
                       </a>
                     </div>
                   </div>

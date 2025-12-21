@@ -1772,7 +1772,11 @@
     "benchmarkData": "Benchmark Data",
     "benchmarkDataHelpText": "Benchmark Data Help Text",
     "currency": "Currency",
-    "timeZone": "Time Zone"
+    "timeZone": "Time Zone",
+    "currencies": {
+      "chf": "CHF",
+      "eur": "EUR"
+    }
   },
   "settingsBillingSubscription": {
     "cancelSubscription": "Cancel Subscription",
