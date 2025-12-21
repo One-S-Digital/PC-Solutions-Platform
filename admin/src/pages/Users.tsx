@@ -726,34 +726,58 @@ const Users: React.FC = () => {
     setIsElevateModalOpen(true)
   }
 
-  // Handle viewing user profile - opens the frontend partner/profile page
+  // Handle viewing user profile - opens the frontend organization profile page
   const handleViewProfile = (user: User) => {
     if (!user.orgId) {
       toast.error(t('admin:users.viewProfile.noOrganization', 'This user has no organization profile to view'))
       return
     }
-    
-    // Get the frontend URL from environment variable
-    const frontendUrl = import.meta.env.VITE_FRONTEND_URL
-    
-    if (!frontendUrl) {
-      // Fallback: try to construct URL based on current origin
-      // This handles common patterns: admin.domain.com -> domain.com, localhost:3001 -> localhost:3000
-      const currentOrigin = window.location.origin
-      let derivedUrl = currentOrigin
-      
-      if (currentOrigin.includes('admin.')) {
-        derivedUrl = currentOrigin.replace('admin.', '')
-      } else if (currentOrigin.includes('localhost:3001')) {
-        derivedUrl = currentOrigin.replace(':3001', ':3000')
-      } else if (currentOrigin.includes(':3001')) {
-        derivedUrl = currentOrigin.replace(':3001', ':3000')
-      }
-      
-      window.open(`${derivedUrl}/partner/${user.orgId}`, '_blank', 'noopener,noreferrer')
-    } else {
-      window.open(`${frontendUrl}/partner/${user.orgId}`, '_blank', 'noopener,noreferrer')
+
+    // Prefer explicit frontend URL to avoid 404s in environments without SPA rewrites / predictable hostnames.
+    const frontendUrl = import.meta.env.VITE_FRONTEND_URL as string | undefined
+
+    const openOrganizationProfile = (baseUrl: string) => {
+      // Use relative join so baseUrl may include a path prefix (e.g. https://domain.com/app)
+      const normalizedBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`
+      const url = new URL(`profile/organization/${user.orgId}`, normalizedBase)
+      window.open(url.toString(), '_blank', 'noopener,noreferrer')
     }
+
+    if (frontendUrl) {
+      openOrganizationProfile(frontendUrl)
+      return
+    }
+
+    // Best-effort fallback when VITE_FRONTEND_URL isn't configured.
+    // Tries common patterns:
+    // - admin.domain.com -> domain.com
+    // - admin-staging.domain.com -> staging.domain.com
+    // - staging-admin.domain.com -> staging.domain.com
+    // - localhost:3001 -> localhost:3000
+    const currentUrl = new URL(window.location.href)
+    const { protocol, hostname, port } = currentUrl
+
+    let derivedHostname = hostname
+    if (hostname.startsWith('admin.')) {
+      derivedHostname = hostname.replace(/^admin\./, '')
+    } else if (hostname.startsWith('admin-')) {
+      derivedHostname = hostname.replace(/^admin-/, '')
+    } else if (hostname.endsWith('-admin')) {
+      derivedHostname = hostname.replace(/-admin$/, '')
+    }
+
+    const derivedPort = port === '3001' ? '3000' : port
+    const derivedHost = derivedPort ? `${derivedHostname}:${derivedPort}` : derivedHostname
+    const derivedUrl = `${protocol}//${derivedHost}`
+
+    // Observability: help debug non-standard deployments where derivation may be wrong.
+    // eslint-disable-next-line no-console
+    console.warn(
+      `VITE_FRONTEND_URL not configured. Derived frontend URL: ${derivedUrl}. ` +
+        `For reliable profile links, set VITE_FRONTEND_URL in the admin environment configuration.`,
+    )
+
+    openOrganizationProfile(derivedUrl)
   }
 
   // Handle saving user updates
