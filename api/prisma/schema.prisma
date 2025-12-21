@@ -195,6 +195,7 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Relations
+  contactInfo       UserContactInfo?
   organizations     UserOrganization[]
   applications      JobApplication[]
   subscriptions     UserSubscription[]
@@ -243,6 +244,22 @@ model User {
   @@map("users")
 }
 
+// User contact info is intentionally separated from the authentication email.
+// This allows a user to publish/share a "contact" email without changing the
+// email used for authentication (User.email / AppUser.email / Clerk).
+model UserContactInfo {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  contactEmail String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_contact_infos")
+}
+
 model Organization {
   id          String           @id @default(uuid())
   name        String
@@ -280,6 +297,7 @@ model Organization {
   coverAsset   Asset?  @relation("OrganizationCover", fields: [coverAssetId], references: [id])
 
   // Relations
+  contactInfo      OrganizationContactInfo?
   members          UserOrganization[]
   products         Product[]
   catalogs         Catalog[]
@@ -302,6 +320,22 @@ model Organization {
   promoCodes PromoCode[]
 
   @@map("organizations")
+}
+
+// Organization contact info is intentionally separated from the authentication email.
+// This allows organizations to publish a "contact" email without changing the user's
+// login/authentication email (User.email / AppUser.email).
+model OrganizationContactInfo {
+  id             String   @id @default(uuid())
+  organizationId String   @unique
+  contactEmail   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("organization_contact_infos")
 }
 
 model UserOrganization {
