@@ -44,18 +44,24 @@ enum AssetKind {
   SIDEBAR_LOGO
   ELEARNING
   COMPANY_PROFILE_DOC
+  // Invoicing document types
+  INVOICE_PDF
+  QUOTE_PDF
+  CREDIT_NOTE_PDF
+  PROFORMA_PDF
+  RECEIPT_PDF
 }
 
 enum SubscriptionStatus {
-  ACTIVE        // Subscription is active and valid
-  INACTIVE      // Subscription is inactive (not started or expired)
-  PAUSED        // Subscription is temporarily paused
-  CANCELLED     // Subscription has been cancelled
-  EXPIRED       // Subscription period has ended
-  TRIAL         // Subscription is in trial period
-  PAST_DUE      // Payment is past due (for future Stripe use)
-  PENDING       // Subscription is pending activation
-  GRACE_PERIOD  // In grace period after failed payment/expiry
+  ACTIVE // Subscription is active and valid
+  INACTIVE // Subscription is inactive (not started or expired)
+  PAUSED // Subscription is temporarily paused
+  CANCELLED // Subscription has been cancelled
+  EXPIRED // Subscription period has ended
+  TRIAL // Subscription is in trial period
+  PAST_DUE // Payment is past due (for future Stripe use)
+  PENDING // Subscription is pending activation
+  GRACE_PERIOD // In grace period after failed payment/expiry
 }
 
 enum SubscriptionTier {
@@ -172,7 +178,7 @@ model User {
   certifications       String[] // Array of certifications
   skills               String[] // Array of skills
   availability         String? // Legacy: simple text availability information
-  availabilitySettings Json?   // New: structured Calendly-style availability schedule
+  availabilitySettings Json? // New: structured Calendly-style availability schedule
   cvUrl                String? // URL to CV document
   shortBio             String? // Short bio/description for profile
 
@@ -233,12 +239,21 @@ model User {
   webhooks                Webhook[]          @relation("WebhookCreator")
 
   // Support ticket relations
-  supportTickets         SupportTicket[]  @relation("UserSupportTickets")
-  assignedTickets        SupportTicket[]  @relation("AssignedSupportTickets")
-  ticketResponses        TicketResponse[] @relation("UserTicketResponses")
+  supportTickets  SupportTicket[]  @relation("UserSupportTickets")
+  assignedTickets SupportTicket[]  @relation("AssignedSupportTickets")
+  ticketResponses TicketResponse[] @relation("UserTicketResponses")
 
   // Calendar event relations
-  calendarEvents         CalendarEvent[]  @relation("UserCalendarEvents")
+  calendarEvents CalendarEvent[] @relation("UserCalendarEvents")
+
+  // Invoicing relations
+  createdDocuments           InvoiceDocument[]           @relation("CreatedDocuments")
+  issuedDocuments            InvoiceDocument[]           @relation("IssuedDocuments")
+  documentRecipientContacts  InvoiceDocument[]           @relation("DocumentRecipientContact")
+  recordedPayments           InvoicePayment[]            @relation("RecordedPayments")
+  generatedPdfVersions       InvoicePdfVersion[]         @relation("GeneratedPdfVersions")
+  invoiceAuditLogs           InvoiceAuditLog[]           @relation("InvoiceAuditActor")
+  invoicingSettingsAuditLogs InvoicingSettingsAuditLog[] @relation("InvoicingSettingsAuditActor")
 
   @@map("users")
 }
@@ -291,15 +306,23 @@ model Organization {
   profileDocuments OrganizationDocument[]
 
   // Foundation-specific relations
-  leadResponses    FoundationLeadResponse[] @relation("FoundationLeadResponses")
-  calendarEvents   CalendarEvent[]          @relation("OrganizationCalendarEvents")
+  leadResponses  FoundationLeadResponse[] @relation("FoundationLeadResponses")
+  calendarEvents CalendarEvent[]          @relation("OrganizationCalendarEvents")
 
   // Inquiry relations
-  sentInquiries     Inquiry[] @relation("InquiryBuyer")    // Inquiries this org has sent
+  sentInquiries     Inquiry[] @relation("InquiryBuyer") // Inquiries this org has sent
   receivedInquiries Inquiry[] @relation("InquirySupplier") // Inquiries this org has received (suppliers)
 
   // Promo codes for suppliers and service providers
   promoCodes PromoCode[]
+
+  // Invoicing relations
+  invoicingSettings          InvoicingSettings?          @relation("OrganizationInvoicingSettings")
+  bankAccounts               OrganizationBankAccount[]   @relation("OrganizationBankAccounts")
+  documentSequences          DocumentSequence[]          @relation("OrganizationDocumentSequences")
+  issuedDocuments            InvoiceDocument[]           @relation("IssuedDocuments")
+  receivedDocuments          InvoiceDocument[]           @relation("ReceivedDocuments")
+  invoicingSettingsAuditLogs InvoicingSettingsAuditLog[] @relation("InvoicingSettingsAuditLogs")
 
   @@map("organizations")
 }
@@ -321,13 +344,13 @@ model UserOrganization {
 model PromoCode {
   id             String   @id @default(uuid())
   code           String
-  discountType   String   // 'Percentage' | 'FixedAmount' | 'FreeMinutes'
+  discountType   String // 'Percentage' | 'FixedAmount' | 'FreeMinutes'
   value          Float
   expiryDate     DateTime
   status         String   @default("Active") // 'Active' | 'Expired' | 'Disabled'
   description    String?
   usageCount     Int      @default(0)
-  maxUsage       Int?     // Optional max usage limit
+  maxUsage       Int? // Optional max usage limit
   organizationId String
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -377,11 +400,11 @@ model Asset {
   version      Int       @default(1) // Version for response/schema changes
 
   // Content categorization fields
-  category       String? // HR_DOCUMENT, ELEARNING, STATE_POLICY, etc. (content type)
+  category        String? // HR_DOCUMENT, ELEARNING, STATE_POLICY, etc. (content type)
   contentCategory String? // Child Development, Onboarding, Education Policy, etc. (actual category)
-  title       String?
-  description String?
-  metadata    Json? // Legacy/flexible metadata (deprecated, use typed fields below)
+  title           String?
+  description     String?
+  metadata        Json? // Legacy/flexible metadata (deprecated, use typed fields below)
 
   // Typed content fields (replaces JSON metadata)
   contentType    String? // COURSE, VIDEO, PDF, LINK (for e-learning)
@@ -456,45 +479,45 @@ model Asset {
 }
 
 model Product {
-  id                 String                     @id @default(uuid())
-  title              String
-  subtitle           String?
-  description        String?
-  price              Float?
-  priceCurrency      String?                    @default("CHF")
-  category           String? // Keep for backward compatibility
-  primaryCategory    String?
-  categories         String[]                   @default([]) // Flexible categories as tags
-  tags               String[]                   @default([])
-  productHighlights  String[]                   @default([])
-  unitOfMeasure      String?
-  status             String                     @default("ACTIVE") // ACTIVE, INACTIVE, PENDING, REJECTED
-  availabilityStatus ProductAvailabilityStatus  @default(ACTIVE)
-  isActive           Boolean                    @default(true)
-  sku                String?
-  vendorSku          String?
-  ean                String?
-  minOrderQuantity   Int?
-  maxOrderQuantity   Int?
-  stockStatus        String?
+  id                   String                    @id @default(uuid())
+  title                String
+  subtitle             String?
+  description          String?
+  price                Float?
+  priceCurrency        String?                   @default("CHF")
+  category             String? // Keep for backward compatibility
+  primaryCategory      String?
+  categories           String[]                  @default([]) // Flexible categories as tags
+  tags                 String[]                  @default([])
+  productHighlights    String[]                  @default([])
+  unitOfMeasure        String?
+  status               String                    @default("ACTIVE") // ACTIVE, INACTIVE, PENDING, REJECTED
+  availabilityStatus   ProductAvailabilityStatus @default(ACTIVE)
+  isActive             Boolean                   @default(true)
+  sku                  String?
+  vendorSku            String?
+  ean                  String?
+  minOrderQuantity     Int?
+  maxOrderQuantity     Int?
+  stockStatus          String?
   deliveryLeadTimeDays Int?
-  restockCadence     String?
-  usageNotes         String?
-  packagingDetails   String?
-  materials          String?
-  complianceTags     String[]                   @default([])
-  allergens          String[]                   @default([])
-  ageRanges          String[]                   @default([])
-  deliveryMethods    String[]                   @default([])
-  deliveryFees       Json?
-  supportedCantons   String[]                   @default([])
-  visibilityStart    DateTime?
-  visibilityEnd      DateTime?
-  volumePricing      Json?
-  variants           Json?
-  supplierId         String
-  createdAt          DateTime                   @default(now())
-  updatedAt          DateTime                   @updatedAt
+  restockCadence       String?
+  usageNotes           String?
+  packagingDetails     String?
+  materials            String?
+  complianceTags       String[]                  @default([])
+  allergens            String[]                  @default([])
+  ageRanges            String[]                  @default([])
+  deliveryMethods      String[]                  @default([])
+  deliveryFees         Json?
+  supportedCantons     String[]                  @default([])
+  visibilityStart      DateTime?
+  visibilityEnd        DateTime?
+  volumePricing        Json?
+  variants             Json?
+  supplierId           String
+  createdAt            DateTime                  @default(now())
+  updatedAt            DateTime                  @updatedAt
 
   // Asset references
   imageAssetId     String?
@@ -625,55 +648,55 @@ model JobApplication {
 }
 
 model Subscription {
-  id                   String             @id @default(uuid())
-  
+  id String @id @default(uuid())
+
   // Owner (one of these must be set)
-  userId               String? // Optional user ID for user-based subscriptions
-  organizationId       String? // Optional organization ID for org-based subscriptions
-  
+  userId         String? // Optional user ID for user-based subscriptions
+  organizationId String? // Optional organization ID for org-based subscriptions
+
   // Plan Details
-  planId               String
-  tier                 SubscriptionTier
-  
+  planId String
+  tier   SubscriptionTier
+
   // Status
-  status               SubscriptionStatus @default(PENDING)
-  
+  status SubscriptionStatus @default(PENDING)
+
   // Period Management
-  currentPeriodStart   DateTime?
-  currentPeriodEnd     DateTime?
-  trialStart           DateTime?          @map("trial_start")
-  trialEnd             DateTime?          @map("trial_end")
-  pausedAt             DateTime?          @map("paused_at")
-  pausedUntil          DateTime?          @map("paused_until")
-  
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  trialStart         DateTime? @map("trial_start")
+  trialEnd           DateTime? @map("trial_end")
+  pausedAt           DateTime? @map("paused_at")
+  pausedUntil        DateTime? @map("paused_until")
+
   // Cancellation
-  cancelAtPeriodEnd    Boolean            @default(false)
-  canceledAt           DateTime?
-  cancellationReason   String?            @map("cancellation_reason")
-  
+  cancelAtPeriodEnd  Boolean   @default(false)
+  canceledAt         DateTime?
+  cancellationReason String?   @map("cancellation_reason")
+
   // Stripe Integration (prepared for future)
-  stripeSubscriptionId String?            @unique
+  stripeSubscriptionId String? @unique
   stripeCustomerId     String?
-  
+
   // Manual Management Fields
-  isManual             Boolean            @default(true) @map("is_manual")
-  activatedBy          String?            @map("activated_by")
-  activatedAt          DateTime?          @map("activated_at")
-  
+  isManual    Boolean   @default(true) @map("is_manual")
+  activatedBy String?   @map("activated_by")
+  activatedAt DateTime? @map("activated_at")
+
   // Grace Period
-  gracePeriodEnd       DateTime?          @map("grace_period_end")
-  
+  gracePeriodEnd DateTime? @map("grace_period_end")
+
   // Metadata
-  notes                String?            @db.Text
-  metadata             Json?
-  
-  createdAt            DateTime           @default(now())
-  updatedAt            DateTime           @updatedAt
+  notes    String? @db.Text
+  metadata Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  user              User?                 @relation(fields: [userId], references: [id])
-  organization      Organization?         @relation(fields: [organizationId], references: [id])
-  plan              SubscriptionPlan      @relation(fields: [planId], references: [id])
+  user              User?                  @relation(fields: [userId], references: [id])
+  organization      Organization?          @relation(fields: [organizationId], references: [id])
+  plan              SubscriptionPlan       @relation(fields: [planId], references: [id])
   transactions      BillingTransaction[]
   actions           SubscriptionAction[]
   schedules         SubscriptionSchedule[]
@@ -736,39 +759,39 @@ model ServiceRequest {
 
 // Supplier Inquiry Model - for suppliers who don't sell directly on platform
 model Inquiry {
-  id             String        @id @default(uuid())
-  organizationId String        // The foundation/buyer making the inquiry
-  supplierId     String        // The supplier receiving the inquiry
-  
+  id             String @id @default(uuid())
+  organizationId String // The foundation/buyer making the inquiry
+  supplierId     String // The supplier receiving the inquiry
+
   // Inquiry details
-  subject        String?
-  message        String
-  productInterest String?      // Optional: specific product they're interested in
-  quantity       Int?          // Optional: estimated quantity needed
-  budget         String?       // Optional: budget range
-  urgency        String?       // Optional: LOW, MEDIUM, HIGH, URGENT
-  
+  subject         String?
+  message         String
+  productInterest String? // Optional: specific product they're interested in
+  quantity        Int? // Optional: estimated quantity needed
+  budget          String? // Optional: budget range
+  urgency         String? // Optional: LOW, MEDIUM, HIGH, URGENT
+
   // Contact preferences
-  contactName    String?
-  contactEmail   String?
-  contactPhone   String?
+  contactName            String?
+  contactEmail           String?
+  contactPhone           String?
   preferredContactMethod String? // EMAIL, PHONE, PLATFORM
-  
+
   // Status tracking
-  status         InquiryStatus @default(NEW)
-  supplierNotes  String?       // Internal notes for supplier
-  responseMessage String?      // Supplier's response to the inquiry
-  quotedAmount   Float?        // If supplier provides a quote
-  
+  status          InquiryStatus @default(NEW)
+  supplierNotes   String? // Internal notes for supplier
+  responseMessage String? // Supplier's response to the inquiry
+  quotedAmount    Float? // If supplier provides a quote
+
   // Timestamps
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  respondedAt    DateTime?     // When supplier first responded
-  fulfilledAt    DateTime?     // When inquiry was fulfilled/converted
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  respondedAt DateTime? // When supplier first responded
+  fulfilledAt DateTime? // When inquiry was fulfilled/converted
 
   // Relations
-  organization   Organization  @relation("InquiryBuyer", fields: [organizationId], references: [id])
-  supplier       Organization  @relation("InquirySupplier", fields: [supplierId], references: [id])
+  organization Organization @relation("InquiryBuyer", fields: [organizationId], references: [id])
+  supplier     Organization @relation("InquirySupplier", fields: [supplierId], references: [id])
 
   @@index([supplierId, status])
   @@index([organizationId])
@@ -1275,10 +1298,10 @@ model Message {
   receiverId     String? // For direct messages
   content        String
   messageType    MessageType @default(TEXT)
-  fileUrl        String?     // URL to the uploaded file (storage key for authenticated access)
-  fileName       String?     // Original filename (validate max 255 chars in application code)
-  fileSize       Int?        // File size in bytes (validate >= 0 in application code)
-  mimeType       String?     // MIME type of the file (validate against allowed list in application code)
+  fileUrl        String? // URL to the uploaded file (storage key for authenticated access)
+  fileName       String? // Original filename (validate max 255 chars in application code)
+  fileSize       Int? // File size in bytes (validate >= 0 in application code)
+  mimeType       String? // MIME type of the file (validate against allowed list in application code)
   isRead         Boolean     @default(false)
   createdAt      DateTime    @default(now())
   // Note: When messageType is FILE or IMAGE, validate fileUrl is present in application code
@@ -1313,7 +1336,7 @@ model FrontendSettings {
   adminAccentColor    String  @default("#3B82F6")
 
   // Sidebar Logo (for main app sidebar menu)
-  sidebarLogoAssetId  String?
+  sidebarLogoAssetId String?
 
   // Contact Information
   contactEmail   String?
@@ -1508,39 +1531,39 @@ model UserNotificationPreferences {
 
 // Subscription Management System
 model SubscriptionPlan {
-  id            String   @id @default(uuid())
-  
+  id String @id @default(uuid())
+
   // Basic Info
-  name          String
-  code          String?  @unique // BASIC, ESSENTIAL, PROFESSIONAL, ENTERPRISE
-  description   String   @db.Text
-  
+  name        String
+  code        String? @unique // BASIC, ESSENTIAL, PROFESSIONAL, ENTERPRISE
+  description String  @db.Text
+
   // Pricing
   price         Float
-  currency      String   @default("CHF")
-  billingPeriod String   @default("monthly") @map("billing_period") // monthly, quarterly, yearly
-  
+  currency      String @default("CHF")
+  billingPeriod String @default("monthly") @map("billing_period") // monthly, quarterly, yearly
+
   // Features
-  features      String[] // Array of feature names
-  limits        Json     // Usage limits as JSON { "parentEnquiries": 15, "teamMembers": 5, ... }
-  
+  features String[] // Array of feature names
+  limits   Json // Usage limits as JSON { "parentEnquiries": 15, "teamMembers": 5, ... }
+
   // Access Control
-  allowedRoles  String[] @default([]) @map("allowed_roles") // Which user roles can subscribe
-  
+  allowedRoles String[] @default([]) @map("allowed_roles") // Which user roles can subscribe
+
   // Trial
-  trialDays     Int      @default(0) @map("trial_days")
-  
+  trialDays Int @default(0) @map("trial_days")
+
   // Display
-  isActive      Boolean  @default(true) @map("is_active")
-  isPopular     Boolean  @default(false) @map("is_popular")
-  displayOrder  Int      @default(0) @map("display_order")
-  
+  isActive     Boolean @default(true) @map("is_active")
+  isPopular    Boolean @default(false) @map("is_popular")
+  displayOrder Int     @default(0) @map("display_order")
+
   // Stripe (prepared for future)
   stripePriceId   String? @map("stripe_price_id")
   stripeProductId String? @map("stripe_product_id")
-  
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
   subscriptions Subscription[]
@@ -1552,17 +1575,17 @@ model SubscriptionPlan {
 model SubscriptionAction {
   id             String   @id @default(uuid())
   subscriptionId String   @map("subscription_id")
-  action         String   // CREATE, ACTIVATE, PAUSE, RESUME, CANCEL, RENEW, UPGRADE, DOWNGRADE, EXPIRE
+  action         String // CREATE, ACTIVATE, PAUSE, RESUME, CANCEL, RENEW, UPGRADE, DOWNGRADE, EXPIRE
   previousStatus String?  @map("previous_status")
   newStatus      String   @map("new_status")
   reason         String?
   notes          String?  @db.Text
   performedBy    String   @map("performed_by") // Admin user ID
   performedAt    DateTime @default(now()) @map("performed_at")
-  metadata       Json?    // Additional context data
-  
-  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
-  
+  metadata       Json? // Additional context data
+
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
   @@index([subscriptionId])
   @@index([performedAt])
   @@map("subscription_actions")
@@ -1579,9 +1602,9 @@ model SubscriptionSchedule {
   processedAt     DateTime? @map("processed_at")
   createdBy       String    @map("created_by")
   createdAt       DateTime  @default(now()) @map("created_at")
-  
-  subscription    Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
-  
+
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
   @@index([scheduledDate, isProcessed])
   @@map("subscription_schedules")
 }
@@ -1594,9 +1617,9 @@ model SubscriptionNote {
   isInternal     Boolean  @default(true) @map("is_internal") // Internal admin note vs customer-visible
   createdBy      String   @map("created_by")
   createdAt      DateTime @default(now())
-  
-  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
-  
+
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
   @@index([subscriptionId])
   @@map("subscription_notes")
 }
@@ -1976,15 +1999,15 @@ model WebhookLog {
 model FoundationLeadResponse {
   id           String   @id @default(uuid())
   leadId       String
-  foundationId String   // Organization ID of the foundation
-  status       String   // INTERESTED, NOT_INTERESTED, NEEDS_MORE_INFO, ENROLLED
+  foundationId String // Organization ID of the foundation
+  status       String // INTERESTED, NOT_INTERESTED, NEEDS_MORE_INFO, ENROLLED
   message      String?  @db.Text
   respondedAt  DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
   // Relations
-  lead         ParentLead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
-  foundation   Organization @relation("FoundationLeadResponses", fields: [foundationId], references: [id])
+  lead       ParentLead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  foundation Organization @relation("FoundationLeadResponses", fields: [foundationId], references: [id])
 
   @@unique([leadId, foundationId])
   @@index([foundationId])
@@ -1994,22 +2017,22 @@ model FoundationLeadResponse {
 
 // Support Ticket System
 model SupportTicket {
-  id          String    @id @default(uuid())
-  userId      String
-  subject     String
-  message     String    @db.Text
-  category    String    @default("GENERAL") // GENERAL, TECHNICAL, BILLING, FEATURE_REQUEST
-  priority    String    @default("MEDIUM") // LOW, MEDIUM, HIGH, URGENT
-  status      String    @default("OPEN") // OPEN, IN_PROGRESS, RESOLVED, CLOSED
-  assignedTo  String?
-  resolvedAt  DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id         String    @id @default(uuid())
+  userId     String
+  subject    String
+  message    String    @db.Text
+  category   String    @default("GENERAL") // GENERAL, TECHNICAL, BILLING, FEATURE_REQUEST
+  priority   String    @default("MEDIUM") // LOW, MEDIUM, HIGH, URGENT
+  status     String    @default("OPEN") // OPEN, IN_PROGRESS, RESOLVED, CLOSED
+  assignedTo String?
+  resolvedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 
   // Relations
-  user        User             @relation("UserSupportTickets", fields: [userId], references: [id])
-  assignee    User?            @relation("AssignedSupportTickets", fields: [assignedTo], references: [id])
-  responses   TicketResponse[]
+  user      User             @relation("UserSupportTickets", fields: [userId], references: [id])
+  assignee  User?            @relation("AssignedSupportTickets", fields: [assignedTo], references: [id])
+  responses TicketResponse[]
 
   @@index([userId])
   @@index([status])
@@ -2040,12 +2063,12 @@ model CalendarEvent {
   organizationId    String
   title             String
   description       String?   @db.Text
-  eventType         String    // appointment, interview, service, meeting, reminder, custom
+  eventType         String // appointment, interview, service, meeting, reminder, custom
   startTime         DateTime
   endTime           DateTime?
   allDay            Boolean   @default(false)
   location          String?
-  relatedEntityType String?   // service_request, job_application, parent_lead, etc.
+  relatedEntityType String? // service_request, job_application, parent_lead, etc.
   relatedEntityId   String?
   createdBy         String?
   createdAt         DateTime  @default(now())
@@ -2081,25 +2104,494 @@ model Partner {
   contactEmail  String?
   contactPhone  String?
   contactPerson String?
-  
+
   // Asset relations
-  logoAssetId   String?
-  
+  logoAssetId String?
+
   // Status and visibility
-  isActive      Boolean     @default(true)
-  isFeatured    Boolean     @default(false)
-  displayOrder  Int         @default(0)
-  
+  isActive     Boolean @default(true)
+  isFeatured   Boolean @default(false)
+  displayOrder Int     @default(0)
+
   // Dates
   partnershipStart DateTime?
   partnershipEnd   DateTime?
-  
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([type])
   @@index([isActive])
   @@index([isFeatured])
   @@index([displayOrder])
   @@map("partners")
+}
+
+// ============================================
+// INVOICING SYSTEM - Swiss QR-Bill Compliant
+// ============================================
+
+// Document Types for invoicing
+enum InvoiceDocumentType {
+  INVOICE // Standard invoice - payment request
+  CREDIT_NOTE // Credit memo - refund/adjustment
+  PROFORMA // Proforma invoice - pre-payment request
+  QUOTE // Estimate/Quote - non-binding offer
+}
+
+// Invoice/Document status (flexible, not strict state machine)
+enum InvoiceDocumentStatus {
+  DRAFT // Created but not finalized (editable)
+  ISSUED // Finalized, number assigned, sent to customer
+  SENT // Explicitly marked as sent
+  VIEWED // Customer has viewed (client portal)
+  PARTIALLY_PAID // Partial payment received
+  PAID // Fully paid
+  OVERDUE // Past due date, unpaid
+  CANCELLED // Voided/cancelled (number preserved)
+  VOID // Marked void (number preserved)
+  ARCHIVED // Archived for long-term storage
+}
+
+// Quote-specific status
+enum QuoteStatus {
+  DRAFT // Being prepared
+  SENT // Sent to client
+  VIEWED // Client viewed
+  ACCEPTED // Client accepted
+  DECLINED // Client declined
+  EXPIRED // Past validity date
+  CONVERTED // Converted to invoice
+}
+
+// Swiss QR-bill reference types
+enum InvoiceReferenceType {
+  QRR // QR-Reference (27 digits, Mod-10 recursive) - requires QR-IBAN
+  SCOR // Structured Creditor Reference (ISO 11649) - standard IBAN
+  NON // No reference - manual payment only
+}
+
+// Address format for QR-bill
+enum InvoiceAddressType {
+  STRUCTURED // S - Separate fields (street, building, postal code, city)
+  COMBINED // K - Combined address lines (max 2 lines)
+}
+
+// Payment terms presets
+enum InvoicePaymentTerms {
+  DUE_ON_RECEIPT // Payment due immediately
+  NET_7 // Due in 7 days
+  NET_10 // Due in 10 days
+  NET_15 // Due in 15 days
+  NET_30 // Due in 30 days (default)
+  NET_45 // Due in 45 days
+  NET_60 // Due in 60 days
+  NET_90 // Due in 90 days
+  CUSTOM // Custom due date specified
+}
+
+// VAT display mode
+enum VatDisplayMode {
+  EXCLUDED // VAT added to net amount (default)
+  INCLUDED // VAT included in unit price
+}
+
+// Invoicing Settings - Per organization configuration
+model InvoicingSettings {
+  id             String @id @default(uuid())
+  organizationId String @unique
+
+  // Company/Issuer Details
+  legalName    String? // Official legal name for invoices
+  tradingName  String? // Trading/DBA name (optional)
+  addressLine1 String? // Street address
+  addressLine2 String? // Building/apartment (optional)
+  postalCode   String? // Postal/ZIP code
+  city         String? // City
+  country      String             @default("CH") // ISO country code
+  addressType  InvoiceAddressType @default(STRUCTURED)
+
+  // Tax identification
+  vatNumber          String? // CHE-123.456.789 MWST format
+  registrationNumber String? // Commercial register number (optional)
+
+  // Default bank account reference
+  defaultBankAccountId String?
+
+  // QR-bill settings
+  qrEnabled            Boolean              @default(true) // Default QR usage
+  defaultReferenceType InvoiceReferenceType @default(SCOR)
+
+  // Document defaults
+  defaultPaymentTerms   InvoicePaymentTerms @default(NET_30)
+  defaultDueDays        Int                 @default(30)
+  defaultVatDisplayMode VatDisplayMode      @default(EXCLUDED)
+  defaultNotes          String?             @db.Text // Default footer/notes
+  defaultLanguage       String              @default("de") // de, fr, it, en
+
+  // Numbering configuration
+  invoicePrefix    String  @default("INV")
+  creditNotePrefix String  @default("CN")
+  proformaPrefix   String  @default("PF")
+  quotePrefix      String  @default("QT")
+  numberFormat     String  @default("{PREFIX}-{YEAR}-{SEQ:5}") // Template
+  yearlyReset      Boolean @default(true) // Reset sequence each year
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  organization       Organization             @relation("OrganizationInvoicingSettings", fields: [organizationId], references: [id], onDelete: Cascade)
+  defaultBankAccount OrganizationBankAccount? @relation("DefaultBankAccount", fields: [defaultBankAccountId], references: [id])
+
+  @@index([organizationId])
+  @@map("invoicing_settings")
+}
+
+// Organization Bank Accounts - For payment details
+model OrganizationBankAccount {
+  id             String @id @default(uuid())
+  organizationId String
+
+  // Account details
+  accountName String // Account holder name
+  iban        String // Swiss IBAN (CH/LI, 21 chars)
+  bankName    String? // Bank name (optional)
+  bic         String? // BIC/SWIFT code (optional)
+
+  // QR-IBAN detection (IID 30000-31999)
+  isQrIban Boolean @default(false) // Auto-detected on save
+
+  // Account status
+  isDefault  Boolean @default(false) // Default account for org
+  isVerified Boolean @default(false) // Verified by admin
+  isActive   Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  organization       Organization        @relation("OrganizationBankAccounts", fields: [organizationId], references: [id], onDelete: Cascade)
+  defaultForSettings InvoicingSettings[] @relation("DefaultBankAccount")
+  documents          InvoiceDocument[]   @relation("DocumentBankAccount")
+
+  @@unique([organizationId, iban])
+  @@index([organizationId])
+  @@index([isDefault])
+  @@map("organization_bank_accounts")
+}
+
+// Document Numbering Sequences - Per issuer + document type
+model DocumentSequence {
+  id             String              @id @default(uuid())
+  organizationId String
+  documentType   InvoiceDocumentType
+  year           Int // Year for yearly reset
+  lastNumber     Int                 @default(0) // Last used sequence number
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  organization Organization @relation("OrganizationDocumentSequences", fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, documentType, year])
+  @@index([organizationId])
+  @@map("document_sequences")
+}
+
+// Main Invoice Document Model
+model InvoiceDocument {
+  id String @id @default(uuid())
+
+  // Document identification
+  documentType    InvoiceDocumentType
+  documentNumber  String? // Assigned on issuance, immutable after
+  referenceNumber String? // QRR/SCOR reference for payment
+  referenceType   InvoiceReferenceType @default(SCOR)
+
+  // Status
+  status      InvoiceDocumentStatus @default(DRAFT)
+  quoteStatus QuoteStatus? // Only for QUOTE type
+
+  // Parties
+  issuerOrgId        String // Creditor organization
+  recipientOrgId     String // Debtor organization
+  recipientContactId String? // Optional: specific contact person
+  createdById        String // User who created
+  issuedById         String? // User who issued (finalized)
+
+  // Snapshot of issuer details at issuance (immutable)
+  issuerSnapshot    Json? // { name, address, vatNumber, etc. }
+  recipientSnapshot Json? // { name, address, vatNumber, etc. }
+
+  // Bank account used
+  bankAccountId String?
+
+  // QR-bill settings for this document
+  qrEnabled     Boolean @default(true)
+  qrPayloadHash String? // SHA-256 hash of QR payload (when generated)
+
+  // ============================================
+  // AMOUNTS - All in minor units (centimes) as BigInt
+  // ============================================
+  subtotalMinor           BigInt @default(0) // Sum of line items before tax
+  discountMinor           BigInt @default(0) // Invoice-level discount amount
+  netMinor                BigInt @default(0) // subtotalMinor - discountMinor
+  vatMinor                BigInt @default(0) // Total VAT amount
+  totalMinor              BigInt @default(0) // netMinor + vatMinor
+  roundingAdjustmentMinor BigInt @default(0) // Rounding difference for audit
+
+  // Payment tracking
+  paidMinor    BigInt @default(0) // Amount paid so far
+  balanceMinor BigInt @default(0) // totalMinor - paidMinor
+
+  // VAT display mode for this document
+  vatDisplayMode VatDisplayMode @default(EXCLUDED)
+
+  // Currency (CHF only for v1)
+  currency String @default("CHF")
+
+  // Dates
+  documentDate       DateTime            @default(now()) // Invoice/quote date
+  dueDate            DateTime? // Payment due date
+  paymentTerms       InvoicePaymentTerms @default(NET_30)
+  validUntil         DateTime? // For quotes: validity expiry
+  servicePeriodStart DateTime? // Service period start
+  servicePeriodEnd   DateTime? // Service period end
+
+  // Notes and references
+  notes         String? @db.Text // Public notes on document
+  internalNotes String? @db.Text // Internal notes (not on PDF)
+  poNumber      String? // Customer's purchase order number
+
+  // Credit note linking
+  originalDocumentId String? // For credit notes: reference to original invoice
+
+  // PDF versioning
+  currentPdfVersion Int @default(0) // 0 = no PDF yet, 1+ = version number
+
+  // Language for PDF generation
+  language String @default("de")
+
+  // Timestamps
+  issuedAt    DateTime? // When document was issued/finalized
+  sentAt      DateTime? // When document was sent
+  paidAt      DateTime? // When fully paid
+  cancelledAt DateTime? // When cancelled/voided
+  archivedAt  DateTime? // When archived
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  issuerOrg        Organization             @relation("IssuedDocuments", fields: [issuerOrgId], references: [id])
+  recipientOrg     Organization             @relation("ReceivedDocuments", fields: [recipientOrgId], references: [id])
+  recipientContact User?                    @relation("DocumentRecipientContact", fields: [recipientContactId], references: [id])
+  createdBy        User                     @relation("CreatedDocuments", fields: [createdById], references: [id])
+  issuedBy         User?                    @relation("IssuedDocuments", fields: [issuedById], references: [id])
+  bankAccount      OrganizationBankAccount? @relation("DocumentBankAccount", fields: [bankAccountId], references: [id])
+  originalDocument InvoiceDocument?         @relation("CreditNoteReference", fields: [originalDocumentId], references: [id])
+  creditNotes      InvoiceDocument[]        @relation("CreditNoteReference")
+
+  lineItems   InvoiceLineItem[]
+  payments    InvoicePayment[]
+  pdfVersions InvoicePdfVersion[]
+  auditLogs   InvoiceAuditLog[]
+
+  @@unique([issuerOrgId, documentNumber])
+  @@index([issuerOrgId])
+  @@index([recipientOrgId])
+  @@index([status])
+  @@index([documentType])
+  @@index([documentDate])
+  @@index([dueDate])
+  @@index([createdById])
+  @@map("invoice_documents")
+}
+
+// Invoice Line Items
+model InvoiceLineItem {
+  id         String @id @default(uuid())
+  documentId String
+
+  // Position/ordering
+  position Int @default(0)
+
+  // Item details
+  description String // Line item description
+  details     String? @db.Text // Additional details
+  quantity    Decimal @db.Decimal(12, 4) // Quantity (supports decimals)
+  unitLabel   String? // e.g., "hours", "pieces", "kg"
+
+  // ============================================
+  // PRICING - All in minor units (centimes) as BigInt
+  // ============================================
+  unitPriceMinor BigInt // Price per unit in centimes
+
+  // Line-level discount (optional)
+  discountPercent Decimal? @db.Decimal(5, 2) // e.g., 10.00 = 10%
+  discountMinor   BigInt   @default(0) // Calculated discount amount
+
+  // Line totals (calculated)
+  lineSubtotalMinor BigInt @default(0) // quantity * unitPriceMinor
+  lineNetMinor      BigInt @default(0) // lineSubtotalMinor - discountMinor
+
+  // ============================================
+  // VAT - Stored in basis points
+  // ============================================
+  vatRateBps Int    @default(0) // VAT rate in basis points (810 = 8.1%)
+  vatMinor   BigInt @default(0) // Calculated VAT amount
+
+  // Line total including VAT
+  lineTotalMinor BigInt @default(0) // lineNetMinor + vatMinor (or lineNetMinor if VAT included)
+
+  // Reference to original line (for credit notes)
+  originalLineId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  document        InvoiceDocument   @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  originalLine    InvoiceLineItem?  @relation("CreditNoteLine", fields: [originalLineId], references: [id])
+  creditNoteLines InvoiceLineItem[] @relation("CreditNoteLine")
+
+  @@index([documentId])
+  @@index([position])
+  @@map("invoice_line_items")
+}
+
+// Invoice Payments
+model InvoicePayment {
+  id         String @id @default(uuid())
+  documentId String
+
+  // Payment amount in minor units (centimes)
+  amountMinor BigInt
+
+  // Payment details
+  paymentDate    DateTime @default(now())
+  paymentMethod  String? // bank_transfer, stripe, cash, etc.
+  transactionRef String? // Bank reference or Stripe payment intent
+
+  // Notes
+  notes String? @db.Text
+
+  // Stripe integration (optional)
+  stripePaymentIntentId String?
+
+  // Refund tracking
+  isRefund          Boolean @default(false)
+  refundedPaymentId String? // Reference to original payment if this is a refund
+
+  // Audit
+  recordedById String // User who recorded this payment
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  document        InvoiceDocument  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  recordedBy      User             @relation("RecordedPayments", fields: [recordedById], references: [id])
+  refundedPayment InvoicePayment?  @relation("PaymentRefund", fields: [refundedPaymentId], references: [id])
+  refunds         InvoicePayment[] @relation("PaymentRefund")
+
+  @@index([documentId])
+  @@index([paymentDate])
+  @@index([recordedById])
+  @@map("invoice_payments")
+}
+
+// Invoice PDF Versions
+model InvoicePdfVersion {
+  id         String @id @default(uuid())
+  documentId String
+
+  // Version number
+  version Int @default(1)
+
+  // Asset reference
+  assetId String // Reference to Asset for PDF storage
+
+  // QR payload hash at time of generation
+  qrPayloadHash String?
+
+  // Generation metadata
+  generatedById String // User who triggered generation
+  generatedAt   DateTime @default(now())
+
+  // Reason for regeneration (if version > 1)
+  regenerationReason String?
+
+  // Relations
+  document    InvoiceDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  generatedBy User            @relation("GeneratedPdfVersions", fields: [generatedById], references: [id])
+
+  @@unique([documentId, version])
+  @@index([documentId])
+  @@map("invoice_pdf_versions")
+}
+
+// Invoice Audit Log - Immutable, append-only
+model InvoiceAuditLog {
+  id         String @id @default(uuid())
+  documentId String
+
+  // Action type
+  action String // created, updated, issued, sent, paid, cancelled, etc.
+
+  // Change details
+  field    String? // Field that changed (null for non-field actions)
+  oldValue String? @db.Text // Previous value (JSON stringified)
+  newValue String? @db.Text // New value (JSON stringified)
+
+  // Full snapshot (optional, for major changes)
+  snapshot Json? // Full document state at this point
+
+  // Actor
+  actorId String // User who made the change
+  actorIp String? // IP address (for compliance)
+
+  // Timestamp (immutable)
+  createdAt DateTime @default(now())
+
+  // Relations
+  document InvoiceDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  actor    User            @relation("InvoiceAuditActor", fields: [actorId], references: [id])
+
+  @@index([documentId])
+  @@index([actorId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("invoice_audit_logs")
+}
+
+// Invoicing Settings Audit Log - For settings changes
+model InvoicingSettingsAuditLog {
+  id             String @id @default(uuid())
+  organizationId String
+
+  // Action type
+  action String // created, updated
+
+  // Change details
+  field    String? // Field that changed
+  oldValue String? @db.Text // Previous value
+  newValue String? @db.Text // New value
+
+  // Actor
+  actorId String
+  actorIp String?
+
+  createdAt DateTime @default(now())
+
+  // Relations
+  organization Organization @relation("InvoicingSettingsAuditLogs", fields: [organizationId], references: [id], onDelete: Cascade)
+  actor        User         @relation("InvoicingSettingsAuditActor", fields: [actorId], references: [id])
+
+  @@index([organizationId])
+  @@index([actorId])
+  @@index([createdAt])
+  @@map("invoicing_settings_audit_logs")
 }
