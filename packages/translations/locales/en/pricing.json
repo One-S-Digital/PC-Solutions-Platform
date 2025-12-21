@@ -76,6 +76,8 @@
         "name": "Basic"
       },
       "suppliersAndProvidersTitle": "For Suppliers & Service Providers",
+      "enquireButton": "Enquire",
+      "comingSoon": "Coming Soon",
       "selectAndContinue": "Select and Continue",
       "featureFallback": "Included feature",
       "subtitleSignup": "Create your account to get started",
@@ -203,6 +205,8 @@
       "name": "Basic"
     },
     "suppliersAndProvidersTitle": "For Suppliers & Service Providers",
+    "enquireButton": "Enquire",
+    "comingSoon": "Coming Soon",
     "selectAndContinue": "Select And Continue",
     "featureFallback": "Included feature",
     "subtitleSignup": "Create your account to get started",

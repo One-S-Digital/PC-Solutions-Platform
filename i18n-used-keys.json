@@ -1,8 +1,8 @@
 {
-  "timestamp": "2025-12-21T18:13:43.190Z",
-  "totalKeys": 1878,
+  "timestamp": "2025-12-21T18:45:14.842Z",
+  "totalKeys": 1881,
   "byNamespace": {
-    "common": 2744,
+    "common": 2743,
     "settings": 534,
     "content": 38,
     "signup": 116,
@@ -3500,67 +3500,79 @@
     {
       "key": "pricingPage.popular",
       "file": "pages/PricingPage.tsx",
-      "line": 48,
+      "line": 51,
       "context": "<span className=\"px-3 py-1 text-xs font-semibold tracking-wide text-white uppercase bg-swiss-mint rounded-full\">{t('pricingPage.popular')}</span>"
     },
     {
       "key": "pricingPage.whatYouGet",
       "file": "pages/PricingPage.tsx",
-      "line": 61,
+      "line": 70,
       "context": "<p className=\"font-semibold text-swiss-charcoal mb-3\">{t('pricingPage.whatYouGet')}:</p>"
+    },
+    {
+      "key": "pricingPage.enquireButton",
+      "file": "pages/PricingPage.tsx",
+      "line": 90,
+      "context": "{t('pricingPage.enquireButton')}"
+    },
+    {
+      "key": "pricingPage.comingSoon",
+      "file": "pages/PricingPage.tsx",
+      "line": 101,
+      "context": "? t('pricingPage.comingSoon')"
     },
     {
       "key": "pricingPage.selectAndContinue",
       "file": "pages/PricingPage.tsx",
-      "line": 73,
-      "context": "{fromSignup ? t('pricingPage.selectAndContinue') : t('pricingPage.choosePlan')}"
+      "line": 102,
+      "context": ": (fromSignup ? t('pricingPage.selectAndContinue') : t('pricingPage.choosePlan'))}"
     },
     {
       "key": "pricingPage.choosePlan",
       "file": "pages/PricingPage.tsx",
-      "line": 73,
-      "context": "{fromSignup ? t('pricingPage.selectAndContinue') : t('pricingPage.choosePlan')}"
+      "line": 102,
+      "context": ": (fromSignup ? t('pricingPage.selectAndContinue') : t('pricingPage.choosePlan'))}"
     },
     {
       "key": "common:buttons.goBack",
       "file": "pages/PricingPage.tsx",
-      "line": 98,
+      "line": 128,
       "context": "{t('common:buttons.goBack')}"
     },
     {
       "key": "common:buttons.goBack",
       "file": "pages/PricingPage.tsx",
-      "line": 98,
+      "line": 128,
       "context": "{t('common:buttons.goBack')}"
     },
     {
       "key": "pricingPage.titleSignup",
       "file": "pages/PricingPage.tsx",
-      "line": 104,
+      "line": 134,
       "context": "<h1 className=\"text-4xl font-bold text-swiss-charcoal\">{fromSignup ? t('pricingPage.titleSignup') : t('pricingPage.title')}</h1>"
     },
     {
       "key": "pricingPage.title",
       "file": "pages/PricingPage.tsx",
-      "line": 104,
+      "line": 134,
       "context": "<h1 className=\"text-4xl font-bold text-swiss-charcoal\">{fromSignup ? t('pricingPage.titleSignup') : t('pricingPage.title')}</h1>"
     },
     {
       "key": "pricingPage.subtitleSignup",
       "file": "pages/PricingPage.tsx",
-      "line": 105,
+      "line": 135,
       "context": "<p className=\"mt-3 text-lg text-gray-600\">{fromSignup ? t('pricingPage.subtitleSignup') : t('pricingPage.subtitle')}</p>"
     },
     {
       "key": "pricingPage.subtitle",
       "file": "pages/PricingPage.tsx",
-      "line": 105,
+      "line": 135,
       "context": "<p className=\"mt-3 text-lg text-gray-600\">{fromSignup ? t('pricingPage.subtitleSignup') : t('pricingPage.subtitle')}</p>"
     },
     {
       "key": "pricingPage.suppliersAndProvidersTitle",
       "file": "pages/PricingPage.tsx",
-      "line": 127,
+      "line": 157,
       "context": "<h2 className=\"text-3xl font-semibold text-center text-swiss-charcoal\">{t('pricingPage.suppliersAndProvidersTitle')}</h2>"
     },
     {
@@ -6992,145 +7004,115 @@
     {
       "key": "common:common.perMonth",
       "file": "hooks/usePricingTranslations.ts",
-      "line": 77,
+      "line": 78,
       "context": "const priceLabel = t('common:common.perMonth');"
     },
     {
       "key": "common:common.perMonth",
       "file": "hooks/usePricingTranslations.ts",
-      "line": 77,
+      "line": 78,
       "context": "const priceLabel = t('common:common.perMonth');"
     },
     {
-      "key": "common:common.perYear",
+      "key": "pricingPage.comingSoon",
       "file": "hooks/usePricingTranslations.ts",
-      "line": 83,
-      "context": "annualPlanText: `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,"
-    },
-    {
-      "key": "common:common.save10Percent",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 83,
-      "context": "annualPlanText: `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,"
+      "line": 84,
+      "context": "? t('pricingPage.comingSoon', 'Coming Soon')"
     },
     {
       "key": "common:common.perYear",
       "file": "hooks/usePricingTranslations.ts",
-      "line": 83,
-      "context": "annualPlanText: `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,"
+      "line": 88,
+      "context": ": `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,"
     },
     {
       "key": "common:common.save10Percent",
       "file": "hooks/usePricingTranslations.ts",
-      "line": 83,
-      "context": "annualPlanText: `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,"
+      "line": 88,
+      "context": ": `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,"
+    },
+    {
+      "key": "common:common.perYear",
+      "file": "hooks/usePricingTranslations.ts",
+      "line": 88,
+      "context": ": `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,"
+    },
+    {
+      "key": "common:common.save10Percent",
+      "file": "hooks/usePricingTranslations.ts",
+      "line": 88,
+      "context": ": `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,"
     },
     {
       "key": "common:common.perMonth",
       "file": "hooks/usePricingTranslations.ts",
-      "line": 95,
-      "context": "const priceLabel = t('common:common.perMonth');"
-    },
-    {
-      "key": "common:common.perMonth",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 95,
-      "context": "const priceLabel = t('common:common.perMonth');"
-    },
-    {
-      "key": "common:common.perYear",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 101,
-      "context": "annualPlanText: `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,"
-    },
-    {
-      "key": "common:common.save10Percent",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 101,
-      "context": "annualPlanText: `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,"
-    },
-    {
-      "key": "common:common.perYear",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 101,
-      "context": "annualPlanText: `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,"
-    },
-    {
-      "key": "common:common.save10Percent",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 101,
-      "context": "annualPlanText: `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,"
-    },
-    {
-      "key": "common:common.perMonth",
-      "file": "hooks/usePricingTranslations.ts",
-      "line": 114,
+      "line": 118,
       "context": "monthly: `CHF ${monthlyPrice} ${t('common:common.perMonth')}`,"
     },
     {
       "key": "common:common.perMonth",
       "file": "hooks/usePricingTranslations.ts",
-      "line": 114,
+      "line": 118,
       "context": "monthly: `CHF ${monthlyPrice} ${t('common:common.perMonth')}`,"
     },
     {
       "key": "common:common.perYear",
       "file": "hooks/usePricingTranslations.ts",
-      "line": 115,
+      "line": 119,
       "context": "annual: `CHF ${annualPrice} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`"
     },
     {
       "key": "common:common.save10Percent",
       "file": "hooks/usePricingTranslations.ts",
-      "line": 115,
+      "line": 119,
       "context": "annual: `CHF ${annualPrice} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`"
     },
     {
       "key": "common:common.perYear",
       "file": "hooks/usePricingTranslations.ts",
-      "line": 115,
+      "line": 119,
       "context": "annual: `CHF ${annualPrice} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`"
     },
     {
       "key": "common:common.save10Percent",
       "file": "hooks/usePricingTranslations.ts",
-      "line": 115,
+      "line": 119,
       "context": "annual: `CHF ${annualPrice} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`"
     },
     {
       "key": "common:common.perMonth",
       "file": "hooks/usePricingTranslations.ts",
-      "line": 120,
+      "line": 124,
       "context": "perMonth: t('common:common.perMonth'),"
     },
     {
       "key": "common:common.perMonth",
       "file": "hooks/usePricingTranslations.ts",
-      "line": 120,
+      "line": 124,
       "context": "perMonth: t('common:common.perMonth'),"
     },
     {
       "key": "common:common.perYear",
       "file": "hooks/usePricingTranslations.ts",
-      "line": 121,
+      "line": 125,
       "context": "perYear: t('common:common.perYear'),"
     },
     {
       "key": "common:common.perYear",
       "file": "hooks/usePricingTranslations.ts",
-      "line": 121,
+      "line": 125,
       "context": "perYear: t('common:common.perYear'),"
     },
     {
       "key": "common:common.save10Percent",
       "file": "hooks/usePricingTranslations.ts",
-      "line": 122,
+      "line": 126,
       "context": "save10Percent: t('common:common.save10Percent')"
     },
     {
       "key": "common:common.save10Percent",
       "file": "hooks/usePricingTranslations.ts",
-      "line": 122,
+      "line": 126,
       "context": "save10Percent: t('common:common.save10Percent')"
     },
     {
@@ -16590,6 +16572,252 @@
       "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close', 'Close')}</Button>"
     },
     {
+      "key": "common:errors.genericErrorTitle",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 80,
+      "context": "title: t('common:errors.genericErrorTitle'),"
+    },
+    {
+      "key": "common:errors.genericErrorTitle",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 80,
+      "context": "title: t('common:errors.genericErrorTitle'),"
+    },
+    {
+      "key": "common:errors.genericErrorMessage",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 81,
+      "context": "message: t('common:errors.genericErrorMessage'),"
+    },
+    {
+      "key": "common:errors.genericErrorMessage",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 81,
+      "context": "message: t('common:errors.genericErrorMessage'),"
+    },
+    {
+      "key": "notifications.successTitle",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 157,
+      "context": "title: t('notifications.successTitle'),"
+    },
+    {
+      "key": "notifications.settingsUpdated",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 158,
+      "context": "message: t('notifications.settingsUpdated'),"
+    },
+    {
+      "key": "common:errors.genericErrorTitle",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 164,
+      "context": "title: t('common:errors.genericErrorTitle'),"
+    },
+    {
+      "key": "common:errors.genericErrorTitle",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 164,
+      "context": "title: t('common:errors.genericErrorTitle'),"
+    },
+    {
+      "key": "common:errors.genericErrorMessage",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 165,
+      "context": "message: t('common:errors.genericErrorMessage'),"
+    },
+    {
+      "key": "common:errors.genericErrorMessage",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 165,
+      "context": "message: t('common:errors.genericErrorMessage'),"
+    },
+    {
+      "key": "common:organizationProfileForm.accessDenied",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 175,
+      "context": "return <p>{t('common:organizationProfileForm.accessDenied')}</p>;"
+    },
+    {
+      "key": "common:organizationProfileForm.accessDenied",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 175,
+      "context": "return <p>{t('common:organizationProfileForm.accessDenied')}</p>;"
+    },
+    {
+      "key": "common:loading",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 181,
+      "context": "<p>{t('common:loading')}</p>"
+    },
+    {
+      "key": "common:loading",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 181,
+      "context": "<p>{t('common:loading')}</p>"
+    },
+    {
+      "key": "common:organizationProfileForm.title",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 188,
+      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal mb-1\">{t('common:organizationProfileForm.title')}</h2>"
+    },
+    {
+      "key": "common:organizationProfileForm.title",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 188,
+      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal mb-1\">{t('common:organizationProfileForm.title')}</h2>"
+    },
+    {
+      "key": "common:organizationProfileForm.subtitle",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 189,
+      "context": "<p className=\"text-sm text-gray-500 mb-6\">{t('common:organizationProfileForm.subtitle')}</p>"
+    },
+    {
+      "key": "common:organizationProfileForm.subtitle",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 189,
+      "context": "<p className=\"text-sm text-gray-500 mb-6\">{t('common:organizationProfileForm.subtitle')}</p>"
+    },
+    {
+      "key": "dashboard:organizationProfileForm.saveSuccess",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 193,
+      "context": "{t('dashboard:organizationProfileForm.saveSuccess')}"
+    },
+    {
+      "key": "dashboard:organizationProfileForm.saveSuccess",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 193,
+      "context": "{t('dashboard:organizationProfileForm.saveSuccess')}"
+    },
+    {
+      "key": "common:organizationProfileForm.labels.capacity",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 200,
+      "context": "{t('common:organizationProfileForm.labels.capacity')}"
+    },
+    {
+      "key": "common:organizationProfileForm.labels.capacity",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 200,
+      "context": "{t('common:organizationProfileForm.labels.capacity')}"
+    },
+    {
+      "key": "common:organizationProfileForm.labels.pedagogy",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 215,
+      "context": "{t('common:organizationProfileForm.labels.pedagogy')}"
+    },
+    {
+      "key": "common:organizationProfileForm.labels.pedagogy",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 215,
+      "context": "{t('common:organizationProfileForm.labels.pedagogy')}"
+    },
+    {
+      "key": "common:organizationProfileForm.placeholders.pedagogy",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 224,
+      "context": "placeholder={t('common:organizationProfileForm.placeholders.pedagogy')}"
+    },
+    {
+      "key": "common:organizationProfileForm.placeholders.pedagogy",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 224,
+      "context": "placeholder={t('common:organizationProfileForm.placeholders.pedagogy')}"
+    },
+    {
+      "key": "common:organizationProfileForm.helpText.commaSeparated",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 226,
+      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
+    },
+    {
+      "key": "common:organizationProfileForm.helpText.commaSeparated",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 226,
+      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
+    },
+    {
+      "key": "common:organizationProfileForm.labels.languages",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 231,
+      "context": "{t('common:organizationProfileForm.labels.languages')}"
+    },
+    {
+      "key": "common:organizationProfileForm.labels.languages",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 231,
+      "context": "{t('common:organizationProfileForm.labels.languages')}"
+    },
+    {
+      "key": "common:organizationProfileForm.placeholders.languages",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 240,
+      "context": "placeholder={t('common:organizationProfileForm.placeholders.languages')}"
+    },
+    {
+      "key": "common:organizationProfileForm.placeholders.languages",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 240,
+      "context": "placeholder={t('common:organizationProfileForm.placeholders.languages')}"
+    },
+    {
+      "key": "common:organizationProfileForm.helpText.commaSeparated",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 242,
+      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
+    },
+    {
+      "key": "common:organizationProfileForm.helpText.commaSeparated",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 242,
+      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
+    },
+    {
+      "key": "common:buttons.saveChanges",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 247,
+      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
+    },
+    {
+      "key": "common:organizationProfileForm.saveButton",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 247,
+      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
+    },
+    {
+      "key": "common:buttons.saveChanges",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 247,
+      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
+    },
+    {
+      "key": "common:organizationProfileForm.saveButton",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 247,
+      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
+    },
+    {
+      "key": "common:buttons.confirm",
+      "file": "components/settings/ConfirmDestructiveActionModal.tsx",
+      "line": 25,
+      "context": "const finalConfirmButtonText = confirmButtonText || t('common:buttons.confirm');"
+    },
+    {
+      "key": "common:buttons.confirm",
+      "file": "components/settings/ConfirmDestructiveActionModal.tsx",
+      "line": 25,
+      "context": "const finalConfirmButtonText = confirmButtonText || t('common:buttons.confirm');"
+    },
+    {
+      "key": "addPromoCodeModal.placeholder",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 12,
+      "context": "<p>{t(\"addPromoCodeModal.placeholder\")}</p>"
+    },
+    {
       "key": "subscription:paywall.pendingTitle",
       "file": "components/shared/SubscriptionPaywall.tsx",
       "line": 171,
@@ -17116,252 +17344,6 @@
       "file": "components/shared/ActiveClientToggle.tsx",
       "line": 87,
       "context": "{t('common:buttons.saveChanges')}"
-    },
-    {
-      "key": "common:errors.genericErrorTitle",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 80,
-      "context": "title: t('common:errors.genericErrorTitle'),"
-    },
-    {
-      "key": "common:errors.genericErrorTitle",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 80,
-      "context": "title: t('common:errors.genericErrorTitle'),"
-    },
-    {
-      "key": "common:errors.genericErrorMessage",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 81,
-      "context": "message: t('common:errors.genericErrorMessage'),"
-    },
-    {
-      "key": "common:errors.genericErrorMessage",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 81,
-      "context": "message: t('common:errors.genericErrorMessage'),"
-    },
-    {
-      "key": "notifications.successTitle",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 157,
-      "context": "title: t('notifications.successTitle'),"
-    },
-    {
-      "key": "notifications.settingsUpdated",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 158,
-      "context": "message: t('notifications.settingsUpdated'),"
-    },
-    {
-      "key": "common:errors.genericErrorTitle",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 164,
-      "context": "title: t('common:errors.genericErrorTitle'),"
-    },
-    {
-      "key": "common:errors.genericErrorTitle",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 164,
-      "context": "title: t('common:errors.genericErrorTitle'),"
-    },
-    {
-      "key": "common:errors.genericErrorMessage",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 165,
-      "context": "message: t('common:errors.genericErrorMessage'),"
-    },
-    {
-      "key": "common:errors.genericErrorMessage",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 165,
-      "context": "message: t('common:errors.genericErrorMessage'),"
-    },
-    {
-      "key": "common:organizationProfileForm.accessDenied",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 175,
-      "context": "return <p>{t('common:organizationProfileForm.accessDenied')}</p>;"
-    },
-    {
-      "key": "common:organizationProfileForm.accessDenied",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 175,
-      "context": "return <p>{t('common:organizationProfileForm.accessDenied')}</p>;"
-    },
-    {
-      "key": "common:loading",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 181,
-      "context": "<p>{t('common:loading')}</p>"
-    },
-    {
-      "key": "common:loading",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 181,
-      "context": "<p>{t('common:loading')}</p>"
-    },
-    {
-      "key": "common:organizationProfileForm.title",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 188,
-      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal mb-1\">{t('common:organizationProfileForm.title')}</h2>"
-    },
-    {
-      "key": "common:organizationProfileForm.title",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 188,
-      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal mb-1\">{t('common:organizationProfileForm.title')}</h2>"
-    },
-    {
-      "key": "common:organizationProfileForm.subtitle",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 189,
-      "context": "<p className=\"text-sm text-gray-500 mb-6\">{t('common:organizationProfileForm.subtitle')}</p>"
-    },
-    {
-      "key": "common:organizationProfileForm.subtitle",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 189,
-      "context": "<p className=\"text-sm text-gray-500 mb-6\">{t('common:organizationProfileForm.subtitle')}</p>"
-    },
-    {
-      "key": "dashboard:organizationProfileForm.saveSuccess",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 193,
-      "context": "{t('dashboard:organizationProfileForm.saveSuccess')}"
-    },
-    {
-      "key": "dashboard:organizationProfileForm.saveSuccess",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 193,
-      "context": "{t('dashboard:organizationProfileForm.saveSuccess')}"
-    },
-    {
-      "key": "common:organizationProfileForm.labels.capacity",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 200,
-      "context": "{t('common:organizationProfileForm.labels.capacity')}"
-    },
-    {
-      "key": "common:organizationProfileForm.labels.capacity",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 200,
-      "context": "{t('common:organizationProfileForm.labels.capacity')}"
-    },
-    {
-      "key": "common:organizationProfileForm.labels.pedagogy",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 215,
-      "context": "{t('common:organizationProfileForm.labels.pedagogy')}"
-    },
-    {
-      "key": "common:organizationProfileForm.labels.pedagogy",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 215,
-      "context": "{t('common:organizationProfileForm.labels.pedagogy')}"
-    },
-    {
-      "key": "common:organizationProfileForm.placeholders.pedagogy",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 224,
-      "context": "placeholder={t('common:organizationProfileForm.placeholders.pedagogy')}"
-    },
-    {
-      "key": "common:organizationProfileForm.placeholders.pedagogy",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 224,
-      "context": "placeholder={t('common:organizationProfileForm.placeholders.pedagogy')}"
-    },
-    {
-      "key": "common:organizationProfileForm.helpText.commaSeparated",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 226,
-      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
-    },
-    {
-      "key": "common:organizationProfileForm.helpText.commaSeparated",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 226,
-      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
-    },
-    {
-      "key": "common:organizationProfileForm.labels.languages",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 231,
-      "context": "{t('common:organizationProfileForm.labels.languages')}"
-    },
-    {
-      "key": "common:organizationProfileForm.labels.languages",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 231,
-      "context": "{t('common:organizationProfileForm.labels.languages')}"
-    },
-    {
-      "key": "common:organizationProfileForm.placeholders.languages",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 240,
-      "context": "placeholder={t('common:organizationProfileForm.placeholders.languages')}"
-    },
-    {
-      "key": "common:organizationProfileForm.placeholders.languages",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 240,
-      "context": "placeholder={t('common:organizationProfileForm.placeholders.languages')}"
-    },
-    {
-      "key": "common:organizationProfileForm.helpText.commaSeparated",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 242,
-      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
-    },
-    {
-      "key": "common:organizationProfileForm.helpText.commaSeparated",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 242,
-      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
-    },
-    {
-      "key": "common:buttons.saveChanges",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 247,
-      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
-    },
-    {
-      "key": "common:organizationProfileForm.saveButton",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 247,
-      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
-    },
-    {
-      "key": "common:buttons.saveChanges",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 247,
-      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
-    },
-    {
-      "key": "common:organizationProfileForm.saveButton",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 247,
-      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
-    },
-    {
-      "key": "common:buttons.confirm",
-      "file": "components/settings/ConfirmDestructiveActionModal.tsx",
-      "line": 25,
-      "context": "const finalConfirmButtonText = confirmButtonText || t('common:buttons.confirm');"
-    },
-    {
-      "key": "common:buttons.confirm",
-      "file": "components/settings/ConfirmDestructiveActionModal.tsx",
-      "line": 25,
-      "context": "const finalConfirmButtonText = confirmButtonText || t('common:buttons.confirm');"
-    },
-    {
-      "key": "addPromoCodeModal.placeholder",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 12,
-      "context": "<p>{t(\"addPromoCodeModal.placeholder\")}</p>"
     },
     {
       "key": "common:serviceUploadModal.editTitle",
@@ -19500,606 +19482,6 @@
       "context": "title={t('profile:documents.previewIframeTitle', 'Document preview')}"
     },
     {
-      "key": "common:errors.updateFailed",
-      "file": "components/messaging/MessageBubble.tsx",
-      "line": 51,
-      "context": "alert(t('common:errors.updateFailed', 'Failed to update message. Please try again.'));"
-    },
-    {
-      "key": "common:errors.updateFailed",
-      "file": "components/messaging/MessageBubble.tsx",
-      "line": 51,
-      "context": "alert(t('common:errors.updateFailed', 'Failed to update message. Please try again.'));"
-    },
-    {
-      "key": "messages:confirmDelete",
-      "file": "components/messaging/MessageBubble.tsx",
-      "line": 61,
-      "context": "if (window.confirm(t('messages:confirmDelete', 'Are you sure you want to delete this message?'))) {"
-    },
-    {
-      "key": "messages:confirmDelete",
-      "file": "components/messaging/MessageBubble.tsx",
-      "line": 61,
-      "context": "if (window.confirm(t('messages:confirmDelete', 'Are you sure you want to delete this message?'))) {"
-    },
-    {
-      "key": "common:errors.deleteFailed",
-      "file": "components/messaging/MessageBubble.tsx",
-      "line": 66,
-      "context": "alert(t('common:errors.deleteFailed', 'Failed to delete message. Please try again.'));"
-    },
-    {
-      "key": "common:errors.deleteFailed",
-      "file": "components/messaging/MessageBubble.tsx",
-      "line": 66,
-      "context": "alert(t('common:errors.deleteFailed', 'Failed to delete message. Please try again.'));"
-    },
-    {
-      "key": "common:errors.downloadFailed",
-      "file": "components/messaging/MessageBubble.tsx",
-      "line": 176,
-      "context": "alert(t('common:errors.downloadFailed', 'Failed to download file. Please try again.'));"
-    },
-    {
-      "key": "common:errors.downloadFailed",
-      "file": "components/messaging/MessageBubble.tsx",
-      "line": 176,
-      "context": "alert(t('common:errors.downloadFailed', 'Failed to download file. Please try again.'));"
-    },
-    {
-      "key": "messages:messageDeleted",
-      "file": "components/messaging/MessageBubble.tsx",
-      "line": 197,
-      "context": "<p className=\"text-sm italic\">{t('messages:messageDeleted', 'Message deleted')}</p>"
-    },
-    {
-      "key": "messages:messageDeleted",
-      "file": "components/messaging/MessageBubble.tsx",
-      "line": 197,
-      "context": "<p className=\"text-sm italic\">{t('messages:messageDeleted', 'Message deleted')}</p>"
-    },
-    {
-      "key": "messages:editMessage",
-      "file": "components/messaging/MessageBubble.tsx",
-      "line": 222,
-      "context": "title={t('messages:editMessage', 'Edit message')}"
-    },
-    {
-      "key": "messages:editMessage",
-      "file": "components/messaging/MessageBubble.tsx",
-      "line": 222,
-      "context": "title={t('messages:editMessage', 'Edit message')}"
-    },
-    {
-      "key": "messages:deleteMessage",
-      "file": "components/messaging/MessageBubble.tsx",
-      "line": 229,
-      "context": "title={t('messages:deleteMessage', 'Delete message')}"
-    },
-    {
-      "key": "messages:deleteMessage",
-      "file": "components/messaging/MessageBubble.tsx",
-      "line": 229,
-      "context": "title={t('messages:deleteMessage', 'Delete message')}"
-    },
-    {
-      "key": "common:loading",
-      "file": "components/messaging/MessageBubble.tsx",
-      "line": 244,
-      "context": "<p className=\"text-sm text-gray-500\">{t('common:loading', 'Loading...')}</p>"
-    },
-    {
-      "key": "common:loading",
-      "file": "components/messaging/MessageBubble.tsx",
-      "line": 244,
-      "context": "<p className=\"text-sm text-gray-500\">{t('common:loading', 'Loading...')}</p>"
-    },
-    {
-      "key": "common:errors.loadFailed",
-      "file": "components/messaging/MessageBubble.tsx",
-      "line": 249,
-      "context": "<p className=\"text-sm text-red-500\">{t('common:errors.loadFailed', 'Failed to load image')}</p>"
-    },
-    {
-      "key": "common:errors.loadFailed",
-      "file": "components/messaging/MessageBubble.tsx",
-      "line": 249,
-      "context": "<p className=\"text-sm text-red-500\">{t('common:errors.loadFailed', 'Failed to load image')}</p>"
-    },
-    {
-      "key": "common:previewLabel",
-      "file": "components/messaging/MessageBubble.tsx",
-      "line": 282,
-      "context": "title={t('common:previewLabel', 'Preview')}"
-    },
-    {
-      "key": "common:previewLabel",
-      "file": "components/messaging/MessageBubble.tsx",
-      "line": 282,
-      "context": "title={t('common:previewLabel', 'Preview')}"
-    },
-    {
-      "key": "common:download",
-      "file": "components/messaging/MessageBubble.tsx",
-      "line": 305,
-      "context": "title={t('common:download', 'Download')}"
-    },
-    {
-      "key": "common:download",
-      "file": "components/messaging/MessageBubble.tsx",
-      "line": 305,
-      "context": "title={t('common:download', 'Download')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/messaging/MessageBubble.tsx",
-      "line": 333,
-      "context": "title={t('common:buttons.cancel', 'Cancel')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/messaging/MessageBubble.tsx",
-      "line": 333,
-      "context": "title={t('common:buttons.cancel', 'Cancel')}"
-    },
-    {
-      "key": "common:buttons.save",
-      "file": "components/messaging/MessageBubble.tsx",
-      "line": 340,
-      "context": "title={t('common:buttons.save', 'Save')}"
-    },
-    {
-      "key": "common:buttons.save",
-      "file": "components/messaging/MessageBubble.tsx",
-      "line": 340,
-      "context": "title={t('common:buttons.save', 'Save')}"
-    },
-    {
-      "key": "common:createGroupChatModal.error.minParticipants",
-      "file": "components/messaging/CreateGroupChatModal.tsx",
-      "line": 136,
-      "context": "alert(t('common:createGroupChatModal.error.minParticipants') || 'Please select at least one other participant');"
-    },
-    {
-      "key": "common:createGroupChatModal.error.minParticipants",
-      "file": "components/messaging/CreateGroupChatModal.tsx",
-      "line": 136,
-      "context": "alert(t('common:createGroupChatModal.error.minParticipants') || 'Please select at least one other participant');"
-    },
-    {
-      "key": "common:createGroupChatModal.error.createFailed",
-      "file": "components/messaging/CreateGroupChatModal.tsx",
-      "line": 148,
-      "context": "const errorMessage = error instanceof Error ? error.message : t('common:createGroupChatModal.error.createFailed', 'Failed to create conversation. Please try again.');"
-    },
-    {
-      "key": "common:createGroupChatModal.error.createFailed",
-      "file": "components/messaging/CreateGroupChatModal.tsx",
-      "line": 148,
-      "context": "const errorMessage = error instanceof Error ? error.message : t('common:createGroupChatModal.error.createFailed', 'Failed to create conversation. Please try again.');"
-    },
-    {
-      "key": "common:createGroupChatModal.title",
-      "file": "components/messaging/CreateGroupChatModal.tsx",
-      "line": 161,
-      "context": "? t('common:createGroupChatModal.title', 'Create Group Chat')"
-    },
-    {
-      "key": "common:createGroupChatModal.title",
-      "file": "components/messaging/CreateGroupChatModal.tsx",
-      "line": 161,
-      "context": "? t('common:createGroupChatModal.title', 'Create Group Chat')"
-    },
-    {
-      "key": "common:createGroupChatModal.titleNewChat",
-      "file": "components/messaging/CreateGroupChatModal.tsx",
-      "line": 162,
-      "context": ": t('common:createGroupChatModal.titleNewChat', 'Create Chat')"
-    },
-    {
-      "key": "common:createGroupChatModal.titleNewChat",
-      "file": "components/messaging/CreateGroupChatModal.tsx",
-      "line": 162,
-      "context": ": t('common:createGroupChatModal.titleNewChat', 'Create Chat')"
-    },
-    {
-      "key": "common:createGroupChatModal.groupNameLabel",
-      "file": "components/messaging/CreateGroupChatModal.tsx",
-      "line": 171,
-      "context": "<label htmlFor=\"groupName\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:createGroupChatModal.groupNameLabel')}</label>"
-    },
-    {
-      "key": "common:createGroupChatModal.groupNameLabel",
-      "file": "components/messaging/CreateGroupChatModal.tsx",
-      "line": 171,
-      "context": "<label htmlFor=\"groupName\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:createGroupChatModal.groupNameLabel')}</label>"
-    },
-    {
-      "key": "common:createGroupChatModal.groupNamePlaceholder",
-      "file": "components/messaging/CreateGroupChatModal.tsx",
-      "line": 178,
-      "context": "placeholder={t('common:createGroupChatModal.groupNamePlaceholder')}"
-    },
-    {
-      "key": "common:createGroupChatModal.groupNamePlaceholder",
-      "file": "components/messaging/CreateGroupChatModal.tsx",
-      "line": 178,
-      "context": "placeholder={t('common:createGroupChatModal.groupNamePlaceholder')}"
-    },
-    {
-      "key": "common:createGroupChatModal.selectParticipantsLabel",
-      "file": "components/messaging/CreateGroupChatModal.tsx",
-      "line": 183,
-      "context": "<label className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:createGroupChatModal.selectParticipantsLabel')}</label>"
-    },
-    {
-      "key": "common:createGroupChatModal.selectParticipantsLabel",
-      "file": "components/messaging/CreateGroupChatModal.tsx",
-      "line": 183,
-      "context": "<label className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:createGroupChatModal.selectParticipantsLabel')}</label>"
-    },
-    {
-      "key": "common:createGroupChatModal.searchPlaceholder",
-      "file": "components/messaging/CreateGroupChatModal.tsx",
-      "line": 186,
-      "context": "placeholder={t('common:createGroupChatModal.searchPlaceholder', 'Search users by name or email...')}"
-    },
-    {
-      "key": "common:createGroupChatModal.searchPlaceholder",
-      "file": "components/messaging/CreateGroupChatModal.tsx",
-      "line": 186,
-      "context": "placeholder={t('common:createGroupChatModal.searchPlaceholder', 'Search users by name or email...')}"
-    },
-    {
-      "key": "common:createGroupChatModal.loadingUsers",
-      "file": "components/messaging/CreateGroupChatModal.tsx",
-      "line": 193,
-      "context": "<p className=\"text-sm text-gray-500 text-center py-4\">{t('common:createGroupChatModal.loadingUsers', 'Loading users...')}</p>"
-    },
-    {
-      "key": "common:createGroupChatModal.loadingUsers",
-      "file": "components/messaging/CreateGroupChatModal.tsx",
-      "line": 193,
-      "context": "<p className=\"text-sm text-gray-500 text-center py-4\">{t('common:createGroupChatModal.loadingUsers', 'Loading users...')}</p>"
-    },
-    {
-      "key": "common:createGroupChatModal.noUsersFound",
-      "file": "components/messaging/CreateGroupChatModal.tsx",
-      "line": 197,
-      "context": "? t('common:createGroupChatModal.noUsersFound', 'No users found')"
-    },
-    {
-      "key": "common:createGroupChatModal.noUsersFound",
-      "file": "components/messaging/CreateGroupChatModal.tsx",
-      "line": 197,
-      "context": "? t('common:createGroupChatModal.noUsersFound', 'No users found')"
-    },
-    {
-      "key": "common:createGroupChatModal.noUsersAvailable",
-      "file": "components/messaging/CreateGroupChatModal.tsx",
-      "line": 198,
-      "context": ": t('common:createGroupChatModal.noUsersAvailable', 'No users available')"
-    },
-    {
-      "key": "common:createGroupChatModal.noUsersAvailable",
-      "file": "components/messaging/CreateGroupChatModal.tsx",
-      "line": 198,
-      "context": ": t('common:createGroupChatModal.noUsersAvailable', 'No users available')"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/messaging/CreateGroupChatModal.tsx",
-      "line": 222,
-      "context": "<Button variant=\"light\" onClick={onClose}>{t('common:buttons.cancel')}</Button>"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/messaging/CreateGroupChatModal.tsx",
-      "line": 222,
-      "context": "<Button variant=\"light\" onClick={onClose}>{t('common:buttons.cancel')}</Button>"
-    },
-    {
-      "key": "common:createGroupChatModal.createButton",
-      "file": "components/messaging/CreateGroupChatModal.tsx",
-      "line": 224,
-      "context": "{t('common:createGroupChatModal.createButton')}"
-    },
-    {
-      "key": "common:createGroupChatModal.createButton",
-      "file": "components/messaging/CreateGroupChatModal.tsx",
-      "line": 224,
-      "context": "{t('common:createGroupChatModal.createButton')}"
-    },
-    {
-      "key": "messages:unknownUser",
-      "file": "components/messaging/ConversationListItem.tsx",
-      "line": 33,
-      "context": "displayName = otherParticipantId ? conversation.participantNames[otherParticipantId] : t('messages:unknownUser');"
-    },
-    {
-      "key": "messages:unknownUser",
-      "file": "components/messaging/ConversationListItem.tsx",
-      "line": 33,
-      "context": "displayName = otherParticipantId ? conversation.participantNames[otherParticipantId] : t('messages:unknownUser');"
-    },
-    {
-      "key": "messages:youPrefix",
-      "file": "components/messaging/ConversationListItem.tsx",
-      "line": 63,
-      "context": "{conversation.lastMessageSenderId === currentUser.id ? t('messages:youPrefix') : ''}"
-    },
-    {
-      "key": "messages:youPrefix",
-      "file": "components/messaging/ConversationListItem.tsx",
-      "line": 63,
-      "context": "{conversation.lastMessageSenderId === currentUser.id ? t('messages:youPrefix') : ''}"
-    },
-    {
-      "key": "messages:noMessagesYet",
-      "file": "components/messaging/ConversationListItem.tsx",
-      "line": 64,
-      "context": "{conversation.lastMessageSnippet || t('messages:noMessagesYet')}"
-    },
-    {
-      "key": "messages:noMessagesYet",
-      "file": "components/messaging/ConversationListItem.tsx",
-      "line": 64,
-      "context": "{conversation.lastMessageSnippet || t('messages:noMessagesYet')}"
-    },
-    {
-      "key": "messages:searchPlaceholder",
-      "file": "components/messaging/ConversationList.tsx",
-      "line": 38,
-      "context": "placeholder={t('messages:searchPlaceholder')}"
-    },
-    {
-      "key": "messages:searchPlaceholder",
-      "file": "components/messaging/ConversationList.tsx",
-      "line": 38,
-      "context": "placeholder={t('messages:searchPlaceholder')}"
-    },
-    {
-      "key": "messages:searchPlaceholder",
-      "file": "components/messaging/ConversationList.tsx",
-      "line": 42,
-      "context": "aria-label={t('messages:searchPlaceholder')}"
-    },
-    {
-      "key": "messages:searchPlaceholder",
-      "file": "components/messaging/ConversationList.tsx",
-      "line": 42,
-      "context": "aria-label={t('messages:searchPlaceholder')}"
-    },
-    {
-      "key": "messages:filters.all",
-      "file": "components/messaging/ConversationList.tsx",
-      "line": 50,
-      "context": "{t('messages:filters.all')}"
-    },
-    {
-      "key": "messages:filters.all",
-      "file": "components/messaging/ConversationList.tsx",
-      "line": 50,
-      "context": "{t('messages:filters.all')}"
-    },
-    {
-      "key": "messages:filters.unread",
-      "file": "components/messaging/ConversationList.tsx",
-      "line": 56,
-      "context": "{t('messages:filters.unread')}"
-    },
-    {
-      "key": "messages:filters.unread",
-      "file": "components/messaging/ConversationList.tsx",
-      "line": 56,
-      "context": "{t('messages:filters.unread')}"
-    },
-    {
-      "key": "messages:noConversationsFound",
-      "file": "components/messaging/ConversationList.tsx",
-      "line": 62,
-      "context": "<p className=\"text-center text-sm text-gray-400 py-10\">{t('messages:noConversationsFound')}</p>"
-    },
-    {
-      "key": "messages:noConversationsFound",
-      "file": "components/messaging/ConversationList.tsx",
-      "line": 62,
-      "context": "<p className=\"text-center text-sm text-gray-400 py-10\">{t('messages:noConversationsFound')}</p>"
-    },
-    {
-      "key": "messages:errors.fileTooLarge",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 198,
-      "context": "alert(t('messages:errors.fileTooLarge', 'File size exceeds 50MB limit'));"
-    },
-    {
-      "key": "messages:errors.fileTooLarge",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 198,
-      "context": "alert(t('messages:errors.fileTooLarge', 'File size exceeds 50MB limit'));"
-    },
-    {
-      "key": "messages:emptyState.selectConversation",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 363,
-      "context": "{t('messages:emptyState.selectConversation')}"
-    },
-    {
-      "key": "messages:emptyState.selectConversation",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 363,
-      "context": "{t('messages:emptyState.selectConversation')}"
-    },
-    {
-      "key": "messages:emptyState.noConversationSelectedTitle",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 377,
-      "context": "chatTitle = otherParticipantId ? activeConversation.participantNames[otherParticipantId] : t('messages:emptyState.noConversationSelectedTitle');"
-    },
-    {
-      "key": "messages:emptyState.noConversationSelectedTitle",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 377,
-      "context": "chatTitle = otherParticipantId ? activeConversation.participantNames[otherParticipantId] : t('messages:emptyState.noConversationSelectedTitle');"
-    },
-    {
-      "key": "messages:loadingMore",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 399,
-      "context": "{t('messages:loadingMore', 'Loading more messages...')}"
-    },
-    {
-      "key": "messages:loadingMore",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 399,
-      "context": "{t('messages:loadingMore', 'Loading more messages...')}"
-    },
-    {
-      "key": "messages:scrollForMore",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 404,
-      "context": "{t('messages:scrollForMore', 'Scroll up for more messages')}"
-    },
-    {
-      "key": "messages:scrollForMore",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 404,
-      "context": "{t('messages:scrollForMore', 'Scroll up for more messages')}"
-    },
-    {
-      "key": "common:remove",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 442,
-      "context": "aria-label={t('common:remove', 'Remove')}"
-    },
-    {
-      "key": "common:remove",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 442,
-      "context": "aria-label={t('common:remove', 'Remove')}"
-    },
-    {
-      "key": "common:remove",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 443,
-      "context": "title={t('common:remove', 'Remove')}"
-    },
-    {
-      "key": "common:remove",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 443,
-      "context": "title={t('common:remove', 'Remove')}"
-    },
-    {
-      "key": "common:attachFile",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 464,
-      "context": "aria-label={t('common:attachFile')}"
-    },
-    {
-      "key": "common:attachFile",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 464,
-      "context": "aria-label={t('common:attachFile')}"
-    },
-    {
-      "key": "common:attachFile",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 466,
-      "context": "title={t('common:attachFile')}"
-    },
-    {
-      "key": "common:attachFile",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 466,
-      "context": "title={t('common:attachFile')}"
-    },
-    {
-      "key": "common:addEmoji",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 476,
-      "context": "aria-label={t('common:addEmoji')}"
-    },
-    {
-      "key": "common:addEmoji",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 476,
-      "context": "aria-label={t('common:addEmoji')}"
-    },
-    {
-      "key": "common:addEmoji",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 478,
-      "context": "title={t('common:addEmoji')}"
-    },
-    {
-      "key": "common:addEmoji",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 478,
-      "context": "title={t('common:addEmoji')}"
-    },
-    {
-      "key": "common:uploading",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 499,
-      "context": "placeholder={isUploading ? t('common:uploading', 'Uploading...') : pendingFile ? t('messages:placeholders.addCaption', 'Add a caption...') : t('messages:placeholders.typeMessage')}"
-    },
-    {
-      "key": "messages:placeholders.addCaption",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 499,
-      "context": "placeholder={isUploading ? t('common:uploading', 'Uploading...') : pendingFile ? t('messages:placeholders.addCaption', 'Add a caption...') : t('messages:placeholders.typeMessage')}"
-    },
-    {
-      "key": "messages:placeholders.typeMessage",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 499,
-      "context": "placeholder={isUploading ? t('common:uploading', 'Uploading...') : pendingFile ? t('messages:placeholders.addCaption', 'Add a caption...') : t('messages:placeholders.typeMessage')}"
-    },
-    {
-      "key": "common:uploading",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 499,
-      "context": "placeholder={isUploading ? t('common:uploading', 'Uploading...') : pendingFile ? t('messages:placeholders.addCaption', 'Add a caption...') : t('messages:placeholders.typeMessage')}"
-    },
-    {
-      "key": "messages:placeholders.addCaption",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 499,
-      "context": "placeholder={isUploading ? t('common:uploading', 'Uploading...') : pendingFile ? t('messages:placeholders.addCaption', 'Add a caption...') : t('messages:placeholders.typeMessage')}"
-    },
-    {
-      "key": "messages:placeholders.typeMessage",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 499,
-      "context": "placeholder={isUploading ? t('common:uploading', 'Uploading...') : pendingFile ? t('messages:placeholders.addCaption', 'Add a caption...') : t('messages:placeholders.typeMessage')}"
-    },
-    {
-      "key": "messages:placeholders.typeMessage",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 502,
-      "context": "aria-label={t('messages:placeholders.typeMessage')}"
-    },
-    {
-      "key": "messages:placeholders.typeMessage",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 502,
-      "context": "aria-label={t('messages:placeholders.typeMessage')}"
-    },
-    {
-      "key": "common:buttons.sendMessage",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 516,
-      "context": "aria-label={t('common:buttons.sendMessage')}"
-    },
-    {
-      "key": "common:buttons.sendMessage",
-      "file": "components/messaging/ChatWindow.tsx",
-      "line": 516,
-      "context": "aria-label={t('common:buttons.sendMessage')}"
-    },
-    {
       "key": "common:marketplace.variousProducts",
       "file": "components/marketplace/SupplierCard.tsx",
       "line": 49,
@@ -20734,6 +20116,606 @@
       "file": "components/foundation/LeadCard.tsx",
       "line": 193,
       "context": "{t('common:leadCard.buttons.markEnrolled')}"
+    },
+    {
+      "key": "common:errors.updateFailed",
+      "file": "components/messaging/MessageBubble.tsx",
+      "line": 51,
+      "context": "alert(t('common:errors.updateFailed', 'Failed to update message. Please try again.'));"
+    },
+    {
+      "key": "common:errors.updateFailed",
+      "file": "components/messaging/MessageBubble.tsx",
+      "line": 51,
+      "context": "alert(t('common:errors.updateFailed', 'Failed to update message. Please try again.'));"
+    },
+    {
+      "key": "messages:confirmDelete",
+      "file": "components/messaging/MessageBubble.tsx",
+      "line": 61,
+      "context": "if (window.confirm(t('messages:confirmDelete', 'Are you sure you want to delete this message?'))) {"
+    },
+    {
+      "key": "messages:confirmDelete",
+      "file": "components/messaging/MessageBubble.tsx",
+      "line": 61,
+      "context": "if (window.confirm(t('messages:confirmDelete', 'Are you sure you want to delete this message?'))) {"
+    },
+    {
+      "key": "common:errors.deleteFailed",
+      "file": "components/messaging/MessageBubble.tsx",
+      "line": 66,
+      "context": "alert(t('common:errors.deleteFailed', 'Failed to delete message. Please try again.'));"
+    },
+    {
+      "key": "common:errors.deleteFailed",
+      "file": "components/messaging/MessageBubble.tsx",
+      "line": 66,
+      "context": "alert(t('common:errors.deleteFailed', 'Failed to delete message. Please try again.'));"
+    },
+    {
+      "key": "common:errors.downloadFailed",
+      "file": "components/messaging/MessageBubble.tsx",
+      "line": 176,
+      "context": "alert(t('common:errors.downloadFailed', 'Failed to download file. Please try again.'));"
+    },
+    {
+      "key": "common:errors.downloadFailed",
+      "file": "components/messaging/MessageBubble.tsx",
+      "line": 176,
+      "context": "alert(t('common:errors.downloadFailed', 'Failed to download file. Please try again.'));"
+    },
+    {
+      "key": "messages:messageDeleted",
+      "file": "components/messaging/MessageBubble.tsx",
+      "line": 197,
+      "context": "<p className=\"text-sm italic\">{t('messages:messageDeleted', 'Message deleted')}</p>"
+    },
+    {
+      "key": "messages:messageDeleted",
+      "file": "components/messaging/MessageBubble.tsx",
+      "line": 197,
+      "context": "<p className=\"text-sm italic\">{t('messages:messageDeleted', 'Message deleted')}</p>"
+    },
+    {
+      "key": "messages:editMessage",
+      "file": "components/messaging/MessageBubble.tsx",
+      "line": 222,
+      "context": "title={t('messages:editMessage', 'Edit message')}"
+    },
+    {
+      "key": "messages:editMessage",
+      "file": "components/messaging/MessageBubble.tsx",
+      "line": 222,
+      "context": "title={t('messages:editMessage', 'Edit message')}"
+    },
+    {
+      "key": "messages:deleteMessage",
+      "file": "components/messaging/MessageBubble.tsx",
+      "line": 229,
+      "context": "title={t('messages:deleteMessage', 'Delete message')}"
+    },
+    {
+      "key": "messages:deleteMessage",
+      "file": "components/messaging/MessageBubble.tsx",
+      "line": 229,
+      "context": "title={t('messages:deleteMessage', 'Delete message')}"
+    },
+    {
+      "key": "common:loading",
+      "file": "components/messaging/MessageBubble.tsx",
+      "line": 244,
+      "context": "<p className=\"text-sm text-gray-500\">{t('common:loading', 'Loading...')}</p>"
+    },
+    {
+      "key": "common:loading",
+      "file": "components/messaging/MessageBubble.tsx",
+      "line": 244,
+      "context": "<p className=\"text-sm text-gray-500\">{t('common:loading', 'Loading...')}</p>"
+    },
+    {
+      "key": "common:errors.loadFailed",
+      "file": "components/messaging/MessageBubble.tsx",
+      "line": 249,
+      "context": "<p className=\"text-sm text-red-500\">{t('common:errors.loadFailed', 'Failed to load image')}</p>"
+    },
+    {
+      "key": "common:errors.loadFailed",
+      "file": "components/messaging/MessageBubble.tsx",
+      "line": 249,
+      "context": "<p className=\"text-sm text-red-500\">{t('common:errors.loadFailed', 'Failed to load image')}</p>"
+    },
+    {
+      "key": "common:previewLabel",
+      "file": "components/messaging/MessageBubble.tsx",
+      "line": 282,
+      "context": "title={t('common:previewLabel', 'Preview')}"
+    },
+    {
+      "key": "common:previewLabel",
+      "file": "components/messaging/MessageBubble.tsx",
+      "line": 282,
+      "context": "title={t('common:previewLabel', 'Preview')}"
+    },
+    {
+      "key": "common:download",
+      "file": "components/messaging/MessageBubble.tsx",
+      "line": 305,
+      "context": "title={t('common:download', 'Download')}"
+    },
+    {
+      "key": "common:download",
+      "file": "components/messaging/MessageBubble.tsx",
+      "line": 305,
+      "context": "title={t('common:download', 'Download')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/messaging/MessageBubble.tsx",
+      "line": 333,
+      "context": "title={t('common:buttons.cancel', 'Cancel')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/messaging/MessageBubble.tsx",
+      "line": 333,
+      "context": "title={t('common:buttons.cancel', 'Cancel')}"
+    },
+    {
+      "key": "common:buttons.save",
+      "file": "components/messaging/MessageBubble.tsx",
+      "line": 340,
+      "context": "title={t('common:buttons.save', 'Save')}"
+    },
+    {
+      "key": "common:buttons.save",
+      "file": "components/messaging/MessageBubble.tsx",
+      "line": 340,
+      "context": "title={t('common:buttons.save', 'Save')}"
+    },
+    {
+      "key": "common:createGroupChatModal.error.minParticipants",
+      "file": "components/messaging/CreateGroupChatModal.tsx",
+      "line": 136,
+      "context": "alert(t('common:createGroupChatModal.error.minParticipants') || 'Please select at least one other participant');"
+    },
+    {
+      "key": "common:createGroupChatModal.error.minParticipants",
+      "file": "components/messaging/CreateGroupChatModal.tsx",
+      "line": 136,
+      "context": "alert(t('common:createGroupChatModal.error.minParticipants') || 'Please select at least one other participant');"
+    },
+    {
+      "key": "common:createGroupChatModal.error.createFailed",
+      "file": "components/messaging/CreateGroupChatModal.tsx",
+      "line": 148,
+      "context": "const errorMessage = error instanceof Error ? error.message : t('common:createGroupChatModal.error.createFailed', 'Failed to create conversation. Please try again.');"
+    },
+    {
+      "key": "common:createGroupChatModal.error.createFailed",
+      "file": "components/messaging/CreateGroupChatModal.tsx",
+      "line": 148,
+      "context": "const errorMessage = error instanceof Error ? error.message : t('common:createGroupChatModal.error.createFailed', 'Failed to create conversation. Please try again.');"
+    },
+    {
+      "key": "common:createGroupChatModal.title",
+      "file": "components/messaging/CreateGroupChatModal.tsx",
+      "line": 161,
+      "context": "? t('common:createGroupChatModal.title', 'Create Group Chat')"
+    },
+    {
+      "key": "common:createGroupChatModal.title",
+      "file": "components/messaging/CreateGroupChatModal.tsx",
+      "line": 161,
+      "context": "? t('common:createGroupChatModal.title', 'Create Group Chat')"
+    },
+    {
+      "key": "common:createGroupChatModal.titleNewChat",
+      "file": "components/messaging/CreateGroupChatModal.tsx",
+      "line": 162,
+      "context": ": t('common:createGroupChatModal.titleNewChat', 'Create Chat')"
+    },
+    {
+      "key": "common:createGroupChatModal.titleNewChat",
+      "file": "components/messaging/CreateGroupChatModal.tsx",
+      "line": 162,
+      "context": ": t('common:createGroupChatModal.titleNewChat', 'Create Chat')"
+    },
+    {
+      "key": "common:createGroupChatModal.groupNameLabel",
+      "file": "components/messaging/CreateGroupChatModal.tsx",
+      "line": 171,
+      "context": "<label htmlFor=\"groupName\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:createGroupChatModal.groupNameLabel')}</label>"
+    },
+    {
+      "key": "common:createGroupChatModal.groupNameLabel",
+      "file": "components/messaging/CreateGroupChatModal.tsx",
+      "line": 171,
+      "context": "<label htmlFor=\"groupName\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:createGroupChatModal.groupNameLabel')}</label>"
+    },
+    {
+      "key": "common:createGroupChatModal.groupNamePlaceholder",
+      "file": "components/messaging/CreateGroupChatModal.tsx",
+      "line": 178,
+      "context": "placeholder={t('common:createGroupChatModal.groupNamePlaceholder')}"
+    },
+    {
+      "key": "common:createGroupChatModal.groupNamePlaceholder",
+      "file": "components/messaging/CreateGroupChatModal.tsx",
+      "line": 178,
+      "context": "placeholder={t('common:createGroupChatModal.groupNamePlaceholder')}"
+    },
+    {
+      "key": "common:createGroupChatModal.selectParticipantsLabel",
+      "file": "components/messaging/CreateGroupChatModal.tsx",
+      "line": 183,
+      "context": "<label className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:createGroupChatModal.selectParticipantsLabel')}</label>"
+    },
+    {
+      "key": "common:createGroupChatModal.selectParticipantsLabel",
+      "file": "components/messaging/CreateGroupChatModal.tsx",
+      "line": 183,
+      "context": "<label className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:createGroupChatModal.selectParticipantsLabel')}</label>"
+    },
+    {
+      "key": "common:createGroupChatModal.searchPlaceholder",
+      "file": "components/messaging/CreateGroupChatModal.tsx",
+      "line": 186,
+      "context": "placeholder={t('common:createGroupChatModal.searchPlaceholder', 'Search users by name or email...')}"
+    },
+    {
+      "key": "common:createGroupChatModal.searchPlaceholder",
+      "file": "components/messaging/CreateGroupChatModal.tsx",
+      "line": 186,
+      "context": "placeholder={t('common:createGroupChatModal.searchPlaceholder', 'Search users by name or email...')}"
+    },
+    {
+      "key": "common:createGroupChatModal.loadingUsers",
+      "file": "components/messaging/CreateGroupChatModal.tsx",
+      "line": 193,
+      "context": "<p className=\"text-sm text-gray-500 text-center py-4\">{t('common:createGroupChatModal.loadingUsers', 'Loading users...')}</p>"
+    },
+    {
+      "key": "common:createGroupChatModal.loadingUsers",
+      "file": "components/messaging/CreateGroupChatModal.tsx",
+      "line": 193,
+      "context": "<p className=\"text-sm text-gray-500 text-center py-4\">{t('common:createGroupChatModal.loadingUsers', 'Loading users...')}</p>"
+    },
+    {
+      "key": "common:createGroupChatModal.noUsersFound",
+      "file": "components/messaging/CreateGroupChatModal.tsx",
+      "line": 197,
+      "context": "? t('common:createGroupChatModal.noUsersFound', 'No users found')"
+    },
+    {
+      "key": "common:createGroupChatModal.noUsersFound",
+      "file": "components/messaging/CreateGroupChatModal.tsx",
+      "line": 197,
+      "context": "? t('common:createGroupChatModal.noUsersFound', 'No users found')"
+    },
+    {
+      "key": "common:createGroupChatModal.noUsersAvailable",
+      "file": "components/messaging/CreateGroupChatModal.tsx",
+      "line": 198,
+      "context": ": t('common:createGroupChatModal.noUsersAvailable', 'No users available')"
+    },
+    {
+      "key": "common:createGroupChatModal.noUsersAvailable",
+      "file": "components/messaging/CreateGroupChatModal.tsx",
+      "line": 198,
+      "context": ": t('common:createGroupChatModal.noUsersAvailable', 'No users available')"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/messaging/CreateGroupChatModal.tsx",
+      "line": 222,
+      "context": "<Button variant=\"light\" onClick={onClose}>{t('common:buttons.cancel')}</Button>"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/messaging/CreateGroupChatModal.tsx",
+      "line": 222,
+      "context": "<Button variant=\"light\" onClick={onClose}>{t('common:buttons.cancel')}</Button>"
+    },
+    {
+      "key": "common:createGroupChatModal.createButton",
+      "file": "components/messaging/CreateGroupChatModal.tsx",
+      "line": 224,
+      "context": "{t('common:createGroupChatModal.createButton')}"
+    },
+    {
+      "key": "common:createGroupChatModal.createButton",
+      "file": "components/messaging/CreateGroupChatModal.tsx",
+      "line": 224,
+      "context": "{t('common:createGroupChatModal.createButton')}"
+    },
+    {
+      "key": "messages:unknownUser",
+      "file": "components/messaging/ConversationListItem.tsx",
+      "line": 33,
+      "context": "displayName = otherParticipantId ? conversation.participantNames[otherParticipantId] : t('messages:unknownUser');"
+    },
+    {
+      "key": "messages:unknownUser",
+      "file": "components/messaging/ConversationListItem.tsx",
+      "line": 33,
+      "context": "displayName = otherParticipantId ? conversation.participantNames[otherParticipantId] : t('messages:unknownUser');"
+    },
+    {
+      "key": "messages:youPrefix",
+      "file": "components/messaging/ConversationListItem.tsx",
+      "line": 63,
+      "context": "{conversation.lastMessageSenderId === currentUser.id ? t('messages:youPrefix') : ''}"
+    },
+    {
+      "key": "messages:youPrefix",
+      "file": "components/messaging/ConversationListItem.tsx",
+      "line": 63,
+      "context": "{conversation.lastMessageSenderId === currentUser.id ? t('messages:youPrefix') : ''}"
+    },
+    {
+      "key": "messages:noMessagesYet",
+      "file": "components/messaging/ConversationListItem.tsx",
+      "line": 64,
+      "context": "{conversation.lastMessageSnippet || t('messages:noMessagesYet')}"
+    },
+    {
+      "key": "messages:noMessagesYet",
+      "file": "components/messaging/ConversationListItem.tsx",
+      "line": 64,
+      "context": "{conversation.lastMessageSnippet || t('messages:noMessagesYet')}"
+    },
+    {
+      "key": "messages:searchPlaceholder",
+      "file": "components/messaging/ConversationList.tsx",
+      "line": 38,
+      "context": "placeholder={t('messages:searchPlaceholder')}"
+    },
+    {
+      "key": "messages:searchPlaceholder",
+      "file": "components/messaging/ConversationList.tsx",
+      "line": 38,
+      "context": "placeholder={t('messages:searchPlaceholder')}"
+    },
+    {
+      "key": "messages:searchPlaceholder",
+      "file": "components/messaging/ConversationList.tsx",
+      "line": 42,
+      "context": "aria-label={t('messages:searchPlaceholder')}"
+    },
+    {
+      "key": "messages:searchPlaceholder",
+      "file": "components/messaging/ConversationList.tsx",
+      "line": 42,
+      "context": "aria-label={t('messages:searchPlaceholder')}"
+    },
+    {
+      "key": "messages:filters.all",
+      "file": "components/messaging/ConversationList.tsx",
+      "line": 50,
+      "context": "{t('messages:filters.all')}"
+    },
+    {
+      "key": "messages:filters.all",
+      "file": "components/messaging/ConversationList.tsx",
+      "line": 50,
+      "context": "{t('messages:filters.all')}"
+    },
+    {
+      "key": "messages:filters.unread",
+      "file": "components/messaging/ConversationList.tsx",
+      "line": 56,
+      "context": "{t('messages:filters.unread')}"
+    },
+    {
+      "key": "messages:filters.unread",
+      "file": "components/messaging/ConversationList.tsx",
+      "line": 56,
+      "context": "{t('messages:filters.unread')}"
+    },
+    {
+      "key": "messages:noConversationsFound",
+      "file": "components/messaging/ConversationList.tsx",
+      "line": 62,
+      "context": "<p className=\"text-center text-sm text-gray-400 py-10\">{t('messages:noConversationsFound')}</p>"
+    },
+    {
+      "key": "messages:noConversationsFound",
+      "file": "components/messaging/ConversationList.tsx",
+      "line": 62,
+      "context": "<p className=\"text-center text-sm text-gray-400 py-10\">{t('messages:noConversationsFound')}</p>"
+    },
+    {
+      "key": "messages:errors.fileTooLarge",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 198,
+      "context": "alert(t('messages:errors.fileTooLarge', 'File size exceeds 50MB limit'));"
+    },
+    {
+      "key": "messages:errors.fileTooLarge",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 198,
+      "context": "alert(t('messages:errors.fileTooLarge', 'File size exceeds 50MB limit'));"
+    },
+    {
+      "key": "messages:emptyState.selectConversation",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 363,
+      "context": "{t('messages:emptyState.selectConversation')}"
+    },
+    {
+      "key": "messages:emptyState.selectConversation",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 363,
+      "context": "{t('messages:emptyState.selectConversation')}"
+    },
+    {
+      "key": "messages:emptyState.noConversationSelectedTitle",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 377,
+      "context": "chatTitle = otherParticipantId ? activeConversation.participantNames[otherParticipantId] : t('messages:emptyState.noConversationSelectedTitle');"
+    },
+    {
+      "key": "messages:emptyState.noConversationSelectedTitle",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 377,
+      "context": "chatTitle = otherParticipantId ? activeConversation.participantNames[otherParticipantId] : t('messages:emptyState.noConversationSelectedTitle');"
+    },
+    {
+      "key": "messages:loadingMore",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 399,
+      "context": "{t('messages:loadingMore', 'Loading more messages...')}"
+    },
+    {
+      "key": "messages:loadingMore",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 399,
+      "context": "{t('messages:loadingMore', 'Loading more messages...')}"
+    },
+    {
+      "key": "messages:scrollForMore",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 404,
+      "context": "{t('messages:scrollForMore', 'Scroll up for more messages')}"
+    },
+    {
+      "key": "messages:scrollForMore",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 404,
+      "context": "{t('messages:scrollForMore', 'Scroll up for more messages')}"
+    },
+    {
+      "key": "common:remove",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 442,
+      "context": "aria-label={t('common:remove', 'Remove')}"
+    },
+    {
+      "key": "common:remove",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 442,
+      "context": "aria-label={t('common:remove', 'Remove')}"
+    },
+    {
+      "key": "common:remove",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 443,
+      "context": "title={t('common:remove', 'Remove')}"
+    },
+    {
+      "key": "common:remove",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 443,
+      "context": "title={t('common:remove', 'Remove')}"
+    },
+    {
+      "key": "common:attachFile",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 464,
+      "context": "aria-label={t('common:attachFile')}"
+    },
+    {
+      "key": "common:attachFile",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 464,
+      "context": "aria-label={t('common:attachFile')}"
+    },
+    {
+      "key": "common:attachFile",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 466,
+      "context": "title={t('common:attachFile')}"
+    },
+    {
+      "key": "common:attachFile",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 466,
+      "context": "title={t('common:attachFile')}"
+    },
+    {
+      "key": "common:addEmoji",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 476,
+      "context": "aria-label={t('common:addEmoji')}"
+    },
+    {
+      "key": "common:addEmoji",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 476,
+      "context": "aria-label={t('common:addEmoji')}"
+    },
+    {
+      "key": "common:addEmoji",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 478,
+      "context": "title={t('common:addEmoji')}"
+    },
+    {
+      "key": "common:addEmoji",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 478,
+      "context": "title={t('common:addEmoji')}"
+    },
+    {
+      "key": "common:uploading",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 499,
+      "context": "placeholder={isUploading ? t('common:uploading', 'Uploading...') : pendingFile ? t('messages:placeholders.addCaption', 'Add a caption...') : t('messages:placeholders.typeMessage')}"
+    },
+    {
+      "key": "messages:placeholders.addCaption",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 499,
+      "context": "placeholder={isUploading ? t('common:uploading', 'Uploading...') : pendingFile ? t('messages:placeholders.addCaption', 'Add a caption...') : t('messages:placeholders.typeMessage')}"
+    },
+    {
+      "key": "messages:placeholders.typeMessage",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 499,
+      "context": "placeholder={isUploading ? t('common:uploading', 'Uploading...') : pendingFile ? t('messages:placeholders.addCaption', 'Add a caption...') : t('messages:placeholders.typeMessage')}"
+    },
+    {
+      "key": "common:uploading",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 499,
+      "context": "placeholder={isUploading ? t('common:uploading', 'Uploading...') : pendingFile ? t('messages:placeholders.addCaption', 'Add a caption...') : t('messages:placeholders.typeMessage')}"
+    },
+    {
+      "key": "messages:placeholders.addCaption",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 499,
+      "context": "placeholder={isUploading ? t('common:uploading', 'Uploading...') : pendingFile ? t('messages:placeholders.addCaption', 'Add a caption...') : t('messages:placeholders.typeMessage')}"
+    },
+    {
+      "key": "messages:placeholders.typeMessage",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 499,
+      "context": "placeholder={isUploading ? t('common:uploading', 'Uploading...') : pendingFile ? t('messages:placeholders.addCaption', 'Add a caption...') : t('messages:placeholders.typeMessage')}"
+    },
+    {
+      "key": "messages:placeholders.typeMessage",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 502,
+      "context": "aria-label={t('messages:placeholders.typeMessage')}"
+    },
+    {
+      "key": "messages:placeholders.typeMessage",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 502,
+      "context": "aria-label={t('messages:placeholders.typeMessage')}"
+    },
+    {
+      "key": "common:buttons.sendMessage",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 516,
+      "context": "aria-label={t('common:buttons.sendMessage')}"
+    },
+    {
+      "key": "common:buttons.sendMessage",
+      "file": "components/messaging/ChatWindow.tsx",
+      "line": 516,
+      "context": "aria-label={t('common:buttons.sendMessage')}"
     },
     {
       "key": "orderSummaryDrawer.orderSuccess",
@@ -24474,195 +24456,207 @@
       "context": "placeholder={t('common:placeholders.url')}"
     },
     {
+      "key": "common:pricingPage.comingSoon",
+      "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
+      "line": 32,
+      "context": "{t('common:pricingPage.comingSoon')}"
+    },
+    {
+      "key": "common:pricingPage.comingSoon",
+      "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
+      "line": 32,
+      "context": "{t('common:pricingPage.comingSoon')}"
+    },
+    {
       "key": "common:settingsBillingSubscription.yourCurrentPlan",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 29,
+      "line": 36,
       "context": "actionButton = <Button variant=\"secondary\" size=\"md\" className=\"w-full\" disabled>{t('common:settingsBillingSubscription.yourCurrentPlan')}</Button>;"
     },
     {
       "key": "common:settingsBillingSubscription.yourCurrentPlan",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 29,
+      "line": 36,
       "context": "actionButton = <Button variant=\"secondary\" size=\"md\" className=\"w-full\" disabled>{t('common:settingsBillingSubscription.yourCurrentPlan')}</Button>;"
     },
     {
       "key": "common:settingsBillingSubscription.upgradePlan",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 31,
+      "line": 38,
       "context": "actionButton = <Button variant=\"primary\" size=\"md\" className=\"w-full\" onClick={() => onSelectPlan(plan.name)}>{t('common:settingsBillingSubscription.upgradePlan')}</Button>;"
     },
     {
       "key": "common:settingsBillingSubscription.upgradePlan",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 31,
+      "line": 38,
       "context": "actionButton = <Button variant=\"primary\" size=\"md\" className=\"w-full\" onClick={() => onSelectPlan(plan.name)}>{t('common:settingsBillingSubscription.upgradePlan')}</Button>;"
     },
     {
       "key": "common:settingsBillingSubscription.downgradePlan",
-      "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 33,
-      "context": "actionButton = <Button variant=\"outline\" size=\"md\" className=\"w-full\" onClick={() => onSelectPlan(plan.name)}>{t('common:settingsBillingSubscription.downgradePlan')}</Button>;"
-    },
-    {
-      "key": "common:settingsBillingSubscription.downgradePlan",
-      "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 33,
-      "context": "actionButton = <Button variant=\"outline\" size=\"md\" className=\"w-full\" onClick={() => onSelectPlan(plan.name)}>{t('common:settingsBillingSubscription.downgradePlan')}</Button>;"
-    },
-    {
-      "key": "common:settingsBillingSubscription.yourCurrentPlan",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
       "line": 40,
+      "context": "actionButton = <Button variant=\"outline\" size=\"md\" className=\"w-full\" onClick={() => onSelectPlan(plan.name)}>{t('common:settingsBillingSubscription.downgradePlan')}</Button>;"
+    },
+    {
+      "key": "common:settingsBillingSubscription.downgradePlan",
+      "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
+      "line": 40,
+      "context": "actionButton = <Button variant=\"outline\" size=\"md\" className=\"w-full\" onClick={() => onSelectPlan(plan.name)}>{t('common:settingsBillingSubscription.downgradePlan')}</Button>;"
+    },
+    {
+      "key": "common:settingsBillingSubscription.yourCurrentPlan",
+      "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
+      "line": 47,
       "context": "<span className=\"px-3 py-1 text-xs font-semibold tracking-wide text-white uppercase bg-swiss-mint rounded-full\">{t('common:settingsBillingSubscription.yourCurrentPlan')}</span>"
     },
     {
       "key": "common:settingsBillingSubscription.yourCurrentPlan",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 40,
+      "line": 47,
       "context": "<span className=\"px-3 py-1 text-xs font-semibold tracking-wide text-white uppercase bg-swiss-mint rounded-full\">{t('common:settingsBillingSubscription.yourCurrentPlan')}</span>"
     },
     {
       "key": "settings:page.billingSubscription",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 78,
+      "line": 91,
       "context": "<SettingsSectionWrapper title={t('settings:page.billingSubscription')} icon={WalletIcon}>"
     },
     {
       "key": "settings:page.billingSubscription",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 78,
+      "line": 91,
       "context": "<SettingsSectionWrapper title={t('settings:page.billingSubscription')} icon={WalletIcon}>"
     },
     {
       "key": "common:settingsBillingSubscription.currentPlan",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 80,
+      "line": 93,
       "context": "<h3 className=\"text-md font-medium text-gray-700\">{t('common:settingsBillingSubscription.currentPlan')}</h3>"
     },
     {
       "key": "common:settingsBillingSubscription.currentPlan",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 80,
+      "line": 93,
       "context": "<h3 className=\"text-md font-medium text-gray-700\">{t('common:settingsBillingSubscription.currentPlan')}</h3>"
     },
     {
       "key": "common:settingsBillingSubscription.nextInvoiceOn",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 82,
+      "line": 95,
       "context": "{settings.nextInvoiceDate && <p className=\"text-sm text-gray-500 mt-0.5\">{t('common:settingsBillingSubscription.nextInvoiceOn', { date: new Date(settings.nextInvoiceDate).toLocaleDateString(i18n.language) })}</p>}"
     },
     {
       "key": "common:settingsBillingSubscription.nextInvoiceOn",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 82,
+      "line": 95,
       "context": "{settings.nextInvoiceDate && <p className=\"text-sm text-gray-500 mt-0.5\">{t('common:settingsBillingSubscription.nextInvoiceOn', { date: new Date(settings.nextInvoiceDate).toLocaleDateString(i18n.language) })}</p>}"
     },
     {
       "key": "common:settingsBillingSubscription.manageSubscriptionTitle",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 97,
+      "line": 110,
       "context": "<h3 className=\"text-xl font-semibold text-swiss-charcoal mb-2\">{t('common:settingsBillingSubscription.manageSubscriptionTitle')}</h3>"
     },
     {
       "key": "common:settingsBillingSubscription.manageSubscriptionTitle",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 97,
+      "line": 110,
       "context": "<h3 className=\"text-xl font-semibold text-swiss-charcoal mb-2\">{t('common:settingsBillingSubscription.manageSubscriptionTitle')}</h3>"
     },
     {
       "key": "common:settingsBillingSubscription.manageSubscriptionDescription",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 98,
+      "line": 111,
       "context": "<p className=\"text-sm text-gray-500 mb-4\">{t('common:settingsBillingSubscription.manageSubscriptionDescription')}</p>"
     },
     {
       "key": "common:settingsBillingSubscription.manageSubscriptionDescription",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 98,
+      "line": 111,
       "context": "<p className=\"text-sm text-gray-500 mb-4\">{t('common:settingsBillingSubscription.manageSubscriptionDescription')}</p>"
     },
     {
       "key": "common:settingsBillingSubscription.managePaymentButton",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 106,
+      "line": 119,
       "context": "{t('common:settingsBillingSubscription.managePaymentButton')}"
     },
     {
       "key": "common:settingsBillingSubscription.managePaymentButton",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 106,
+      "line": 119,
       "context": "{t('common:settingsBillingSubscription.managePaymentButton')}"
     },
     {
       "key": "common:settingsBillingSubscription.cancelSubscription",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 113,
+      "line": 126,
       "context": "{t('common:settingsBillingSubscription.cancelSubscription')}"
     },
     {
       "key": "common:settingsBillingSubscription.cancelSubscription",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 113,
+      "line": 126,
       "context": "{t('common:settingsBillingSubscription.cancelSubscription')}"
     },
     {
       "key": "common:settingsBillingSubscription.stripePortalLinkNotConfigured",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 116,
+      "line": 129,
       "context": "{!settings.stripePortalLink && <p className=\"text-xs text-gray-400 mt-2\">{t('common:settingsBillingSubscription.stripePortalLinkNotConfigured')}</p>}"
     },
     {
       "key": "common:settingsBillingSubscription.stripePortalLinkNotConfigured",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 116,
+      "line": 129,
       "context": "{!settings.stripePortalLink && <p className=\"text-xs text-gray-400 mt-2\">{t('common:settingsBillingSubscription.stripePortalLinkNotConfigured')}</p>}"
     },
     {
       "key": "common:settingsBillingSubscription.confirmCancelTitle",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 122,
+      "line": 135,
       "context": "<h3 className=\"text-lg font-semibold mb-2 text-swiss-coral\">{t('common:settingsBillingSubscription.confirmCancelTitle')}</h3>"
     },
     {
       "key": "common:settingsBillingSubscription.confirmCancelTitle",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 122,
+      "line": 135,
       "context": "<h3 className=\"text-lg font-semibold mb-2 text-swiss-coral\">{t('common:settingsBillingSubscription.confirmCancelTitle')}</h3>"
     },
     {
       "key": "common:settingsBillingSubscription.confirmCancelMessage",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 123,
+      "line": 136,
       "context": "<p className=\"text-sm text-gray-600 mb-4\">{t('common:settingsBillingSubscription.confirmCancelMessage')}</p>"
     },
     {
       "key": "common:settingsBillingSubscription.confirmCancelMessage",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 123,
+      "line": 136,
       "context": "<p className=\"text-sm text-gray-600 mb-4\">{t('common:settingsBillingSubscription.confirmCancelMessage')}</p>"
     },
     {
       "key": "common:settingsBillingSubscription.keepSubscription",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 125,
+      "line": 138,
       "context": "<Button variant=\"light\" onClick={() => setIsCancelModalOpen(false)}>{t('common:settingsBillingSubscription.keepSubscription')}</Button>"
     },
     {
       "key": "common:settingsBillingSubscription.keepSubscription",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 125,
+      "line": 138,
       "context": "<Button variant=\"light\" onClick={() => setIsCancelModalOpen(false)}>{t('common:settingsBillingSubscription.keepSubscription')}</Button>"
     },
     {
       "key": "common:settingsBillingSubscription.yesCancel",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 126,
+      "line": 139,
       "context": "<Button variant=\"danger\" onClick={() => alert('Subscription cancelled (mock action)')}>{t('common:settingsBillingSubscription.yesCancel')}</Button>"
     },
     {
       "key": "common:settingsBillingSubscription.yesCancel",
       "file": "components/settings/sections/BillingSubscriptionSettings.tsx",
-      "line": 126,
+      "line": 139,
       "context": "<Button variant=\"danger\" onClick={() => alert('Subscription cancelled (mock action)')}>{t('common:settingsBillingSubscription.yesCancel')}</Button>"
     },
     {

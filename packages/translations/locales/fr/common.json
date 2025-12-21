@@ -1405,6 +1405,8 @@
   "pricingPage": {
     "annual": "annual",
     "choosePlan": "choose Plan",
+    "comingSoon": "Bientôt disponible",
+    "enquireButton": "Renseignez-vous",
     "monthly": "monthly",
     "popular": "popular",
     "saveUpTo10": "Enregistrer up to10",

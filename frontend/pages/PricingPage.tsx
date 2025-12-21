@@ -40,6 +40,9 @@ const PricingPage: React.FC = () => {
 
   const PlanCard: React.FC<{ plan: PricingPlan }> = ({ plan }) => {
     const translatedPlan = translatePlan(plan, isAnnual);
+    const isSupplierOrProvider =
+      plan.role === UserRole.PRODUCT_SUPPLIER || plan.role === UserRole.SERVICE_PROVIDER;
+    const isEnterprisePlan = plan.role === UserRole.FOUNDATION && plan.name === 'Enterprise';
     
     return (
       <Card className={`flex flex-col p-6 border-2 ${plan.isPopular ? 'border-swiss-mint' : 'border-gray-200'} relative`} hoverEffect>
@@ -50,10 +53,16 @@ const PricingPage: React.FC = () => {
         )}
         <h3 className="text-2xl font-bold text-swiss-charcoal text-center mt-3">{plan.emoji} {translatedPlan.name}</h3>
         
-        <div className="my-4 text-center space-y-1">
-          <p className="text-xl font-semibold text-gray-800">{translatedPlan.monthlyPriceText}</p>
-          <p className="text-sm text-gray-600">{translatedPlan.annualPlanText}</p>
-        </div>
+        {!isSupplierOrProvider && (translatedPlan.monthlyPriceText || translatedPlan.annualPlanText) && (
+          <div className="my-4 text-center space-y-1">
+            {translatedPlan.monthlyPriceText && (
+              <p className="text-xl font-semibold text-gray-800">{translatedPlan.monthlyPriceText}</p>
+            )}
+            {translatedPlan.annualPlanText && (
+              <p className="text-sm text-gray-600">{translatedPlan.annualPlanText}</p>
+            )}
+          </div>
+        )}
 
         <p className="text-sm text-gray-600 text-center font-medium my-2">{translatedPlan.tagline}</p>
         <p className="text-sm text-gray-600 text-center my-4">{translatedPlan.description}</p>
@@ -69,9 +78,30 @@ const PricingPage: React.FC = () => {
             </li>
           ))}
         </ul>
-        <Button variant={plan.isPopular ? 'primary' : 'outline'} size="lg" className="w-full mt-6" onClick={() => handleChoosePlan(plan)}>
-          {fromSignup ? t('pricingPage.selectAndContinue') : t('pricingPage.choosePlan')}
-        </Button>
+        {isSupplierOrProvider ? (
+          <Button
+            variant="primary"
+            size="lg"
+            className="w-full mt-6"
+            onClick={() => {
+              window.location.href = 'mailto:hello@procrechesolutions.com';
+            }}
+          >
+            {t('pricingPage.enquireButton')}
+          </Button>
+        ) : (
+          <Button
+            variant={plan.isPopular ? 'primary' : 'outline'}
+            size="lg"
+            className="w-full mt-6"
+            onClick={() => handleChoosePlan(plan)}
+            disabled={isEnterprisePlan}
+          >
+            {isEnterprisePlan
+              ? t('pricingPage.comingSoon')
+              : (fromSignup ? t('pricingPage.selectAndContinue') : t('pricingPage.choosePlan'))}
+          </Button>
+        )}
       </Card>
     );
   };

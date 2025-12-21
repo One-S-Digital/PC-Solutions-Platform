@@ -20,12 +20,19 @@ const PlanCard: React.FC<{ plan: PricingPlan, currentPlanName?: string, onSelect
     const { translatePlan } = usePricingTranslations();
     const translatedPlan = translatePlan(plan);
     const isCurrentPlan = plan.name === currentPlanName;
+    const isEnterprisePlan = plan.name === 'Enterprise';
     const planOrder = { 'Basic': 1, 'Essential': 2, 'Professional': 3 };
     const currentPlanOrder = planOrder[currentPlanName as keyof typeof planOrder] || 0;
     const thisPlanOrder = planOrder[plan.name as keyof typeof planOrder];
     
     let actionButton;
-    if (isCurrentPlan) {
+    if (isEnterprisePlan) {
+        actionButton = (
+          <Button variant="secondary" size="md" className="w-full" disabled>
+            {t('common:pricingPage.comingSoon')}
+          </Button>
+        );
+    } else if (isCurrentPlan) {
         actionButton = <Button variant="secondary" size="md" className="w-full" disabled>{t('common:settingsBillingSubscription.yourCurrentPlan')}</Button>;
     } else if (thisPlanOrder > currentPlanOrder) {
         actionButton = <Button variant="primary" size="md" className="w-full" onClick={() => onSelectPlan(plan.name)}>{t('common:settingsBillingSubscription.upgradePlan')}</Button>;
@@ -41,10 +48,16 @@ const PlanCard: React.FC<{ plan: PricingPlan, currentPlanName?: string, onSelect
                 </div>
             )}
             <h3 className="text-2xl font-bold text-swiss-charcoal text-center mt-3">{plan.emoji} {translatedPlan.name}</h3>
-            <div className="my-4 text-center space-y-1">
-                <p className="text-xl font-semibold text-gray-800">{translatedPlan.monthlyPriceText}</p>
-                <p className="text-sm text-gray-600">{translatedPlan.annualPlanText}</p>
-            </div>
+            {(translatedPlan.monthlyPriceText || translatedPlan.annualPlanText) && (
+              <div className="my-4 text-center space-y-1">
+                {translatedPlan.monthlyPriceText && (
+                  <p className="text-xl font-semibold text-gray-800">{translatedPlan.monthlyPriceText}</p>
+                )}
+                {translatedPlan.annualPlanText && (
+                  <p className="text-sm text-gray-600">{translatedPlan.annualPlanText}</p>
+                )}
+              </div>
+            )}
             <ul className="space-y-3 text-sm text-gray-600 flex-grow mb-6">
                 {translatedPlan.features.map(feature => (
                     <li key={feature} className="flex items-start">
