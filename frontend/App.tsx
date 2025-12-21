@@ -538,7 +538,7 @@ const App: React.FC = () => {
             <Routes>
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
-              <Route path="/pricing" element={<PricingPage />} />
+              <Route path="/pricing" element={<SubscriptionProvider><PricingPage /></SubscriptionProvider>} />
               <Route path="/partners" element={<PublicPartnersPage />} />
               <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
               <Route path="/*" element={<ProtectedLayout />} />
