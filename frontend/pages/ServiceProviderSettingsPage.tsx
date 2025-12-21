@@ -16,7 +16,6 @@ import {
     WalletIcon,
     BuildingOfficeIcon,
     PhoneIcon,
-    TagIcon,
     AdjustmentsHorizontalIcon,
     PencilSquareIcon,
 } from '@heroicons/react/24/outline';
@@ -28,7 +27,6 @@ import PrivacyDataSettings from '../components/settings/sections/PrivacyDataSett
 import ContactBookingSettings from '../components/settings/sections/ContactBookingSettings';
 import DefaultsSettings from '../components/settings/sections/DefaultsSettings';
 import NotificationPreferencesSettings from '../components/settings/sections/NotificationPreferencesSettings';
-import PromoCodeManagerSettings from '../components/settings/sections/PromoCodeManagerSettings';
 
 interface ProviderSectionConfig {
   id: string;
@@ -163,7 +161,6 @@ const ServiceProviderSettingsPage: React.FC = () => {
     { id: 'privacyData', nameKey: 'common:settingsPage.privacyData', icon: LockClosedIcon, component: PrivacyDataSettings },
     { id: 'notifications', nameKey: 'common:settingsPage.notificationPreferences', icon: BellAlertIcon, component: NotificationPreferencesSettings },
     { id: 'contactBooking', nameKey: 'common:settingsPage.contactBooking', icon: PhoneIcon, component: ContactBookingSettings },
-    { id: 'promoCodes', nameKey: 'common:settingsPage.promoCodeManager', icon: TagIcon, component: PromoCodeManagerSettings },
     { id: 'defaults', nameKey: 'settings:page.defaults', icon: AdjustmentsHorizontalIcon, component: DefaultsSettings },
   ];
 
