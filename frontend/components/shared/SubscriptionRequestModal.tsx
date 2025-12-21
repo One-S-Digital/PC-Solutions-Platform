@@ -109,12 +109,15 @@ const SubscriptionRequestModal: React.FC<SubscriptionRequestModalProps> = ({
       <div
         className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
         onClick={(e) => e.target === e.currentTarget && onClose()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="subscription-success-title"
       >
-        <div className="bg-white rounded-2xl w-full max-w-md p-8 text-center">
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+        <div className="bg-white rounded-2xl w-full max-w-md p-8 text-center" role="document">
+          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6" aria-hidden="true">
             <CheckCircleIcon className="w-10 h-10 text-green-600" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+          <h2 id="subscription-success-title" className="text-2xl font-bold text-gray-900 mb-4">
             {t('subscription:requestForm.success.title', 'Request Submitted!')}
           </h2>
           <p className="text-gray-600 mb-6">
@@ -149,13 +152,16 @@ const SubscriptionRequestModal: React.FC<SubscriptionRequestModalProps> = ({
     <div
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
       onClick={(e) => e.target === e.currentTarget && onClose()}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="subscription-modal-title"
     >
-      <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto" role="document">
         {/* Header */}
         <div className="p-6 border-b border-gray-200">
           <div className="flex justify-between items-start">
             <div>
-              <h2 className="text-xl font-bold text-gray-900">
+              <h2 id="subscription-modal-title" className="text-xl font-bold text-gray-900">
                 {t('subscription:requestForm.title', 'Request Subscription')}
               </h2>
               <p className="text-sm text-gray-500 mt-1">
@@ -165,6 +171,7 @@ const SubscriptionRequestModal: React.FC<SubscriptionRequestModalProps> = ({
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label={t('common:buttons.close', 'Close')}
             >
               <XMarkIcon className="w-6 h-6" />
             </button>

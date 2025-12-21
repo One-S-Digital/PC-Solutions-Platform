@@ -63,6 +63,9 @@ const PricingPage: React.FC = () => {
         message: data.message,
         organizationId: data.organizationId,
       });
+    } catch (error) {
+      // Re-throw to let the modal handle and display the error
+      throw error;
     } finally {
       setIsSubmitting(false);
     }

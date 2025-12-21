@@ -8,6 +8,7 @@ import {
   IsEmail,
   Min,
   Max,
+  MaxLength,
 } from 'class-validator';
 import { SubscriptionTier } from '@workspace/types';
 
@@ -57,6 +58,7 @@ export class CreateSubscriptionRequestDto {
 
   @IsOptional()
   @IsString()
+  @MaxLength(2000)
   message?: string;
 }
 
@@ -98,6 +100,7 @@ export class SubscriptionRequestFiltersDto {
 export class ReviewSubscriptionRequestDto {
   @IsOptional()
   @IsString()
+  @MaxLength(5000)
   notes?: string;
 }
 
@@ -122,6 +125,7 @@ export class SendInvoiceDto {
 
   @IsOptional()
   @IsString()
+  @MaxLength(5000)
   notes?: string;
 }
 
@@ -143,6 +147,7 @@ export class ConfirmPaymentDto {
 
   @IsOptional()
   @IsString()
+  @MaxLength(5000)
   notes?: string;
 }
 
@@ -170,6 +175,7 @@ export class ActivateFromRequestDto {
 
   @IsOptional()
   @IsString()
+  @MaxLength(5000)
   notes?: string;
 }
 
@@ -178,6 +184,7 @@ export class ActivateFromRequestDto {
  */
 export class DeclineSubscriptionRequestDto {
   @IsString()
+  @MaxLength(1000)
   reason: string;
 
   @IsOptional()
@@ -186,6 +193,7 @@ export class DeclineSubscriptionRequestDto {
 
   @IsOptional()
   @IsString()
+  @MaxLength(5000)
   notes?: string;
 }
 
@@ -194,6 +202,7 @@ export class DeclineSubscriptionRequestDto {
  */
 export class AddRequestNoteDto {
   @IsString()
+  @MaxLength(2000)
   note: string;
 
   @IsOptional()

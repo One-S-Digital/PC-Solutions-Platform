@@ -68,13 +68,14 @@ export interface SubscriptionSettings {
 
 export interface SubscriptionRequestAnalytics {
   totalRequests: number;
-  pendingRequests: number;
-  underReviewRequests: number;
-  invoiceSentRequests: number;
-  paymentPendingRequests: number;
-  activatedRequests: number;
-  declinedRequests: number;
-  cancelledRequests: number;
+  // UI-aligned field names
+  pending: number;
+  underReview: number;
+  invoiceSent: number;
+  paymentReceived: number;
+  activated: number;
+  declined: number;
+  cancelled: number;
   requestsByStatus: Record<string, number>;
   averageProcessingDays: number;
   conversionRate: number;
@@ -116,22 +117,27 @@ export class SubscriptionRequestService {
       }
 
       // Check for existing pending request
-      const existingRequest = await this.prisma.subscriptionRequest.findFirst({
-        where: {
-          OR: [
-            { userId: userId || undefined },
-            { organizationId: organizationId || undefined },
-          ],
-          status: {
-            in: ['PENDING', 'UNDER_REVIEW', 'INVOICE_SENT', 'PAYMENT_PENDING'],
-          },
-        },
-      });
+      // Build owner conditions properly to avoid matching all requests when IDs are missing
+      const ownerConditions = [
+        userId ? { userId } : null,
+        organizationId ? { organizationId } : null,
+      ].filter(Boolean) as Array<{ userId?: string; organizationId?: string }>;
 
-      if (existingRequest) {
-        throw new BadRequestException(
-          'You already have a pending subscription request. Please wait for it to be processed.',
-        );
+      if (ownerConditions.length > 0) {
+        const existingRequest = await this.prisma.subscriptionRequest.findFirst({
+          where: {
+            OR: ownerConditions,
+            status: {
+              in: ['PENDING', 'UNDER_REVIEW', 'INVOICE_SENT', 'PAYMENT_PENDING'],
+            },
+          },
+        });
+
+        if (existingRequest) {
+          throw new BadRequestException(
+            'You already have a pending subscription request. Please wait for it to be processed.',
+          );
+        }
       }
 
       // Determine tier from plan code if not provided
@@ -656,20 +662,20 @@ export class SubscriptionRequestService {
     try {
       const [
         totalRequests,
-        pendingRequests,
-        underReviewRequests,
-        invoiceSentRequests,
-        paymentPendingRequests,
-        activatedRequests,
-        declinedRequests,
-        cancelledRequests,
+        pending,
+        underReview,
+        invoiceSent,
+        paymentReceived,
+        activated,
+        declined,
+        cancelled,
         requestsByStatus,
       ] = await Promise.all([
         this.prisma.subscriptionRequest.count(),
         this.prisma.subscriptionRequest.count({ where: { status: 'PENDING' } }),
         this.prisma.subscriptionRequest.count({ where: { status: 'UNDER_REVIEW' } }),
         this.prisma.subscriptionRequest.count({ where: { status: 'INVOICE_SENT' } }),
-        this.prisma.subscriptionRequest.count({ where: { status: 'PAYMENT_PENDING' } }),
+        this.prisma.subscriptionRequest.count({ where: { status: 'PAYMENT_RECEIVED' } }),
         this.prisma.subscriptionRequest.count({ where: { status: 'ACTIVATED' } }),
         this.prisma.subscriptionRequest.count({ where: { status: 'DECLINED' } }),
         this.prisma.subscriptionRequest.count({ where: { status: 'CANCELLED' } }),
@@ -686,17 +692,17 @@ export class SubscriptionRequestService {
       }
 
       // Calculate conversion rate
-      const conversionRate = totalRequests > 0 ? (activatedRequests / totalRequests) * 100 : 0;
+      const conversionRate = totalRequests > 0 ? (activated / totalRequests) * 100 : 0;
 
       return {
         totalRequests,
-        pendingRequests,
-        underReviewRequests,
-        invoiceSentRequests,
-        paymentPendingRequests,
-        activatedRequests,
-        declinedRequests,
-        cancelledRequests,
+        pending,
+        underReview,
+        invoiceSent,
+        paymentReceived,
+        activated,
+        declined,
+        cancelled,
         requestsByStatus: byStatus,
         averageProcessingDays: 0, // TODO: Calculate
         conversionRate,

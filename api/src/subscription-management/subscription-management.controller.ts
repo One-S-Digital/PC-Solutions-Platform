@@ -953,29 +953,25 @@ export class UserSubscriptionController {
     const userId = userContext?.userId;
     const organizationId = userContext?.organizationId;
 
-    try {
-      // Create the subscription request using the new service
-      const request = await this.subscriptionRequestService.createRequest(
-        body,
-        userId,
-        organizationId,
-      );
+    // Create the subscription request using the new service
+    const request = await this.subscriptionRequestService.createRequest(
+      body,
+      userId,
+      organizationId,
+    );
 
-      // Get estimated response time from settings
-      const settings = await this.subscriptionRequestService.getSettings();
-      const estimatedHours = settings.estimatedResponseHours || 48;
+    // Get estimated response time from settings
+    const settings = await this.subscriptionRequestService.getSettings();
+    const estimatedHours = settings.estimatedResponseHours || 48;
 
-      return wrapResponse({
-        message: 'Subscription request submitted successfully. Our team will contact you shortly.',
-        requestId: request.id,
-        status: request.status,
-        estimatedResponseTime: `${Math.ceil(estimatedHours / 24)} business days`,
-        // Future: Add checkoutUrl for Stripe integration
-        checkoutUrl: null,
-      });
-    } catch (error) {
-      return wrapResponse(null, (error as Error).message, false);
-    }
+    return wrapResponse({
+      message: 'Subscription request submitted successfully. Our team will contact you shortly.',
+      requestId: request.id,
+      status: request.status,
+      estimatedResponseTime: `${Math.ceil(estimatedHours / 24)} business days`,
+      // Future: Add checkoutUrl for Stripe integration
+      checkoutUrl: null,
+    });
   }
 
   /**
