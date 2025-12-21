@@ -44,6 +44,29 @@ export interface SubscriptionPlan {
   updatedAt: string;
 }
 
+export interface PricingTierDiscounts {
+  yearlyDiscount: number;
+  volumeDiscounts: Array<{
+    minQuantity: number;
+    discountPercentage: number;
+  }>;
+}
+
+export interface PricingTier {
+  id: string;
+  role: string;
+  subscriptionTier: SubscriptionTier;
+  name: string;
+  basePrice: number;
+  currency: string;
+  billingPeriod: 'monthly' | 'yearly';
+  discounts: PricingTierDiscounts;
+  isActive: boolean;
+  displayOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Subscription {
   id: string;
   userId?: string;
@@ -271,6 +294,21 @@ export interface CreatePlanDto {
 }
 
 export interface UpdatePlanDto extends Partial<CreatePlanDto> {}
+
+// Pricing tier DTOs
+export interface CreatePricingTierDto {
+  role: string;
+  subscriptionTier: SubscriptionTier;
+  name: string;
+  basePrice: number;
+  currency?: string;
+  billingPeriod?: 'monthly' | 'yearly';
+  discounts?: Partial<PricingTierDiscounts>;
+  isActive?: boolean;
+  displayOrder?: number;
+}
+
+export interface UpdatePricingTierDto extends Partial<CreatePricingTierDto> {}
 
 // Utility types
 export const SubscriptionStatusLabels: Record<SubscriptionStatus, string> = {

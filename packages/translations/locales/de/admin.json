@@ -1605,7 +1605,61 @@
       "basic": "Basis",
       "essential": "Essential",
       "professional": "Professional",
-      "enterprise": "Enterprise"
+      "enterprise": "Enterprise",
+      "help": "Die Stufe gilt für Funktionszugriff und Preis-Konfiguration für Stiftungen."
+    },
+    "tierSection": {
+      "title": "Abonnementstufe",
+      "subtitle": "Abonnementstufen und Preise für Stiftungen konfigurieren.",
+      "add": "Stufe hinzufügen",
+      "empty": "Noch keine Stufen konfiguriert.",
+      "table": {
+        "tier": "Stufe",
+        "billing": "Abrechnung",
+        "price": "Preis",
+        "active": "Aktiv",
+        "actions": "Aktionen"
+      }
+    },
+    "tierEditor": {
+      "createTitle": "Abonnementstufe erstellen",
+      "editTitle": "Abonnementstufe bearbeiten",
+      "success": "Abonnementstufe erfolgreich gespeichert",
+      "error": "Fehler beim Speichern der Abonnementstufe: ",
+      "deleteSuccess": "Abonnementstufe erfolgreich gelöscht",
+      "deleteError": "Fehler beim Löschen der Abonnementstufe: ",
+      "confirmDelete": "Diese Stufe löschen?",
+      "billing": {
+        "monthly": "Monatlich",
+        "yearly": "Jährlich"
+      },
+      "fields": {
+        "subscriptionTier": "Stufe",
+        "billingPeriod": "Abrechnungszeitraum",
+        "name": "Name",
+        "namePlaceholder": "z.B. Stiftung - Essential",
+        "basePrice": "Grundpreis",
+        "currency": "Währung",
+        "yearlyDiscount": "Jahresrabatt (%)",
+        "displayOrder": "Anzeigereihenfolge",
+        "isActive": "Aktiv",
+        "isActiveHelp": "Inaktive Stufen sind bei Auswahl und Preisberechnung ausgeblendet.",
+        "volumeDiscounts": "Mengenrabatte",
+        "volumeDiscountsHelp": "Optional: Rabatte basierend auf Menge.",
+        "noVolumeDiscounts": "Keine Mengenrabatte konfiguriert.",
+        "minQuantity": "Mindestmenge",
+        "discountPercentage": "Rabatt (%)"
+      },
+      "actions": {
+        "addVolumeDiscount": "Hinzufügen",
+        "saving": "Speichern...",
+        "save": "Speichern"
+      },
+      "validation": {
+        "basePrice": "Der Grundpreis muss eine gültige Zahl sein.",
+        "yearlyDiscount": "Der Jahresrabatt muss zwischen 0 und 100 liegen.",
+        "displayOrder": "Die Anzeigereihenfolge muss eine gültige Zahl sein."
+      }
     },
     "actions": {
       "activate": "Aktivieren",

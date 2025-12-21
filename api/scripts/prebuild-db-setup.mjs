@@ -594,6 +594,119 @@ CREATE INDEX IF NOT EXISTS "subscriptions_is_manual_idx" ON "subscriptions"("is_
 };
 
 /**
+ * Ensure foundation subscription tier schema exists (PricingTier scoping).
+ * Matches migration `20251221000002_foundation_subscription_tiers`.
+ */
+const ensureFoundationSubscriptionTiers = () => {
+  const sql = `
+-- Ensure pricing_tiers table exists (from init migration)
+CREATE TABLE IF NOT EXISTS "pricing_tiers" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "basePrice" DOUBLE PRECISION NOT NULL,
+    "currency" TEXT NOT NULL DEFAULT 'CHF',
+    "billingPeriod" TEXT NOT NULL DEFAULT 'monthly',
+    "discounts" JSONB NOT NULL,
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    CONSTRAINT "pricing_tiers_pkey" PRIMARY KEY ("id")
+);
+
+-- Ensure columns for scoping exist
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'pricing_tiers' AND column_name = 'role') THEN
+        ALTER TABLE "public"."pricing_tiers" ADD COLUMN "role" "UserRole" NOT NULL DEFAULT 'FOUNDATION';
+    END IF;
+END $$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'pricing_tiers' AND column_name = 'subscription_tier') THEN
+        ALTER TABLE "public"."pricing_tiers" ADD COLUMN "subscription_tier" "SubscriptionTier" NOT NULL DEFAULT 'BASIC';
+    END IF;
+END $$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'pricing_tiers' AND column_name = 'display_order') THEN
+        ALTER TABLE "public"."pricing_tiers" ADD COLUMN "display_order" INTEGER NOT NULL DEFAULT 0;
+    END IF;
+END $$;
+
+-- Ensure indexes
+CREATE INDEX IF NOT EXISTS "pricing_tiers_role_idx" ON "public"."pricing_tiers" ("role");
+CREATE INDEX IF NOT EXISTS "pricing_tiers_subscription_tier_idx" ON "public"."pricing_tiers" ("subscription_tier");
+CREATE INDEX IF NOT EXISTS "pricing_tiers_role_subscription_tier_idx" ON "public"."pricing_tiers" ("role", "subscription_tier");
+
+-- Ensure uniqueness constraint
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_constraint
+    WHERE conname = 'pricing_tiers_role_subscription_tier_billing_period_key'
+  ) THEN
+    ALTER TABLE "public"."pricing_tiers"
+      ADD CONSTRAINT "pricing_tiers_role_subscription_tier_billing_period_key"
+      UNIQUE ("role", "subscription_tier", "billingPeriod");
+  END IF;
+END $$;
+
+-- Seed default Foundation tiers if missing
+-- Ensure pgcrypto is available for gen_random_uuid()
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+INSERT INTO "public"."pricing_tiers" (
+  "id",
+  "role",
+  "subscription_tier",
+  "name",
+  "basePrice",
+  "currency",
+  "billingPeriod",
+  "discounts",
+  "isActive",
+  "display_order",
+  "createdAt",
+  "updatedAt"
+)
+SELECT
+  gen_random_uuid()::text,
+  'FOUNDATION'::"public"."UserRole",
+  v.subscription_tier::"public"."SubscriptionTier",
+  v.name,
+  v.base_price,
+  'CHF',
+  'monthly',
+  jsonb_build_object('yearlyDiscount', 0, 'volumeDiscounts', '[]'::jsonb),
+  TRUE,
+  v.display_order,
+  NOW(),
+  NOW()
+FROM (
+  VALUES
+    ('BASIC', 'Foundation - Basic', 0.0, 10),
+    ('ESSENTIAL', 'Foundation - Essential', 0.0, 20),
+    ('PROFESSIONAL', 'Foundation - Professional', 0.0, 30),
+    ('ENTERPRISE', 'Foundation - Enterprise', 0.0, 40)
+) AS v(subscription_tier, name, base_price, display_order)
+WHERE NOT EXISTS (
+  SELECT 1
+  FROM "public"."pricing_tiers" pt
+  WHERE pt."role" = 'FOUNDATION'::"public"."UserRole"
+    AND pt."subscription_tier" = v.subscription_tier::"public"."SubscriptionTier"
+    AND pt."billingPeriod" = 'monthly'
+);
+`;
+
+  log('Ensuring foundation subscription tiers schema exists...');
+  runSql(sql);
+  log('✅ Foundation subscription tiers schema verified.');
+};
+
+/**
  * Ensure job contract type enum has new values.
  * Matches migration `20251219000000_add_job_contract_types`.
  * Adds REPLACEMENT, TEMPORARY, FREELANCE to JobContractType enum.
@@ -895,6 +1008,30 @@ const main = async () => {
     try {
       forceMarkMigrationRolledBack('20251218000000_subscription_management_system');
       ensureSubscriptionManagementSystem();
+    } catch (e2) {
+      error(`❌ Could not prepare for migration: ${e2.message}`);
+    }
+  }
+
+  // Foundation subscription tiers (PricingTier scoping + seed)
+  try {
+    log('🔧 Preparing for foundation subscription tiers migration...');
+    let cleared = await resolveMigration('rolled-back', '20251221000002_foundation_subscription_tiers');
+    if (!cleared) {
+      log('⚠️  Standard resolve failed, force-marking as rolled-back...');
+      cleared = forceMarkMigrationRolledBack('20251221000002_foundation_subscription_tiers');
+    }
+    if (cleared) {
+      log('✅ Migration cleared from failed state. Prisma will re-run it.');
+    }
+    ensureFoundationSubscriptionTiers();
+    log('✅ Database schema prepared for migration.');
+    log('📋 Prisma migrate deploy will now run this migration and mark it complete.');
+  } catch (e) {
+    warn(`⚠️  Foundation subscription tiers preparation failed: ${e.message}`);
+    try {
+      forceMarkMigrationRolledBack('20251221000002_foundation_subscription_tiers');
+      ensureFoundationSubscriptionTiers();
     } catch (e2) {
       error(`❌ Could not prepare for migration: ${e2.message}`);
     }
