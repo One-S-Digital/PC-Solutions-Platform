@@ -1655,6 +1655,20 @@
       "planLabel": "Plan",
       "periodLabel": "Zeitraum"
     },
+    "planEditor": {
+      "open": "Pläne bearbeiten",
+      "title": "Abonnementplan-Editor",
+      "plan": "Plan",
+      "billingPeriod": "Abonnement",
+      "billingPeriodHelp": "Wählen Sie den für diesen Plan angezeigten Abonnementzeitraum aus.",
+      "currentInfo": "Aktuelle Planinfo",
+      "price": "Preis",
+      "currentBillingPeriod": "Aktuelles Abonnement",
+      "saving": "Speichern...",
+      "save": "Änderungen speichern",
+      "success": "Plan erfolgreich aktualisiert",
+      "error": "Fehler beim Aktualisieren des Plans: "
+    },
     "createSubscription": {
       "title": "Abonnement erstellen"
     },

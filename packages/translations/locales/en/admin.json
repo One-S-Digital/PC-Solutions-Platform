@@ -1647,6 +1647,20 @@
       "planLabel": "Plan",
       "periodLabel": "Period"
     },
+    "planEditor": {
+      "open": "Edit Plans",
+      "title": "Subscription Plan Editor",
+      "plan": "Plan",
+      "billingPeriod": "Subscription",
+      "billingPeriodHelp": "Select the subscription billing period shown for this plan.",
+      "currentInfo": "Current Plan Info",
+      "price": "Price",
+      "currentBillingPeriod": "Current Subscription",
+      "saving": "Saving...",
+      "save": "Save Changes",
+      "success": "Plan updated successfully",
+      "error": "Failed to update plan: "
+    },
     "createSubscription": {
       "title": "Create Subscription"
     },
