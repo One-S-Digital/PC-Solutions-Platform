@@ -19,6 +19,11 @@ export class UpdateEducatorSettingsDto {
   @IsEmail()
   email: string;
 
+  // Separate from authentication email: used for "contact info" on the profile.
+  @IsOptional()
+  @IsEmail()
+  contactEmail?: string;
+
   @IsString()
   phoneNumber: string;
 

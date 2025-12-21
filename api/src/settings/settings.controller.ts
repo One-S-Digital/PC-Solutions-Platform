@@ -289,6 +289,7 @@ export class SettingsController {
     const { user } = await this.principal.getOrBootstrapAccountAndProfile(clerkUserId, {
       avatarAsset: true, // Include avatar asset relation
       coverAsset: true, // Include cover asset relation
+      contactInfo: true,
     });
 
     return {
@@ -297,6 +298,9 @@ export class SettingsController {
         firstName: user.firstName ?? '',
         lastName: user.lastName ?? '',
         email: user.email,
+        // Contact email is stored separately from authentication email.
+        // For backward compatibility, fall back to the user's auth email if unset.
+        contactEmail: (user as any).contactInfo?.contactEmail ?? user.email,
         phoneNumber: user.phoneNumber ?? '',
         workExperience: user.workExperience ?? '',
         education: user.education ?? '',
@@ -356,6 +360,20 @@ export class SettingsController {
         ...(settings.coverAssetId !== undefined && { coverAssetId: settings.coverAssetId || null }),
       },
       });
+
+      // Store contact email separately (does NOT touch auth email).
+      if (settings.contactEmail !== undefined) {
+        await tx.userContactInfo.upsert({
+          where: { userId: profileId },
+          create: {
+            userId: profileId,
+            contactEmail: settings.contactEmail || null,
+          },
+          update: {
+            contactEmail: settings.contactEmail || null,
+          },
+        });
+      }
 
       if (settings.email) {
         await tx.appUser.update({
@@ -758,7 +776,9 @@ export class SettingsController {
   @ApiResponse({ status: 200, description: 'Settings retrieved successfully' })
   async getParentSettings(@Request() req) {
     const { clerkUserId } = this.getContext(req);
-    const { user } = await this.principal.getOrBootstrapAccountAndProfile(clerkUserId);
+    const { user } = await this.principal.getOrBootstrapAccountAndProfile(clerkUserId, {
+      contactInfo: true,
+    });
 
     return {
       success: true,
@@ -766,6 +786,9 @@ export class SettingsController {
         firstName: user.firstName ?? '',
         lastName: user.lastName ?? '',
         email: user.email,
+        // Contact email is stored separately from authentication email.
+        // For backward compatibility, fall back to the user's auth email if unset.
+        contactEmail: (user as any).contactInfo?.contactEmail ?? user.email,
         phoneNumber: user.phoneNumber ?? '',
         childAge: 0,
         preferredLocation: '',
@@ -803,6 +826,20 @@ export class SettingsController {
           ...(settings.avatarAssetId !== undefined && { avatarAssetId: settings.avatarAssetId || null }),
         },
       });
+
+      // Store contact email separately (does NOT touch auth email).
+      if (settings.contactEmail !== undefined) {
+        await tx.userContactInfo.upsert({
+          where: { userId: profileId },
+          create: {
+            userId: profileId,
+            contactEmail: settings.contactEmail || null,
+          },
+          update: {
+            contactEmail: settings.contactEmail || null,
+          },
+        });
+      }
 
       if (settings.email) {
         await tx.appUser.update({
