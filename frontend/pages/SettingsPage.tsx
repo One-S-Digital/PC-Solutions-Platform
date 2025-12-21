@@ -8,7 +8,7 @@ import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import {
   UsersIcon, LockClosedIcon, BellAlertIcon, WalletIcon, BuildingOfficeIcon,
-  PhoneIcon, TagIcon, AdjustmentsHorizontalIcon, ChartPieIcon, UserCircleIcon, PencilSquareIcon
+  PhoneIcon, AdjustmentsHorizontalIcon, ChartPieIcon, UserCircleIcon, PencilSquareIcon
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import Tabs from '../components/ui/Tabs';
@@ -17,7 +17,6 @@ import Tabs from '../components/ui/Tabs';
 import ContactBookingSettings from '../components/settings/sections/ContactBookingSettings';
 import NotificationPreferencesSettings from '../components/settings/sections/NotificationPreferencesSettings';
 import DefaultsSettings from '../components/settings/sections/DefaultsSettings';
-import PromoCodeManagerSettings from '../components/settings/sections/PromoCodeManagerSettings';
 import BillingSubscriptionSettings from '../components/settings/sections/BillingSubscriptionSettings';
 import AnalyticsPreferencesSettings from '../components/settings/sections/AnalyticsPreferencesSettings';
 import TeamPermissionsSettings from '../components/settings/sections/TeamPermissionsSettings';
@@ -207,7 +206,6 @@ const SettingsPage: React.FC = () => {
     { id: 'notifications', nameKey: 'common:settingsPage.notificationPreferences', icon: BellAlertIcon, component: NotificationPreferencesSettings, roles: [UserRole.PRODUCT_SUPPLIER, UserRole.FOUNDATION] },
     { id: 'privacyData', nameKey: 'common:settingsPage.privacyData', icon: LockClosedIcon, component: PrivacyDataSettings, roles: [UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.FOUNDATION] },
     { id: 'contactBooking', nameKey: 'common:settingsPage.contactBooking', icon: PhoneIcon, component: ContactBookingSettings, roles: [UserRole.PRODUCT_SUPPLIER] },
-    { id: 'promoCodes', nameKey: 'common:settingsPage.promoCodeManager', icon: TagIcon, component: PromoCodeManagerSettings, roles: [UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER] },
     { id: 'analyticsPreferences', nameKey: 'common:settingsPage.analyticsPreferences', icon: ChartPieIcon, component: AnalyticsPreferencesSettings, roles: [UserRole.PRODUCT_SUPPLIER] },
   ];
 
