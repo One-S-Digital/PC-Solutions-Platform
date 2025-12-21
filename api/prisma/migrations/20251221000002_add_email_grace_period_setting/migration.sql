@@ -3,11 +3,13 @@
 -- after a user's email is changed (allows users to recover if needed)
 
 -- Only insert if the setting doesn't already exist
-INSERT INTO "SystemSettings" ("id", "key", "value", "description", "category", "isEncrypted", "isPublic", "createdAt", "updatedAt")
+-- NOTE: Prisma maps model `SystemSettings` -> table `public.system_settings` (see @@map).
+-- Using "SystemSettings" (quoted) would look for a case-sensitive table that doesn't exist.
+INSERT INTO "public"."system_settings" ("id", "key", "value", "description", "category", "isEncrypted", "isPublic", "createdAt", "updatedAt")
 SELECT 
     gen_random_uuid(),
     'email.grace_period_days',
-    '7',
+    to_jsonb(7),
     'Number of days to keep old email addresses before automatic deletion after an email change. This grace period allows users to recover access if needed.',
     'email',
     false,
@@ -15,5 +17,5 @@ SELECT
     NOW(),
     NOW()
 WHERE NOT EXISTS (
-    SELECT 1 FROM "SystemSettings" WHERE "key" = 'email.grace_period_days'
+    SELECT 1 FROM "public"."system_settings" WHERE "key" = 'email.grace_period_days'
 );
