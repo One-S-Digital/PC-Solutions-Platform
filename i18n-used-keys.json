@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-21T15:52:46.778Z",
+  "timestamp": "2025-12-21T17:19:55.264Z",
   "totalKeys": 1857,
   "byNamespace": {
     "common": 2683,
@@ -16553,6 +16553,252 @@
       "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close', 'Close')}</Button>"
     },
     {
+      "key": "common:errors.genericErrorTitle",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 80,
+      "context": "title: t('common:errors.genericErrorTitle'),"
+    },
+    {
+      "key": "common:errors.genericErrorTitle",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 80,
+      "context": "title: t('common:errors.genericErrorTitle'),"
+    },
+    {
+      "key": "common:errors.genericErrorMessage",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 81,
+      "context": "message: t('common:errors.genericErrorMessage'),"
+    },
+    {
+      "key": "common:errors.genericErrorMessage",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 81,
+      "context": "message: t('common:errors.genericErrorMessage'),"
+    },
+    {
+      "key": "notifications.successTitle",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 157,
+      "context": "title: t('notifications.successTitle'),"
+    },
+    {
+      "key": "notifications.settingsUpdated",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 158,
+      "context": "message: t('notifications.settingsUpdated'),"
+    },
+    {
+      "key": "common:errors.genericErrorTitle",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 164,
+      "context": "title: t('common:errors.genericErrorTitle'),"
+    },
+    {
+      "key": "common:errors.genericErrorTitle",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 164,
+      "context": "title: t('common:errors.genericErrorTitle'),"
+    },
+    {
+      "key": "common:errors.genericErrorMessage",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 165,
+      "context": "message: t('common:errors.genericErrorMessage'),"
+    },
+    {
+      "key": "common:errors.genericErrorMessage",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 165,
+      "context": "message: t('common:errors.genericErrorMessage'),"
+    },
+    {
+      "key": "common:organizationProfileForm.accessDenied",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 175,
+      "context": "return <p>{t('common:organizationProfileForm.accessDenied')}</p>;"
+    },
+    {
+      "key": "common:organizationProfileForm.accessDenied",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 175,
+      "context": "return <p>{t('common:organizationProfileForm.accessDenied')}</p>;"
+    },
+    {
+      "key": "common:loading",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 181,
+      "context": "<p>{t('common:loading')}</p>"
+    },
+    {
+      "key": "common:loading",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 181,
+      "context": "<p>{t('common:loading')}</p>"
+    },
+    {
+      "key": "common:organizationProfileForm.title",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 188,
+      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal mb-1\">{t('common:organizationProfileForm.title')}</h2>"
+    },
+    {
+      "key": "common:organizationProfileForm.title",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 188,
+      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal mb-1\">{t('common:organizationProfileForm.title')}</h2>"
+    },
+    {
+      "key": "common:organizationProfileForm.subtitle",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 189,
+      "context": "<p className=\"text-sm text-gray-500 mb-6\">{t('common:organizationProfileForm.subtitle')}</p>"
+    },
+    {
+      "key": "common:organizationProfileForm.subtitle",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 189,
+      "context": "<p className=\"text-sm text-gray-500 mb-6\">{t('common:organizationProfileForm.subtitle')}</p>"
+    },
+    {
+      "key": "dashboard:organizationProfileForm.saveSuccess",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 193,
+      "context": "{t('dashboard:organizationProfileForm.saveSuccess')}"
+    },
+    {
+      "key": "dashboard:organizationProfileForm.saveSuccess",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 193,
+      "context": "{t('dashboard:organizationProfileForm.saveSuccess')}"
+    },
+    {
+      "key": "common:organizationProfileForm.labels.capacity",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 200,
+      "context": "{t('common:organizationProfileForm.labels.capacity')}"
+    },
+    {
+      "key": "common:organizationProfileForm.labels.capacity",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 200,
+      "context": "{t('common:organizationProfileForm.labels.capacity')}"
+    },
+    {
+      "key": "common:organizationProfileForm.labels.pedagogy",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 215,
+      "context": "{t('common:organizationProfileForm.labels.pedagogy')}"
+    },
+    {
+      "key": "common:organizationProfileForm.labels.pedagogy",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 215,
+      "context": "{t('common:organizationProfileForm.labels.pedagogy')}"
+    },
+    {
+      "key": "common:organizationProfileForm.placeholders.pedagogy",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 224,
+      "context": "placeholder={t('common:organizationProfileForm.placeholders.pedagogy')}"
+    },
+    {
+      "key": "common:organizationProfileForm.placeholders.pedagogy",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 224,
+      "context": "placeholder={t('common:organizationProfileForm.placeholders.pedagogy')}"
+    },
+    {
+      "key": "common:organizationProfileForm.helpText.commaSeparated",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 226,
+      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
+    },
+    {
+      "key": "common:organizationProfileForm.helpText.commaSeparated",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 226,
+      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
+    },
+    {
+      "key": "common:organizationProfileForm.labels.languages",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 231,
+      "context": "{t('common:organizationProfileForm.labels.languages')}"
+    },
+    {
+      "key": "common:organizationProfileForm.labels.languages",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 231,
+      "context": "{t('common:organizationProfileForm.labels.languages')}"
+    },
+    {
+      "key": "common:organizationProfileForm.placeholders.languages",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 240,
+      "context": "placeholder={t('common:organizationProfileForm.placeholders.languages')}"
+    },
+    {
+      "key": "common:organizationProfileForm.placeholders.languages",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 240,
+      "context": "placeholder={t('common:organizationProfileForm.placeholders.languages')}"
+    },
+    {
+      "key": "common:organizationProfileForm.helpText.commaSeparated",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 242,
+      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
+    },
+    {
+      "key": "common:organizationProfileForm.helpText.commaSeparated",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 242,
+      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
+    },
+    {
+      "key": "common:buttons.saveChanges",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 247,
+      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
+    },
+    {
+      "key": "common:organizationProfileForm.saveButton",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 247,
+      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
+    },
+    {
+      "key": "common:buttons.saveChanges",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 247,
+      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
+    },
+    {
+      "key": "common:organizationProfileForm.saveButton",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 247,
+      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
+    },
+    {
+      "key": "common:buttons.confirm",
+      "file": "components/settings/ConfirmDestructiveActionModal.tsx",
+      "line": 25,
+      "context": "const finalConfirmButtonText = confirmButtonText || t('common:buttons.confirm');"
+    },
+    {
+      "key": "common:buttons.confirm",
+      "file": "components/settings/ConfirmDestructiveActionModal.tsx",
+      "line": 25,
+      "context": "const finalConfirmButtonText = confirmButtonText || t('common:buttons.confirm');"
+    },
+    {
+      "key": "addPromoCodeModal.placeholder",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 12,
+      "context": "<p>{t(\"addPromoCodeModal.placeholder\")}</p>"
+    },
+    {
       "key": "renameFileModal.title",
       "file": "components/shared/RenameFileModal.tsx",
       "line": 40,
@@ -16863,252 +17109,6 @@
       "file": "components/shared/ActiveClientToggle.tsx",
       "line": 87,
       "context": "{t('common:buttons.saveChanges')}"
-    },
-    {
-      "key": "common:errors.genericErrorTitle",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 80,
-      "context": "title: t('common:errors.genericErrorTitle'),"
-    },
-    {
-      "key": "common:errors.genericErrorTitle",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 80,
-      "context": "title: t('common:errors.genericErrorTitle'),"
-    },
-    {
-      "key": "common:errors.genericErrorMessage",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 81,
-      "context": "message: t('common:errors.genericErrorMessage'),"
-    },
-    {
-      "key": "common:errors.genericErrorMessage",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 81,
-      "context": "message: t('common:errors.genericErrorMessage'),"
-    },
-    {
-      "key": "notifications.successTitle",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 157,
-      "context": "title: t('notifications.successTitle'),"
-    },
-    {
-      "key": "notifications.settingsUpdated",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 158,
-      "context": "message: t('notifications.settingsUpdated'),"
-    },
-    {
-      "key": "common:errors.genericErrorTitle",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 164,
-      "context": "title: t('common:errors.genericErrorTitle'),"
-    },
-    {
-      "key": "common:errors.genericErrorTitle",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 164,
-      "context": "title: t('common:errors.genericErrorTitle'),"
-    },
-    {
-      "key": "common:errors.genericErrorMessage",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 165,
-      "context": "message: t('common:errors.genericErrorMessage'),"
-    },
-    {
-      "key": "common:errors.genericErrorMessage",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 165,
-      "context": "message: t('common:errors.genericErrorMessage'),"
-    },
-    {
-      "key": "common:organizationProfileForm.accessDenied",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 175,
-      "context": "return <p>{t('common:organizationProfileForm.accessDenied')}</p>;"
-    },
-    {
-      "key": "common:organizationProfileForm.accessDenied",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 175,
-      "context": "return <p>{t('common:organizationProfileForm.accessDenied')}</p>;"
-    },
-    {
-      "key": "common:loading",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 181,
-      "context": "<p>{t('common:loading')}</p>"
-    },
-    {
-      "key": "common:loading",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 181,
-      "context": "<p>{t('common:loading')}</p>"
-    },
-    {
-      "key": "common:organizationProfileForm.title",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 188,
-      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal mb-1\">{t('common:organizationProfileForm.title')}</h2>"
-    },
-    {
-      "key": "common:organizationProfileForm.title",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 188,
-      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal mb-1\">{t('common:organizationProfileForm.title')}</h2>"
-    },
-    {
-      "key": "common:organizationProfileForm.subtitle",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 189,
-      "context": "<p className=\"text-sm text-gray-500 mb-6\">{t('common:organizationProfileForm.subtitle')}</p>"
-    },
-    {
-      "key": "common:organizationProfileForm.subtitle",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 189,
-      "context": "<p className=\"text-sm text-gray-500 mb-6\">{t('common:organizationProfileForm.subtitle')}</p>"
-    },
-    {
-      "key": "dashboard:organizationProfileForm.saveSuccess",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 193,
-      "context": "{t('dashboard:organizationProfileForm.saveSuccess')}"
-    },
-    {
-      "key": "dashboard:organizationProfileForm.saveSuccess",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 193,
-      "context": "{t('dashboard:organizationProfileForm.saveSuccess')}"
-    },
-    {
-      "key": "common:organizationProfileForm.labels.capacity",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 200,
-      "context": "{t('common:organizationProfileForm.labels.capacity')}"
-    },
-    {
-      "key": "common:organizationProfileForm.labels.capacity",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 200,
-      "context": "{t('common:organizationProfileForm.labels.capacity')}"
-    },
-    {
-      "key": "common:organizationProfileForm.labels.pedagogy",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 215,
-      "context": "{t('common:organizationProfileForm.labels.pedagogy')}"
-    },
-    {
-      "key": "common:organizationProfileForm.labels.pedagogy",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 215,
-      "context": "{t('common:organizationProfileForm.labels.pedagogy')}"
-    },
-    {
-      "key": "common:organizationProfileForm.placeholders.pedagogy",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 224,
-      "context": "placeholder={t('common:organizationProfileForm.placeholders.pedagogy')}"
-    },
-    {
-      "key": "common:organizationProfileForm.placeholders.pedagogy",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 224,
-      "context": "placeholder={t('common:organizationProfileForm.placeholders.pedagogy')}"
-    },
-    {
-      "key": "common:organizationProfileForm.helpText.commaSeparated",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 226,
-      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
-    },
-    {
-      "key": "common:organizationProfileForm.helpText.commaSeparated",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 226,
-      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
-    },
-    {
-      "key": "common:organizationProfileForm.labels.languages",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 231,
-      "context": "{t('common:organizationProfileForm.labels.languages')}"
-    },
-    {
-      "key": "common:organizationProfileForm.labels.languages",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 231,
-      "context": "{t('common:organizationProfileForm.labels.languages')}"
-    },
-    {
-      "key": "common:organizationProfileForm.placeholders.languages",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 240,
-      "context": "placeholder={t('common:organizationProfileForm.placeholders.languages')}"
-    },
-    {
-      "key": "common:organizationProfileForm.placeholders.languages",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 240,
-      "context": "placeholder={t('common:organizationProfileForm.placeholders.languages')}"
-    },
-    {
-      "key": "common:organizationProfileForm.helpText.commaSeparated",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 242,
-      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
-    },
-    {
-      "key": "common:organizationProfileForm.helpText.commaSeparated",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 242,
-      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
-    },
-    {
-      "key": "common:buttons.saveChanges",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 247,
-      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
-    },
-    {
-      "key": "common:organizationProfileForm.saveButton",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 247,
-      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
-    },
-    {
-      "key": "common:buttons.saveChanges",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 247,
-      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
-    },
-    {
-      "key": "common:organizationProfileForm.saveButton",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 247,
-      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
-    },
-    {
-      "key": "common:buttons.confirm",
-      "file": "components/settings/ConfirmDestructiveActionModal.tsx",
-      "line": 25,
-      "context": "const finalConfirmButtonText = confirmButtonText || t('common:buttons.confirm');"
-    },
-    {
-      "key": "common:buttons.confirm",
-      "file": "components/settings/ConfirmDestructiveActionModal.tsx",
-      "line": 25,
-      "context": "const finalConfirmButtonText = confirmButtonText || t('common:buttons.confirm');"
-    },
-    {
-      "key": "addPromoCodeModal.placeholder",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 12,
-      "context": "<p>{t(\"addPromoCodeModal.placeholder\")}</p>"
     },
     {
       "key": "common:serviceUploadModal.editTitle",
@@ -19643,6 +19643,318 @@
       "context": "<Button type=\"submit\" variant=\"primary\">{t('common:buttons.submitRequest')}</Button>"
     },
     {
+      "key": "common:leadCard.alert.missingParentInfo",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 58,
+      "context": "alert(t('common:leadCard.alert.missingParentInfo'));"
+    },
+    {
+      "key": "common:leadCard.alert.missingParentInfo",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 58,
+      "context": "alert(t('common:leadCard.alert.missingParentInfo'));"
+    },
+    {
+      "key": "dashboard:leadCard.status.notResponded",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 69,
+      "context": "case FoundationLeadResponseStatus.NOT_RESPONDED: return { className: 'bg-gray-200 text-gray-700', label: t('dashboard:leadCard.status.notResponded') };"
+    },
+    {
+      "key": "dashboard:leadCard.status.notResponded",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 69,
+      "context": "case FoundationLeadResponseStatus.NOT_RESPONDED: return { className: 'bg-gray-200 text-gray-700', label: t('dashboard:leadCard.status.notResponded') };"
+    },
+    {
+      "key": "dashboard:leadCard.status.interested",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 70,
+      "context": "case FoundationLeadResponseStatus.INTERESTED: return { className: 'bg-green-100 text-green-700', label: t('dashboard:leadCard.status.interested') };"
+    },
+    {
+      "key": "dashboard:leadCard.status.interested",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 70,
+      "context": "case FoundationLeadResponseStatus.INTERESTED: return { className: 'bg-green-100 text-green-700', label: t('dashboard:leadCard.status.interested') };"
+    },
+    {
+      "key": "dashboard:leadCard.status.notInterested",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 71,
+      "context": "case FoundationLeadResponseStatus.NOT_INTERESTED: return { className: 'bg-red-100 text-red-700', label: t('dashboard:leadCard.status.notInterested') };"
+    },
+    {
+      "key": "dashboard:leadCard.status.notInterested",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 71,
+      "context": "case FoundationLeadResponseStatus.NOT_INTERESTED: return { className: 'bg-red-100 text-red-700', label: t('dashboard:leadCard.status.notInterested') };"
+    },
+    {
+      "key": "dashboard:leadCard.status.needsMoreInfo",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 72,
+      "context": "case FoundationLeadResponseStatus.NEEDS_MORE_INFO: return { className: 'bg-yellow-100 text-yellow-700', label: t('dashboard:leadCard.status.needsMoreInfo') };"
+    },
+    {
+      "key": "dashboard:leadCard.status.needsMoreInfo",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 72,
+      "context": "case FoundationLeadResponseStatus.NEEDS_MORE_INFO: return { className: 'bg-yellow-100 text-yellow-700', label: t('dashboard:leadCard.status.needsMoreInfo') };"
+    },
+    {
+      "key": "dashboard:leadCard.status.enrolled",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 73,
+      "context": "case FoundationLeadResponseStatus.ENROLLED: return { className: 'bg-purple-100 text-purple-700', label: t('dashboard:leadCard.status.enrolled') };"
+    },
+    {
+      "key": "dashboard:leadCard.status.enrolled",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 73,
+      "context": "case FoundationLeadResponseStatus.ENROLLED: return { className: 'bg-purple-100 text-purple-700', label: t('dashboard:leadCard.status.enrolled') };"
+    },
+    {
+      "key": "common:leadCard.title",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 85,
+      "context": "{t('common:leadCard.title', { name: lead.contactName })}"
+    },
+    {
+      "key": "common:leadCard.title",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 85,
+      "context": "{t('common:leadCard.title', { name: lead.contactName })}"
+    },
+    {
+      "key": "common:leadCard.forLocation",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 92,
+      "context": "{t('common:leadCard.forLocation', { canton: lead.canton, municipality: lead.municipality ? `- ${lead.municipality}` : '' })}"
+    },
+    {
+      "key": "common:leadCard.forLocation",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 92,
+      "context": "{t('common:leadCard.forLocation', { canton: lead.canton, municipality: lead.municipality ? `- ${lead.municipality}` : '' })}"
+    },
+    {
+      "key": "common:leadCard.childAge",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 97,
+      "context": "<p><strong>{t('common:leadCard.childAge')}:</strong> {lead.childAge}</p>"
+    },
+    {
+      "key": "common:leadCard.childAge",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 97,
+      "context": "<p><strong>{t('common:leadCard.childAge')}:</strong> {lead.childAge}</p>"
+    },
+    {
+      "key": "common:leadCard.desiredStart",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 98,
+      "context": "<p><strong>{t('common:leadCard.desiredStart')}:</strong> {new Date(lead.desiredStartDate).toLocaleDateString(i18n.language)}</p>"
+    },
+    {
+      "key": "common:leadCard.desiredStart",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 98,
+      "context": "<p><strong>{t('common:leadCard.desiredStart')}:</strong> {new Date(lead.desiredStartDate).toLocaleDateString(i18n.language)}</p>"
+    },
+    {
+      "key": "common:leadCard.submittedOn",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 99,
+      "context": "<p><strong>{t('common:leadCard.submittedOn')}:</strong> {new Date(lead.submissionDate).toLocaleDateString(i18n.language)}</p>"
+    },
+    {
+      "key": "common:leadCard.submittedOn",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 99,
+      "context": "<p><strong>{t('common:leadCard.submittedOn')}:</strong> {new Date(lead.submissionDate).toLocaleDateString(i18n.language)}</p>"
+    },
+    {
+      "key": "common:leadCard.notes",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 100,
+      "context": "{lead.specialNeeds && <p><strong>{t('common:leadCard.notes')}:</strong> <span className=\"italic\">{lead.specialNeeds}</span></p>}"
+    },
+    {
+      "key": "common:leadCard.notes",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 100,
+      "context": "{lead.specialNeeds && <p><strong>{t('common:leadCard.notes')}:</strong> <span className=\"italic\">{lead.specialNeeds}</span></p>}"
+    },
+    {
+      "key": "common:leadCard.defaultMessages.interested",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 115,
+      "context": "onClick={() => handleResponse(FoundationLeadResponseStatus.INTERESTED, t('common:leadCard.defaultMessages.interested'))}"
+    },
+    {
+      "key": "common:leadCard.defaultMessages.interested",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 115,
+      "context": "onClick={() => handleResponse(FoundationLeadResponseStatus.INTERESTED, t('common:leadCard.defaultMessages.interested'))}"
+    },
+    {
+      "key": "common:leadCard.buttons.interested",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 118,
+      "context": "{t('common:leadCard.buttons.interested')}"
+    },
+    {
+      "key": "common:leadCard.buttons.interested",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 118,
+      "context": "{t('common:leadCard.buttons.interested')}"
+    },
+    {
+      "key": "common:leadCard.defaultMessages.notInterested",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 124,
+      "context": "onClick={() => handleResponse(FoundationLeadResponseStatus.NOT_INTERESTED, t('common:leadCard.defaultMessages.notInterested'))}"
+    },
+    {
+      "key": "common:leadCard.defaultMessages.notInterested",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 124,
+      "context": "onClick={() => handleResponse(FoundationLeadResponseStatus.NOT_INTERESTED, t('common:leadCard.defaultMessages.notInterested'))}"
+    },
+    {
+      "key": "common:leadCard.buttons.notInterested",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 127,
+      "context": "{t('common:leadCard.buttons.notInterested')}"
+    },
+    {
+      "key": "common:leadCard.buttons.notInterested",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 127,
+      "context": "{t('common:leadCard.buttons.notInterested')}"
+    },
+    {
+      "key": "common:leadCard.buttons.needInfo",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 136,
+      "context": "{t('common:leadCard.buttons.needInfo')}"
+    },
+    {
+      "key": "common:leadCard.buttons.needInfo",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 136,
+      "context": "{t('common:leadCard.buttons.needInfo')}"
+    },
+    {
+      "key": "common:leadCard.questionFor",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 142,
+      "context": "{t('common:leadCard.questionFor', { name: lead.contactName })}:"
+    },
+    {
+      "key": "common:leadCard.questionFor",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 142,
+      "context": "{t('common:leadCard.questionFor', { name: lead.contactName })}:"
+    },
+    {
+      "key": "common:leadCard.questionPlaceholder",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 150,
+      "context": "placeholder={t('common:leadCard.questionPlaceholder')}"
+    },
+    {
+      "key": "common:leadCard.questionPlaceholder",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 150,
+      "context": "placeholder={t('common:leadCard.questionPlaceholder')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 153,
+      "context": "<Button variant=\"ghost\" size=\"sm\" onClick={() => setShowResponseInput(false)}>{t('common:buttons.cancel')}</Button>"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 153,
+      "context": "<Button variant=\"ghost\" size=\"sm\" onClick={() => setShowResponseInput(false)}>{t('common:buttons.cancel')}</Button>"
+    },
+    {
+      "key": "common:leadCard.buttons.sendQuestion",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 161,
+      "context": "{t('common:leadCard.buttons.sendQuestion')}"
+    },
+    {
+      "key": "common:leadCard.buttons.sendQuestion",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 161,
+      "context": "{t('common:leadCard.buttons.sendQuestion')}"
+    },
+    {
+      "key": "common:leadCard.yourResponse",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 173,
+      "context": "<p className=\"font-medium\">{t('common:leadCard.yourResponse')}: <span className={`${currentStatusInfo.className} px-1.5 py-0.5 rounded`}>{currentStatusInfo.label}</span></p>"
+    },
+    {
+      "key": "common:leadCard.yourResponse",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 173,
+      "context": "<p className=\"font-medium\">{t('common:leadCard.yourResponse')}: <span className={`${currentStatusInfo.className} px-1.5 py-0.5 rounded`}>{currentStatusInfo.label}</span></p>"
+    },
+    {
+      "key": "common:leadCard.messageSent",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 174,
+      "context": "{myResponse.messageToParent && <p className=\"italic mt-1\">{t('common:leadCard.messageSent')}: \"{myResponse.messageToParent}\"</p>}"
+    },
+    {
+      "key": "common:leadCard.messageSent",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 174,
+      "context": "{myResponse.messageToParent && <p className=\"italic mt-1\">{t('common:leadCard.messageSent')}: \"{myResponse.messageToParent}\"</p>}"
+    },
+    {
+      "key": "common:leadCard.buttons.messageParent",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 183,
+      "context": "{t('common:leadCard.buttons.messageParent')}"
+    },
+    {
+      "key": "common:leadCard.buttons.messageParent",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 183,
+      "context": "{t('common:leadCard.buttons.messageParent')}"
+    },
+    {
+      "key": "common:leadCard.defaultMessages.enrolled",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 191,
+      "context": "onClick={() => handleResponse(FoundationLeadResponseStatus.ENROLLED, t('common:leadCard.defaultMessages.enrolled'))}"
+    },
+    {
+      "key": "common:leadCard.defaultMessages.enrolled",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 191,
+      "context": "onClick={() => handleResponse(FoundationLeadResponseStatus.ENROLLED, t('common:leadCard.defaultMessages.enrolled'))}"
+    },
+    {
+      "key": "common:leadCard.buttons.markEnrolled",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 193,
+      "context": "{t('common:leadCard.buttons.markEnrolled')}"
+    },
+    {
+      "key": "common:leadCard.buttons.markEnrolled",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 193,
+      "context": "{t('common:leadCard.buttons.markEnrolled')}"
+    },
+    {
       "key": "appName",
       "file": "components/layout/Sidebar.tsx",
       "line": 180,
@@ -19803,318 +20115,6 @@
       "file": "components/layout/MainLayout.tsx",
       "line": 49,
       "context": "aria-label={t('common:labels.closesidebar')}"
-    },
-    {
-      "key": "common:leadCard.alert.missingParentInfo",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 58,
-      "context": "alert(t('common:leadCard.alert.missingParentInfo'));"
-    },
-    {
-      "key": "common:leadCard.alert.missingParentInfo",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 58,
-      "context": "alert(t('common:leadCard.alert.missingParentInfo'));"
-    },
-    {
-      "key": "dashboard:leadCard.status.notResponded",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 69,
-      "context": "case FoundationLeadResponseStatus.NOT_RESPONDED: return { className: 'bg-gray-200 text-gray-700', label: t('dashboard:leadCard.status.notResponded') };"
-    },
-    {
-      "key": "dashboard:leadCard.status.notResponded",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 69,
-      "context": "case FoundationLeadResponseStatus.NOT_RESPONDED: return { className: 'bg-gray-200 text-gray-700', label: t('dashboard:leadCard.status.notResponded') };"
-    },
-    {
-      "key": "dashboard:leadCard.status.interested",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 70,
-      "context": "case FoundationLeadResponseStatus.INTERESTED: return { className: 'bg-green-100 text-green-700', label: t('dashboard:leadCard.status.interested') };"
-    },
-    {
-      "key": "dashboard:leadCard.status.interested",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 70,
-      "context": "case FoundationLeadResponseStatus.INTERESTED: return { className: 'bg-green-100 text-green-700', label: t('dashboard:leadCard.status.interested') };"
-    },
-    {
-      "key": "dashboard:leadCard.status.notInterested",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 71,
-      "context": "case FoundationLeadResponseStatus.NOT_INTERESTED: return { className: 'bg-red-100 text-red-700', label: t('dashboard:leadCard.status.notInterested') };"
-    },
-    {
-      "key": "dashboard:leadCard.status.notInterested",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 71,
-      "context": "case FoundationLeadResponseStatus.NOT_INTERESTED: return { className: 'bg-red-100 text-red-700', label: t('dashboard:leadCard.status.notInterested') };"
-    },
-    {
-      "key": "dashboard:leadCard.status.needsMoreInfo",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 72,
-      "context": "case FoundationLeadResponseStatus.NEEDS_MORE_INFO: return { className: 'bg-yellow-100 text-yellow-700', label: t('dashboard:leadCard.status.needsMoreInfo') };"
-    },
-    {
-      "key": "dashboard:leadCard.status.needsMoreInfo",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 72,
-      "context": "case FoundationLeadResponseStatus.NEEDS_MORE_INFO: return { className: 'bg-yellow-100 text-yellow-700', label: t('dashboard:leadCard.status.needsMoreInfo') };"
-    },
-    {
-      "key": "dashboard:leadCard.status.enrolled",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 73,
-      "context": "case FoundationLeadResponseStatus.ENROLLED: return { className: 'bg-purple-100 text-purple-700', label: t('dashboard:leadCard.status.enrolled') };"
-    },
-    {
-      "key": "dashboard:leadCard.status.enrolled",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 73,
-      "context": "case FoundationLeadResponseStatus.ENROLLED: return { className: 'bg-purple-100 text-purple-700', label: t('dashboard:leadCard.status.enrolled') };"
-    },
-    {
-      "key": "common:leadCard.title",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 85,
-      "context": "{t('common:leadCard.title', { name: lead.contactName })}"
-    },
-    {
-      "key": "common:leadCard.title",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 85,
-      "context": "{t('common:leadCard.title', { name: lead.contactName })}"
-    },
-    {
-      "key": "common:leadCard.forLocation",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 92,
-      "context": "{t('common:leadCard.forLocation', { canton: lead.canton, municipality: lead.municipality ? `- ${lead.municipality}` : '' })}"
-    },
-    {
-      "key": "common:leadCard.forLocation",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 92,
-      "context": "{t('common:leadCard.forLocation', { canton: lead.canton, municipality: lead.municipality ? `- ${lead.municipality}` : '' })}"
-    },
-    {
-      "key": "common:leadCard.childAge",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 97,
-      "context": "<p><strong>{t('common:leadCard.childAge')}:</strong> {lead.childAge}</p>"
-    },
-    {
-      "key": "common:leadCard.childAge",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 97,
-      "context": "<p><strong>{t('common:leadCard.childAge')}:</strong> {lead.childAge}</p>"
-    },
-    {
-      "key": "common:leadCard.desiredStart",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 98,
-      "context": "<p><strong>{t('common:leadCard.desiredStart')}:</strong> {new Date(lead.desiredStartDate).toLocaleDateString(i18n.language)}</p>"
-    },
-    {
-      "key": "common:leadCard.desiredStart",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 98,
-      "context": "<p><strong>{t('common:leadCard.desiredStart')}:</strong> {new Date(lead.desiredStartDate).toLocaleDateString(i18n.language)}</p>"
-    },
-    {
-      "key": "common:leadCard.submittedOn",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 99,
-      "context": "<p><strong>{t('common:leadCard.submittedOn')}:</strong> {new Date(lead.submissionDate).toLocaleDateString(i18n.language)}</p>"
-    },
-    {
-      "key": "common:leadCard.submittedOn",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 99,
-      "context": "<p><strong>{t('common:leadCard.submittedOn')}:</strong> {new Date(lead.submissionDate).toLocaleDateString(i18n.language)}</p>"
-    },
-    {
-      "key": "common:leadCard.notes",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 100,
-      "context": "{lead.specialNeeds && <p><strong>{t('common:leadCard.notes')}:</strong> <span className=\"italic\">{lead.specialNeeds}</span></p>}"
-    },
-    {
-      "key": "common:leadCard.notes",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 100,
-      "context": "{lead.specialNeeds && <p><strong>{t('common:leadCard.notes')}:</strong> <span className=\"italic\">{lead.specialNeeds}</span></p>}"
-    },
-    {
-      "key": "common:leadCard.defaultMessages.interested",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 115,
-      "context": "onClick={() => handleResponse(FoundationLeadResponseStatus.INTERESTED, t('common:leadCard.defaultMessages.interested'))}"
-    },
-    {
-      "key": "common:leadCard.defaultMessages.interested",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 115,
-      "context": "onClick={() => handleResponse(FoundationLeadResponseStatus.INTERESTED, t('common:leadCard.defaultMessages.interested'))}"
-    },
-    {
-      "key": "common:leadCard.buttons.interested",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 118,
-      "context": "{t('common:leadCard.buttons.interested')}"
-    },
-    {
-      "key": "common:leadCard.buttons.interested",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 118,
-      "context": "{t('common:leadCard.buttons.interested')}"
-    },
-    {
-      "key": "common:leadCard.defaultMessages.notInterested",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 124,
-      "context": "onClick={() => handleResponse(FoundationLeadResponseStatus.NOT_INTERESTED, t('common:leadCard.defaultMessages.notInterested'))}"
-    },
-    {
-      "key": "common:leadCard.defaultMessages.notInterested",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 124,
-      "context": "onClick={() => handleResponse(FoundationLeadResponseStatus.NOT_INTERESTED, t('common:leadCard.defaultMessages.notInterested'))}"
-    },
-    {
-      "key": "common:leadCard.buttons.notInterested",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 127,
-      "context": "{t('common:leadCard.buttons.notInterested')}"
-    },
-    {
-      "key": "common:leadCard.buttons.notInterested",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 127,
-      "context": "{t('common:leadCard.buttons.notInterested')}"
-    },
-    {
-      "key": "common:leadCard.buttons.needInfo",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 136,
-      "context": "{t('common:leadCard.buttons.needInfo')}"
-    },
-    {
-      "key": "common:leadCard.buttons.needInfo",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 136,
-      "context": "{t('common:leadCard.buttons.needInfo')}"
-    },
-    {
-      "key": "common:leadCard.questionFor",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 142,
-      "context": "{t('common:leadCard.questionFor', { name: lead.contactName })}:"
-    },
-    {
-      "key": "common:leadCard.questionFor",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 142,
-      "context": "{t('common:leadCard.questionFor', { name: lead.contactName })}:"
-    },
-    {
-      "key": "common:leadCard.questionPlaceholder",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 150,
-      "context": "placeholder={t('common:leadCard.questionPlaceholder')}"
-    },
-    {
-      "key": "common:leadCard.questionPlaceholder",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 150,
-      "context": "placeholder={t('common:leadCard.questionPlaceholder')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 153,
-      "context": "<Button variant=\"ghost\" size=\"sm\" onClick={() => setShowResponseInput(false)}>{t('common:buttons.cancel')}</Button>"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 153,
-      "context": "<Button variant=\"ghost\" size=\"sm\" onClick={() => setShowResponseInput(false)}>{t('common:buttons.cancel')}</Button>"
-    },
-    {
-      "key": "common:leadCard.buttons.sendQuestion",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 161,
-      "context": "{t('common:leadCard.buttons.sendQuestion')}"
-    },
-    {
-      "key": "common:leadCard.buttons.sendQuestion",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 161,
-      "context": "{t('common:leadCard.buttons.sendQuestion')}"
-    },
-    {
-      "key": "common:leadCard.yourResponse",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 173,
-      "context": "<p className=\"font-medium\">{t('common:leadCard.yourResponse')}: <span className={`${currentStatusInfo.className} px-1.5 py-0.5 rounded`}>{currentStatusInfo.label}</span></p>"
-    },
-    {
-      "key": "common:leadCard.yourResponse",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 173,
-      "context": "<p className=\"font-medium\">{t('common:leadCard.yourResponse')}: <span className={`${currentStatusInfo.className} px-1.5 py-0.5 rounded`}>{currentStatusInfo.label}</span></p>"
-    },
-    {
-      "key": "common:leadCard.messageSent",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 174,
-      "context": "{myResponse.messageToParent && <p className=\"italic mt-1\">{t('common:leadCard.messageSent')}: \"{myResponse.messageToParent}\"</p>}"
-    },
-    {
-      "key": "common:leadCard.messageSent",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 174,
-      "context": "{myResponse.messageToParent && <p className=\"italic mt-1\">{t('common:leadCard.messageSent')}: \"{myResponse.messageToParent}\"</p>}"
-    },
-    {
-      "key": "common:leadCard.buttons.messageParent",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 183,
-      "context": "{t('common:leadCard.buttons.messageParent')}"
-    },
-    {
-      "key": "common:leadCard.buttons.messageParent",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 183,
-      "context": "{t('common:leadCard.buttons.messageParent')}"
-    },
-    {
-      "key": "common:leadCard.defaultMessages.enrolled",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 191,
-      "context": "onClick={() => handleResponse(FoundationLeadResponseStatus.ENROLLED, t('common:leadCard.defaultMessages.enrolled'))}"
-    },
-    {
-      "key": "common:leadCard.defaultMessages.enrolled",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 191,
-      "context": "onClick={() => handleResponse(FoundationLeadResponseStatus.ENROLLED, t('common:leadCard.defaultMessages.enrolled'))}"
-    },
-    {
-      "key": "common:leadCard.buttons.markEnrolled",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 193,
-      "context": "{t('common:leadCard.buttons.markEnrolled')}"
-    },
-    {
-      "key": "common:leadCard.buttons.markEnrolled",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 193,
-      "context": "{t('common:leadCard.buttons.markEnrolled')}"
     },
     {
       "key": "orderSummaryDrawer.orderSuccess",

@@ -602,7 +602,7 @@ const EditPricingTierModal: React.FC<EditPricingTierModalProps> = ({ isOpen, onC
   const [volumeDiscounts, setVolumeDiscounts] = useState<Array<{ id: string; minQuantity: string; discountPercentage: string }>>(
     () =>
       (tier?.discounts?.volumeDiscounts || []).map((d, idx) => ({
-        id: `${tier.id}-${idx}`,
+        id: `${tier?.id ?? 'new'}-${idx}`,
         minQuantity: String(d.minQuantity),
         discountPercentage: String(d.discountPercentage),
       })) || []
@@ -679,7 +679,14 @@ const EditPricingTierModal: React.FC<EditPricingTierModalProps> = ({ isOpen, onC
         minQuantity: Number(d.minQuantity),
         discountPercentage: Number(d.discountPercentage),
       }))
-      .filter((d) => Number.isFinite(d.minQuantity) && d.minQuantity >= 1 && Number.isFinite(d.discountPercentage));
+      .filter(
+        (d) =>
+          Number.isFinite(d.minQuantity) &&
+          d.minQuantity >= 1 &&
+          Number.isFinite(d.discountPercentage) &&
+          d.discountPercentage >= 0 &&
+          d.discountPercentage <= 100
+      );
 
     await onSave({
       id: tier?.id,

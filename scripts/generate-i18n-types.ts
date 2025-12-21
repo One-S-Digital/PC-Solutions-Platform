@@ -59,6 +59,11 @@ function generateTypes(): void {
   // Process each namespace file
   for (const file of files) {
     const namespace = file.replace('.json', '');
+    // Guard against accidental ".json" file -> empty namespace.
+    if (!namespace) {
+      console.warn(`⚠️  Skipping invalid namespace file: ${file}`);
+      continue;
+    }
     const filePath = path.join(LOCALES_DIR, file);
     
     try {
@@ -123,9 +128,13 @@ ${allKeys.map(key => `  | '${key}'`).join('\n')};
   for (const [namespace, keys] of Object.entries(namespaceKeys)) {
     const typeName = namespace.charAt(0).toUpperCase() + namespace.slice(1) + 'Key';
     content += `// Keys available in ${namespace} namespace\n`;
-    content += `export type ${typeName} =\n`;
-    content += keys.map(key => `  | '${key}'`).join('\n');
-    content += ';\n\n';
+    if (!keys || keys.length === 0) {
+      content += `export type ${typeName} = never;\n\n`;
+    } else {
+      content += `export type ${typeName} =\n`;
+      content += keys.map(key => `  | '${key}'`).join('\n');
+      content += ';\n\n';
+    }
   }
 
   // Add namespace type

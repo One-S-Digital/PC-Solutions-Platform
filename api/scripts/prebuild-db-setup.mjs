@@ -613,6 +613,22 @@ CREATE TABLE IF NOT EXISTS "pricing_tiers" (
     CONSTRAINT "pricing_tiers_pkey" PRIMARY KEY ("id")
 );
 
+-- Ensure base enum exists (defensive for early bootstrap)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'UserRole') THEN
+        CREATE TYPE "UserRole" AS ENUM (
+          'SUPER_ADMIN',
+          'ADMIN',
+          'FOUNDATION',
+          'PRODUCT_SUPPLIER',
+          'SERVICE_PROVIDER',
+          'EDUCATOR',
+          'PARENT'
+        );
+    END IF;
+END $$;
+
 -- Ensure columns for scoping exist
 DO $$
 BEGIN
@@ -655,9 +671,6 @@ BEGIN
 END $$;
 
 -- Seed default Foundation tiers if missing
--- Ensure pgcrypto is available for gen_random_uuid()
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
-
 INSERT INTO "public"."pricing_tiers" (
   "id",
   "role",
@@ -673,7 +686,7 @@ INSERT INTO "public"."pricing_tiers" (
   "updatedAt"
 )
 SELECT
-  gen_random_uuid()::text,
+  v.id,
   'FOUNDATION'::"public"."UserRole",
   v.subscription_tier::"public"."SubscriptionTier",
   v.name,
@@ -687,11 +700,11 @@ SELECT
   NOW()
 FROM (
   VALUES
-    ('BASIC', 'Foundation - Basic', 0.0, 10),
-    ('ESSENTIAL', 'Foundation - Essential', 0.0, 20),
-    ('PROFESSIONAL', 'Foundation - Professional', 0.0, 30),
-    ('ENTERPRISE', 'Foundation - Enterprise', 0.0, 40)
-) AS v(subscription_tier, name, base_price, display_order)
+    ('2c31bb25-8b79-4d2a-8cda-0ab2d2621158', 'BASIC', 'Foundation - Basic', 0.0, 10),
+    ('c7fc6d30-cbb5-4b13-9d24-4c8c50b1246e', 'ESSENTIAL', 'Foundation - Essential', 0.0, 20),
+    ('70c3aa20-f9bd-44b8-8624-4313f3b70423', 'PROFESSIONAL', 'Foundation - Professional', 0.0, 30),
+    ('d9c81d07-9774-4b8b-93a4-7c78b02b0b3e', 'ENTERPRISE', 'Foundation - Enterprise', 0.0, 40)
+) AS v(id, subscription_tier, name, base_price, display_order)
 WHERE NOT EXISTS (
   SELECT 1
   FROM "public"."pricing_tiers" pt
