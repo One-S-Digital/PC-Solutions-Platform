@@ -187,7 +187,10 @@ const verifyCriticalTables = () => {
   
   const criticalTables = [
     'users',
+    // Separate contact email storage (must exist for profile settings updates)
+    'user_contact_infos',
     'organizations',
+    'organization_contact_infos',
     'assets',
     'products',
     'services',
