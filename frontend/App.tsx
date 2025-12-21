@@ -17,6 +17,8 @@ import { AppContextProvider, useAppContext } from './contexts/AppContext';
 import { CartProvider } from './contexts/CartContext';
 import { MessagingProvider } from './contexts/MessagingContext';
 import { NotificationProvider } from './contexts/NotificationContext';
+import { SubscriptionProvider } from './contexts/SubscriptionContext';
+import { SubscriptionPaywall } from './components/shared/SubscriptionPaywall';
 import { useAuthContext } from './providers/AuthProvider';
 import { UserRole } from './types';
 import { useFrontendSettings } from './hooks/useFrontendSettings';
@@ -103,6 +105,43 @@ const ProtectedRoute: React.FC<{ children: React.ReactElement; roles: UserRole[]
     return <Navigate to="/dashboard" replace />; // Redirect to their own dashboard if role mismatches
   }
   return children;
+};
+
+/**
+ * SubscriptionGatedRoute - Wraps content that requires active subscription
+ * 
+ * This component combines role-based access with subscription-based access.
+ * Users without an active subscription will see the SubscriptionPaywall.
+ * 
+ * Note: The SubscriptionPaywall component already handles:
+ * - Checking if user's role requires subscription
+ * - Allowing access to always-allowed routes (settings, profile, pricing)
+ * - Showing appropriate paywall UI based on subscription status
+ * 
+ * @param roles - Array of UserRoles that can access this route
+ * @param children - The content to render if access is granted
+ * @param requiredFeature - Optional specific feature key to check
+ */
+const SubscriptionGatedRoute: React.FC<{ 
+  children: React.ReactElement; 
+  roles: UserRole[];
+  requiredFeature?: string;
+}> = ({ children, roles, requiredFeature }): React.ReactElement | null => {
+  const { currentUser } = useAppContext();
+
+  if (!currentUser) {
+    return <Navigate to="/login" replace />;
+  }
+  if (!roles.includes(currentUser.role)) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  
+  // Wrap with SubscriptionPaywall which handles subscription checking
+  return (
+    <SubscriptionPaywall requiredFeature={requiredFeature}>
+      {children}
+    </SubscriptionPaywall>
+  );
 };
 
 const RoleBasedDashboardRedirect: React.FC = () => {
@@ -239,11 +278,12 @@ const ProtectedLayout: React.FC = () => {
   }
 
   return (
-    <MainLayout>
-      <Routes>
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="/dashboard" element={<RoleBasedDashboardRedirect />} />
-        <Route path="/dashboard/details/:detailType" element={<DashboardDetailPage />} />
+    <SubscriptionProvider>
+      <MainLayout>
+        <Routes>
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/dashboard" element={<RoleBasedDashboardRedirect />} />
+          <Route path="/dashboard/details/:detailType" element={<DashboardDetailPage />} />
         
         <Route path="/marketplace" element={<Navigate to="/marketplace/products" replace />} />
         <Route path="/marketplace/products" element={<MarketplacePage />} />
@@ -353,20 +393,21 @@ const ProtectedLayout: React.FC = () => {
           } 
         />
 
-        {/* Product Supplier Routes */}
+        {/* Product Supplier Routes - Subscription Gated */}
         <Route path="/supplier/dashboard" element={
-          <ProtectedRoute roles={[UserRole.PRODUCT_SUPPLIER]}><SupplierDashboardPage /></ProtectedRoute>
+          <SubscriptionGatedRoute roles={[UserRole.PRODUCT_SUPPLIER]}><SupplierDashboardPage /></SubscriptionGatedRoute>
         } />
         <Route path="/supplier/orders" element={
-          <ProtectedRoute roles={[UserRole.PRODUCT_SUPPLIER]}><SupplierOrdersPage /></ProtectedRoute>
+          <SubscriptionGatedRoute roles={[UserRole.PRODUCT_SUPPLIER]}><SupplierOrdersPage /></SubscriptionGatedRoute>
         } />
         <Route path="/supplier/product-listings" element={
-          <ProtectedRoute roles={[UserRole.PRODUCT_SUPPLIER]}><SupplierProductListingsPage /></ProtectedRoute>
+          <SubscriptionGatedRoute roles={[UserRole.PRODUCT_SUPPLIER]}><SupplierProductListingsPage /></SubscriptionGatedRoute>
         } />
         <Route path="/supplier/analytics" element={
-          <ProtectedRoute roles={[UserRole.PRODUCT_SUPPLIER]}><SupplierAnalyticsPage /></ProtectedRoute>
+          <SubscriptionGatedRoute roles={[UserRole.PRODUCT_SUPPLIER]}><SupplierAnalyticsPage /></SubscriptionGatedRoute>
         } />
-        <Route path="/supplier/company-profile" element={ // This route is effectively replaced by /settings
+        {/* Profile/Settings/Support routes don't require subscription */}
+        <Route path="/supplier/company-profile" element={
           <ProtectedRoute roles={[UserRole.PRODUCT_SUPPLIER]}><Navigate to="/settings" replace /></ProtectedRoute>
         } />
         <Route path="/supplier/organisation-profile" element={
@@ -376,20 +417,21 @@ const ProtectedLayout: React.FC = () => {
           <ProtectedRoute roles={[UserRole.PRODUCT_SUPPLIER]}><SupplierSupportPage /></ProtectedRoute>
         } />
 
-        {/* Service Provider Routes */}
+        {/* Service Provider Routes - Subscription Gated */}
         <Route path="/service-provider/dashboard" element={
-          <ProtectedRoute roles={[UserRole.SERVICE_PROVIDER]}><ServiceProviderDashboardPage /></ProtectedRoute>
+          <SubscriptionGatedRoute roles={[UserRole.SERVICE_PROVIDER]}><ServiceProviderDashboardPage /></SubscriptionGatedRoute>
         } />
         <Route path="/service-provider/requests" element={
-          <ProtectedRoute roles={[UserRole.SERVICE_PROVIDER]}><ServiceProviderRequestsPage /></ProtectedRoute>
+          <SubscriptionGatedRoute roles={[UserRole.SERVICE_PROVIDER]}><ServiceProviderRequestsPage /></SubscriptionGatedRoute>
         } />
         <Route path="/service-provider/service-listings" element={
-          <ProtectedRoute roles={[UserRole.SERVICE_PROVIDER]}><ServiceProviderListingsPage /></ProtectedRoute>
+          <SubscriptionGatedRoute roles={[UserRole.SERVICE_PROVIDER]}><ServiceProviderListingsPage /></SubscriptionGatedRoute>
         } />
         <Route path="/service-provider/analytics" element={
-          <ProtectedRoute roles={[UserRole.SERVICE_PROVIDER]}><ServiceProviderAnalyticsPage /></ProtectedRoute>
+          <SubscriptionGatedRoute roles={[UserRole.SERVICE_PROVIDER]}><ServiceProviderAnalyticsPage /></SubscriptionGatedRoute>
         } />
-          <Route path="/service-provider/company-profile" element={ // This route is effectively replaced by /settings/service-provider
+        {/* Profile/Settings/Support routes don't require subscription */}
+        <Route path="/service-provider/company-profile" element={
           <ProtectedRoute roles={[UserRole.SERVICE_PROVIDER]}><Navigate to="/settings/service-provider" replace /></ProtectedRoute>
         } />
         <Route path="/service-provider/organisation-profile" element={
@@ -399,20 +441,21 @@ const ProtectedLayout: React.FC = () => {
           <ProtectedRoute roles={[UserRole.SERVICE_PROVIDER]}><ServiceProviderSupportPage /></ProtectedRoute>
         } />
         
-        {/* Foundation Routes */}
+        {/* Foundation Routes - Subscription Gated */}
         <Route path="/foundation/dashboard" element={
-          <ProtectedRoute roles={[UserRole.FOUNDATION]}><FoundationDashboardPage /></ProtectedRoute>
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION]}><FoundationDashboardPage /></SubscriptionGatedRoute>
         } />
         <Route path="/foundation/orders-appointments" element={
-          <ProtectedRoute roles={[UserRole.FOUNDATION]}><FoundationOrdersAppointmentsPage /></ProtectedRoute>
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION]}><FoundationOrdersAppointmentsPage /></SubscriptionGatedRoute>
         } />
         <Route path="/foundation/leads" element={ 
-          <ProtectedRoute roles={[UserRole.FOUNDATION]}><FoundationLeadsPage /></ProtectedRoute>
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION]}><FoundationLeadsPage /></SubscriptionGatedRoute>
         } />
         <Route path="/foundation/analytics" element={
-          <ProtectedRoute roles={[UserRole.FOUNDATION]}><FoundationAnalyticsPage /></ProtectedRoute>
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION]}><FoundationAnalyticsPage /></SubscriptionGatedRoute>
         } />
-          <Route path="/foundation/organisation-profile" element={ 
+        {/* Profile/Support routes don't require subscription */}
+        <Route path="/foundation/organisation-profile" element={ 
           <ProtectedRoute roles={[UserRole.FOUNDATION]}><FoundationOrganisationProfilePage /></ProtectedRoute>
         } />
         <Route path="/foundation/support" element={
@@ -452,8 +495,9 @@ const ProtectedLayout: React.FC = () => {
         <Route path="/notifications" element={<ProtectedRoute roles={[UserRole.FOUNDATION, UserRole.EDUCATOR, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.PARENT, UserRole.ADMIN, UserRole.SUPER_ADMIN]}><NotificationsPage /></ProtectedRoute>} />
 
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
-      </Routes>
-    </MainLayout>
+        </Routes>
+      </MainLayout>
+    </SubscriptionProvider>
   );
 };
 

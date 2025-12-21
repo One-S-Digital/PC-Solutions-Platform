@@ -607,3 +607,272 @@ export class SubscriptionController {
     return wrapResponse(plan);
   }
 }
+
+// =====================================
+// USER SUBSCRIPTION CONTROLLER
+// Authenticated user endpoints for checking own subscription status
+// Future-proofed for Stripe/payment gateway integration
+// =====================================
+
+/**
+ * Response interface for user subscription status
+ * Designed to be payment-gateway agnostic for future Stripe integration
+ */
+export interface UserSubscriptionResponse {
+  /** Whether user has an active subscription (ACTIVE or TRIAL status) */
+  hasActiveSubscription: boolean;
+  /** Whether this user's role requires a subscription */
+  requiresSubscription: boolean;
+  /** Current subscription status */
+  status: SubscriptionStatus | null;
+  /** Subscription details (null if no subscription) */
+  subscription: Subscription | null;
+  /** List of features available in current plan */
+  features: string[];
+  /** Plan limits (e.g., { parentEnquiries: 15, teamMembers: 5 }) */
+  limits: Record<string, any> | null;
+  /** Plan details */
+  plan: SubscriptionPlan | null;
+  /** Subscription expiry date */
+  expiresAt: Date | null;
+  /** Whether subscription is in trial period */
+  isTrialing: boolean;
+  /** Days remaining in trial (if applicable) */
+  trialDaysRemaining: number | null;
+  /** Days until subscription expires */
+  daysUntilExpiry: number | null;
+  /** Whether subscription is set to cancel at period end */
+  cancelAtPeriodEnd: boolean;
+  /** 
+   * Payment gateway info (for future Stripe integration)
+   * Will contain stripeCustomerId, stripeSubscriptionId when integrated
+   */
+  paymentGateway: {
+    provider: 'manual' | 'stripe' | 'other';
+    customerId: string | null;
+    subscriptionId: string | null;
+    /** URL to payment portal (e.g., Stripe Customer Portal) */
+    portalUrl: string | null;
+  };
+}
+
+// Roles that require a subscription to access platform features
+const SUBSCRIPTION_REQUIRED_ROLES: UserRole[] = [
+  UserRole.FOUNDATION,
+  UserRole.PRODUCT_SUPPLIER,
+  UserRole.SERVICE_PROVIDER,
+];
+
+@Controller('subscriptions')
+@UseGuards(RolesGuard)
+export class UserSubscriptionController {
+  constructor(private readonly subscriptionService: SubscriptionManagementService) {}
+
+  /**
+   * Get current user's subscription status
+   * This is the primary endpoint for the frontend to check subscription status
+   * 
+   * @returns UserSubscriptionResponse with subscription status and features
+   */
+  @Get('me')
+  @Roles(
+    UserRole.FOUNDATION,
+    UserRole.PRODUCT_SUPPLIER,
+    UserRole.SERVICE_PROVIDER,
+    UserRole.EDUCATOR,
+    UserRole.PARENT,
+    UserRole.ADMIN,
+    UserRole.SUPER_ADMIN,
+  )
+  async getMySubscription(@Request() req: any): Promise<{ success: boolean; data: UserSubscriptionResponse }> {
+    const userContext = req.context;
+    const userId = userContext?.userId;
+    const userRole = userContext?.role as UserRole;
+
+    // Check if role requires subscription
+    const requiresSubscription = SUBSCRIPTION_REQUIRED_ROLES.includes(userRole);
+
+    // For roles that don't require subscription, return free access
+    if (!requiresSubscription) {
+      return wrapResponse({
+        hasActiveSubscription: true, // Free roles always have "access"
+        requiresSubscription: false,
+        status: null,
+        subscription: null,
+        features: ['*'], // Full access
+        limits: null,
+        plan: null,
+        expiresAt: null,
+        isTrialing: false,
+        trialDaysRemaining: null,
+        daysUntilExpiry: null,
+        cancelAtPeriodEnd: false,
+        paymentGateway: {
+          provider: 'manual',
+          customerId: null,
+          subscriptionId: null,
+          portalUrl: null,
+        },
+      } as UserSubscriptionResponse);
+    }
+
+    // For subscription-required roles, check subscription
+    let subscription: Subscription | null = null;
+
+    // First try user-based subscription
+    if (userId) {
+      subscription = await this.subscriptionService.getUserSubscription(userId);
+    }
+
+    // If no user subscription, try organization-based subscription
+    if (!subscription && userContext?.organizationId) {
+      subscription = await this.subscriptionService.getOrganizationSubscription(userContext.organizationId);
+    }
+
+    // Calculate derived fields
+    const now = new Date();
+    const isActive = subscription?.status === 'ACTIVE' || subscription?.status === 'TRIAL';
+    const isTrialing = subscription?.status === 'TRIAL';
+    
+    let trialDaysRemaining: number | null = null;
+    if (isTrialing && subscription?.trialEnd) {
+      const trialEnd = new Date(subscription.trialEnd);
+      trialDaysRemaining = Math.max(0, Math.ceil((trialEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
+    }
+
+    let daysUntilExpiry: number | null = null;
+    if (subscription?.currentPeriodEnd) {
+      const periodEnd = new Date(subscription.currentPeriodEnd);
+      daysUntilExpiry = Math.max(0, Math.ceil((periodEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
+    }
+
+    return wrapResponse({
+      hasActiveSubscription: isActive,
+      requiresSubscription: true,
+      status: subscription?.status || null,
+      subscription: subscription || null,
+      features: subscription?.plan?.features || [],
+      limits: subscription?.plan?.limits || null,
+      plan: subscription?.plan || null,
+      expiresAt: subscription?.currentPeriodEnd || null,
+      isTrialing,
+      trialDaysRemaining,
+      daysUntilExpiry,
+      cancelAtPeriodEnd: subscription?.cancelAtPeriodEnd || false,
+      paymentGateway: {
+        provider: subscription?.isManual ? 'manual' : 'stripe',
+        customerId: subscription?.stripeCustomerId || null,
+        subscriptionId: subscription?.stripeSubscriptionId || null,
+        // Future: Generate Stripe Customer Portal URL when integrated
+        portalUrl: null,
+      },
+    } as UserSubscriptionResponse);
+  }
+
+  /**
+   * Request a subscription (for manual subscription flow)
+   * This endpoint creates a pending subscription request for admin approval
+   * 
+   * Future: Will integrate with Stripe Checkout for automated payments
+   */
+  @Post('request')
+  @Roles(
+    UserRole.FOUNDATION,
+    UserRole.PRODUCT_SUPPLIER,
+    UserRole.SERVICE_PROVIDER,
+  )
+  async requestSubscription(
+    @Body() body: { planId: string; billingPeriod?: 'monthly' | 'yearly'; notes?: string },
+    @Request() req: any,
+  ) {
+    const userContext = req.context;
+    const userId = userContext?.userId;
+    const organizationId = userContext?.organizationId;
+
+    if (!userId && !organizationId) {
+      return wrapResponse(null, 'User or organization ID required', false);
+    }
+
+    // Check if plan exists
+    const plan = await this.subscriptionService.getSubscriptionPlanById(body.planId);
+    if (!plan) {
+      return wrapResponse(null, 'Plan not found', false);
+    }
+
+    // Check if user/org already has an active or pending subscription
+    let existingSubscription = userId 
+      ? await this.subscriptionService.getUserSubscription(userId)
+      : await this.subscriptionService.getOrganizationSubscription(organizationId);
+
+    if (existingSubscription && ['ACTIVE', 'TRIAL', 'PENDING'].includes(existingSubscription.status)) {
+      return wrapResponse(null, 'You already have an active or pending subscription', false);
+    }
+
+    // Create a pending subscription request
+    // In manual flow, admin will activate this
+    // Future: In Stripe flow, this will redirect to Stripe Checkout
+    const subscription = await this.subscriptionService.createSubscription(
+      {
+        userId: userId || undefined,
+        organizationId: organizationId || undefined,
+        planId: body.planId,
+        tier: (plan.code?.toUpperCase() || 'BASIC') as SubscriptionTier,
+        notes: body.notes || `Subscription request via self-service. Billing: ${body.billingPeriod || 'monthly'}`,
+      },
+      'self-service',
+    );
+
+    return wrapResponse({
+      message: 'Subscription request submitted successfully. Our team will contact you shortly.',
+      subscriptionId: subscription.id,
+      status: subscription.status,
+      // Future: Add checkoutUrl for Stripe integration
+      checkoutUrl: null,
+    });
+  }
+
+  /**
+   * Check if user has access to a specific feature
+   * Used for granular feature gating within the application
+   */
+  @Get('feature/:featureKey')
+  @Roles(
+    UserRole.FOUNDATION,
+    UserRole.PRODUCT_SUPPLIER,
+    UserRole.SERVICE_PROVIDER,
+    UserRole.EDUCATOR,
+    UserRole.PARENT,
+    UserRole.ADMIN,
+    UserRole.SUPER_ADMIN,
+  )
+  async checkFeatureAccess(
+    @Param('featureKey') featureKey: string,
+    @Request() req: any,
+  ) {
+    const userContext = req.context;
+    const userId = userContext?.userId;
+    const userRole = userContext?.role as UserRole;
+
+    // Free roles have access to all features
+    if (!SUBSCRIPTION_REQUIRED_ROLES.includes(userRole)) {
+      return wrapResponse({ hasAccess: true, reason: 'free_role' });
+    }
+
+    // Check feature access - first via user subscription
+    let hasAccess = await this.subscriptionService.checkFeatureAccess(userId, featureKey);
+
+    // If no access via user subscription, check organization subscription
+    if (!hasAccess && userContext?.organizationId) {
+      hasAccess = await this.subscriptionService.checkFeatureAccess(
+        userContext.organizationId, 
+        featureKey
+      );
+    }
+
+    return wrapResponse({
+      hasAccess,
+      featureKey,
+      reason: hasAccess ? 'feature_available' : 'feature_requires_upgrade',
+    });
+  }
+}

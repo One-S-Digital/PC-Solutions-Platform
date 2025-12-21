@@ -1,0 +1,90 @@
+{
+  "paywall": {
+    "requiredTitle": "Subscription Required",
+    "requiredMessage": "An active subscription is required to access this feature. Choose a plan to get started.",
+    "pendingTitle": "Subscription Pending",
+    "pendingMessage": "Your subscription request is being processed. Our team will contact you shortly to activate your account.",
+    "expiredTitle": "Subscription Expired",
+    "expiredMessage": "Your subscription has expired. Renew now to regain access to all features.",
+    "cancelledTitle": "Subscription Cancelled",
+    "cancelledMessage": "Your subscription has been cancelled. Subscribe again to continue using the platform.",
+    "pausedTitle": "Subscription Paused",
+    "pausedMessage": "Your subscription is currently paused. Contact support to resume access.",
+    "pastDueTitle": "Payment Required",
+    "pastDueMessage": "Your payment is overdue. Please update your payment method to restore access.",
+    "graceTitle": "Grace Period",
+    "graceMessage": "Your subscription is in a grace period. Please renew soon to avoid losing access.",
+    "viewPlans": "View Subscription Plans",
+    "manageBilling": "Manage Billing",
+    "contactSupport": "Contact Support",
+    "manageSubscription": "Manage your subscription",
+    "needHelp": "Need help?",
+    "contactUs": "Contact us",
+    "featureNotAvailableTitle": "Feature Not Available",
+    "featureNotAvailableMessage": "This feature requires a higher tier plan. Upgrade to access {{feature}}."
+  },
+  "featureGate": {
+    "locked": "This feature requires a plan upgrade",
+    "upgrade": "Upgrade Plan"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "paused": "Paused",
+    "cancelled": "Cancelled",
+    "expired": "Expired",
+    "trial": "Trial",
+    "pastDue": "Past Due",
+    "pending": "Pending",
+    "gracePeriod": "Grace Period"
+  },
+  "request": {
+    "title": "Request Subscription",
+    "selectPlan": "Select a Plan",
+    "billingPeriod": "Billing Period",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "yearlyDiscount": "Save 10%",
+    "notes": "Additional Notes",
+    "notesPlaceholder": "Any special requirements or questions...",
+    "submit": "Submit Request",
+    "submitting": "Submitting...",
+    "successTitle": "Request Submitted",
+    "successMessage": "Your subscription request has been submitted successfully. Our team will contact you shortly.",
+    "errorTitle": "Request Failed",
+    "errorMessage": "There was an error submitting your request. Please try again."
+  },
+  "info": {
+    "currentPlan": "Current Plan",
+    "noPlan": "No active plan",
+    "expiresOn": "Expires on {{date}}",
+    "trialEndsOn": "Trial ends on {{date}}",
+    "daysRemaining": "{{days}} days remaining",
+    "trialDaysRemaining": "{{days}} trial days remaining",
+    "cancelAtPeriodEnd": "Cancels at period end",
+    "features": "Features",
+    "limits": "Usage Limits",
+    "unlimited": "Unlimited"
+  },
+  "actions": {
+    "upgrade": "Upgrade Plan",
+    "downgrade": "Downgrade Plan",
+    "renew": "Renew Subscription",
+    "cancel": "Cancel Subscription",
+    "resume": "Resume Subscription",
+    "managePayment": "Manage Payment Method"
+  },
+  "errors": {
+    "fetchFailed": "Failed to load subscription information",
+    "requestFailed": "Failed to submit subscription request",
+    "contextMissing": "useSubscription must be used within a SubscriptionProvider",
+    "featureNotAvailable": "This feature is not available in your current plan"
+  },
+  "badge": {
+    "trial": "Trial",
+    "active": "Active",
+    "expiringSoon": "Expiring Soon",
+    "expired": "Expired",
+    "pending": "Pending"
+  }
+}
