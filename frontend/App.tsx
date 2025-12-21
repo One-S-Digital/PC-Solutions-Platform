@@ -278,7 +278,6 @@ const ProtectedLayout: React.FC = () => {
   }
 
   return (
-    <SubscriptionProvider>
       <MainLayout>
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
@@ -497,7 +496,6 @@ const ProtectedLayout: React.FC = () => {
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </MainLayout>
-    </SubscriptionProvider>
   );
 };
 
@@ -535,14 +533,16 @@ const App: React.FC = () => {
       <CartProvider>
         <NotificationProvider>
           <MessagingProvider>
-            <Routes>
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/signup" element={<SignupPage />} />
-              <Route path="/pricing" element={<SubscriptionProvider><PricingPage /></SubscriptionProvider>} />
-              <Route path="/partners" element={<PublicPartnersPage />} />
-              <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
-              <Route path="/*" element={<ProtectedLayout />} />
-            </Routes>
+            <SubscriptionProvider>
+              <Routes>
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/signup" element={<SignupPage />} />
+                <Route path="/pricing" element={<PricingPage />} />
+                <Route path="/partners" element={<PublicPartnersPage />} />
+                <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
+                <Route path="/*" element={<ProtectedLayout />} />
+              </Routes>
+            </SubscriptionProvider>
           </MessagingProvider>
         </NotificationProvider>
       </CartProvider>
