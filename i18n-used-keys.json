@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-21T15:34:24.821Z",
+  "timestamp": "2025-12-21T17:19:55.264Z",
   "totalKeys": 1857,
   "byNamespace": {
     "common": 2683,
@@ -15767,318 +15767,6 @@
       "context": "const placeholderText = placeholder || t('common:placeholders.typeorselect');"
     },
     {
-      "key": "renameFileModal.title",
-      "file": "components/shared/RenameFileModal.tsx",
-      "line": 40,
-      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('renameFileModal.title')}</h2>"
-    },
-    {
-      "key": "renameFileModal.label",
-      "file": "components/shared/RenameFileModal.tsx",
-      "line": 44,
-      "context": "<label htmlFor=\"fileName\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('renameFileModal.label')}</label>"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/shared/RenameFileModal.tsx",
-      "line": 56,
-      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.cancel')}</Button>"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/shared/RenameFileModal.tsx",
-      "line": 56,
-      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.cancel')}</Button>"
-    },
-    {
-      "key": "common:buttons.save",
-      "file": "components/shared/RenameFileModal.tsx",
-      "line": 57,
-      "context": "<Button type=\"submit\" variant=\"primary\">{t('common:buttons.save')}</Button>"
-    },
-    {
-      "key": "common:buttons.save",
-      "file": "components/shared/RenameFileModal.tsx",
-      "line": 57,
-      "context": "<Button type=\"submit\" variant=\"primary\">{t('common:buttons.save')}</Button>"
-    },
-    {
-      "key": "settings:imageCropper.title",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 430,
-      "context": "{t('settings:imageCropper.title', 'Crop Your Image')}"
-    },
-    {
-      "key": "settings:imageCropper.title",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 430,
-      "context": "{t('settings:imageCropper.title', 'Crop Your Image')}"
-    },
-    {
-      "key": "settings:imageCropper.subtitle",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 433,
-      "context": "{t('settings:imageCropper.subtitle', 'Adjust the selection to fit your {{type}}', {"
-    },
-    {
-      "key": "settings:imageCropper.subtitle",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 433,
-      "context": "{t('settings:imageCropper.subtitle', 'Adjust the selection to fit your {{type}}', {"
-    },
-    {
-      "key": "settings:imageCropper.targetSize",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 475,
-      "context": "{t('settings:imageCropper.targetSize', 'Output: {{width}}×{{height}}px', {"
-    },
-    {
-      "key": "settings:imageCropper.targetSize",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 475,
-      "context": "{t('settings:imageCropper.targetSize', 'Output: {{width}}×{{height}}px', {"
-    },
-    {
-      "key": "settings:imageCropper.dragHint",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 482,
-      "context": "{t('settings:imageCropper.dragHint', 'Drag to move, corners to resize')}"
-    },
-    {
-      "key": "settings:imageCropper.dragHint",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 482,
-      "context": "{t('settings:imageCropper.dragHint', 'Drag to move, corners to resize')}"
-    },
-    {
-      "key": "settings:imageCropper.qualityNote",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 490,
-      "context": "{t('settings:imageCropper.qualityNote', 'Image will be saved as high-quality JPEG')}"
-    },
-    {
-      "key": "settings:imageCropper.qualityNote",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 490,
-      "context": "{t('settings:imageCropper.qualityNote', 'Image will be saved as high-quality JPEG')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 498,
-      "context": "{t('common:buttons.cancel', 'Cancel')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 498,
-      "context": "{t('common:buttons.cancel', 'Cancel')}"
-    },
-    {
-      "key": "settings:imageCropper.processing",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 506,
-      "context": "? t('settings:imageCropper.processing', 'Processing...')"
-    },
-    {
-      "key": "settings:imageCropper.processing",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 506,
-      "context": "? t('settings:imageCropper.processing', 'Processing...')"
-    },
-    {
-      "key": "settings:imageCropper.apply",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 507,
-      "context": ": t('settings:imageCropper.apply', 'Apply Crop')"
-    },
-    {
-      "key": "settings:imageCropper.apply",
-      "file": "components/shared/ImageCropperModal.tsx",
-      "line": 507,
-      "context": ": t('settings:imageCropper.apply', 'Apply Crop')"
-    },
-    {
-      "key": "fileUploadModal.title",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 101,
-      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('fileUploadModal.title')}</h2>"
-    },
-    {
-      "key": "fileUploadModal.uploadFile",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 114,
-      "context": "<span>{t('fileUploadModal.uploadFile')}</span>"
-    },
-    {
-      "key": "fileUploadModal.dragAndDrop",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 117,
-      "context": "<p className=\"pl-1\">{t('fileUploadModal.dragAndDrop')}</p>"
-    },
-    {
-      "key": "fileUploadModal.fileTypes",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 119,
-      "context": "<p className=\"text-xs text-gray-500\">{t('fileUploadModal.fileTypes')}</p>"
-    },
-    {
-      "key": "fileUploadModal.uploadedFiles",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 125,
-      "context": "{uploadedFiles.length > 0 ? t('fileUploadModal.uploadedFiles') : t('fileUploadModal.filesToUpload')}"
-    },
-    {
-      "key": "fileUploadModal.filesToUpload",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 125,
-      "context": "{uploadedFiles.length > 0 ? t('fileUploadModal.uploadedFiles') : t('fileUploadModal.filesToUpload')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 153,
-      "context": "<Button variant=\"light\" onClick={onClose} disabled={isUploading}>{t('common:buttons.cancel')}</Button>"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 153,
-      "context": "<Button variant=\"light\" onClick={onClose} disabled={isUploading}>{t('common:buttons.cancel')}</Button>"
-    },
-    {
-      "key": "fileUploadModal.uploading",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 155,
-      "context": "{isUploading ? t('fileUploadModal.uploading') : t('fileUploadModal.uploadButton', { count: filesToUpload.length })}"
-    },
-    {
-      "key": "fileUploadModal.uploadButton",
-      "file": "components/shared/FileUploadModal.tsx",
-      "line": 155,
-      "context": "{isUploading ? t('fileUploadModal.uploading') : t('fileUploadModal.uploadButton', { count: filesToUpload.length })}"
-    },
-    {
-      "key": "featureLock.title",
-      "file": "components/shared/FeatureLock.tsx",
-      "line": 21,
-      "context": "<h2 className=\"text-2xl font-bold text-swiss-charcoal mb-2\">{t('featureLock.title', { featureName })}</h2>"
-    },
-    {
-      "key": "featureLock.message",
-      "file": "components/shared/FeatureLock.tsx",
-      "line": 22,
-      "context": "<p className=\"text-gray-600 mb-6\">{t('featureLock.message', { requiredPlan })}</p>"
-    },
-    {
-      "key": "featureLock.upgradeButton",
-      "file": "components/shared/FeatureLock.tsx",
-      "line": 24,
-      "context": "{t('featureLock.upgradeButton')}"
-    },
-    {
-      "key": "errorBoundary.somethingWentWrong",
-      "file": "components/shared/ErrorBoundary.tsx",
-      "line": 55,
-      "context": "{t(\"errorBoundary.somethingWentWrong\")}"
-    },
-    {
-      "key": "errorBoundary.sorryMessage",
-      "file": "components/shared/ErrorBoundary.tsx",
-      "line": 58,
-      "context": "{t(\"errorBoundary.sorryMessage\")}"
-    },
-    {
-      "key": "errorBoundary.errorDetails",
-      "file": "components/shared/ErrorBoundary.tsx",
-      "line": 63,
-      "context": "{t(\"errorBoundary.errorDetails\")}"
-    },
-    {
-      "key": "errorBoundary.tryAgain",
-      "file": "components/shared/ErrorBoundary.tsx",
-      "line": 77,
-      "context": "{t(\"errorBoundary.tryAgain\")}"
-    },
-    {
-      "key": "errorBoundary.reloadPage",
-      "file": "components/shared/ErrorBoundary.tsx",
-      "line": 84,
-      "context": "{t(\"errorBoundary.reloadPage\")}"
-    },
-    {
-      "key": "activeClientToggle.confirmSave",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 35,
-      "context": "if (window.confirm(t('activeClientToggle.confirmSave'))) {"
-    },
-    {
-      "key": "activeClientToggle.saveSuccess.title",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 38,
-      "context": "title: t('activeClientToggle.saveSuccess.title'),"
-    },
-    {
-      "key": "activeClientToggle.saveSuccess.message",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 39,
-      "context": "message: t('activeClientToggle.saveSuccess.message'),"
-    },
-    {
-      "key": "activeClientToggle.title",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 49,
-      "context": "<h3 className=\"text-lg font-semibold text-amber-900 mb-2\">{t('activeClientToggle.title')}</h3>"
-    },
-    {
-      "key": "activeClientToggle.label",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 51,
-      "context": "<label htmlFor=\"activeClientToggle\" className=\"font-medium text-amber-800\">{t('activeClientToggle.label')}</label>"
-    },
-    {
-      "key": "activeClientToggle.reasonLabel",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 64,
-      "context": "<label htmlFor=\"clientReason\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('activeClientToggle.reasonLabel')}</label>"
-    },
-    {
-      "key": "placeholders.select",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 66,
-      "context": "<option value=\"\">{t('placeholders.select')}</option>"
-    },
-    {
-      "key": "activeClientToggle.noteLabel",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 73,
-      "context": "<label htmlFor=\"clientNote\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('activeClientToggle.noteLabel')}</label>"
-    },
-    {
-      "key": "activeClientToggle.notePlaceholder",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 81,
-      "context": "placeholder={t('activeClientToggle.notePlaceholder')}"
-    },
-    {
-      "key": "activeClientToggle.subtext",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 85,
-      "context": "<p className=\"text-xs text-gray-600 mt-2\">{t('activeClientToggle.subtext')}</p>"
-    },
-    {
-      "key": "common:buttons.saveChanges",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 87,
-      "context": "{t('common:buttons.saveChanges')}"
-    },
-    {
-      "key": "common:buttons.saveChanges",
-      "file": "components/shared/ActiveClientToggle.tsx",
-      "line": 87,
-      "context": "{t('common:buttons.saveChanges')}"
-    },
-    {
       "key": "dashboard:productUploadModal.editTitle",
       "file": "components/supplier/ProductUploadModal.tsx",
       "line": 185,
@@ -17109,6 +16797,318 @@
       "file": "components/settings/AddPromoCodeModal.tsx",
       "line": 12,
       "context": "<p>{t(\"addPromoCodeModal.placeholder\")}</p>"
+    },
+    {
+      "key": "renameFileModal.title",
+      "file": "components/shared/RenameFileModal.tsx",
+      "line": 40,
+      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('renameFileModal.title')}</h2>"
+    },
+    {
+      "key": "renameFileModal.label",
+      "file": "components/shared/RenameFileModal.tsx",
+      "line": 44,
+      "context": "<label htmlFor=\"fileName\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('renameFileModal.label')}</label>"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/shared/RenameFileModal.tsx",
+      "line": 56,
+      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.cancel')}</Button>"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/shared/RenameFileModal.tsx",
+      "line": 56,
+      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.cancel')}</Button>"
+    },
+    {
+      "key": "common:buttons.save",
+      "file": "components/shared/RenameFileModal.tsx",
+      "line": 57,
+      "context": "<Button type=\"submit\" variant=\"primary\">{t('common:buttons.save')}</Button>"
+    },
+    {
+      "key": "common:buttons.save",
+      "file": "components/shared/RenameFileModal.tsx",
+      "line": 57,
+      "context": "<Button type=\"submit\" variant=\"primary\">{t('common:buttons.save')}</Button>"
+    },
+    {
+      "key": "settings:imageCropper.title",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 430,
+      "context": "{t('settings:imageCropper.title', 'Crop Your Image')}"
+    },
+    {
+      "key": "settings:imageCropper.title",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 430,
+      "context": "{t('settings:imageCropper.title', 'Crop Your Image')}"
+    },
+    {
+      "key": "settings:imageCropper.subtitle",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 433,
+      "context": "{t('settings:imageCropper.subtitle', 'Adjust the selection to fit your {{type}}', {"
+    },
+    {
+      "key": "settings:imageCropper.subtitle",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 433,
+      "context": "{t('settings:imageCropper.subtitle', 'Adjust the selection to fit your {{type}}', {"
+    },
+    {
+      "key": "settings:imageCropper.targetSize",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 475,
+      "context": "{t('settings:imageCropper.targetSize', 'Output: {{width}}×{{height}}px', {"
+    },
+    {
+      "key": "settings:imageCropper.targetSize",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 475,
+      "context": "{t('settings:imageCropper.targetSize', 'Output: {{width}}×{{height}}px', {"
+    },
+    {
+      "key": "settings:imageCropper.dragHint",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 482,
+      "context": "{t('settings:imageCropper.dragHint', 'Drag to move, corners to resize')}"
+    },
+    {
+      "key": "settings:imageCropper.dragHint",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 482,
+      "context": "{t('settings:imageCropper.dragHint', 'Drag to move, corners to resize')}"
+    },
+    {
+      "key": "settings:imageCropper.qualityNote",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 490,
+      "context": "{t('settings:imageCropper.qualityNote', 'Image will be saved as high-quality JPEG')}"
+    },
+    {
+      "key": "settings:imageCropper.qualityNote",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 490,
+      "context": "{t('settings:imageCropper.qualityNote', 'Image will be saved as high-quality JPEG')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 498,
+      "context": "{t('common:buttons.cancel', 'Cancel')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 498,
+      "context": "{t('common:buttons.cancel', 'Cancel')}"
+    },
+    {
+      "key": "settings:imageCropper.processing",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 506,
+      "context": "? t('settings:imageCropper.processing', 'Processing...')"
+    },
+    {
+      "key": "settings:imageCropper.processing",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 506,
+      "context": "? t('settings:imageCropper.processing', 'Processing...')"
+    },
+    {
+      "key": "settings:imageCropper.apply",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 507,
+      "context": ": t('settings:imageCropper.apply', 'Apply Crop')"
+    },
+    {
+      "key": "settings:imageCropper.apply",
+      "file": "components/shared/ImageCropperModal.tsx",
+      "line": 507,
+      "context": ": t('settings:imageCropper.apply', 'Apply Crop')"
+    },
+    {
+      "key": "fileUploadModal.title",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 101,
+      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('fileUploadModal.title')}</h2>"
+    },
+    {
+      "key": "fileUploadModal.uploadFile",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 114,
+      "context": "<span>{t('fileUploadModal.uploadFile')}</span>"
+    },
+    {
+      "key": "fileUploadModal.dragAndDrop",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 117,
+      "context": "<p className=\"pl-1\">{t('fileUploadModal.dragAndDrop')}</p>"
+    },
+    {
+      "key": "fileUploadModal.fileTypes",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 119,
+      "context": "<p className=\"text-xs text-gray-500\">{t('fileUploadModal.fileTypes')}</p>"
+    },
+    {
+      "key": "fileUploadModal.uploadedFiles",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 125,
+      "context": "{uploadedFiles.length > 0 ? t('fileUploadModal.uploadedFiles') : t('fileUploadModal.filesToUpload')}"
+    },
+    {
+      "key": "fileUploadModal.filesToUpload",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 125,
+      "context": "{uploadedFiles.length > 0 ? t('fileUploadModal.uploadedFiles') : t('fileUploadModal.filesToUpload')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 153,
+      "context": "<Button variant=\"light\" onClick={onClose} disabled={isUploading}>{t('common:buttons.cancel')}</Button>"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 153,
+      "context": "<Button variant=\"light\" onClick={onClose} disabled={isUploading}>{t('common:buttons.cancel')}</Button>"
+    },
+    {
+      "key": "fileUploadModal.uploading",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 155,
+      "context": "{isUploading ? t('fileUploadModal.uploading') : t('fileUploadModal.uploadButton', { count: filesToUpload.length })}"
+    },
+    {
+      "key": "fileUploadModal.uploadButton",
+      "file": "components/shared/FileUploadModal.tsx",
+      "line": 155,
+      "context": "{isUploading ? t('fileUploadModal.uploading') : t('fileUploadModal.uploadButton', { count: filesToUpload.length })}"
+    },
+    {
+      "key": "featureLock.title",
+      "file": "components/shared/FeatureLock.tsx",
+      "line": 21,
+      "context": "<h2 className=\"text-2xl font-bold text-swiss-charcoal mb-2\">{t('featureLock.title', { featureName })}</h2>"
+    },
+    {
+      "key": "featureLock.message",
+      "file": "components/shared/FeatureLock.tsx",
+      "line": 22,
+      "context": "<p className=\"text-gray-600 mb-6\">{t('featureLock.message', { requiredPlan })}</p>"
+    },
+    {
+      "key": "featureLock.upgradeButton",
+      "file": "components/shared/FeatureLock.tsx",
+      "line": 24,
+      "context": "{t('featureLock.upgradeButton')}"
+    },
+    {
+      "key": "errorBoundary.somethingWentWrong",
+      "file": "components/shared/ErrorBoundary.tsx",
+      "line": 55,
+      "context": "{t(\"errorBoundary.somethingWentWrong\")}"
+    },
+    {
+      "key": "errorBoundary.sorryMessage",
+      "file": "components/shared/ErrorBoundary.tsx",
+      "line": 58,
+      "context": "{t(\"errorBoundary.sorryMessage\")}"
+    },
+    {
+      "key": "errorBoundary.errorDetails",
+      "file": "components/shared/ErrorBoundary.tsx",
+      "line": 63,
+      "context": "{t(\"errorBoundary.errorDetails\")}"
+    },
+    {
+      "key": "errorBoundary.tryAgain",
+      "file": "components/shared/ErrorBoundary.tsx",
+      "line": 77,
+      "context": "{t(\"errorBoundary.tryAgain\")}"
+    },
+    {
+      "key": "errorBoundary.reloadPage",
+      "file": "components/shared/ErrorBoundary.tsx",
+      "line": 84,
+      "context": "{t(\"errorBoundary.reloadPage\")}"
+    },
+    {
+      "key": "activeClientToggle.confirmSave",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 35,
+      "context": "if (window.confirm(t('activeClientToggle.confirmSave'))) {"
+    },
+    {
+      "key": "activeClientToggle.saveSuccess.title",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 38,
+      "context": "title: t('activeClientToggle.saveSuccess.title'),"
+    },
+    {
+      "key": "activeClientToggle.saveSuccess.message",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 39,
+      "context": "message: t('activeClientToggle.saveSuccess.message'),"
+    },
+    {
+      "key": "activeClientToggle.title",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 49,
+      "context": "<h3 className=\"text-lg font-semibold text-amber-900 mb-2\">{t('activeClientToggle.title')}</h3>"
+    },
+    {
+      "key": "activeClientToggle.label",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 51,
+      "context": "<label htmlFor=\"activeClientToggle\" className=\"font-medium text-amber-800\">{t('activeClientToggle.label')}</label>"
+    },
+    {
+      "key": "activeClientToggle.reasonLabel",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 64,
+      "context": "<label htmlFor=\"clientReason\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('activeClientToggle.reasonLabel')}</label>"
+    },
+    {
+      "key": "placeholders.select",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 66,
+      "context": "<option value=\"\">{t('placeholders.select')}</option>"
+    },
+    {
+      "key": "activeClientToggle.noteLabel",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 73,
+      "context": "<label htmlFor=\"clientNote\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('activeClientToggle.noteLabel')}</label>"
+    },
+    {
+      "key": "activeClientToggle.notePlaceholder",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 81,
+      "context": "placeholder={t('activeClientToggle.notePlaceholder')}"
+    },
+    {
+      "key": "activeClientToggle.subtext",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 85,
+      "context": "<p className=\"text-xs text-gray-600 mt-2\">{t('activeClientToggle.subtext')}</p>"
+    },
+    {
+      "key": "common:buttons.saveChanges",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 87,
+      "context": "{t('common:buttons.saveChanges')}"
+    },
+    {
+      "key": "common:buttons.saveChanges",
+      "file": "components/shared/ActiveClientToggle.tsx",
+      "line": 87,
+      "context": "{t('common:buttons.saveChanges')}"
     },
     {
       "key": "common:serviceUploadModal.editTitle",
@@ -19643,6 +19643,318 @@
       "context": "<Button type=\"submit\" variant=\"primary\">{t('common:buttons.submitRequest')}</Button>"
     },
     {
+      "key": "common:leadCard.alert.missingParentInfo",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 58,
+      "context": "alert(t('common:leadCard.alert.missingParentInfo'));"
+    },
+    {
+      "key": "common:leadCard.alert.missingParentInfo",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 58,
+      "context": "alert(t('common:leadCard.alert.missingParentInfo'));"
+    },
+    {
+      "key": "dashboard:leadCard.status.notResponded",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 69,
+      "context": "case FoundationLeadResponseStatus.NOT_RESPONDED: return { className: 'bg-gray-200 text-gray-700', label: t('dashboard:leadCard.status.notResponded') };"
+    },
+    {
+      "key": "dashboard:leadCard.status.notResponded",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 69,
+      "context": "case FoundationLeadResponseStatus.NOT_RESPONDED: return { className: 'bg-gray-200 text-gray-700', label: t('dashboard:leadCard.status.notResponded') };"
+    },
+    {
+      "key": "dashboard:leadCard.status.interested",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 70,
+      "context": "case FoundationLeadResponseStatus.INTERESTED: return { className: 'bg-green-100 text-green-700', label: t('dashboard:leadCard.status.interested') };"
+    },
+    {
+      "key": "dashboard:leadCard.status.interested",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 70,
+      "context": "case FoundationLeadResponseStatus.INTERESTED: return { className: 'bg-green-100 text-green-700', label: t('dashboard:leadCard.status.interested') };"
+    },
+    {
+      "key": "dashboard:leadCard.status.notInterested",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 71,
+      "context": "case FoundationLeadResponseStatus.NOT_INTERESTED: return { className: 'bg-red-100 text-red-700', label: t('dashboard:leadCard.status.notInterested') };"
+    },
+    {
+      "key": "dashboard:leadCard.status.notInterested",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 71,
+      "context": "case FoundationLeadResponseStatus.NOT_INTERESTED: return { className: 'bg-red-100 text-red-700', label: t('dashboard:leadCard.status.notInterested') };"
+    },
+    {
+      "key": "dashboard:leadCard.status.needsMoreInfo",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 72,
+      "context": "case FoundationLeadResponseStatus.NEEDS_MORE_INFO: return { className: 'bg-yellow-100 text-yellow-700', label: t('dashboard:leadCard.status.needsMoreInfo') };"
+    },
+    {
+      "key": "dashboard:leadCard.status.needsMoreInfo",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 72,
+      "context": "case FoundationLeadResponseStatus.NEEDS_MORE_INFO: return { className: 'bg-yellow-100 text-yellow-700', label: t('dashboard:leadCard.status.needsMoreInfo') };"
+    },
+    {
+      "key": "dashboard:leadCard.status.enrolled",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 73,
+      "context": "case FoundationLeadResponseStatus.ENROLLED: return { className: 'bg-purple-100 text-purple-700', label: t('dashboard:leadCard.status.enrolled') };"
+    },
+    {
+      "key": "dashboard:leadCard.status.enrolled",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 73,
+      "context": "case FoundationLeadResponseStatus.ENROLLED: return { className: 'bg-purple-100 text-purple-700', label: t('dashboard:leadCard.status.enrolled') };"
+    },
+    {
+      "key": "common:leadCard.title",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 85,
+      "context": "{t('common:leadCard.title', { name: lead.contactName })}"
+    },
+    {
+      "key": "common:leadCard.title",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 85,
+      "context": "{t('common:leadCard.title', { name: lead.contactName })}"
+    },
+    {
+      "key": "common:leadCard.forLocation",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 92,
+      "context": "{t('common:leadCard.forLocation', { canton: lead.canton, municipality: lead.municipality ? `- ${lead.municipality}` : '' })}"
+    },
+    {
+      "key": "common:leadCard.forLocation",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 92,
+      "context": "{t('common:leadCard.forLocation', { canton: lead.canton, municipality: lead.municipality ? `- ${lead.municipality}` : '' })}"
+    },
+    {
+      "key": "common:leadCard.childAge",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 97,
+      "context": "<p><strong>{t('common:leadCard.childAge')}:</strong> {lead.childAge}</p>"
+    },
+    {
+      "key": "common:leadCard.childAge",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 97,
+      "context": "<p><strong>{t('common:leadCard.childAge')}:</strong> {lead.childAge}</p>"
+    },
+    {
+      "key": "common:leadCard.desiredStart",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 98,
+      "context": "<p><strong>{t('common:leadCard.desiredStart')}:</strong> {new Date(lead.desiredStartDate).toLocaleDateString(i18n.language)}</p>"
+    },
+    {
+      "key": "common:leadCard.desiredStart",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 98,
+      "context": "<p><strong>{t('common:leadCard.desiredStart')}:</strong> {new Date(lead.desiredStartDate).toLocaleDateString(i18n.language)}</p>"
+    },
+    {
+      "key": "common:leadCard.submittedOn",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 99,
+      "context": "<p><strong>{t('common:leadCard.submittedOn')}:</strong> {new Date(lead.submissionDate).toLocaleDateString(i18n.language)}</p>"
+    },
+    {
+      "key": "common:leadCard.submittedOn",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 99,
+      "context": "<p><strong>{t('common:leadCard.submittedOn')}:</strong> {new Date(lead.submissionDate).toLocaleDateString(i18n.language)}</p>"
+    },
+    {
+      "key": "common:leadCard.notes",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 100,
+      "context": "{lead.specialNeeds && <p><strong>{t('common:leadCard.notes')}:</strong> <span className=\"italic\">{lead.specialNeeds}</span></p>}"
+    },
+    {
+      "key": "common:leadCard.notes",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 100,
+      "context": "{lead.specialNeeds && <p><strong>{t('common:leadCard.notes')}:</strong> <span className=\"italic\">{lead.specialNeeds}</span></p>}"
+    },
+    {
+      "key": "common:leadCard.defaultMessages.interested",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 115,
+      "context": "onClick={() => handleResponse(FoundationLeadResponseStatus.INTERESTED, t('common:leadCard.defaultMessages.interested'))}"
+    },
+    {
+      "key": "common:leadCard.defaultMessages.interested",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 115,
+      "context": "onClick={() => handleResponse(FoundationLeadResponseStatus.INTERESTED, t('common:leadCard.defaultMessages.interested'))}"
+    },
+    {
+      "key": "common:leadCard.buttons.interested",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 118,
+      "context": "{t('common:leadCard.buttons.interested')}"
+    },
+    {
+      "key": "common:leadCard.buttons.interested",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 118,
+      "context": "{t('common:leadCard.buttons.interested')}"
+    },
+    {
+      "key": "common:leadCard.defaultMessages.notInterested",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 124,
+      "context": "onClick={() => handleResponse(FoundationLeadResponseStatus.NOT_INTERESTED, t('common:leadCard.defaultMessages.notInterested'))}"
+    },
+    {
+      "key": "common:leadCard.defaultMessages.notInterested",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 124,
+      "context": "onClick={() => handleResponse(FoundationLeadResponseStatus.NOT_INTERESTED, t('common:leadCard.defaultMessages.notInterested'))}"
+    },
+    {
+      "key": "common:leadCard.buttons.notInterested",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 127,
+      "context": "{t('common:leadCard.buttons.notInterested')}"
+    },
+    {
+      "key": "common:leadCard.buttons.notInterested",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 127,
+      "context": "{t('common:leadCard.buttons.notInterested')}"
+    },
+    {
+      "key": "common:leadCard.buttons.needInfo",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 136,
+      "context": "{t('common:leadCard.buttons.needInfo')}"
+    },
+    {
+      "key": "common:leadCard.buttons.needInfo",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 136,
+      "context": "{t('common:leadCard.buttons.needInfo')}"
+    },
+    {
+      "key": "common:leadCard.questionFor",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 142,
+      "context": "{t('common:leadCard.questionFor', { name: lead.contactName })}:"
+    },
+    {
+      "key": "common:leadCard.questionFor",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 142,
+      "context": "{t('common:leadCard.questionFor', { name: lead.contactName })}:"
+    },
+    {
+      "key": "common:leadCard.questionPlaceholder",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 150,
+      "context": "placeholder={t('common:leadCard.questionPlaceholder')}"
+    },
+    {
+      "key": "common:leadCard.questionPlaceholder",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 150,
+      "context": "placeholder={t('common:leadCard.questionPlaceholder')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 153,
+      "context": "<Button variant=\"ghost\" size=\"sm\" onClick={() => setShowResponseInput(false)}>{t('common:buttons.cancel')}</Button>"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 153,
+      "context": "<Button variant=\"ghost\" size=\"sm\" onClick={() => setShowResponseInput(false)}>{t('common:buttons.cancel')}</Button>"
+    },
+    {
+      "key": "common:leadCard.buttons.sendQuestion",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 161,
+      "context": "{t('common:leadCard.buttons.sendQuestion')}"
+    },
+    {
+      "key": "common:leadCard.buttons.sendQuestion",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 161,
+      "context": "{t('common:leadCard.buttons.sendQuestion')}"
+    },
+    {
+      "key": "common:leadCard.yourResponse",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 173,
+      "context": "<p className=\"font-medium\">{t('common:leadCard.yourResponse')}: <span className={`${currentStatusInfo.className} px-1.5 py-0.5 rounded`}>{currentStatusInfo.label}</span></p>"
+    },
+    {
+      "key": "common:leadCard.yourResponse",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 173,
+      "context": "<p className=\"font-medium\">{t('common:leadCard.yourResponse')}: <span className={`${currentStatusInfo.className} px-1.5 py-0.5 rounded`}>{currentStatusInfo.label}</span></p>"
+    },
+    {
+      "key": "common:leadCard.messageSent",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 174,
+      "context": "{myResponse.messageToParent && <p className=\"italic mt-1\">{t('common:leadCard.messageSent')}: \"{myResponse.messageToParent}\"</p>}"
+    },
+    {
+      "key": "common:leadCard.messageSent",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 174,
+      "context": "{myResponse.messageToParent && <p className=\"italic mt-1\">{t('common:leadCard.messageSent')}: \"{myResponse.messageToParent}\"</p>}"
+    },
+    {
+      "key": "common:leadCard.buttons.messageParent",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 183,
+      "context": "{t('common:leadCard.buttons.messageParent')}"
+    },
+    {
+      "key": "common:leadCard.buttons.messageParent",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 183,
+      "context": "{t('common:leadCard.buttons.messageParent')}"
+    },
+    {
+      "key": "common:leadCard.defaultMessages.enrolled",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 191,
+      "context": "onClick={() => handleResponse(FoundationLeadResponseStatus.ENROLLED, t('common:leadCard.defaultMessages.enrolled'))}"
+    },
+    {
+      "key": "common:leadCard.defaultMessages.enrolled",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 191,
+      "context": "onClick={() => handleResponse(FoundationLeadResponseStatus.ENROLLED, t('common:leadCard.defaultMessages.enrolled'))}"
+    },
+    {
+      "key": "common:leadCard.buttons.markEnrolled",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 193,
+      "context": "{t('common:leadCard.buttons.markEnrolled')}"
+    },
+    {
+      "key": "common:leadCard.buttons.markEnrolled",
+      "file": "components/foundation/LeadCard.tsx",
+      "line": 193,
+      "context": "{t('common:leadCard.buttons.markEnrolled')}"
+    },
+    {
       "key": "appName",
       "file": "components/layout/Sidebar.tsx",
       "line": 180,
@@ -19803,318 +20115,6 @@
       "file": "components/layout/MainLayout.tsx",
       "line": 49,
       "context": "aria-label={t('common:labels.closesidebar')}"
-    },
-    {
-      "key": "common:leadCard.alert.missingParentInfo",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 58,
-      "context": "alert(t('common:leadCard.alert.missingParentInfo'));"
-    },
-    {
-      "key": "common:leadCard.alert.missingParentInfo",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 58,
-      "context": "alert(t('common:leadCard.alert.missingParentInfo'));"
-    },
-    {
-      "key": "dashboard:leadCard.status.notResponded",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 69,
-      "context": "case FoundationLeadResponseStatus.NOT_RESPONDED: return { className: 'bg-gray-200 text-gray-700', label: t('dashboard:leadCard.status.notResponded') };"
-    },
-    {
-      "key": "dashboard:leadCard.status.notResponded",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 69,
-      "context": "case FoundationLeadResponseStatus.NOT_RESPONDED: return { className: 'bg-gray-200 text-gray-700', label: t('dashboard:leadCard.status.notResponded') };"
-    },
-    {
-      "key": "dashboard:leadCard.status.interested",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 70,
-      "context": "case FoundationLeadResponseStatus.INTERESTED: return { className: 'bg-green-100 text-green-700', label: t('dashboard:leadCard.status.interested') };"
-    },
-    {
-      "key": "dashboard:leadCard.status.interested",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 70,
-      "context": "case FoundationLeadResponseStatus.INTERESTED: return { className: 'bg-green-100 text-green-700', label: t('dashboard:leadCard.status.interested') };"
-    },
-    {
-      "key": "dashboard:leadCard.status.notInterested",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 71,
-      "context": "case FoundationLeadResponseStatus.NOT_INTERESTED: return { className: 'bg-red-100 text-red-700', label: t('dashboard:leadCard.status.notInterested') };"
-    },
-    {
-      "key": "dashboard:leadCard.status.notInterested",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 71,
-      "context": "case FoundationLeadResponseStatus.NOT_INTERESTED: return { className: 'bg-red-100 text-red-700', label: t('dashboard:leadCard.status.notInterested') };"
-    },
-    {
-      "key": "dashboard:leadCard.status.needsMoreInfo",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 72,
-      "context": "case FoundationLeadResponseStatus.NEEDS_MORE_INFO: return { className: 'bg-yellow-100 text-yellow-700', label: t('dashboard:leadCard.status.needsMoreInfo') };"
-    },
-    {
-      "key": "dashboard:leadCard.status.needsMoreInfo",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 72,
-      "context": "case FoundationLeadResponseStatus.NEEDS_MORE_INFO: return { className: 'bg-yellow-100 text-yellow-700', label: t('dashboard:leadCard.status.needsMoreInfo') };"
-    },
-    {
-      "key": "dashboard:leadCard.status.enrolled",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 73,
-      "context": "case FoundationLeadResponseStatus.ENROLLED: return { className: 'bg-purple-100 text-purple-700', label: t('dashboard:leadCard.status.enrolled') };"
-    },
-    {
-      "key": "dashboard:leadCard.status.enrolled",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 73,
-      "context": "case FoundationLeadResponseStatus.ENROLLED: return { className: 'bg-purple-100 text-purple-700', label: t('dashboard:leadCard.status.enrolled') };"
-    },
-    {
-      "key": "common:leadCard.title",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 85,
-      "context": "{t('common:leadCard.title', { name: lead.contactName })}"
-    },
-    {
-      "key": "common:leadCard.title",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 85,
-      "context": "{t('common:leadCard.title', { name: lead.contactName })}"
-    },
-    {
-      "key": "common:leadCard.forLocation",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 92,
-      "context": "{t('common:leadCard.forLocation', { canton: lead.canton, municipality: lead.municipality ? `- ${lead.municipality}` : '' })}"
-    },
-    {
-      "key": "common:leadCard.forLocation",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 92,
-      "context": "{t('common:leadCard.forLocation', { canton: lead.canton, municipality: lead.municipality ? `- ${lead.municipality}` : '' })}"
-    },
-    {
-      "key": "common:leadCard.childAge",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 97,
-      "context": "<p><strong>{t('common:leadCard.childAge')}:</strong> {lead.childAge}</p>"
-    },
-    {
-      "key": "common:leadCard.childAge",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 97,
-      "context": "<p><strong>{t('common:leadCard.childAge')}:</strong> {lead.childAge}</p>"
-    },
-    {
-      "key": "common:leadCard.desiredStart",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 98,
-      "context": "<p><strong>{t('common:leadCard.desiredStart')}:</strong> {new Date(lead.desiredStartDate).toLocaleDateString(i18n.language)}</p>"
-    },
-    {
-      "key": "common:leadCard.desiredStart",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 98,
-      "context": "<p><strong>{t('common:leadCard.desiredStart')}:</strong> {new Date(lead.desiredStartDate).toLocaleDateString(i18n.language)}</p>"
-    },
-    {
-      "key": "common:leadCard.submittedOn",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 99,
-      "context": "<p><strong>{t('common:leadCard.submittedOn')}:</strong> {new Date(lead.submissionDate).toLocaleDateString(i18n.language)}</p>"
-    },
-    {
-      "key": "common:leadCard.submittedOn",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 99,
-      "context": "<p><strong>{t('common:leadCard.submittedOn')}:</strong> {new Date(lead.submissionDate).toLocaleDateString(i18n.language)}</p>"
-    },
-    {
-      "key": "common:leadCard.notes",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 100,
-      "context": "{lead.specialNeeds && <p><strong>{t('common:leadCard.notes')}:</strong> <span className=\"italic\">{lead.specialNeeds}</span></p>}"
-    },
-    {
-      "key": "common:leadCard.notes",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 100,
-      "context": "{lead.specialNeeds && <p><strong>{t('common:leadCard.notes')}:</strong> <span className=\"italic\">{lead.specialNeeds}</span></p>}"
-    },
-    {
-      "key": "common:leadCard.defaultMessages.interested",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 115,
-      "context": "onClick={() => handleResponse(FoundationLeadResponseStatus.INTERESTED, t('common:leadCard.defaultMessages.interested'))}"
-    },
-    {
-      "key": "common:leadCard.defaultMessages.interested",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 115,
-      "context": "onClick={() => handleResponse(FoundationLeadResponseStatus.INTERESTED, t('common:leadCard.defaultMessages.interested'))}"
-    },
-    {
-      "key": "common:leadCard.buttons.interested",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 118,
-      "context": "{t('common:leadCard.buttons.interested')}"
-    },
-    {
-      "key": "common:leadCard.buttons.interested",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 118,
-      "context": "{t('common:leadCard.buttons.interested')}"
-    },
-    {
-      "key": "common:leadCard.defaultMessages.notInterested",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 124,
-      "context": "onClick={() => handleResponse(FoundationLeadResponseStatus.NOT_INTERESTED, t('common:leadCard.defaultMessages.notInterested'))}"
-    },
-    {
-      "key": "common:leadCard.defaultMessages.notInterested",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 124,
-      "context": "onClick={() => handleResponse(FoundationLeadResponseStatus.NOT_INTERESTED, t('common:leadCard.defaultMessages.notInterested'))}"
-    },
-    {
-      "key": "common:leadCard.buttons.notInterested",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 127,
-      "context": "{t('common:leadCard.buttons.notInterested')}"
-    },
-    {
-      "key": "common:leadCard.buttons.notInterested",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 127,
-      "context": "{t('common:leadCard.buttons.notInterested')}"
-    },
-    {
-      "key": "common:leadCard.buttons.needInfo",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 136,
-      "context": "{t('common:leadCard.buttons.needInfo')}"
-    },
-    {
-      "key": "common:leadCard.buttons.needInfo",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 136,
-      "context": "{t('common:leadCard.buttons.needInfo')}"
-    },
-    {
-      "key": "common:leadCard.questionFor",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 142,
-      "context": "{t('common:leadCard.questionFor', { name: lead.contactName })}:"
-    },
-    {
-      "key": "common:leadCard.questionFor",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 142,
-      "context": "{t('common:leadCard.questionFor', { name: lead.contactName })}:"
-    },
-    {
-      "key": "common:leadCard.questionPlaceholder",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 150,
-      "context": "placeholder={t('common:leadCard.questionPlaceholder')}"
-    },
-    {
-      "key": "common:leadCard.questionPlaceholder",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 150,
-      "context": "placeholder={t('common:leadCard.questionPlaceholder')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 153,
-      "context": "<Button variant=\"ghost\" size=\"sm\" onClick={() => setShowResponseInput(false)}>{t('common:buttons.cancel')}</Button>"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 153,
-      "context": "<Button variant=\"ghost\" size=\"sm\" onClick={() => setShowResponseInput(false)}>{t('common:buttons.cancel')}</Button>"
-    },
-    {
-      "key": "common:leadCard.buttons.sendQuestion",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 161,
-      "context": "{t('common:leadCard.buttons.sendQuestion')}"
-    },
-    {
-      "key": "common:leadCard.buttons.sendQuestion",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 161,
-      "context": "{t('common:leadCard.buttons.sendQuestion')}"
-    },
-    {
-      "key": "common:leadCard.yourResponse",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 173,
-      "context": "<p className=\"font-medium\">{t('common:leadCard.yourResponse')}: <span className={`${currentStatusInfo.className} px-1.5 py-0.5 rounded`}>{currentStatusInfo.label}</span></p>"
-    },
-    {
-      "key": "common:leadCard.yourResponse",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 173,
-      "context": "<p className=\"font-medium\">{t('common:leadCard.yourResponse')}: <span className={`${currentStatusInfo.className} px-1.5 py-0.5 rounded`}>{currentStatusInfo.label}</span></p>"
-    },
-    {
-      "key": "common:leadCard.messageSent",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 174,
-      "context": "{myResponse.messageToParent && <p className=\"italic mt-1\">{t('common:leadCard.messageSent')}: \"{myResponse.messageToParent}\"</p>}"
-    },
-    {
-      "key": "common:leadCard.messageSent",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 174,
-      "context": "{myResponse.messageToParent && <p className=\"italic mt-1\">{t('common:leadCard.messageSent')}: \"{myResponse.messageToParent}\"</p>}"
-    },
-    {
-      "key": "common:leadCard.buttons.messageParent",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 183,
-      "context": "{t('common:leadCard.buttons.messageParent')}"
-    },
-    {
-      "key": "common:leadCard.buttons.messageParent",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 183,
-      "context": "{t('common:leadCard.buttons.messageParent')}"
-    },
-    {
-      "key": "common:leadCard.defaultMessages.enrolled",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 191,
-      "context": "onClick={() => handleResponse(FoundationLeadResponseStatus.ENROLLED, t('common:leadCard.defaultMessages.enrolled'))}"
-    },
-    {
-      "key": "common:leadCard.defaultMessages.enrolled",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 191,
-      "context": "onClick={() => handleResponse(FoundationLeadResponseStatus.ENROLLED, t('common:leadCard.defaultMessages.enrolled'))}"
-    },
-    {
-      "key": "common:leadCard.buttons.markEnrolled",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 193,
-      "context": "{t('common:leadCard.buttons.markEnrolled')}"
-    },
-    {
-      "key": "common:leadCard.buttons.markEnrolled",
-      "file": "components/foundation/LeadCard.tsx",
-      "line": 193,
-      "context": "{t('common:leadCard.buttons.markEnrolled')}"
     },
     {
       "key": "orderSummaryDrawer.orderSuccess",

@@ -1637,15 +1637,22 @@ model SubscriptionNote {
 
 model PricingTier {
   id            String   @id @default(uuid())
+  role          UserRole @default(FOUNDATION)
+  subscriptionTier SubscriptionTier @default(BASIC) @map("subscription_tier")
   name          String
   basePrice     Float
   currency      String   @default("CHF")
   billingPeriod String   @default("monthly") // monthly, yearly
   discounts     Json // Discount configuration as JSON
   isActive      Boolean  @default(true)
+  displayOrder  Int      @default(0) @map("display_order")
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
+  @@index([role])
+  @@index([subscriptionTier])
+  @@index([role, subscriptionTier])
+  @@unique([role, subscriptionTier, billingPeriod])
   @@map("pricing_tiers")
 }
 

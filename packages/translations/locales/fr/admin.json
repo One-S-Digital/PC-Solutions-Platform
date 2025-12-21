@@ -1605,7 +1605,61 @@
       "basic": "Basique",
       "essential": "Essentiel",
       "professional": "Professionnel",
-      "enterprise": "Entreprise"
+      "enterprise": "Entreprise",
+      "help": "Le niveau s’applique à l’accès aux fonctionnalités et à la configuration des prix pour les Fondations."
+    },
+    "tierSection": {
+      "title": "Niveau d’abonnement",
+      "subtitle": "Configurer les niveaux d’abonnement et les prix pour les Fondations.",
+      "add": "Ajouter un niveau",
+      "empty": "Aucun niveau configuré pour le moment.",
+      "table": {
+        "tier": "Niveau",
+        "billing": "Facturation",
+        "price": "Prix",
+        "active": "Actif",
+        "actions": "Actions"
+      }
+    },
+    "tierEditor": {
+      "createTitle": "Créer un niveau d’abonnement",
+      "editTitle": "Modifier le niveau d’abonnement",
+      "success": "Niveau d’abonnement enregistré avec succès",
+      "error": "Échec de l’enregistrement du niveau d’abonnement : ",
+      "deleteSuccess": "Niveau d’abonnement supprimé avec succès",
+      "deleteError": "Échec de la suppression du niveau d’abonnement : ",
+      "confirmDelete": "Supprimer ce niveau ?",
+      "billing": {
+        "monthly": "Mensuel",
+        "yearly": "Annuel"
+      },
+      "fields": {
+        "subscriptionTier": "Niveau",
+        "billingPeriod": "Période de facturation",
+        "name": "Nom",
+        "namePlaceholder": "ex. Fondation - Essentiel",
+        "basePrice": "Prix de base",
+        "currency": "Devise",
+        "yearlyDiscount": "Remise annuelle (%)",
+        "displayOrder": "Ordre d’affichage",
+        "isActive": "Actif",
+        "isActiveHelp": "Les niveaux inactifs sont masqués de la sélection et de la tarification.",
+        "volumeDiscounts": "Remises par volume",
+        "volumeDiscountsHelp": "Optionnel : remises selon la quantité.",
+        "noVolumeDiscounts": "Aucune remise par volume configurée.",
+        "minQuantity": "Quantité min.",
+        "discountPercentage": "Remise (%)"
+      },
+      "actions": {
+        "addVolumeDiscount": "Ajouter",
+        "saving": "Enregistrement...",
+        "save": "Enregistrer"
+      },
+      "validation": {
+        "basePrice": "Le prix de base doit être un nombre valide.",
+        "yearlyDiscount": "La remise annuelle doit être comprise entre 0 et 100.",
+        "displayOrder": "L’ordre d’affichage doit être un nombre valide."
+      }
     },
     "actions": {
       "activate": "Activer",

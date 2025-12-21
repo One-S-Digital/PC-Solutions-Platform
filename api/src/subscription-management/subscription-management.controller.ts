@@ -34,6 +34,8 @@ import {
   SubscriptionFiltersDto,
   CreatePlanDto,
   UpdatePlanDto,
+  CreatePricingTierDto,
+  UpdatePricingTierDto,
 } from './dto';
 import { wrapResponse } from '../common/utils/response.util';
 
@@ -465,21 +467,41 @@ export class SubscriptionManagementController {
   // =====================================
 
   @Post('pricing/tiers')
-  async createPricingTier(@Body() tierData: any) {
+  async createPricingTier(@Body() tierData: CreatePricingTierDto) {
     const tier = await this.pricingService.createPricingTier(tierData);
     return wrapResponse(tier, 'Pricing tier created successfully');
   }
 
   @Get('pricing/tiers')
-  async getAllPricingTiers() {
-    const tiers = await this.pricingService.getAllPricingTiers();
+  async getAllPricingTiers(
+    @Query('role') role?: string,
+    @Query('subscriptionTier') subscriptionTier?: string,
+    @Query('includeInactive') includeInactive?: string,
+  ) {
+    const parsedRole =
+      role && Object.values(UserRole).includes(role as UserRole) ? (role as UserRole) : undefined;
+    const parsedTier =
+      subscriptionTier && Object.values(SubscriptionTier).includes(subscriptionTier as SubscriptionTier)
+        ? (subscriptionTier as SubscriptionTier)
+        : undefined;
+    const tiers = await this.pricingService.getAllPricingTiers({
+      role: parsedRole,
+      subscriptionTier: parsedTier,
+      includeInactive: includeInactive === 'true',
+    });
     return wrapResponse(tiers);
   }
 
   @Put('pricing/tiers/:id')
-  async updatePricingTier(@Param('id') id: string, @Body() tierData: any) {
+  async updatePricingTier(@Param('id') id: string, @Body() tierData: UpdatePricingTierDto) {
     const tier = await this.pricingService.updatePricingTier(id, tierData);
     return wrapResponse(tier, 'Pricing tier updated successfully');
+  }
+
+  @Delete('pricing/tiers/:id')
+  async deletePricingTier(@Param('id') id: string) {
+    await this.pricingService.deletePricingTier(id);
+    return wrapResponse(null, 'Pricing tier deleted successfully');
   }
 
   @Post('pricing/calculate')

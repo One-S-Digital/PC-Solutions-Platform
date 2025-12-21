@@ -1597,7 +1597,61 @@
       "basic": "Basic",
       "essential": "Essential",
       "professional": "Professional",
-      "enterprise": "Enterprise"
+      "enterprise": "Enterprise",
+      "help": "Tier applies to Foundation feature access and pricing configuration."
+    },
+    "tierSection": {
+      "title": "Subscription Tier",
+      "subtitle": "Configure Foundation subscription tiers and pricing.",
+      "add": "Add Tier",
+      "empty": "No tiers configured yet.",
+      "table": {
+        "tier": "Tier",
+        "billing": "Billing",
+        "price": "Price",
+        "active": "Active",
+        "actions": "Actions"
+      }
+    },
+    "tierEditor": {
+      "createTitle": "Create Subscription Tier",
+      "editTitle": "Edit Subscription Tier",
+      "success": "Subscription tier saved successfully",
+      "error": "Failed to save subscription tier: ",
+      "deleteSuccess": "Subscription tier deleted successfully",
+      "deleteError": "Failed to delete subscription tier: ",
+      "confirmDelete": "Delete this tier?",
+      "billing": {
+        "monthly": "Monthly",
+        "yearly": "Yearly"
+      },
+      "fields": {
+        "subscriptionTier": "Tier",
+        "billingPeriod": "Billing Period",
+        "name": "Name",
+        "namePlaceholder": "e.g. Foundation - Essential",
+        "basePrice": "Base Price",
+        "currency": "Currency",
+        "yearlyDiscount": "Yearly Discount (%)",
+        "displayOrder": "Display Order",
+        "isActive": "Active",
+        "isActiveHelp": "Inactive tiers are hidden from selection and pricing.",
+        "volumeDiscounts": "Volume Discounts",
+        "volumeDiscountsHelp": "Optional: discounts based on quantity.",
+        "noVolumeDiscounts": "No volume discounts configured.",
+        "minQuantity": "Min Quantity",
+        "discountPercentage": "Discount (%)"
+      },
+      "actions": {
+        "addVolumeDiscount": "Add",
+        "saving": "Saving...",
+        "save": "Save"
+      },
+      "validation": {
+        "basePrice": "Base price must be a valid number.",
+        "yearlyDiscount": "Yearly discount must be between 0 and 100.",
+        "displayOrder": "Display order must be a valid number."
+      }
     },
     "actions": {
       "activate": "Activate",

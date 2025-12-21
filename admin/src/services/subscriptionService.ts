@@ -25,6 +25,9 @@ import {
   PaginatedSubscriptions,
   CreatePlanDto,
   UpdatePlanDto,
+  PricingTier,
+  CreatePricingTierDto,
+  UpdatePricingTierDto,
 } from '../types/subscription';
 
 // API Response wrapper type
@@ -237,6 +240,29 @@ export const subscriptionService = {
     apiClient.get<ApiResponse<any>>('/admin/subscription-management/billing/analytics', {
       params: { timeRange },
     }),
+
+  // =====================================
+  // PRICING TIERS (SUBSCRIPTION TIERS)
+  // =====================================
+
+  /** Create a pricing tier (scoped by role + subscriptionTier) */
+  createPricingTier: (apiClient: AxiosInstance, data: CreatePricingTierDto) =>
+    apiClient.post<ApiResponse<PricingTier>>('/admin/subscription-management/pricing/tiers', data),
+
+  /** Get pricing tiers (supports role/subscriptionTier filters) */
+  getPricingTiers: (
+    apiClient: AxiosInstance,
+    params?: { role?: string; subscriptionTier?: string; includeInactive?: boolean },
+  ) =>
+    apiClient.get<ApiResponse<PricingTier[]>>('/admin/subscription-management/pricing/tiers', { params }),
+
+  /** Update a pricing tier */
+  updatePricingTier: (apiClient: AxiosInstance, id: string, data: UpdatePricingTierDto) =>
+    apiClient.put<ApiResponse<PricingTier>>(`/admin/subscription-management/pricing/tiers/${id}`, data),
+
+  /** Delete a pricing tier */
+  deletePricingTier: (apiClient: AxiosInstance, id: string) =>
+    apiClient.delete<ApiResponse<null>>(`/admin/subscription-management/pricing/tiers/${id}`),
 };
 
 export default subscriptionService;
