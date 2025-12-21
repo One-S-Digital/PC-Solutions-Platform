@@ -96,9 +96,18 @@ const Dashboard: React.FC = () => {
   const [policiesCount, setPoliciesCount] = useState(0)
   const [contentLoading, setContentLoading] = useState(true)
 
+  const organizations = (() => {
+    const data = orgsResponse?.data?.data as any
+    if (!data) return []
+    if (Array.isArray(data)) return data
+    if (Array.isArray(data.organizations)) return data.organizations
+    return []
+  })()
+
   // Extract counts directly from API responses - much simpler and more reliable
   const usersData = usersResponse?.data?.data?.length ?? 0
-  const orgsData = orgsResponse?.data?.data?.length ?? 0
+  // Dashboard card is specifically "Foundations" (org.type === 'FOUNDATION')
+  const orgsData = organizations.filter((o: any) => o?.type === 'FOUNDATION').length
   const productsData = productsResponse?.data?.data?.length ?? 0
   const leadsData = parentLeadsResponse?.data?.data?.length ?? 0
   const totalJobs = jobListingsResponse?.data?.data?.length ?? 0
@@ -165,7 +174,13 @@ const Dashboard: React.FC = () => {
     },
   ]
 
-  const systemStatus = healthData?.data?.status === 'OK'
+  const systemStatus = (() => {
+    const data: any = healthData?.data
+    const status = typeof data?.status === 'string' ? data.status.toLowerCase() : undefined
+    if (status) return ['ok', 'healthy', 'ready'].includes(status)
+    if (typeof data?.healthy === 'boolean') return data.healthy
+    return false
+  })()
 
   // Overall loading state for summary section
   const statsLoading = usersLoading || orgsLoading || productsLoading || jobListingsLoading
@@ -325,11 +340,17 @@ const Dashboard: React.FC = () => {
           <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
               <span className="text-gray-500">{t('dashboard:adminSystemMonitoringPage.metadata.environment', 'Environment')}:</span>
-              <span className="ml-2 font-medium text-swiss-charcoal">{healthData.data.environment}</span>
+              <span className="ml-2 font-medium text-swiss-charcoal">
+                {(healthData.data as any).environment ?? (healthData.data as any).service ?? '—'}
+              </span>
             </div>
             <div>
               <span className="text-gray-500">{t('dashboard:adminSystemMonitoringPage.serverPerformance.uptimeDays', 'Uptime (Days)')}:</span>
-              <span className="ml-2 font-medium text-swiss-charcoal">{Math.floor(healthData.data.uptime / 60)}m</span>
+              <span className="ml-2 font-medium text-swiss-charcoal">
+                {typeof (healthData.data as any).uptime === 'number'
+                  ? Math.floor(((healthData.data as any).uptime as number) / 86400)
+                  : '—'}
+              </span>
             </div>
             <div>
               <span className="text-gray-500">{t('dashboard:adminSystemMonitoringPage.components.api', 'API')}:</span>
