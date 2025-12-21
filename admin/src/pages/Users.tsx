@@ -770,6 +770,13 @@ const Users: React.FC = () => {
     const derivedHost = derivedPort ? `${derivedHostname}:${derivedPort}` : derivedHostname
     const derivedUrl = `${protocol}//${derivedHost}`
 
+    // Observability: help debug non-standard deployments where derivation may be wrong.
+    // eslint-disable-next-line no-console
+    console.warn(
+      `VITE_FRONTEND_URL not configured. Derived frontend URL: ${derivedUrl}. ` +
+        `For reliable profile links, set VITE_FRONTEND_URL in the admin environment configuration.`,
+    )
+
     openOrganizationProfile(derivedUrl)
   }
 
