@@ -20,7 +20,7 @@ const PricingPage: React.FC = () => {
   const { t } = useTranslation(['pricing', 'common']);
   const location = useLocation();
   const navigate = useNavigate();
-  const { login, user } = useAppContext();
+  const { currentUser } = useAppContext();
   const { requestSubscription } = useSubscription();
   const { translatePlan } = usePricingTranslations();
   const { settings } = useFrontendSettings();
@@ -36,7 +36,7 @@ const PricingPage: React.FC = () => {
 
   const handleChoosePlan = (plan: PricingPlan) => {
     // If user is logged in, show the request modal
-    if (user) {
+    if (currentUser) {
       setSelectedPlan(plan);
       setIsRequestModalOpen(true);
     } else if (fromSignup) {
