@@ -822,7 +822,7 @@ export class UserSubscriptionController {
     }
 
     // Check if user/org already has an active or pending subscription
-    let existingSubscription = userId 
+    const existingSubscription = userId 
       ? await this.subscriptionService.getUserSubscription(userId)
       : await this.subscriptionService.getOrganizationSubscription(organizationId);
 

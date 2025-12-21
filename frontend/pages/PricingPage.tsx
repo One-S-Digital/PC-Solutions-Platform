@@ -42,7 +42,6 @@ const PricingPage: React.FC = () => {
     const translatedPlan = translatePlan(plan, isAnnual);
     const isSupplierOrProvider =
       plan.role === UserRole.PRODUCT_SUPPLIER || plan.role === UserRole.SERVICE_PROVIDER;
-    const isEnterprisePlan = plan.role === UserRole.FOUNDATION && plan.name === 'Enterprise';
     
     return (
       <Card className={`flex flex-col p-6 border-2 ${plan.isPopular ? 'border-swiss-mint' : 'border-gray-200'} relative`} hoverEffect>
@@ -95,11 +94,8 @@ const PricingPage: React.FC = () => {
             size="lg"
             className="w-full mt-6"
             onClick={() => handleChoosePlan(plan)}
-            disabled={isEnterprisePlan}
           >
-            {isEnterprisePlan
-              ? t('pricingPage.comingSoon')
-              : (fromSignup ? t('pricingPage.selectAndContinue') : t('pricingPage.choosePlan'))}
+            {fromSignup ? t('pricingPage.selectAndContinue') : t('pricingPage.choosePlan')}
           </Button>
         )}
       </Card>

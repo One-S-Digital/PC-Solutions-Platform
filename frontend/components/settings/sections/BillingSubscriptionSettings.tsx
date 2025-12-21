@@ -20,19 +20,12 @@ const PlanCard: React.FC<{ plan: PricingPlan, currentPlanName?: string, onSelect
     const { translatePlan } = usePricingTranslations();
     const translatedPlan = translatePlan(plan);
     const isCurrentPlan = plan.name === currentPlanName;
-    const isEnterprisePlan = plan.name === 'Enterprise';
     const planOrder = { 'Basic': 1, 'Essential': 2, 'Professional': 3 };
     const currentPlanOrder = planOrder[currentPlanName as keyof typeof planOrder] || 0;
     const thisPlanOrder = planOrder[plan.name as keyof typeof planOrder];
     
     let actionButton;
-    if (isEnterprisePlan) {
-        actionButton = (
-          <Button variant="secondary" size="md" className="w-full" disabled>
-            {t('common:pricingPage.comingSoon')}
-          </Button>
-        );
-    } else if (isCurrentPlan) {
+    if (isCurrentPlan) {
         actionButton = <Button variant="secondary" size="md" className="w-full" disabled>{t('common:settingsBillingSubscription.yourCurrentPlan')}</Button>;
     } else if (thisPlanOrder > currentPlanOrder) {
         actionButton = <Button variant="primary" size="md" className="w-full" onClick={() => onSelectPlan(plan.name)}>{t('common:settingsBillingSubscription.upgradePlan')}</Button>;

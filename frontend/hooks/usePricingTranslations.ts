@@ -73,19 +73,14 @@ export const usePricingTranslations = () => {
     
     if (plan.role === UserRole.FOUNDATION) {
       const translationKey = `${planKey}Plan`;
-      const isEnterprisePlan = planKey === 'enterprise';
       const displayPrice = isAnnual ? plan.price.annualEquivalent : plan.price.monthly;
       const priceLabel = t('common:common.perMonth');
 
       return {
         ...plan,
         name: translatePricingKey(`${translationKey}.name`) || plan.name,
-        monthlyPriceText: isEnterprisePlan
-          ? t('pricingPage.comingSoon', 'Coming Soon')
-          : `CHF ${displayPrice || plan.price.monthly} ${priceLabel}`,
-        annualPlanText: isEnterprisePlan
-          ? ''
-          : `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,
+        monthlyPriceText: `CHF ${displayPrice || plan.price.monthly} ${priceLabel}`,
+        annualPlanText: `CHF ${plan.price.annually} ${t('common:common.perYear')} (${t('common:common.save10Percent')})`,
         tagline: translatePricingKey(`${translationKey}.tagline`) || plan.tagline,
         description: translatePricingKey(`${translationKey}.description`) || plan.description,
         features: plan.features.map(feature => {
