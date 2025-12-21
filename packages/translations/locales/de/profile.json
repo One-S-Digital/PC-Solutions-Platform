@@ -16,11 +16,19 @@
     "status": "Status"
   },
   "documents": {
-    "download": "Download",
-    "downloadFailedMessage": "Failed to download document.",
-    "noFileUrl": "Document URL not available.",
-    "preview": "Preview",
-    "title": "Documents & Resources"
+    "download": "Herunterladen",
+    "downloadFailedMessage": "Dokument konnte nicht heruntergeladen werden.",
+    "noFileUrl": "Dokument-URL nicht verfügbar.",
+    "preview": "Vorschau",
+    "title": "Dokumente & Ressourcen",
+    "untitledDocument": "Unbenanntes Dokument",
+    "previewIframeTitle": "Dokumentvorschau",
+    "types": {
+      "brochure": "Broschüre",
+      "catalog": "Produktkatalog",
+      "company_profile": "Unternehmensprofil",
+      "price_list": "Preisliste"
+    }
   },
   "educator": {
     "availability": "availability",
@@ -57,12 +65,12 @@
     "actions": {
       "bookNow": "book Now",
       "directOrder": "direct Order",
-      "viewCatalog": "Anzeigen catalog"
+      "viewCatalog": "Katalog ansehen"
     },
     "bookService": "book Service",
     "businessInfo": "Business Informationen",
     "capacity": "capacity",
-    "catalog": "catalog",
+    "catalog": "Katalog",
     "children": "children",
     "contact": "contact",
     "contactPerson": "contact Person",
@@ -97,7 +105,7 @@
     "services": "services",
     "setupRequired": "setup Required",
     "vatNumber": "vat Number",
-    "viewCatalog": "Anzeigen catalog",
+    "viewCatalog": "Katalog ansehen",
     "website": "website"
   },
   "subtitle": "Überprüfen Sie Ihre Konto- und Organisationsinformationen.",

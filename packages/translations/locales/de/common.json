@@ -1764,10 +1764,14 @@
     }
   },
   "settingsAnalyticsPreferences": {
-    "benchmarkData": "[DE] Benchmark Data",
-    "benchmarkDataHelpText": "[DE] Benchmark Data Help Text",
-    "currency": "[DE] Currency",
-    "timeZone": "[DE] Time Zone"
+    "benchmarkData": "Benchmark-Daten",
+    "benchmarkDataHelpText": "Teilen Sie Ihre Daten anonymisiert, um Vergleichsstatistiken zu verbessern.",
+    "currency": "Währung",
+    "timeZone": "Zeitzone",
+    "currencies": {
+      "chf": "CHF",
+      "eur": "EUR"
+    }
   },
   "settingsBillingSubscription": {
     "cancelSubscription": "Abonnement Kündigen",

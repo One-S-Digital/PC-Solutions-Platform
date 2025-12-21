@@ -275,7 +275,7 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
                 <div>
                   <p className="text-sm font-medium text-gray-900">
                     {/* Extract filename from URL or show generic name */}
-                    {formData.cvUrl.split('/').pop() || 'CV Document'}
+                    {formData.cvUrl.split('/').pop() || t('settings:educatorProfile.cvDocument', 'CV document')}
                   </p>
                   <a 
                     href={formData.cvUrl} 
@@ -283,7 +283,7 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
                     rel="noopener noreferrer" 
                     className="text-xs text-green-700 hover:underline"
                   >
-                    View Document
+                    {t('settings:educatorProfile.viewDocument', 'View document')}
                   </a>
                 </div>
               </div>

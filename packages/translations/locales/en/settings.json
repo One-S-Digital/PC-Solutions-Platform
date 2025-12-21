@@ -171,6 +171,8 @@
     "cvUpload": "Upload CV",
     "cvDragDrop": "Drag & drop your CV here",
     "cvHint": "Accepted formats: PDF, DOC, DOCX (Max 5MB). This will be shared with foundations when you apply for jobs.",
+    "cvDocument": "CV document",
+    "viewDocument": "View document",
     "cvUrl": "CV URL",
     "cvUrlPlaceholder": "https://example.com/cv.pdf",
     "cvUrlHint": "Link to your CV or resume document"

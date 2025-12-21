@@ -16,11 +16,19 @@
     "status": "Statut"
   },
   "documents": {
-    "download": "Download",
-    "downloadFailedMessage": "Failed to download document.",
-    "noFileUrl": "Document URL not available.",
-    "preview": "Preview",
-    "title": "Documents & Resources"
+    "download": "Télécharger",
+    "downloadFailedMessage": "Échec du téléchargement du document.",
+    "noFileUrl": "URL du document indisponible.",
+    "preview": "Aperçu",
+    "title": "Documents et ressources",
+    "untitledDocument": "Document sans titre",
+    "previewIframeTitle": "Aperçu du document",
+    "types": {
+      "brochure": "Brochure",
+      "catalog": "Catalogue produits",
+      "company_profile": "Profil d'entreprise",
+      "price_list": "Liste de prix"
+    }
   },
   "educator": {
     "availability": "availability",
@@ -57,12 +65,12 @@
     "actions": {
       "bookNow": "book Now",
       "directOrder": "direct Order",
-      "viewCatalog": "Voir catalog"
+      "viewCatalog": "Voir le catalogue"
     },
     "bookService": "book Service",
     "businessInfo": "business Informations",
     "capacity": "capacity",
-    "catalog": "catalog",
+    "catalog": "Catalogue",
     "children": "children",
     "contact": "contact",
     "contactPerson": "contact Person",
@@ -97,7 +105,7 @@
     "services": "services",
     "setupRequired": "setup Required",
     "vatNumber": "vat Number",
-    "viewCatalog": "Voir catalog",
+    "viewCatalog": "Voir le catalogue",
     "website": "website"
   },
   "subtitle": "Passez en revue les détails de votre compte et les informations relatives à votre organisation.",

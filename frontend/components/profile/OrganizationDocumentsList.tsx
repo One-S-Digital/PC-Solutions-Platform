@@ -38,13 +38,6 @@ interface OrganizationDocumentsListProps {
   organizationId: string;
 }
 
-const DOCUMENT_TYPE_LABELS: Record<string, string> = {
-  CATALOG: 'Product Catalog',
-  COMPANY_PROFILE: 'Company Profile',
-  BROCHURE: 'Brochure',
-  PRICE_LIST: 'Price List',
-};
-
 const getDocumentIcon = (mimeType?: string) => {
   if (!mimeType) return DocumentIcon;
   if (mimeType.includes('pdf')) return DocumentTextIcon;
@@ -140,7 +133,7 @@ const OrganizationDocumentsList: React.FC<OrganizationDocumentsListProps> = ({ o
         <div className="grid gap-3">
           {documents.map((doc) => {
             const IconComponent = getDocumentIcon(doc.asset?.mimeType);
-            const docTypeLabel = DOCUMENT_TYPE_LABELS[doc.documentType] || doc.documentType;
+            const docTypeKey = `profile:documents.types.${doc.documentType.toLowerCase()}`;
             
             return (
               <div
@@ -153,11 +146,11 @@ const OrganizationDocumentsList: React.FC<OrganizationDocumentsListProps> = ({ o
                   </div>
                   <div className="ml-3 min-w-0 flex-1">
                     <p className="text-sm font-medium text-gray-900 truncate">
-                      {doc.title || doc.asset?.filename || 'Untitled Document'}
+                      {doc.title || doc.asset?.filename || t('profile:documents.untitledDocument', 'Untitled document')}
                     </p>
                     <div className="flex items-center text-xs text-gray-500 space-x-2 mt-0.5">
                       <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
-                        {t(`profile:documents.types.${doc.documentType.toLowerCase()}`, docTypeLabel)}
+                        {t(docTypeKey, doc.documentType)}
                       </span>
                       {doc.asset?.size && (
                         <span>{formatFileSize(doc.asset.size)}</span>
@@ -208,7 +201,7 @@ const OrganizationDocumentsList: React.FC<OrganizationDocumentsListProps> = ({ o
             <iframe
               src={previewUrl}
               className="w-full h-full rounded-lg"
-              title="Document Preview"
+              title={t('profile:documents.previewIframeTitle', 'Document preview')}
             />
           </div>
         </div>
