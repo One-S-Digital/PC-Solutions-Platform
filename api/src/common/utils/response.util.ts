@@ -19,6 +19,7 @@ export interface ApiResponseEnvelope<T> {
  * Standard API response wrapper for successful operations.
  * @param data The response payload
  * @param message Optional success message (defaults to 'OK')
+ * @param success Optional success flag (defaults to true)
  * @returns Standardized response object with success flag, message, data, and timestamp
  * 
  * @example
@@ -32,9 +33,13 @@ export interface ApiResponseEnvelope<T> {
  * return wrapResponse(plan, 'Subscription plan created successfully');
  * ```
  */
-export function wrapResponse<T>(data: T, message = 'OK'): ApiResponseEnvelope<T> {
+export function wrapResponse<T>(
+  data: T,
+  message = 'OK',
+  success = true
+): ApiResponseEnvelope<T> {
   return {
-    success: true,
+    success,
     message,
     data,
     timestamp: new Date().toISOString(),

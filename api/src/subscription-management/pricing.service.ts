@@ -11,8 +11,12 @@ export interface PricingTier {
   currency: string;
   billingPeriod: 'monthly' | 'yearly';
   discounts: {
-    yearlyDiscount: number; // Percentage discount for yearly billing
-    volumeDiscounts: Array<{
+    /**
+     * Percentage discount for yearly billing.
+     * Optional to allow partial updates / DTO input; defaults are applied at write-time.
+     */
+    yearlyDiscount?: number;
+    volumeDiscounts?: Array<{
       minQuantity: number;
       discountPercentage: number;
     }>;
