@@ -775,13 +775,13 @@
     "notProvided": "Non fourni",
     "sections": {
       "contact": {
-        "title": "Titre"
+        "title": "Informations de contact"
       },
       "metadata": {
-        "title": "Titre"
+        "title": "Métadonnées de l'organisation"
       },
       "operations": {
-        "title": "Titre"
+        "title": "Opérations"
       },
       "edit": {
         "title": "Mettre à jour les informations principales du profil de l'organisation",

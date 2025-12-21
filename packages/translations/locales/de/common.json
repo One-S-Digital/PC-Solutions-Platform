@@ -784,13 +784,13 @@
     "notProvided": "Nicht angegeben",
     "sections": {
       "contact": {
-        "title": "Titel"
+        "title": "Kontaktinformationen"
       },
       "metadata": {
-        "title": "Titel"
+        "title": "Organisations-Metadaten"
       },
       "operations": {
-        "title": "Titel"
+        "title": "Betrieb"
       },
       "edit": {
         "title": "Kern-Organisationsprofilinformationen aktualisieren",
