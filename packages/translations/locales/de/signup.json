@@ -145,8 +145,8 @@
     "title": "Treten Sie der PC Solutions Plattform bei"
   },
   "profileCompletion": {
-    "message": "Please complete your profile to continue",
-    "emailFromAccount": "Email from account"
+    "message": "Bitte vervollständigen Sie Ihr Profil, um fortzufahren",
+    "emailFromAccount": "E-Mail vom Konto"
   },
   "errors": {
     "profileCompletionFailedTitle": "Profilvervollständigung fehlgeschlagen",

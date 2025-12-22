@@ -113,7 +113,7 @@
       "productSupplier": "Fournisseur de produits",
       "serviceProvider": "Prestataire de services",
       "foundation": "Fondation (Garderie)",
-      "superAdmin": "Super Admin",
+      "superAdmin": "Super Administrateur",
       "educator": "Éducateur/Candidat",
       "supplier": "Fournisseur de produits",
       "parent": "Parent",
@@ -145,8 +145,8 @@
     "title": "Rejoindre la plate-forme PC Solutions"
   },
   "profileCompletion": {
-    "message": "Please complete your profile to continue",
-    "emailFromAccount": "Email from account"
+    "message": "Veuillez compléter votre profil pour continuer",
+    "emailFromAccount": "E-mail du compte"
   },
   "errors": {
     "profileCompletionFailedTitle": "Échec de l'achèvement du profil",
@@ -168,13 +168,13 @@
     "captchaRequired": "Captcha requis",
     "cantonRequired": "Canton requis",
     "captchaExpired": "Captcha expiré",
-    "accountExists": "Un compte avec cet email existe déjà",
+    "accountExists": "Un compte avec cet e-mail existe déjà",
     "emailRequired": "Courriel requis",
     "passwordPwned": "Ce mot de passe a été découvert lors d'une violation de données. Veuillez choisir un autre mot de passe",
     "phoneRequired": "Téléphone requis",
     "termsRequired": "Conditions requises",
     "captchaError": "Erreur Captcha",
-    "emailInvalid": "Email invalide",
+    "emailInvalid": "E-mail invalide",
     "passwordWeak": "Le mot de passe n'est pas assez fort"
   },
   "oauthCompletion": {

@@ -57,7 +57,7 @@
     "activityJohn": "John hat sich auf die Erzieherstelle beworben",
     "activityLina": "Lina hat ein neues Richtliniendokument hochgeladen",
     "activityParent": "Ein Elternteil hat eine neue Anfrage eingereicht",
-    "browseMarketplace": "Marketplace durchsuchen",
+    "browseMarketplace": "Marktplatz durchsuchen",
     "defaultUser": "Benutzer",
     "manageUsers": "Benutzer verwalten",
     "newOrders": "Neue Bestellungen",
@@ -241,7 +241,7 @@
       "title": "Schnellstatistiken",
       "upcomingAppointments": "Bevorstehende Termine"
     },
-    "title": "Foundation-Dashboard",
+    "title": "Stiftungs-Dashboard",
     "todayAtGlance": "Heute auf einen Blick",
     "welcomeMessage": "Willkommen zurück {{name}}! Hier ist eine Übersicht über Ihre Kindertagesstätten-Operationen."
   },

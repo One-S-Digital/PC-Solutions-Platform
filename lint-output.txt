@@ -1,0 +1,70 @@
+﻿
+­ƒöì Linting translation values for quality issues...
+   Mode: Full scan
+
+node : 
+At line:1 char:1
++ node scripts/lint-translation-values.mjs 2>&1 | Out-File -FilePath "l ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+ÔÜá´©Å  Found 218 translation quality issue(s):
+
+
+ÔÜá´©Å  Placeholder Markers ([FR], [DE], [EN]) - 1 found (reported only, NOT 
+blocking):
+
+   ­ƒôä de/dashboard.json
+      Key: _NOTE
+      Value: "This German translation file requires comprehensive review b..."
+
+
+ÔÜá´©Å  Mixed Language Values - 217 found (reported only, NOT blocking):
+
+   ­ƒôä fr/admin.json
+      Key: settings.systemConfig.emailTemplates.goToTemplates
+      Value: "Aller aux mod├¿les d'e-mail"
+      Language: fr
+
+   ­ƒôä fr/admin.json
+      Key: sidebar.candidatePool
+      Value: "Bassin de candidats"
+      Language: fr
+
+   ­ƒôä fr/admin.json
+      Key: partners.application.successMessage
+      Value: "Merci de votre int├®r├¬t pour un partenariat avec ProCr├¿che 
+So..."
+      Language: fr
+
+   ­ƒôä fr/admin.json
+      Key: forms.organization.languagePlaceholder
+      Value: "par exemple, allemand, fran├ºais, anglais"
+      Language: fr
+
+   ­ƒôä fr/admin.json
+      Key: translations.oneClickSync.description
+      Value: "Importer les cl├®s anglaises ÔåÆ Traduire en fran├ºais et 
+allema..."
+      Language: fr
+
+   ... and 212 more mixed-language issues
+
+
+============================================================
+­ƒôè Summary
+============================================================
+   Placeholder Markers (excluding allowlisted): 1
+   Mixed Language: 217
+   TODO Markers: 0
+   Missing Interpolation: 0
+============================================================
+
+ƒÆí Quality issues (placeholder markers, mixed languages) are reported but do 
+not block commits.
+
+   Fix them incrementally when working in those files.
+
+   Use --strict-quality to enforce quality standards.
+
