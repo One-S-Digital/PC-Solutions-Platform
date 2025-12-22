@@ -1,30 +1,74 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSettings } from '../../hooks/useSettings'
 import LoadingSpinner from '../ui/LoadingSpinner'
 import logger from '../../utils/logger'
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
-import { publicApi } from '../../services/api'
+import { useApiClient } from '../../services/api'
 import { toast } from 'sonner'
-import { AlertTriangle, CheckCircle, Settings as SettingsIcon } from 'lucide-react'
+import { AlertTriangle, CheckCircle, Settings as SettingsIcon, Mail } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+
+interface SystemSetting {
+  id: string;
+  key: string;
+  value: any;
+  description: string;
+  category: string;
+  isEncrypted: boolean;
+  isPublic: boolean;
+}
 
 const GeneralSettings: React.FC = () => {
   const { t } = useTranslation(['admin', 'common'])
   const { settings, updateSettings, loading, error, saving } = useSettings()
   const [maintenanceMode, setMaintenanceMode] = useState(false)
   const [maintenanceMessage, setMaintenanceMessage] = useState('')
+  const [emailGracePeriodDays, setEmailGracePeriodDays] = useState<string>('7')
+  const [savingEmailGracePeriod, setSavingEmailGracePeriod] = useState(false)
   const queryClient = useQueryClient()
+  const apiClient = useApiClient()
 
   // Platform settings queries
   const { data: platformSettings, isLoading: platformLoading } = useQuery({
     queryKey: ['platform-settings'],
-    queryFn: () => publicApi.get('/api/platform-settings'),
+    queryFn: async () => {
+      if (!apiClient) return null
+      const response = await apiClient.get('/platform-settings')
+      return response.data
+    },
+    enabled: !!apiClient,
   })
+
+  // Fetch email grace period setting from system configuration
+  const { data: systemSettings, isLoading: systemSettingsLoading } = useQuery({
+    queryKey: ['system-settings-email'],
+    queryFn: async () => {
+      if (!apiClient) return null
+      const response = await apiClient.get('/admin/system-configuration/settings?category=email')
+      return response.data as SystemSetting[]
+    },
+    enabled: !!apiClient,
+  })
+
+  // Update local state when system settings are fetched
+  useEffect(() => {
+    if (systemSettings && Array.isArray(systemSettings)) {
+      const gracePeriodSetting = systemSettings.find(s => s.key === 'email.grace_period_days')
+      if (gracePeriodSetting) {
+        const value = typeof gracePeriodSetting.value === 'number' 
+          ? gracePeriodSetting.value.toString() 
+          : String(gracePeriodSetting.value || 7)
+        setEmailGracePeriodDays(value)
+      }
+    }
+  }, [systemSettings])
 
   // Maintenance mode mutation
   const updateMaintenanceMutation = useMutation({
-    mutationFn: (data: { maintenanceMode: boolean; maintenanceMessage?: string }) => 
-      publicApi.put('/api/platform-settings', data),
+    mutationFn: async (data: { maintenanceMode: boolean; maintenanceMessage?: string }) => {
+      if (!apiClient) throw new Error('API client not available')
+      return apiClient.put('/platform-settings', data)
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['platform-settings'] })
       toast.success(t('admin:settings.general.platformSettings.updateMessage'))
@@ -71,6 +115,37 @@ const GeneralSettings: React.FC = () => {
       maintenanceMode,
       maintenanceMessage
     })
+  }
+
+  // Handle email grace period update
+  const handleEmailGracePeriodUpdate = async () => {
+    if (!apiClient) {
+      toast.error(t('admin:settings.general.userEmailSettings.authRequired', 'Authentication required'))
+      return
+    }
+
+    const days = parseInt(emailGracePeriodDays)
+    if (isNaN(days) || days < 0 || days > 365) {
+      toast.error(t('admin:settings.general.userEmailSettings.invalidDays', 'Please enter a valid number of days (0-365)'))
+      return
+    }
+
+    setSavingEmailGracePeriod(true)
+    try {
+      await apiClient.put('/admin/system-configuration/settings/email.grace_period_days', {
+        value: days,
+        description: 'Number of days to keep old email addresses before automatic deletion after an email change. This grace period allows users to recover access if needed.',
+      })
+      
+      queryClient.invalidateQueries({ queryKey: ['system-settings-email'] })
+      toast.success(t('admin:settings.general.userEmailSettings.updated', 'Email grace period updated successfully'))
+      logger.log('✅ Email grace period setting updated to:', days)
+    } catch (err) {
+      logger.error('❌ Failed to update email grace period:', err)
+      toast.error(t('admin:settings.general.userEmailSettings.updateFailed', 'Failed to update email grace period setting'))
+    } finally {
+      setSavingEmailGracePeriod(false)
+    }
   }
 
   if (loading) return <LoadingSpinner />
@@ -225,6 +300,71 @@ const GeneralSettings: React.FC = () => {
               </button>
             </div>
           )}
+        </div>
+      </div>
+
+      {/* User Email Settings Section */}
+      <div className="bg-white rounded-card shadow-soft border border-gray-200 p-6">
+        <div className="flex items-center space-x-2 mb-6">
+          <Mail className="h-5 w-5 text-swiss-teal" />
+          <h3 className="text-xl font-semibold text-swiss-charcoal">
+            {t('admin:settings.general.userEmailSettings.title', 'User Email Settings')}
+          </h3>
+        </div>
+
+        <div className="space-y-4">
+          <div className="p-4 border border-gray-200 rounded-lg">
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="emailGracePeriodDays" className="block text-sm font-medium text-gray-900 mb-1">
+                  {t('admin:settings.general.userEmailSettings.gracePeriodLabel', 'Email Change Grace Period (Days)')}
+                </label>
+                <p className="text-sm text-gray-500 mb-3">
+                  {t('admin:settings.general.userEmailSettings.gracePeriodDescription', 
+                    'When a user changes their email address, the old email is retained for this many days before being automatically deleted. This allows users to recover their account if needed. Set to 0 to delete immediately.'
+                  )}
+                </p>
+                <div className="flex items-center space-x-4">
+                  <input
+                    type="number"
+                    id="emailGracePeriodDays"
+                    min="0"
+                    max="365"
+                    value={emailGracePeriodDays}
+                    onChange={(e) => setEmailGracePeriodDays(e.target.value)}
+                    disabled={systemSettingsLoading}
+                    className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    placeholder="7"
+                  />
+                  <span className="text-sm text-gray-500">
+                    {t('admin:settings.general.userEmailSettings.daysLabel', 'days')}
+                  </span>
+                </div>
+              </div>
+              
+              <div className="pt-4 border-t border-gray-200">
+                <button
+                  onClick={handleEmailGracePeriodUpdate}
+                  disabled={savingEmailGracePeriod || systemSettingsLoading}
+                  className="inline-flex justify-center rounded-button bg-swiss-teal py-2 px-4 text-sm font-medium text-white shadow-soft hover:bg-swiss-teal/90 focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                >
+                  {savingEmailGracePeriod 
+                    ? t('admin:settings.general.userEmailSettings.saving', 'Saving...') 
+                    : t('admin:settings.general.userEmailSettings.saveButton', 'Save Email Settings')
+                  }
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <p className="text-sm text-blue-700">
+              <strong>{t('admin:settings.general.userEmailSettings.noteTitle', 'Note:')}</strong>{' '}
+              {t('admin:settings.general.userEmailSettings.noteDescription', 
+                'This setting also exists in System Config → System Settings under the "email" category as "email.grace_period_days".'
+              )}
+            </p>
+          </div>
         </div>
       </div>
     </div>

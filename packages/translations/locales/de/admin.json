@@ -316,6 +316,20 @@
         "updating": "Aktualisieren...",
         "title": "Plattformeinstellungen"
       },
+      "userEmailSettings": {
+        "title": "Benutzer-E-Mail-Einstellungen",
+        "gracePeriodLabel": "Karenzzeit für E-Mail-Änderung (Tage)",
+        "gracePeriodDescription": "Wenn ein Benutzer seine E-Mail-Adresse ändert, wird die alte E-Mail für diese Anzahl von Tagen aufbewahrt, bevor sie automatisch gelöscht wird. Dies ermöglicht es Benutzern, ihr Konto bei Bedarf wiederherzustellen. Auf 0 setzen für sofortige Löschung.",
+        "daysLabel": "Tage",
+        "saveButton": "E-Mail-Einstellungen speichern",
+        "saving": "Speichern...",
+        "updated": "E-Mail-Karenzzeit erfolgreich aktualisiert",
+        "updateFailed": "Fehler beim Aktualisieren der E-Mail-Karenzzeit-Einstellung",
+        "invalidDays": "Bitte geben Sie eine gültige Anzahl von Tagen ein (0-365)",
+        "authRequired": "Authentifizierung erforderlich",
+        "noteTitle": "Hinweis:",
+        "noteDescription": "Diese Einstellung existiert auch in Systemkonfiguration → Systemeinstellungen unter der Kategorie \"email\" als \"email.grace_period_days\"."
+      },
       "siteDescriptionPlaceholder": "Seitenbeschreibung eingeben",
       "contactEmailPlaceholder": "kontakt@beispiel.com",
       "contactPhonePlaceholder": "+41 XX XXX XX XX",

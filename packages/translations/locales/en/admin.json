@@ -316,6 +316,20 @@
         "updating": "Updating...",
         "title": "Platform Settings"
       },
+      "userEmailSettings": {
+        "title": "User Email Settings",
+        "gracePeriodLabel": "Email Change Grace Period (Days)",
+        "gracePeriodDescription": "When a user changes their email address, the old email is retained for this many days before being automatically deleted. This allows users to recover their account if needed. Set to 0 to delete immediately.",
+        "daysLabel": "days",
+        "saveButton": "Save Email Settings",
+        "saving": "Saving...",
+        "updated": "Email grace period updated successfully",
+        "updateFailed": "Failed to update email grace period setting",
+        "invalidDays": "Please enter a valid number of days (0-365)",
+        "authRequired": "Authentication required",
+        "noteTitle": "Note:",
+        "noteDescription": "This setting also exists in System Config → System Settings under the \"email\" category as \"email.grace_period_days\"."
+      },
       "siteDescriptionPlaceholder": "Enter site description",
       "contactEmailPlaceholder": "contact@example.com",
       "contactPhonePlaceholder": "+41 XX XXX XX XX",
