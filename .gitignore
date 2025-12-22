@@ -53,6 +53,7 @@ hardcoded-text-replacements*
 packages/translations/dist/
 packages/translations/tsconfig.tsbuildinfo
 
+
 # Core dump files
 core
 core.*
