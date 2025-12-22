@@ -37,7 +37,7 @@ const SubscriptionRequestModal: React.FC<SubscriptionRequestModalProps> = ({
   isLoading = false,
 }) => {
   const { t } = useTranslation(['subscription', 'common']);
-  const { user } = useAppContext();
+  const { currentUser } = useAppContext();
   
   const [contactName, setContactName] = useState('');
   const [contactEmail, setContactEmail] = useState('');
@@ -49,11 +49,11 @@ const SubscriptionRequestModal: React.FC<SubscriptionRequestModalProps> = ({
 
   // Pre-fill with user data
   useEffect(() => {
-    if (user) {
-      setContactName(`${user.firstName || ''} ${user.lastName || ''}`.trim() || '');
-      setContactEmail(user.email || '');
+    if (currentUser) {
+      setContactName(`${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim() || '');
+      setContactEmail(currentUser.email || '');
     }
-  }, [user]);
+  }, [currentUser]);
 
   // Handle escape key
   useEffect(() => {
@@ -87,7 +87,7 @@ const SubscriptionRequestModal: React.FC<SubscriptionRequestModalProps> = ({
         contactPhone: contactPhone.trim() || undefined,
         preferredContact,
         message: message.trim() || undefined,
-        organizationId: user?.organizationId,
+        organizationId: currentUser?.orgId,
       });
       setSubmitted(true);
     } catch (err) {
