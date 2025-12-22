@@ -76,6 +76,7 @@ const BillingSubscriptionSettings: React.FC<BillingSubscriptionSettingsProps> = 
   const location = useLocation();
   const { request } = useAuthenticatedApi();
   const { addNotification } = useNotifications();
+  const { translatePlan } = usePricingTranslations();
   const {
     status,
     subscription,
@@ -194,7 +195,7 @@ const BillingSubscriptionSettings: React.FC<BillingSubscriptionSettingsProps> = 
               <p className="text-2xl font-semibold text-swiss-mint mt-1">
                 {subscriptionLoading
                   ? t('common:loading')
-                  : plan?.name || t('subscription:info.noPlan')}
+                  : (plan ? translatePlan(plan).name : null) || t('subscription:info.noPlan')}
               </p>
             </div>
           </div>
@@ -209,7 +210,7 @@ const BillingSubscriptionSettings: React.FC<BillingSubscriptionSettingsProps> = 
             </div>
             <div>
               <span className="font-medium">{t('subscription:info.cancelAtPeriodEnd')}:</span>{' '}
-              {cancelAtPeriodEnd ? t('common:yes') : t('common:no')}
+              {cancelAtPeriodEnd ? t('common:common.yes') : t('common:common.no')}
             </div>
           </div>
 
