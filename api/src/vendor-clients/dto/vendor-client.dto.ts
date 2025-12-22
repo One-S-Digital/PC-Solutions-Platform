@@ -21,21 +21,3 @@ export class UpsertVendorClientDto {
   note?: string;
 }
 
-export class VendorClientFiltersDto {
-  @IsOptional()
-  @IsUUID()
-  vendorId?: string;
-
-  @IsOptional()
-  @IsUUID()
-  orgId?: string;
-
-  @IsOptional()
-  @IsBoolean()
-  isActive?: boolean;
-
-  @IsOptional()
-  @IsEnum(VendorClientReason)
-  reason?: VendorClientReason;
-}
-

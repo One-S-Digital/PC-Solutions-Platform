@@ -400,7 +400,7 @@ model VendorClient {
   isActive       Boolean            @default(true)
   reason         VendorClientReason?
   note           String?
-  markedByUserId String
+  markedByUserId String?
   markedAt       DateTime           @default(now())
   deactivatedAt  DateTime?
   lastAdminNotifiedAt DateTime?
@@ -408,7 +408,7 @@ model VendorClient {
   // Relations
   vendor   Organization @relation("VendorClientVendor", fields: [vendorId], references: [id], onDelete: Cascade)
   org      Organization @relation("VendorClientOrg", fields: [orgId], references: [id], onDelete: Cascade)
-  markedBy User         @relation(fields: [markedByUserId], references: [id], onDelete: Cascade)
+  markedBy User?        @relation(fields: [markedByUserId], references: [id], onDelete: SetNull)
 
   @@unique([vendorId, orgId], name: "vendorId_orgId")
   @@index([vendorId])

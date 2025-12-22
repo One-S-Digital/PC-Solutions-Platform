@@ -9,7 +9,7 @@ CREATE TABLE "public"."vendor_clients" (
   "isActive" BOOLEAN NOT NULL DEFAULT true,
   "reason" "public"."VendorClientReason",
   "note" TEXT,
-  "markedByUserId" TEXT NOT NULL,
+  "markedByUserId" TEXT,
   "markedAt" TIMESTAMPTZ NOT NULL DEFAULT now(),
   "deactivatedAt" TIMESTAMPTZ,
   "lastAdminNotifiedAt" TIMESTAMPTZ,
@@ -35,5 +35,5 @@ ALTER TABLE "public"."vendor_clients"
 
 ALTER TABLE "public"."vendor_clients"
   ADD CONSTRAINT "vendor_clients_markedByUserId_fkey"
-  FOREIGN KEY ("markedByUserId") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+  FOREIGN KEY ("markedByUserId") REFERENCES "public"."users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 

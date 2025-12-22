@@ -40,7 +40,7 @@ const DiscountTerminationsPage: React.FC = () => {
   const [reason, setReason] = React.useState<VendorClientReason>('CONTRACT');
   const [note, setNote] = React.useState('');
 
-  const { data: orgsRes, isLoading: orgsLoading } = useQuery({
+  const { data: orgsRes, isLoading: orgsLoading, isError: orgsIsError } = useQuery({
     queryKey: ['discount-terminations-orgs'],
     queryFn: () => apiService.getOrganizations(apiClient),
     enabled: !!apiClient,
@@ -101,7 +101,7 @@ const DiscountTerminationsPage: React.FC = () => {
       reason,
       note: note.trim() ? note.trim() : undefined,
     });
-    toast.success(t('admin:admin.discountTerminations.actions.markCompleted', 'Saved'));
+    toast.success(t('common:saved', 'Saved'));
     setNote('');
   };
 
@@ -147,6 +147,14 @@ const DiscountTerminationsPage: React.FC = () => {
         <Card className="p-6 border-l-4 border-red-500 bg-red-50">
           <p className="text-sm text-red-700">
             {t('common:errors.loadFailed', 'Failed to load data')}
+          </p>
+        </Card>
+      )}
+
+      {orgsIsError && (
+        <Card className="p-6 border-l-4 border-yellow-500 bg-yellow-50">
+          <p className="text-sm text-yellow-700">
+            {t('common:errors.loadFailed', 'Failed to load organizations')}
           </p>
         </Card>
       )}
