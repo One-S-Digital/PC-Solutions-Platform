@@ -5,6 +5,176 @@ import { PrismaService } from '../prisma/prisma.service';
 export class EmailTemplateService {
   constructor(private prisma: PrismaService) {}
 
+  private getStarterTemplates() {
+    // These are the 4 templates the admin UI expects to manage out of the box.
+    // IMPORTANT: Keep these idempotent and do not overwrite existing templates.
+    return [
+      {
+        name: 'Account verification',
+        event: 'account_verification',
+        subject: 'Verify Your Account - Pro Crèche Solutions',
+        category: 'authentication',
+        variables: ['firstName', 'verificationUrl'],
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Welcome to Pro Crèche Solutions!</h2>
+            <p>Hello {{firstName}},</p>
+            <p>Thank you for registering with Pro Crèche Solutions. Please verify your email address by clicking the button below:</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="{{verificationUrl}}" style="background-color: #3B82F6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Verify Email</a>
+            </div>
+            <p>If you didn't create an account, please ignore this email.</p>
+            <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+          </div>
+        `.trim(),
+        textContent: `
+          Welcome to Pro Crèche Solutions!
+
+          Hello {{firstName}},
+
+          Thank you for registering with Pro Crèche Solutions. Please verify your email address by visiting the following link:
+
+          {{verificationUrl}}
+
+          If you didn't create an account, please ignore this email.
+
+          Best regards,
+          The Pro Crèche Solutions Team
+        `.trim(),
+        isActive: true,
+      },
+      {
+        name: 'Password reset',
+        event: 'password_reset',
+        subject: 'Reset Your Password - Pro Crèche Solutions',
+        category: 'authentication',
+        variables: ['firstName', 'resetUrl'],
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Password Reset Request</h2>
+            <p>Hello {{firstName}},</p>
+            <p>We received a request to reset your password. Click the button below to create a new password:</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="{{resetUrl}}" style="background-color: #EF4444; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Reset Password</a>
+            </div>
+            <p>This link will expire in 1 hour for security reasons.</p>
+            <p>If you didn't request this password reset, please ignore this email.</p>
+            <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+          </div>
+        `.trim(),
+        textContent: `
+          Password Reset Request
+
+          Hello {{firstName}},
+
+          We received a request to reset your password. Visit the following link to create a new password:
+
+          {{resetUrl}}
+
+          This link will expire in 1 hour for security reasons.
+
+          If you didn't request this password reset, please ignore this email.
+
+          Best regards,
+          The Pro Crèche Solutions Team
+        `.trim(),
+        isActive: true,
+      },
+      {
+        name: 'Welcome email',
+        event: 'welcome_email',
+        subject: 'Welcome to Pro Crèche Solutions!',
+        category: 'userManagement',
+        variables: ['firstName', 'dashboardUrl'],
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Welcome to Pro Crèche Solutions!</h2>
+            <p>Hello {{firstName}},</p>
+            <p>Welcome to Pro Crèche Solutions! We're excited to have you join our community of childcare professionals.</p>
+            <p>Here's what you can do next:</p>
+            <ul>
+              <li>Complete your profile</li>
+              <li>Explore job opportunities</li>
+              <li>Connect with organizations</li>
+              <li>Browse our marketplace</li>
+            </ul>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="{{dashboardUrl}}" style="background-color: #3B82F6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Get Started</a>
+            </div>
+            <p>If you have any questions, feel free to contact our support team.</p>
+            <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+          </div>
+        `.trim(),
+        textContent: `
+          Welcome to Pro Crèche Solutions!
+
+          Hello {{firstName}},
+
+          Welcome to Pro Crèche Solutions! We're excited to have you join our community of childcare professionals.
+
+          Here's what you can do next:
+          - Complete your profile
+          - Explore job opportunities
+          - Connect with organizations
+          - Browse our marketplace
+
+          Get started: {{dashboardUrl}}
+
+          If you have any questions, feel free to contact our support team.
+
+          Best regards,
+          The Pro Crèche Solutions Team
+        `.trim(),
+        isActive: true,
+      },
+      {
+        name: 'New message',
+        event: 'new_message',
+        subject: 'New Message from {{senderName}}',
+        category: 'messaging',
+        variables: ['firstName', 'senderName', 'messagePreview', 'messageUrl'],
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>New Message</h2>
+            <p>Hello {{firstName}},</p>
+            <p>You have received a new message from <strong>{{senderName}}</strong>:</p>
+            <div style="background-color: #F3F4F6; padding: 15px; border-radius: 6px; margin: 20px 0;">
+              <p style="margin: 0;">{{messagePreview}}</p>
+            </div>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="{{messageUrl}}" style="background-color: #3B82F6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">View Message</a>
+            </div>
+            <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+          </div>
+        `.trim(),
+        textContent: `
+          New Message
+
+          Hello {{firstName}},
+
+          You have received a new message from {{senderName}}:
+
+          {{messagePreview}}
+
+          View message: {{messageUrl}}
+
+          Best regards,
+          The Pro Crèche Solutions Team
+        `.trim(),
+        isActive: true,
+      },
+    ];
+  }
+
+  private async ensureStarterTemplatesExist(): Promise<void> {
+    // createMany + skipDuplicates ensures we only INSERT missing events and never overwrite admin edits.
+    const data = this.getStarterTemplates();
+    await this.prisma.emailTemplate.createMany({
+      data,
+      skipDuplicates: true,
+    });
+  }
+
   async getTemplate(event: string): Promise<any> {
     const template = await this.prisma.emailTemplate.findFirst({
       where: {
@@ -35,6 +205,8 @@ export class EmailTemplateService {
   }
 
   async getAllTemplates(): Promise<any[]> {
+    // If seeding didn't run (common in prod/deploy), make sure the admin UI still has templates to manage.
+    await this.ensureStarterTemplatesExist();
     return this.prisma.emailTemplate.findMany({
       orderBy: { createdAt: 'desc' },
     });
