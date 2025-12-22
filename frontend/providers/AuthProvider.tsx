@@ -451,21 +451,40 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         // Prepare data for backend (remove frontend-only fields)
         const backendData: any = { ...updatedInfo };
         
+        // Map orgName to organizationName for the profiles endpoint
+        // Only include organizationName if it's a non-empty value
+        const hasOrgNameUpdate = backendData.orgName !== undefined && 
+                                 backendData.orgName !== null && 
+                                 String(backendData.orgName).trim() !== '';
+        if (hasOrgNameUpdate) {
+          backendData.organizationName = backendData.orgName;
+        }
+        delete backendData.orgName; // Always remove orgName (backend expects organizationName)
+        
         // Remove frontend-only fields that backend doesn't accept
         delete backendData.name; // We use firstName/lastName separately
-        delete backendData.orgName; // Backend uses orgId (UUID), not orgName (string)
         delete backendData.status; // Transformed field, not raw backend field
         delete backendData.lastLogin; // Transformed field
         delete backendData.memberSince; // Transformed field
         delete backendData.organizations; // Many-to-many relation, not direct field
         
-
+        // Determine which endpoint to use based on what's being updated
+        // Use profiles endpoint if updating organization-related fields with actual values
+        const hasOrgFields = hasOrgNameUpdate || 
+                           (backendData.description !== undefined && backendData.description !== '') ||
+                           (backendData.contactPerson !== undefined && backendData.contactPerson !== '') ||
+                           backendData.canton !== undefined ||
+                           backendData.languages !== undefined;
+        
         const apiBaseUrl = apiService.apiBaseUrl;
-        const url = `${apiBaseUrl}${API_ENDPOINTS.users.update}`;
+        const url = hasOrgFields 
+          ? `${apiBaseUrl}${API_ENDPOINTS.profiles.update}`
+          : `${apiBaseUrl}${API_ENDPOINTS.users.update}`;
+        const method = hasOrgFields ? 'PUT' : 'PATCH';
 
 
         const response = await fetch(url, {
-          method: 'PATCH',
+          method,
           headers: {
             'Content-Type': 'application/json',
             Accept: 'application/json',
@@ -619,14 +638,37 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         // Handle Clerk-specific errors
         const clerkErrors = error?.errors;
         if (Array.isArray(clerkErrors) && clerkErrors.length > 0) {
+          const firstError = clerkErrors[0];
+          const errorCode = firstError?.code || '';
           const message = clerkErrors
             .map((e: any) => e?.longMessage || e?.message)
             .filter(Boolean)
             .join(' ');
+          
+          // Handle verification_strategy_requires_reverification error
+          if (errorCode === 'verification_strategy_requires_reverification' ||
+              message.includes('additional verification')) {
+            throw new Error(
+              'For security reasons, you need to sign out and sign back in before changing your email address. ' +
+              'This helps us verify your identity for sensitive account changes.'
+            );
+          }
+          
           throw new Error(message || 'Email change failed');
         }
 
         const errorMessage = error?.message || '';
+        const errorStatus = error?.status || error?.code;
+        
+        // Handle 403 additional verification requirement
+        if (errorStatus === 403 || 
+            errorMessage.includes('additional verification') ||
+            errorMessage.includes('verification')) {
+          throw new Error(
+            'For security reasons, you need to sign out and sign back in before changing your email address. ' +
+            'This helps us verify your identity for sensitive account changes.'
+          );
+        }
         
         // Handle duplicate email
         if (errorMessage.includes('already exists') || errorMessage.includes('taken')) {

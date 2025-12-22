@@ -509,8 +509,14 @@ const AccountSecuritySettings: React.FC<AccountSecuritySettingsProps> = ({ setti
 
           {/* Error Message */}
           {emailError && (
-            <div className="mt-4">
-              <p className="text-sm text-swiss-coral font-medium">{emailError}</p>
+            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm text-red-700 font-medium">{emailError}</p>
+              {emailError.includes('sign out and sign back in') && (
+                <p className="text-xs text-red-600 mt-2">
+                  {t('common:settingsAccountSecurity.changeEmail.reAuthTip', 
+                    'After signing back in, return to this page to change your email address.')}
+                </p>
+              )}
             </div>
           )}
         </div>
