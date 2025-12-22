@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useAuth } from '@clerk/clerk-react';
 import { useTranslation } from 'react-i18next';
+import DOMPurify from 'dompurify';
 import { 
   AdminCard, 
   AdminButton, 
@@ -58,6 +59,7 @@ export default function EmailNotificationPage() {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'templates' | 'analytics' | 'logs' | 'send'>('templates');
   const [showSendForm, setShowSendForm] = useState(false);
+  const [isSavingTemplate, setIsSavingTemplate] = useState(false);
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
   const [templateModalMode, setTemplateModalMode] = useState<'create' | 'edit' | 'preview'>('create');
   const [selectedTemplate, setSelectedTemplate] = useState<EmailTemplate | null>(null);
@@ -72,6 +74,13 @@ export default function EmailNotificationPage() {
     isActive: true,
   });
   const [previewPayload, setPreviewPayload] = useState('{\n  "firstName": "Alex"\n}');
+  const previewPayloadParsed = useMemo(() => {
+    try {
+      return { ok: true as const, value: previewPayload ? JSON.parse(previewPayload) : {} };
+    } catch {
+      return { ok: false as const, value: {} };
+    }
+  }, [previewPayload]);
   const [sendForm, setSendForm] = useState({
     event: '',
     recipient: '',
@@ -146,6 +155,8 @@ export default function EmailNotificationPage() {
   };
 
   const saveTemplate = async () => {
+    if (isSavingTemplate) return;
+    setIsSavingTemplate(true);
     try {
       const token = await getToken();
       const variables = templateForm.variables
@@ -199,6 +210,8 @@ export default function EmailNotificationPage() {
           defaultValue: `Failed to save template: ${err.message}`,
         })
       );
+    } finally {
+      setIsSavingTemplate(false);
     }
   };
 
@@ -238,6 +251,8 @@ export default function EmailNotificationPage() {
     }
   };
 
+  // Clerk's getToken is stable in practice; this is intentionally run once on mount.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -841,14 +856,9 @@ export default function EmailNotificationPage() {
                       <div>
                         <label className="block text-sm font-medium text-admin-text mb-1">Rendered subject</label>
                         <div className="rounded border border-admin-border bg-admin-surface p-3 text-sm">
-                          {(() => {
-                            try {
-                              const payload = previewPayload ? JSON.parse(previewPayload) : {};
-                              return processTemplateString(selectedTemplate.subject || '', payload);
-                            } catch {
-                              return 'Invalid JSON payload';
-                            }
-                          })()}
+                          {!previewPayloadParsed.ok
+                            ? 'Invalid JSON payload'
+                            : processTemplateString(selectedTemplate.subject || '', previewPayloadParsed.value)}
                         </div>
                       </div>
                     </div>
@@ -857,28 +867,25 @@ export default function EmailNotificationPage() {
                       <div>
                         <label className="block text-sm font-medium text-admin-text mb-1">Rendered HTML</label>
                         <div className="rounded border border-admin-border bg-white p-3">
-                          {(() => {
-                            try {
-                              const payload = previewPayload ? JSON.parse(previewPayload) : {};
-                              const html = processTemplateString(selectedTemplate.htmlContent || '', payload);
-                              return <div dangerouslySetInnerHTML={{ __html: html }} />;
-                            } catch {
-                              return <div className="text-sm text-red-600">Invalid JSON payload</div>;
-                            }
-                          })()}
+                          {!previewPayloadParsed.ok ? (
+                            <div className="text-sm text-red-600">Invalid JSON payload</div>
+                          ) : (
+                            <div
+                              dangerouslySetInnerHTML={{
+                                __html: DOMPurify.sanitize(
+                                  processTemplateString(selectedTemplate.htmlContent || '', previewPayloadParsed.value)
+                                ),
+                              }}
+                            />
+                          )}
                         </div>
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-admin-text mb-1">Rendered text</label>
                         <pre className="rounded border border-admin-border bg-admin-surface p-3 text-xs whitespace-pre-wrap">
-                          {(() => {
-                            try {
-                              const payload = previewPayload ? JSON.parse(previewPayload) : {};
-                              return processTemplateString(selectedTemplate.textContent || '', payload);
-                            } catch {
-                              return 'Invalid JSON payload';
-                            }
-                          })()}
+                          {!previewPayloadParsed.ok
+                            ? 'Invalid JSON payload'
+                            : processTemplateString(selectedTemplate.textContent || '', previewPayloadParsed.value)}
                         </pre>
                       </div>
                     </div>
@@ -894,9 +901,9 @@ export default function EmailNotificationPage() {
                   <AdminButton
                     variant="primary"
                     onClick={saveTemplate}
-                    disabled={!templateForm.name || !templateForm.event || !templateForm.subject}
+                    disabled={isSavingTemplate || !templateForm.name || !templateForm.event || !templateForm.subject}
                   >
-                    {t('common:save', { defaultValue: 'Save' })}
+                    {isSavingTemplate ? 'Saving…' : t('common:save', { defaultValue: 'Save' })}
                   </AdminButton>
                 )}
               </div>
