@@ -941,6 +941,7 @@
     "decreaseQuantity": "Menge verringern",
     "increaseQuantity": "Menge erhöhen",
     "region": "Region",
+    "status": "Status",
     "sortBy": "Sortieren nach",
     "supplierTags": "Lieferanten-Tags",
     "verificationCode": "Bestätigungscode"
