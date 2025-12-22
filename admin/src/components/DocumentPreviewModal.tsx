@@ -91,7 +91,52 @@ export default function DocumentPreviewModal({
           return;
         }
 
-        const response = await fetch(fileUrl, {
+        // Determine the download URL - handle both relative and absolute URLs
+        // This matches the frontend implementation for consistency
+        let downloadUrl: string;
+        const apiBaseUrl = import.meta.env.VITE_API_URL || '/api';
+
+        if (fileUrl.startsWith('/api/upload/download/')) {
+          // Relative URL: /api/upload/download/storage-key
+          const storageKey = fileUrl.replace('/api/upload/download/', '');
+          downloadUrl = `${apiBaseUrl}/upload/download/${storageKey}`;
+        } else if (fileUrl.startsWith('http://') || fileUrl.startsWith('https://')) {
+          // Absolute URL: extract the path
+          try {
+            const url = new URL(fileUrl);
+            if (url.pathname.startsWith('/api/upload/download/')) {
+              // Already has /api/upload/download/ in path
+              const storageKey = url.pathname.replace('/api/upload/download/', '');
+              downloadUrl = `${apiBaseUrl}/upload/download/${storageKey}`;
+            } else if (fileUrl.includes('/api/upload/download/')) {
+              // Extract from full URL
+              const match = fileUrl.match(/\/api\/upload\/download\/(.+)$/);
+              if (match) {
+                downloadUrl = `${apiBaseUrl}/upload/download/${match[1]}`;
+              } else {
+                downloadUrl = fileUrl; // Fallback to original
+              }
+            } else {
+              // Assume the pathname is the storage key
+              const storageKey = url.pathname.startsWith('/') ? url.pathname.substring(1) : url.pathname;
+              downloadUrl = `${apiBaseUrl}/upload/download/${storageKey}`;
+            }
+          } catch (e) {
+            console.error('Error parsing fileUrl:', e);
+            // Fallback: try to extract from the URL string
+            const match = fileUrl.match(/\/api\/upload\/download\/(.+)$/);
+            if (match) {
+              downloadUrl = `${apiBaseUrl}/upload/download/${match[1]}`;
+            } else {
+              downloadUrl = fileUrl; // Use original as fallback
+            }
+          }
+        } else {
+          // Assume it's a storage key
+          downloadUrl = `${apiBaseUrl}/upload/download/${fileUrl}`;
+        }
+
+        const response = await fetch(downloadUrl, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -111,7 +156,12 @@ export default function DocumentPreviewModal({
         
         blobUrlRef.current = blobUrl;
         setPreviewBlobUrl(blobUrl);
-        setIsLoading(false);
+        
+        // Small delay to ensure content is ready to render (like frontend version)
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 100);
+        
         isFetchingRef.current = false;
         lastFileUrlRef.current = fileUrl; // Track that we've processed this fileUrl
       } catch (error) {
@@ -446,8 +496,15 @@ export default function DocumentPreviewModal({
           src={previewUrl}
           className="w-full h-full border-0"
           title={fileName}
+          onLoad={() => {
+            // PDF loaded successfully
+            if (import.meta.env.DEV) {
+              console.log('✅ PDF loaded in iframe:', fileName);
+            }
+          }}
           onError={(e) => {
-            console.error('PDF iframe load error:', e);
+            console.error('❌ PDF iframe load error:', e, { previewUrl, fileName });
+            setLoadError(true);
           }}
         />
       );
