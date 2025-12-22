@@ -227,10 +227,8 @@ async function main() {
       ];
 
       for (const plan of subscriptionPlans) {
-        await prisma.subscriptionPlan.upsert({
-          where: { code: plan.code },
-          update: plan,
-          create: plan,
+        await prisma.subscriptionPlan.create({
+          data: plan,
         });
       }
       console.log('🌱 Seed: 5 subscription plans created (matching pricing page)');
