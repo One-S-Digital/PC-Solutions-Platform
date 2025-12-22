@@ -130,11 +130,12 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
   const [status, setStatus] = useState<SubscriptionStatus>(subscription?.status || SubscriptionStatus.INACTIVE);
   const [selectedPlanId, setSelectedPlanId] = useState<string>(subscription?.planId || '');
   const [tier, setTier] = useState<SubscriptionTier>(subscription?.tier || SubscriptionTier.BASIC);
-  const [durationMonths, setDurationMonths] = useState<number>(0); // Default to Monthly Recurring
+  const [durationMonths, setDurationMonths] = useState<number>(-1); // -1 = no selection (user must choose)
   const [notes, setNotes] = useState<string>(subscription?.notes || '');
 
-  // Subscription period options (0 = monthly recurring with no fixed end)
+  // Subscription period options (0 = monthly recurring with no fixed end, -1 = no selection)
   const subscriptionPeriodOptions = React.useMemo(() => [
+    { value: -1, label: t('admin:subscriptions.editSubscription.period.selectPeriod', 'Select a period...') },
     { value: 0, label: t('admin:subscriptions.editSubscription.period.monthlyRecurring', 'Monthly Recurring') },
     { value: 1, label: t('admin:subscriptions.editSubscription.period.oneMonth', '1 Month') },
     { value: 3, label: t('admin:subscriptions.editSubscription.period.threeMonths', '3 Months') },
@@ -210,7 +211,7 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
       setStatus(SubscriptionStatus.INACTIVE);
       setSelectedPlanId('');
       setTier(SubscriptionTier.BASIC);
-      setDurationMonths(0); // Default to Monthly Recurring for new subscriptions
+      setDurationMonths(-1); // No default - user must select
       setNotes('');
     }
   }, [subscription]);
