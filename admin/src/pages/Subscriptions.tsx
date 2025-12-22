@@ -295,21 +295,29 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
             <label className="block text-sm font-medium text-gray-700 mb-2">
               {t('admin:subscriptions.editSubscription.plan', 'Subscription Plan')}
             </label>
-            <select
-              value={selectedPlanId}
-              onChange={(e) => setSelectedPlanId(e.target.value)}
-              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="">{t('admin:subscriptions.editSubscription.selectPlan', 'Select a plan...')}</option>
-              {plans.filter((p) => p.isActive).map((plan) => (
-                <option key={plan.id} value={plan.id}>
-                  {plan.name} - {new Intl.NumberFormat(CURRENCY_LOCALE, {
-                    style: 'currency',
-                    currency: plan.currency,
-                  }).format(plan.price)}/{billingPeriodLabel(plan.billingPeriod)}
-                </option>
-              ))}
-            </select>
+            {plans.filter((p) => p.isActive).length > 0 ? (
+              <select
+                value={selectedPlanId}
+                onChange={(e) => setSelectedPlanId(e.target.value)}
+                className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">{t('admin:subscriptions.editSubscription.selectPlan', 'Select a plan...')}</option>
+                {plans.filter((p) => p.isActive).map((plan) => (
+                  <option key={plan.id} value={plan.id}>
+                    {plan.name} - {new Intl.NumberFormat(CURRENCY_LOCALE, {
+                      style: 'currency',
+                      currency: plan.currency,
+                    }).format(plan.price)}/{billingPeriodLabel(plan.billingPeriod)}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                <p className="text-amber-800 text-sm">
+                  {t('admin:subscriptions.editSubscription.noPlansAvailable', 'No subscription plans available. Please create subscription plans first via the API or database seed.')}
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Notes */}
@@ -499,17 +507,25 @@ const EditSubscriptionPlanModal: React.FC<EditSubscriptionPlanModalProps> = ({
             <label className="block text-sm font-medium text-gray-700 mb-2">
               {t('admin:subscriptions.planEditor.plan', 'Plan')}
             </label>
-            <select
-              value={selectedPlanId}
-              onChange={(e) => setSelectedPlanId(e.target.value)}
-              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              {plans.map((plan) => (
-                <option key={plan.id} value={plan.id}>
-                  {plan.name} {!plan.isActive ? `(${t('common:inactive', 'Inactive')})` : ''}
-                </option>
-              ))}
-            </select>
+            {plans.length > 0 ? (
+              <select
+                value={selectedPlanId}
+                onChange={(e) => setSelectedPlanId(e.target.value)}
+                className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                {plans.map((plan) => (
+                  <option key={plan.id} value={plan.id}>
+                    {plan.name} {!plan.isActive ? `(${t('common:inactive', 'Inactive')})` : ''}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                <p className="text-amber-800 text-sm">
+                  {t('admin:subscriptions.planEditor.noPlansAvailable', 'No subscription plans available. Please run the database seed or create plans via the API.')}
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Billing Period */}

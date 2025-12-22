@@ -9,17 +9,21 @@ async function main() {
   console.log('📋 Creating plans and prices...');
   await seedPlansAndPrices();
 
-  // 2. Test users removed for production
+  // 2. Create Subscription Plans (for admin subscription management)
+  console.log('📋 Creating subscription plans...');
+  await seedSubscriptionPlans();
 
-  // 3. Create Enterprise Tenant Structure
+  // 3. Test users removed for production
+
+  // 4. Create Enterprise Tenant Structure
   console.log('🏢 Creating enterprise tenant structure...');
   await seedEnterpriseStructure();
 
-  // 4. Create Sample Content
+  // 5. Create Sample Content
   console.log('📄 Creating sample content...');
   await seedSampleContent();
 
-  // 5. Create Feature Flags
+  // 6. Create Feature Flags
   console.log('🚩 Setting up feature flags...');
   await seedFeatureFlags();
 
@@ -168,6 +172,266 @@ async function seedPlansAndPrices() {
 }
 
 // Test users seeding removed for production - users should be created through Clerk authentication
+
+async function seedSubscriptionPlans() {
+  // Create subscription plans for the admin subscription management system
+  // These are separate from Plan/PlanPrice used for Stripe billing
+
+  // Foundation Subscription Plans
+  await prisma.subscriptionPlan.upsert({
+    where: { code: 'FOUNDATION_BASIC' },
+    update: {},
+    create: {
+      name: 'Foundation Basic',
+      code: 'FOUNDATION_BASIC',
+      description: 'Basic subscription for small foundations getting started with the platform.',
+      price: 29.00,
+      currency: 'CHF',
+      billingPeriod: 'monthly',
+      features: [
+        'Up to 10 parent enquiries per month',
+        'Basic marketplace access',
+        'Standard support',
+        'Job posting (1 active)',
+      ],
+      limits: {
+        parentEnquiries: 10,
+        activeJobListings: 1,
+        teamMembers: 2,
+        storage: '1GB',
+      },
+      allowedRoles: ['FOUNDATION'],
+      trialDays: 14,
+      isActive: true,
+      isPopular: false,
+      displayOrder: 1,
+    },
+  });
+
+  await prisma.subscriptionPlan.upsert({
+    where: { code: 'FOUNDATION_ESSENTIAL' },
+    update: {},
+    create: {
+      name: 'Foundation Essential',
+      code: 'FOUNDATION_ESSENTIAL',
+      description: 'Essential subscription for growing foundations with expanded features.',
+      price: 79.00,
+      currency: 'CHF',
+      billingPeriod: 'monthly',
+      features: [
+        'Up to 50 parent enquiries per month',
+        'Full marketplace access',
+        'Priority support',
+        'Job posting (5 active)',
+        'Team management',
+        'Analytics dashboard',
+      ],
+      limits: {
+        parentEnquiries: 50,
+        activeJobListings: 5,
+        teamMembers: 10,
+        storage: '5GB',
+      },
+      allowedRoles: ['FOUNDATION'],
+      trialDays: 14,
+      isActive: true,
+      isPopular: true,
+      displayOrder: 2,
+    },
+  });
+
+  await prisma.subscriptionPlan.upsert({
+    where: { code: 'FOUNDATION_PROFESSIONAL' },
+    update: {},
+    create: {
+      name: 'Foundation Professional',
+      code: 'FOUNDATION_PROFESSIONAL',
+      description: 'Professional subscription for established foundations with advanced features.',
+      price: 149.00,
+      currency: 'CHF',
+      billingPeriod: 'monthly',
+      features: [
+        'Unlimited parent enquiries',
+        'Full marketplace access',
+        '24/7 priority support',
+        'Unlimited job postings',
+        'Advanced team management',
+        'Advanced analytics',
+        'API access',
+        'Custom branding',
+      ],
+      limits: {
+        parentEnquiries: -1,
+        activeJobListings: -1,
+        teamMembers: 50,
+        storage: '25GB',
+      },
+      allowedRoles: ['FOUNDATION'],
+      trialDays: 14,
+      isActive: true,
+      isPopular: false,
+      displayOrder: 3,
+    },
+  });
+
+  await prisma.subscriptionPlan.upsert({
+    where: { code: 'FOUNDATION_ENTERPRISE' },
+    update: {},
+    create: {
+      name: 'Foundation Enterprise',
+      code: 'FOUNDATION_ENTERPRISE',
+      description: 'Enterprise subscription for large foundations with custom needs and dedicated support.',
+      price: 299.00,
+      currency: 'CHF',
+      billingPeriod: 'monthly',
+      features: [
+        'Unlimited everything',
+        'Dedicated account manager',
+        'Custom integrations',
+        'White-label options',
+        'SLA guarantee',
+        'On-site training',
+        'Custom analytics',
+        'Multi-branch management',
+      ],
+      limits: {
+        parentEnquiries: -1,
+        activeJobListings: -1,
+        teamMembers: -1,
+        storage: 'unlimited',
+      },
+      allowedRoles: ['FOUNDATION'],
+      trialDays: 30,
+      isActive: true,
+      isPopular: false,
+      displayOrder: 4,
+    },
+  });
+
+  // Product Supplier Subscription Plans
+  await prisma.subscriptionPlan.upsert({
+    where: { code: 'SUPPLIER_BASIC' },
+    update: {},
+    create: {
+      name: 'Supplier Basic',
+      code: 'SUPPLIER_BASIC',
+      description: 'Basic subscription for product suppliers to list products.',
+      price: 49.00,
+      currency: 'CHF',
+      billingPeriod: 'monthly',
+      features: [
+        'Up to 20 product listings',
+        'Basic storefront',
+        'Standard support',
+        'Order management',
+      ],
+      limits: {
+        productListings: 20,
+        featuredProducts: 0,
+        storage: '2GB',
+      },
+      allowedRoles: ['PRODUCT_SUPPLIER'],
+      trialDays: 14,
+      isActive: true,
+      isPopular: false,
+      displayOrder: 1,
+    },
+  });
+
+  await prisma.subscriptionPlan.upsert({
+    where: { code: 'SUPPLIER_PROFESSIONAL' },
+    update: {},
+    create: {
+      name: 'Supplier Professional',
+      code: 'SUPPLIER_PROFESSIONAL',
+      description: 'Professional subscription for established product suppliers.',
+      price: 129.00,
+      currency: 'CHF',
+      billingPeriod: 'monthly',
+      features: [
+        'Unlimited product listings',
+        'Premium storefront',
+        'Priority support',
+        'Advanced analytics',
+        'Featured products (5)',
+        'Bulk upload',
+      ],
+      limits: {
+        productListings: -1,
+        featuredProducts: 5,
+        storage: '20GB',
+      },
+      allowedRoles: ['PRODUCT_SUPPLIER'],
+      trialDays: 14,
+      isActive: true,
+      isPopular: true,
+      displayOrder: 2,
+    },
+  });
+
+  // Service Provider Subscription Plans
+  await prisma.subscriptionPlan.upsert({
+    where: { code: 'SERVICE_BASIC' },
+    update: {},
+    create: {
+      name: 'Service Provider Basic',
+      code: 'SERVICE_BASIC',
+      description: 'Basic subscription for service providers.',
+      price: 39.00,
+      currency: 'CHF',
+      billingPeriod: 'monthly',
+      features: [
+        'Up to 5 service listings',
+        'Basic profile',
+        'Standard support',
+        'Booking management',
+      ],
+      limits: {
+        serviceListings: 5,
+        featuredServices: 0,
+        storage: '1GB',
+      },
+      allowedRoles: ['SERVICE_PROVIDER'],
+      trialDays: 14,
+      isActive: true,
+      isPopular: false,
+      displayOrder: 1,
+    },
+  });
+
+  await prisma.subscriptionPlan.upsert({
+    where: { code: 'SERVICE_PROFESSIONAL' },
+    update: {},
+    create: {
+      name: 'Service Provider Professional',
+      code: 'SERVICE_PROFESSIONAL',
+      description: 'Professional subscription for established service providers.',
+      price: 99.00,
+      currency: 'CHF',
+      billingPeriod: 'monthly',
+      features: [
+        'Unlimited service listings',
+        'Premium profile',
+        'Priority support',
+        'Advanced scheduling',
+        'Featured services (3)',
+        'Analytics dashboard',
+      ],
+      limits: {
+        serviceListings: -1,
+        featuredServices: 3,
+        storage: '10GB',
+      },
+      allowedRoles: ['SERVICE_PROVIDER'],
+      trialDays: 14,
+      isActive: true,
+      isPopular: true,
+      displayOrder: 2,
+    },
+  });
+
+  console.log('✅ Subscription plans created successfully');
+}
 
 async function seedEnterpriseStructure() {
   // Create Sunrise Group enterprise
