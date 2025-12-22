@@ -850,7 +850,10 @@ export class UserSubscriptionController {
   )
   async getMySubscription(@Request() req: any): Promise<{ success: boolean; data: UserSubscriptionResponse }> {
     const userContext = req.context;
-    const userId = userContext?.userId;
+    // IMPORTANT:
+    // - req.context.userId is the Clerk user id (e.g. "user_...") used for auth.
+    // - our subscription tables (`subscriptions`) use the internal profile UUID (User.id).
+    const userId = userContext?.profileUserId || req.user?.id;
     const userRole = userContext?.role as UserRole;
 
     // Check if role requires subscription

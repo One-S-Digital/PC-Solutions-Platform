@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { AppLoggerService } from '../common/logger.service';
 import Stripe from 'stripe';
+import { SubscriptionStatus, SubscriptionTier } from '@workspace/types';
 
 @Injectable()
 export class BillingService {
@@ -205,6 +206,44 @@ export class BillingService {
     };
   }
 
+  private mapStripeStatus(stripeStatus: string | null | undefined): SubscriptionStatus {
+    const status = (stripeStatus || '').toLowerCase();
+    switch (status) {
+      case 'active':
+        return 'ACTIVE';
+      case 'trialing':
+        return 'TRIAL';
+      case 'past_due':
+      case 'unpaid':
+        return 'PAST_DUE';
+      case 'canceled':
+      case 'cancelled':
+        return 'CANCELLED';
+      default:
+        return 'PENDING';
+    }
+  }
+
+  private async mirrorSubscriptionUpdate(
+    stripeSubscriptionId: string,
+    data: Record<string, unknown>,
+    logContext: Record<string, unknown>,
+  ): Promise<void> {
+    // Best-effort mirroring: never fail the webhook if this write fails.
+    try {
+      await this.prisma.subscription.updateMany({
+        where: { stripeSubscriptionId },
+        data: data as any,
+      });
+    } catch (e: any) {
+      this.logger.warn('Failed to mirror subscription update', 'BillingService', {
+        error: e?.message,
+        stripeSubscriptionId,
+        ...logContext,
+      });
+    }
+  }
+
   // Webhook handlers
   async handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
     const { userId, planCode, cadence, kind } = session.metadata;
@@ -238,6 +277,77 @@ export class BillingService {
           trialEnd: subscription.trial_end ? new Date(subscription.trial_end * 1000) : null,
         },
       });
+
+      // ALSO mirror into the newer `subscriptions` table so `/subscriptions/me` reflects Stripe status.
+      // This is best-effort until we fully consolidate the two subscription systems.
+      try {
+        const subscriptionPlan = await this.prisma.subscriptionPlan.findFirst({
+          where: { code: planCode },
+        });
+
+        if (!subscriptionPlan) {
+          this.logger.warn(
+            `No SubscriptionPlan found with code=${planCode}; skipping mirror to subscriptions table`,
+            'BillingService',
+            { planCode, userId, stripeSubscriptionId: subscription.id },
+          );
+        } else {
+          const mappedStatus = this.mapStripeStatus(subscription.status);
+
+          const tierFromCode =
+            (planCode || '').toUpperCase() in SubscriptionTier
+              ? (SubscriptionTier as any)[(planCode || '').toUpperCase()]
+              : SubscriptionTier.BASIC;
+
+          await this.prisma.subscription.upsert({
+            where: { stripeSubscriptionId: subscription.id },
+            create: {
+              userId,
+              planId: subscriptionPlan.id,
+              tier: tierFromCode as any,
+              status: mappedStatus as any,
+              currentPeriodStart: new Date((subscription as any).current_period_start * 1000),
+              currentPeriodEnd: new Date((subscription as any).current_period_end * 1000),
+              trialStart: subscription.trial_start ? new Date(subscription.trial_start * 1000) : null,
+              trialEnd: subscription.trial_end ? new Date(subscription.trial_end * 1000) : null,
+              cancelAtPeriodEnd: !!subscription.cancel_at_period_end,
+              isManual: false,
+              stripeCustomerId: subscription.customer as string,
+              stripeSubscriptionId: subscription.id,
+              metadata: {
+                provider: 'stripe',
+                cadence,
+                planCode,
+              },
+            },
+            update: {
+              userId,
+              planId: subscriptionPlan.id,
+              tier: tierFromCode as any,
+              status: mappedStatus as any,
+              currentPeriodStart: new Date((subscription as any).current_period_start * 1000),
+              currentPeriodEnd: new Date((subscription as any).current_period_end * 1000),
+              trialStart: subscription.trial_start ? new Date(subscription.trial_start * 1000) : null,
+              trialEnd: subscription.trial_end ? new Date(subscription.trial_end * 1000) : null,
+              cancelAtPeriodEnd: !!subscription.cancel_at_period_end,
+              isManual: false,
+              stripeCustomerId: subscription.customer as string,
+              metadata: {
+                provider: 'stripe',
+                cadence,
+                planCode,
+              },
+            },
+          });
+        }
+      } catch (e: any) {
+        this.logger.warn('Failed to mirror Stripe subscription into subscriptions table', 'BillingService', {
+          error: e?.message,
+          userId,
+          planCode,
+          stripeSubscriptionId: subscription.id,
+        });
+      }
     } else {
       // Handle one-time payment (license)
       const paymentIntent = await this.stripe.paymentIntents.retrieve(session.payment_intent as string);
@@ -260,8 +370,9 @@ export class BillingService {
 
   async handleInvoicePaid(invoice: Stripe.Invoice) {
     if ((invoice as any).subscription) {
+      const stripeSubscriptionId = (invoice as any).subscription as string;
       const subscription = await this.prisma.userSubscription.findUnique({
-        where: { stripeSubscriptionId: (invoice as any).subscription as string },
+        where: { stripeSubscriptionId },
       });
 
       if (subscription) {
@@ -274,13 +385,25 @@ export class BillingService {
           },
         });
       }
+
+      // Mirror to new subscriptions table (best effort)
+      await this.mirrorSubscriptionUpdate(
+        stripeSubscriptionId,
+        {
+          status: 'ACTIVE',
+          currentPeriodStart: new Date(invoice.period_start * 1000),
+          currentPeriodEnd: new Date(invoice.period_end * 1000),
+        },
+        { invoiceId: invoice.id },
+      );
     }
   }
 
   async handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
     if ((invoice as any).subscription) {
+      const stripeSubscriptionId = (invoice as any).subscription as string;
       const subscription = await this.prisma.userSubscription.findUnique({
-        where: { stripeSubscriptionId: (invoice as any).subscription as string },
+        where: { stripeSubscriptionId },
       });
 
       if (subscription) {
@@ -291,6 +414,13 @@ export class BillingService {
           },
         });
       }
+
+      // Mirror to new subscriptions table (best effort)
+      await this.mirrorSubscriptionUpdate(
+        stripeSubscriptionId,
+        { status: 'PAST_DUE' },
+        { invoiceId: invoice.id },
+      );
     }
   }
 
@@ -311,6 +441,22 @@ export class BillingService {
         },
       });
     }
+
+    // Mirror to new subscriptions table (best effort)
+    const mappedStatus = this.mapStripeStatus(subscription.status);
+    await this.mirrorSubscriptionUpdate(
+      subscription.id,
+      {
+        status: mappedStatus,
+        currentPeriodStart: new Date((subscription as any).current_period_start * 1000),
+        currentPeriodEnd: new Date((subscription as any).current_period_end * 1000),
+        cancelAtPeriodEnd: subscription.cancel_at_period_end,
+        canceledAt: subscription.canceled_at ? new Date(subscription.canceled_at * 1000) : null,
+        isManual: false,
+        stripeCustomerId: subscription.customer as string,
+      },
+      { event: 'customer.subscription.updated' },
+    );
   }
 
   async handleSubscriptionDeleted(subscription: Stripe.Subscription) {
@@ -327,6 +473,18 @@ export class BillingService {
         },
       });
     }
+
+    // Mirror to new subscriptions table (best effort)
+    await this.mirrorSubscriptionUpdate(
+      subscription.id,
+      {
+        status: 'CANCELLED',
+        canceledAt: new Date(),
+        isManual: false,
+        stripeCustomerId: subscription.customer as string,
+      },
+      { event: 'customer.subscription.deleted' },
+    );
   }
 
   async handleChargeRefunded(charge: Stripe.Charge) {
