@@ -49,6 +49,7 @@ import { SupportModule } from './support/support.module';
 import { PartnersModule } from './partners/partners.module';
 import { OrganizationDocumentsModule } from './organization-documents/organization-documents.module';
 import { PromoCodesModule } from './promo-codes/promo-codes.module';
+import { VendorClientsModule } from './vendor-clients/vendor-clients.module';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
 
@@ -142,6 +143,7 @@ import {
     PartnersModule,
     OrganizationDocumentsModule,
     PromoCodesModule,
+    VendorClientsModule,
   ],
   controllers: [AppController],
   providers: [
