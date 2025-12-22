@@ -210,16 +210,16 @@ export const PRICING_PLANS: PricingPlan[] = [
     ],
     isPopular: false,
   },
-  // Supplier Plans
+  // Supplier Plans - Pricing based on enquiry
   {
     role: UserRole.PRODUCT_SUPPLIER,
     name: 'Suppliers',
     emoji: '📦',
-    price: { monthly: 99, annually: 1069, annualEquivalent: 89 },
-    monthlyPriceText: '💰 CHF 99 / month',
-    annualPlanText: 'CHF 1,069 / year (save 10%)',
+    price: { monthly: 0, annually: 0, annualEquivalent: 0 },
+    monthlyPriceText: '',
+    annualPlanText: '',
     tagline: 'Perfect for: Suppliers focused on daycare market growth.',
-    description: '✨ Reach daycares efficiently with minimal admin—fair fees, simple pricing.',
+    description: '✨ Reach daycares efficiently with minimal admin—fair fees, simple pricing. Contact us for custom pricing.',
     features: [
       'Product listings & marketplace access',
       'Lead management system',
@@ -230,16 +230,16 @@ export const PRICING_PLANS: PricingPlan[] = [
     ],
     isPopular: false,
   },
-  // Service Provider Plans
+  // Service Provider Plans - Pricing based on enquiry
   {
     role: UserRole.SERVICE_PROVIDER,
     name: 'Service Providers',
     emoji: '🔧',
-    price: { monthly: 149, annually: 1609, annualEquivalent: 134 },
-    monthlyPriceText: '💰 CHF 149 / month',
-    annualPlanText: 'CHF 1,609 / year (save 10%)',
+    price: { monthly: 0, annually: 0, annualEquivalent: 0 },
+    monthlyPriceText: '',
+    annualPlanText: '',
     tagline: 'Perfect for: Service providers targeting professional daycare partnerships.',
-    description: '✨ Scale your service business with complete daycare relationship management.',
+    description: '✨ Scale your service business with complete daycare relationship management. Contact us for custom pricing.',
     features: [
       'Service listings & marketplace access',
       'Appointment scheduling system',

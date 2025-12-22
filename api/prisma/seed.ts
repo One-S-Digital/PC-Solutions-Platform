@@ -9,17 +9,21 @@ async function main() {
   console.log('📋 Creating plans and prices...');
   await seedPlansAndPrices();
 
-  // 2. Test users removed for production
+  // 2. Create Subscription Plans (for admin subscription management)
+  console.log('📋 Creating subscription plans...');
+  await seedSubscriptionPlans();
 
-  // 3. Create Enterprise Tenant Structure
+  // 3. Test users removed for production
+
+  // 4. Create Enterprise Tenant Structure
   console.log('🏢 Creating enterprise tenant structure...');
   await seedEnterpriseStructure();
 
-  // 4. Create Sample Content
+  // 5. Create Sample Content
   console.log('📄 Creating sample content...');
   await seedSampleContent();
 
-  // 5. Create Feature Flags
+  // 6. Create Feature Flags
   console.log('🚩 Setting up feature flags...');
   await seedFeatureFlags();
 
@@ -168,6 +172,313 @@ async function seedPlansAndPrices() {
 }
 
 // Test users seeding removed for production - users should be created through Clerk authentication
+
+async function seedSubscriptionPlans() {
+  // Create subscription plans matching the 5 plans on the pricing page
+  // These are used by the admin subscription management system
+
+  // 1. Foundation Basic - CHF 69/month
+  await prisma.subscriptionPlan.upsert({
+    where: { code: 'BASIC' },
+    update: {
+      name: 'Basic',
+      description: 'Perfect for small daycares who want essential tools without complexity. Get immediate access to suppliers, compliance info, and support.',
+      price: 69.00,
+      currency: 'CHF',
+      billingPeriod: 'monthly',
+      features: [
+        'Supplier & service provider marketplace',
+        'State policy hub (by canton)',
+        'Multilingual interface (EN/FR/DE)',
+        'Email support',
+      ],
+      limits: {
+        parentEnquiries: 0,
+        marketplace: true,
+        policyHub: true,
+        multiLanguage: true,
+      },
+      allowedRoles: ['FOUNDATION'],
+      trialDays: 14,
+      isActive: true,
+      isPopular: false,
+      displayOrder: 1,
+    },
+    create: {
+      name: 'Basic',
+      code: 'BASIC',
+      description: 'Perfect for small daycares who want essential tools without complexity. Get immediate access to suppliers, compliance info, and support.',
+      price: 69.00,
+      currency: 'CHF',
+      billingPeriod: 'monthly',
+      features: [
+        'Supplier & service provider marketplace',
+        'State policy hub (by canton)',
+        'Multilingual interface (EN/FR/DE)',
+        'Email support',
+      ],
+      limits: {
+        parentEnquiries: 0,
+        marketplace: true,
+        policyHub: true,
+        multiLanguage: true,
+      },
+      allowedRoles: ['FOUNDATION'],
+      trialDays: 14,
+      isActive: true,
+      isPopular: false,
+      displayOrder: 1,
+    },
+  });
+
+  // 2. Foundation Essential - CHF 129/month (Popular)
+  await prisma.subscriptionPlan.upsert({
+    where: { code: 'ESSENTIAL' },
+    update: {
+      name: 'Essential',
+      description: 'Perfect for single-site daycares who want to save time with parent leads and compliant HR tools. Win parents faster, stay compliant, and manage enquiries with ease.',
+      price: 129.00,
+      currency: 'CHF',
+      billingPeriod: 'monthly',
+      features: [
+        'Everything in Basic',
+        'Parent leads inbox + auto-matching system',
+        'HR & compliance document library (Swiss-validated)',
+        'Parent enquiry tracker with quick replies',
+      ],
+      limits: {
+        parentEnquiries: 15,
+        marketplace: true,
+        policyHub: true,
+        multiLanguage: true,
+        hrLibrary: true,
+        parentLeads: true,
+      },
+      allowedRoles: ['FOUNDATION'],
+      trialDays: 14,
+      isActive: true,
+      isPopular: true,
+      displayOrder: 2,
+    },
+    create: {
+      name: 'Essential',
+      code: 'ESSENTIAL',
+      description: 'Perfect for single-site daycares who want to save time with parent leads and compliant HR tools. Win parents faster, stay compliant, and manage enquiries with ease.',
+      price: 129.00,
+      currency: 'CHF',
+      billingPeriod: 'monthly',
+      features: [
+        'Everything in Basic',
+        'Parent leads inbox + auto-matching system',
+        'HR & compliance document library (Swiss-validated)',
+        'Parent enquiry tracker with quick replies',
+      ],
+      limits: {
+        parentEnquiries: 15,
+        marketplace: true,
+        policyHub: true,
+        multiLanguage: true,
+        hrLibrary: true,
+        parentLeads: true,
+      },
+      allowedRoles: ['FOUNDATION'],
+      trialDays: 14,
+      isActive: true,
+      isPopular: true,
+      displayOrder: 2,
+    },
+  });
+
+  // 3. Foundation Professional - CHF 259/month
+  await prisma.subscriptionPlan.upsert({
+    where: { code: 'PROFESSIONAL' },
+    update: {
+      name: 'Professional',
+      description: 'Perfect for medium-sized daycares ready to grow and professionalize operations. Recruit and train staff, handle unlimited parent enquiries, and deliver excellence.',
+      price: 259.00,
+      currency: 'CHF',
+      billingPeriod: 'monthly',
+      features: [
+        'Everything in Essential',
+        'Recruitment module',
+        'Unlimited parent enquiries',
+        'E-learning for staff',
+        'Team management & tools',
+        'Priority support',
+      ],
+      limits: {
+        parentEnquiries: -1,
+        marketplace: true,
+        policyHub: true,
+        multiLanguage: true,
+        hrLibrary: true,
+        parentLeads: true,
+        recruitment: true,
+        eLearning: true,
+        teamManagement: true,
+      },
+      allowedRoles: ['FOUNDATION'],
+      trialDays: 14,
+      isActive: true,
+      isPopular: false,
+      displayOrder: 3,
+    },
+    create: {
+      name: 'Professional',
+      code: 'PROFESSIONAL',
+      description: 'Perfect for medium-sized daycares ready to grow and professionalize operations. Recruit and train staff, handle unlimited parent enquiries, and deliver excellence.',
+      price: 259.00,
+      currency: 'CHF',
+      billingPeriod: 'monthly',
+      features: [
+        'Everything in Essential',
+        'Recruitment module',
+        'Unlimited parent enquiries',
+        'E-learning for staff',
+        'Team management & tools',
+        'Priority support',
+      ],
+      limits: {
+        parentEnquiries: -1,
+        marketplace: true,
+        policyHub: true,
+        multiLanguage: true,
+        hrLibrary: true,
+        parentLeads: true,
+        recruitment: true,
+        eLearning: true,
+        teamManagement: true,
+      },
+      allowedRoles: ['FOUNDATION'],
+      trialDays: 14,
+      isActive: true,
+      isPopular: false,
+      displayOrder: 3,
+    },
+  });
+
+  // 4. Suppliers - Enquiry-based pricing
+  await prisma.subscriptionPlan.upsert({
+    where: { code: 'SUPPLIERS' },
+    update: {
+      name: 'Suppliers',
+      description: 'Perfect for suppliers focused on daycare market growth. Pricing based on enquiry.',
+      price: 0,
+      currency: 'CHF',
+      billingPeriod: 'enquiry',
+      features: [
+        'Product listings & marketplace access',
+        'Lead management system',
+        'Order tracking & fulfillment',
+        'Multi-language support',
+        'Sales analytics dashboard',
+        'Email support',
+      ],
+      limits: {
+        productListings: -1,
+        marketplace: true,
+        leadManagement: true,
+        orderTracking: true,
+        analytics: true,
+      },
+      allowedRoles: ['PRODUCT_SUPPLIER'],
+      trialDays: 0,
+      isActive: true,
+      isPopular: false,
+      displayOrder: 4,
+    },
+    create: {
+      name: 'Suppliers',
+      code: 'SUPPLIERS',
+      description: 'Perfect for suppliers focused on daycare market growth. Pricing based on enquiry.',
+      price: 0,
+      currency: 'CHF',
+      billingPeriod: 'enquiry',
+      features: [
+        'Product listings & marketplace access',
+        'Lead management system',
+        'Order tracking & fulfillment',
+        'Multi-language support',
+        'Sales analytics dashboard',
+        'Email support',
+      ],
+      limits: {
+        productListings: -1,
+        marketplace: true,
+        leadManagement: true,
+        orderTracking: true,
+        analytics: true,
+      },
+      allowedRoles: ['PRODUCT_SUPPLIER'],
+      trialDays: 0,
+      isActive: true,
+      isPopular: false,
+      displayOrder: 4,
+    },
+  });
+
+  // 5. Service Providers - Enquiry-based pricing
+  await prisma.subscriptionPlan.upsert({
+    where: { code: 'SERVICE_PROVIDERS' },
+    update: {
+      name: 'Service Providers',
+      description: 'Perfect for service providers targeting professional daycare partnerships. Pricing based on enquiry.',
+      price: 0,
+      currency: 'CHF',
+      billingPeriod: 'enquiry',
+      features: [
+        'Service listings & marketplace access',
+        'Appointment scheduling system',
+        'Client relationship management',
+        'Revenue tracking & reporting',
+        'Multi-language support',
+        'Priority support',
+      ],
+      limits: {
+        serviceListings: -1,
+        marketplace: true,
+        scheduling: true,
+        crm: true,
+        revenueTracking: true,
+      },
+      allowedRoles: ['SERVICE_PROVIDER'],
+      trialDays: 0,
+      isActive: true,
+      isPopular: false,
+      displayOrder: 5,
+    },
+    create: {
+      name: 'Service Providers',
+      code: 'SERVICE_PROVIDERS',
+      description: 'Perfect for service providers targeting professional daycare partnerships. Pricing based on enquiry.',
+      price: 0,
+      currency: 'CHF',
+      billingPeriod: 'enquiry',
+      features: [
+        'Service listings & marketplace access',
+        'Appointment scheduling system',
+        'Client relationship management',
+        'Revenue tracking & reporting',
+        'Multi-language support',
+        'Priority support',
+      ],
+      limits: {
+        serviceListings: -1,
+        marketplace: true,
+        scheduling: true,
+        crm: true,
+        revenueTracking: true,
+      },
+      allowedRoles: ['SERVICE_PROVIDER'],
+      trialDays: 0,
+      isActive: true,
+      isPopular: false,
+      displayOrder: 5,
+    },
+  });
+
+  console.log('✅ Subscription plans created successfully (5 plans matching pricing page)');
+}
 
 async function seedEnterpriseStructure() {
   // Create Sunrise Group enterprise

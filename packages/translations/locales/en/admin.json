@@ -1704,7 +1704,9 @@
       "error": "Failed to update subscription: ",
       "currentInfo": "Current Subscription Info",
       "planLabel": "Plan",
-      "periodLabel": "Period"
+      "periodLabel": "Period",
+      "enquiryBased": "Enquiry-based pricing",
+      "noPlansAvailable": "No subscription plans available. Please create subscription plans first via the API or database seed."
     },
     "planEditor": {
       "open": "Edit Plans",
@@ -1726,7 +1728,8 @@
       "saving": "Saving...",
       "save": "Save Changes",
       "success": "Plan updated successfully",
-      "error": "Failed to update plan: "
+      "error": "Failed to update plan: ",
+      "noPlansAvailable": "No subscription plans available. Please run the database seed or create plans via the API."
     },
     "createSubscription": {
       "title": "Create Subscription"
