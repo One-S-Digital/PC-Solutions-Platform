@@ -304,10 +304,10 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
                 <option value="">{t('admin:subscriptions.editSubscription.selectPlan', 'Select a plan...')}</option>
                 {plans.filter((p) => p.isActive).map((plan) => (
                   <option key={plan.id} value={plan.id}>
-                    {plan.name} - {new Intl.NumberFormat(CURRENCY_LOCALE, {
+                    {plan.name}{plan.price > 0 ? ` - ${new Intl.NumberFormat(CURRENCY_LOCALE, {
                       style: 'currency',
                       currency: plan.currency,
-                    }).format(plan.price)}/{billingPeriodLabel(plan.billingPeriod)}
+                    }).format(plan.price)}/${billingPeriodLabel(plan.billingPeriod)}` : ` (${t('admin:subscriptions.editSubscription.enquiryBased', 'Enquiry-based pricing')})`}
                   </option>
                 ))}
               </select>
