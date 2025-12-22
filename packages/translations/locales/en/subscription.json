@@ -120,6 +120,7 @@
   },
   "errors": {
     "fetchFailed": "Failed to load subscription information",
+    "cancelRequestFailed": "Failed to submit cancellation request",
     "requestFailed": "Failed to submit subscription request",
     "contextMissing": "useSubscription must be used within a SubscriptionProvider",
     "featureNotAvailable": "This feature is not available in your current plan"

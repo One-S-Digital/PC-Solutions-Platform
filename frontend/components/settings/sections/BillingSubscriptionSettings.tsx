@@ -116,15 +116,15 @@ const BillingSubscriptionSettings: React.FC<BillingSubscriptionSettingsProps> = 
 
   const statusLabel = React.useMemo(() => {
     const key = formatStatusKey(status);
-    if (!key) return t('common:notAvailable', 'N/A');
-    return t(`subscription:status.${key}` as any, status);
+    if (!key) return t('common:notAvailable');
+    return t(`subscription:status.${key}` as any);
   }, [formatStatusKey, status, t]);
 
   const formatDate = React.useCallback(
     (dateValue?: string | null) => {
-      if (!dateValue) return t('common:notAvailable', 'N/A');
+      if (!dateValue) return t('common:notAvailable');
       const d = new Date(dateValue);
-      if (Number.isNaN(d.getTime())) return t('common:notAvailable', 'N/A');
+      if (Number.isNaN(d.getTime())) return t('common:notAvailable');
       return d.toLocaleDateString(i18n.language);
     },
     [i18n.language, t]
@@ -133,7 +133,7 @@ const BillingSubscriptionSettings: React.FC<BillingSubscriptionSettingsProps> = 
   const currentPeriodLabel = React.useMemo(() => {
     const start = subscription?.currentPeriodStart;
     const end = subscription?.currentPeriodEnd;
-    if (!start && !end) return t('common:notAvailable', 'N/A');
+    if (!start && !end) return t('common:notAvailable');
     return `${formatDate(start || null)} – ${formatDate(end || null)}`;
   }, [formatDate, subscription?.currentPeriodEnd, subscription?.currentPeriodStart, t]);
 
@@ -149,21 +149,22 @@ const BillingSubscriptionSettings: React.FC<BillingSubscriptionSettingsProps> = 
       });
 
       if (!res?.success) {
-        throw new Error(res?.message || 'Failed to submit cancellation request');
+        throw new Error('cancel_request_failed');
       }
 
       setCancelRequestSubmitted(true);
       setIsCancelModalOpen(false);
       setCancelReason('');
       addNotification({
-        title: t('common:notifications.successTitle', 'Success'),
-        message: t('common:notifications.requestSubmitted', 'Request submitted successfully'),
+        title: t('common:notifications.successTitle'),
+        message: t('common:notifications.requestSubmitted'),
         type: 'success',
       });
     } catch (err) {
+      console.error('Cancellation request failed:', err);
       addNotification({
         title: t('common:errors.genericErrorTitle'),
-        message: err instanceof Error ? err.message : t('common:errors.genericErrorMessage'),
+        message: t('subscription:errors.cancelRequestFailed'),
         type: 'error',
       });
     } finally {
@@ -172,8 +173,12 @@ const BillingSubscriptionSettings: React.FC<BillingSubscriptionSettingsProps> = 
   };
   
   const handleSelectPlan = (planName: string) => {
-      // In a real app, this would redirect to a checkout/confirmation page
-      alert(`Plan selected: ${planName}. This would typically lead to a payment confirmation flow.`);
+      // Placeholder until checkout flow exists - keep UX translated
+      addNotification({
+        title: t('common:notifications.infoTitle'),
+        message: t('common:settingsBillingSubscription.planChangeNotImplemented', { planName }),
+        type: 'info',
+      });
   };
 
   const foundationPlans = pricingService.getFoundationPlans();
@@ -188,29 +193,27 @@ const BillingSubscriptionSettings: React.FC<BillingSubscriptionSettingsProps> = 
               <h3 className="text-md font-medium text-gray-700">{t('common:settingsBillingSubscription.currentPlan')}</h3>
               <p className="text-2xl font-semibold text-swiss-mint mt-1">
                 {subscriptionLoading
-                  ? t('common:loading', 'Loading...')
-                  : plan?.name || t('subscription:info.noPlan', 'No active plan')}
+                  ? t('common:loading')
+                  : plan?.name || t('subscription:info.noPlan')}
               </p>
             </div>
             <div className="text-sm text-gray-600">
-              <span className="font-medium">{t('common:status', 'Status')}:</span> {subscriptionLoading ? t('common:loading', 'Loading...') : statusLabel}
+              <span className="font-medium">{t('common:status')}:</span> {subscriptionLoading ? t('common:loading') : statusLabel}
             </div>
           </div>
 
           <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-gray-600">
             <div>
-              <span className="font-medium">{t('subscription:info.currentPeriod', 'Current Period')}:</span> {currentPeriodLabel}
+              <span className="font-medium">{t('subscription:info.currentPeriod')}:</span> {currentPeriodLabel}
             </div>
             <div>
-              <span className="font-medium">{t('subscription:info.cancelAtPeriodEnd', 'Cancels at period end')}:</span>{' '}
-              {cancelAtPeriodEnd ? t('common:yes', 'Yes') : t('common:no', 'No')}
+              <span className="font-medium">{t('subscription:info.cancelAtPeriodEnd')}:</span>{' '}
+              {cancelAtPeriodEnd ? t('common:yes') : t('common:no')}
             </div>
           </div>
 
           {subscriptionError && (
-            <p className="text-xs text-swiss-coral mt-2">
-              {subscriptionError}
-            </p>
+            <p className="text-xs text-swiss-coral mt-2">{t('subscription:errors.fetchFailed')}</p>
           )}
         </div>
 
@@ -261,7 +264,7 @@ const BillingSubscriptionSettings: React.FC<BillingSubscriptionSettingsProps> = 
           )}
           {(cancelAtPeriodEnd || cancelRequestSubmitted) && (
             <p className="text-xs text-gray-500 mt-2">
-              {t('subscription:info.cancelAtPeriodEnd', 'Cancels at period end')}
+              {t('subscription:info.cancelAtPeriodEnd')}
             </p>
           )}
         </Card>
@@ -276,7 +279,7 @@ const BillingSubscriptionSettings: React.FC<BillingSubscriptionSettingsProps> = 
                 {t('common:settingsBillingSubscription.confirmCancelMessage')}
               </p>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('common:description', 'Description')} ({t('common:optional', 'optional')})
+                {t('common:description')} ({t('common:optional')})
               </label>
               <textarea
                 value={cancelReason}
@@ -294,7 +297,7 @@ const BillingSubscriptionSettings: React.FC<BillingSubscriptionSettingsProps> = 
                   onClick={handleSubmitCancellationRequest}
                   disabled={isSubmittingCancel}
                 >
-                  {isSubmittingCancel ? t('common:loading', 'Loading...') : t('common:settingsBillingSubscription.yesCancel')}
+                  {isSubmittingCancel ? t('common:loading') : t('common:settingsBillingSubscription.yesCancel')}
                 </Button>
               </div>
             </div>

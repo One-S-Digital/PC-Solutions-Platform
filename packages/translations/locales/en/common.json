@@ -1795,6 +1795,7 @@
     "manageSubscriptionDescription": "Update your payment method, view invoices, and manage your subscription settings.",
     "manageSubscriptionTitle": "Manage Subscription",
     "nextInvoiceOn": "Next invoice on {{date}}",
+    "planChangeNotImplemented": "Plan change is not available yet (selected: {{planName}}).",
     "stripePortalLinkNotConfigured": "Payment portal is not configured. Please contact support.",
     "upgradePlan": "Upgrade Plan",
     "yesCancel": "Yes, Cancel",
