@@ -19,6 +19,9 @@ interface EmailTemplate {
   name: string;
   event: string;
   subject: string;
+  htmlContent: string;
+  textContent: string;
+  variables: string[];
   category: string;
   isActive: boolean;
   createdAt: string;
@@ -55,6 +58,20 @@ export default function EmailNotificationPage() {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'templates' | 'analytics' | 'logs' | 'send'>('templates');
   const [showSendForm, setShowSendForm] = useState(false);
+  const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
+  const [templateModalMode, setTemplateModalMode] = useState<'create' | 'edit' | 'preview'>('create');
+  const [selectedTemplate, setSelectedTemplate] = useState<EmailTemplate | null>(null);
+  const [templateForm, setTemplateForm] = useState({
+    name: '',
+    event: '',
+    category: 'userManagement',
+    subject: '',
+    htmlContent: '',
+    textContent: '',
+    variables: '',
+    isActive: true,
+  });
+  const [previewPayload, setPreviewPayload] = useState('{\n  "firstName": "Alex"\n}');
   const [sendForm, setSendForm] = useState({
     event: '',
     recipient: '',
@@ -77,6 +94,111 @@ export default function EmailNotificationPage() {
       setTemplates(data);
     } catch (err: any) {
       console.error('Failed to fetch templates:', err);
+    }
+  };
+
+  const openCreateTemplate = () => {
+    setTemplateModalMode('create');
+    setSelectedTemplate(null);
+    setTemplateForm({
+      name: '',
+      event: '',
+      category: 'userManagement',
+      subject: '',
+      htmlContent: '',
+      textContent: '',
+      variables: '',
+      isActive: true,
+    });
+    setIsTemplateModalOpen(true);
+  };
+
+  const openEditTemplate = (template: EmailTemplate) => {
+    setTemplateModalMode('edit');
+    setSelectedTemplate(template);
+    setTemplateForm({
+      name: template.name || '',
+      event: template.event || '',
+      category: template.category || 'userManagement',
+      subject: template.subject || '',
+      htmlContent: template.htmlContent || '',
+      textContent: template.textContent || '',
+      variables: (template.variables || []).join(', '),
+      isActive: template.isActive ?? true,
+    });
+    setIsTemplateModalOpen(true);
+  };
+
+  const openPreviewTemplate = (template: EmailTemplate) => {
+    setTemplateModalMode('preview');
+    setSelectedTemplate(template);
+    setPreviewPayload('{\n  "firstName": "Alex"\n}');
+    setIsTemplateModalOpen(true);
+  };
+
+  const processTemplateString = (template: string, payload: Record<string, any>) => {
+    let processed = template;
+    Object.keys(payload || {}).forEach((key) => {
+      const regex = new RegExp(`{{${key}}}`, 'g');
+      processed = processed.replace(regex, payload[key] ?? '');
+    });
+    return processed;
+  };
+
+  const saveTemplate = async () => {
+    try {
+      const token = await getToken();
+      const variables = templateForm.variables
+        .split(',')
+        .map((v) => v.trim())
+        .filter(Boolean);
+
+      const payload = {
+        name: templateForm.name,
+        event: templateForm.event,
+        category: templateForm.category,
+        subject: templateForm.subject,
+        htmlContent: templateForm.htmlContent,
+        textContent: templateForm.textContent,
+        variables,
+        isActive: templateForm.isActive,
+      };
+
+      const isEdit = templateModalMode === 'edit' && selectedTemplate?.id;
+      const url = isEdit
+        ? `/api/admin/email-notifications/templates/${selectedTemplate!.id}`
+        : '/api/admin/email-notifications/templates';
+
+      const method = isEdit ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const msg = await response.text().catch(() => '');
+        throw new Error(msg || 'Failed to save template');
+      }
+
+      setIsTemplateModalOpen(false);
+      await fetchTemplates();
+      alert(
+        isEdit
+          ? t('admin:settings.emailNotifications.templates.alerts.updated', { defaultValue: 'Template updated' })
+          : t('admin:settings.emailNotifications.templates.alerts.created', { defaultValue: 'Template created' })
+      );
+    } catch (err: any) {
+      alert(
+        t('admin:settings.emailNotifications.templates.alerts.saveFailed', {
+          message: err.message,
+          defaultValue: `Failed to save template: ${err.message}`,
+        })
+      );
     }
   };
 
@@ -323,7 +445,7 @@ export default function EmailNotificationPage() {
           <AdminCard className="p-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-admin-text">{t('admin:settings.emailNotifications.templates.title')}</h3>
-              <AdminButton variant="primary" size="sm">
+              <AdminButton variant="primary" size="sm" onClick={openCreateTemplate}>
                 {t('admin:settings.emailNotifications.templates.createTemplate')}
               </AdminButton>
             </div>
@@ -363,10 +485,10 @@ export default function EmailNotificationPage() {
                     </AdminTableCell>
                     <AdminTableCell>
                       <div className="flex gap-2">
-                        <AdminButton variant="outline" size="sm">
+                        <AdminButton variant="outline" size="sm" onClick={() => openEditTemplate(template)}>
                           {t('admin:settings.emailNotifications.templates.buttons.edit')}
                         </AdminButton>
-                        <AdminButton variant="secondary" size="sm">
+                        <AdminButton variant="secondary" size="sm" onClick={() => openPreviewTemplate(template)}>
                           {t('admin:settings.emailNotifications.templates.buttons.preview')}
                         </AdminButton>
                       </div>
@@ -555,6 +677,230 @@ export default function EmailNotificationPage() {
         {error && (
           <div className="mt-4 rounded-md bg-red-50 p-4">
             <div className="text-sm text-red-700">{error}</div>
+          </div>
+        )}
+
+        {/* Template modal (create / edit / preview) */}
+        {isTemplateModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+            <div
+              className="absolute inset-0 bg-black/40"
+              onClick={() => setIsTemplateModalOpen(false)}
+            />
+            <div className="relative w-full max-w-4xl rounded-lg bg-white shadow-xl border border-admin-border">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-admin-border">
+                <h3 className="text-lg font-semibold text-admin-text">
+                  {templateModalMode === 'create'
+                    ? t('admin:settings.emailNotifications.templates.createTemplate')
+                    : templateModalMode === 'edit'
+                      ? t('admin:settings.emailNotifications.templates.buttons.edit')
+                      : t('admin:settings.emailNotifications.templates.buttons.preview')}
+                </h3>
+                <button
+                  className="text-admin-muted hover:text-admin-text"
+                  onClick={() => setIsTemplateModalOpen(false)}
+                  aria-label="Close"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+                {templateModalMode !== 'preview' && (
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-admin-text mb-1">
+                          {t('admin:settings.emailNotifications.templates.tableHeaders.name')}
+                        </label>
+                        <input
+                          className="admin-input w-full px-3 py-2"
+                          value={templateForm.name}
+                          onChange={(e) => setTemplateForm((p) => ({ ...p, name: e.target.value }))}
+                          placeholder="e.g. Welcome email"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-admin-text mb-1">
+                          {t('admin:settings.emailNotifications.templates.tableHeaders.event')}
+                        </label>
+                        <input
+                          className="admin-input w-full px-3 py-2"
+                          value={templateForm.event}
+                          onChange={(e) => setTemplateForm((p) => ({ ...p, event: e.target.value }))}
+                          placeholder="e.g. welcome_email"
+                          disabled={templateModalMode === 'edit'}
+                        />
+                        {templateModalMode === 'edit' && (
+                          <p className="text-xs text-admin-muted mt-1">Event is immutable for existing templates.</p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-admin-text mb-1">
+                          {t('admin:settings.emailNotifications.templates.tableHeaders.category')}
+                        </label>
+                        <select
+                          className="admin-input w-full px-3 py-2"
+                          value={templateForm.category}
+                          onChange={(e) => setTemplateForm((p) => ({ ...p, category: e.target.value }))}
+                        >
+                          <option value="authentication">authentication</option>
+                          <option value="userManagement">userManagement</option>
+                          <option value="jobRecruitment">jobRecruitment</option>
+                          <option value="messaging">messaging</option>
+                          <option value="marketplace">marketplace</option>
+                          <option value="subscription">subscription</option>
+                          <option value="systemAdmin">systemAdmin</option>
+                          <option value="marketing">marketing</option>
+                          <option value="leadManagement">leadManagement</option>
+                          <option value="contentModeration">contentModeration</option>
+                        </select>
+                      </div>
+
+                      <div className="flex items-end gap-3">
+                        <label className="flex items-center gap-2 text-sm font-medium text-admin-text">
+                          <input
+                            type="checkbox"
+                            checked={templateForm.isActive}
+                            onChange={(e) => setTemplateForm((p) => ({ ...p, isActive: e.target.checked }))}
+                          />
+                          {t('admin:settings.emailNotifications.templates.tableHeaders.status')}
+                        </label>
+                        <span className="text-xs text-admin-muted">
+                          {templateForm.isActive
+                            ? t('admin:settings.emailNotifications.templates.status.active')
+                            : t('admin:settings.emailNotifications.templates.status.inactive')}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-admin-text mb-1">
+                        {t('admin:settings.emailNotifications.templates.tableHeaders.subject')}
+                      </label>
+                      <input
+                        className="admin-input w-full px-3 py-2"
+                        value={templateForm.subject}
+                        onChange={(e) => setTemplateForm((p) => ({ ...p, subject: e.target.value }))}
+                        placeholder="e.g. Welcome, {{firstName}}!"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-admin-text mb-1">Variables (comma-separated)</label>
+                      <input
+                        className="admin-input w-full px-3 py-2"
+                        value={templateForm.variables}
+                        onChange={(e) => setTemplateForm((p) => ({ ...p, variables: e.target.value }))}
+                        placeholder="e.g. firstName, dashboardUrl"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-admin-text mb-1">HTML content</label>
+                        <textarea
+                          className="admin-input w-full px-3 py-2 font-mono text-xs"
+                          rows={12}
+                          value={templateForm.htmlContent}
+                          onChange={(e) => setTemplateForm((p) => ({ ...p, htmlContent: e.target.value }))}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-admin-text mb-1">Text content</label>
+                        <textarea
+                          className="admin-input w-full px-3 py-2 font-mono text-xs"
+                          rows={12}
+                          value={templateForm.textContent}
+                          onChange={(e) => setTemplateForm((p) => ({ ...p, textContent: e.target.value }))}
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {templateModalMode === 'preview' && selectedTemplate && (
+                  <>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-admin-text mb-1">Preview payload (JSON)</label>
+                        <textarea
+                          className="admin-input w-full px-3 py-2 font-mono text-xs"
+                          rows={10}
+                          value={previewPayload}
+                          onChange={(e) => setPreviewPayload(e.target.value)}
+                        />
+                        <p className="text-xs text-admin-muted mt-1">
+                          Variables: {(selectedTemplate.variables || []).join(', ') || '—'}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-admin-text mb-1">Rendered subject</label>
+                        <div className="rounded border border-admin-border bg-admin-surface p-3 text-sm">
+                          {(() => {
+                            try {
+                              const payload = previewPayload ? JSON.parse(previewPayload) : {};
+                              return processTemplateString(selectedTemplate.subject || '', payload);
+                            } catch {
+                              return 'Invalid JSON payload';
+                            }
+                          })()}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-admin-text mb-1">Rendered HTML</label>
+                        <div className="rounded border border-admin-border bg-white p-3">
+                          {(() => {
+                            try {
+                              const payload = previewPayload ? JSON.parse(previewPayload) : {};
+                              const html = processTemplateString(selectedTemplate.htmlContent || '', payload);
+                              return <div dangerouslySetInnerHTML={{ __html: html }} />;
+                            } catch {
+                              return <div className="text-sm text-red-600">Invalid JSON payload</div>;
+                            }
+                          })()}
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-admin-text mb-1">Rendered text</label>
+                        <pre className="rounded border border-admin-border bg-admin-surface p-3 text-xs whitespace-pre-wrap">
+                          {(() => {
+                            try {
+                              const payload = previewPayload ? JSON.parse(previewPayload) : {};
+                              return processTemplateString(selectedTemplate.textContent || '', payload);
+                            } catch {
+                              return 'Invalid JSON payload';
+                            }
+                          })()}
+                        </pre>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-admin-border">
+                <AdminButton variant="outline" onClick={() => setIsTemplateModalOpen(false)}>
+                  {t('common:cancel', { defaultValue: 'Cancel' })}
+                </AdminButton>
+                {templateModalMode !== 'preview' && (
+                  <AdminButton
+                    variant="primary"
+                    onClick={saveTemplate}
+                    disabled={!templateForm.name || !templateForm.event || !templateForm.subject}
+                  >
+                    {t('common:save', { defaultValue: 'Save' })}
+                  </AdminButton>
+                )}
+              </div>
+            </div>
           </div>
         )}
       </main>

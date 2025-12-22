@@ -6,7 +6,11 @@ import { UserRole } from '@prisma/client';
 
 describe('PrincipalService', () => {
   let service: PrincipalService;
-  let prisma: jest.Mocked<PrismaService>;
+  let prisma: {
+    appUser: { findUnique: jest.Mock; upsert: jest.Mock };
+    user: { findUnique: jest.Mock; upsert: jest.Mock };
+    userNotificationPreferences: { upsert: jest.Mock; findUnique: jest.Mock };
+  };
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -33,7 +37,7 @@ describe('PrincipalService', () => {
     }).compile();
 
     service = module.get(PrincipalService);
-    prisma = module.get(PrismaService) as jest.Mocked<PrismaService>;
+    prisma = module.get(PrismaService) as unknown as typeof prisma;
   });
 
   describe('getOrBootstrapAccountAndProfile', () => {
@@ -239,7 +243,7 @@ describe('PrincipalService', () => {
       expect(result).toEqual(mockPrefs);
       expect(prisma.userNotificationPreferences.upsert).toHaveBeenCalledWith({
         where: { userId: 'user-1' },
-        update: {},
+        update: { userId: 'user-1' },
         create: expect.objectContaining({
           userId: 'user-1',
           emailNotifications: true,
