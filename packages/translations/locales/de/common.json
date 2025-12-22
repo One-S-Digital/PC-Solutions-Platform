@@ -2,22 +2,22 @@
   "View Favorites TBD": "Favoriten tbd Anzegen",
   "[data-debug-component]": "[DATEN-Debug-Komponente]",
   "activeClientToggle": {
-    "confirmSave": "[DE] Confirm Save",
-    "label": "[DE] Label",
-    "noteLabel": "[DE] No te",
-    "notePlaceholder": "[DE] No ter note",
-    "reasonLabel": "[DE] Reason",
+    "confirmSave": "Speichern bestätigen",
+    "label": "Bezeichnung",
+    "noteLabel": "Notiz",
+    "notePlaceholder": "Notiz hinzufügen",
+    "reasonLabel": "Grund",
     "saveSuccess": {
-      "message": "[DE] Message",
-      "title": "[DE] Title"
+      "message": "Nachricht",
+      "title": "Titel"
     },
-    "subtext": "[DE] Subtext",
-    "title": "[DE] Title"
+    "subtext": "Untertitel",
+    "title": "Titel"
   },
   "add": "Hinzufügen",
   "addEmoji": "Emoji hinzufügen",
   "addPromoCodeModal": {
-    "placeholder": "[DE] Placeholder"
+    "placeholder": "Aktionscode"
   },
   "admin": "Admin",
   "adminSystemMonitoringPage": {
@@ -72,9 +72,9 @@
     },
     "title": "[DE] Title"
   },
-  "alreadyHaveAccount": "HABEN SIE BERITEN EIN BONTO?",
+  "alreadyHaveAccount": "Haben Sie bereits ein Konto?",
   "appContext": {
-    "useAppContextError": "[DE] Use App Context Error"
+    "useAppContextError": "Fehler bei der Verwendung des Anwendungskontexts"
   },
   "appName": "Procrèche Solutions Suisse",
   "application transformation maps application data correctly": "AnwendungStransformation Kartiert anwendungsdaten Korrekt",
@@ -83,7 +83,7 @@
     "listView": "Listenansicht"
   },
   "attachFile": "Datei anhängen",
-  "back": "[DE] Back",
+  "back": "Zurück",
   "benefits": "Vorhöhe",
   "body": "Körper",
   "buttons": {
@@ -169,7 +169,7 @@
   "canton": "Kanton",
   "capacity": "Kapazität",
   "cartContext": {
-    "useCartError": "[DE] Use Cart Error"
+    "useCartError": "Fehler bei der Verwendung des Warenkorbs"
   },
   "childAge": "Kindererald",
   "chooseRole": "Wämlen Sie Ihre Rolle",
@@ -208,30 +208,30 @@
   "contactPerson": "Kontaktperson",
   "content upload validates file types": "Inhalations -UPAD VALIDERIERTE DATUMITYPEN",
   "contentType": {
-    "course": "[DE] Course",
-    "link": "[DE] External Link",
-    "pdf": "[DE] PDF",
-    "policy": "[DE] Policy",
-    "video": "[DE] Video"
+    "course": "Kurs",
+    "link": "Externer Link",
+    "pdf": "PDF",
+    "policy": "Richtlinie",
+    "video": "Video"
   },
   "contentUploadModal": {
     "buttons": {
-      "upload": "[DE] Upload",
-      "uploading": "[DE] Uploading"
+      "upload": "Hochladen",
+      "uploading": "Wird hochgeladen"
     },
     "contentType": {
-      "course": "[DE] Course",
-      "link": "[DE] Link",
-      "pdf": "[DE] Pdf",
-      "policy": "[DE] Policy",
-      "video": "[DE] Video"
+      "course": "Kurs",
+      "link": "Link",
+      "pdf": "PDF",
+      "policy": "Richtlinie",
+      "video": "Video"
     },
     "criticalityOptions": {
-      "critical": "[DE] Critical",
-      "normal": "[DE] Normal"
+      "critical": "Kritisch",
+      "normal": "Normal"
     },
     "error": {
-      "selectFileOrLink": "[DE] Please select a file or provide a link"
+      "selectFileOrLink": "Bitte wählen Sie eine Datei aus oder geben Sie einen Link an"
     },
     "fileUpload": {
       "browse": "Datei auswählen",
@@ -242,41 +242,41 @@
       "selected": "{{fileName}} ausgewählt"
     },
     "labels": {
-      "accessRoles": "[DE] Access Roles",
-      "category": "[DE] Category",
-      "contentType": "[DE] Content Type",
-      "country": "[DE] Country",
-      "criticality": "[DE] Criticality",
-      "currentFile": "[DE] Current File",
-      "description": "[DE] Description",
-      "descriptionPreview": "[DE] Description Preview",
-      "documentTitle": "[DE] Document Title",
-      "duration": "[DE] Duration",
-      "effectiveDate": "[DE] Effective Date",
-      "externalLink": "[DE] External Link",
-      "fileType": "[DE] File Type",
-      "language": "[DE] Language",
-      "lessons": "[DE] Lessons",
-      "linkUrl": "[DE] Link Url",
-      "markAsCritical": "[DE] Mark As Critical",
-      "policyType": "[DE] Policy Type",
-      "regionCanton": "[DE] Region Canton",
-      "status": "[DE] Status",
-      "title": "[DE] Title",
-      "uploadFile": "[DE] Upload File",
-      "uploadFileType": "[DE] Upload File Type",
-      "version": "[DE] Version"
+      "accessRoles": "Zugriffsrollen",
+      "category": "Kategorie",
+      "contentType": "Inhaltstyp",
+      "country": "Land",
+      "criticality": "Kritikalität",
+      "currentFile": "Aktuelle Datei",
+      "description": "Beschreibung",
+      "descriptionPreview": "Beschreibungsvorschau",
+      "documentTitle": "Dokumenttitel",
+      "duration": "Dauer",
+      "effectiveDate": "Gültigkeitsdatum",
+      "externalLink": "Externer Link",
+      "fileType": "Dateityp",
+      "language": "Sprache",
+      "lessons": "Lektionen",
+      "linkUrl": "Link-URL",
+      "markAsCritical": "Als kritisch markieren",
+      "policyType": "Richtlinientyp",
+      "regionCanton": "Region/Kanton",
+      "status": "Status",
+      "title": "Titel",
+      "uploadFile": "Datei hochladen",
+      "uploadFileType": "Hochzuladender Dateityp",
+      "version": "Version"
     },
     "placeholders": {
-      "duration": "[DE] Duration",
-      "externalLink": "[DE] External Link",
-      "linkUrl": "[DE] Link Url",
-      "version": "[DE] Version"
+      "duration": "Dauer",
+      "externalLink": "Externer Link",
+      "linkUrl": "Link-URL",
+      "version": "Version"
     },
     "statusOptions": {
-      "archived": "[DE] Archived",
-      "draft": "[DE] Draft",
-      "published": "[DE] Published"
+      "archived": "Archiviert",
+      "draft": "Entwurf",
+      "published": "Veröffentlicht"
     },
     "title": {
       "edit": "Bearbeiten {{contentType}}"
@@ -389,26 +389,26 @@
   },
   "discountTerminationsPage": {
     "actions": {
-      "markCompleted": "[DE] Mark Completed",
-      "sendNotices": "[DE] Send Notices",
-      "sendNoticesAlert": "[DE] Send Notices Alert"
+      "markCompleted": "Als abgeschlossen markieren",
+      "sendNotices": "Mitteilungen senden",
+      "sendNoticesAlert": "Mitteilungsversand-Warnung"
     },
     "allActive": {
-      "description": "[DE] Description",
-      "tableTitle": "[DE] Table Title",
-      "title": "[DE] Title"
+      "description": "Beschreibung",
+      "tableTitle": "Tabellentitel",
+      "title": "Titel"
     },
     "queue": {
-      "description": "[DE] Description",
-      "tableTitle": "[DE] Table Title",
-      "title": "[DE] Title"
+      "description": "Beschreibung",
+      "tableTitle": "Tabellentitel",
+      "title": "Titel"
     },
     "table": {
-      "actions": "[DE] Actions",
-      "activeSince": "[DE] Active Since",
-      "daycare": "[DE] Daycare",
-      "reason": "[DE] Reason",
-      "vendor": "[DE] Vendor"
+      "actions": "Aktionen",
+      "activeSince": "Aktiv seit",
+      "daycare": "Kinderbetreuung",
+      "reason": "Grund",
+      "vendor": "Anbieter"
     }
   },
   "dontHaveAccount": "Haven Sie Kein Konto?",

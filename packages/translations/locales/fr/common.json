@@ -1,21 +1,21 @@
 {
   "activeClientToggle": {
-    "confirmSave": "[FR] Confirm Save",
-    "label": "[FR] Label",
-    "noteLabel": "[FR] No te",
-    "notePlaceholder": "[FR] No ter note",
-    "reasonLabel": "[FR] Reason",
+    "confirmSave": "Confirmer l'enregistrement",
+    "label": "Libellé",
+    "noteLabel": "Note",
+    "notePlaceholder": "Ajouter une note",
+    "reasonLabel": "Raison",
     "saveSuccess": {
-      "message": "[FR] Message",
-      "title": "[FR] Title"
+      "message": "Message",
+      "title": "Titre"
     },
-    "subtext": "[FR] Subtext",
-    "title": "[FR] Title"
+    "subtext": "Sous-texte",
+    "title": "Titre"
   },
   "add": "Ajouter",
   "addEmoji": "Ajouter un emoji",
   "addPromoCodeModal": {
-    "placeholder": "[FR] Placeholder"
+    "placeholder": "Code promotionnel"
   },
   "admin": "Admin",
   "adminSystemMonitoringPage": {
@@ -68,11 +68,11 @@
       "title": "Titre",
       "uptimeDays": "Jours de fonctionnement"
     },
-    "title": "[FR] Title"
+    "title": "Titre"
   },
   "alreadyHaveAccount": "Vous avez déjà un compte ?",
   "appContext": {
-    "useAppContextError": "[FR] Use App Context Error"
+    "useAppContextError": "Erreur d'utilisation du contexte d'application"
   },
   "appName": "ProCrèche Solutions Suisse",
   "ariaLabels": {
@@ -165,7 +165,7 @@
   "canton": "Canton",
   "capacity": "Capacité",
   "cartContext": {
-    "useCartError": "[FR] Use Cart Error"
+    "useCartError": "Erreur d'utilisation du panier"
   },
   "childAge": "Child Age",
   "chooseRole": "Choisissez votre rôle",
@@ -202,30 +202,30 @@
   "confirmPassword": "Confirmer le mot de passe",
   "contactPerson": "Personne de contact",
   "contentType": {
-    "course": "[FR] Course",
-    "link": "[FR] External Link",
-    "pdf": "[FR] PDF",
-    "policy": "[FR] Policy",
-    "video": "[FR] Video"
+    "course": "Cours",
+    "link": "Lien externe",
+    "pdf": "PDF",
+    "policy": "Politique",
+    "video": "Vidéo"
   },
   "contentUploadModal": {
     "buttons": {
-      "upload": "[FR] Upload",
-      "uploading": "[FR] Uploading"
+      "upload": "Télécharger",
+      "uploading": "Téléchargement en cours"
     },
     "contentType": {
-      "course": "[FR] Course",
-      "link": "[FR] Link",
-      "pdf": "[FR] Pdf",
-      "policy": "[FR] Policy",
-      "video": "[FR] Video"
+      "course": "Cours",
+      "link": "Lien",
+      "pdf": "PDF",
+      "policy": "Politique",
+      "video": "Vidéo"
     },
     "criticalityOptions": {
-      "critical": "[FR] Critical",
-      "normal": "[FR] Normal"
+      "critical": "Critique",
+      "normal": "Normal"
     },
     "error": {
-      "selectFileOrLink": "[FR] Please select a file or provide a link"
+      "selectFileOrLink": "Veuillez sélectionner un fichier ou fournir un lien"
     },
     "fileUpload": {
       "browse": "Choisir un fichier",
@@ -236,41 +236,41 @@
       "selected": "{{fileName}} sélectionné"
     },
     "labels": {
-      "accessRoles": "[FR] Access Roles",
-      "category": "[FR] Category",
-      "contentType": "[FR] Content Type",
-      "country": "[FR] Country",
-      "criticality": "[FR] Criticality",
-      "currentFile": "[FR] Current File",
-      "description": "[FR] Description",
-      "descriptionPreview": "[FR] Description Preview",
-      "documentTitle": "[FR] Document Title",
-      "duration": "[FR] Duration",
-      "effectiveDate": "[FR] Effective Date",
-      "externalLink": "[FR] External Link",
-      "fileType": "[FR] File Type",
-      "language": "[FR] Language",
-      "lessons": "[FR] Lessons",
-      "linkUrl": "[FR] Link Url",
-      "markAsCritical": "[FR] Mark As Critical",
-      "policyType": "[FR] Policy Type",
-      "regionCanton": "[FR] Region Canton",
-      "status": "[FR] Status",
-      "title": "[FR] Title",
-      "uploadFile": "[FR] Upload File",
-      "uploadFileType": "[FR] Upload File Type",
-      "version": "[FR] Version"
+      "accessRoles": "Rôles d'accès",
+      "category": "Catégorie",
+      "contentType": "Type de contenu",
+      "country": "Pays",
+      "criticality": "Criticité",
+      "currentFile": "Fichier actuel",
+      "description": "Description",
+      "descriptionPreview": "Aperçu de la description",
+      "documentTitle": "Titre du document",
+      "duration": "Durée",
+      "effectiveDate": "Date d'entrée en vigueur",
+      "externalLink": "Lien externe",
+      "fileType": "Type de fichier",
+      "language": "Langue",
+      "lessons": "Leçons",
+      "linkUrl": "URL du lien",
+      "markAsCritical": "Marquer comme critique",
+      "policyType": "Type de politique",
+      "regionCanton": "Région/Canton",
+      "status": "Statut",
+      "title": "Titre",
+      "uploadFile": "Télécharger un fichier",
+      "uploadFileType": "Type de fichier à télécharger",
+      "version": "Version"
     },
     "placeholders": {
-      "duration": "[FR] Duration",
-      "externalLink": "[FR] External Link",
-      "linkUrl": "[FR] Link Url",
-      "version": "[FR] Version"
+      "duration": "Durée",
+      "externalLink": "Lien externe",
+      "linkUrl": "URL du lien",
+      "version": "Version"
     },
     "statusOptions": {
-      "archived": "[FR] Archived",
-      "draft": "[FR] Draft",
-      "published": "[FR] Published"
+      "archived": "Archivé",
+      "draft": "Brouillon",
+      "published": "Publié"
     },
     "title": {
       "edit": "Modifier {{contentType}}"
@@ -383,26 +383,26 @@
   },
   "discountTerminationsPage": {
     "actions": {
-      "markCompleted": "[FR] Mark Completed",
-      "sendNotices": "[FR] Send Notices",
-      "sendNoticesAlert": "[FR] Send Notices Alert"
+      "markCompleted": "Marquer comme terminé",
+      "sendNotices": "Envoyer les avis",
+      "sendNoticesAlert": "Alerte d'envoi des avis"
     },
     "allActive": {
-      "description": "[FR] Description",
-      "tableTitle": "[FR] Table Title",
-      "title": "[FR] Title"
+      "description": "Description",
+      "tableTitle": "Titre du tableau",
+      "title": "Titre"
     },
     "queue": {
-      "description": "[FR] Description",
-      "tableTitle": "[FR] Table Title",
-      "title": "[FR] Title"
+      "description": "Description",
+      "tableTitle": "Titre du tableau",
+      "title": "Titre"
     },
     "table": {
-      "actions": "[FR] Actions",
-      "activeSince": "[FR] Active Since",
-      "daycare": "[FR] Daycare",
-      "reason": "[FR] Reason",
-      "vendor": "[FR] Vendor"
+      "actions": "Actions",
+      "activeSince": "Actif depuis",
+      "daycare": "Garderie",
+      "reason": "Raison",
+      "vendor": "Fournisseur"
     }
   },
   "dontHaveAccount": "Vous n'avez pas de compte ?",
