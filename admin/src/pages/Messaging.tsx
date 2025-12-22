@@ -530,6 +530,87 @@ const Messaging: React.FC = () => {
     setPendingFile(null);
   };
 
+  // Handle message edit
+  const handleStartEdit = (message: Message & { isFromAdmin: boolean; timestamp: string }) => {
+    setEditingMessageId(message.id);
+    setEditContent(message.content || '');
+    setShowActions({});
+  };
+
+  const handleCancelEdit = () => {
+    setEditingMessageId(null);
+    setEditContent('');
+  };
+
+  const handleSaveEdit = async (messageId: string) => {
+    if (!editContent.trim()) {
+      alert(t('admin:messaging.errors.emptyMessage', 'Message cannot be empty'));
+      return;
+    }
+
+    try {
+      const token = await getToken();
+      if (!token) {
+        throw new Error('Authentication token not available');
+      }
+
+      const response = await fetch(`${apiClient?.defaults?.baseURL || '/api'}/messaging/messages/${messageId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ content: editContent.trim() }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to update message: ${response.statusText}`);
+      }
+
+      // Invalidate and refetch messages
+      await queryClient.invalidateQueries({ queryKey: ['messages', selectedConversationId] });
+      await queryClient.refetchQueries({ queryKey: ['messages', selectedConversationId] });
+      
+      setEditingMessageId(null);
+      setEditContent('');
+    } catch (error) {
+      console.error('Failed to update message:', error);
+      alert(t('admin:messaging.errors.updateFailed', 'Failed to update message. Please try again.'));
+    }
+  };
+
+  // Handle message delete
+  const handleDeleteMessage = async (messageId: string) => {
+    if (!window.confirm(t('admin:messaging.confirmDelete', 'Are you sure you want to delete this message?'))) {
+      return;
+    }
+
+    try {
+      const token = await getToken();
+      if (!token) {
+        throw new Error('Authentication token not available');
+      }
+
+      const response = await fetch(`${apiClient?.defaults?.baseURL || '/api'}/messaging/messages/${messageId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete message: ${response.statusText}`);
+      }
+
+      // Invalidate and refetch messages
+      await queryClient.invalidateQueries({ queryKey: ['messages', selectedConversationId] });
+      await queryClient.refetchQueries({ queryKey: ['messages', selectedConversationId] });
+    } catch (error) {
+      console.error('Failed to delete message:', error);
+      alert(t('admin:messaging.errors.deleteFailed', 'Failed to delete message. Please try again.'));
+    }
+  };
+
   const sendMessageMutation = useMutation({
     mutationFn: (messageData: { 
       conversationId: string; 

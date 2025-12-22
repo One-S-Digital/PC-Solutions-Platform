@@ -1,6 +1,6 @@
 # i18n Legacy Backlog
 
-> **Last Updated:** 2025/12/22, 23:23:31
+> **Last Updated:** 2025/12/22, 23:39:48
 > 
 > **Purpose:** Tracking document only - these issues do NOT block commits or releases.
 > Fix them incrementally when working in affected files.
