@@ -287,7 +287,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
         {isFile && message.fileUrl && (
           <div className="mb-2">
             <div className={`flex items-center space-x-2 p-2 rounded-lg ${
-              isCurrentUserSender 
+              isOwn 
                 ? 'bg-swiss-mint/20 text-white' 
                 : 'bg-gray-200 text-swiss-charcoal'
             }`}>
@@ -313,7 +313,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
                     handleFileDownload(e);
                   }}
                   className={`p-1.5 rounded hover:opacity-80 transition-opacity ${
-                    isCurrentUserSender 
+                    isOwn 
                       ? 'hover:bg-swiss-mint/30 text-white' 
                       : 'hover:bg-gray-300 text-swiss-charcoal'
                   }`}

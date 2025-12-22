@@ -59,7 +59,7 @@ const transformConversation = (conv: any, currentUserId?: string): Conversation 
 }
 
 // Import shared ownership utility
-import { extractSenderId } from '../utils/messageOwnership';
+import { isOwnMessage, extractSenderId } from '../utils/messageOwnership';
 
 // Transform backend message data to match frontend format
 // NOTE: isFromAdmin is kept for backward compatibility but should NOT be used for ownership checks
