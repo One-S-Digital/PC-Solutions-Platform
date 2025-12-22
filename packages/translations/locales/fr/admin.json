@@ -1705,6 +1705,7 @@
       "selectPlan": "Sélectionner un forfait...",
       "subscriptionPeriod": "Durée de l'abonnement",
       "subscriptionPeriodHelp": "Sélectionnez la durée d'activation de cet abonnement.",
+      "monthlyRecurringHelp": "Renouvellement automatique chaque mois jusqu'à annulation, suspension ou modification par un administrateur.",
       "period": {
         "monthlyRecurring": "Mensuel récurrent",
         "oneMonth": "1 mois",

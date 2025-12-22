@@ -1705,6 +1705,7 @@
       "selectPlan": "Plan auswählen...",
       "subscriptionPeriod": "Abonnementlaufzeit",
       "subscriptionPeriodHelp": "Wählen Sie, wie lange dieses Abonnement aktiv sein soll.",
+      "monthlyRecurringHelp": "Wird jeden Monat automatisch verlängert, bis es von einem Administrator gekündigt, pausiert oder geändert wird.",
       "period": {
         "monthlyRecurring": "Monatlich wiederkehrend",
         "oneMonth": "1 Monat",

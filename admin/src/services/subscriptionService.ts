@@ -146,8 +146,8 @@ export const subscriptionService = {
     apiClient.post<ApiResponse<Subscription>>(`/admin/subscription-management/subscriptions/${id}/downgrade`, data),
 
   /** Update subscription status directly */
-  updateSubscriptionStatus: (apiClient: AxiosInstance, id: string, status: string) =>
-    apiClient.put<ApiResponse<Subscription>>(`/admin/subscription-management/subscriptions/${id}/status`, { status }),
+  updateSubscriptionStatus: (apiClient: AxiosInstance, id: string, status: string, cancelAtPeriodEnd?: boolean) =>
+    apiClient.put<ApiResponse<Subscription>>(`/admin/subscription-management/subscriptions/${id}/status`, { status, cancelAtPeriodEnd }),
 
   // =====================================
   // SUBSCRIPTION HISTORY & NOTES

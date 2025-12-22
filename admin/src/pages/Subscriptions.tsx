@@ -364,7 +364,9 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
               ))}
             </select>
             <p className="text-xs text-gray-500 mt-1">
-              {t('admin:subscriptions.editSubscription.subscriptionPeriodHelp', 'Select how long this subscription should be active.')}
+              {durationMonths === 0 
+                ? t('admin:subscriptions.editSubscription.monthlyRecurringHelp', 'Auto-renews every month until cancelled, paused, or changed by an admin.')
+                : t('admin:subscriptions.editSubscription.subscriptionPeriodHelp', 'Select how long this subscription should be active.')}
             </p>
           </div>
 
@@ -1935,9 +1937,11 @@ const Subscriptions: React.FC = () => {
       data: { status: SubscriptionStatus; planId?: string; tier?: SubscriptionTier; durationMonths?: number; notes?: string };
     }) => {
       const existingSubscription = userSubscriptionMap.get(userId);
+      const isMonthlyRecurring = data.durationMonths === 0;
+      
       if (existingSubscription) {
         // Calculate new currentPeriodEnd based on durationMonths
-        // 0 = monthly recurring (set to 1 month period that will auto-renew)
+        // 0 = monthly recurring (set to 1 month period that will auto-renew indefinitely)
         let currentPeriodEnd: string | undefined;
         if (data.durationMonths !== undefined) {
           const startDate = existingSubscription.currentPeriodStart 
@@ -1945,37 +1949,58 @@ const Subscriptions: React.FC = () => {
             : new Date();
           const endDate = new Date(startDate);
           // For monthly recurring (0), set period to 1 month
-          const months = data.durationMonths === 0 ? 1 : data.durationMonths;
+          const months = isMonthlyRecurring ? 1 : data.durationMonths;
           endDate.setMonth(endDate.getMonth() + months);
           currentPeriodEnd = endDate.toISOString();
         }
         
         // Update existing subscription - include planId if changed
-        return subscriptionService.updateSubscription(apiClient, existingSubscription.id, {
+        await subscriptionService.updateSubscription(apiClient, existingSubscription.id, {
           planId: data.planId,
           tier: data.tier,
           currentPeriodEnd,
           notes: data.notes,
-        }).then(() => {
-          // Also update status if changed
-          if (data.status !== existingSubscription.status) {
-            return subscriptionService.updateSubscriptionStatus(apiClient, existingSubscription.id, data.status);
-          }
         });
+        
+        // Update status and cancelAtPeriodEnd flag
+        // For monthly recurring: cancelAtPeriodEnd = false (auto-renew indefinitely)
+        // For fixed-term: don't change cancelAtPeriodEnd unless status changed
+        if (isMonthlyRecurring || data.status !== existingSubscription.status) {
+          await subscriptionService.updateSubscriptionStatus(
+            apiClient, 
+            existingSubscription.id, 
+            data.status,
+            isMonthlyRecurring ? false : undefined
+          );
+        }
+        
+        return;
       } else {
         // Create new subscription - validate plan is available
         if (!data.planId && !plans[0]?.id) {
           throw new Error('No plan selected and no plans available');
         }
         // For monthly recurring (0), set durationMonths to 1
-        const duration = data.durationMonths === 0 ? 1 : data.durationMonths;
-        return subscriptionService.createSubscription(apiClient, {
+        const duration = isMonthlyRecurring ? 1 : data.durationMonths;
+        const subscription = await subscriptionService.createSubscription(apiClient, {
           userId,
           planId: data.planId || plans[0]?.id,
           tier: data.tier || SubscriptionTier.BASIC,
           durationMonths: duration,
           notes: data.notes,
         });
+        
+        // For monthly recurring, ensure cancelAtPeriodEnd is false
+        if (isMonthlyRecurring && subscription.data?.data?.id) {
+          await subscriptionService.updateSubscriptionStatus(
+            apiClient,
+            subscription.data.data.id,
+            data.status,
+            false
+          );
+        }
+        
+        return subscription;
       }
     },
     onSuccess: () => {
