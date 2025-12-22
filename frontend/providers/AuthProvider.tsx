@@ -452,10 +452,14 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         const backendData: any = { ...updatedInfo };
         
         // Map orgName to organizationName for the profiles endpoint
-        if (backendData.orgName !== undefined) {
+        // Only include organizationName if it's a non-empty value
+        const hasOrgNameUpdate = backendData.orgName !== undefined && 
+                                 backendData.orgName !== null && 
+                                 String(backendData.orgName).trim() !== '';
+        if (hasOrgNameUpdate) {
           backendData.organizationName = backendData.orgName;
-          delete backendData.orgName;
         }
+        delete backendData.orgName; // Always remove orgName (backend expects organizationName)
         
         // Remove frontend-only fields that backend doesn't accept
         delete backendData.name; // We use firstName/lastName separately
@@ -465,10 +469,10 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         delete backendData.organizations; // Many-to-many relation, not direct field
         
         // Determine which endpoint to use based on what's being updated
-        // Use profiles endpoint if updating organization-related fields
-        const hasOrgFields = backendData.organizationName !== undefined || 
-                           backendData.description !== undefined ||
-                           backendData.contactPerson !== undefined ||
+        // Use profiles endpoint if updating organization-related fields with actual values
+        const hasOrgFields = hasOrgNameUpdate || 
+                           (backendData.description !== undefined && backendData.description !== '') ||
+                           (backendData.contactPerson !== undefined && backendData.contactPerson !== '') ||
                            backendData.canton !== undefined ||
                            backendData.languages !== undefined;
         
