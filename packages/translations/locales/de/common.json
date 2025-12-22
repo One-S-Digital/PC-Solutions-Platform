@@ -770,16 +770,16 @@
       "pedagogy": "pedagogy"
     },
     "labels": {
-      "address": "address",
-      "contactEmail": "contact Email",
-      "contactPerson": "contact Person",
-      "createdAt": "created At",
-      "languages": "languages",
-      "organizationId": "organization Id",
-      "pedagogy": "pedagogy",
-      "phoneNumber": "phone Number",
-      "updatedAt": "updated At",
-      "vatNumber": "vat Number"
+      "address": "Standort",
+      "contactEmail": "Kontakt-E-Mail",
+      "contactPerson": "Kontaktperson",
+      "createdAt": "Erstellt",
+      "languages": "Sprachen",
+      "organizationId": "Organisations-ID",
+      "pedagogy": "Pädagogik",
+      "phoneNumber": "Telefonnummer",
+      "updatedAt": "Zuletzt aktualisiert",
+      "vatNumber": "Umsatzsteuer-ID"
     },
     "notProvided": "Nicht angegeben",
     "sections": {
@@ -2122,13 +2122,13 @@
     },
     "empty": {
       "organizationName": "organization Name",
-      "regionsServed": "regions Served"
+      "regionsServed": "Keine Regionen angegeben"
     },
     "labels": {
-      "regionsServed": "regions Served"
+      "regionsServed": "Bediente Regionen"
     },
     "subtitle": "Anzeigen und Verwalten der Informationen zum Unternehmensprofil.",
-    "title": "Titel"
+    "title": "Organisationsprofil"
   },
   "supplierProductListingsPage": {
     "title": "[DE] Title"

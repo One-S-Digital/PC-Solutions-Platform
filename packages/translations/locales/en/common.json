@@ -800,16 +800,16 @@
       "pedagogy": "pedagogy"
     },
     "labels": {
-      "address": "address",
-      "contactEmail": "contact Email",
-      "contactPerson": "contact Person",
-      "createdAt": "created At",
-      "languages": "languages",
-      "organizationId": "organization Id",
-      "pedagogy": "pedagogy",
-      "phoneNumber": "phone Number",
-      "updatedAt": "updated At",
-      "vatNumber": "vat Number"
+      "address": "Location",
+      "contactEmail": "Contact Email",
+      "contactPerson": "Contact Person",
+      "createdAt": "Created",
+      "languages": "Languages",
+      "organizationId": "Organization ID",
+      "pedagogy": "Pedagogy",
+      "phoneNumber": "Phone Number",
+      "updatedAt": "Last Updated",
+      "vatNumber": "VAT Number"
     },
     "notProvided": "not Provided",
     "sections": {
@@ -2126,13 +2126,13 @@
     },
     "empty": {
       "organizationName": "organization Name",
-      "regionsServed": "regions Served"
+      "regionsServed": "No regions specified"
     },
     "labels": {
-      "regionsServed": "regions Served"
+      "regionsServed": "Regions Served"
     },
     "subtitle": "View and manage your company profile information.",
-    "title": "title"
+    "title": "Organization Profile"
   },
   "supplierProductListingsPage": {
     "title": "Title"

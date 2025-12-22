@@ -761,16 +761,16 @@
       "pedagogy": "pedagogy"
     },
     "labels": {
-      "address": "address",
-      "contactEmail": "contact Email",
-      "contactPerson": "contact Person",
-      "createdAt": "created At",
-      "languages": "languages",
-      "organizationId": "organization Id",
-      "pedagogy": "pedagogy",
-      "phoneNumber": "phone Number",
-      "updatedAt": "updated At",
-      "vatNumber": "vat Number"
+      "address": "Localisation",
+      "contactEmail": "Courriel de contact",
+      "contactPerson": "Personne de contact",
+      "createdAt": "Créé",
+      "languages": "Langues",
+      "organizationId": "ID de l'organisation",
+      "pedagogy": "Pédagogie",
+      "phoneNumber": "Numéro de téléphone",
+      "updatedAt": "Dernière mise à jour",
+      "vatNumber": "Numéro de TVA"
     },
     "notProvided": "Non fourni",
     "sections": {
@@ -2097,13 +2097,13 @@
     },
     "empty": {
       "organizationName": "organization Name",
-      "regionsServed": "regions Served"
+      "regionsServed": "Aucune région spécifiée"
     },
     "labels": {
-      "regionsServed": "regions Served"
+      "regionsServed": "Régions desservies"
     },
     "subtitle": "Consultez et gérez les informations du profil de votre entreprise.",
-    "title": "Titre"
+    "title": "Profil de l'organisation"
   },
   "supplierProductListingsPage": {
     "title": "[FR] Title"
