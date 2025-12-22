@@ -331,6 +331,16 @@ export const apiService = {
   updateOrganization: (apiClient: AxiosInstance, id: string, orgData: Partial<Organization>) => apiClient.put<ApiResponse<Organization>>(`/compat/organizations/${id}`, orgData),
   deleteOrganization: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/compat/organizations/${id}`),
 
+  // Discount Terminations / Vendor Clients (Admin)
+  getVendorClients: (
+    apiClient: AxiosInstance,
+    params?: { vendorId?: string; orgId?: string; isActive?: boolean; reason?: string },
+  ) => apiClient.get<ApiResponse<any[]>>('/admin/vendor-clients', { params }),
+  upsertVendorClient: (
+    apiClient: AxiosInstance,
+    data: { vendorId: string; orgId: string; isActive: boolean; reason?: string; note?: string },
+  ) => apiClient.post<ApiResponse<any>>('/admin/vendor-clients', data),
+
   // Products
   // Note: GET list uses compat controller, CRUD operations use marketplace controller
   getProducts: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Product[]>>('/compat/products'),
