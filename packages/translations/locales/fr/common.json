@@ -13,6 +13,8 @@
     "title": "Titre"
   },
   "add": "Ajouter",
+  "yes": "Oui",
+  "no": "Non",
   "addEmoji": "Ajouter un emoji",
   "addPromoCodeModal": {
     "placeholder": "Code promotionnel"

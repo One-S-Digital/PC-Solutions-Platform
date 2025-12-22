@@ -99,6 +99,7 @@
   },
   "info": {
     "currentPlan": "Plan actuel",
+    "currentPeriod": "Période en cours",
     "noPlan": "Aucun plan actif",
     "expiresOn": "Expire le {{date}}",
     "trialEndsOn": "L'essai se termine le {{date}}",
