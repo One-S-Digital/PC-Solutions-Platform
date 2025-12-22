@@ -357,15 +357,15 @@ async function seedSubscriptionPlans() {
     },
   });
 
-  // 4. Suppliers - CHF 99/month
+  // 4. Suppliers - Enquiry-based pricing
   await prisma.subscriptionPlan.upsert({
     where: { code: 'SUPPLIERS' },
     update: {
       name: 'Suppliers',
-      description: 'Perfect for suppliers focused on daycare market growth. Reach daycares efficiently with minimal admin—fair fees, simple pricing.',
-      price: 99.00,
+      description: 'Perfect for suppliers focused on daycare market growth. Pricing based on enquiry.',
+      price: 0,
       currency: 'CHF',
-      billingPeriod: 'monthly',
+      billingPeriod: 'enquiry',
       features: [
         'Product listings & marketplace access',
         'Lead management system',
@@ -382,7 +382,7 @@ async function seedSubscriptionPlans() {
         analytics: true,
       },
       allowedRoles: ['PRODUCT_SUPPLIER'],
-      trialDays: 14,
+      trialDays: 0,
       isActive: true,
       isPopular: false,
       displayOrder: 4,
@@ -390,10 +390,10 @@ async function seedSubscriptionPlans() {
     create: {
       name: 'Suppliers',
       code: 'SUPPLIERS',
-      description: 'Perfect for suppliers focused on daycare market growth. Reach daycares efficiently with minimal admin—fair fees, simple pricing.',
-      price: 99.00,
+      description: 'Perfect for suppliers focused on daycare market growth. Pricing based on enquiry.',
+      price: 0,
       currency: 'CHF',
-      billingPeriod: 'monthly',
+      billingPeriod: 'enquiry',
       features: [
         'Product listings & marketplace access',
         'Lead management system',
@@ -410,22 +410,22 @@ async function seedSubscriptionPlans() {
         analytics: true,
       },
       allowedRoles: ['PRODUCT_SUPPLIER'],
-      trialDays: 14,
+      trialDays: 0,
       isActive: true,
       isPopular: false,
       displayOrder: 4,
     },
   });
 
-  // 5. Service Providers - CHF 149/month
+  // 5. Service Providers - Enquiry-based pricing
   await prisma.subscriptionPlan.upsert({
     where: { code: 'SERVICE_PROVIDERS' },
     update: {
       name: 'Service Providers',
-      description: 'Perfect for service providers targeting professional daycare partnerships. Scale your service business with complete daycare relationship management.',
-      price: 149.00,
+      description: 'Perfect for service providers targeting professional daycare partnerships. Pricing based on enquiry.',
+      price: 0,
       currency: 'CHF',
-      billingPeriod: 'monthly',
+      billingPeriod: 'enquiry',
       features: [
         'Service listings & marketplace access',
         'Appointment scheduling system',
@@ -442,7 +442,7 @@ async function seedSubscriptionPlans() {
         revenueTracking: true,
       },
       allowedRoles: ['SERVICE_PROVIDER'],
-      trialDays: 14,
+      trialDays: 0,
       isActive: true,
       isPopular: false,
       displayOrder: 5,
@@ -450,10 +450,10 @@ async function seedSubscriptionPlans() {
     create: {
       name: 'Service Providers',
       code: 'SERVICE_PROVIDERS',
-      description: 'Perfect for service providers targeting professional daycare partnerships. Scale your service business with complete daycare relationship management.',
-      price: 149.00,
+      description: 'Perfect for service providers targeting professional daycare partnerships. Pricing based on enquiry.',
+      price: 0,
       currency: 'CHF',
-      billingPeriod: 'monthly',
+      billingPeriod: 'enquiry',
       features: [
         'Service listings & marketplace access',
         'Appointment scheduling system',
@@ -470,7 +470,7 @@ async function seedSubscriptionPlans() {
         revenueTracking: true,
       },
       allowedRoles: ['SERVICE_PROVIDER'],
-      trialDays: 14,
+      trialDays: 0,
       isActive: true,
       isPopular: false,
       displayOrder: 5,
