@@ -316,6 +316,20 @@
         "updating": "Mise à jour...",
         "title": "Paramètres de la plateforme"
       },
+      "userEmailSettings": {
+        "title": "Paramètres d'e-mail utilisateur",
+        "gracePeriodLabel": "Période de grâce pour le changement d'e-mail (jours)",
+        "gracePeriodDescription": "Lorsqu'un utilisateur change son adresse e-mail, l'ancien e-mail est conservé pendant ce nombre de jours avant d'être automatiquement supprimé. Cela permet aux utilisateurs de récupérer leur compte si nécessaire. Définissez sur 0 pour supprimer immédiatement.",
+        "daysLabel": "jours",
+        "saveButton": "Enregistrer les paramètres e-mail",
+        "saving": "Enregistrement...",
+        "updated": "Période de grâce de l'e-mail mise à jour avec succès",
+        "updateFailed": "Échec de la mise à jour du paramètre de période de grâce de l'e-mail",
+        "invalidDays": "Veuillez entrer un nombre de jours valide (0-365)",
+        "authRequired": "Authentification requise",
+        "noteTitle": "Note :",
+        "noteDescription": "Ce paramètre existe également dans Configuration système → Paramètres système sous la catégorie \"email\" comme \"email.grace_period_days\"."
+      },
       "siteDescriptionPlaceholder": "Entrez la description du site",
       "contactEmailPlaceholder": "contact@exemple.com",
       "contactPhonePlaceholder": "+41 XX XXX XX XX",
