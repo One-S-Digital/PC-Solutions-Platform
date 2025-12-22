@@ -273,7 +273,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
               <button 
                 onClick={() => {
                     const targetPath = currentUser?.role === UserRole.SERVICE_PROVIDER ? '/settings/service-provider' : '/settings';
-                    navigate(targetPath);
+                    // Deep-link directly to Billing & Subscription (and the manage section)
+                    navigate(`${targetPath}?focus=manage-subscription#billingSubscription`);
                     if (onLinkClick) onLinkClick();
                 }}
                 className="w-full bg-swiss-coral text-white text-xs lg:text-sm px-3 lg:px-4 py-1.5 lg:py-2 rounded-button hover:bg-opacity-90 transition-colors shadow-soft flex items-center justify-center"

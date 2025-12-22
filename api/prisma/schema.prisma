@@ -177,6 +177,13 @@ enum SubscriptionRequestStatus {
   CANCELLED         // Customer cancelled the request
 }
 
+enum SubscriptionCancellationRequestStatus {
+  PENDING    // Customer requested cancellation, awaiting admin action
+  APPROVED   // Admin approved and processed the cancellation
+  DECLINED   // Admin declined the cancellation request
+  CANCELLED  // Request withdrawn/cancelled by customer (future use)
+}
+
 // Core Models
 model User {
   id        String   @id @default(uuid())
@@ -222,6 +229,7 @@ model User {
   subscriptions          UserSubscription[]
   mainSubscriptions      Subscription[] // Main subscription model
   subscriptionRequests   SubscriptionRequest[] // Subscription requests
+  subscriptionCancellationRequests SubscriptionCancellationRequest[] // Subscription cancellation requests
   licenses               License[]
 
   // E-Learning relations
@@ -343,6 +351,7 @@ model Organization {
 
   // Subscription request relations
   subscriptionRequests SubscriptionRequest[]
+  subscriptionCancellationRequests SubscriptionCancellationRequest[]
 
   // Promo codes for suppliers and service providers
   promoCodes PromoCode[]
@@ -769,6 +778,7 @@ model Subscription {
   schedules           SubscriptionSchedule[]
   subscriptionNotes   SubscriptionNote[]
   subscriptionRequest SubscriptionRequest?  // Link to original request
+  cancellationRequests SubscriptionCancellationRequest[]
 
   @@index([userId])
   @@index([organizationId])
@@ -1699,6 +1709,42 @@ model SubscriptionRequest {
   @@index([userId])
   @@index([organizationId])
   @@map("subscription_requests")
+}
+
+// Subscription Cancellation Request Model - User requests cancellation for admin processing
+model SubscriptionCancellationRequest {
+  id              String   @id @default(uuid())
+
+  // Related subscription
+  subscriptionId  String   @map("subscription_id")
+
+  // Requester context (one may be set; kept for admin filtering)
+  userId          String?  @map("user_id")
+  organizationId  String?  @map("organization_id")
+
+  // Customer-provided reason/context
+  reason          String?  @db.Text
+
+  // Workflow
+  status          SubscriptionCancellationRequestStatus @default(PENDING)
+
+  // Timestamps / processing metadata
+  requestedAt     DateTime @default(now()) @map("requested_at")
+  processedAt     DateTime? @map("processed_at")
+  processedBy     String?  @map("processed_by")
+  notes           String?  @db.Text  // Admin notes
+
+  // Relations
+  subscription    Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  user            User?         @relation(fields: [userId], references: [id])
+  organization    Organization? @relation(fields: [organizationId], references: [id])
+
+  @@index([status])
+  @@index([requestedAt])
+  @@index([subscriptionId])
+  @@index([userId])
+  @@index([organizationId])
+  @@map("subscription_cancellation_requests")
 }
 
 // Subscription Settings - Admin configurable settings for subscription management

@@ -1820,7 +1820,8 @@
     "noSubscriptions": "No subscriptions found",
     "tabs": {
       "subscriptions": "Subscriptions",
-      "requests": "Subscription Requests"
+      "requests": "Subscription Requests",
+      "cancellations": "Cancellation Requests"
     },
     "requestStatus": {
       "pending": "Pending",
@@ -1919,6 +1920,30 @@
         "notes": "Internal Notes (optional)",
         "sendEmailNotification": "Send email notification to customer",
         "decline": "Decline Request"
+      }
+    },
+    "cancellations": {
+      "noRequests": "No cancellation requests found",
+      "filter": {
+        "allStatuses": "All Statuses"
+      },
+      "table": {
+        "subscriber": "Subscriber",
+        "plan": "Plan",
+        "status": "Status",
+        "requestedAt": "Requested",
+        "reason": "Reason",
+        "actions": "Actions"
+      },
+      "actions": {
+        "approve": "Approve",
+        "decline": "Decline"
+      },
+      "status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "declined": "Declined",
+        "cancelled": "Cancelled"
       }
     },
     "settings": {
