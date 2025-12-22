@@ -444,10 +444,10 @@
     "viewingAlert": "viewing Alert"
   },
   "eLearningTypes": {
-    "course": "[FR] Course",
-    "link": "[FR] External Link",
-    "pdf": "[FR] PDF Document",
-    "video": "[FR] Video"
+    "course": "Cours",
+    "link": "Lien externe",
+    "pdf": "Document PDF",
+    "video": "Vidéo"
   },
   "educatorApplicationsPage": {
     "emptyState": "Vide state",
@@ -465,35 +465,35 @@
       "lastUpdated": "last Updated",
       "status": "status"
     },
-    "title": "[FR] Title",
+    "title": "Titre",
     "unknownFoundation": "unknown Foundation",
     "viewingDetailsFor": "viewing Details For"
   },
   "educatorDashboard": {
     "applicationStatus": {
-      "button": "[FR] Button",
-      "interviews": "[FR] Interviews",
-      "offers": "[FR] Offers",
-      "submitted": "[FR] Submitted",
-      "title": "[FR] Title",
-      "viewed": "[FR] Viewed"
+      "button": "Bouton",
+      "interviews": "Entretiens",
+      "offers": "Offres",
+      "submitted": "Soumis",
+      "title": "Titre",
+      "viewed": "Consulté"
     },
     "profileCompletion": {
-      "button": "[FR] Button",
-      "subtitle": "[FR] Subtitle",
-      "title": "[FR] Title"
+      "button": "Bouton",
+      "subtitle": "Sous-titre",
+      "title": "Titre"
     },
     "recommendations": {
-      "match": "[FR] Match",
-      "title": "[FR] Title"
+      "match": "Correspondance",
+      "title": "Titre"
     },
     "skills": {
-      "button": "[FR] Button",
-      "subtitle": "[FR] Subtitle",
-      "title": "[FR] Title"
+      "button": "Bouton",
+      "subtitle": "Sous-titre",
+      "title": "Titre"
     },
-    "title": "[FR] Title",
-    "welcome": "[FR] Welcome"
+    "title": "Titre",
+    "welcome": "Bienvenue"
   },
   "educatorJobBoardPage": {
     "errors": {
@@ -561,11 +561,11 @@
   },
   "error": "Une erreur s'est produit",
   "errorBoundary": {
-    "errorDetails": "[FR] Error Details",
-    "reloadPage": "[FR] Reload Page",
-    "somethingWentWrong": "[FR] Something Went Wrong",
-    "sorryMessage": "[FR] Sorry Message",
-    "tryAgain": "[FR] Try Again"
+    "errorDetails": "Détails de l'erreur",
+    "reloadPage": "Recharger la page",
+    "somethingWentWrong": "Une erreur s'est produite",
+    "sorryMessage": "Message d'excuse",
+    "tryAgain": "Réessayer"
   },
   "errors": {
     "deleteFailed": "Supprimer failed",
@@ -590,9 +590,9 @@
     "verificationKeyword": "verification"
   },
   "featureLock": {
-    "message": "[FR] Message",
-    "title": "[FR] Title",
-    "upgradeButton": "[FR] Upgrade Button"
+    "message": "Message",
+    "title": "Titre",
+    "upgradeButton": "Bouton de mise à niveau"
   },
   "fileGallery": {
     "actions": {
@@ -613,18 +613,18 @@
     "uploadButton": "Télécharger des Fichiers"
   },
   "fileUploadModal": {
-    "dragAndDrop": "[FR] Drag and drop files here",
-    "fileTypes": "[FR] File Types",
-    "filesToUpload": "[FR] Files to Upload",
-    "title": "[FR] Title",
-    "uploadButton": "[FR] Upload",
-    "uploadFile": "[FR] Upload File",
+    "dragAndDrop": "Glissez-déposez les fichiers ici",
+    "fileTypes": "Types de fichiers",
+    "filesToUpload": "Fichiers à télécharger",
+    "title": "Titre",
+    "uploadButton": "Télécharger",
+    "uploadFile": "Télécharger un fichier",
     "uploadedFiles": "uploaded Files",
-    "uploading": "[FR] Uploading"
+    "uploading": "Téléchargement en cours"
   },
   "fileUploadZone": {
     "defaultLabel": "default",
-    "dragAndDrop": "[FR] Drag and drop files here"
+    "dragAndDrop": "Glissez-déposez les fichiers ici"
   },
   "filters": {
     "all": "Tous",
@@ -683,24 +683,24 @@
   "foundationDashboard": {
     "activity": {
       "noActivity": "no Activity",
-      "title": "[FR] Title"
+      "title": "Titre"
     },
     "calendar": {
       "noEvents": "no Events"
     },
     "quickActions": {
-      "title": "[FR] Title"
+      "title": "Titre"
     },
     "quickMessage": {
-      "placeholder": "[FR] Placeholder",
-      "title": "[FR] Title"
+      "placeholder": "Placeholder",
+      "title": "Titre"
     },
     "quickStats": {
-      "title": "[FR] Title"
+      "title": "Titre"
     },
-    "title": "[FR] Title",
-    "todayAtGlance": "[FR] Today At Glance",
-    "welcomeMessage": "[FR] Welcome Message"
+    "title": "Titre",
+    "todayAtGlance": "Aujourd'hui en un coup d'œil",
+    "welcomeMessage": "Message de bienvenue"
   },
   "foundationLeadsPage": {
     "accessDenied": {
@@ -817,7 +817,7 @@
     "free": "Gratuit",
     "help": "Aide",
     "home": "Accueil",
-    "info": "[FR] Info",
+    "info": "Info",
     "loading": "Chargement...",
     "login": "Connexion",
     "logout": "Déconnexion",
@@ -852,17 +852,17 @@
   },
   "hidePassword": "Masquer le mot de passe",
   "hrDocumentCard": {
-    "categoryLabel": "[FR] Category",
-    "deleteButtonLabel": "[FR] Delete Button",
-    "downloadButton": "[FR] Download",
-    "downloadingAlert": "[FR] Downloading Alert",
-    "editButtonLabel": "[FR] Edit Button",
-    "languageLabel": "[FR] Language",
-    "lastUpdatedLabel": "[FR] Last Updated",
-    "previewButtonLabel": "[FR] Preview",
-    "previewingAlert": "[FR] Previewing Alert",
-    "toggleFavoriteLabel": "[FR] Toggle Favorite",
-    "versionLabel": "[FR] Version"
+    "categoryLabel": "Catégorie",
+    "deleteButtonLabel": "Bouton Supprimer",
+    "downloadButton": "Télécharger",
+    "downloadingAlert": "Alerte de téléchargement",
+    "editButtonLabel": "Bouton Modifier",
+    "languageLabel": "Langue",
+    "lastUpdatedLabel": "Dernière mise à jour",
+    "previewButtonLabel": "Aperçu",
+    "previewingAlert": "Alerte d'aperçu",
+    "toggleFavoriteLabel": "Basculer Favori",
+    "versionLabel": "Version"
   },
   "hrProcedures": {
     "adminUploadNote": "admin Upload Note",
@@ -951,31 +951,31 @@
   "lastName": "Nom de famille",
   "leadCard": {
     "alert": {
-      "missingParentInfo": "[FR] Missing Parent Info"
+      "missingParentInfo": "Informations parent manquantes"
     },
     "buttons": {
-      "interested": "[FR] Interested",
-      "markEnrolled": "[FR] Mark Enrolled",
-      "messageParent": "[FR] Message Parent",
-      "needInfo": "[FR] Need Info",
-      "notInterested": "[FR] No t Interested",
-      "sendQuestion": "[FR] Send Question"
+      "interested": "Intéressé",
+      "markEnrolled": "Marquer comme inscrit",
+      "messageParent": "Message parent",
+      "needInfo": "Besoin d'informations",
+      "notInterested": "Non intéressé",
+      "sendQuestion": "Envoyer une question"
     },
-    "childAge": "[FR] Child Age",
+    "childAge": "Âge de l'enfant",
     "defaultMessages": {
-      "enrolled": "[FR] Enrolled",
-      "interested": "[FR] Interested",
-      "notInterested": "[FR] No t Interested"
+      "enrolled": "Inscrit",
+      "interested": "Intéressé",
+      "notInterested": "Non intéressé"
     },
-    "desiredStart": "[FR] Desired Start",
+    "desiredStart": "Début souhaité",
     "email": "email",
-    "forLocation": "[FR] For Location",
-    "messageSent": "[FR] Message Sent",
+    "forLocation": "Pour l'emplacement",
+    "messageSent": "Message envoyé",
     "noLocation": "no Location",
-    "notes": "[FR] No tes",
+    "notes": "Notes",
     "phone": "phone",
-    "questionFor": "[FR] Question For",
-    "questionPlaceholder": "[FR] Enter question",
+    "questionFor": "Question pour",
+    "questionPlaceholder": "Entrer une question",
     "status": {
       "converted": "Converti",
       "enrolled": "Inscrit",
@@ -986,12 +986,12 @@
       "notResponded": "Pas de réponse",
       "processing": "En traitement"
     },
-    "submittedOn": "[FR] Submitted On",
-    "title": "[FR] Title",
+    "submittedOn": "Soumis le",
+    "title": "Titre",
     "yearsOld": "years Old",
-    "yourResponse": "[FR] Your Response"
+    "yourResponse": "Votre réponse"
   },
-  "loading": "[FR] Loading",
+  "loading": "Chargement",
   "locations": {
     "switzerland": "switzerland"
   },
@@ -1046,9 +1046,9 @@
   },
   "marketplacePage": {
     "serviceCard": {
-      "bookAppointment": "[FR] Book Appointment",
-      "categoryLabel": "[FR] Category",
-      "viewProvider": "[FR] View Provider"
+      "bookAppointment": "Réserver un rendez-vous",
+      "categoryLabel": "Catégorie",
+      "viewProvider": "Voir le fournisseur"
     }
   },
   "messages": {
@@ -1057,17 +1057,17 @@
   "messagesPage": {
     "addEmoji": "Ajouter un emoji",
     "attachFile": "Joindre un fichier",
-    "conversationFallbackTitle": "[FR] Conversation Fallback Title",
-    "noMessagesYet": "[FR] No  Messages Yet",
-    "searchPlaceholder": "[FR] Enter search",
-    "selectConversationToView": "[FR] Select Conversation To View",
-    "typeMessagePlaceholder": "[FR] Enter type message",
-    "unknownUser": "[FR] Unknown User",
-    "youPrefix": "[FR] You Prefix"
+    "conversationFallbackTitle": "Titre de conversation par défaut",
+    "noMessagesYet": "Aucun message pour le moment",
+    "searchPlaceholder": "Entrer une recherche",
+    "selectConversationToView": "Sélectionner une conversation à voir",
+    "typeMessagePlaceholder": "Entrer un type de message",
+    "unknownUser": "Utilisateur inconnu",
+    "youPrefix": "Vous"
   },
   "messagingContext": {
-    "useMessagingError": "[FR] Use Messaging Error",
-    "userNotLoggedIn": "[FR] User Not Logged In"
+    "useMessagingError": "Erreur d'utilisation de la messagerie",
+    "userNotLoggedIn": "Utilisateur non connecté"
   },
   "navbar": {
     "goBackPreviousPage": "Retourner à la page précédente",
@@ -1101,7 +1101,7 @@
   "notAvailable": "Non disponible",
   "notProvided": "Non fourni",
   "notificationContext": {
-    "useNotificationsError": "[FR] Use Notifications Error"
+    "useNotificationsError": "Erreur d'utilisation des notifications"
   },
   "notifications": {
     "errorTitle": "Erreur",
@@ -1118,118 +1118,118 @@
       "message": "message",
       "title": "Titre"
     },
-    "title": "[FR] Title"
+    "title": "Titre"
   },
   "optional": "Optionnel",
   "or": "or",
   "order": {
-    "cannotSubmitMissingInfo": "[FR] Cannot submit order. User not logged in, supplier info missing, or cart is empty.",
-    "titleAndMessageRequired": "[FR] Title and message are required."
+    "cannotSubmitMissingInfo": "Impossible de soumettre la commande. Utilisateur non connecté, informations fournisseur manquantes ou panier vide.",
+    "titleAndMessageRequired": "Le titre et le message sont requis."
   },
   "orderRequestDetailModal": {
-    "date": "[FR] Date",
-    "lineItems": "[FR] Line Items",
-    "markAsProcessing": "[FR] Mark As Processing",
-    "notes": "[FR] No tes",
-    "orderId": "[FR] Order Id",
-    "price": "[FR] Price",
-    "product": "[FR] Product",
-    "quantity": "[FR] Quantity",
-    "status": "[FR] Status",
-    "title": "[FR] Title",
-    "total": "[FR] Total",
-    "viewDaycareProfile": "[FR] View Daycare Profile"
+    "date": "Date",
+    "lineItems": "Éléments de ligne",
+    "markAsProcessing": "Marquer comme en traitement",
+    "notes": "Notes",
+    "orderId": "ID de commande",
+    "price": "Prix",
+    "product": "Produit",
+    "quantity": "Quantité",
+    "status": "Statut",
+    "title": "Titre",
+    "total": "Total",
+    "viewDaycareProfile": "Voir le profil de la garderie"
   },
   "orderRequestModal": {
     "labels": {
-      "notes": "[FR] No tes",
-      "product": "[FR] Product",
-      "quantity": "[FR] Quantity",
-      "supplier": "[FR] Supplier"
+      "notes": "Notes",
+      "product": "Produit",
+      "quantity": "Quantité",
+      "supplier": "Fournisseur"
     },
     "placeholders": {
-      "notes": "[FR] No tes"
+      "notes": "Notes"
     },
-    "title": "[FR] Title"
+    "title": "Titre"
   },
   "orderStatus": {
-    "active": "[FR] Active",
-    "approved": "[FR] Approved",
-    "cancelled": "[FR] Cancelled",
-    "completed": "[FR] Completed",
-    "confirmed": "[FR] Confirmed",
-    "delivered": "[FR] Delivered",
-    "inactive": "[FR] Inactive",
-    "paid": "[FR] Paid",
-    "pending": "[FR] Pending",
-    "processing": "[FR] Processing",
-    "refunded": "[FR] Refunded",
-    "rejected": "[FR] Rejected",
-    "shipped": "[FR] Shipped"
+    "active": "Actif",
+    "approved": "Approuvé",
+    "cancelled": "Annulé",
+    "completed": "Terminé",
+    "confirmed": "Confirmé",
+    "delivered": "Livré",
+    "inactive": "Inactif",
+    "paid": "Payé",
+    "pending": "En attente",
+    "processing": "En traitement",
+    "refunded": "Remboursé",
+    "rejected": "Rejeté",
+    "shipped": "Expédié"
   },
   "orderSummaryDrawer": {
-    "closePanel": "[FR] Close Panel",
-    "continueShopping": "[FR] Continue Shopping",
-    "emptyCart": "[FR] Empty Cart",
-    "itemsFrom": "[FR] Items From",
+    "closePanel": "Fermer le panneau",
+    "continueShopping": "Continuer les achats",
+    "emptyCart": "Vider le panier",
+    "itemsFrom": "Articles de",
     "notesPlaceholder": "Enter notes",
     "orderError": "order Error",
     "orderSuccess": "order Success",
-    "shippingNote": "[FR] Shipping Note",
-    "specialInstructions": "[FR] Special Instructions",
+    "shippingNote": "Note d'expédition",
+    "specialInstructions": "Instructions spéciales",
     "submitTo": "Soumettre to",
     "submitting": "submitting",
-    "subtotal": "[FR] Subtotal",
-    "title": "[FR] Title"
+    "subtotal": "Sous-total",
+    "title": "Titre"
   },
   "organizationName": "Nom de l'organisation",
   "organizationProfileForm": {
-    "accessDenied": "[FR] Access Denied",
+    "accessDenied": "Accès refusé",
     "helpText": {
-      "commaSeparated": "[FR] Comma Separated"
+      "commaSeparated": "Séparé par des virgules"
     },
     "labels": {
-      "capacity": "[FR] Capacity",
-      "languages": "[FR] Languages",
-      "pedagogy": "[FR] Pedagogy"
+      "capacity": "Capacité",
+      "languages": "Langues",
+      "pedagogy": "Pédagogie"
     },
     "placeholders": {
-      "languages": "[FR] Languages",
-      "pedagogy": "[FR] Pedagogy"
+      "languages": "Langues",
+      "pedagogy": "Pédagogie"
     },
     "notProvided": "Non fourni",
-    "saveButton": "[FR] Save Button",
+    "saveButton": "Bouton Enregistrer",
     "saveSuccess": "Enregistrer success",
-    "subtitle": "[FR] Subtitle",
-    "title": "[FR] Title"
+    "subtitle": "Sous-titre",
+    "title": "Titre"
   },
   "parentDashboard": {
     "childProfile": {
-      "age": "[FR] Age",
-      "button": "[FR] Button",
-      "languages": "[FR] Languages",
-      "location": "[FR] Location",
-      "name": "[FR] Name",
-      "specialNeeds": "[FR] Special Needs",
-      "title": "[FR] Title"
+      "age": "Âge",
+      "button": "Bouton",
+      "languages": "Langues",
+      "location": "Emplacement",
+      "name": "Nom",
+      "specialNeeds": "Besoins spéciaux",
+      "title": "Titre"
     },
     "enquiry": {
-      "button": "[FR] Button",
-      "pending": "[FR] Pending",
-      "responses": "[FR] Responses",
-      "sent": "[FR] Sent",
-      "title": "[FR] Title"
+      "button": "Bouton",
+      "pending": "En attente",
+      "responses": "Réponses",
+      "sent": "Envoyé",
+      "title": "Titre"
     },
     "favorites": {
-      "button": "[FR] Button",
-      "subtitle": "[FR] Subtitle",
-      "title": "[FR] Title"
+      "button": "Bouton",
+      "subtitle": "Sous-titre",
+      "title": "Titre"
     },
     "quickActions": {
-      "title": "[FR] Title"
+      "title": "Titre"
     },
-    "title": "[FR] Title",
-    "welcomeMessage": "[FR] Welcome Message"
+    "title": "Titre",
+    "welcomeMessage": "Message de bienvenue"
   },
   "parentEnquiriesPage": {
     "accessDenied": {
@@ -1256,7 +1256,7 @@
     "title": "Mes demandes"
   },
   "parentLeadFormPage": {
-    "title": "[FR] Title"
+    "title": "Titre"
   },
   "parentSupportPage": {
     "faq": {
@@ -1377,19 +1377,19 @@
   },
   "policyAlertModal": {
     "labels": {
-      "displayEndDate": "[FR] Display End Date",
-      "displayStartDate": "[FR] Display Start Date",
-      "message": "[FR] Message",
-      "regionScope": "[FR] Region Scope",
-      "title": "[FR] Title",
-      "type": "[FR] Type"
+      "displayEndDate": "Date de fin d'affichage",
+      "displayStartDate": "Date de début d'affichage",
+      "message": "Message",
+      "regionScope": "Portée de la région",
+      "title": "Titre",
+      "type": "Type"
     },
     "title": "Titre"
   },
   "policyStatusOptions": {
-    "active": "[FR] Active",
-    "archived": "[FR] Archived",
-    "draft": "[FR] Draft"
+    "active": "Actif",
+    "archived": "Archivé",
+    "draft": "Brouillon"
   },
   "preferredLocation": "Lieu préféré",
   "previewLabel": "Preview",
@@ -1467,8 +1467,8 @@
   "rememberMe": "Se souvenir de moi",
   "remove": "Retirer",
   "renameFileModal": {
-    "label": "[FR] Label",
-    "title": "[FR] Title"
+    "label": "Libellé",
+    "title": "Titre"
   },
   "requirements": "Exigences",
   "resetPassword": "Réinitialiser le mot de passe",
@@ -1536,7 +1536,7 @@
     "Remote": "À distance"
   },
   "serviceProvider": {
-    "noServicesFound": "[FR] No services found"
+    "noServicesFound": "Aucun service trouvé"
   },
   "serviceProviderAnalyticsPage": {
     "mockChartText": "Visualisation de graphique {{type}} simulée",
@@ -1550,31 +1550,31 @@
   },
   "serviceProviderDashboard": {
     "loadError": "load Error",
-    "title": "[FR] Title",
-    "welcomeMessage": "[FR] Welcome Message",
+    "title": "Titre",
+    "welcomeMessage": "Message de bienvenue",
     "widgets": {
       "appointments": {
-        "button": "[FR] Button",
+        "button": "Bouton",
         "noAppointments": "no Appointments",
         "notScheduled": "not Scheduled",
-        "title": "[FR] Title",
-        "with": "[FR] With"
+        "title": "Titre",
+        "with": "Avec"
       },
       "management": {
-        "button": "[FR] Button",
-        "categories": "[FR] Categories",
-        "listings": "[FR] Listings",
+        "button": "Bouton",
+        "categories": "Catégories",
+        "listings": "Annonces",
         "noCategories": "no Categories",
-        "pending": "[FR] Pending",
-        "title": "[FR] Title"
+        "pending": "En attente",
+        "title": "Titre"
       },
       "overview": {
-        "activeRequests": "[FR] Active Requests",
-        "button": "[FR] Button",
-        "completedServices": "[FR] Completed Services",
-        "customerRating": "[FR] Customer Rating",
-        "title": "[FR] Title",
-        "upcoming": "[FR] Upcoming"
+        "activeRequests": "Demandes actives",
+        "button": "Bouton",
+        "completedServices": "Services terminés",
+        "customerRating": "Note du client",
+        "title": "Titre",
+        "upcoming": "À venir"
       }
     }
   },
@@ -1622,64 +1622,64 @@
       "service": "service",
       "status": "status"
     },
-    "title": "[FR] Title",
+    "title": "Titre",
     "updateError": "update Error"
   },
   "serviceRequestDetailModal": {
-    "date": "[FR] Date",
-    "markAsCompleted": "[FR] Mark As Completed",
-    "noPreferredDate": "[FR] No  Preferred Date",
-    "notes": "[FR] No tes",
-    "preferredDate": "[FR] Preferred Date",
-    "requestId": "[FR] Request Id",
+    "date": "Date",
+    "markAsCompleted": "Marquer comme terminé",
+    "noPreferredDate": "Aucune date préférée",
+    "notes": "Notes",
+    "preferredDate": "Date préférée",
+    "requestId": "ID de demande",
     "schedule": "schedule",
-    "serviceName": "[FR] Service Name",
-    "status": "[FR] Status",
-    "title": "[FR] Title",
-    "viewDaycareProfile": "[FR] View Daycare Profile"
+    "serviceName": "Nom du service",
+    "status": "Statut",
+    "title": "Titre",
+    "viewDaycareProfile": "Voir le profil de la garderie"
   },
   "serviceRequestModal": {
-    "notesLabel": "[FR] No tes",
-    "preferredDateLabel": "[FR] Preferred Date",
-    "submitButton": "[FR] Submit Button"
+    "notesLabel": "Notes",
+    "preferredDateLabel": "Date préférée",
+    "submitButton": "Bouton Soumettre"
   },
   "serviceStatus": {
-    "active": "[FR] Active",
-    "approved": "[FR] Approved",
-    "cancelled": "[FR] Cancelled",
-    "completed": "[FR] Completed",
-    "confirmed": "[FR] Confirmed",
-    "inactive": "[FR] Inactive",
-    "inprogress": "[FR] In Progress",
-    "paid": "[FR] Paid",
-    "pending": "[FR] Pending",
-    "rejected": "[FR] Rejected",
-    "scheduled": "[FR] Scheduled",
-    "shipped": "[FR] Shipped"
+    "active": "Actif",
+    "approved": "Approuvé",
+    "cancelled": "Annulé",
+    "completed": "Terminé",
+    "confirmed": "Confirmé",
+    "inactive": "Inactif",
+    "inprogress": "En cours",
+    "paid": "Payé",
+    "pending": "En attente",
+    "rejected": "Rejeté",
+    "scheduled": "Planifié",
+    "shipped": "Expédié"
   },
   "serviceType": "Type de service",
   "serviceUploadModal": {
-    "addTitle": "[FR] Add Service",
+    "addTitle": "Ajouter un service",
     "categoriesHelpText": "categories Help Text.",
-    "currentImage": "[FR] Current Image",
-    "editTitle": "[FR] Edit Title",
-    "imageHelpText": "[FR] Image Help Text",
+    "currentImage": "Image actuelle",
+    "editTitle": "Modifier le service",
+    "imageHelpText": "Texte d'aide pour l'image",
     "labels": {
-      "availability": "[FR] Availability",
+      "availability": "Disponibilité",
       "categories": "categories",
-      "category": "[FR] Category",
-      "deliveryType": "[FR] Delivery Type",
-      "description": "[FR] Description",
-      "image": "[FR] Image",
-      "priceInfo": "[FR] Price Info",
-      "tags": "[FR] Tags",
-      "title": "[FR] Title"
+      "category": "Catégorie",
+      "deliveryType": "Type de livraison",
+      "description": "Description",
+      "image": "Image",
+      "priceInfo": "Informations sur le prix",
+      "tags": "Mots-clés",
+      "title": "Titre"
     },
     "placeholders": {
-      "availability": "[FR] Availability",
+      "availability": "Disponibilité",
       "categories": "categories",
-      "priceInfo": "[FR] Price Info",
-      "tags": "[FR] Tags"
+      "priceInfo": "Informations sur le prix",
+      "tags": "Mots-clés"
     }
   },
   "settingsAccountSecurity": {
@@ -1914,26 +1914,26 @@
     "usageCount": "Utilisé"
   },
   "settingsTeamPermissions": {
-    "confirmRemoveMember": "[FR] Confirm Remove Member",
-    "currentTeamMembers": "[FR] Current Team Members",
-    "emailAddress": "[FR] Email Address",
-    "emailPlaceholder": "[FR] Enter email",
-    "inviteNewMember": "[FR] Invite New Member",
-    "noTeamMembers": "[FR] No  Team Members",
-    "passwordResetSentAlert": "[FR] Password Reset Sent Alert",
-    "removeMemberTooltip": "[FR] Remove Member Tooltip",
-    "resetPasswordTooltip": "[FR] Reset Password Tooltip",
-    "role": "[FR] Role",
+    "confirmRemoveMember": "Confirmer la suppression du membre",
+    "currentTeamMembers": "Membres actuels de l'équipe",
+    "emailAddress": "Adresse e-mail",
+    "emailPlaceholder": "Entrer l'e-mail",
+    "inviteNewMember": "Inviter un nouveau membre",
+    "noTeamMembers": "Aucun membre d'équipe",
+    "passwordResetSentAlert": "Alerte d'envoi de réinitialisation du mot de passe",
+    "removeMemberTooltip": "Info-bulle de suppression du membre",
+    "resetPasswordTooltip": "Info-bulle de réinitialisation du mot de passe",
+    "role": "Rôle",
     "roles": {
-      "editor": "[FR] Editor",
-      "viewer": "[FR] Viewer"
+      "editor": "Éditeur",
+      "viewer": "Observateur"
     },
-    "sendInvite": "[FR] Send Invite",
+    "sendInvite": "Envoyer une invitation",
     "table": {
-      "actions": "[FR] Actions",
-      "email": "[FR] Email",
-      "role": "[FR] Role",
-      "status": "[FR] Status"
+      "actions": "Actions",
+      "email": "E-mail",
+      "role": "Rôle",
+      "status": "Statut"
     }
   },
   "showPassword": "Afficher le mot de passe",
@@ -1975,13 +1975,13 @@
     "reviewed": "Examiné"
   },
   "stockStatus": {
-    "discontinued": "[FR] Discontinued",
-    "inStock": "[FR] In Stock",
-    "instock": "[FR] In Stock",
-    "lowStock": "[FR] Low Stock",
-    "lowstock": "[FR] Low Stock",
-    "outOfStock": "[FR] Out of Stock",
-    "outofstock": "[FR] Out of Stock"
+    "discontinued": "Discontinué",
+    "inStock": "En stock",
+    "instock": "En stock",
+    "lowStock": "Stock faible",
+    "lowstock": "Stock faible",
+    "outOfStock": "Rupture de stock",
+    "outofstock": "Rupture de stock"
   },
   "submissionSuccessMessage": "Votre compte a été créé. Vous pouvez maintenant vous connecter ou accéder à votre tableau de bord.",
   "submissionSuccessTitle": "Compte créé avec succès",
@@ -2010,8 +2010,8 @@
   "supplierDashboard": {
     "loadError": "load Error",
     "noRecentInquiries": "no Recent Inquiries",
-    "noRecentOrders": "[FR] No  Recent Orders",
-    "noSalesYet": "[FR] No  Sales Yet",
+    "noRecentOrders": "Aucune commande récente",
+    "noSalesYet": "Aucune vente pour le moment",
     "recentInquiriesTable": {
       "from": "from",
       "status": "status",
@@ -2019,19 +2019,19 @@
     },
     "recentInquiriesTitle": "recent inquiries Titre",
     "recentOrdersActions": {
-      "accept": "[FR] Accept",
-      "decline": "[FR] Decline"
+      "accept": "Accepter",
+      "decline": "Refuser"
     },
     "recentOrdersTable": {
-      "creche": "[FR] Creche",
-      "date": "[FR] Date",
-      "id": "[FR] Id",
-      "status": "[FR] Status",
-      "total": "[FR] Total"
+      "creche": "Crèche",
+      "date": "Date",
+      "id": "ID",
+      "status": "Statut",
+      "total": "Total"
     },
-    "recentOrdersTitle": "[FR] Recent Orders Title",
-    "title": "[FR] Title",
-    "welcomeMessage": "[FR] Welcome Message",
+    "recentOrdersTitle": "Commandes récentes",
+    "title": "Titre",
+    "welcomeMessage": "Message de bienvenue",
     "widgets": {
       "inquiries": {
         "button": "button",
@@ -2041,25 +2041,25 @@
         "title": "Titre"
       },
       "orders": {
-        "button": "[FR] Button",
-        "pending": "[FR] Pending",
-        "title": "[FR] Title",
-        "toFulfill": "[FR] To Fulfill"
+        "button": "Bouton",
+        "pending": "En attente",
+        "title": "Titre",
+        "toFulfill": "À honorer"
       },
       "products": {
-        "active": "[FR] Active",
-        "button": "[FR] Button",
-        "lowStock": "[FR] Low Stock",
-        "pending": "[FR] Pending",
-        "title": "[FR] Title"
+        "active": "Actif",
+        "button": "Bouton",
+        "lowStock": "Stock faible",
+        "pending": "En attente",
+        "title": "Titre"
       },
       "sales": {
-        "button": "[FR] Button",
-        "fulfillmentRate": "[FR] Fulfillment Rate",
-        "revenueMonth": "[FR] Revenue Month",
-        "title": "[FR] Title",
-        "topSelling": "[FR] Top Selling",
-        "totalOrders": "[FR] Total Orders"
+        "button": "Bouton",
+        "fulfillmentRate": "Taux de réalisation",
+        "revenueMonth": "Revenus du mois",
+        "title": "Titre",
+        "topSelling": "Meilleures ventes",
+        "totalOrders": "Total des commandes"
       }
     }
   },
@@ -2087,7 +2087,7 @@
       "inquiries": "inquiries",
       "orders": "orders"
     },
-    "title": "[FR] Title",
+    "title": "Titre",
     "updateError": "update Error"
   },
   "supplierOrganisationProfilePage": {
@@ -2106,7 +2106,7 @@
     "title": "Profil de l'organisation"
   },
   "supplierProductListingsPage": {
-    "title": "[FR] Title"
+    "title": "Titre"
   },
   "supportPage": {
     "emailLinkText": "support@procrechesolutions.com",
@@ -2168,10 +2168,10 @@
     "serviceProvider": "Prestataire de services"
   },
   "vendorClientReasons": {
-    "demo": "[FR] Demo",
-    "inactive": "[FR] Inactive",
-    "testing": "[FR] Testing",
-    "trial": "[FR] Trial"
+    "demo": "Démo",
+    "inactive": "Inactif",
+    "testing": "Test",
+    "trial": "Essai"
   },
   "verificationProgress": {
     "messages": {
