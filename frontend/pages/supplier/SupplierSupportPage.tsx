@@ -61,6 +61,8 @@ const SupplierSupportPage: React.FC = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const replyTextareaRef = useRef<HTMLTextAreaElement>(null);
   const wasFocusedRef = useRef(false);
+  const isTypingRef = useRef(false);
+  const pendingUpdatesRef = useRef<any[]>([]);
 
   // State
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
@@ -211,8 +213,11 @@ const SupplierSupportPage: React.FC = () => {
     userId: currentUser?.id || '',
     onNewReply: (reply) => {
       if (selectedTicket && !selectedTicket.responses.find(r => r.id === reply.id)) {
-        // Check if textarea was focused before update
-        wasFocusedRef.current = document.activeElement === replyTextareaRef.current;
+        // If user is typing, queue the update instead of applying immediately
+        if (isTypingRef.current) {
+          pendingUpdatesRef.current.push(reply);
+          return;
+        }
         
         // Deduplicate and sort
         const updatedResponses = [...selectedTicket.responses, reply].sort(
@@ -222,13 +227,6 @@ const SupplierSupportPage: React.FC = () => {
           ...selectedTicket,
           responses: updatedResponses,
         });
-        
-        // Restore focus if it was focused before
-        if (wasFocusedRef.current && replyTextareaRef.current) {
-          setTimeout(() => {
-            replyTextareaRef.current?.focus();
-          }, 0);
-        }
         
         // Scroll to bottom if user is near bottom
         if (scrollContainerRef.current) {
@@ -254,8 +252,10 @@ const SupplierSupportPage: React.FC = () => {
 
     const pollInterval = setInterval(async () => {
       try {
-        // Check if textarea was focused before update
-        wasFocusedRef.current = document.activeElement === replyTextareaRef.current;
+        // Skip polling if user is typing
+        if (isTypingRef.current) {
+          return;
+        }
         
         const res = await request<SupportTicket>(supportApi.getTicketEndpoint(selectedTicket.id));
         if (res.success && res.data) {
@@ -266,13 +266,6 @@ const SupplierSupportPage: React.FC = () => {
           if (currentResponseIds.size !== newResponseIds.size || 
               [...newResponseIds].some(id => !currentResponseIds.has(id))) {
             setSelectedTicket(updatedTicket);
-            
-            // Restore focus if it was focused before
-            if (wasFocusedRef.current && replyTextareaRef.current) {
-              setTimeout(() => {
-                replyTextareaRef.current?.focus();
-              }, 0);
-            }
             
             // Scroll to bottom if user is near bottom
             if (scrollContainerRef.current) {
@@ -368,9 +361,55 @@ const SupplierSupportPage: React.FC = () => {
           <form onSubmit={handleResponseSubmit} className="border-t pt-4">
             <textarea
               ref={replyTextareaRef}
-              key={`reply-${selectedTicket.id}`}
               value={newResponse}
-              onChange={(e) => setNewResponse(e.target.value)}
+              onChange={(e) => {
+                setNewResponse(e.target.value);
+                isTypingRef.current = true;
+                // Clear typing flag after 1 second of no typing
+                clearTimeout((window as any).typingTimeout);
+                (window as any).typingTimeout = setTimeout(() => {
+                  isTypingRef.current = false;
+                  // Apply any pending updates
+                  if (pendingUpdatesRef.current.length > 0 && selectedTicket) {
+                    const allResponses = [...selectedTicket.responses, ...pendingUpdatesRef.current];
+                    const deduplicated = allResponses.filter((r, i, self) => 
+                      i === self.findIndex(resp => resp.id === r.id)
+                    );
+                    const sorted = deduplicated.sort(
+                      (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+                    );
+                    setSelectedTicket({
+                      ...selectedTicket,
+                      responses: sorted,
+                    });
+                    pendingUpdatesRef.current = [];
+                  }
+                }, 1000);
+              }}
+              onFocus={() => {
+                isTypingRef.current = true;
+              }}
+              onBlur={() => {
+                // Small delay before clearing typing flag
+                setTimeout(() => {
+                  isTypingRef.current = false;
+                  // Apply any pending updates
+                  if (pendingUpdatesRef.current.length > 0 && selectedTicket) {
+                    const allResponses = [...selectedTicket.responses, ...pendingUpdatesRef.current];
+                    const deduplicated = allResponses.filter((r, i, self) => 
+                      i === self.findIndex(resp => resp.id === r.id)
+                    );
+                    const sorted = deduplicated.sort(
+                      (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+                    );
+                    setSelectedTicket({
+                      ...selectedTicket,
+                      responses: sorted,
+                    });
+                    pendingUpdatesRef.current = [];
+                  }
+                }, 200);
+              }}
               placeholder={t('common:supportPage.ticketForm.responsePlaceholder')}
               rows={3}
               className={STANDARD_INPUT_FIELD}

@@ -39,6 +39,8 @@ const Support: React.FC = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const replyTextareaRef = useRef<HTMLTextAreaElement>(null);
   const wasFocusedRef = useRef(false);
+  const isTypingRef = useRef(false);
+  const pendingUpdatesRef = useRef<any[]>([]);
 
   // Fetch current user to check assignment
   const { data: currentUserResponse } = useQuery({
@@ -174,8 +176,11 @@ const Support: React.FC = () => {
     userId: currentUserId,
     onNewReply: (reply) => {
       if (selectedTicket && !selectedTicket.responses.find(r => r.id === reply.id)) {
-        // Check if textarea was focused before update
-        wasFocusedRef.current = document.activeElement === replyTextareaRef.current;
+        // If user is typing, queue the update instead of applying immediately
+        if (isTypingRef.current) {
+          pendingUpdatesRef.current.push(reply);
+          return;
+        }
         
         // Deduplicate and sort
         const updatedResponses = [...selectedTicket.responses, reply].sort(
@@ -185,13 +190,6 @@ const Support: React.FC = () => {
           ...selectedTicket,
           responses: updatedResponses,
         });
-        
-        // Restore focus if it was focused before
-        if (wasFocusedRef.current && replyTextareaRef.current) {
-          setTimeout(() => {
-            replyTextareaRef.current?.focus();
-          }, 0);
-        }
         
         // Scroll to bottom if user is near bottom
         if (scrollContainerRef.current) {
@@ -217,8 +215,10 @@ const Support: React.FC = () => {
 
     const pollInterval = setInterval(async () => {
       try {
-        // Check if textarea was focused before update
-        wasFocusedRef.current = document.activeElement === replyTextareaRef.current;
+        // Skip polling if user is typing
+        if (isTypingRef.current) {
+          return;
+        }
         
         const response = await apiService.getSupportTicket(apiClient, selectedTicket.id);
         if (response.data.data) {
@@ -229,13 +229,6 @@ const Support: React.FC = () => {
           if (currentResponseIds.size !== newResponseIds.size || 
               [...newResponseIds].some(id => !currentResponseIds.has(id))) {
             setSelectedTicket(updatedTicket);
-            
-            // Restore focus if it was focused before
-            if (wasFocusedRef.current && replyTextareaRef.current) {
-              setTimeout(() => {
-                replyTextareaRef.current?.focus();
-              }, 0);
-            }
             
             // Scroll to bottom if user is near bottom
             if (scrollContainerRef.current) {
@@ -665,12 +658,58 @@ const Support: React.FC = () => {
               <div className="p-6 border-t border-gray-200">
                 <textarea
                   ref={replyTextareaRef}
-                  key={`reply-${selectedTicket.id}`}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm resize-none"
                   rows={3}
                   placeholder={t('admin:support.replyPlaceholder')}
                   value={replyMessage}
-                  onChange={(e) => setReplyMessage(e.target.value)}
+                  onChange={(e) => {
+                    setReplyMessage(e.target.value);
+                    isTypingRef.current = true;
+                    // Clear typing flag after 1 second of no typing
+                    clearTimeout((window as any).typingTimeout);
+                    (window as any).typingTimeout = setTimeout(() => {
+                      isTypingRef.current = false;
+                      // Apply any pending updates
+                      if (pendingUpdatesRef.current.length > 0 && selectedTicket) {
+                        const allResponses = [...selectedTicket.responses, ...pendingUpdatesRef.current];
+                        const deduplicated = allResponses.filter((r, i, self) => 
+                          i === self.findIndex(resp => resp.id === r.id)
+                        );
+                        const sorted = deduplicated.sort(
+                          (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+                        );
+                        setSelectedTicket({
+                          ...selectedTicket,
+                          responses: sorted,
+                        });
+                        pendingUpdatesRef.current = [];
+                      }
+                    }, 1000);
+                  }}
+                  onFocus={() => {
+                    isTypingRef.current = true;
+                  }}
+                  onBlur={() => {
+                    // Small delay before clearing typing flag
+                    setTimeout(() => {
+                      isTypingRef.current = false;
+                      // Apply any pending updates
+                      if (pendingUpdatesRef.current.length > 0 && selectedTicket) {
+                        const allResponses = [...selectedTicket.responses, ...pendingUpdatesRef.current];
+                        const deduplicated = allResponses.filter((r, i, self) => 
+                          i === self.findIndex(resp => resp.id === r.id)
+                        );
+                        const sorted = deduplicated.sort(
+                          (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+                        );
+                        setSelectedTicket({
+                          ...selectedTicket,
+                          responses: sorted,
+                        });
+                        pendingUpdatesRef.current = [];
+                      }
+                    }, 200);
+                  }}
                 />
                 <button
                   onClick={handleReply}
