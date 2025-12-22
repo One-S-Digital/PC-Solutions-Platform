@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { AppLoggerService } from '../common/logger.service';
 import Stripe from 'stripe';
+import { SubscriptionStatus, SubscriptionTier } from '@workspace/types';
 
 @Injectable()
 export class BillingService {
@@ -238,6 +239,87 @@ export class BillingService {
           trialEnd: subscription.trial_end ? new Date(subscription.trial_end * 1000) : null,
         },
       });
+
+      // ALSO mirror into the newer `subscriptions` table so `/subscriptions/me` reflects Stripe status.
+      // This is best-effort until we fully consolidate the two subscription systems.
+      try {
+        const subscriptionPlan = await this.prisma.subscriptionPlan.findFirst({
+          where: { code: planCode },
+        });
+
+        if (!subscriptionPlan) {
+          this.logger.warn(
+            `No SubscriptionPlan found with code=${planCode}; skipping mirror to subscriptions table`,
+            'BillingService',
+            { planCode, userId, stripeSubscriptionId: subscription.id },
+          );
+        } else {
+          const stripeStatus = (subscription.status || '').toLowerCase();
+          const mappedStatus: SubscriptionStatus =
+            stripeStatus === 'active'
+              ? 'ACTIVE'
+              : stripeStatus === 'trialing'
+                ? 'TRIAL'
+                : stripeStatus === 'past_due' || stripeStatus === 'unpaid'
+                  ? 'PAST_DUE'
+                  : stripeStatus === 'canceled' || stripeStatus === 'cancelled'
+                    ? 'CANCELLED'
+                    : 'PENDING';
+
+          const tierFromCode =
+            (planCode || '').toUpperCase() in SubscriptionTier
+              ? (SubscriptionTier as any)[(planCode || '').toUpperCase()]
+              : SubscriptionTier.BASIC;
+
+          await this.prisma.subscription.upsert({
+            where: { stripeSubscriptionId: subscription.id },
+            create: {
+              userId,
+              planId: subscriptionPlan.id,
+              tier: tierFromCode as any,
+              status: mappedStatus as any,
+              currentPeriodStart: new Date((subscription as any).current_period_start * 1000),
+              currentPeriodEnd: new Date((subscription as any).current_period_end * 1000),
+              trialStart: subscription.trial_start ? new Date(subscription.trial_start * 1000) : null,
+              trialEnd: subscription.trial_end ? new Date(subscription.trial_end * 1000) : null,
+              cancelAtPeriodEnd: !!subscription.cancel_at_period_end,
+              isManual: false,
+              stripeCustomerId: subscription.customer as string,
+              stripeSubscriptionId: subscription.id,
+              metadata: {
+                provider: 'stripe',
+                cadence,
+                planCode,
+              },
+            },
+            update: {
+              userId,
+              planId: subscriptionPlan.id,
+              tier: tierFromCode as any,
+              status: mappedStatus as any,
+              currentPeriodStart: new Date((subscription as any).current_period_start * 1000),
+              currentPeriodEnd: new Date((subscription as any).current_period_end * 1000),
+              trialStart: subscription.trial_start ? new Date(subscription.trial_start * 1000) : null,
+              trialEnd: subscription.trial_end ? new Date(subscription.trial_end * 1000) : null,
+              cancelAtPeriodEnd: !!subscription.cancel_at_period_end,
+              isManual: false,
+              stripeCustomerId: subscription.customer as string,
+              metadata: {
+                provider: 'stripe',
+                cadence,
+                planCode,
+              },
+            },
+          });
+        }
+      } catch (e: any) {
+        this.logger.warn('Failed to mirror Stripe subscription into subscriptions table', 'BillingService', {
+          error: e?.message,
+          userId,
+          planCode,
+          stripeSubscriptionId: subscription.id,
+        });
+      }
     } else {
       // Handle one-time payment (license)
       const paymentIntent = await this.stripe.paymentIntents.retrieve(session.payment_intent as string);
@@ -274,6 +356,16 @@ export class BillingService {
           },
         });
       }
+
+      // Mirror to new subscriptions table (best effort)
+      await this.prisma.subscription.updateMany({
+        where: { stripeSubscriptionId: (invoice as any).subscription as string },
+        data: {
+          status: 'ACTIVE' as any,
+          currentPeriodStart: new Date(invoice.period_start * 1000),
+          currentPeriodEnd: new Date(invoice.period_end * 1000),
+        },
+      });
     }
   }
 
@@ -291,6 +383,14 @@ export class BillingService {
           },
         });
       }
+
+      // Mirror to new subscriptions table (best effort)
+      await this.prisma.subscription.updateMany({
+        where: { stripeSubscriptionId: (invoice as any).subscription as string },
+        data: {
+          status: 'PAST_DUE' as any,
+        },
+      });
     }
   }
 
@@ -311,6 +411,32 @@ export class BillingService {
         },
       });
     }
+
+    // Mirror to new subscriptions table (best effort)
+    const stripeStatus = (subscription.status || '').toLowerCase();
+    const mappedStatus: SubscriptionStatus =
+      stripeStatus === 'active'
+        ? 'ACTIVE'
+        : stripeStatus === 'trialing'
+          ? 'TRIAL'
+          : stripeStatus === 'past_due' || stripeStatus === 'unpaid'
+            ? 'PAST_DUE'
+            : stripeStatus === 'canceled' || stripeStatus === 'cancelled'
+              ? 'CANCELLED'
+              : 'PENDING';
+
+    await this.prisma.subscription.updateMany({
+      where: { stripeSubscriptionId: subscription.id },
+      data: {
+        status: mappedStatus as any,
+        currentPeriodStart: new Date((subscription as any).current_period_start * 1000),
+        currentPeriodEnd: new Date((subscription as any).current_period_end * 1000),
+        cancelAtPeriodEnd: subscription.cancel_at_period_end,
+        canceledAt: subscription.canceled_at ? new Date(subscription.canceled_at * 1000) : null,
+        isManual: false,
+        stripeCustomerId: subscription.customer as string,
+      },
+    });
   }
 
   async handleSubscriptionDeleted(subscription: Stripe.Subscription) {
@@ -327,6 +453,17 @@ export class BillingService {
         },
       });
     }
+
+    // Mirror to new subscriptions table (best effort)
+    await this.prisma.subscription.updateMany({
+      where: { stripeSubscriptionId: subscription.id },
+      data: {
+        status: 'CANCELLED' as any,
+        canceledAt: new Date(),
+        isManual: false,
+        stripeCustomerId: subscription.customer as string,
+      },
+    });
   }
 
   async handleChargeRefunded(charge: Stripe.Charge) {
