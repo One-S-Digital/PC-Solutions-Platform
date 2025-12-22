@@ -9,6 +9,7 @@ import { useAuth } from '@clerk/clerk-react';
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
 import { apiService } from '../../services/api';
 import DocumentPreviewModal from '../DocumentPreviewModal';
+import { isOwnMessage, extractSenderId } from '../../utils/messageOwnership';
 
 interface MessageBubbleProps {
   message: Message;
@@ -20,7 +21,21 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
   const { t } = useTranslation(['messages', 'common']);
   const { getToken } = useAuth();
   const { authenticatedDownload } = useAuthenticatedApi();
-  const isCurrentUserSender = message.senderId === currentUser?.id;
+  
+  // Single source of truth for ownership - use shared utility
+  const messageSenderId = extractSenderId(message);
+  const isOwn = isOwnMessage(messageSenderId, currentUser?.id);
+  
+  // Dev-only diagnostics
+  if (import.meta.env.DEV) {
+    console.log('🔍 MessageBubble ownership check:', {
+      messageId: message.id,
+      messageSenderId,
+      currentUserId: currentUser?.id,
+      isOwn,
+      messagePreview: message.content?.substring(0, 30),
+    });
+  }
   const isImage = message.messageType === 'IMAGE' && message.fileUrl;
   const isFile = message.messageType === 'FILE' && message.fileUrl;
   const isDeleted = message.content === '[Message deleted]';
@@ -188,9 +203,9 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
 
   if (isDeleted) {
     return (
-      <div className={`flex mb-3 ${isCurrentUserSender ? 'justify-end' : 'justify-start'}`}>
+      <div className={`flex mb-3 ${isOwn ? 'justify-end' : 'justify-start'}`}>
         <div className={`max-w-xs lg:max-w-md px-4 py-2.5 rounded-xl shadow-soft ${
-          isCurrentUserSender 
+          isOwn 
             ? 'bg-gray-300 text-gray-500 rounded-br-none' 
             : 'bg-gray-200 text-gray-500 rounded-bl-none'
         }`}>
@@ -202,19 +217,19 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
 
   return (
     <div 
-      className={`flex mb-3 ${isCurrentUserSender ? 'justify-end' : 'justify-start'} group`}
-      onMouseEnter={() => isCurrentUserSender && !isEditing && setShowActions(true)}
+      className={`flex mb-3 ${isOwn ? 'justify-end' : 'justify-start'} group`}
+      onMouseEnter={() => isOwn && !isEditing && setShowActions(true)}
       onMouseLeave={() => setShowActions(false)}
-      onFocus={() => isCurrentUserSender && !isEditing && setShowActions(true)}
+      onFocus={() => isOwn && !isEditing && setShowActions(true)}
       onBlur={(e) => !e.currentTarget.contains(e.relatedTarget as Node) && setShowActions(false)}
-      tabIndex={isCurrentUserSender ? 0 : -1}
+      tabIndex={isOwn ? 0 : -1}
     >
       <div className={`max-w-xs lg:max-w-md px-4 py-2.5 rounded-xl shadow-soft relative ${
-        isCurrentUserSender 
+        isOwn 
           ? 'bg-swiss-mint text-white rounded-br-none' 
           : 'bg-gray-100 text-swiss-charcoal rounded-bl-none'
       }`}>
-        {isCurrentUserSender && showActions && !isEditing && (
+        {isOwn && showActions && !isEditing && (
           <div className="absolute -top-8 right-0 flex space-x-1 bg-white rounded-lg shadow-lg p-1">
             <button
               onClick={() => setIsEditing(true)}
@@ -232,7 +247,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
             </button>
           </div>
         )}
-        {!isCurrentUserSender && (
+        {!isOwn && (
           <p className="text-xs font-semibold mb-0.5 text-swiss-teal">{message.senderName}</p>
         )}
         

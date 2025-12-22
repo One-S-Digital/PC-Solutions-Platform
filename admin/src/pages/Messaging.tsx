@@ -58,13 +58,15 @@ const transformConversation = (conv: any, currentUserId?: string): Conversation 
   }
 }
 
+// Import shared ownership utility
+import { extractSenderId } from '../utils/messageOwnership';
+
 // Transform backend message data to match frontend format
-const transformMessage = (msg: any, currentUserId?: string): Message & { isFromAdmin: boolean; timestamp: string } => {
-  // Check if message is from current user by comparing both senderId and sender.id
-  const senderId = msg.sender?.id || msg.senderId;
-  const isFromCurrentUser = senderId === currentUserId || msg.senderId === currentUserId;
-  // isFromAdmin is used for styling - messages from current user appear on the right
-  const isFromAdmin = isFromCurrentUser;
+// NOTE: isFromAdmin is kept for backward compatibility but should NOT be used for ownership checks
+// Use isOwnMessage() utility function instead
+const transformMessage = (msg: any, currentUserId?: string): Message & { isFromAdmin: boolean; timestamp: string; senderId: string } => {
+  // Normalize senderId - use shared utility for consistency
+  const senderId = extractSenderId(msg);
   
   return {
     id: msg.id,
@@ -82,9 +84,9 @@ const transformMessage = (msg: any, currentUserId?: string): Message & { isFromA
     fileName: msg.fileName,
     fileSize: msg.fileSize,
     mimeType: msg.mimeType,
-    isFromAdmin,
+    isFromAdmin: false, // DEPRECATED: Do not use for ownership checks
     timestamp: msg.createdAt,
-    senderId: senderId, // Store senderId for easy comparison
+    senderId: senderId, // Store senderId for easy comparison - this is the source of truth
   }
 }
 
@@ -875,19 +877,31 @@ const Messaging: React.FC = () => {
                 const isFile = message.messageType === 'FILE' && message.fileUrl;
                 const isDeleted = message.content === '[Message deleted]';
                 
-                // Double-check ownership: message must be from current user
-                const messageSenderId = (message as any).senderId || message.sender?.id;
-                const isOwnMessage = messageSenderId === currentUserId || message.isFromAdmin;
+                // STRICT ownership check: use shared utility (single source of truth)
+                const messageSenderId = extractSenderId(message);
+                const isOwn = isOwnMessage(messageSenderId, currentUserId);
+                
+                // Dev-only diagnostics (log first 2 messages only to avoid spam)
+                if (import.meta.env.DEV && messages.indexOf(message) < 2) {
+                  console.log('🔍 Admin Messaging ownership check:', {
+                    messageId: message.id,
+                    messageSenderId,
+                    currentUserId,
+                    isOwn,
+                    messagePreview: message.content?.substring(0, 30),
+                    senderName: message.sender?.name
+                  });
+                }
 
                 if (isDeleted) {
                   return (
                     <div
                       key={message.id}
-                      className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
+                      className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
                     >
                       <div
                         className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                          isOwnMessage
+                          isOwn
                             ? 'bg-gray-300 text-gray-500'
                             : 'bg-gray-200 text-gray-500'
                         }`}
@@ -903,19 +917,22 @@ const Messaging: React.FC = () => {
                 return (
                   <div
                     key={message.id}
-                    className={`flex mb-3 ${message.isFromAdmin ? 'justify-end' : 'justify-start'} group relative`}
-                    onMouseEnter={() => message.isFromAdmin && !isEditing && setShowActions(prev => ({ ...prev, [message.id]: true }))}
+                    className={`flex mb-3 ${isOwn ? 'justify-end' : 'justify-start'} group relative`}
+                    onMouseEnter={() => isOwn && !isEditing && setShowActions(prev => ({ ...prev, [message.id]: true }))}
                     onMouseLeave={() => setShowActions(prev => ({ ...prev, [message.id]: false }))}
+                    onFocus={() => isOwn && !isEditing && setShowActions(prev => ({ ...prev, [message.id]: true }))}
+                    onBlur={(e) => !e.currentTarget.contains(e.relatedTarget as Node) && setShowActions(prev => ({ ...prev, [message.id]: false }))}
+                    tabIndex={isOwn ? 0 : -1}
                   >
                     <div
                       className={`max-w-xs lg:max-w-md px-4 py-2.5 rounded-xl shadow-sm relative ${
-                        message.isFromAdmin
+                        isOwn
                           ? 'bg-swiss-teal text-white rounded-br-none'
                           : 'bg-gray-100 text-gray-900 rounded-bl-none'
                       }`}
                     >
-                      {/* Edit/Delete Actions - Only show for admin's own messages */}
-                      {message.isFromAdmin && showActions[message.id] && !isEditing && (
+                      {/* Edit/Delete Actions - Only show for OWN messages (strict check) */}
+                      {isOwn && showActions[message.id] && !isEditing && (
                         <div className="absolute -top-8 right-0 flex space-x-1 bg-white rounded-lg shadow-lg p-1 z-10">
                           <button
                             onClick={() => handleStartEdit(message)}
@@ -980,16 +997,16 @@ const Messaging: React.FC = () => {
                             <button
                               onClick={() => fetchImage(message)}
                               className={`w-full flex items-center justify-center p-4 bg-gray-200 rounded-lg mb-2 hover:bg-gray-300 transition-colors ${
-                                message.isFromAdmin ? 'bg-swiss-teal/20' : ''
+                                isOwn ? 'bg-swiss-teal/20' : ''
                               }`}
                             >
                               <ImageIcon className="w-8 h-8 text-gray-400 mr-2" />
                               <div className="flex-1 text-left">
-                                <p className={`text-sm font-medium ${isOwnMessage ? 'text-white' : 'text-gray-900'}`}>
+                                <p className={`text-sm font-medium ${isOwn ? 'text-white' : 'text-gray-900'}`}>
                                   {message.fileName || 'Image'}
                                 </p>
                                 {message.fileSize && (
-                                  <p className={`text-xs ${isOwnMessage ? 'text-white/70' : 'text-gray-500'}`}>
+                                  <p className={`text-xs ${isOwn ? 'text-white/70' : 'text-gray-500'}`}>
                                     {formatFileSize(message.fileSize)} - Click to load
                                   </p>
                                 )}
@@ -998,7 +1015,7 @@ const Messaging: React.FC = () => {
                           )}
                           {imageLoading[message.id] && (
                             <div className="flex items-center justify-center p-4 bg-gray-200 rounded-lg mb-2">
-                              <p className={`text-sm ${isOwnMessage ? 'text-white' : 'text-gray-600'}`}>
+                              <p className={`text-sm ${isOwn ? 'text-white' : 'text-gray-600'}`}>
                                 {t('admin:messaging.loading', 'Loading...')}
                               </p>
                             </div>
@@ -1078,7 +1095,7 @@ const Messaging: React.FC = () => {
                               <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium truncate">{message.fileName || 'File'}</p>
                                 {message.fileSize && (
-                                  <p className={`text-xs ${isOwnMessage ? 'text-white/70' : 'text-gray-500'}`}>
+                                  <p className={`text-xs ${isOwn ? 'text-white/70' : 'text-gray-500'}`}>
                                     {formatFileSize(message.fileSize)}
                                   </p>
                                 )}
@@ -1113,7 +1130,7 @@ const Messaging: React.FC = () => {
                       )}
                       
                       <div className={`text-xs mt-1 ${
-                        isOwnMessage ? 'text-white/80' : 'text-gray-500'
+                        isOwn ? 'text-white/80' : 'text-gray-500'
                       }`}>
                         {formatTime(message.timestamp)}
                       </div>

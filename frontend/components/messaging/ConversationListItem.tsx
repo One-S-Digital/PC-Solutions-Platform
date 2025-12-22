@@ -60,7 +60,8 @@ const ConversationListItem: React.FC<ConversationListItemProps> = ({ conversatio
           </div>
           <div className="flex justify-between items-center">
             <p className="text-xs text-gray-500 truncate pr-2">
-              {conversation.lastMessageSenderId === currentUser.id ? t('messages:youPrefix') : ''}
+              {/* Strict string comparison for "You:" prefix */}
+              {conversation.lastMessageSenderId && currentUser.id && String(conversation.lastMessageSenderId) === String(currentUser.id) ? t('messages:youPrefix') : ''}
               {conversation.lastMessageSnippet || t('messages:noMessagesYet')}
             </p>
             {unreadCount > 0 && (

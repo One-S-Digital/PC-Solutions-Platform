@@ -334,6 +334,10 @@ class MessagingService {
 
   // Transform message data to include legacy fields for UI compatibility
   transformMessage(msg: any): Message {
+    // Normalize senderId - ensure it's always present and consistent
+    // Try multiple possible locations (handles various API response shapes)
+    const senderId = msg.senderId || msg.sender?.id || (msg as any).senderId || '';
+    
     // Use file metadata from database fields first (new format)
     let fileUrl: string | undefined = msg.fileUrl;
     let fileName: string | undefined = msg.fileName;
@@ -378,7 +382,7 @@ class MessagingService {
     return {
       id: msg.id,
       conversationId: msg.conversationId,
-      senderId: msg.senderId,
+      senderId: senderId, // Use normalized senderId
       senderName: msg.sender ? `${msg.sender.firstName || ''} ${msg.sender.lastName || ''}`.trim() || msg.sender.email || 'Unknown' : 'Unknown',
       senderRole: msg.sender?.role || 'USER',
       content: content,
