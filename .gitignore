@@ -53,6 +53,9 @@ hardcoded-text-replacements*
 packages/translations/dist/
 packages/translations/tsconfig.tsbuildinfo
 
+# Admin build info (generated)
+admin/tsconfig.tsbuildinfo
+
 # Core dump files
 core
 core.*
