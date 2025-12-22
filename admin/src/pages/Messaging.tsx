@@ -60,15 +60,17 @@ const transformConversation = (conv: any, currentUserId?: string): Conversation 
 
 // Transform backend message data to match frontend format
 const transformMessage = (msg: any, currentUserId?: string): Message & { isFromAdmin: boolean; timestamp: string } => {
-  const isFromCurrentUser = msg.senderId === currentUserId
+  // Check if message is from current user by comparing both senderId and sender.id
+  const senderId = msg.sender?.id || msg.senderId;
+  const isFromCurrentUser = senderId === currentUserId || msg.senderId === currentUserId;
   // isFromAdmin is used for styling - messages from current user appear on the right
-  const isFromAdmin = isFromCurrentUser
+  const isFromAdmin = isFromCurrentUser;
   
   return {
     id: msg.id,
     conversationId: msg.conversationId,
     sender: {
-      id: msg.sender?.id || msg.senderId,
+      id: senderId,
       name: msg.sender ? `${msg.sender.firstName || ''} ${msg.sender.lastName || ''}`.trim() || msg.sender.email || 'Unknown' : 'Unknown',
       role: msg.sender?.role || 'USER',
     },
@@ -82,6 +84,7 @@ const transformMessage = (msg: any, currentUserId?: string): Message & { isFromA
     mimeType: msg.mimeType,
     isFromAdmin,
     timestamp: msg.createdAt,
+    senderId: senderId, // Store senderId for easy comparison
   }
 }
 
@@ -871,16 +874,20 @@ const Messaging: React.FC = () => {
                 const isImage = message.messageType === 'IMAGE' && message.fileUrl;
                 const isFile = message.messageType === 'FILE' && message.fileUrl;
                 const isDeleted = message.content === '[Message deleted]';
+                
+                // Double-check ownership: message must be from current user
+                const messageSenderId = (message as any).senderId || message.sender?.id;
+                const isOwnMessage = messageSenderId === currentUserId || message.isFromAdmin;
 
                 if (isDeleted) {
                   return (
                     <div
                       key={message.id}
-                      className={`flex ${message.isFromAdmin ? 'justify-end' : 'justify-start'}`}
+                      className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
                     >
                       <div
                         className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                          message.isFromAdmin
+                          isOwnMessage
                             ? 'bg-gray-300 text-gray-500'
                             : 'bg-gray-200 text-gray-500'
                         }`}
@@ -978,11 +985,11 @@ const Messaging: React.FC = () => {
                             >
                               <ImageIcon className="w-8 h-8 text-gray-400 mr-2" />
                               <div className="flex-1 text-left">
-                                <p className={`text-sm font-medium ${message.isFromAdmin ? 'text-white' : 'text-gray-900'}`}>
+                                <p className={`text-sm font-medium ${isOwnMessage ? 'text-white' : 'text-gray-900'}`}>
                                   {message.fileName || 'Image'}
                                 </p>
                                 {message.fileSize && (
-                                  <p className={`text-xs ${message.isFromAdmin ? 'text-white/70' : 'text-gray-500'}`}>
+                                  <p className={`text-xs ${isOwnMessage ? 'text-white/70' : 'text-gray-500'}`}>
                                     {formatFileSize(message.fileSize)} - Click to load
                                   </p>
                                 )}
@@ -991,7 +998,7 @@ const Messaging: React.FC = () => {
                           )}
                           {imageLoading[message.id] && (
                             <div className="flex items-center justify-center p-4 bg-gray-200 rounded-lg mb-2">
-                              <p className={`text-sm ${message.isFromAdmin ? 'text-white' : 'text-gray-600'}`}>
+                              <p className={`text-sm ${isOwnMessage ? 'text-white' : 'text-gray-600'}`}>
                                 {t('admin:messaging.loading', 'Loading...')}
                               </p>
                             </div>
@@ -1023,14 +1030,14 @@ const Messaging: React.FC = () => {
                                 }}
                               />
                               <div className="flex items-center justify-between">
-                                <p className={`text-xs ${message.isFromAdmin ? 'text-white/70' : 'text-gray-500'}`}>
+                                <p className={`text-xs ${isOwnMessage ? 'text-white/70' : 'text-gray-500'}`}>
                                   {message.fileName || 'Image'}
                                   {message.fileSize && ` • ${formatFileSize(message.fileSize)}`}
                                 </p>
                                 <button
                                   onClick={() => handleFileDownload(message)}
                                   className={`p-1.5 rounded hover:opacity-80 transition-opacity ${
-                                    message.isFromAdmin
+                                    isOwnMessage
                                       ? 'hover:bg-swiss-teal/30 text-white'
                                       : 'hover:bg-gray-300 text-gray-700'
                                   }`}
@@ -1051,7 +1058,7 @@ const Messaging: React.FC = () => {
                       {isFile && message.fileUrl && (
                         <div className="mb-2">
                           <div className={`flex items-center space-x-2 p-2 rounded-lg ${
-                            message.isFromAdmin
+                            isOwnMessage
                               ? 'bg-swiss-teal/20 text-white'
                               : 'bg-gray-200 text-gray-900'
                           }`}>
@@ -1071,7 +1078,7 @@ const Messaging: React.FC = () => {
                               <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium truncate">{message.fileName || 'File'}</p>
                                 {message.fileSize && (
-                                  <p className={`text-xs ${message.isFromAdmin ? 'text-white/70' : 'text-gray-500'}`}>
+                                  <p className={`text-xs ${isOwnMessage ? 'text-white/70' : 'text-gray-500'}`}>
                                     {formatFileSize(message.fileSize)}
                                   </p>
                                 )}
@@ -1084,7 +1091,7 @@ const Messaging: React.FC = () => {
                                   handleFileDownload(message);
                                 }}
                                 className={`p-1.5 rounded hover:opacity-80 transition-opacity ${
-                                  message.isFromAdmin
+                                  isOwnMessage
                                     ? 'hover:bg-swiss-teal/30 text-white'
                                     : 'hover:bg-gray-300 text-gray-700'
                                 }`}
@@ -1106,7 +1113,7 @@ const Messaging: React.FC = () => {
                       )}
                       
                       <div className={`text-xs mt-1 ${
-                        message.isFromAdmin ? 'text-white/80' : 'text-gray-500'
+                        isOwnMessage ? 'text-white/80' : 'text-gray-500'
                       }`}>
                         {formatTime(message.timestamp)}
                       </div>
