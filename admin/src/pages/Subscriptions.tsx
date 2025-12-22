@@ -1791,8 +1791,38 @@ interface SubscriptionRequest {
   };
 }
 
+interface SubscriptionCancellationRequest {
+  id: string;
+  subscriptionId: string;
+  userId?: string;
+  organizationId?: string;
+  reason?: string;
+  status: 'PENDING' | 'APPROVED' | 'DECLINED' | 'CANCELLED';
+  requestedAt: string;
+  processedAt?: string;
+  processedBy?: string;
+  notes?: string;
+  user?: {
+    id: string;
+    email: string;
+    firstName?: string;
+    lastName?: string;
+    role: string;
+  };
+  organization?: {
+    id: string;
+    name: string;
+  };
+  subscription?: {
+    id: string;
+    status: SubscriptionStatus;
+    currentPeriodEnd?: string;
+    plan?: { id: string; name: string };
+  };
+}
+
 // View mode for main content
-type ViewMode = 'subscriptions' | 'requests' | 'settings';
+type ViewMode = 'subscriptions' | 'requests' | 'cancellations' | 'settings';
 
 const Subscriptions: React.FC = () => {
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
@@ -1807,6 +1837,7 @@ const Subscriptions: React.FC = () => {
   // Subscription Requests state
   const [viewMode, setViewMode] = useState<ViewMode>('subscriptions');
   const [requestStatusFilter, setRequestStatusFilter] = useState<string>('');
+  const [cancellationStatusFilter, setCancellationStatusFilter] = useState<string>('');
   const [selectedRequest, setSelectedRequest] = useState<SubscriptionRequest | null>(null);
   const [isRequestDetailOpen, setIsRequestDetailOpen] = useState(false);
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
@@ -1868,6 +1899,17 @@ const Subscriptions: React.FC = () => {
     enabled: !!apiClient && viewMode === 'requests',
   });
 
+  // Fetch subscription cancellation requests
+  const { data: cancellationRequestsResponse, isLoading: cancellationRequestsLoading } = useQuery({
+    queryKey: ['subscription-cancellation-requests', cancellationStatusFilter],
+    queryFn: () =>
+      subscriptionService.getCancellationRequests(apiClient, {
+        status: cancellationStatusFilter || undefined,
+        limit: 100,
+      }),
+    enabled: !!apiClient && viewMode === 'cancellations',
+  });
+
   // Fetch request analytics
   const { data: requestAnalyticsResponse } = useQuery({
     queryKey: ['subscription-request-analytics'],
@@ -1888,6 +1930,8 @@ const Subscriptions: React.FC = () => {
   const subscriptions: Subscription[] = subscriptionsResponse?.data?.data?.subscriptions || [];
   const pricingTiers: PricingTier[] = pricingTiersResponse?.data?.data || [];
   const requests: SubscriptionRequest[] = requestsResponse?.data?.data?.requests || [];
+  const cancellationRequests: SubscriptionCancellationRequest[] =
+    cancellationRequestsResponse?.data?.data?.requests || [];
   const requestAnalytics = requestAnalyticsResponse?.data?.data || null;
   const subscriptionSettings = settingsResponse?.data?.data || null;
 
@@ -2197,6 +2241,33 @@ const Subscriptions: React.FC = () => {
     },
   });
 
+  // Cancellation Request mutations
+  const approveCancellationRequestMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data?: { immediate?: boolean; reason?: string; notes?: string } }) =>
+      subscriptionService.approveCancellationRequest(apiClient, id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['subscription-cancellation-requests'] });
+      queryClient.invalidateQueries({ queryKey: ['subscriptions'] });
+      queryClient.invalidateQueries({ queryKey: ['subscription-analytics'] });
+      toast.success(t('admin:subscriptions.cancellations.actions.approve', 'Approved'));
+    },
+    onError: (error: Error) => {
+      toast.error(t('admin:subscriptions.cancellations.actions.approve', 'Approve') + ': ' + error.message);
+    },
+  });
+
+  const declineCancellationRequestMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data?: { notes?: string } }) =>
+      subscriptionService.declineCancellationRequest(apiClient, id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['subscription-cancellation-requests'] });
+      toast.success(t('admin:subscriptions.cancellations.actions.decline', 'Declined'));
+    },
+    onError: (error: Error) => {
+      toast.error(t('admin:subscriptions.cancellations.actions.decline', 'Decline') + ': ' + error.message);
+    },
+  });
+
   const updateSettingsMutation = useMutation({
     mutationFn: async (data: {
       notificationEmail?: string;
@@ -2261,6 +2332,20 @@ const Subscriptions: React.FC = () => {
     );
   };
 
+  const getCancellationStatusBadge = (status: SubscriptionCancellationRequest['status']) => {
+    const colors: Record<SubscriptionCancellationRequest['status'], string> = {
+      PENDING: 'bg-yellow-100 text-yellow-800',
+      APPROVED: 'bg-green-100 text-green-800',
+      DECLINED: 'bg-red-100 text-red-800',
+      CANCELLED: 'bg-gray-100 text-gray-800',
+    };
+    return (
+      <span className={`px-2 py-1 text-xs font-medium rounded-full ${colors[status] || 'bg-gray-100 text-gray-800'}`}>
+        {t(`admin:subscriptions.cancellations.status.${status.toLowerCase()}`, status)}
+      </span>
+    );
+  };
+
   const handleViewRequest = (request: SubscriptionRequest) => {
     setSelectedRequest(request);
     setIsRequestDetailOpen(true);
@@ -2269,6 +2354,8 @@ const Subscriptions: React.FC = () => {
   const pendingRequestsCount = requests.filter(
     (r) => r.status === SubscriptionRequestStatus.PENDING || r.status === SubscriptionRequestStatus.UNDER_REVIEW
   ).length;
+
+  const pendingCancellationRequestsCount = cancellationRequests.filter((r) => r.status === 'PENDING').length;
 
   // Stats cards
   const statsCards = [
@@ -2357,6 +2444,27 @@ const Subscriptions: React.FC = () => {
             {pendingRequestsCount > 0 && (
               <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-red-100 text-red-800">
                 {pendingRequestsCount}
+              </span>
+            )}
+          </div>
+        </button>
+        <button
+          onClick={() => {
+            setViewMode('cancellations');
+            setSelectedRole(null);
+          }}
+          className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+            viewMode === 'cancellations'
+              ? 'border-swiss-teal text-swiss-teal'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <XCircle className="w-4 h-4" />
+            {t('admin:subscriptions.tabs.cancellations', 'Cancellation Requests')}
+            {pendingCancellationRequestsCount > 0 && (
+              <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-red-100 text-red-800">
+                {pendingCancellationRequestsCount}
               </span>
             )}
           </div>
@@ -2543,6 +2651,132 @@ const Subscriptions: React.FC = () => {
                             >
                               <Eye className="w-4 h-4" />
                               {t('common:view', 'View')}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </>
+      )}
+
+      {viewMode === 'cancellations' && (
+        <>
+          {/* Cancellation Request Filters */}
+          <div className="bg-white p-4 rounded-lg border">
+            <div className="flex flex-wrap gap-4 items-center">
+              <div className="flex-1 min-w-[200px]">
+                <select
+                  value={cancellationStatusFilter}
+                  onChange={(e) => setCancellationStatusFilter(e.target.value)}
+                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">{t('admin:subscriptions.cancellations.filter.allStatuses', 'All Statuses')}</option>
+                  {(['PENDING', 'APPROVED', 'DECLINED', 'CANCELLED'] as const).map((status) => (
+                    <option key={status} value={status}>
+                      {t(`admin:subscriptions.cancellations.status.${status.toLowerCase()}`, status)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <button
+                onClick={() => queryClient.invalidateQueries({ queryKey: ['subscription-cancellation-requests'] })}
+                className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50"
+              >
+                <RefreshCcw className="w-4 h-4" />
+                {t('common:refresh', 'Refresh')}
+              </button>
+            </div>
+          </div>
+
+          {/* Cancellation Requests Table */}
+          <div className="bg-white rounded-lg border overflow-hidden">
+            {cancellationRequestsLoading ? (
+              <div className="flex justify-center py-12">
+                <LoadingSpinner />
+              </div>
+            ) : cancellationRequests.length === 0 ? (
+              <div className="text-center py-12 text-gray-500">
+                <XCircle className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                <p>{t('admin:subscriptions.cancellations.noRequests', 'No cancellation requests found')}</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                        {t('admin:subscriptions.cancellations.table.subscriber', 'Subscriber')}
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                        {t('admin:subscriptions.cancellations.table.plan', 'Plan')}
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                        {t('admin:subscriptions.cancellations.table.status', 'Status')}
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                        {t('admin:subscriptions.cancellations.table.requestedAt', 'Requested')}
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                        {t('admin:subscriptions.cancellations.table.reason', 'Reason')}
+                      </th>
+                      <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                        {t('admin:subscriptions.cancellations.table.actions', 'Actions')}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    {cancellationRequests.map((req) => (
+                      <tr key={req.id} className="hover:bg-gray-50">
+                        <td className="px-4 py-4">
+                          <div>
+                            <p className="font-medium text-gray-900">
+                              {req.organization?.name ||
+                                (req.user?.firstName || req.user?.lastName
+                                  ? `${req.user?.firstName || ''} ${req.user?.lastName || ''}`.trim()
+                                  : req.user?.email || t('common:unknown', 'Unknown'))}
+                            </p>
+                            {req.user?.email && <p className="text-sm text-gray-500">{req.user.email}</p>}
+                            {req.subscriptionId && <p className="text-xs text-gray-400">Sub: {req.subscriptionId}</p>}
+                          </div>
+                        </td>
+                        <td className="px-4 py-4 text-sm text-gray-600">
+                          {req.subscription?.plan?.name || '-'}
+                        </td>
+                        <td className="px-4 py-4">
+                          {getCancellationStatusBadge(req.status)}
+                        </td>
+                        <td className="px-4 py-4 text-sm text-gray-600">
+                          {new Date(req.requestedAt).toLocaleDateString()}
+                        </td>
+                        <td className="px-4 py-4 text-sm text-gray-600 max-w-[360px]">
+                          <div className="truncate" title={req.reason || ''}>
+                            {req.reason || '-'}
+                          </div>
+                        </td>
+                        <td className="px-4 py-4">
+                          <div className="flex justify-end gap-2">
+                            <button
+                              onClick={() =>
+                                approveCancellationRequestMutation.mutate({ id: req.id, data: { immediate: false } })
+                              }
+                              disabled={req.status !== 'PENDING' || approveCancellationRequestMutation.isPending}
+                              className="flex items-center gap-1 px-3 py-1.5 text-sm bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors disabled:opacity-50"
+                            >
+                              <CheckCircle className="w-4 h-4" />
+                              {t('admin:subscriptions.cancellations.actions.approve', 'Approve')}
+                            </button>
+                            <button
+                              onClick={() => declineCancellationRequestMutation.mutate({ id: req.id, data: {} })}
+                              disabled={req.status !== 'PENDING' || declineCancellationRequestMutation.isPending}
+                              className="flex items-center gap-1 px-3 py-1.5 text-sm bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50"
+                            >
+                              <XCircle className="w-4 h-4" />
+                              {t('admin:subscriptions.cancellations.actions.decline', 'Decline')}
                             </button>
                           </div>
                         </td>

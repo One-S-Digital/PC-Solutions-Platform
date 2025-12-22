@@ -359,6 +359,29 @@ export const subscriptionService = {
     estimatedResponseHours?: number;
   }) =>
     apiClient.put<ApiResponse<any>>('/admin/subscription-management/settings', data),
+
+  // =====================================
+  // SUBSCRIPTION CANCELLATION REQUESTS
+  // =====================================
+
+  /** Get all subscription cancellation requests */
+  getCancellationRequests: (apiClient: AxiosInstance, params?: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    search?: string;
+    dateFrom?: string;
+    dateTo?: string;
+  }) =>
+    apiClient.get<ApiResponse<any>>('/admin/subscription-management/cancellation-requests', { params }),
+
+  /** Approve a cancellation request (optionally immediate) */
+  approveCancellationRequest: (apiClient: AxiosInstance, id: string, data?: { immediate?: boolean; reason?: string; notes?: string }) =>
+    apiClient.post<ApiResponse<any>>(`/admin/subscription-management/cancellation-requests/${id}/approve`, data || {}),
+
+  /** Decline a cancellation request */
+  declineCancellationRequest: (apiClient: AxiosInstance, id: string, data?: { notes?: string }) =>
+    apiClient.post<ApiResponse<any>>(`/admin/subscription-management/cancellation-requests/${id}/decline`, data || {}),
 };
 
 export default subscriptionService;

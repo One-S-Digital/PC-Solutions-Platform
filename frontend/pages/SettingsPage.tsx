@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../contexts/AppContext';
 import { useNotifications } from '../contexts/NotificationContext';
 import { UserRole, SettingsFormData } from '../types';
@@ -39,6 +39,7 @@ const SettingsPage: React.FC = () => {
   const { addNotification } = useNotifications();
   const { request } = useAuthenticatedApi();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [formData, setFormData] = useState<SettingsFormData | null>(null);
   const [initialFormData, setInitialFormData] = useState<SettingsFormData | null>(null);
@@ -216,6 +217,26 @@ const SettingsPage: React.FC = () => {
       setActiveSectionId(availableSections[0].id);
     }
   }, [availableSections, activeSectionId]);
+
+  // Deep-link support: /settings#billingSubscription (optionally ?focus=manage-subscription)
+  useEffect(() => {
+    if (!currentUser) return;
+    const hashSectionId = (location.hash || '').replace('#', '').trim();
+    if (!hashSectionId) return;
+
+    const hasSection = availableSections.some(s => s.id === hashSectionId);
+    if (!hasSection) return;
+
+    // Activate tab / section
+    setActiveSectionId(hashSectionId);
+
+    // Scroll for non-tab layout (most roles)
+    if (currentUser.role !== UserRole.FOUNDATION) {
+      requestAnimationFrame(() => {
+        sectionRefs.current[hashSectionId]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+  }, [location.hash, currentUser, availableSections]);
 
   const handleFormChange = (field: keyof SettingsFormData, value: any) => {
     setFormData(prev => (prev ? { ...prev, [field]: value } : null));

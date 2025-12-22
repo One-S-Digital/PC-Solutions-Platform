@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { SubscriptionManagementService, SubscriptionPlan, Subscription } from './subscription-management.service';
 import { SubscriptionRequestService } from './subscription-request.service';
+import { SubscriptionCancellationRequestService } from './subscription-cancellation-request.service';
 import { PricingService } from './pricing.service';
 import { FeatureFlagService } from './feature-flag.service';
 import { BillingService } from './billing.service';
@@ -47,6 +48,10 @@ import {
   DeclineSubscriptionRequestDto,
   AddRequestNoteDto,
   UpdateSubscriptionSettingsDto,
+  CreateSubscriptionCancellationRequestDto,
+  CancellationRequestFiltersDto,
+  SubscriptionCancellationRequestStatus,
+  ProcessCancellationRequestDto,
 } from './dto';
 import { wrapResponse } from '../common/utils/response.util';
 
@@ -57,6 +62,7 @@ export class SubscriptionManagementController {
   constructor(
     private readonly subscriptionService: SubscriptionManagementService,
     private readonly subscriptionRequestService: SubscriptionRequestService,
+    private readonly cancellationRequestService: SubscriptionCancellationRequestService,
     private readonly pricingService: PricingService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly billingService: BillingService,
@@ -732,6 +738,56 @@ export class SubscriptionManagementController {
   }
 
   // =====================================
+  // SUBSCRIPTION CANCELLATION REQUESTS
+  // =====================================
+
+  @Get('cancellation-requests')
+  async getAllCancellationRequests(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('status') status?: string,
+    @Query('search') search?: string,
+    @Query('dateFrom') dateFrom?: string,
+    @Query('dateTo') dateTo?: string,
+  ) {
+    const filters: CancellationRequestFiltersDto = {
+      page: page ? parseInt(page, 10) : 1,
+      limit: limit ? parseInt(limit, 10) : 20,
+      status:
+        status && Object.values(SubscriptionCancellationRequestStatus).includes(status as SubscriptionCancellationRequestStatus)
+          ? (status as SubscriptionCancellationRequestStatus)
+          : undefined,
+      search,
+      dateFrom,
+      dateTo,
+    };
+    const result = await this.cancellationRequestService.getAllCancellationRequests(filters);
+    return wrapResponse(result);
+  }
+
+  @Post('cancellation-requests/:id/approve')
+  async approveCancellationRequest(
+    @Param('id') id: string,
+    @Body() body: ProcessCancellationRequestDto,
+    @Request() req: any,
+  ) {
+    const performedBy = req.user?.clerkId || 'system';
+    const updated = await this.cancellationRequestService.approveCancellationRequest(id, body, performedBy);
+    return wrapResponse(updated, 'Cancellation request approved');
+  }
+
+  @Post('cancellation-requests/:id/decline')
+  async declineCancellationRequest(
+    @Param('id') id: string,
+    @Body() body: ProcessCancellationRequestDto,
+    @Request() req: any,
+  ) {
+    const performedBy = req.user?.clerkId || 'system';
+    const updated = await this.cancellationRequestService.declineCancellationRequest(id, body, performedBy);
+    return wrapResponse(updated, 'Cancellation request declined');
+  }
+
+  // =====================================
   // SUBSCRIPTION SETTINGS
   // =====================================
 
@@ -830,6 +886,7 @@ export class UserSubscriptionController {
   constructor(
     private readonly subscriptionService: SubscriptionManagementService,
     private readonly subscriptionRequestService: SubscriptionRequestService,
+    private readonly cancellationRequestService: SubscriptionCancellationRequestService,
   ) {}
 
   /**
@@ -975,6 +1032,66 @@ export class UserSubscriptionController {
       // Future: Add checkoutUrl for Stripe integration
       checkoutUrl: null,
     });
+  }
+
+  /**
+   * Request cancellation of the current subscription (manual cancellation request workflow)
+   * Creates a cancellation request for admins to process in the admin dashboard.
+   */
+  @Post('cancel-request')
+  @Roles(
+    UserRole.FOUNDATION,
+    UserRole.PRODUCT_SUPPLIER,
+    UserRole.SERVICE_PROVIDER,
+  )
+  async requestCancellation(
+    @Body() body: CreateSubscriptionCancellationRequestDto,
+    @Request() req: any,
+  ) {
+    const userContext = req.context;
+    const profileUserId = userContext?.profileUserId || req.user?.id;
+    const organizationId = userContext?.organizationId;
+    const userRole = userContext?.role as UserRole;
+
+    // Ensure this role requires subscription (matches getMySubscription behavior)
+    if (!SUBSCRIPTION_REQUIRED_ROLES.includes(userRole)) {
+      return wrapResponse(
+        { message: 'Cancellation not applicable for this role' },
+        'Cancellation not applicable',
+      );
+    }
+
+    // Find the user's active (or most recent) subscription (user first, then org)
+    let subscription: Subscription | null = null;
+    if (profileUserId) {
+      subscription = await this.subscriptionService.getUserSubscription(profileUserId);
+    }
+    if (!subscription && organizationId) {
+      subscription = await this.subscriptionService.getOrganizationSubscription(organizationId);
+    }
+
+    if (!subscription) {
+      return wrapResponse(
+        { message: 'No subscription found to cancel' },
+        'No subscription found',
+      );
+    }
+
+    const cancellationRequest = await this.cancellationRequestService.createCancellationRequest({
+      subscriptionId: subscription.id,
+      userId: subscription.userId || profileUserId,
+      organizationId: subscription.organizationId || organizationId,
+      data: body,
+    });
+
+    return wrapResponse(
+      {
+        message: 'Cancellation request submitted successfully. Our team will review it shortly.',
+        requestId: cancellationRequest.id,
+        status: cancellationRequest.status,
+      },
+      'Cancellation request submitted',
+    );
   }
 
   /**
