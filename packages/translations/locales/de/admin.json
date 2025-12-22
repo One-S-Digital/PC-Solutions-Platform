@@ -1721,6 +1721,7 @@
       "subscriptionPeriodHelp": "Wählen Sie, wie lange dieses Abonnement aktiv sein soll.",
       "monthlyRecurringHelp": "Wird jeden Monat automatisch verlängert, bis es von einem Administrator gekündigt, pausiert oder geändert wird.",
       "period": {
+        "selectPeriod": "Zeitraum auswählen...",
         "monthlyRecurring": "Monatlich wiederkehrend",
         "oneMonth": "1 Monat",
         "threeMonths": "3 Monate",

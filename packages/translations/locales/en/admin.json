@@ -1713,6 +1713,7 @@
       "subscriptionPeriodHelp": "Select how long this subscription should be active.",
       "monthlyRecurringHelp": "Auto-renews every month until cancelled, paused, or changed by an admin.",
       "period": {
+        "selectPeriod": "Select a period...",
         "monthlyRecurring": "Monthly Recurring",
         "oneMonth": "1 Month",
         "threeMonths": "3 Months",
