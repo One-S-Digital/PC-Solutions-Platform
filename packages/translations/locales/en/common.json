@@ -963,6 +963,7 @@
     "decreaseQuantity": "decrease Quantity",
     "increaseQuantity": "increase Quantity",
     "region": "Region",
+    "status": "Status",
     "sortBy": "sort By",
     "supplierTags": "supplier Tags",
     "verificationCode": "Verification Code"

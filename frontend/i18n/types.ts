@@ -2595,6 +2595,7 @@ export type I18nKey =
   | 'common:labels.decreaseQuantity'
   | 'common:labels.increaseQuantity'
   | 'common:labels.region'
+  | 'common:labels.status'
   | 'common:labels.sortBy'
   | 'common:labels.supplierTags'
   | 'common:labels.verificationCode'

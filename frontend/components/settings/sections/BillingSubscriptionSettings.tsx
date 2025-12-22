@@ -198,7 +198,8 @@ const BillingSubscriptionSettings: React.FC<BillingSubscriptionSettingsProps> = 
               </p>
             </div>
             <div className="text-sm text-gray-600">
-              <span className="font-medium">{t('common:status')}:</span> {subscriptionLoading ? t('common:loading') : statusLabel}
+              <span className="font-medium">{t('common:labels.status', 'Status')}:</span>{' '}
+              {subscriptionLoading ? t('common:loading') : statusLabel}
             </div>
           </div>
 

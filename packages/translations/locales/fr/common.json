@@ -930,6 +930,7 @@
     "decreaseQuantity": "decrease Quantity",
     "increaseQuantity": "increase Quantity",
     "region": "Région",
+    "status": "Statut",
     "sortBy": "sort By",
     "supplierTags": "supplier Tags",
     "verificationCode": "Code de vérification"
