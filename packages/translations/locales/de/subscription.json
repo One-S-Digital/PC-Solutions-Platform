@@ -99,6 +99,7 @@
   },
   "info": {
     "currentPlan": "Aktueller Plan",
+    "currentPeriod": "Aktueller Zeitraum",
     "noPlan": "Kein aktiver Plan",
     "expiresOn": "Läuft ab am {{date}}",
     "trialEndsOn": "Testversion endet am {{date}}",
