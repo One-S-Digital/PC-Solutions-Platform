@@ -20,7 +20,7 @@ export class EntitlementMiddleware implements NestMiddleware {
         status: {
           // Stripe statuses are lowercase strings ('active', 'trialing', ...)
           // but historical data may contain uppercase. Support both.
-          in: ['active', 'trialing', 'ACTIVE', 'TRIALING', 'TRIAL'],
+          in: ['active', 'trialing', 'ACTIVE', 'TRIALING', 'TRIAL', 'trial'],
         },
       },
     });

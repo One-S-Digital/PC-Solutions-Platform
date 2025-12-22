@@ -206,6 +206,44 @@ export class BillingService {
     };
   }
 
+  private mapStripeStatus(stripeStatus: string | null | undefined): SubscriptionStatus {
+    const status = (stripeStatus || '').toLowerCase();
+    switch (status) {
+      case 'active':
+        return 'ACTIVE';
+      case 'trialing':
+        return 'TRIAL';
+      case 'past_due':
+      case 'unpaid':
+        return 'PAST_DUE';
+      case 'canceled':
+      case 'cancelled':
+        return 'CANCELLED';
+      default:
+        return 'PENDING';
+    }
+  }
+
+  private async mirrorSubscriptionUpdate(
+    stripeSubscriptionId: string,
+    data: Record<string, unknown>,
+    logContext: Record<string, unknown>,
+  ): Promise<void> {
+    // Best-effort mirroring: never fail the webhook if this write fails.
+    try {
+      await this.prisma.subscription.updateMany({
+        where: { stripeSubscriptionId },
+        data: data as any,
+      });
+    } catch (e: any) {
+      this.logger.warn('Failed to mirror subscription update', 'BillingService', {
+        error: e?.message,
+        stripeSubscriptionId,
+        ...logContext,
+      });
+    }
+  }
+
   // Webhook handlers
   async handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
     const { userId, planCode, cadence, kind } = session.metadata;
@@ -254,17 +292,7 @@ export class BillingService {
             { planCode, userId, stripeSubscriptionId: subscription.id },
           );
         } else {
-          const stripeStatus = (subscription.status || '').toLowerCase();
-          const mappedStatus: SubscriptionStatus =
-            stripeStatus === 'active'
-              ? 'ACTIVE'
-              : stripeStatus === 'trialing'
-                ? 'TRIAL'
-                : stripeStatus === 'past_due' || stripeStatus === 'unpaid'
-                  ? 'PAST_DUE'
-                  : stripeStatus === 'canceled' || stripeStatus === 'cancelled'
-                    ? 'CANCELLED'
-                    : 'PENDING';
+          const mappedStatus = this.mapStripeStatus(subscription.status);
 
           const tierFromCode =
             (planCode || '').toUpperCase() in SubscriptionTier
@@ -342,8 +370,9 @@ export class BillingService {
 
   async handleInvoicePaid(invoice: Stripe.Invoice) {
     if ((invoice as any).subscription) {
+      const stripeSubscriptionId = (invoice as any).subscription as string;
       const subscription = await this.prisma.userSubscription.findUnique({
-        where: { stripeSubscriptionId: (invoice as any).subscription as string },
+        where: { stripeSubscriptionId },
       });
 
       if (subscription) {
@@ -358,21 +387,23 @@ export class BillingService {
       }
 
       // Mirror to new subscriptions table (best effort)
-      await this.prisma.subscription.updateMany({
-        where: { stripeSubscriptionId: (invoice as any).subscription as string },
-        data: {
-          status: 'ACTIVE' as any,
+      await this.mirrorSubscriptionUpdate(
+        stripeSubscriptionId,
+        {
+          status: 'ACTIVE',
           currentPeriodStart: new Date(invoice.period_start * 1000),
           currentPeriodEnd: new Date(invoice.period_end * 1000),
         },
-      });
+        { invoiceId: invoice.id },
+      );
     }
   }
 
   async handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
     if ((invoice as any).subscription) {
+      const stripeSubscriptionId = (invoice as any).subscription as string;
       const subscription = await this.prisma.userSubscription.findUnique({
-        where: { stripeSubscriptionId: (invoice as any).subscription as string },
+        where: { stripeSubscriptionId },
       });
 
       if (subscription) {
@@ -385,12 +416,11 @@ export class BillingService {
       }
 
       // Mirror to new subscriptions table (best effort)
-      await this.prisma.subscription.updateMany({
-        where: { stripeSubscriptionId: (invoice as any).subscription as string },
-        data: {
-          status: 'PAST_DUE' as any,
-        },
-      });
+      await this.mirrorSubscriptionUpdate(
+        stripeSubscriptionId,
+        { status: 'PAST_DUE' },
+        { invoiceId: invoice.id },
+      );
     }
   }
 
@@ -413,22 +443,11 @@ export class BillingService {
     }
 
     // Mirror to new subscriptions table (best effort)
-    const stripeStatus = (subscription.status || '').toLowerCase();
-    const mappedStatus: SubscriptionStatus =
-      stripeStatus === 'active'
-        ? 'ACTIVE'
-        : stripeStatus === 'trialing'
-          ? 'TRIAL'
-          : stripeStatus === 'past_due' || stripeStatus === 'unpaid'
-            ? 'PAST_DUE'
-            : stripeStatus === 'canceled' || stripeStatus === 'cancelled'
-              ? 'CANCELLED'
-              : 'PENDING';
-
-    await this.prisma.subscription.updateMany({
-      where: { stripeSubscriptionId: subscription.id },
-      data: {
-        status: mappedStatus as any,
+    const mappedStatus = this.mapStripeStatus(subscription.status);
+    await this.mirrorSubscriptionUpdate(
+      subscription.id,
+      {
+        status: mappedStatus,
         currentPeriodStart: new Date((subscription as any).current_period_start * 1000),
         currentPeriodEnd: new Date((subscription as any).current_period_end * 1000),
         cancelAtPeriodEnd: subscription.cancel_at_period_end,
@@ -436,7 +455,8 @@ export class BillingService {
         isManual: false,
         stripeCustomerId: subscription.customer as string,
       },
-    });
+      { event: 'customer.subscription.updated' },
+    );
   }
 
   async handleSubscriptionDeleted(subscription: Stripe.Subscription) {
@@ -455,15 +475,16 @@ export class BillingService {
     }
 
     // Mirror to new subscriptions table (best effort)
-    await this.prisma.subscription.updateMany({
-      where: { stripeSubscriptionId: subscription.id },
-      data: {
-        status: 'CANCELLED' as any,
+    await this.mirrorSubscriptionUpdate(
+      subscription.id,
+      {
+        status: 'CANCELLED',
         canceledAt: new Date(),
         isManual: false,
         stripeCustomerId: subscription.customer as string,
       },
-    });
+      { event: 'customer.subscription.deleted' },
+    );
   }
 
   async handleChargeRefunded(charge: Stripe.Charge) {
