@@ -130,7 +130,7 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
   const [status, setStatus] = useState<SubscriptionStatus>(subscription?.status || SubscriptionStatus.INACTIVE);
   const [selectedPlanId, setSelectedPlanId] = useState<string>(subscription?.planId || '');
   const [tier, setTier] = useState<SubscriptionTier>(subscription?.tier || SubscriptionTier.BASIC);
-  const [durationMonths, setDurationMonths] = useState<number>(12);
+  const [durationMonths, setDurationMonths] = useState<number>(0); // Default to Monthly Recurring
   const [notes, setNotes] = useState<string>(subscription?.notes || '');
 
   // Subscription period options (0 = monthly recurring with no fixed end)
@@ -182,21 +182,35 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
         const start = new Date(subscription.currentPeriodStart);
         const end = new Date(subscription.currentPeriodEnd);
         const months = Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24 * 30));
-        // Map to closest standard option
-        if (months <= 1) setDurationMonths(1);
-        else if (months <= 3) setDurationMonths(3);
-        else if (months <= 6) setDurationMonths(6);
-        else if (months <= 12) setDurationMonths(12);
-        else setDurationMonths(24);
+        // Check if this is a monthly recurring subscription
+        // Monthly recurring = ~1 month period AND cancelAtPeriodEnd is false (auto-renews)
+        if (months <= 1 && subscription.cancelAtPeriodEnd === false) {
+          setDurationMonths(0); // Monthly Recurring
+        } else if (months <= 1) {
+          setDurationMonths(1);
+        } else if (months <= 3) {
+          setDurationMonths(3);
+        } else if (months <= 6) {
+          setDurationMonths(6);
+        } else if (months <= 12) {
+          setDurationMonths(12);
+        } else {
+          setDurationMonths(24);
+        }
       } else {
-        setDurationMonths(12);
+        // No period set - default to Monthly Recurring if cancelAtPeriodEnd is false
+        if (subscription.cancelAtPeriodEnd === false) {
+          setDurationMonths(0);
+        } else {
+          setDurationMonths(12);
+        }
       }
       setNotes(subscription.notes || '');
     } else {
       setStatus(SubscriptionStatus.INACTIVE);
       setSelectedPlanId('');
       setTier(SubscriptionTier.BASIC);
-      setDurationMonths(12);
+      setDurationMonths(0); // Default to Monthly Recurring for new subscriptions
       setNotes('');
     }
   }, [subscription]);
