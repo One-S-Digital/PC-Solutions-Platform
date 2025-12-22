@@ -1712,7 +1712,9 @@
       "error": "Fehler beim Aktualisieren des Abonnements: ",
       "currentInfo": "Aktuelle Abonnementinformationen",
       "planLabel": "Plan",
-      "periodLabel": "Zeitraum"
+      "periodLabel": "Zeitraum",
+      "enquiryBased": "Preisgestaltung auf Anfrage",
+      "noPlansAvailable": "Keine Abonnementpläne verfügbar. Bitte erstellen Sie Pläne über die API oder das Datenbank-Seed."
     },
     "planEditor": {
       "open": "Pläne bearbeiten",
@@ -1734,7 +1736,8 @@
       "saving": "Speichern...",
       "save": "Änderungen speichern",
       "success": "Plan erfolgreich aktualisiert",
-      "error": "Fehler beim Aktualisieren des Plans: "
+      "error": "Fehler beim Aktualisieren des Plans: ",
+      "noPlansAvailable": "Keine Abonnementpläne verfügbar. Bitte führen Sie das Datenbank-Seed aus oder erstellen Sie Pläne über die API."
     },
     "createSubscription": {
       "title": "Abonnement erstellen"
