@@ -275,8 +275,19 @@ const Messaging: React.FC = () => {
   })
 
   const currentUserId = currentUserResponse?.data?.data?.id
+  const currentUserClerkId = currentUserResponse?.data?.data?.clerkId
   const currentUserRole = currentUserResponse?.data?.data?.role
   const isAdmin = currentUserRole === 'ADMIN' || currentUserRole === 'SUPER_ADMIN'
+  
+  // One-time debug print for ID type identification (DEV only)
+  if (import.meta.env.DEV && currentUserResponse?.data?.data) {
+    console.log('🔍 Admin Current User IDs:', {
+      dbUserId: currentUserId,
+      clerkId: currentUserClerkId,
+      role: currentUserRole,
+      userObject: currentUserResponse.data.data
+    });
+  }
 
   const { data: conversationsResponse, isLoading: isLoadingConversations, error: conversationsError } = useQuery({
     queryKey: ['conversations'],
@@ -878,18 +889,30 @@ const Messaging: React.FC = () => {
                 const isDeleted = message.content === '[Message deleted]';
                 
                 // STRICT ownership check: use shared utility (single source of truth)
-                const messageSenderId = extractSenderId(message);
+                // Use normalized senderId from transformMessage (already set on message)
+                const messageSenderId = (message as any).senderId || message.sender?.id || message.senderId || '';
                 const isOwn = isOwnMessage(messageSenderId, currentUserId);
                 
-                // Dev-only diagnostics (log first 2 messages only to avoid spam)
-                if (import.meta.env.DEV && messages.indexOf(message) < 2) {
-                  console.log('🔍 Admin Messaging ownership check:', {
+                // Dev-only diagnostics (log first 5 messages with ID details)
+                if (import.meta.env.DEV && messages.indexOf(message) < 5) {
+                  console.log('🔍 Admin Message Ownership Check:', {
                     messageId: message.id,
                     messageSenderId,
                     currentUserId,
+                    currentUserClerkId,
                     isOwn,
                     messagePreview: message.content?.substring(0, 30),
-                    senderName: message.sender?.name
+                    senderName: message.sender?.name,
+                    rawMessageFields: {
+                      messageSenderId: (message as any).senderId,
+                      messageSenderIdField: message.senderId,
+                      senderIdFromSender: message.sender?.id,
+                      senderClerkId: message.sender?.clerkId,
+                    },
+                    idTypes: {
+                      currentUserIdType: typeof currentUserId,
+                      messageSenderIdType: typeof messageSenderId,
+                    }
                   });
                 }
 
@@ -1047,14 +1070,14 @@ const Messaging: React.FC = () => {
                                 }}
                               />
                               <div className="flex items-center justify-between">
-                                <p className={`text-xs ${isOwnMessage ? 'text-white/70' : 'text-gray-500'}`}>
+                                <p className={`text-xs ${isOwn ? 'text-white/70' : 'text-gray-500'}`}>
                                   {message.fileName || 'Image'}
                                   {message.fileSize && ` • ${formatFileSize(message.fileSize)}`}
                                 </p>
                                 <button
                                   onClick={() => handleFileDownload(message)}
                                   className={`p-1.5 rounded hover:opacity-80 transition-opacity ${
-                                    isOwnMessage
+                                    isOwn
                                       ? 'hover:bg-swiss-teal/30 text-white'
                                       : 'hover:bg-gray-300 text-gray-700'
                                   }`}
@@ -1075,7 +1098,7 @@ const Messaging: React.FC = () => {
                       {isFile && message.fileUrl && (
                         <div className="mb-2">
                           <div className={`flex items-center space-x-2 p-2 rounded-lg ${
-                            isOwnMessage
+                            isOwn
                               ? 'bg-swiss-teal/20 text-white'
                               : 'bg-gray-200 text-gray-900'
                           }`}>
@@ -1108,7 +1131,7 @@ const Messaging: React.FC = () => {
                                   handleFileDownload(message);
                                 }}
                                 className={`p-1.5 rounded hover:opacity-80 transition-opacity ${
-                                  isOwnMessage
+                                  isOwn
                                     ? 'hover:bg-swiss-teal/30 text-white'
                                     : 'hover:bg-gray-300 text-gray-700'
                                 }`}

@@ -9,7 +9,7 @@ import { useAuth } from '@clerk/clerk-react';
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
 import { apiService } from '../../services/api';
 import DocumentPreviewModal from '../DocumentPreviewModal';
-import { isOwnMessage, extractSenderId } from '../../utils/messageOwnership';
+import { isOwnMessage } from '../../utils/messageOwnership';
 
 interface MessageBubbleProps {
   message: Message;
@@ -23,18 +23,24 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
   const { authenticatedDownload } = useAuthenticatedApi();
   
   // Single source of truth for ownership - use shared utility
-  const messageSenderId = extractSenderId(message);
+  // Use normalized senderId from message (already set by messagingService.transformMessage)
+  const messageSenderId = message.senderId || (message as any).senderId || '';
   const isOwn = isOwnMessage(messageSenderId, currentUser?.id);
   
-  // Dev-only diagnostics
-  if (import.meta.env.DEV) {
-    console.log('🔍 MessageBubble ownership check:', {
-      messageId: message.id,
-      messageSenderId,
-      currentUserId: currentUser?.id,
-      isOwn,
-      messagePreview: message.content?.substring(0, 30),
-    });
+  // Dev-only diagnostics (log only when IDs are missing or first render per message)
+  const loggedRef = useRef<Set<string>>(new Set());
+  if (import.meta.env.DEV && !loggedRef.current.has(message.id)) {
+    const shouldLog = !currentUser?.id || !messageSenderId || !isOwn;
+    if (shouldLog) {
+      console.log('🔍 MessageBubble ownership check:', {
+        messageId: message.id,
+        messageSenderId,
+        currentUserId: currentUser?.id,
+        isOwn,
+        messagePreview: message.content?.substring(0, 30),
+      });
+      loggedRef.current.add(message.id);
+    }
   }
   const isImage = message.messageType === 'IMAGE' && message.fileUrl;
   const isFile = message.messageType === 'FILE' && message.fileUrl;
@@ -300,7 +306,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{message.fileName || 'File'}</p>
                   {message.fileSize && (
-                    <p className={`text-xs ${isCurrentUserSender ? 'text-swiss-mint/70' : 'text-gray-500'}`}>
+                    <p className={`text-xs ${isOwn ? 'text-swiss-mint/70' : 'text-gray-500'}`}>
                       {formatFileSize(message.fileSize)}
                     </p>
                   )}
@@ -362,7 +368,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
           <p className="text-sm whitespace-pre-wrap">{message.content}</p>
         )}
 
-        <p className={`text-xs mt-1 ${isCurrentUserSender ? 'text-swiss-mint/70 text-right' : 'text-gray-400 text-left'}`}>
+        <p className={`text-xs mt-1 ${isOwn ? 'text-swiss-mint/70 text-right' : 'text-gray-400 text-left'}`}>
           {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </p>
       </div>

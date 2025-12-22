@@ -7,8 +7,9 @@
  * @returns true if the message belongs to the current user, false otherwise
  */
 export function isOwnMessage(senderId: string | undefined | null, currentUserId: string | undefined | null): boolean {
-  // Strict check: both must exist and match exactly (as strings)
-  if (!senderId || !currentUserId) {
+  // Strict check: both must exist, be non-empty, and match exactly (as strings)
+  // Empty strings are treated as falsy to prevent false matches
+  if (!senderId || !currentUserId || senderId === '' || currentUserId === '') {
     return false;
   }
   
