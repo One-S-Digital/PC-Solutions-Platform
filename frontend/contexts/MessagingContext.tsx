@@ -71,10 +71,12 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
       }
       
       const userConvs = await messagingService.getConversations(token);
-      console.log('📊 MessagingContext: REST response received', {
-        rawCount: userConvs.length,
-        conversationIds: userConvs.map(c => c.id),
-      });
+      if (import.meta.env.DEV) {
+        console.log('📊 MessagingContext: REST response received', {
+          rawCount: userConvs.length,
+          conversationIds: userConvs.map(c => c.id),
+        });
+      }
       setConversations(userConvs);
       
       // Only preload messages for the active conversation (if any)

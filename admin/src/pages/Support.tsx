@@ -37,6 +37,8 @@ const Support: React.FC = () => {
   const queryClient = useQueryClient();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const replyTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const wasFocusedRef = useRef(false);
 
   // Fetch current user to check assignment
   const { data: currentUserResponse } = useQuery({
@@ -172,6 +174,9 @@ const Support: React.FC = () => {
     userId: currentUserId,
     onNewReply: (reply) => {
       if (selectedTicket && !selectedTicket.responses.find(r => r.id === reply.id)) {
+        // Check if textarea was focused before update
+        wasFocusedRef.current = document.activeElement === replyTextareaRef.current;
+        
         // Deduplicate and sort
         const updatedResponses = [...selectedTicket.responses, reply].sort(
           (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
@@ -180,6 +185,14 @@ const Support: React.FC = () => {
           ...selectedTicket,
           responses: updatedResponses,
         });
+        
+        // Restore focus if it was focused before
+        if (wasFocusedRef.current && replyTextareaRef.current) {
+          setTimeout(() => {
+            replyTextareaRef.current?.focus();
+          }, 0);
+        }
+        
         // Scroll to bottom if user is near bottom
         if (scrollContainerRef.current) {
           const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
@@ -204,6 +217,9 @@ const Support: React.FC = () => {
 
     const pollInterval = setInterval(async () => {
       try {
+        // Check if textarea was focused before update
+        wasFocusedRef.current = document.activeElement === replyTextareaRef.current;
+        
         const response = await apiService.getSupportTicket(apiClient, selectedTicket.id);
         if (response.data.data) {
           const updatedTicket = response.data.data;
@@ -213,6 +229,14 @@ const Support: React.FC = () => {
           if (currentResponseIds.size !== newResponseIds.size || 
               [...newResponseIds].some(id => !currentResponseIds.has(id))) {
             setSelectedTicket(updatedTicket);
+            
+            // Restore focus if it was focused before
+            if (wasFocusedRef.current && replyTextareaRef.current) {
+              setTimeout(() => {
+                replyTextareaRef.current?.focus();
+              }, 0);
+            }
+            
             // Scroll to bottom if user is near bottom
             if (scrollContainerRef.current) {
               const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
@@ -640,6 +664,8 @@ const Support: React.FC = () => {
               {/* Reply Box */}
               <div className="p-6 border-t border-gray-200">
                 <textarea
+                  ref={replyTextareaRef}
+                  key={`reply-${selectedTicket.id}`}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm resize-none"
                   rows={3}
                   placeholder={t('admin:support.replyPlaceholder')}

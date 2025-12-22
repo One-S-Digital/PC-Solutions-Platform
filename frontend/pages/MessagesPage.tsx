@@ -36,17 +36,21 @@ const MessagesPage: React.FC = () => {
 
   // Diagnostic logs
   useEffect(() => {
-    console.log('📊 MessagesPage: Conversations loaded via REST', {
-      conversationCount: conversations.length,
-      conversationIds: conversations.map(c => c.id),
-    });
+    if (import.meta.env.DEV) {
+      console.log('📊 MessagesPage: Conversations loaded via REST', {
+        conversationCount: conversations.length,
+        conversationIds: conversations.map(c => c.id),
+      });
+    }
   }, [conversations]);
 
   useEffect(() => {
-    console.log('📊 MessagesPage: WebSocket state', {
-      isSocketConnected,
-      activeConversationId,
-    });
+    if (import.meta.env.DEV) {
+      console.log('📊 MessagesPage: WebSocket state', {
+        isSocketConnected,
+        activeConversationId,
+      });
+    }
   }, [isSocketConnected, activeConversationId]);
 
   useEffect(() => {
