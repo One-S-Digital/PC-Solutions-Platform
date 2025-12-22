@@ -9,12 +9,17 @@
  * - Mixed-language values (e.g., "Voir profile", "Alle contract types")
  * - Missing interpolation placeholders (if EN has {{placeholder}}, FR/DE must have it too)
  * 
- * Run manually: node scripts/lint-translation-values.mjs
+ * Usage:
+ *   node scripts/lint-translation-values.mjs              # Full scan (default)
+ *   node scripts/lint-translation-values.mjs --changed-only  # Only staged files
+ *   node scripts/lint-translation-values.mjs --strict-quality  # Fail on quality issues
+ * 
  * Runs automatically on git commit via husky pre-commit hook
  */
 
 import fs from 'fs';
 import path from 'path';
+import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -23,6 +28,18 @@ const __dirname = path.dirname(__filename);
 const LOCALES_PATH = path.join(__dirname, '..', 'packages', 'translations', 'locales');
 const SUPPORTED_LANGUAGES = ['en', 'fr', 'de'];
 const REFERENCE_LANGUAGE = 'en';
+
+// Parse CLI arguments
+const args = process.argv.slice(2);
+const changedOnly = args.includes('--changed-only');
+const strictQuality = args.includes('--strict-quality');
+
+// Allowlist for intentional placeholder markers (keys that describe the feature itself)
+const PLACEHOLDER_MARKER_ALLOWLIST = [
+  'translations.advanced.cleanPrefixesDesc',  // Describes the feature that removes markers
+  // Allow all keys under translations.advanced.* (they describe translation tooling)
+  (keyPath) => keyPath.startsWith('translations.advanced.')
+];
 
 let hasErrors = false;
 const errors = [];
@@ -34,6 +51,25 @@ function extractPlaceholders(str) {
   if (typeof str !== 'string') return [];
   const matches = str.match(/\{\{(\w+)\}\}/g);
   return matches ? matches.map(m => m.replace(/[{}]/g, '')) : [];
+}
+
+/**
+ * Check if a key path is allowlisted for placeholder markers
+ */
+function isAllowlisted(keyPath) {
+  // Check exact matches
+  if (PLACEHOLDER_MARKER_ALLOWLIST.includes(keyPath)) {
+    return true;
+  }
+  
+  // Check function predicates
+  for (const item of PLACEHOLDER_MARKER_ALLOWLIST) {
+    if (typeof item === 'function' && item(keyPath)) {
+      return true;
+    }
+  }
+  
+  return false;
 }
 
 /**
@@ -112,8 +148,8 @@ function scanObject(obj, filePath, keyPath = '', language = 'en') {
   if (typeof obj === 'string') {
     const value = obj;
     
-    // Check for placeholder markers
-    if (hasPlaceholderMarker(value)) {
+    // Check for placeholder markers (skip if allowlisted)
+    if (hasPlaceholderMarker(value) && !isAllowlisted(keyPath)) {
       errors.push({
         type: 'placeholder_marker',
         file: filePath,
@@ -182,19 +218,97 @@ function buildKeyMap(obj, prefix = '') {
 }
 
 /**
+ * Get staged translation files from git
+ */
+function getStagedTranslationFiles() {
+  try {
+    const output = execSync('git diff --cached --name-only', {
+      encoding: 'utf8',
+      cwd: path.join(__dirname, '..')
+    });
+    
+    const stagedFiles = output
+      .split('\n')
+      .filter(line => line.trim())
+      .filter(file => {
+        // Match packages/translations/locales/{lang}/*.json (handle both / and \ separators)
+        const normalized = file.replace(/\\/g, '/');
+        return /packages\/translations\/locales\/[^\/]+\/.+\.json$/.test(normalized);
+      });
+    
+    return stagedFiles;
+  } catch (error) {
+    console.warn('⚠️  Could not get staged files (not a git repo?):', error.message);
+    return [];
+  }
+}
+
+/**
+ * Get files to scan based on --changed-only flag
+ */
+function getFilesToScan() {
+  if (changedOnly) {
+    const stagedFiles = getStagedTranslationFiles();
+    
+    if (stagedFiles.length === 0) {
+      console.log('ℹ️  No staged translation files found. Nothing to lint.');
+      return [];
+    }
+    
+    console.log(`📋 Scanning ${stagedFiles.length} staged translation file(s):`);
+    stagedFiles.forEach(file => console.log(`   - ${file}`));
+    console.log('');
+    
+    // Convert to absolute paths
+    const rootDir = path.join(__dirname, '..');
+    return stagedFiles.map(file => path.join(rootDir, file));
+  } else {
+    // Scan all files
+    const files = [];
+    for (const lang of SUPPORTED_LANGUAGES) {
+      const langPath = path.join(LOCALES_PATH, lang);
+      if (!fs.existsSync(langPath)) continue;
+      
+      const langFiles = fs.readdirSync(langPath)
+        .filter(f => f.endsWith('.json'))
+        .map(f => path.join(langPath, f));
+      
+      files.push(...langFiles);
+    }
+    return files;
+  }
+}
+
+/**
  * Check interpolation placeholder consistency
  */
-function checkInterpolationConsistency() {
+function checkInterpolationConsistency(filesToCheck = null) {
   const enPath = path.join(LOCALES_PATH, REFERENCE_LANGUAGE);
   if (!fs.existsSync(enPath)) {
     console.error(`❌ Reference language directory not found: ${enPath}`);
     return;
   }
   
-  // Get all namespace files
-  const namespaceFiles = fs.readdirSync(enPath)
-    .filter(f => f.endsWith('.json'))
-    .map(f => f.replace('.json', ''));
+  // If filesToCheck is provided (changed-only mode), only check those namespaces
+  let namespaceFiles;
+  if (filesToCheck && filesToCheck.length > 0) {
+    // Extract unique namespaces from staged files
+    const namespaces = new Set();
+    filesToCheck.forEach(file => {
+      // Handle both forward and backward slashes
+      const normalized = file.replace(/\\/g, '/');
+      const match = normalized.match(/packages\/translations\/locales\/[^\/]+\/(.+)\.json$/);
+      if (match) {
+        namespaces.add(match[1]);
+      }
+    });
+    namespaceFiles = Array.from(namespaces);
+  } else {
+    // Get all namespace files
+    namespaceFiles = fs.readdirSync(enPath)
+      .filter(f => f.endsWith('.json'))
+      .map(f => f.replace('.json', ''));
+  }
   
   for (const namespace of namespaceFiles) {
     const enFile = path.join(enPath, `${namespace}.json`);
@@ -248,7 +362,12 @@ function checkInterpolationConsistency() {
  * Main function
  */
 function main() {
-  console.log('\n🔍 Linting translation values for quality issues...\n');
+  console.log('\n🔍 Linting translation values for quality issues...');
+  if (changedOnly) {
+    console.log('   Mode: Changed files only (--changed-only)\n');
+  } else {
+    console.log('   Mode: Full scan\n');
+  }
   
   // Check if locales directory exists
   if (!fs.existsSync(LOCALES_PATH)) {
@@ -256,36 +375,59 @@ function main() {
     process.exit(1);
   }
   
-  // Scan all translation files
-  for (const lang of SUPPORTED_LANGUAGES) {
-    const langPath = path.join(LOCALES_PATH, lang);
-    if (!fs.existsSync(langPath)) continue;
-    
-    const files = fs.readdirSync(langPath)
-      .filter(f => f.endsWith('.json'))
-      .map(f => path.join(langPath, f));
-    
-    for (const file of files) {
-      try {
-        const content = fs.readFileSync(file, 'utf8');
-        const data = JSON.parse(content);
-        const relativePath = path.relative(LOCALES_PATH, file);
-        
-        scanObject(data, relativePath, '', lang);
-      } catch (error) {
-        if (error instanceof SyntaxError) {
-          console.error(`❌ ${path.relative(LOCALES_PATH, file)}: Invalid JSON - ${error.message}`);
-          hasErrors = true;
+  // Get files to scan
+  const filesToScan = getFilesToScan();
+  
+  if (filesToScan.length === 0) {
+    console.log('✅ No files to scan.\n');
+    process.exit(0);
+  }
+  
+  // Scan translation files
+  for (const file of filesToScan) {
+    try {
+      // Extract language and namespace from file path
+      // Handle both absolute paths and relative paths
+      let lang, namespace, relativePath;
+      
+      // Try absolute path match first
+      const absMatch = file.match(/packages[\/\\]translations[\/\\]locales[\/\\]([^\/\\]+)[\/\\](.+)\.json$/);
+      if (absMatch) {
+        lang = absMatch[1];
+        namespace = absMatch[2];
+        relativePath = `${lang}/${namespace}.json`;
+      } else {
+        // Fallback: try relative path from LOCALES_PATH
+        const relativePathFromLocales = path.relative(LOCALES_PATH, file);
+        const parts = relativePathFromLocales.split(path.sep);
+        if (parts.length >= 2) {
+          lang = parts[0];
+          namespace = parts.slice(1).join('/').replace(/\.json$/, '');
+          relativePath = relativePathFromLocales.replace(/\\/g, '/');
         } else {
-          console.error(`❌ Error reading ${file}: ${error.message}`);
-          hasErrors = true;
+          console.warn(`⚠️  Could not parse file path: ${file}`);
+          continue;
         }
+      }
+      
+      const content = fs.readFileSync(file, 'utf8');
+      const data = JSON.parse(content);
+      
+      scanObject(data, relativePath, '', lang);
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        const relativePath = path.relative(LOCALES_PATH, file);
+        console.error(`❌ ${relativePath}: Invalid JSON - ${error.message}`);
+        hasErrors = true;
+      } else {
+        console.error(`❌ Error reading ${file}: ${error.message}`);
+        hasErrors = true;
       }
     }
   }
   
-  // Check interpolation placeholder consistency
-  checkInterpolationConsistency();
+  // Check interpolation placeholder consistency (only for scanned files in changed-only mode)
+  checkInterpolationConsistency(changedOnly ? filesToScan : null);
   
   // Report results
   if (hasErrors) {
@@ -382,11 +524,28 @@ function main() {
       process.exit(1);
     }
     
-    // Only quality issues (non-blocking)
+    // Print summary
+    console.log('\n' + '='.repeat(60));
+    console.log('📊 Summary');
+    console.log('='.repeat(60));
+    console.log(`   Placeholder Markers (excluding allowlisted): ${byType.placeholder_marker.length}`);
+    console.log(`   Mixed Language: ${byType.mixed_language.length}`);
+    console.log(`   TODO Markers: ${byType.todo_marker.length}`);
+    console.log(`   Missing Interpolation: ${byType.missing_interpolation.length}`);
+    console.log('='.repeat(60) + '\n');
+    
+    // Only quality issues (non-blocking by default)
     if (nonBlockingIssues > 0) {
-      console.error('💡 Quality issues (placeholder markers, mixed languages) are reported but do not block commits.\n');
-      console.error('   Fix them incrementally when working in those files.\n');
-      process.exit(0);
+      if (strictQuality) {
+        console.error('❌ Quality issues found (--strict-quality mode enabled).\n');
+        console.error('   Fix placeholder markers and mixed-language values before committing.\n');
+        process.exit(1);
+      } else {
+        console.error('💡 Quality issues (placeholder markers, mixed languages) are reported but do not block commits.\n');
+        console.error('   Fix them incrementally when working in those files.\n');
+        console.error('   Use --strict-quality to enforce quality standards.\n');
+        process.exit(0);
+      }
     }
   } else {
     console.log('✅ No translation quality issues found!\n');

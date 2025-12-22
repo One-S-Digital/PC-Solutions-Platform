@@ -27,6 +27,8 @@
     "check:i18n-keys": "ts-node scripts/check-i18n-keys.ts",
     "check:untranslated": "node scripts/check-untranslated-strings.mjs",
     "i18n:full-check": "npm run extract:i18n-keys && npm run check:i18n-keys && npm run generate:i18n-types",
+    "i18n:pipeline": "node scripts/i18n-pipeline.mjs",
+    "i18n:pipeline:ci": "node scripts/i18n-pipeline.mjs --ci",
     "prepare": "node scripts/run-husky.js"
   },
   "devDependencies": {
