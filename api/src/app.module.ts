@@ -61,19 +61,41 @@ import {
   UPLOAD_TTL_SECONDS,
 } from './common/decorators/throttle.decorator';
 
+function isRedisEnabled(): boolean {
+  // In production (Render), only enable Redis-dependent modules if configured.
+  // In dev/test, default to localhost to keep existing behavior.
+  if (process.env.NODE_ENV !== 'production') return true;
+  return Boolean(process.env.REDIS_URL || process.env.REDIS_HOST);
+}
+
+function getBullRedisConfig():
+  | string
+  | {
+      host: string;
+      port: number;
+      password?: string;
+    } {
+  if (process.env.REDIS_URL) return process.env.REDIS_URL;
+  return {
+    host: process.env.REDIS_HOST || 'localhost',
+    port: parseInt(process.env.REDIS_PORT || '6379', 10),
+    password: process.env.REDIS_PASSWORD,
+  };
+}
+
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
     ScheduleModule.forRoot(),
-    BullModule.forRoot({
-      redis: {
-        host: process.env.REDIS_HOST || 'localhost',
-        port: parseInt(process.env.REDIS_PORT || '6379'),
-        password: process.env.REDIS_PASSWORD,
-      },
-    }),
+    ...(isRedisEnabled()
+      ? [
+          BullModule.forRoot({
+            redis: getBullRedisConfig(),
+          }),
+        ]
+      : []),
     ThrottlerModule.forRoot([
       {
         name: 'short',
