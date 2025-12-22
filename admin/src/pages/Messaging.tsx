@@ -20,7 +20,11 @@ import {
   Image as ImageIcon,
   Paperclip,
   Smile,
-  X
+  X,
+  Pencil,
+  Trash2,
+  Check,
+  XCircle
 } from 'lucide-react'
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
@@ -32,6 +36,7 @@ import logger from '../utils/logger'
 
 import { Conversation, Message } from '../types/api'
 import NewConversationModal from '../components/messaging/NewConversationModal'
+import DocumentPreviewModal from '../components/DocumentPreviewModal'
 
 // Transform backend conversation data to match frontend format
 const transformConversation = (conv: any, currentUserId?: string): Conversation => {
@@ -101,6 +106,14 @@ const Messaging: React.FC = () => {
     fileUrl: string;
     isImage: boolean;
   } | null>(null)
+  const [previewFile, setPreviewFile] = useState<{
+    fileUrl: string;
+    fileName: string;
+    mimeType: string;
+  } | null>(null)
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null)
+  const [editContent, setEditContent] = useState<string>('')
+  const [showActions, setShowActions] = useState<Record<string, boolean>>({})
   const fileInputRef = React.useRef<HTMLInputElement>(null)
   const emojiPickerRef = React.useRef<HTMLDivElement>(null)
   const apiClient = useApiClient()
@@ -797,18 +810,81 @@ const Messaging: React.FC = () => {
                   );
                 }
 
+                const isEditing = editingMessageId === message.id;
+                
                 return (
                   <div
                     key={message.id}
-                    className={`flex ${message.isFromAdmin ? 'justify-end' : 'justify-start'}`}
+                    className={`flex mb-3 ${message.isFromAdmin ? 'justify-end' : 'justify-start'} group relative`}
+                    onMouseEnter={() => message.isFromAdmin && !isEditing && setShowActions(prev => ({ ...prev, [message.id]: true }))}
+                    onMouseLeave={() => setShowActions(prev => ({ ...prev, [message.id]: false }))}
                   >
                     <div
-                      className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                      className={`max-w-xs lg:max-w-md px-4 py-2.5 rounded-xl shadow-sm relative ${
                         message.isFromAdmin
-                          ? 'bg-swiss-teal text-white'
-                          : 'bg-gray-100 text-gray-900'
+                          ? 'bg-swiss-teal text-white rounded-br-none'
+                          : 'bg-gray-100 text-gray-900 rounded-bl-none'
                       }`}
                     >
+                      {/* Edit/Delete Actions - Only show for admin's own messages */}
+                      {message.isFromAdmin && showActions[message.id] && !isEditing && (
+                        <div className="absolute -top-8 right-0 flex space-x-1 bg-white rounded-lg shadow-lg p-1 z-10">
+                          <button
+                            onClick={() => handleStartEdit(message)}
+                            className="p-1.5 hover:bg-gray-100 rounded transition-colors"
+                            title={t('admin:messaging.edit', 'Edit message')}
+                          >
+                            <Pencil className="w-4 h-4 text-gray-600" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteMessage(message.id)}
+                            className="p-1.5 hover:bg-gray-100 rounded transition-colors"
+                            title={t('admin:messaging.delete', 'Delete message')}
+                          >
+                            <Trash2 className="w-4 h-4 text-red-600" />
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Edit Mode */}
+                      {isEditing && (
+                        <div className="space-y-2">
+                          <textarea
+                            value={editContent}
+                            onChange={(e) => setEditContent(e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-mint focus:border-transparent text-gray-900 resize-none"
+                            rows={3}
+                            autoFocus
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                                handleSaveEdit(message.id);
+                              } else if (e.key === 'Escape') {
+                                handleCancelEdit();
+                              }
+                            }}
+                          />
+                          <div className="flex items-center justify-end space-x-2">
+                            <button
+                              onClick={handleCancelEdit}
+                              className="p-1.5 rounded hover:bg-white/20 transition-colors"
+                              title={t('common:cancel', 'Cancel')}
+                            >
+                              <XCircle className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleSaveEdit(message.id)}
+                              className="p-1.5 rounded hover:bg-white/20 transition-colors"
+                              title={t('common:save', 'Save')}
+                            >
+                              <Check className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Regular Message Content */}
+                      {!isEditing && (
+                        <>
                       {/* Image Preview */}
                       {isImage && message.fileUrl && (
                         <div className="mb-2">
@@ -898,26 +974,44 @@ const Messaging: React.FC = () => {
                               ? 'bg-swiss-teal/20 text-white'
                               : 'bg-gray-200 text-gray-900'
                           }`}>
-                            <File className="w-5 h-5 flex-shrink-0" />
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium truncate">{message.fileName || 'File'}</p>
-                              {message.fileSize && (
-                                <p className={`text-xs ${message.isFromAdmin ? 'text-white/70' : 'text-gray-500'}`}>
-                                  {formatFileSize(message.fileSize)}
-                                </p>
-                              )}
-                            </div>
                             <button
-                              onClick={() => handleFileDownload(message)}
-                              className={`p-1.5 rounded hover:opacity-80 transition-opacity ${
-                                message.isFromAdmin
-                                  ? 'hover:bg-swiss-teal/30 text-white'
-                                  : 'hover:bg-gray-300 text-gray-700'
-                              }`}
-                              title={t('admin:messaging.download', 'Download')}
+                              onClick={() => {
+                                const downloadUrl = buildDownloadUrl(message.fileUrl);
+                                setPreviewFile({
+                                  fileUrl: downloadUrl || message.fileUrl || '',
+                                  fileName: message.fileName || 'File',
+                                  mimeType: message.mimeType || message.fileName?.split('.').pop()?.toUpperCase() || 'PDF',
+                                });
+                              }}
+                              className="flex items-center space-x-2 flex-1 min-w-0 text-left hover:opacity-80 transition-opacity cursor-pointer"
+                              title={t('admin:messaging.preview', 'Click to preview')}
                             >
-                              <Download className="w-4 h-4" />
+                              <File className="w-5 h-5 flex-shrink-0" />
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium truncate">{message.fileName || 'File'}</p>
+                                {message.fileSize && (
+                                  <p className={`text-xs ${message.isFromAdmin ? 'text-white/70' : 'text-gray-500'}`}>
+                                    {formatFileSize(message.fileSize)}
+                                  </p>
+                                )}
+                              </div>
                             </button>
+                            <div className="flex items-center space-x-1 flex-shrink-0">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleFileDownload(message);
+                                }}
+                                className={`p-1.5 rounded hover:opacity-80 transition-opacity ${
+                                  message.isFromAdmin
+                                    ? 'hover:bg-swiss-teal/30 text-white'
+                                    : 'hover:bg-gray-300 text-gray-700'
+                                }`}
+                                title={t('admin:messaging.download', 'Download')}
+                              >
+                                <Download className="w-4 h-4" />
+                              </button>
+                            </div>
                           </div>
                           {message.content && message.content.trim() && !message.content.startsWith('{') && (
                             <p className="text-sm whitespace-pre-wrap mt-2">{message.content}</p>
@@ -935,6 +1029,8 @@ const Messaging: React.FC = () => {
                       }`}>
                         {formatTime(message.timestamp)}
                       </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 );
@@ -1048,6 +1144,17 @@ const Messaging: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Document Preview Modal */}
+      {previewFile && (
+        <DocumentPreviewModal
+          isOpen={!!previewFile}
+          onClose={() => setPreviewFile(null)}
+          fileUrl={previewFile.fileUrl}
+          fileName={previewFile.fileName}
+          fileType={previewFile.mimeType}
+        />
+      )}
 
       {/* New Conversation Modal */}
       <NewConversationModal
