@@ -1703,6 +1703,15 @@
       "status": "Abonnementstatus",
       "plan": "Abonnementplan",
       "selectPlan": "Plan auswählen...",
+      "subscriptionPeriod": "Abonnementlaufzeit",
+      "subscriptionPeriodHelp": "Wählen Sie, wie lange dieses Abonnement aktiv sein soll.",
+      "period": {
+        "oneMonth": "1 Monat",
+        "threeMonths": "3 Monate",
+        "sixMonths": "6 Monate",
+        "oneYear": "1 Jahr",
+        "twoYears": "2 Jahre"
+      },
       "notes": "Notizen (optional)",
       "notesPlaceholder": "Notizen zu diesem Abonnement hinzufügen...",
       "edit": "Bearbeiten",

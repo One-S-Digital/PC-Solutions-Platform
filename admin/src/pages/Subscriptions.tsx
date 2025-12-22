@@ -112,7 +112,7 @@ interface EditSubscriptionModalProps {
   subscription: Subscription | null;
   plans: SubscriptionPlan[];
   availableTiers?: SubscriptionTier[];
-  onSave: (data: { status: SubscriptionStatus; planId?: string; tier?: SubscriptionTier; notes?: string }) => Promise<void>;
+  onSave: (data: { status: SubscriptionStatus; planId?: string; tier?: SubscriptionTier; durationMonths?: number; notes?: string }) => Promise<void>;
   isLoading: boolean;
 }
 
@@ -130,7 +130,17 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
   const [status, setStatus] = useState<SubscriptionStatus>(subscription?.status || SubscriptionStatus.INACTIVE);
   const [selectedPlanId, setSelectedPlanId] = useState<string>(subscription?.planId || '');
   const [tier, setTier] = useState<SubscriptionTier>(subscription?.tier || SubscriptionTier.BASIC);
+  const [durationMonths, setDurationMonths] = useState<number>(12);
   const [notes, setNotes] = useState<string>(subscription?.notes || '');
+
+  // Subscription period options
+  const subscriptionPeriodOptions = React.useMemo(() => [
+    { value: 1, label: t('admin:subscriptions.editSubscription.period.oneMonth', '1 Month') },
+    { value: 3, label: t('admin:subscriptions.editSubscription.period.threeMonths', '3 Months') },
+    { value: 6, label: t('admin:subscriptions.editSubscription.period.sixMonths', '6 Months') },
+    { value: 12, label: t('admin:subscriptions.editSubscription.period.oneYear', '1 Year') },
+    { value: 24, label: t('admin:subscriptions.editSubscription.period.twoYears', '2 Years') },
+  ], [t]);
 
   const billingPeriodLabel = React.useCallback(
     (period: string | null | undefined) => {
@@ -166,11 +176,26 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
       setStatus(subscription.status);
       setSelectedPlanId(subscription.planId || '');
       setTier(subscription.tier || SubscriptionTier.BASIC);
+      // Calculate duration from current period if available
+      if (subscription.currentPeriodStart && subscription.currentPeriodEnd) {
+        const start = new Date(subscription.currentPeriodStart);
+        const end = new Date(subscription.currentPeriodEnd);
+        const months = Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24 * 30));
+        // Map to closest standard option
+        if (months <= 1) setDurationMonths(1);
+        else if (months <= 3) setDurationMonths(3);
+        else if (months <= 6) setDurationMonths(6);
+        else if (months <= 12) setDurationMonths(12);
+        else setDurationMonths(24);
+      } else {
+        setDurationMonths(12);
+      }
       setNotes(subscription.notes || '');
     } else {
       setStatus(SubscriptionStatus.INACTIVE);
       setSelectedPlanId('');
       setTier(SubscriptionTier.BASIC);
+      setDurationMonths(12);
       setNotes('');
     }
   }, [subscription]);
@@ -195,6 +220,7 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
       status,
       planId: selectedPlanId || undefined,
       tier: user?.role === UserRole.FOUNDATION ? tier : undefined,
+      durationMonths,
       notes: notes || undefined,
     });
   };
@@ -318,6 +344,27 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
                 </p>
               </div>
             )}
+          </div>
+
+          {/* Subscription Period */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t('admin:subscriptions.editSubscription.subscriptionPeriod', 'Subscription Period')}
+            </label>
+            <select
+              value={durationMonths}
+              onChange={(e) => setDurationMonths(Number(e.target.value))}
+              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              {subscriptionPeriodOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-gray-500 mt-1">
+              {t('admin:subscriptions.editSubscription.subscriptionPeriodHelp', 'Select how long this subscription should be active.')}
+            </p>
           </div>
 
           {/* Notes */}
@@ -1884,14 +1931,26 @@ const Subscriptions: React.FC = () => {
       data,
     }: {
       userId: string;
-      data: { status: SubscriptionStatus; planId?: string; tier?: SubscriptionTier; notes?: string };
+      data: { status: SubscriptionStatus; planId?: string; tier?: SubscriptionTier; durationMonths?: number; notes?: string };
     }) => {
       const existingSubscription = userSubscriptionMap.get(userId);
       if (existingSubscription) {
+        // Calculate new currentPeriodEnd based on durationMonths
+        let currentPeriodEnd: string | undefined;
+        if (data.durationMonths) {
+          const startDate = existingSubscription.currentPeriodStart 
+            ? new Date(existingSubscription.currentPeriodStart)
+            : new Date();
+          const endDate = new Date(startDate);
+          endDate.setMonth(endDate.getMonth() + data.durationMonths);
+          currentPeriodEnd = endDate.toISOString();
+        }
+        
         // Update existing subscription - include planId if changed
         return subscriptionService.updateSubscription(apiClient, existingSubscription.id, {
           planId: data.planId,
           tier: data.tier,
+          currentPeriodEnd,
           notes: data.notes,
         }).then(() => {
           // Also update status if changed
@@ -1908,6 +1967,7 @@ const Subscriptions: React.FC = () => {
           userId,
           planId: data.planId || plans[0]?.id,
           tier: data.tier || SubscriptionTier.BASIC,
+          durationMonths: data.durationMonths,
           notes: data.notes,
         });
       }
@@ -2118,7 +2178,7 @@ const Subscriptions: React.FC = () => {
     setIsEditModalOpen(true);
   };
 
-  const handleSaveSubscription = async (data: { status: SubscriptionStatus; planId?: string; tier?: SubscriptionTier; notes?: string }) => {
+  const handleSaveSubscription = async (data: { status: SubscriptionStatus; planId?: string; tier?: SubscriptionTier; durationMonths?: number; notes?: string }) => {
     if (selectedUser) {
       await updateSubscriptionMutation.mutateAsync({ userId: selectedUser.id, data });
     }

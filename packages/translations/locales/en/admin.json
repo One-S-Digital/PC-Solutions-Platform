@@ -1695,6 +1695,15 @@
       "status": "Subscription Status",
       "plan": "Subscription Plan",
       "selectPlan": "Select a plan...",
+      "subscriptionPeriod": "Subscription Period",
+      "subscriptionPeriodHelp": "Select how long this subscription should be active.",
+      "period": {
+        "oneMonth": "1 Month",
+        "threeMonths": "3 Months",
+        "sixMonths": "6 Months",
+        "oneYear": "1 Year",
+        "twoYears": "2 Years"
+      },
       "notes": "Notes (optional)",
       "notesPlaceholder": "Add notes about this subscription...",
       "edit": "Edit",

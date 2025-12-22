@@ -1703,6 +1703,15 @@
       "status": "Statut d'abonnement",
       "plan": "Forfait d'abonnement",
       "selectPlan": "Sélectionner un forfait...",
+      "subscriptionPeriod": "Durée de l'abonnement",
+      "subscriptionPeriodHelp": "Sélectionnez la durée d'activation de cet abonnement.",
+      "period": {
+        "oneMonth": "1 mois",
+        "threeMonths": "3 mois",
+        "sixMonths": "6 mois",
+        "oneYear": "1 an",
+        "twoYears": "2 ans"
+      },
       "notes": "Notes (optionnel)",
       "notesPlaceholder": "Ajouter des notes sur cet abonnement...",
       "edit": "Modifier",
