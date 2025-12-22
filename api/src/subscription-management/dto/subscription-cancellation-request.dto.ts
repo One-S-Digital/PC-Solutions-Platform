@@ -1,4 +1,4 @@
-import { IsBoolean, IsIn, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import { IsBoolean, IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 
 export enum SubscriptionCancellationRequestStatus {
   PENDING = 'PENDING',
@@ -26,7 +26,7 @@ export class CancellationRequestFiltersDto {
   limit?: number;
 
   @IsOptional()
-  @IsIn(Object.values(SubscriptionCancellationRequestStatus))
+  @IsEnum(SubscriptionCancellationRequestStatus)
   status?: SubscriptionCancellationRequestStatus;
 
   @IsOptional()

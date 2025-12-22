@@ -79,8 +79,8 @@ export class SubscriptionCancellationRequestService {
     const created = await this.prisma.subscriptionCancellationRequest.create({
       data: {
         subscriptionId,
-        userId: subscription.userId || userId || null,
-        organizationId: subscription.organizationId || organizationId || null,
+        userId: subscription.userId ?? null,
+        organizationId: subscription.organizationId ?? null,
         reason: data.reason,
         status: 'PENDING',
       },
@@ -116,8 +116,14 @@ export class SubscriptionCancellationRequestService {
     }
     if (filters.dateFrom || filters.dateTo) {
       where.requestedAt = {};
-      if (filters.dateFrom) where.requestedAt.gte = new Date(filters.dateFrom);
-      if (filters.dateTo) where.requestedAt.lte = new Date(filters.dateTo);
+      if (filters.dateFrom) {
+        const dateFrom = new Date(filters.dateFrom);
+        if (!Number.isNaN(dateFrom.getTime())) where.requestedAt.gte = dateFrom;
+      }
+      if (filters.dateTo) {
+        const dateTo = new Date(filters.dateTo);
+        if (!Number.isNaN(dateTo.getTime())) where.requestedAt.lte = dateTo;
+      }
     }
     if (filters.search) {
       where.OR = [

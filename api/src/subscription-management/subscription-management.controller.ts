@@ -9,6 +9,8 @@ import {
   Query,
   UseGuards,
   Request,
+  BadRequestException,
+  NotFoundException,
 } from '@nestjs/common';
 import { SubscriptionManagementService, SubscriptionPlan, Subscription } from './subscription-management.service';
 import { SubscriptionRequestService } from './subscription-request.service';
@@ -1055,10 +1057,7 @@ export class UserSubscriptionController {
 
     // Ensure this role requires subscription (matches getMySubscription behavior)
     if (!SUBSCRIPTION_REQUIRED_ROLES.includes(userRole)) {
-      return wrapResponse(
-        { message: 'Cancellation not applicable for this role' },
-        'Cancellation not applicable',
-      );
+      throw new BadRequestException('Cancellation not applicable for this role');
     }
 
     // Find the user's active (or most recent) subscription (user first, then org)
@@ -1071,10 +1070,7 @@ export class UserSubscriptionController {
     }
 
     if (!subscription) {
-      return wrapResponse(
-        { message: 'No subscription found to cancel' },
-        'No subscription found',
-      );
+      throw new NotFoundException('No subscription found to cancel');
     }
 
     const cancellationRequest = await this.cancellationRequestService.createCancellationRequest({
