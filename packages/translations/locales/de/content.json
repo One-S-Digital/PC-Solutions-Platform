@@ -240,7 +240,7 @@
     "confirmDeleteDocument": "Möchten Sie dieses Dokument wirklich löschen?",
     "allDocumentsCategory": "Alle Dokumente",
     "noDocumentsAvailable": "Keine Dokumente verfügbar",
-    "uploadButton": "[DE] Upload Document",
+    "uploadButton": "Dokument hochladen",
     "searchPlaceholder": "Dokumente durchsuchen...",
     "categoriesTitle": "HR-Dokumentkategorien",
     "allItemsCount": "{{count}} Dokumente",
