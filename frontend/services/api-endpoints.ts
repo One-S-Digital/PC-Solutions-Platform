@@ -197,6 +197,8 @@ export const API_ENDPOINTS = {
     me: "/subscriptions/me",
     /** Request a new subscription (manual flow) */
     request: "/subscriptions/request",
+    /** Request cancellation of current subscription (manual flow) */
+    cancelRequest: "/subscriptions/cancel-request",
     /** Check feature access */
     checkFeature: (featureKey: string) => `/subscriptions/feature/${featureKey}`,
     /** Get available subscription plans (public) */
