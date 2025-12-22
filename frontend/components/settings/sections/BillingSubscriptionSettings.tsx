@@ -188,7 +188,7 @@ const BillingSubscriptionSettings: React.FC<BillingSubscriptionSettingsProps> = 
       <div className="space-y-8">
         {/* Current subscription summary (connected to real subscription API) */}
         <div className="p-4 border rounded-lg bg-gray-50">
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
+          <div className="flex flex-col gap-2">
             <div>
               <h3 className="text-md font-medium text-gray-700">{t('common:settingsBillingSubscription.currentPlan')}</h3>
               <p className="text-2xl font-semibold text-swiss-mint mt-1">
@@ -197,13 +197,13 @@ const BillingSubscriptionSettings: React.FC<BillingSubscriptionSettingsProps> = 
                   : plan?.name || t('subscription:info.noPlan')}
               </p>
             </div>
-            <div className="text-sm text-gray-600">
+          </div>
+
+          <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm text-gray-600">
+            <div>
               <span className="font-medium">{t('common:labels.status', 'Status')}:</span>{' '}
               {subscriptionLoading ? t('common:loading') : statusLabel}
             </div>
-          </div>
-
-          <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-gray-600">
             <div>
               <span className="font-medium">{t('subscription:info.currentPeriod')}:</span> {currentPeriodLabel}
             </div>
