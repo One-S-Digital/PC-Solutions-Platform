@@ -25,6 +25,7 @@ export default function DocumentPreviewModal({
   const [loadError, setLoadError] = useState(false);
   const blobUrlRef = useRef<string | null>(null);
   const isFetchingRef = useRef(false);
+  const lastFileUrlRef = useRef<string | null>(null);
   
   // Fetch file with authentication and create blob URL for preview
   useEffect(() => {
@@ -35,6 +36,23 @@ export default function DocumentPreviewModal({
         blobUrlRef.current = null;
         setPreviewBlobUrl(null);
       }
+      lastFileUrlRef.current = null;
+      return;
+    }
+
+    // Skip if this is the same file URL we already processed
+    if (lastFileUrlRef.current === fileUrl && blobUrlRef.current) {
+      setIsLoading(false);
+      return;
+    }
+
+    // Check if fileUrl is already a blob URL (from previous fetch or message)
+    const isAlreadyBlobUrl = fileUrl?.startsWith('blob:');
+    if (isAlreadyBlobUrl) {
+      // Use the blob URL directly
+      setPreviewBlobUrl(fileUrl);
+      setIsLoading(false);
+      lastFileUrlRef.current = fileUrl;
       return;
     }
 
@@ -50,12 +68,7 @@ export default function DocumentPreviewModal({
       // For external URLs that don't need auth, use them directly
       setPreviewBlobUrl(fileUrl);
       setIsLoading(false);
-      return;
-    }
-
-    // Skip if we already have a blob URL for this file
-    if (blobUrlRef.current && previewBlobUrl) {
-      setIsLoading(false);
+      lastFileUrlRef.current = fileUrl;
       return;
     }
 
@@ -100,6 +113,7 @@ export default function DocumentPreviewModal({
         setPreviewBlobUrl(blobUrl);
         setIsLoading(false);
         isFetchingRef.current = false;
+        lastFileUrlRef.current = fileUrl; // Track that we've processed this fileUrl
       } catch (error) {
         console.error('Failed to load authenticated file:', error);
         setLoadError(true);
@@ -118,12 +132,16 @@ export default function DocumentPreviewModal({
         blobUrlRef.current = null;
       }
     };
-  }, [isOpen, fileUrl, getToken, previewBlobUrl]);
+  }, [isOpen, fileUrl, getToken]); // Removed previewBlobUrl from deps to prevent re-renders
   
   if (!isOpen) return null;
 
-  // Debug logging
-  console.log('DocumentPreviewModal:', { fileUrl, fileName, fileType });
+  // Debug logging (only once per fileUrl change)
+  const loggedFileUrlRef = useRef<string | null>(null);
+  if (import.meta.env.DEV && fileUrl && loggedFileUrlRef.current !== fileUrl) {
+    console.log('DocumentPreviewModal:', { fileUrl, fileName, fileType });
+    loggedFileUrlRef.current = fileUrl;
+  }
 
   const handleDownload = async () => {
     try {
