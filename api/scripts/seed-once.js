@@ -114,6 +114,130 @@ async function main() {
       console.log('🌱 Seed: job listing created');
     }
 
+    // 4) Seed subscription plans (5 plans matching pricing page)
+    const subscriptionPlanCount = await prisma.subscriptionPlan.count().catch(() => 0);
+    if (subscriptionPlanCount === 0) {
+      const subscriptionPlans = [
+        {
+          name: 'Basic',
+          code: 'BASIC',
+          description: 'Perfect for small daycares who want essential tools without complexity.',
+          price: 69.00,
+          currency: 'CHF',
+          billingPeriod: 'monthly',
+          features: [
+            'Supplier & service provider marketplace',
+            'State policy hub (by canton)',
+            'Multilingual interface (EN/FR/DE)',
+            'Email support',
+          ],
+          limits: { parentEnquiries: 0, marketplace: true, policyHub: true, multiLanguage: true },
+          allowedRoles: ['FOUNDATION'],
+          trialDays: 14,
+          isActive: true,
+          isPopular: false,
+          displayOrder: 1,
+        },
+        {
+          name: 'Essential',
+          code: 'ESSENTIAL',
+          description: 'Perfect for single-site daycares who want to save time with parent leads and compliant HR tools.',
+          price: 129.00,
+          currency: 'CHF',
+          billingPeriod: 'monthly',
+          features: [
+            'Everything in Basic',
+            'Parent leads inbox + auto-matching system',
+            'HR & compliance document library (Swiss-validated)',
+            'Parent enquiry tracker with quick replies',
+          ],
+          limits: { parentEnquiries: 15, marketplace: true, policyHub: true, multiLanguage: true, hrLibrary: true, parentLeads: true },
+          allowedRoles: ['FOUNDATION'],
+          trialDays: 14,
+          isActive: true,
+          isPopular: true,
+          displayOrder: 2,
+        },
+        {
+          name: 'Professional',
+          code: 'PROFESSIONAL',
+          description: 'Perfect for medium-sized daycares ready to grow and professionalize operations.',
+          price: 259.00,
+          currency: 'CHF',
+          billingPeriod: 'monthly',
+          features: [
+            'Everything in Essential',
+            'Recruitment module',
+            'Unlimited parent enquiries',
+            'E-learning for staff',
+            'Team management & tools',
+            'Priority support',
+          ],
+          limits: { parentEnquiries: -1, marketplace: true, policyHub: true, multiLanguage: true, hrLibrary: true, parentLeads: true, recruitment: true, eLearning: true, teamManagement: true },
+          allowedRoles: ['FOUNDATION'],
+          trialDays: 14,
+          isActive: true,
+          isPopular: false,
+          displayOrder: 3,
+        },
+        {
+          name: 'Suppliers',
+          code: 'SUPPLIERS',
+          description: 'Perfect for suppliers focused on daycare market growth.',
+          price: 99.00,
+          currency: 'CHF',
+          billingPeriod: 'monthly',
+          features: [
+            'Product listings & marketplace access',
+            'Lead management system',
+            'Order tracking & fulfillment',
+            'Multi-language support',
+            'Sales analytics dashboard',
+            'Email support',
+          ],
+          limits: { productListings: -1, marketplace: true, leadManagement: true, orderTracking: true, analytics: true },
+          allowedRoles: ['PRODUCT_SUPPLIER'],
+          trialDays: 14,
+          isActive: true,
+          isPopular: false,
+          displayOrder: 4,
+        },
+        {
+          name: 'Service Providers',
+          code: 'SERVICE_PROVIDERS',
+          description: 'Perfect for service providers targeting professional daycare partnerships.',
+          price: 149.00,
+          currency: 'CHF',
+          billingPeriod: 'monthly',
+          features: [
+            'Service listings & marketplace access',
+            'Appointment scheduling system',
+            'Client relationship management',
+            'Revenue tracking & reporting',
+            'Multi-language support',
+            'Priority support',
+          ],
+          limits: { serviceListings: -1, marketplace: true, scheduling: true, crm: true, revenueTracking: true },
+          allowedRoles: ['SERVICE_PROVIDER'],
+          trialDays: 14,
+          isActive: true,
+          isPopular: false,
+          displayOrder: 5,
+        },
+      ];
+
+      for (const plan of subscriptionPlans) {
+        await prisma.subscriptionPlan.upsert({
+          where: { code: plan.code },
+          update: plan,
+          create: plan,
+        });
+      }
+      console.log('🌱 Seed: 5 subscription plans created (matching pricing page)');
+    } else {
+      console.log('ℹ️ Seed: subscription plans already present');
+    }
+
     console.log('✅ Seed: completed');
   } catch (err) {
     console.error('❌ Seed failed:', err?.message || err);
