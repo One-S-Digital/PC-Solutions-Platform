@@ -305,6 +305,11 @@ export interface Message {
   content: string;
   createdAt: string;
   isRead?: boolean;
+  messageType?: 'TEXT' | 'FILE' | 'IMAGE' | 'SYSTEM';
+  fileUrl?: string;
+  fileName?: string;
+  fileSize?: number;
+  mimeType?: string;
 }
 
 export interface FileUploadResult {

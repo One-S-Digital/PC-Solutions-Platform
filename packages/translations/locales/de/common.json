@@ -1125,6 +1125,7 @@
     "infoTitle": "Information",
     "newMessageFrom": "Neue Nachricht von",
     "noNewNotifications": "Keine neuen Benachrichtigungen",
+    "requestSubmitted": "Anfrage erfolgreich übermittelt",
     "settingsUpdated": "Einstellungen erfolgreich aktualisiert",
     "successTitle": "Erfolg",
     "warningTitle": "Warnung"
@@ -1729,7 +1730,8 @@
       "verificationSentMessage": "Bitte überprüfen Sie Ihre neue E-Mail-Adresse für den Bestätigungscode.",
       "verificationSentTo": "Ein Bestätigungscode wurde an {{email}} gesendet. Bitte geben Sie den Code unten ein, um die E-Mail-Änderung abzuschließen.",
       "verifyAndChange": "Verifizieren & E-Mail ändern",
-      "verifying": "Wird verifiziert..."
+      "verifying": "Wird verifiziert...",
+      "reAuthTip": "Sie müssen sich möglicherweise erneut authentifizieren, nachdem Sie Ihre E-Mail-Adresse geändert haben."
     },
     "changePassword": {
       "confirmNewPasswordLabel": "Neues Passwort bestätigen",
@@ -1790,6 +1792,7 @@
     "manageSubscriptionDescription": "Aktualisieren Sie Ihre Zahlungsmethode, sehen Sie Rechnungen ein und verwalten Sie Ihre Abonnementeinstellungen.",
     "manageSubscriptionTitle": "Abonnement Verwalten",
     "nextInvoiceOn": "Nächste Rechnung am {{date}}",
+    "planChangeNotImplemented": "Planänderungen sind noch nicht verfügbar. Sie haben {{planName}} ausgewählt. Bitte kontaktieren Sie den Support, wenn Sie Hilfe benötigen.",
     "stripePortalLinkNotConfigured": "Zahlungsportal ist nicht konfiguriert. Bitte kontaktieren Sie den Support.",
     "upgradePlan": "Plan Erweitern",
     "yesCancel": "Ja, Kündigen",
@@ -2242,5 +2245,6 @@
   "verifying": "Wird überprüft...",
   "viewAll": "Anzeigen Alle",
   "welcome": "Willkommen",
-  "welcomeBack": "Willkommen Zurück!"
+  "welcomeBack": "Willkommen Zurück!",
+  "description": "Beschreibung"
 }

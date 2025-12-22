@@ -119,6 +119,7 @@
     "managePayment": "Gérer le mode de paiement"
   },
   "errors": {
+    "cancelRequestFailed": "Échec de l'envoi de la demande d'annulation",
     "fetchFailed": "Échec du chargement des informations d'abonnement",
     "requestFailed": "Échec de l'envoi de la demande d'abonnement",
     "contextMissing": "useSubscription doit être utilisé dans un SubscriptionProvider",

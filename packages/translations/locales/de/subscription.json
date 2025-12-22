@@ -119,6 +119,7 @@
     "managePayment": "Zahlungsmethode verwalten"
   },
   "errors": {
+    "cancelRequestFailed": "Fehler beim Senden der Kündigungsanfrage",
     "fetchFailed": "Fehler beim Laden der Abonnementinformationen",
     "requestFailed": "Fehler beim Senden der Abonnementanfrage",
     "contextMissing": "useSubscription muss innerhalb eines SubscriptionProvider verwendet werden",

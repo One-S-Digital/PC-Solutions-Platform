@@ -1735,7 +1735,8 @@
       "verificationSentMessage": "Please check your new email for the verification code.",
       "verificationSentTo": "A verification code has been sent to {{email}}. Please enter the code below to complete the email change.",
       "verifyAndChange": "Verify & Change Email",
-      "verifying": "Verifying..."
+      "verifying": "Verifying...",
+      "reAuthTip": "You may need to re-authenticate after changing your email address."
     },
     "changePassword": {
       "confirmNewPasswordLabel": "Confirm New Password",
@@ -2246,5 +2247,6 @@
   "verifying": "Verifying...",
   "viewAll": "view All",
   "welcome": "Welcome",
-  "welcomeBack": "Welcome back!"
+  "welcomeBack": "Welcome back!",
+  "description": "Description"
 }

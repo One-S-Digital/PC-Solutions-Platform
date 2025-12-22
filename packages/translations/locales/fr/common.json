@@ -1109,6 +1109,7 @@
     "infoTitle": "Information",
     "newMessageFrom": "Nouveau message de",
     "noNewNotifications": "Aucune nouvelle notification",
+    "requestSubmitted": "Demande soumise avec succès",
     "settingsUpdated": "Paramètres mis à jour avec succès",
     "successTitle": "Succès",
     "warningTitle": "Avertissement"
@@ -1706,7 +1707,8 @@
       "verificationSentMessage": "Veuillez vérifier votre nouvelle adresse e-mail pour le code de vérification.",
       "verificationSentTo": "Un code de vérification a été envoyé à {{email}}. Veuillez entrer le code ci-dessous pour terminer le changement d'e-mail.",
       "verifyAndChange": "Vérifier et changer l'e-mail",
-      "verifying": "Vérification en cours..."
+      "verifying": "Vérification en cours...",
+      "reAuthTip": "Vous devrez peut-être vous ré-authentifier après avoir changé votre adresse e-mail."
     },
     "changePassword": {
       "confirmNewPasswordLabel": "Confirmer le nouveau mot de passe",
@@ -1767,6 +1769,7 @@
     "manageSubscriptionDescription": "Mettez à jour votre méthode de paiement, consultez les factures et gérez les paramètres de votre abonnement.",
     "manageSubscriptionTitle": "Gérer l'Abonnement",
     "nextInvoiceOn": "Prochaine facture le {{date}}",
+    "planChangeNotImplemented": "Les changements de plan ne sont pas encore disponibles. Vous avez sélectionné {{planName}}. Veuillez contacter le support si vous avez besoin d'aide.",
     "stripePortalLinkNotConfigured": "Le portail de paiement n'est pas configuré. Veuillez contacter le support.",
     "upgradePlan": "Passer à un Plan Supérieur",
     "yesCancel": "Oui, Annuler",
@@ -2216,5 +2219,6 @@
   "verifying": "Vérification...",
   "viewAll": "Voir Tous",
   "welcome": "Bienvener",
-  "welcomeBack": "Bon retour !"
+  "welcomeBack": "Bon retour !",
+  "description": "Description"
 }
