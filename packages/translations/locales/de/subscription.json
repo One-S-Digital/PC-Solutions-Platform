@@ -24,6 +24,48 @@
     "featureNotAvailableTitle": "Funktion nicht verfügbar",
     "featureNotAvailableMessage": "Diese Funktion erfordert einen höheren Plan. Upgraden Sie, um auf {{feature}} zuzugreifen."
   },
+  "tier": {
+    "basic": "Basis",
+    "essential": "Essentiell",
+    "professional": "Professionell",
+    "enterprise": "Unternehmen"
+  },
+  "requestForm": {
+    "title": "Abonnement anfordern",
+    "subtitle": "Füllen Sie das untenstehende Formular aus, um Ihr Abonnement anzufordern",
+    "selectedPlan": "Ausgewählter Plan",
+    "billedMonthly": "Monatlich abgerechnet",
+    "billedAnnually": "Jährlich abgerechnet",
+    "year": "Jahr",
+    "month": "Monat",
+    "contactName": "Kontaktname",
+    "contactNamePlaceholder": "Ihr vollständiger Name",
+    "contactEmail": "E-Mail-Adresse",
+    "contactEmailPlaceholder": "ihre@email.com",
+    "contactPhone": "Telefonnummer",
+    "contactPhonePlaceholder": "+41 XX XXX XX XX",
+    "preferredContact": "Bevorzugte Kontaktmethode",
+    "message": "Zusätzliche Nachricht",
+    "messagePlaceholder": "Fragen oder besondere Anforderungen...",
+    "submitButton": "Anfrage senden",
+    "submitting": "Wird gesendet...",
+    "validation": {
+      "required": "Bitte füllen Sie alle Pflichtfelder aus"
+    },
+    "success": {
+      "title": "Anfrage gesendet!",
+      "description": "Vielen Dank für Ihr Interesse am {{planName}} Plan. Unser Team wird Ihre Anfrage prüfen und Ihnen innerhalb von 48 Stunden eine Rechnung zusenden.",
+      "estimatedTime": "Geschätzte Antwortzeit: 24-48 Stunden",
+      "emailSent": "Eine Bestätigungs-E-Mail wurde an {{email}} gesendet"
+    },
+    "howItWorks": {
+      "title": "So funktioniert es:",
+      "step1": "Senden Sie Ihre Anfrage",
+      "step2": "Erhalten Sie eine Rechnung per E-Mail",
+      "step3": "Zahlen Sie die Rechnung",
+      "step4": "Ihr Abonnement wird aktiviert"
+    }
+  },
   "featureGate": {
     "locked": "Diese Funktion erfordert ein Plan-Upgrade",
     "upgrade": "Plan upgraden"

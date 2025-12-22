@@ -1099,6 +1099,7 @@
   "noData": "no Data",
   "none": "Aucun",
   "notAvailable": "Non disponible",
+  "notProvided": "Non fourni",
   "notificationContext": {
     "useNotificationsError": "[FR] Use Notifications Error"
   },
@@ -1119,6 +1120,7 @@
     },
     "title": "[FR] Title"
   },
+  "optional": "Optionnel",
   "or": "or",
   "order": {
     "cannotSubmitMissingInfo": "[FR] Cannot submit order. User not logged in, supplier info missing, or cart is empty.",
@@ -1195,6 +1197,7 @@
       "languages": "[FR] Languages",
       "pedagogy": "[FR] Pedagogy"
     },
+    "notProvided": "Non fourni",
     "saveButton": "[FR] Save Button",
     "saveSuccess": "Enregistrer success",
     "subtitle": "[FR] Subtitle",

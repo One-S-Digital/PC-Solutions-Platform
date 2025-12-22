@@ -1180,12 +1180,19 @@
     "welcome": "Welcome to your service provider dashboard"
   },
   "serviceProviderListingsPage": {
+    "defaultAvailability": "By appointment",
+    "defaultDeliveryType": "On-site",
+    "defaultPriceInfo": "Contact for quote",
+    "defaultTitle": "Untitled Service",
+    "missingOrgDetails": "User organization details are missing.",
     "addNewServiceButton": "Add New Service",
     "card": {
       "category": "Category",
       "delivery": "Delivery"
     },
     "confirmDelete": "Are you sure you want to delete this service?",
+    "loadError": "Failed to load services",
+    "saveError": "Failed to save service",
     "emptyState": {
       "noMatch": "No services match your search criteria",
       "noServicesYet": "You haven't created any services yet",

@@ -1115,6 +1115,7 @@
   "non-super-admin cannot access super-admin routes": "Nick-super-admin Köns",
   "none": "Keine",
   "notAvailable": "Nicht verfügbar",
+  "notProvided": "Nicht angegeben",
   "notificationContext": {
     "useNotificationsError": "[DE] Use Notifications Error"
   },
@@ -1135,6 +1136,7 @@
     },
     "title": "[DE] Title"
   },
+  "optional": "Optional",
   "or": "or",
   "order": {
     "cannotSubmitMissingInfo": "[DE] Cannot submit order. User not logged in, supplier info missing, or cart is empty.",
@@ -1211,6 +1213,7 @@
       "languages": "organisationsprofileform.plapholders.Ulovertation",
       "pedagogy": "[DE] Pedagogy"
     },
+    "notProvided": "Nicht angegeben",
     "saveButton": "[DE] Save Button",
     "saveSuccess": "Speichern success",
     "subtitle": "organisationsprofileform.subtitel",

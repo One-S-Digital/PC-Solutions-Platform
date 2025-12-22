@@ -24,6 +24,48 @@
     "featureNotAvailableTitle": "Fonctionnalité non disponible",
     "featureNotAvailableMessage": "Cette fonctionnalité nécessite un plan supérieur. Mettez à niveau pour accéder à {{feature}}."
   },
+  "tier": {
+    "basic": "Basique",
+    "essential": "Essentiel",
+    "professional": "Professionnel",
+    "enterprise": "Entreprise"
+  },
+  "requestForm": {
+    "title": "Demander un abonnement",
+    "subtitle": "Complétez le formulaire ci-dessous pour demander votre abonnement",
+    "selectedPlan": "Plan sélectionné",
+    "billedMonthly": "Facturé mensuellement",
+    "billedAnnually": "Facturé annuellement",
+    "year": "année",
+    "month": "mois",
+    "contactName": "Nom du contact",
+    "contactNamePlaceholder": "Votre nom complet",
+    "contactEmail": "Adresse e-mail",
+    "contactEmailPlaceholder": "votre@email.com",
+    "contactPhone": "Numéro de téléphone",
+    "contactPhonePlaceholder": "+41 XX XXX XX XX",
+    "preferredContact": "Méthode de contact préférée",
+    "message": "Message supplémentaire",
+    "messagePlaceholder": "Questions ou exigences particulières...",
+    "submitButton": "Soumettre la demande",
+    "submitting": "Envoi en cours...",
+    "validation": {
+      "required": "Veuillez remplir tous les champs obligatoires"
+    },
+    "success": {
+      "title": "Demande soumise !",
+      "description": "Merci de votre intérêt pour le plan {{planName}}. Notre équipe examinera votre demande et vous enverra une facture dans les 48 heures.",
+      "estimatedTime": "Temps de réponse estimé : 24-48 heures",
+      "emailSent": "Un e-mail de confirmation a été envoyé à {{email}}"
+    },
+    "howItWorks": {
+      "title": "Comment ça fonctionne :",
+      "step1": "Soumettez votre demande",
+      "step2": "Recevez une facture par e-mail",
+      "step3": "Payez la facture",
+      "step4": "Votre abonnement est activé"
+    }
+  },
   "featureGate": {
     "locked": "Cette fonctionnalité nécessite une mise à niveau du plan",
     "upgrade": "Mettre à niveau"

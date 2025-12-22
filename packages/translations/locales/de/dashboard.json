@@ -485,6 +485,27 @@
     },
     "topViewedProducts": "Meist angesehene Produkte"
   },
+  "partnerDetailPage": {
+    "aboutTitle": "Über",
+    "addToOrderButton": "Zur Bestellung hinzufügen",
+    "applyPromoButton": "Anwenden",
+    "contactInfoTitle": "Kontaktinformationen",
+    "directOrderButton": "Direktbestellung",
+    "invalidPartnerIdMessage": "Es konnte kein Benutzer gefunden werden, der dieser Organisation zugeordnet ist, um eine Nachricht zu senden.",
+    "loadingPartnerDetails": "Partnerdetails werden geladen...",
+    "noProductsListed": "Keine Produkte aufgelistet",
+    "noServicesListed": "Keine Dienstleistungen aufgelistet",
+    "onlyFoundationsRequestService": "Nur Stiftungen können Dienstleistungen anfordern",
+    "productAddedToOrder": "Produkt erfolgreich zur Bestellung hinzugefügt",
+    "productOutOfStock": "Das Produkt ist derzeit nicht vorrätig",
+    "promoCodePlaceholder": "Aktionscode eingeben",
+    "promoCodeTitle": "Aktionscode",
+    "ratingText": "Bewertung",
+    "ratingsReviewsTitle": "Bewertungen und Rezensionen",
+    "requestServiceButton": "Service anfordern",
+    "requestSubmittedAlert": "Serviceanfrage erfolgreich übermittelt",
+    "reviewsPlaceholder": "Noch keine Bewertungen"
+  },
   "supplierCard": {
     "viewProfileAndProducts": "Profil anzeigen"
   },
@@ -636,6 +657,13 @@
       "delivery": "Lieferung"
     },
     "confirmDelete": "Sind Sie sicher, dass Sie diesen Service löschen möchten?",
+    "defaultAvailability": "Nach Vereinbarung",
+    "defaultDeliveryType": "Vor Ort",
+    "defaultPriceInfo": "Kontaktieren Sie uns für ein Angebot",
+    "defaultTitle": "Unbenannter Service",
+    "loadError": "Fehler beim Laden der Services",
+    "missingOrgDetails": "Organisationsdetails des Benutzers fehlen.",
+    "saveError": "Fehler beim Speichern des Services",
     "emptyState": {
       "noMatch": "Keine Services entsprechen Ihren Suchkriterien",
       "noServicesYet": "Sie haben noch keine Services erstellt",

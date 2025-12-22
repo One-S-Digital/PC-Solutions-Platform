@@ -360,7 +360,7 @@ const DocumentPreviewModal: React.FC<DocumentPreviewModalProps> = ({
       return (
         <div className="w-full h-full flex flex-col items-center justify-center bg-gray-50 text-gray-600">
           <p className="text-lg mb-4">{t('preview.invalidUrl', 'Invalid file URL')}</p>
-          <p className="text-sm mb-2">URL: {fileUrl || 'Not provided'}</p>
+          <p className="text-sm mb-2">URL: {fileUrl || t('common:notProvided', 'Not provided')}</p>
           <p className="text-sm mb-6">{t('preview.uploadIssue', 'The document may not have been uploaded correctly')}</p>
         </div>
       );

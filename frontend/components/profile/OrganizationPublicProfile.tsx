@@ -48,7 +48,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
   if (!organization) {
     return (
       <Card className="p-6">
-        <p className="text-gray-500 text-center">No organization data available.</p>
+        <p className="text-gray-500 text-center">{t('profile:empty.organization', { defaultValue: 'No organization information available yet.' })}</p>
       </Card>
     );
   }
@@ -57,7 +57,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
   if (!organization.id || !organization.name) {
     return (
       <Card className="p-6">
-        <p className="text-gray-500 text-center">Invalid organization data.</p>
+        <p className="text-gray-500 text-center">{t('profile:organization.invalidData', { defaultValue: 'Invalid organization data.' })}</p>
       </Card>
     );
   }
@@ -99,7 +99,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                   {t('profile:organization.vatNumber', { defaultValue: 'VAT Number' })}
                 </p>
                 <p className="text-gray-700">
-                  {organization.vatNumber || <span className="text-gray-400 italic">Not provided</span>}
+                  {organization.vatNumber || <span className="text-gray-400 italic">{t('profile:organization.notProvided', { defaultValue: 'Not provided' })}</span>}
                 </p>
               </div>
               
@@ -121,7 +121,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-400 italic text-xs">No regions specified</p>
+                  <p className="text-gray-400 italic text-xs">{t('profile:organization.noRegionsSpecified', { defaultValue: 'No regions specified' })}</p>
                 )}
               </div>
 
@@ -142,7 +142,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-400 italic text-xs">No languages specified</p>
+                  <p className="text-gray-400 italic text-xs">{t('profile:organization.noLanguagesSpecified', { defaultValue: 'No languages specified' })}</p>
                 )}
               </div>
 
@@ -160,7 +160,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                           {organization.capacity} {t('profile:organization.children', { defaultValue: 'children' })}
                         </span>
                       ) : (
-                        <span className="text-gray-400 italic text-xs">Not specified</span>
+                        <span className="text-gray-400 italic text-xs">{t('profile:organization.notSpecified', { defaultValue: 'Not specified' })}</span>
                       )}
                     </p>
                   </div>
@@ -181,7 +181,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                         ))}
                       </div>
                     ) : (
-                      <p className="text-gray-400 italic text-xs">No pedagogical approaches specified</p>
+                      <p className="text-gray-400 italic text-xs">{t('profile:organization.noPedagogySpecified', { defaultValue: 'No pedagogical approaches specified' })}</p>
                     )}
                   </div>
                 </>
@@ -203,7 +203,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                     {organization.contactPerson}
                   </p>
                 ) : (
-                  <p className="text-gray-400 italic text-xs">Not provided</p>
+                  <p className="text-gray-400 italic text-xs">{t('profile:organization.notProvided', { defaultValue: 'Not provided' })}</p>
                 )}
               </div>
 
@@ -220,7 +220,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                     {organization.phoneNumber}
                   </a>
                 ) : (
-                  <p className="text-gray-400 italic text-xs">Not provided</p>
+                  <p className="text-gray-400 italic text-xs">{t('profile:organization.notProvided', { defaultValue: 'Not provided' })}</p>
                 )}
               </div>
 
@@ -237,7 +237,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                     {user.email}
                   </a>
                 ) : (
-                  <p className="text-gray-400 italic text-xs">Not provided</p>
+                  <p className="text-gray-400 italic text-xs">{t('profile:organization.notProvided', { defaultValue: 'Not provided' })}</p>
                 )}
               </div>
 
@@ -256,7 +256,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                     <span className="truncate">{organization.bookingLink}</span>
                   </a>
                 ) : (
-                  <p className="text-gray-400 italic text-xs">Not provided</p>
+                  <p className="text-gray-400 italic text-xs">{t('profile:organization.notProvided', { defaultValue: 'Not provided' })}</p>
                 )}
               </div>
 
@@ -277,7 +277,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                         <span className="truncate">{organization.directOrderLink}</span>
                       </a>
                     ) : (
-                      <p className="text-gray-400 italic text-xs">Not provided</p>
+                      <p className="text-gray-400 italic text-xs">{t('profile:organization.notProvided', { defaultValue: 'Not provided' })}</p>
                     )}
                   </div>
 
@@ -296,7 +296,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                         <span className="truncate">{t('profile:organization.viewCatalog', { defaultValue: 'View Catalog' })}</span>
                       </a>
                     ) : (
-                      <p className="text-gray-400 italic text-xs">Not provided</p>
+                      <p className="text-gray-400 italic text-xs">{t('profile:organization.notProvided', { defaultValue: 'Not provided' })}</p>
                     )}
                   </div>
                 </>
@@ -319,7 +319,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                         {t('profile:organization.productCategory', { defaultValue: 'Product Category' })}
                       </p>
                       <p className="text-gray-700">
-                        {organization.productCategory ? formatCategory(organization.productCategory) : <span className="text-gray-400 italic text-xs">Not specified</span>}
+                        {organization.productCategory ? formatCategory(organization.productCategory) : <span className="text-gray-400 italic text-xs">{t('profile:organization.notSpecified', { defaultValue: 'Not specified' })}</span>}
                       </p>
                     </div>
 
@@ -330,7 +330,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                       <p className="text-gray-700">
                         {typeof organization.minimumOrderQuantity === 'number' 
                           ? organization.minimumOrderQuantity 
-                          : <span className="text-gray-400 italic text-xs">Not specified</span>}
+                          : <span className="text-gray-400 italic text-xs">{t('profile:organization.notSpecified', { defaultValue: 'Not specified' })}</span>}
                       </p>
                     </div>
                   </>
@@ -343,7 +343,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                         {t('profile:organization.serviceType', { defaultValue: 'Service Type' })}
                       </p>
                       <p className="text-gray-700">
-                        {organization.serviceType || <span className="text-gray-400 italic text-xs">Not specified</span>}
+                        {organization.serviceType || <span className="text-gray-400 italic text-xs">{t('profile:organization.notSpecified', { defaultValue: 'Not specified' })}</span>}
                       </p>
                     </div>
 
@@ -374,7 +374,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                         <p className="text-gray-700">
                           {organization.deliveryType
                             ? formatServiceDeliveryType(t, organization.deliveryType)
-                            : <span className="text-gray-400 italic text-xs">{t('profile:organization.deliveryTypeNotSpecified', { defaultValue: 'Not specified' })}</span>}
+                            : <span className="text-gray-400 italic text-xs">{t('profile:organization.notSpecified', { defaultValue: 'Not specified' })}</span>}
                         </p>
                     </div>
                   </>
@@ -392,7 +392,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
             {organization.description ? (
               <p className="text-sm text-gray-700 whitespace-pre-line leading-relaxed">{organization.description}</p>
             ) : (
-              <p className="text-sm text-gray-400 italic">No description provided.</p>
+              <p className="text-sm text-gray-400 italic">{t('profile:organization.noDescription', { defaultValue: 'No description provided.' })}</p>
             )}
           </Card>
 
@@ -443,11 +443,11 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                     </div>
                   ))}
                 </div>
-              ) : (
-                <p className="text-sm text-gray-500">
-                  {t('profile:organization.empty.products', { defaultValue: 'No products published yet.' })}
-                </p>
-              )}
+                ) : (
+                  <p className="text-sm text-gray-500">
+                    {t('profile:organization.empty.products', { defaultValue: 'No products listed.' })}
+                  </p>
+                )}
             </Card>
           )}
 
@@ -502,11 +502,11 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                     </div>
                   ))}
                 </div>
-              ) : (
-                <p className="text-sm text-gray-500">
-                  {t('profile:organization.empty.services', { defaultValue: 'No services published yet.' })}
-                </p>
-              )}
+                ) : (
+                  <p className="text-sm text-gray-500">
+                    {t('profile:organization.empty.services', { defaultValue: 'No services listed.' })}
+                  </p>
+                )}
             </Card>
           )}
 
@@ -548,11 +548,11 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                     </div>
                   ))}
                 </div>
-              ) : (
-                <p className="text-sm text-gray-500">
-                  {t('profile:organization.empty.jobListings', { defaultValue: 'No job listings published yet.' })}
-                </p>
-              )}
+                ) : (
+                  <p className="text-sm text-gray-500">
+                    {t('profile:organization.empty.jobListings', { defaultValue: 'No job listings listed.' })}
+                  </p>
+                )}
             </Card>
           )}
 

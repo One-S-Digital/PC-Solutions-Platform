@@ -75,7 +75,7 @@ const ServiceProviderListingsPage: React.FC = () => {
       }
     } catch (err) {
       console.error('Failed to fetch services:', err);
-      setError(t('serviceProviderListingsPage.loadError', 'Failed to load services'));
+      setError(t('dashboard:serviceProviderListingsPage.loadError', 'Failed to load services'));
     } finally {
       setLoading(false);
     }
@@ -103,7 +103,7 @@ const ServiceProviderListingsPage: React.FC = () => {
 
   const handleServiceSubmit = async (data: Partial<Omit<Service, 'id' | 'providerId' | 'providerName' | 'providerLogo'>>, file?: File) => {
     if (!currentUser || !currentUser.orgId || !currentUser.orgName) {
-      alert("User organization details are missing.");
+      alert(t('dashboard:serviceProviderListingsPage.missingOrgDetails', 'User organization details are missing.'));
       return;
     }
 
@@ -151,13 +151,13 @@ const ServiceProviderListingsPage: React.FC = () => {
           providerId,
           providerName,
           providerLogo,
-          title: data.title || 'Untitled Service',
+          title: data.title || t('dashboard:serviceProviderListingsPage.defaultTitle', 'Untitled Service'),
           description: data.description || '',
           category: data.category || ServiceCategory.OTHER,
-          availability: data.availability || 'By appointment',
+          availability: data.availability || t('dashboard:serviceProviderListingsPage.defaultAvailability', 'By appointment'),
           tags: data.tags || [],
-          deliveryType: data.deliveryType || 'On-site',
-          priceInfo: data.priceInfo || t('serviceProviderListingsPage.defaultPriceInfo', 'Contact for quote'),
+          deliveryType: data.deliveryType || t('dashboard:serviceProviderListingsPage.defaultDeliveryType', 'On-site'),
+          priceInfo: data.priceInfo || t('dashboard:serviceProviderListingsPage.defaultPriceInfo', 'Contact for quote'),
           imageUrl,
           isActive: true,
           ...data,
@@ -175,7 +175,7 @@ const ServiceProviderListingsPage: React.FC = () => {
       handleCloseModal();
     } catch (err) {
       console.error('Failed to save service:', err);
-      alert(t('serviceProviderListingsPage.saveError', 'Failed to save service'));
+      alert(t('dashboard:serviceProviderListingsPage.saveError', 'Failed to save service'));
     }
   };
 

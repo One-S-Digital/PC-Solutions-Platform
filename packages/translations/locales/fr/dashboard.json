@@ -484,6 +484,27 @@
     },
     "topViewedProducts": "Produits les plus consultés"
   },
+  "partnerDetailPage": {
+    "aboutTitle": "À propos",
+    "addToOrderButton": "Ajouter à la commande",
+    "applyPromoButton": "Appliquer",
+    "contactInfoTitle": "Informations de contact",
+    "directOrderButton": "Commande directe",
+    "invalidPartnerIdMessage": "Impossible de trouver un utilisateur associé à cette organisation pour envoyer un message.",
+    "loadingPartnerDetails": "Chargement des détails du partenaire...",
+    "noProductsListed": "Aucun produit répertorié",
+    "noServicesListed": "Aucun service répertorié",
+    "onlyFoundationsRequestService": "Seules les fondations peuvent demander des services",
+    "productAddedToOrder": "Produit ajouté à la commande avec succès",
+    "productOutOfStock": "Le produit est actuellement en rupture de stock",
+    "promoCodePlaceholder": "Entrer le code promotionnel",
+    "promoCodeTitle": "Code promotionnel",
+    "ratingText": "Note",
+    "ratingsReviewsTitle": "Notes et avis",
+    "requestServiceButton": "Demander un service",
+    "requestSubmittedAlert": "Demande de service soumise avec succès",
+    "reviewsPlaceholder": "Aucun avis pour le moment"
+  },
   "supplierCard": {
     "viewProfileAndProducts": "Voir le profil"
   },
@@ -635,6 +656,13 @@
       "delivery": "Livraison"
     },
     "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce service ?",
+    "defaultAvailability": "Sur rendez-vous",
+    "defaultDeliveryType": "Sur site",
+    "defaultPriceInfo": "Contacter pour un devis",
+    "defaultTitle": "Service sans titre",
+    "loadError": "Échec du chargement des services",
+    "missingOrgDetails": "Les détails de l'organisation de l'utilisateur sont manquants.",
+    "saveError": "Échec de l'enregistrement du service",
     "emptyState": {
       "noMatch": "Aucun service ne correspond à vos critères de recherche",
       "noServicesYet": "Vous n'avez pas encore créé de services",

@@ -553,7 +553,7 @@ const PartnerDetailPage: React.FC = () => {
                 </span>
               )}
             </div>
-            <p className="text-sm text-gray-500">{t('partnerDetailPage.reviewsPlaceholder')}</p>
+            <p className="text-sm text-gray-500">{t('dashboard:partnerDetailPage.reviewsPlaceholder', 'No reviews yet')}</p>
           </Card>
         </div>
 
@@ -584,7 +584,7 @@ const PartnerDetailPage: React.FC = () => {
               ) : (
                 <div className="text-center py-8">
                   <ShoppingCartIcon className="w-12 h-12 mx-auto text-gray-300 mb-4" />
-                  <p className="text-gray-500">{t('partnerDetailPage.noProductsListed')}</p>
+                  <p className="text-gray-500">{t('dashboard:partnerDetailPage.noProductsListed', 'No products listed')}</p>
                 </div>
               )
             )}
@@ -635,7 +635,7 @@ const PartnerDetailPage: React.FC = () => {
               ) : (
                 <div className="text-center py-8">
                   <WrenchScrewdriverIcon className="w-12 h-12 mx-auto text-gray-300 mb-4" />
-                  <p className="text-gray-500">{t('partnerDetailPage.noServicesListed')}</p>
+                  <p className="text-gray-500">{t('dashboard:partnerDetailPage.noServicesListed', 'No services listed')}</p>
                 </div>
               )
             )}
