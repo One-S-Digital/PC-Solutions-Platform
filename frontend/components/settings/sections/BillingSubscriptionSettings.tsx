@@ -210,7 +210,7 @@ const BillingSubscriptionSettings: React.FC<BillingSubscriptionSettingsProps> = 
             </div>
             <div>
               <span className="font-medium">{t('subscription:info.cancelAtPeriodEnd')}:</span>{' '}
-              {cancelAtPeriodEnd ? t('common:yes') : t('common:no')}
+              {cancelAtPeriodEnd ? t('common:common.yes') : t('common:common.no')}
             </div>
           </div>
 
