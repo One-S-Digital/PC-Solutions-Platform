@@ -33,7 +33,7 @@ const GeneralSettings: React.FC = () => {
     queryKey: ['platform-settings'],
     queryFn: async () => {
       if (!apiClient) return null
-      const response = await apiClient.get('/api/platform-settings')
+      const response = await apiClient.get('/platform-settings')
       return response.data
     },
     enabled: !!apiClient,
@@ -44,7 +44,7 @@ const GeneralSettings: React.FC = () => {
     queryKey: ['system-settings-email'],
     queryFn: async () => {
       if (!apiClient) return null
-      const response = await apiClient.get('/api/admin/system-configuration/settings?category=email')
+      const response = await apiClient.get('/admin/system-configuration/settings?category=email')
       return response.data as SystemSetting[]
     },
     enabled: !!apiClient,
@@ -67,7 +67,7 @@ const GeneralSettings: React.FC = () => {
   const updateMaintenanceMutation = useMutation({
     mutationFn: async (data: { maintenanceMode: boolean; maintenanceMessage?: string }) => {
       if (!apiClient) throw new Error('API client not available')
-      return apiClient.put('/api/platform-settings', data)
+      return apiClient.put('/platform-settings', data)
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['platform-settings'] })
@@ -132,7 +132,7 @@ const GeneralSettings: React.FC = () => {
 
     setSavingEmailGracePeriod(true)
     try {
-      await apiClient.put('/api/admin/system-configuration/settings/email.grace_period_days', {
+      await apiClient.put('/admin/system-configuration/settings/email.grace_period_days', {
         value: days,
         description: 'Number of days to keep old email addresses before automatic deletion after an email change. This grace period allows users to recover access if needed.',
       })
