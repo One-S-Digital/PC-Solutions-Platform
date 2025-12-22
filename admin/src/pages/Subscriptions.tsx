@@ -133,8 +133,9 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
   const [durationMonths, setDurationMonths] = useState<number>(12);
   const [notes, setNotes] = useState<string>(subscription?.notes || '');
 
-  // Subscription period options
+  // Subscription period options (0 = monthly recurring with no fixed end)
   const subscriptionPeriodOptions = React.useMemo(() => [
+    { value: 0, label: t('admin:subscriptions.editSubscription.period.monthlyRecurring', 'Monthly Recurring') },
     { value: 1, label: t('admin:subscriptions.editSubscription.period.oneMonth', '1 Month') },
     { value: 3, label: t('admin:subscriptions.editSubscription.period.threeMonths', '3 Months') },
     { value: 6, label: t('admin:subscriptions.editSubscription.period.sixMonths', '6 Months') },
@@ -1936,13 +1937,16 @@ const Subscriptions: React.FC = () => {
       const existingSubscription = userSubscriptionMap.get(userId);
       if (existingSubscription) {
         // Calculate new currentPeriodEnd based on durationMonths
+        // 0 = monthly recurring (set to 1 month period that will auto-renew)
         let currentPeriodEnd: string | undefined;
-        if (data.durationMonths) {
+        if (data.durationMonths !== undefined) {
           const startDate = existingSubscription.currentPeriodStart 
             ? new Date(existingSubscription.currentPeriodStart)
             : new Date();
           const endDate = new Date(startDate);
-          endDate.setMonth(endDate.getMonth() + data.durationMonths);
+          // For monthly recurring (0), set period to 1 month
+          const months = data.durationMonths === 0 ? 1 : data.durationMonths;
+          endDate.setMonth(endDate.getMonth() + months);
           currentPeriodEnd = endDate.toISOString();
         }
         
@@ -1963,11 +1967,13 @@ const Subscriptions: React.FC = () => {
         if (!data.planId && !plans[0]?.id) {
           throw new Error('No plan selected and no plans available');
         }
+        // For monthly recurring (0), set durationMonths to 1
+        const duration = data.durationMonths === 0 ? 1 : data.durationMonths;
         return subscriptionService.createSubscription(apiClient, {
           userId,
           planId: data.planId || plans[0]?.id,
           tier: data.tier || SubscriptionTier.BASIC,
-          durationMonths: data.durationMonths,
+          durationMonths: duration,
           notes: data.notes,
         });
       }

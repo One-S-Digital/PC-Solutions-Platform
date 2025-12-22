@@ -1698,6 +1698,7 @@
       "subscriptionPeriod": "Subscription Period",
       "subscriptionPeriodHelp": "Select how long this subscription should be active.",
       "period": {
+        "monthlyRecurring": "Monthly Recurring",
         "oneMonth": "1 Month",
         "threeMonths": "3 Months",
         "sixMonths": "6 Months",
