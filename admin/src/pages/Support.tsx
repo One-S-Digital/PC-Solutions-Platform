@@ -30,6 +30,7 @@ const Support: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<TicketCategory | ''>('');
   const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
   const [replyMessage, setReplyMessage] = useState('');
+  const [responses, setResponses] = useState<TicketResponse[]>([]);
 
   const apiClient = useApiClient();
   const { t } = useTranslation(['common', 'admin']);
@@ -128,6 +129,8 @@ const Support: React.FC = () => {
           createdAt: new Date().toISOString(),
           userName: user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.emailAddresses[0]?.emailAddress || 'Admin' : 'Admin',
         };
+        // Update responses state separately (doesn't cause textarea re-render)
+        setResponses(prev => [...prev, tempReply]);
         setSelectedTicket({
           ...previousTicket,
           responses: [...previousTicket.responses, tempReply],
@@ -140,12 +143,14 @@ const Support: React.FC = () => {
       // Rollback on error
       if (context?.previousTicket) {
         setSelectedTicket(context.previousTicket);
+        setResponses(context.previousTicket.responses || []);
       }
     },
     onSuccess: (response, { ticketId }) => {
       // Update with real data
       const updatedTicket = response.data.data;
       setSelectedTicket(updatedTicket);
+      setResponses(updatedTicket.responses || []);
       queryClient.invalidateQueries({ queryKey: ['support-tickets'] });
       queryClient.invalidateQueries({ queryKey: ['support-ticket', ticketId] });
       setReplyMessage('');
@@ -175,21 +180,28 @@ const Support: React.FC = () => {
     ticketId: selectedTicket?.id || null,
     userId: currentUserId,
     onNewReply: (reply) => {
-      if (selectedTicket && !selectedTicket.responses.find(r => r.id === reply.id)) {
+      if (selectedTicket && !responses.find(r => r.id === reply.id)) {
         // If user is typing, queue the update instead of applying immediately
         if (isTypingRef.current) {
           pendingUpdatesRef.current.push(reply);
           return;
         }
         
-        // Deduplicate and sort
-        const updatedResponses = [...selectedTicket.responses, reply].sort(
-          (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        );
-        setSelectedTicket({
-          ...selectedTicket,
-          responses: updatedResponses,
+        // Update only the responses state, not the entire ticket
+        setResponses(prev => {
+          const updated = [...prev, reply].sort(
+            (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
+          return updated;
         });
+        
+        // Also update ticket for consistency, but this won't affect textarea
+        setSelectedTicket(prev => prev ? {
+          ...prev,
+          responses: [...(prev.responses || []), reply].sort(
+            (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          ),
+        } : null);
         
         // Scroll to bottom if user is near bottom
         if (scrollContainerRef.current) {
@@ -224,10 +236,12 @@ const Support: React.FC = () => {
         if (response.data.data) {
           const updatedTicket = response.data.data;
           // Only update if responses changed
-          const currentResponseIds = new Set(selectedTicket.responses.map(r => r.id));
+          const currentResponseIds = new Set(responses.map(r => r.id));
           const newResponseIds = new Set(updatedTicket.responses.map(r => r.id));
           if (currentResponseIds.size !== newResponseIds.size || 
               [...newResponseIds].some(id => !currentResponseIds.has(id))) {
+            // Update responses state separately
+            setResponses(updatedTicket.responses || []);
             setSelectedTicket(updatedTicket);
             
             // Scroll to bottom if user is near bottom
@@ -249,6 +263,15 @@ const Support: React.FC = () => {
 
     return () => clearInterval(pollInterval);
   }, [selectedTicket?.id, isSocketConnected, apiClient]);
+
+  // Sync responses when ticket changes
+  useEffect(() => {
+    if (selectedTicket) {
+      setResponses(selectedTicket.responses || []);
+    } else {
+      setResponses([]);
+    }
+  }, [selectedTicket?.id]);
 
   // Auto-scroll to bottom on mount or when selected ticket changes
   useEffect(() => {
@@ -669,21 +692,29 @@ const Support: React.FC = () => {
                     clearTimeout((window as any).typingTimeout);
                     (window as any).typingTimeout = setTimeout(() => {
                       isTypingRef.current = false;
-                      // Apply any pending updates
-                      if (pendingUpdatesRef.current.length > 0 && selectedTicket) {
-                        const allResponses = [...selectedTicket.responses, ...pendingUpdatesRef.current];
-                        const deduplicated = allResponses.filter((r, i, self) => 
+                  // Apply any pending updates
+                  if (pendingUpdatesRef.current.length > 0) {
+                    setResponses(prev => {
+                      const allResponses = [...prev, ...pendingUpdatesRef.current];
+                      const deduplicated = allResponses.filter((r, i, self) => 
+                        i === self.findIndex(resp => resp.id === r.id)
+                      );
+                      return deduplicated.sort(
+                        (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+                      );
+                    });
+                    if (selectedTicket) {
+                      setSelectedTicket({
+                        ...selectedTicket,
+                        responses: [...responses, ...pendingUpdatesRef.current].filter((r, i, self) => 
                           i === self.findIndex(resp => resp.id === r.id)
-                        );
-                        const sorted = deduplicated.sort(
+                        ).sort(
                           (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-                        );
-                        setSelectedTicket({
-                          ...selectedTicket,
-                          responses: sorted,
-                        });
-                        pendingUpdatesRef.current = [];
-                      }
+                        ),
+                      });
+                    }
+                    pendingUpdatesRef.current = [];
+                  }
                     }, 1000);
                   }}
                   onFocus={() => {
@@ -693,21 +724,29 @@ const Support: React.FC = () => {
                     // Small delay before clearing typing flag
                     setTimeout(() => {
                       isTypingRef.current = false;
-                      // Apply any pending updates
-                      if (pendingUpdatesRef.current.length > 0 && selectedTicket) {
-                        const allResponses = [...selectedTicket.responses, ...pendingUpdatesRef.current];
-                        const deduplicated = allResponses.filter((r, i, self) => 
+                  // Apply any pending updates
+                  if (pendingUpdatesRef.current.length > 0) {
+                    setResponses(prev => {
+                      const allResponses = [...prev, ...pendingUpdatesRef.current];
+                      const deduplicated = allResponses.filter((r, i, self) => 
+                        i === self.findIndex(resp => resp.id === r.id)
+                      );
+                      return deduplicated.sort(
+                        (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+                      );
+                    });
+                    if (selectedTicket) {
+                      setSelectedTicket({
+                        ...selectedTicket,
+                        responses: [...responses, ...pendingUpdatesRef.current].filter((r, i, self) => 
                           i === self.findIndex(resp => resp.id === r.id)
-                        );
-                        const sorted = deduplicated.sort(
+                        ).sort(
                           (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-                        );
-                        setSelectedTicket({
-                          ...selectedTicket,
-                          responses: sorted,
-                        });
-                        pendingUpdatesRef.current = [];
-                      }
+                        ),
+                      });
+                    }
+                    pendingUpdatesRef.current = [];
+                  }
                     }, 200);
                   }}
                 />

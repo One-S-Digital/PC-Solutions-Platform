@@ -70,6 +70,7 @@ const FoundationSupportPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showNewTicketForm, setShowNewTicketForm] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
+  const [responses, setResponses] = useState<TicketResponse[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [newResponse, setNewResponse] = useState('');
 
@@ -162,6 +163,8 @@ const FoundationSupportPage: React.FC = () => {
       createdAt: new Date().toISOString(),
       userName: currentUser ? `${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim() || currentUser.email || 'You' : 'You',
     };
+    // Update responses state separately (doesn't cause textarea re-render)
+    setResponses(prev => [...prev, tempReply]);
     setSelectedTicket({
       ...previousTicket,
       responses: [...previousTicket.responses, tempReply],
@@ -184,6 +187,7 @@ const FoundationSupportPage: React.FC = () => {
           ...res.data,
           responses: updatedResponses,
         });
+        setResponses(updatedResponses);
         setError(null);
         await fetchTickets();
         // Scroll to bottom
@@ -193,6 +197,7 @@ const FoundationSupportPage: React.FC = () => {
       } else {
         // Rollback on error
         setSelectedTicket(previousTicket);
+        setResponses(previousTicket.responses || []);
         setNewResponse(messageToSend);
         setError(t('common:errors.submitFailed'));
       }
@@ -200,6 +205,7 @@ const FoundationSupportPage: React.FC = () => {
       console.error('Error submitting response:', err);
       // Rollback on error
       setSelectedTicket(previousTicket);
+      setResponses(previousTicket.responses || []);
       setNewResponse(messageToSend);
       setError(t('common:errors.submitFailed'));
     } finally {
@@ -207,26 +213,42 @@ const FoundationSupportPage: React.FC = () => {
     }
   };
 
+  // Sync responses when ticket changes
+  useEffect(() => {
+    if (selectedTicket) {
+      setResponses(selectedTicket.responses || []);
+    } else {
+      setResponses([]);
+    }
+  }, [selectedTicket?.id]);
+
   // WebSocket for real-time updates
   const { isConnected: isSocketConnected } = useSupportSocket({
     ticketId: selectedTicket?.id || null,
     userId: currentUser?.id || '',
     onNewReply: (reply) => {
-      if (selectedTicket && !selectedTicket.responses.find(r => r.id === reply.id)) {
+      if (selectedTicket && !responses.find(r => r.id === reply.id)) {
         // If user is typing, queue the update instead of applying immediately
         if (isTypingRef.current) {
           pendingUpdatesRef.current.push(reply);
           return;
         }
         
-        // Deduplicate and sort
-        const updatedResponses = [...selectedTicket.responses, reply].sort(
-          (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        );
-        setSelectedTicket({
-          ...selectedTicket,
-          responses: updatedResponses,
+        // Update only the responses state, not the entire ticket
+        setResponses(prev => {
+          const updated = [...prev, reply].sort(
+            (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
+          return updated;
         });
+        
+        // Also update ticket for consistency, but this won't affect textarea
+        setSelectedTicket(prev => prev ? {
+          ...prev,
+          responses: [...(prev.responses || []), reply].sort(
+            (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          ),
+        } : null);
         
         // Scroll to bottom if user is near bottom
         if (scrollContainerRef.current) {
@@ -261,10 +283,12 @@ const FoundationSupportPage: React.FC = () => {
         if (res.success && res.data) {
           const updatedTicket = res.data;
           // Only update if responses changed
-          const currentResponseIds = new Set(selectedTicket.responses.map(r => r.id));
+          const currentResponseIds = new Set(responses.map(r => r.id));
           const newResponseIds = new Set(updatedTicket.responses.map(r => r.id));
           if (currentResponseIds.size !== newResponseIds.size || 
               [...newResponseIds].some(id => !currentResponseIds.has(id))) {
+            // Update responses state separately
+            setResponses(updatedTicket.responses || []);
             setSelectedTicket(updatedTicket);
             
             // Scroll to bottom if user is near bottom
@@ -335,9 +359,9 @@ const FoundationSupportPage: React.FC = () => {
           ref={scrollContainerRef}
           className="space-y-3 mb-4 max-h-96 overflow-y-auto"
         >
-          {[...selectedTicket.responses]
+          {responses
             .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
-            .map(response => (
+            .map((response: TicketResponse) => (
               <div 
                 key={response.id} 
                 className={`p-4 rounded-lg ${response.isStaff ? 'bg-swiss-teal/10 ml-4' : 'bg-gray-50 mr-4'}`}
@@ -370,17 +394,15 @@ const FoundationSupportPage: React.FC = () => {
                 (window as any).typingTimeout = setTimeout(() => {
                   isTypingRef.current = false;
                   // Apply any pending updates
-                  if (pendingUpdatesRef.current.length > 0 && selectedTicket) {
-                    const allResponses = [...selectedTicket.responses, ...pendingUpdatesRef.current];
-                    const deduplicated = allResponses.filter((r, i, self) => 
-                      i === self.findIndex(resp => resp.id === r.id)
-                    );
-                    const sorted = deduplicated.sort(
-                      (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-                    );
-                    setSelectedTicket({
-                      ...selectedTicket,
-                      responses: sorted,
+                  if (pendingUpdatesRef.current.length > 0) {
+                    setResponses(prev => {
+                      const allResponses = [...prev, ...pendingUpdatesRef.current];
+                      const deduplicated = allResponses.filter((r, i, self) => 
+                        i === self.findIndex(resp => resp.id === r.id)
+                      );
+                      return deduplicated.sort(
+                        (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+                      );
                     });
                     pendingUpdatesRef.current = [];
                   }
@@ -394,17 +416,15 @@ const FoundationSupportPage: React.FC = () => {
                 setTimeout(() => {
                   isTypingRef.current = false;
                   // Apply any pending updates
-                  if (pendingUpdatesRef.current.length > 0 && selectedTicket) {
-                    const allResponses = [...selectedTicket.responses, ...pendingUpdatesRef.current];
-                    const deduplicated = allResponses.filter((r, i, self) => 
-                      i === self.findIndex(resp => resp.id === r.id)
-                    );
-                    const sorted = deduplicated.sort(
-                      (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-                    );
-                    setSelectedTicket({
-                      ...selectedTicket,
-                      responses: sorted,
+                  if (pendingUpdatesRef.current.length > 0) {
+                    setResponses(prev => {
+                      const allResponses = [...prev, ...pendingUpdatesRef.current];
+                      const deduplicated = allResponses.filter((r, i, self) => 
+                        i === self.findIndex(resp => resp.id === r.id)
+                      );
+                      return deduplicated.sort(
+                        (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+                      );
                     });
                     pendingUpdatesRef.current = [];
                   }
