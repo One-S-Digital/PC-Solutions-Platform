@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException, ForbiddenException, BadRequestException, Logger } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException, Logger, Inject, Optional } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { SupportTicketResponse } from './dto/support.dto';
 import { MailgunService } from './mailgun.service';
 import { EmailTemplateService } from '../email-notification/email-template.service';
+import { SupportGateway } from './support.gateway';
 import { UserRole } from '@prisma/client';
 
 const ALLOWED_STATUSES = ['OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED'] as const;
@@ -15,6 +16,7 @@ export class SupportService {
     private prisma: PrismaService,
     private mailgunService: MailgunService,
     private emailTemplateService: EmailTemplateService,
+    @Optional() @Inject(SupportGateway) private supportGateway?: SupportGateway,
   ) {}
 
   /**
@@ -203,12 +205,17 @@ export class SupportService {
     }
 
     // Create the response
-    await this.prisma.ticketResponse.create({
+    const response = await this.prisma.ticketResponse.create({
       data: {
         ticketId,
         userId,
         message,
         isStaff,
+      },
+      include: {
+        user: {
+          select: { firstName: true, lastName: true },
+        },
       },
     });
 
@@ -220,8 +227,26 @@ export class SupportService {
       });
     }
 
+    // Get updated ticket for WebSocket emission
+    const updatedTicket = await this.getTicketById(ticketId, userId, isStaff);
+
+    // Emit WebSocket event for real-time updates
+    if (this.supportGateway) {
+      const replyData = {
+        id: response.id,
+        message: response.message,
+        isStaff: response.isStaff,
+        createdAt: response.createdAt.toISOString(),
+        userName: response.user
+          ? `${response.user.firstName || ''} ${response.user.lastName || ''}`.trim() || 'Unknown'
+          : 'Unknown',
+      };
+      this.supportGateway.emitReplyCreated(ticketId, replyData);
+      this.supportGateway.emitTicketUpdated(ticketId, updatedTicket);
+    }
+
     // Return updated ticket
-    return this.getTicketById(ticketId, userId, isStaff);
+    return updatedTicket;
   }
 
   /**

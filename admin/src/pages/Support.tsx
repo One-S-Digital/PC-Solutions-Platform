@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   LifeBuoy,
@@ -20,6 +20,8 @@ import { useApiClient, apiService } from '../services/api';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { SupportTicket, TicketCategory, TicketPriority, TicketStatus, TicketStats } from '../types';
 import { useTranslation } from 'react-i18next';
+import { useSupportSocket } from '../hooks/useSupportSocket';
+import { useUser } from '@clerk/clerk-react';
 
 const Support: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -31,8 +33,10 @@ const Support: React.FC = () => {
 
   const apiClient = useApiClient();
   const { t } = useTranslation(['common', 'admin']);
-
+  const { user } = useUser();
   const queryClient = useQueryClient();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Fetch current user to check assignment
   const { data: currentUserResponse } = useQuery({
@@ -100,18 +104,51 @@ const Support: React.FC = () => {
     },
   });
 
-  // Reply to ticket mutation
+  // Reply to ticket mutation with optimistic UI
   const replyMutation = useMutation({
     mutationFn: ({ ticketId, message }: { ticketId: string; message: string }) =>
       apiService.respondToTicket(apiClient, ticketId, message),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['support-tickets'] });
-      setReplyMessage('');
-      if (selectedTicket) {
-        apiService.getSupportTicket(apiClient, selectedTicket.id).then((response) => {
-          setSelectedTicket(response.data.data);
+    onMutate: async ({ ticketId, message }) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['support-ticket', ticketId] });
+
+      // Snapshot previous value
+      const previousTicket = selectedTicket;
+
+      // Optimistically update UI
+      if (previousTicket && previousTicket.id === ticketId) {
+        const tempReply = {
+          id: `temp-${Date.now()}`,
+          message,
+          isStaff: true,
+          createdAt: new Date().toISOString(),
+          userName: user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.emailAddresses[0]?.emailAddress || 'Admin' : 'Admin',
+        };
+        setSelectedTicket({
+          ...previousTicket,
+          responses: [...previousTicket.responses, tempReply],
         });
       }
+
+      return { previousTicket };
+    },
+    onError: (err, variables, context) => {
+      // Rollback on error
+      if (context?.previousTicket) {
+        setSelectedTicket(context.previousTicket);
+      }
+    },
+    onSuccess: (response, { ticketId }) => {
+      // Update with real data
+      const updatedTicket = response.data.data;
+      setSelectedTicket(updatedTicket);
+      queryClient.invalidateQueries({ queryKey: ['support-tickets'] });
+      queryClient.invalidateQueries({ queryKey: ['support-ticket', ticketId] });
+      setReplyMessage('');
+      // Scroll to bottom
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
     },
   });
 
@@ -127,6 +164,83 @@ const Support: React.FC = () => {
     if (!selectedTicket || !replyMessage.trim()) return;
     replyMutation.mutate({ ticketId: selectedTicket.id, message: replyMessage });
   };
+
+  // WebSocket for real-time updates
+  const currentUserId = user?.id || '';
+  const { isConnected: isSocketConnected } = useSupportSocket({
+    ticketId: selectedTicket?.id || null,
+    userId: currentUserId,
+    onNewReply: (reply) => {
+      if (selectedTicket && !selectedTicket.responses.find(r => r.id === reply.id)) {
+        // Deduplicate and sort
+        const updatedResponses = [...selectedTicket.responses, reply].sort(
+          (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+        setSelectedTicket({
+          ...selectedTicket,
+          responses: updatedResponses,
+        });
+        // Scroll to bottom if user is near bottom
+        if (scrollContainerRef.current) {
+          const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
+          const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+          if (isNearBottom) {
+            setTimeout(() => {
+              messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+          }
+        }
+      }
+    },
+    onTicketUpdate: (ticket) => {
+      // Update ticket in list if needed
+      queryClient.invalidateQueries({ queryKey: ['support-tickets'] });
+    },
+  });
+
+  // Polling fallback when WebSocket is not connected
+  useEffect(() => {
+    if (!selectedTicket || isSocketConnected) return;
+
+    const pollInterval = setInterval(async () => {
+      try {
+        const response = await apiService.getSupportTicket(apiClient, selectedTicket.id);
+        if (response.data.data) {
+          const updatedTicket = response.data.data;
+          // Only update if responses changed
+          const currentResponseIds = new Set(selectedTicket.responses.map(r => r.id));
+          const newResponseIds = new Set(updatedTicket.responses.map(r => r.id));
+          if (currentResponseIds.size !== newResponseIds.size || 
+              [...newResponseIds].some(id => !currentResponseIds.has(id))) {
+            setSelectedTicket(updatedTicket);
+            // Scroll to bottom if user is near bottom
+            if (scrollContainerRef.current) {
+              const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
+              const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+              if (isNearBottom) {
+                setTimeout(() => {
+                  messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error polling ticket updates:', error);
+      }
+    }, 5000); // Poll every 5 seconds
+
+    return () => clearInterval(pollInterval);
+  }, [selectedTicket?.id, isSocketConnected, apiClient]);
+
+  // Auto-scroll to bottom on mount or when selected ticket changes
+  useEffect(() => {
+    if (selectedTicket) {
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  }, [selectedTicket?.id]);
 
   const getStatusColor = (status: TicketStatus): string => {
     switch (status) {
@@ -473,7 +587,10 @@ const Support: React.FC = () => {
                 </div>
               </div>
 
-              <div className="p-6 max-h-96 overflow-y-auto">
+              <div 
+                ref={scrollContainerRef}
+                className="p-6 max-h-96 overflow-y-auto"
+              >
                 <div className="space-y-4">
                   {/* Original Message */}
                   <div className="border-l-4 border-blue-500 pl-4">
@@ -490,30 +607,33 @@ const Support: React.FC = () => {
                     <p className="text-sm text-gray-700">{selectedTicket.message}</p>
                   </div>
 
-                  {/* Responses */}
-                  {selectedTicket.responses.map((response) => (
-                    <div
-                      key={response.id}
-                      className={`border-l-4 ${
-                        response.isStaff ? 'border-green-500' : 'border-gray-300'
-                      } pl-4`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-gray-900">
-                          {response.userName || t('common:unknown')}
-                          {response.isStaff && (
-                            <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
-                              {t('admin:support.staff')}
-                            </span>
-                          )}
-                        </span>
-                        <span className="text-xs text-gray-500">
-                          {new Date(response.createdAt).toLocaleString()}
-                        </span>
+                  {/* Responses - sorted by createdAt */}
+                  {[...selectedTicket.responses]
+                    .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+                    .map((response) => (
+                      <div
+                        key={response.id}
+                        className={`border-l-4 ${
+                          response.isStaff ? 'border-green-500' : 'border-gray-300'
+                        } pl-4`}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-medium text-gray-900">
+                            {response.userName || t('common:unknown')}
+                            {response.isStaff && (
+                              <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
+                                {t('admin:support.staff')}
+                              </span>
+                            )}
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            {new Date(response.createdAt).toLocaleString()}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-700">{response.message}</p>
                       </div>
-                      <p className="text-sm text-gray-700">{response.message}</p>
-                    </div>
-                  ))}
+                    ))}
+                  <div ref={messagesEndRef} />
                 </div>
               </div>
 

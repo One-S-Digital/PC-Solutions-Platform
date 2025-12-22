@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { STANDARD_INPUT_FIELD } from '../../constants';
@@ -16,6 +16,8 @@ import {
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
+import { useAppContext } from '../../contexts/AppContext';
+import { useSupportSocket } from '../../hooks/useSupportSocket';
 import {
   supportApi,
   SupportTicket,
@@ -54,6 +56,9 @@ const FAQItem: React.FC<FAQItemProps> = ({ questionKey, answerKey }) => {
 const FoundationSupportPage: React.FC = () => {
   const { t, i18n } = useTranslation(['dashboard', 'common']);
   const { request } = useAuthenticatedApi();
+  const { currentUser } = useAppContext();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // State
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
@@ -136,35 +141,143 @@ const FoundationSupportPage: React.FC = () => {
     }
   };
 
-  // Submit response to ticket
+  // Submit response to ticket with optimistic UI
   const handleResponseSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedTicket || !newResponse.trim()) return;
 
     setSubmitting(true);
+    const messageToSend = newResponse.trim();
+    const previousTicket = selectedTicket;
+
+    // Optimistic update
+    const tempReply = {
+      id: `temp-${Date.now()}`,
+      message: messageToSend,
+      isStaff: false,
+      createdAt: new Date().toISOString(),
+      userName: currentUser ? `${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim() || currentUser.email || 'You' : 'You',
+    };
+    setSelectedTicket({
+      ...previousTicket,
+      responses: [...previousTicket.responses, tempReply],
+    });
+    setNewResponse('');
 
     try {
-      const config = supportApi.respondToTicketConfig(selectedTicket.id, { message: newResponse });
+      const config = supportApi.respondToTicketConfig(selectedTicket.id, { message: messageToSend });
       const res = await request<SupportTicket>(config.endpoint, {
         method: config.method,
         body: config.body,
       });
 
       if (res.success && res.data) {
-        setSelectedTicket(res.data);
-        setNewResponse('');
+        // Update with real data (deduplicated and sorted)
+        const updatedResponses = res.data.responses.sort(
+          (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+        setSelectedTicket({
+          ...res.data,
+          responses: updatedResponses,
+        });
         setError(null);
         await fetchTickets();
+        // Scroll to bottom
+        setTimeout(() => {
+          messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
       } else {
+        // Rollback on error
+        setSelectedTicket(previousTicket);
+        setNewResponse(messageToSend);
         setError(t('common:errors.submitFailed'));
       }
     } catch (err) {
       console.error('Error submitting response:', err);
+      // Rollback on error
+      setSelectedTicket(previousTicket);
+      setNewResponse(messageToSend);
       setError(t('common:errors.submitFailed'));
     } finally {
       setSubmitting(false);
     }
   };
+
+  // WebSocket for real-time updates
+  const { isConnected: isSocketConnected } = useSupportSocket({
+    ticketId: selectedTicket?.id || null,
+    userId: currentUser?.id || '',
+    onNewReply: (reply) => {
+      if (selectedTicket && !selectedTicket.responses.find(r => r.id === reply.id)) {
+        // Deduplicate and sort
+        const updatedResponses = [...selectedTicket.responses, reply].sort(
+          (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+        setSelectedTicket({
+          ...selectedTicket,
+          responses: updatedResponses,
+        });
+        // Scroll to bottom if user is near bottom
+        if (scrollContainerRef.current) {
+          const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
+          const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+          if (isNearBottom) {
+            setTimeout(() => {
+              messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+          }
+        }
+      }
+    },
+    onTicketUpdate: () => {
+      // Refresh ticket list
+      fetchTickets();
+    },
+  });
+
+  // Polling fallback when WebSocket is not connected
+  useEffect(() => {
+    if (!selectedTicket || isSocketConnected) return;
+
+    const pollInterval = setInterval(async () => {
+      try {
+        const res = await request<SupportTicket>(supportApi.getTicketEndpoint(selectedTicket.id));
+        if (res.success && res.data) {
+          const updatedTicket = res.data;
+          // Only update if responses changed
+          const currentResponseIds = new Set(selectedTicket.responses.map(r => r.id));
+          const newResponseIds = new Set(updatedTicket.responses.map(r => r.id));
+          if (currentResponseIds.size !== newResponseIds.size || 
+              [...newResponseIds].some(id => !currentResponseIds.has(id))) {
+            setSelectedTicket(updatedTicket);
+            // Scroll to bottom if user is near bottom
+            if (scrollContainerRef.current) {
+              const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
+              const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+              if (isNearBottom) {
+                setTimeout(() => {
+                  messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error polling ticket updates:', error);
+      }
+    }, 5000); // Poll every 5 seconds
+
+    return () => clearInterval(pollInterval);
+  }, [selectedTicket?.id, isSocketConnected, request]);
+
+  // Auto-scroll to bottom on mount or when selected ticket changes
+  useEffect(() => {
+    if (selectedTicket) {
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  }, [selectedTicket?.id]);
 
   // Ticket detail modal/card
   const TicketDetail = () => {
@@ -200,24 +313,30 @@ const FoundationSupportPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Responses */}
-        <div className="space-y-3 mb-4">
-          {selectedTicket.responses.map(response => (
-            <div 
-              key={response.id} 
-              className={`p-4 rounded-lg ${response.isStaff ? 'bg-swiss-teal/10 ml-4' : 'bg-gray-50 mr-4'}`}
-            >
-              <div className="flex justify-between items-start mb-2">
-                <span className={`text-xs font-medium ${response.isStaff ? 'text-swiss-teal' : 'text-gray-600'}`}>
-                  {response.isStaff ? t('common:supportPage.staffResponse') : response.userName || t('common:supportPage.you')}
-                </span>
-                <span className="text-xs text-gray-400">
-                  {new Date(response.createdAt).toLocaleString(i18n.language)}
-                </span>
+        {/* Responses - sorted by createdAt */}
+        <div 
+          ref={scrollContainerRef}
+          className="space-y-3 mb-4 max-h-96 overflow-y-auto"
+        >
+          {[...selectedTicket.responses]
+            .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+            .map(response => (
+              <div 
+                key={response.id} 
+                className={`p-4 rounded-lg ${response.isStaff ? 'bg-swiss-teal/10 ml-4' : 'bg-gray-50 mr-4'}`}
+              >
+                <div className="flex justify-between items-start mb-2">
+                  <span className={`text-xs font-medium ${response.isStaff ? 'text-swiss-teal' : 'text-gray-600'}`}>
+                    {response.isStaff ? t('common:supportPage.staffResponse') : response.userName || t('common:supportPage.you')}
+                  </span>
+                  <span className="text-xs text-gray-400">
+                    {new Date(response.createdAt).toLocaleString(i18n.language)}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-700 whitespace-pre-wrap">{response.message}</p>
               </div>
-              <p className="text-sm text-gray-700 whitespace-pre-wrap">{response.message}</p>
-            </div>
-          ))}
+            ))}
+          <div ref={messagesEndRef} />
         </div>
 
         {/* Response form */}
