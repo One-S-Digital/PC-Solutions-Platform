@@ -45,6 +45,62 @@ const SupportReplyComposer: React.FC<SupportReplyComposerProps> = ({
     setDraft('');
   }, [ticketId]);
 
+  // DEV-ONLY: Focus tracing to identify what's stealing focus
+  React.useEffect(() => {
+    if (import.meta.env.PROD) return;
+
+    // Wait for ref to be available
+    const el = textareaRef.current;
+    if (!el) {
+      // Retry on next tick if ref not available yet
+      const timeoutId = setTimeout(() => {
+        const retryEl = textareaRef.current;
+        if (!retryEl) return;
+        setupFocusTracing(retryEl);
+      }, 0);
+      return () => clearTimeout(timeoutId);
+    }
+
+    const setupFocusTracing = (element: HTMLTextAreaElement) => {
+
+    const originalFocus = HTMLElement.prototype.focus;
+
+    HTMLElement.prototype.focus = function (...args: any[]) {
+      const target = this as HTMLElement;
+
+      // If focus is being moved away from our textarea while it's active, log it
+      const active = document.activeElement;
+      const isTextareaActive = active === element;
+      const isFocusingElsewhere = target !== element;
+
+      if (isTextareaActive && isFocusingElsewhere) {
+        // eslint-disable-next-line no-console
+        console.warn('[FOCUS-STEAL] focus moved to:', target.tagName, target.className);
+        // eslint-disable-next-line no-console
+        console.warn(new Error('[FOCUS-STEAL] stack').stack);
+      }
+
+        return originalFocus.apply(this, args as any);
+      };
+
+      const onFocusIn = (e: FocusEvent) => {
+        // eslint-disable-next-line no-console
+        console.log('[focusin]', (e.target as HTMLElement)?.tagName, (e.target as HTMLElement)?.className);
+      };
+
+      document.addEventListener('focusin', onFocusIn, true);
+
+      return () => {
+        HTMLElement.prototype.focus = originalFocus;
+        document.removeEventListener('focusin', onFocusIn, true);
+      };
+    };
+
+    return setupFocusTracing(el);
+
+    return setupFocusTracing(el);
+  }, []);
+
   const displayPlaceholder = placeholder || t('admin:support.replyPlaceholder', { defaultValue: 'Type your reply...' });
 
   // Debug logging
