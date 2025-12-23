@@ -664,7 +664,13 @@ const SignupPage: React.FC = () => {
       ) : (
         <div className="relative">
           <input 
-            type={(name === 'password' && !showPassword) || (name === 'confirmPassword' && !showConfirmPassword) ? 'password' : type}
+            type={
+              name === 'password'
+                ? (showPassword ? 'text' : 'password')
+                : name === 'confirmPassword'
+                  ? (showConfirmPassword ? 'text' : 'password')
+                  : type
+            }
             id={name} 
             name={name} 
             value={String(formData[name as keyof SignupFormData] ?? '')}
