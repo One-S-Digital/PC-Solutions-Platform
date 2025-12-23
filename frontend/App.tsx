@@ -86,7 +86,6 @@ import EducatorSupportPage from './pages/educator/EducatorSupportPage';
 // Parent Pages
 import ParentDashboardPage from './pages/parent/ParentDashboardPage';
 import ParentSupportPage from './pages/parent/ParentSupportPage';
-import PricingPage from './pages/PricingPage';
 import PublicPartnersPage from './pages/PublicPartnersPage';
 import ProfilePage from './pages/ProfilePage';
 import OrganizationProfileViewPage from './pages/profile/OrganizationProfileViewPage';
@@ -537,7 +536,6 @@ const App: React.FC = () => {
               <Routes>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignupPage />} />
-                <Route path="/pricing" element={<PricingPage />} />
                 <Route path="/partners" element={<PublicPartnersPage />} />
                 <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
                 <Route path="/*" element={<ProtectedLayout />} />

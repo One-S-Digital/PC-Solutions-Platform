@@ -138,19 +138,11 @@ const SignupPage: React.FC = () => {
   const [webhookStatus, setWebhookStatus] = useState<'pending' | 'processing' | 'ready' | 'error'>('pending');
   const [webhookError, setWebhookError] = useState<string | null>(null);
 
-  const roleRequiresPricing = (role: SignupRole | null) =>
-    role !== null && [SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(role);
-
   const getSuccessRedirectForRole = (role: SignupRole | null) => {
-    if (roleRequiresPricing(role) && role) {
-      return { path: '/pricing', state: { fromSignup: true, role } };
-    }
     return { path: '/dashboard' };
   };
 
-  const successButtonLabel = roleRequiresPricing(selectedRole)
-    ? t('goToPricingButton', 'Go to Pricing')
-    : t('goToDashboardButton');
+  const successButtonLabel = t('goToDashboardButton');
 
     const requiresOrganizationDetails =
       selectedRole !== null &&
