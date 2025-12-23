@@ -719,35 +719,10 @@ WHERE NOT EXISTS (
   log('✅ Foundation subscription tiers schema verified.');
 };
 
-/**
- * Ensure email grace period system setting exists.
- * Matches migration `20251221000002_add_email_grace_period_setting`.
- * This setting controls how many days to wait before deleting old email addresses
- * after a user's email is changed (allows users to recover if needed).
- */
-const ensureEmailGracePeriodSetting = () => {
-  const sql = `
--- Add email grace period setting for admin dashboard configuration
-INSERT INTO "SystemSettings" ("id", "key", "value", "description", "category", "isEncrypted", "isPublic", "createdAt", "updatedAt")
-SELECT 
-    gen_random_uuid(),
-    'email.grace_period_days',
-    '7',
-    'Number of days to keep old email addresses before automatic deletion after an email change. This grace period allows users to recover access if needed.',
-    'email',
-    false,
-    false,
-    NOW(),
-    NOW()
-WHERE NOT EXISTS (
-    SELECT 1 FROM "SystemSettings" WHERE "key" = 'email.grace_period_days'
-);
-`;
-
-  log('Ensuring email.grace_period_days system setting exists...');
-  runSql(sql);
-  log('✅ Email grace period setting verified.');
-};
+// NOTE:
+// An earlier version of this script inserted into `"SystemSettings"` using `gen_random_uuid()`.
+// The Prisma model is `SystemSettings` but the mapped Postgres table is `system_settings` (see schema.prisma),
+// and `gen_random_uuid()` also requires pgcrypto. We use the safer `system_settings` variant below.
 
 /**
  * Ensure job contract type enum has new values.
