@@ -10,6 +10,8 @@ import { Cache } from 'cache-manager';
 export class PlatformSettingsService {
   private readonly CACHE_KEY_PREFIX = 'platform:settings:';
   private readonly CACHE_TTL = 60; // 60 seconds
+  private readonly MAINTENANCE_CACHE_KEY = 'platform:settings:maintenance';
+  private readonly MAINTENANCE_CACHE_TTL = 5; // seconds (short TTL for faster propagation)
 
   constructor(
     private prisma: PrismaService,
@@ -129,19 +131,29 @@ export class PlatformSettingsService {
   }
 
   async getMaintenanceMode(): Promise<{ enabled: boolean; message?: string }> {
+    // Short-lived cache specifically for maintenance checks (middleware hits this frequently)
+    const cached = await this.cacheManager.get<{ enabled: boolean; message?: string }>(
+      this.MAINTENANCE_CACHE_KEY,
+    );
+    if (cached) return cached;
+
     const settings = await this.getPlatformSettings();
-    return {
+    const value = {
       enabled: settings?.maintenanceMode || false,
-      message: settings?.platformDescription || 'System is under maintenance',
+      message: settings?.maintenanceMessage || 'System is under maintenance',
     };
+
+    await this.cacheManager.set(this.MAINTENANCE_CACHE_KEY, value, this.MAINTENANCE_CACHE_TTL * 1000);
+    return value;
   }
 
   async toggleMaintenanceMode(
     enabled: boolean,
     message?: string,
-    actorId?: string,
+    actor: { profileUserId?: string; clerkUserId?: string } = {},
   ): Promise<PlatformSettings> {
-    let settings = await this.getPlatformSettings();
+    const previous = await this.getPlatformSettings();
+    let settings = previous;
 
     if (!settings) {
       // Create default settings if none exist
@@ -158,9 +170,52 @@ export class PlatformSettingsService {
           maintenanceMode: enabled,
           maintenanceMessage: message,
         },
-        actorId,
+        actor.profileUserId,
       );
     }
+
+    // Resolve a stable audit actorId (AuditLog.actorId references the `User` table)
+    let auditActorId: string | null = actor.profileUserId || null;
+    if (!auditActorId && actor.clerkUserId) {
+      try {
+        const user = await this.prisma.user.findUnique({ where: { clerkId: actor.clerkUserId } });
+        auditActorId = user?.id || null;
+      } catch {
+        auditActorId = null;
+      }
+    }
+
+    // Write audit log entry (System Config uses this for auditing)
+    try {
+      await this.prisma.auditLog.create({
+        data: {
+          entity: 'PlatformSettings',
+          entityId: settings.id,
+          action: enabled ? 'maintenance.enable' : 'maintenance.disable',
+          actorId: auditActorId,
+          diff: {
+            before: {
+              maintenanceMode: previous?.maintenanceMode ?? false,
+              maintenanceMessage: previous?.maintenanceMessage ?? null,
+            },
+            after: {
+              maintenanceMode: enabled,
+              maintenanceMessage: message ?? null,
+            },
+          },
+          metadata: {
+            source: 'platform-settings',
+            timestamp: new Date().toISOString(),
+            actorClerkId: actor.clerkUserId || null,
+          },
+        },
+      });
+    } catch {
+      // Audit logging should not block maintenance toggling.
+    }
+
+    // Invalidate maintenance cache
+    await this.cacheManager.del(this.MAINTENANCE_CACHE_KEY);
 
     // Emit specific event for maintenance mode changes
     this.eventEmitter.emit('platform.maintenance.changed', {
