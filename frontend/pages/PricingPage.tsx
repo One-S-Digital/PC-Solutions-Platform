@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { PricingPlan, UserRole, SubscriptionTier } from '../types';
@@ -15,6 +15,8 @@ import { useFrontendSettings } from '../hooks/useFrontendSettings';
 import { APP_NAME } from '../constants';
 import SubscriptionRequestModal, { SubscriptionRequestFormData } from '../components/shared/SubscriptionRequestModal';
 import { useSubscription } from '../contexts/SubscriptionContext';
+import { apiService } from '../services/api';
+import type { SubscriptionPlan } from '../contexts/SubscriptionContext';
 
 const PricingPage: React.FC = () => {
   const { t } = useTranslation(['pricing', 'common']);
@@ -28,11 +30,32 @@ const PricingPage: React.FC = () => {
   const [selectedPlan, setSelectedPlan] = useState<PricingPlan | null>(null);
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeSubscriptionPlans, setActiveSubscriptionPlans] = useState<SubscriptionPlan[]>([]);
 
   const fromSignup = location.state?.fromSignup || false;
   const userRoleFromSignup = location.state?.role as UserRole | undefined;
 
   const { foundation: daycarePlans, supplier: supplierPlan, serviceProvider: serviceProviderPlan } = pricingService.getPlansByRole();
+
+  // Fetch backend subscription plans so the request payload has a real `planId`
+  useEffect(() => {
+    let isMounted = true;
+    apiService
+      .get<SubscriptionPlan[]>('/subscriptions/plans')
+      .then((res) => {
+        if (!isMounted) return;
+        if (res?.success && Array.isArray(res.data)) {
+          setActiveSubscriptionPlans(res.data);
+        }
+      })
+      .catch(() => {
+        // Best-effort only: UI can still render prices from PRICING_PLANS.
+        // Submission will show a friendly error if planId is missing.
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleChoosePlan = (plan: PricingPlan) => {
     // If user is logged in, show the request modal
@@ -82,11 +105,39 @@ const PricingPage: React.FC = () => {
     return tierMap[plan.name] || SubscriptionTier.BASIC;
   };
 
+  const activePlanIdByCode = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const p of activeSubscriptionPlans) {
+      if (p?.code && p?.id) {
+        map.set(String(p.code).toUpperCase(), p.id);
+      }
+    }
+    return map;
+  }, [activeSubscriptionPlans]);
+
+  const resolveSubscriptionPlanId = (plan: PricingPlan): string | undefined => {
+    // Prefer matching by backend plan name (works for Suppliers/Service Providers too).
+    const normalized = (plan.name || '').trim().toLowerCase();
+    const byName = activeSubscriptionPlans.find(
+      (p) => (p?.name || '').trim().toLowerCase() === normalized
+    );
+    if (byName?.id) return byName.id;
+
+    // Fallback: match by allowed role (for vendor plans that might be named differently)
+    const roleMatch = activeSubscriptionPlans.find((p) => {
+      const allowed = (p?.allowedRoles || []).map((r) => String(r).toUpperCase());
+      return allowed.includes(String(plan.role).toUpperCase());
+    });
+    if (roleMatch?.id) return roleMatch.id;
+
+    // Fallback for foundation plans that follow tier codes.
+    const tier = getPlanTier(plan);
+    return activePlanIdByCode.get(String(tier).toUpperCase());
+  };
+
 
   const PlanCard: React.FC<{ plan: PricingPlan }> = ({ plan }) => {
     const translatedPlan = translatePlan(plan, isAnnual);
-    const isSupplierOrProvider =
-      plan.role === UserRole.PRODUCT_SUPPLIER || plan.role === UserRole.SERVICE_PROVIDER;
     
     return (
       <Card className={`flex flex-col p-6 border-2 ${plan.isPopular ? 'border-swiss-mint' : 'border-gray-200'} relative`} hoverEffect>
@@ -97,7 +148,7 @@ const PricingPage: React.FC = () => {
         )}
         <h3 className="text-2xl font-bold text-swiss-charcoal text-center mt-3">{plan.emoji} {translatedPlan.name}</h3>
         
-        {!isSupplierOrProvider && (translatedPlan.monthlyPriceText || translatedPlan.annualPlanText) && (
+        {(translatedPlan.monthlyPriceText || translatedPlan.annualPlanText) && (
           <div className="my-4 text-center space-y-1">
             {translatedPlan.monthlyPriceText && (
               <p className="text-xl font-semibold text-gray-800">{translatedPlan.monthlyPriceText}</p>
@@ -122,27 +173,16 @@ const PricingPage: React.FC = () => {
             </li>
           ))}
         </ul>
-        {isSupplierOrProvider ? (
-          <Button
-            variant="primary"
-            size="lg"
-            className="w-full mt-6"
-            onClick={() => {
-              window.location.href = 'mailto:hello@procrechesolutions.com';
-            }}
-          >
-            {t('pricingPage.enquireButton')}
-          </Button>
-        ) : (
-          <Button
-            variant={plan.isPopular ? 'primary' : 'outline'}
-            size="lg"
-            className="w-full mt-6"
-            onClick={() => handleChoosePlan(plan)}
-          >
-            {fromSignup ? t('pricingPage.selectAndContinue') : t('pricingPage.choosePlan')}
-          </Button>
-        )}
+        <Button
+          variant={plan.isPopular ? 'primary' : 'outline'}
+          size="lg"
+          className="w-full mt-6"
+          onClick={() => handleChoosePlan(plan)}
+        >
+          {plan.role === UserRole.PRODUCT_SUPPLIER || plan.role === UserRole.SERVICE_PROVIDER
+            ? t('pricingPage.enquireButton')
+            : (fromSignup ? t('pricingPage.selectAndContinue') : t('pricingPage.choosePlan'))}
+        </Button>
       </Card>
     );
   };
@@ -214,8 +254,9 @@ const PricingPage: React.FC = () => {
             setSelectedPlan(null);
           }}
           plan={selectedPlan}
-          billingPeriod={isAnnual ? 'yearly' : 'monthly'}
-          tier={getPlanTier(selectedPlan)}
+          billingPeriod={selectedPlan.role === UserRole.FOUNDATION ? (isAnnual ? 'yearly' : 'monthly') : undefined}
+          tier={selectedPlan.role === UserRole.FOUNDATION ? getPlanTier(selectedPlan) : undefined}
+          subscriptionPlanId={resolveSubscriptionPlanId(selectedPlan)}
           onSubmit={handleSubmitRequest}
           isLoading={isSubmitting}
         />
