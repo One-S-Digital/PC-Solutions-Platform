@@ -25,7 +25,7 @@ export class MaintenanceModeMiddleware {
 
     if (allowList.some((re) => re.test(url))) return next();
 
-    // Admin bypass (role is populated by ClerkAuthGuard / RoleContextMiddleware)
+    // Admin bypass (role is populated by RoleContextMiddleware)
     const role = (req as any)?.context?.role;
     if (role === 'ADMIN' || role === 'SUPER_ADMIN') return next();
 

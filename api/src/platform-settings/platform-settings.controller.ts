@@ -140,11 +140,13 @@ export class PlatformSettingsController {
     @Body() body: { enabled: boolean; message?: string },
   ) {
     try {
-      const actorId: string | undefined = req?.context?.profileUserId || req?.user?.id || undefined;
+      // AuditLog.actorId references the `User` table, so prefer the profile user ID if available.
+      const profileUserId: string | undefined = req?.context?.profileUserId || req?.user?.id || undefined;
+      const clerkUserId: string | undefined = req?.context?.clerkUserId || req?.context?.userId || req?.clerk?.userId || undefined;
       const result = await this.platformSettingsService.toggleMaintenanceMode(
         body.enabled,
         body.message,
-        actorId,
+        { profileUserId, clerkUserId },
       );
       return {
         success: true,
