@@ -22,17 +22,6 @@ const SupportReplyComposer: React.FC<SupportReplyComposerProps> = ({
   const [sending, setSending] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Debug: Track mount/unmount
-  React.useEffect(() => {
-    console.log('[SupportReplyComposer] mount', ticketId);
-    return () => console.log('[SupportReplyComposer] unmount', ticketId);
-  }, [ticketId]);
-
-  // Debug: Track renders
-  React.useEffect(() => {
-    console.log('[SupportReplyComposer] render', ticketId);
-  });
-
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     const content = draft.trim();
@@ -67,18 +56,31 @@ const SupportReplyComposer: React.FC<SupportReplyComposerProps> = ({
 
   const displayPlaceholder = placeholder || t('common:supportPage.ticketForm.responsePlaceholder', { defaultValue: 'Type your reply...' });
 
+  // Stop event propagation to prevent parent click handlers from stealing focus
+  const stopPropagation = useCallback((e: React.MouseEvent | React.FocusEvent) => {
+    e.stopPropagation();
+  }, []);
+
   return (
-    <form onSubmit={handleSubmit} className={className}>
-      <textarea
-        ref={textareaRef}
-        value={draft}
-        onChange={(e) => setDraft(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder={displayPlaceholder}
-        rows={3}
-        disabled={disabled || sending}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm resize-none disabled:opacity-50 disabled:cursor-not-allowed"
-      />
+    <div
+      onMouseDown={stopPropagation}
+      onClick={stopPropagation}
+      className={className}
+    >
+      <form onSubmit={handleSubmit}>
+        <textarea
+          ref={textareaRef}
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={handleKeyDown}
+          onMouseDown={stopPropagation}
+          onClick={stopPropagation}
+          onFocus={stopPropagation}
+          placeholder={displayPlaceholder}
+          rows={3}
+          disabled={disabled || sending}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+        />
       <div className="flex justify-end mt-2">
         <Button
           type="submit"
@@ -89,7 +91,8 @@ const SupportReplyComposer: React.FC<SupportReplyComposerProps> = ({
           {sending ? t('common:buttons.sending', { defaultValue: 'Sending...' }) : t('common:buttons.reply', { defaultValue: 'Reply' })}
         </Button>
       </div>
-    </form>
+      </form>
+    </div>
   );
 };
 
