@@ -7,6 +7,16 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateCandidateDto } from './dto/create-candidate.dto';
 import { CreateJobListingDto } from '../recruitment/dto/create-job-listing.dto';
 
+type RequestUser = {
+  role?: UserRole;
+  organizationId?: string;
+  orgId?: string;
+};
+
+type RequestWithUser = {
+  user?: RequestUser;
+};
+
 @Controller('compat')
 @UseGuards(RolesGuard)
 export class CompatController {
@@ -14,23 +24,24 @@ export class CompatController {
 
   private marketplaceActiveSubscriptionWhere(now: Date) {
     return {
-      status: {
-        in: [
-          SubscriptionStatus.ACTIVE,
-          SubscriptionStatus.TRIAL,
-          SubscriptionStatus.GRACE_PERIOD,
-        ],
-      },
       OR: [
-        { currentPeriodEnd: null },
-        { currentPeriodEnd: { gt: now } },
-        { trialEnd: { gt: now } },
-        { gracePeriodEnd: { gt: now } },
+        {
+          status: SubscriptionStatus.ACTIVE,
+          OR: [{ currentPeriodEnd: null }, { currentPeriodEnd: { gt: now } }],
+        },
+        {
+          status: SubscriptionStatus.TRIAL,
+          OR: [{ trialEnd: null }, { trialEnd: { gt: now } }],
+        },
+        {
+          status: SubscriptionStatus.GRACE_PERIOD,
+          OR: [{ gracePeriodEnd: null }, { gracePeriodEnd: { gt: now } }],
+        },
       ],
     } as const;
   }
 
-  private canBypassMarketplaceSubscriptionGate(user: any, organizationId: string): boolean {
+  private canBypassMarketplaceSubscriptionGate(user: RequestUser | undefined, organizationId: string): boolean {
     const role = user?.role;
     if (role === UserRole.ADMIN || role === UserRole.SUPER_ADMIN) return true;
 
@@ -460,8 +471,9 @@ export class CompatController {
 
   @Get('organizations/:id')
   @Public()
-  async getOrganizationById(@Param('id') id: string, @Request() req: any) {
+  async getOrganizationById(@Param('id') id: string, @Request() req: RequestWithUser) {
     try {
+      const now = new Date();
       const org = await this.prisma.organization.findUnique({
         where: { id },
         include: {
@@ -499,6 +511,10 @@ export class CompatController {
             },
             orderBy: { createdAt: 'asc' },
           },
+          subscriptions: {
+            where: this.marketplaceActiveSubscriptionWhere(now),
+            select: { id: true },
+          },
         },
       });
       if (!org) {
@@ -513,16 +529,7 @@ export class CompatController {
           org.type === OrganizationType.SERVICE_PROVIDER) &&
         !this.canBypassMarketplaceSubscriptionGate(req?.user, org.id)
       ) {
-        const now = new Date();
-        const activeSubscription = await this.prisma.subscription.findFirst({
-          where: {
-            organizationId: org.id,
-            ...this.marketplaceActiveSubscriptionWhere(now),
-          },
-          select: { id: true },
-        });
-
-        if (!activeSubscription) {
+        if (!org.subscriptions || org.subscriptions.length === 0) {
           return { success: false, message: 'Organization not found', timestamp: new Date().toISOString() };
         }
       }
