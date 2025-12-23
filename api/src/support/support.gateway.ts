@@ -103,27 +103,59 @@ export class SupportGateway
    */
   private async verifyTokenAndGetUser(token: string): Promise<{ userId: string; role?: string } | null> {
     try {
-      const payload = await verifyToken(token, {
+      // Decode token payload without verifying to read `iss` (Clerk can mint tokens with different issuers
+      // depending on instance / environment). This mirrors the logic used in `ClerkAuthGuard`.
+      const decodeBase64Url = (s: string) =>
+        Buffer.from(s.replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('utf8');
+      const [, rawPayload] = token.split('.');
+      let decodedPayload: any = undefined;
+      try {
+        decodedPayload = rawPayload ? JSON.parse(decodeBase64Url(rawPayload)) : undefined;
+      } catch {}
+
+      // NOTE: `@clerk/backend`'s VerifyTokenOptions typings vary by version.
+      // We keep options flexible to avoid deploy-time type breaks.
+      const options: any = {
         secretKey: this.secretKey,
-        issuer: this.issuer,
         authorizedParties: this.authorizedParties.length > 0 ? this.authorizedParties : undefined,
-        jwtKey: this.jwtKey,
-      });
+        clockSkewInMs: 60_000,
+      };
+      if (decodedPayload?.iss) {
+        options.issuer = decodedPayload.iss;
+      } else if (this.issuer) {
+        options.issuer = this.issuer;
+      }
+      if (this.jwtKey) {
+        options.jwtKey = this.jwtKey;
+      }
+
+      const payload = await verifyToken(token, options);
+      const clerkId = (payload as any)?.sub as string | undefined;
+      if (!clerkId) {
+        this.logger.warn('Token verified but missing sub claim');
+        return null;
+      }
 
       // Get user from database
       const user = await this.prisma.user.findUnique({
-        where: { clerkId: payload.sub },
+        where: { clerkId },
         select: { id: true },
       });
 
       if (!user) {
-        this.logger.warn(`User not found for Clerk ID: ${payload.sub}`);
+        this.logger.warn(`User not found for Clerk ID: ${clerkId}`);
         return null;
       }
 
+      // Prefer role from AppUser (source of truth for authorization)
+      const appUser = await this.prisma.appUser.findUnique({
+        where: { clerkId },
+        select: { role: true },
+      });
+
       return {
         userId: user.id,
-        role: payload.metadata?.role as string | undefined,
+        role: (appUser?.role as string | undefined) || undefined,
       };
     } catch (error) {
       this.logger.error(`Token verification failed: ${(error as Error).message}`);
