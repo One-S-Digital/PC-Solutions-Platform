@@ -56,15 +56,52 @@ const SupportReplyComposer: React.FC<SupportReplyComposerProps> = ({
 
   const displayPlaceholder = placeholder || t('common:supportPage.ticketForm.responsePlaceholder', { defaultValue: 'Type your reply...' });
 
+  // Debug logging
+  const log = useCallback((...args: any[]) => {
+    console.log('[SupportReplyComposer]', ...args);
+  }, []);
+
   // Stop event propagation to prevent parent click handlers from stealing focus
   const stopPropagation = useCallback((e: React.MouseEvent | React.FocusEvent) => {
     e.stopPropagation();
   }, []);
 
+  const stopKeyPropagation = useCallback((e: React.KeyboardEvent) => {
+    e.stopPropagation();
+  }, []);
+
+  const handleFocus = useCallback((e: React.FocusEvent<HTMLTextAreaElement>) => {
+    log('FOCUS');
+    e.stopPropagation();
+  }, [log]);
+
+  const handleBlur = useCallback((e: React.FocusEvent<HTMLTextAreaElement>) => {
+    const activeElement = document.activeElement as HTMLElement;
+    log('BLUR', 'activeElement:', activeElement?.tagName, activeElement?.className);
+    e.stopPropagation();
+  }, [log]);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    log('KEYDOWN', e.key);
+    // Enter to send, Shift+Enter for new line
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (draft.trim() && !sending) {
+        handleSubmit(e);
+      }
+    }
+  }, [draft, sending, handleSubmit, log]);
+
+  const handleKeyUp = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    log('KEYUP', e.key);
+  }, [log]);
+
   return (
     <div
       onMouseDown={stopPropagation}
       onClick={stopPropagation}
+      onKeyDownCapture={stopKeyPropagation}
+      onKeyUpCapture={stopKeyPropagation}
       className={className}
     >
       <form onSubmit={handleSubmit}>
@@ -73,9 +110,11 @@ const SupportReplyComposer: React.FC<SupportReplyComposerProps> = ({
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={handleKeyDown}
+          onKeyUp={handleKeyUp}
           onMouseDown={stopPropagation}
           onClick={stopPropagation}
-          onFocus={stopPropagation}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           placeholder={displayPlaceholder}
           rows={3}
           disabled={disabled || sending}
@@ -83,10 +122,11 @@ const SupportReplyComposer: React.FC<SupportReplyComposerProps> = ({
         />
       <div className="flex justify-end mt-2">
         <Button
-          type="submit"
+          type="button"
           variant="primary"
           disabled={!draft.trim() || disabled || sending}
           size="sm"
+          onClick={handleSubmit}
         >
           {sending ? t('common:buttons.sending', { defaultValue: 'Sending...' }) : t('common:buttons.reply', { defaultValue: 'Reply' })}
         </Button>
