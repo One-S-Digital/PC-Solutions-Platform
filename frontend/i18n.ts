@@ -303,25 +303,6 @@ i18n
     pluralSeparator: '_', // Use underscore for pluralization (e.g., items_one, items_other)
     keySeparator: '.', // Use dot for nested keys
     nsSeparator: ':', // Use colon for namespace separation
-    // Debug mode - log missing keys in development
-    missingKeyHandler: (lng: string[], ns: string[], key: string) => {
-      if (import.meta.env.DEV) {
-        console.warn(`[i18n] Missing translation key: ${ns.join(',')}:${key} for language ${lng.join(',')}`);
-        // Try to help debug by showing what keys are available
-        if (ns.includes('content')) {
-          const contentData = i18n.getResourceBundle(lng[0] || 'fr', 'content');
-          if (contentData) {
-            const topKeys = Object.keys(contentData).slice(0, 10);
-            console.warn(`[i18n] Available top-level keys in content namespace:`, topKeys);
-            if ('eLearning' in contentData) {
-              const eLearningKeys = Object.keys((contentData as Record<string, unknown>).eLearning as Record<string, unknown> || {}).slice(0, 10);
-              console.warn(`[i18n] Available eLearning keys:`, eLearningKeys);
-            }
-          }
-        }
-      }
-      return key; // Return key as fallback
-    },
     interpolation: {
       escapeValue: false,
       format: (value: unknown, format: string | undefined, lng: string | undefined) => {

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { TicketResponse, SupportTicket } from '../services/supportService';
 import { useSupportSocket } from './useSupportSocket';
-import { useAuthenticatedApi } from '../contexts/AuthContext';
+import { useAuthenticatedApi } from './useAuthenticatedApi';
 import { supportApi } from '../services/supportService';
 
 interface UseSupportThreadOptions {
