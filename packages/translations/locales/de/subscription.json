@@ -33,21 +33,43 @@
   "requestForm": {
     "title": "Abonnement anfordern",
     "subtitle": "Füllen Sie das untenstehende Formular aus, um Ihr Abonnement anzufordern",
+    "titles": {
+      "foundation": "Abonnement anfordern",
+      "supplier": "Anfrage (Lieferant)",
+      "serviceProvider": "Anfrage (Dienstleister)"
+    },
+    "subtitles": {
+      "foundation": "Füllen Sie das untenstehende Formular aus, um Ihr Abonnement anzufordern",
+      "supplier": "Erzählen Sie uns von Ihrem Unternehmen und Ihren Produkten. Wir melden uns mit Preisen und den nächsten Schritten.",
+      "serviceProvider": "Erzählen Sie uns von Ihrem Unternehmen und Ihren Dienstleistungen. Wir melden uns mit Preisen und den nächsten Schritten."
+    },
     "selectedPlan": "Ausgewählter Plan",
     "priceOnRequest": "Preis auf Anfrage",
     "billedMonthly": "Monatlich abgerechnet",
     "billedAnnually": "Jährlich abgerechnet",
     "year": "Jahr",
     "month": "Monat",
+    "roleLabel": {
+      "supplier": "Lieferant",
+      "serviceProvider": "Dienstleister"
+    },
+    "organizationName": "Organisation / Unternehmen",
+    "organizationNamePlaceholder": "Name Ihrer Organisation",
     "contactName": "Kontaktname",
     "contactNamePlaceholder": "Ihr vollständiger Name",
     "contactEmail": "E-Mail-Adresse",
     "contactEmailPlaceholder": "ihre@email.com",
     "contactPhone": "Telefonnummer",
     "contactPhonePlaceholder": "+41 XX XXX XX XX",
+    "website": "Website",
+    "websitePlaceholder": "https://beispiel.de",
     "preferredContact": "Bevorzugte Kontaktmethode",
     "message": "Zusätzliche Nachricht",
     "messagePlaceholder": "Fragen oder besondere Anforderungen...",
+    "messageSupplier": "Erzählen Sie uns von Ihren Produkten",
+    "messageSupplierPlaceholder": "Was verkaufen Sie? Kategorien, MOQ, Regionen, usw.",
+    "messageServiceProvider": "Erzählen Sie uns von Ihren Dienstleistungen",
+    "messageServiceProviderPlaceholder": "Welche Dienstleistungen bieten Sie an? Region, Preismodell, Verfügbarkeit, usw.",
     "submitButton": "Anfrage senden",
     "submitting": "Wird gesendet...",
     "validation": {
@@ -66,6 +88,11 @@
       "step2": "Erhalten Sie eine Rechnung per E-Mail",
       "step3": "Zahlen Sie die Rechnung",
       "step4": "Ihr Abonnement wird aktiviert"
+    },
+    "howItWorksVendor": {
+      "step1": "Senden Sie Ihre Anfrage",
+      "step2": "Wir melden uns mit Preisen",
+      "step3": "Sie erhalten die nächsten Schritte für die Listung"
     }
   },
   "featureGate": {

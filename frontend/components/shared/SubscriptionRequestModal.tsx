@@ -9,8 +9,8 @@ interface SubscriptionRequestModalProps {
   isOpen: boolean;
   onClose: () => void;
   plan: PricingPlan;
-  billingPeriod: 'monthly' | 'yearly';
-  tier: SubscriptionTier;
+  billingPeriod?: 'monthly' | 'yearly';
+  tier?: SubscriptionTier;
   /**
    * Backend `SubscriptionPlan.id` used by /subscriptions/request.
    * Pricing cards use static `PRICING_PLANS`, so we pass the real plan id separately.
@@ -22,8 +22,8 @@ interface SubscriptionRequestModalProps {
 
 export interface SubscriptionRequestFormData {
   planId: string;
-  tier: SubscriptionTier;
-  billingPeriod: string;
+  tier?: SubscriptionTier;
+  billingPeriod?: string;
   contactName: string;
   contactEmail: string;
   contactPhone?: string;
@@ -44,11 +44,16 @@ const SubscriptionRequestModal: React.FC<SubscriptionRequestModalProps> = ({
 }) => {
   const { t } = useTranslation(['subscription', 'common']);
   const { currentUser } = useAppContext();
+  const isFoundation = plan.role === UserRole.FOUNDATION;
+  const isSupplier = plan.role === UserRole.PRODUCT_SUPPLIER;
+  const isServiceProvider = plan.role === UserRole.SERVICE_PROVIDER;
   
   const [contactName, setContactName] = useState('');
   const [contactEmail, setContactEmail] = useState('');
   const [contactPhone, setContactPhone] = useState('');
   const [preferredContact, setPreferredContact] = useState<'email' | 'phone'>('email');
+  const [organizationName, setOrganizationName] = useState('');
+  const [website, setWebsite] = useState('');
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -58,6 +63,7 @@ const SubscriptionRequestModal: React.FC<SubscriptionRequestModalProps> = ({
     if (currentUser) {
       setContactName(`${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim() || '');
       setContactEmail(currentUser.email || '');
+      setOrganizationName(currentUser.orgName || '');
     }
   }, [currentUser]);
 
@@ -78,7 +84,7 @@ const SubscriptionRequestModal: React.FC<SubscriptionRequestModalProps> = ({
     e.preventDefault();
     setError(null);
 
-    if (!contactName.trim() || !contactEmail.trim()) {
+    if (!contactName.trim() || !contactEmail.trim() || (!isFoundation && !organizationName.trim())) {
       setError(t('subscription:requestForm.validation.required', 'Please fill in all required fields'));
       return;
     }
@@ -93,16 +99,32 @@ const SubscriptionRequestModal: React.FC<SubscriptionRequestModalProps> = ({
       return;
     }
 
+    if (isFoundation && (!tier || !billingPeriod)) {
+      setError(t('subscription:requestForm.validation.required', 'Please fill in all required fields'));
+      return;
+    }
+
+    const composedMessage = (() => {
+      if (isFoundation) {
+        return message.trim() || undefined;
+      }
+      const parts: string[] = [];
+      if (organizationName.trim()) parts.push(`Organization: ${organizationName.trim()}`);
+      if (website.trim()) parts.push(`Website: ${website.trim()}`);
+      if (message.trim()) parts.push(`Message: ${message.trim()}`);
+      return parts.length ? parts.join('\n') : undefined;
+    })();
+
     try {
       await onSubmit({
         planId: subscriptionPlanId,
-        tier,
-        billingPeriod,
+        tier: isFoundation ? tier : undefined,
+        billingPeriod: isFoundation ? billingPeriod : undefined,
         contactName: contactName.trim(),
         contactEmail: contactEmail.trim(),
         contactPhone: contactPhone.trim() || undefined,
         preferredContact,
-        message: message.trim() || undefined,
+        message: composedMessage,
         organizationId: currentUser?.orgId,
       });
       setSubmitted(true);
@@ -182,10 +204,27 @@ const SubscriptionRequestModal: React.FC<SubscriptionRequestModalProps> = ({
           <div className="flex justify-between items-start">
             <div>
               <h2 id="subscription-modal-title" className="text-xl font-bold text-gray-900">
-                {t('subscription:requestForm.title', 'Request Subscription')}
+            {isSupplier
+              ? t('subscription:requestForm.titles.supplier', 'Supplier enquiry')
+              : isServiceProvider
+                ? t('subscription:requestForm.titles.serviceProvider', 'Service provider enquiry')
+                : t('subscription:requestForm.titles.foundation', t('subscription:requestForm.title', 'Request Subscription'))}
               </h2>
               <p className="text-sm text-gray-500 mt-1">
-                {t('subscription:requestForm.subtitle', 'Complete the form below to request your subscription')}
+            {isSupplier
+              ? t(
+                  'subscription:requestForm.subtitles.supplier',
+                  'Tell us about your company and products. We will contact you with pricing and next steps.'
+                )
+              : isServiceProvider
+                ? t(
+                    'subscription:requestForm.subtitles.serviceProvider',
+                    'Tell us about your company and services. We will contact you with pricing and next steps.'
+                  )
+                : t(
+                    'subscription:requestForm.subtitles.foundation',
+                    t('subscription:requestForm.subtitle', 'Complete the form below to request your subscription')
+                  )}
               </p>
             </div>
             <button
@@ -205,14 +244,24 @@ const SubscriptionRequestModal: React.FC<SubscriptionRequestModalProps> = ({
               <p className="text-sm text-gray-500">{t('subscription:requestForm.selectedPlan', 'Selected Plan')}</p>
               <p className="text-lg font-semibold text-gray-900">{plan.emoji} {plan.name}</p>
               <p className="text-sm text-gray-500 capitalize">
-                {t(`subscription:tier.${tier.toLowerCase()}`, tier)} • {billingPeriod === 'yearly' 
-                  ? t('subscription:requestForm.billedAnnually', 'Billed annually') 
-                  : t('subscription:requestForm.billedMonthly', 'Billed monthly')
-                }
+                {isFoundation && tier && billingPeriod ? (
+                  <>
+                    {t(`subscription:tier.${tier.toLowerCase()}`, tier)} •{' '}
+                    {billingPeriod === 'yearly'
+                      ? t('subscription:requestForm.billedAnnually', 'Billed annually')
+                      : t('subscription:requestForm.billedMonthly', 'Billed monthly')}
+                  </>
+                ) : (
+                  <span>
+                    {isSupplier
+                      ? t('subscription:requestForm.roleLabel.supplier', 'Supplier')
+                      : t('subscription:requestForm.roleLabel.serviceProvider', 'Service provider')}
+                  </span>
+                )}
               </p>
             </div>
             <div className="text-right">
-              {plan.role === UserRole.FOUNDATION ? (
+              {isFoundation ? (
                 <>
                   <p className="text-2xl font-bold text-swiss-teal">{formatPrice()}</p>
                   <p className="text-sm text-gray-500">
@@ -233,6 +282,22 @@ const SubscriptionRequestModal: React.FC<SubscriptionRequestModalProps> = ({
           {error && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
               {error}
+            </div>
+          )}
+
+          {!isFoundation && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t('subscription:requestForm.organizationName', 'Organization / Company')} *
+              </label>
+              <input
+                type="text"
+                value={organizationName}
+                onChange={(e) => setOrganizationName(e.target.value)}
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
+                placeholder={t('subscription:requestForm.organizationNamePlaceholder', 'Your organization name')}
+                required
+              />
             </div>
           )}
 
@@ -283,6 +348,21 @@ const SubscriptionRequestModal: React.FC<SubscriptionRequestModalProps> = ({
             </div>
           </div>
 
+          {!isFoundation && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t('subscription:requestForm.website', 'Website')} ({t('common:optional', 'Optional')})
+              </label>
+              <input
+                type="url"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent"
+                placeholder={t('subscription:requestForm.websitePlaceholder', 'https://example.com')}
+              />
+            </div>
+          )}
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               {t('subscription:requestForm.preferredContact', 'Preferred Contact Method')}
@@ -315,14 +395,25 @@ const SubscriptionRequestModal: React.FC<SubscriptionRequestModalProps> = ({
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('subscription:requestForm.message', 'Additional Message')} ({t('common:optional', 'Optional')})
+              {isFoundation
+                ? t('subscription:requestForm.message', 'Additional Message')
+                : (isSupplier
+                    ? t('subscription:requestForm.messageSupplier', 'Tell us about your products')
+                    : t('subscription:requestForm.messageServiceProvider', 'Tell us about your services'))}{' '}
+              ({t('common:optional', 'Optional')})
             </label>
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               rows={3}
               className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-teal focus:border-transparent resize-none"
-              placeholder={t('subscription:requestForm.messagePlaceholder', 'Any questions or special requirements...')}
+              placeholder={
+                isFoundation
+                  ? t('subscription:requestForm.messagePlaceholder', 'Any questions or special requirements...')
+                  : (isSupplier
+                      ? t('subscription:requestForm.messageSupplierPlaceholder', 'What do you sell? Any focus categories, MOQ, regions served, etc.')
+                      : t('subscription:requestForm.messageServiceProviderPlaceholder', 'What services do you offer? Coverage region, pricing model, availability, etc.'))
+              }
             />
           </div>
 
@@ -331,10 +422,20 @@ const SubscriptionRequestModal: React.FC<SubscriptionRequestModalProps> = ({
               {t('subscription:requestForm.howItWorks.title', 'How it works:')}
             </p>
             <ol className="list-decimal list-inside space-y-1 text-blue-700">
-              <li>{t('subscription:requestForm.howItWorks.step1', 'Submit your request')}</li>
-              <li>{t('subscription:requestForm.howItWorks.step2', 'Receive an invoice via email')}</li>
-              <li>{t('subscription:requestForm.howItWorks.step3', 'Pay the invoice')}</li>
-              <li>{t('subscription:requestForm.howItWorks.step4', 'Your subscription is activated')}</li>
+              {isFoundation ? (
+                <>
+                  <li>{t('subscription:requestForm.howItWorks.step1', 'Submit your request')}</li>
+                  <li>{t('subscription:requestForm.howItWorks.step2', 'Receive an invoice via email')}</li>
+                  <li>{t('subscription:requestForm.howItWorks.step3', 'Pay the invoice')}</li>
+                  <li>{t('subscription:requestForm.howItWorks.step4', 'Your subscription is activated')}</li>
+                </>
+              ) : (
+                <>
+                  <li>{t('subscription:requestForm.howItWorksVendor.step1', 'Submit your enquiry')}</li>
+                  <li>{t('subscription:requestForm.howItWorksVendor.step2', 'We contact you with pricing')}</li>
+                  <li>{t('subscription:requestForm.howItWorksVendor.step3', 'You receive next steps to get listed')}</li>
+                </>
+              )}
             </ol>
           </div>
 

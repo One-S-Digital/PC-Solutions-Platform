@@ -33,21 +33,43 @@
   "requestForm": {
     "title": "Demander un abonnement",
     "subtitle": "Complétez le formulaire ci-dessous pour demander votre abonnement",
+    "titles": {
+      "foundation": "Demander un abonnement",
+      "supplier": "Demande d’information (fournisseur)",
+      "serviceProvider": "Demande d’information (prestataire)"
+    },
+    "subtitles": {
+      "foundation": "Complétez le formulaire ci-dessous pour demander votre abonnement",
+      "supplier": "Parlez-nous de votre entreprise et de vos produits. Nous vous contacterons avec le tarif et les prochaines étapes.",
+      "serviceProvider": "Parlez-nous de votre entreprise et de vos services. Nous vous contacterons avec le tarif et les prochaines étapes."
+    },
     "selectedPlan": "Plan sélectionné",
     "priceOnRequest": "Prix sur demande",
     "billedMonthly": "Facturé mensuellement",
     "billedAnnually": "Facturé annuellement",
     "year": "année",
     "month": "mois",
+    "roleLabel": {
+      "supplier": "Fournisseur",
+      "serviceProvider": "Prestataire"
+    },
+    "organizationName": "Organisation / entreprise",
+    "organizationNamePlaceholder": "Nom de votre organisation",
     "contactName": "Nom du contact",
     "contactNamePlaceholder": "Votre nom complet",
     "contactEmail": "Adresse e-mail",
     "contactEmailPlaceholder": "votre@email.com",
     "contactPhone": "Numéro de téléphone",
     "contactPhonePlaceholder": "+41 XX XXX XX XX",
+    "website": "Site web",
+    "websitePlaceholder": "https://exemple.com",
     "preferredContact": "Méthode de contact préférée",
     "message": "Message supplémentaire",
     "messagePlaceholder": "Questions ou exigences particulières...",
+    "messageSupplier": "Parlez-nous de vos produits",
+    "messageSupplierPlaceholder": "Que vendez-vous ? Catégories, MOQ, zones desservies, etc.",
+    "messageServiceProvider": "Parlez-nous de vos services",
+    "messageServiceProviderPlaceholder": "Quels services proposez-vous ? Zone, modèle tarifaire, disponibilités, etc.",
     "submitButton": "Soumettre la demande",
     "submitting": "Envoi en cours...",
     "validation": {
@@ -66,6 +88,11 @@
       "step2": "Recevez une facture par e-mail",
       "step3": "Payez la facture",
       "step4": "Votre abonnement est activé"
+    },
+    "howItWorksVendor": {
+      "step1": "Soumettez votre demande d’information",
+      "step2": "Nous vous contactons avec le tarif",
+      "step3": "Vous recevez les prochaines étapes pour être référencé"
     }
   },
   "featureGate": {

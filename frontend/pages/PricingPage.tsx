@@ -123,6 +123,13 @@ const PricingPage: React.FC = () => {
     );
     if (byName?.id) return byName.id;
 
+    // Fallback: match by allowed role (for vendor plans that might be named differently)
+    const roleMatch = activeSubscriptionPlans.find((p) => {
+      const allowed = (p?.allowedRoles || []).map((r) => String(r).toUpperCase());
+      return allowed.includes(String(plan.role).toUpperCase());
+    });
+    if (roleMatch?.id) return roleMatch.id;
+
     // Fallback for foundation plans that follow tier codes.
     const tier = getPlanTier(plan);
     return activePlanIdByCode.get(String(tier).toUpperCase());
@@ -247,8 +254,8 @@ const PricingPage: React.FC = () => {
             setSelectedPlan(null);
           }}
           plan={selectedPlan}
-          billingPeriod={isAnnual ? 'yearly' : 'monthly'}
-          tier={getPlanTier(selectedPlan)}
+          billingPeriod={selectedPlan.role === UserRole.FOUNDATION ? (isAnnual ? 'yearly' : 'monthly') : undefined}
+          tier={selectedPlan.role === UserRole.FOUNDATION ? getPlanTier(selectedPlan) : undefined}
           subscriptionPlanId={resolveSubscriptionPlanId(selectedPlan)}
           onSubmit={handleSubmitRequest}
           isLoading={isSubmitting}
