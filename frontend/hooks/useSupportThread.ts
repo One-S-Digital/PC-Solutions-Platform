@@ -53,10 +53,13 @@ export function useSupportThread({
   // Merge server replies (from polling or initial load)
   const mergeReplies = useCallback((serverReplies: TicketResponse[]) => {
     setReplies(prev => {
+      // Filter out any temp replies first
+      const filteredPrev = prev.filter(r => !r.id.startsWith('temp-'));
       // Create a map of existing replies by ID
-      const existingMap = new Map(prev.map(r => [r.id, r]));
-      // Add new replies, keeping existing ones
+      const existingMap = new Map(filteredPrev.map(r => [r.id, r]));
+      // Add new replies, keeping existing ones (deduplication by ID)
       serverReplies.forEach(reply => {
+        // Only add if it doesn't already exist
         if (!existingMap.has(reply.id)) {
           existingMap.set(reply.id, reply);
         }
@@ -97,14 +100,11 @@ export function useSupportThread({
       });
 
       if (res.success && res.data) {
-        // Replace temp reply with actual reply
-        const actualReply = res.data.responses[res.data.responses.length - 1];
-        setReplies(prev => {
-          const filtered = prev.filter(r => r.id !== tempReply.id);
-          return [...filtered, actualReply].sort(
-            (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-          );
-        });
+        // Remove temp reply first
+        setReplies(prev => prev.filter(r => r.id !== tempReply.id));
+        // Merge all responses from server (which includes the new one)
+        // This ensures deduplication if WebSocket also receives the reply
+        mergeReplies(res.data.responses || []);
       } else {
         // Remove temp reply on error
         setReplies(prev => prev.filter(r => r.id !== tempReply.id));
@@ -128,7 +128,9 @@ export function useSupportThread({
     request<SupportTicket>(supportApi.getTicketEndpoint(ticketId))
       .then(res => {
         if (res.success && res.data) {
-          mergeReplies(res.data.responses || []);
+          // Reset replies when loading a new ticket to avoid duplicates
+          // Then merge the server responses
+          setReplies(res.data.responses || []);
         }
       })
       .catch(err => {
@@ -137,7 +139,7 @@ export function useSupportThread({
       .finally(() => {
         setLoading(false);
       });
-  }, [ticketId, request, mergeReplies]);
+  }, [ticketId, request]);
 
   // Polling fallback when WebSocket is not connected
   useEffect(() => {
