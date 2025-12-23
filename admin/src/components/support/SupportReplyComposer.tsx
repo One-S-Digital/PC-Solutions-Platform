@@ -20,7 +20,7 @@ const SupportReplyComposer: React.FC<SupportReplyComposerProps> = ({
   const { t } = useTranslation(['common', 'admin']);
   const [draft, setDraft] = useState('');
   const [sending, setSending] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,68 +45,10 @@ const SupportReplyComposer: React.FC<SupportReplyComposerProps> = ({
     setDraft('');
   }, [ticketId]);
 
-  // DEV-ONLY: Focus tracing to identify what's stealing focus
-  React.useEffect(() => {
-    if (import.meta.env.PROD) return;
-
-    // Wait for ref to be available
-    const el = textareaRef.current;
-    if (!el) {
-      // Retry on next tick if ref not available yet
-      const timeoutId = setTimeout(() => {
-        const retryEl = textareaRef.current;
-        if (!retryEl) return;
-        setupFocusTracing(retryEl);
-      }, 0);
-      return () => clearTimeout(timeoutId);
-    }
-
-    const setupFocusTracing = (element: HTMLTextAreaElement) => {
-
-    const originalFocus = HTMLElement.prototype.focus;
-
-    HTMLElement.prototype.focus = function (...args: any[]) {
-      const target = this as HTMLElement;
-
-      // If focus is being moved away from our textarea while it's active, log it
-      const active = document.activeElement;
-      const isTextareaActive = active === element;
-      const isFocusingElsewhere = target !== element;
-
-      if (isTextareaActive && isFocusingElsewhere) {
-        // eslint-disable-next-line no-console
-        console.warn('[FOCUS-STEAL] focus moved to:', target.tagName, target.className);
-        // eslint-disable-next-line no-console
-        console.warn(new Error('[FOCUS-STEAL] stack').stack);
-      }
-
-        return originalFocus.apply(this, args as any);
-      };
-
-      const onFocusIn = (e: FocusEvent) => {
-        // eslint-disable-next-line no-console
-        console.log('[focusin]', (e.target as HTMLElement)?.tagName, (e.target as HTMLElement)?.className);
-      };
-
-      document.addEventListener('focusin', onFocusIn, true);
-
-      return () => {
-        HTMLElement.prototype.focus = originalFocus;
-        document.removeEventListener('focusin', onFocusIn, true);
-      };
-    };
-
-    return setupFocusTracing(el);
-
-    return setupFocusTracing(el);
-  }, []);
-
   const displayPlaceholder = placeholder || t('admin:support.replyPlaceholder', { defaultValue: 'Type your reply...' });
 
-  // Debug logging
-  const log = useCallback((...args: any[]) => {
-    console.log('[SupportReplyComposer]', ...args);
-  }, []);
+  // Focus lock refs
+  const ignoreNextBlurRef = useRef(false);
 
   // Stop event propagation to prevent parent click handlers from stealing focus
   const stopPropagation = useCallback((e: React.MouseEvent | React.FocusEvent) => {
@@ -117,19 +59,37 @@ const SupportReplyComposer: React.FC<SupportReplyComposerProps> = ({
     e.stopPropagation();
   }, []);
 
+  // Mark when user intentionally blurs (e.g., clicking Send button)
+  const markUserIntentionalBlur = useCallback(() => {
+    ignoreNextBlurRef.current = true;
+    setTimeout(() => {
+      ignoreNextBlurRef.current = false;
+    }, 250);
+  }, []);
+
+  // Safe focus lock: refocus textarea if focus is stolen while typing
+  const handleBlur = useCallback(() => {
+    if (ignoreNextBlurRef.current) return;
+
+    requestAnimationFrame(() => {
+      const el = textareaRef.current;
+      if (!el) return;
+
+      // Only refocus if the textarea was the intended typing target:
+      // - element exists
+      // - it's not disabled
+      // - user is still on this page
+      if (!el.disabled && document.visibilityState === 'visible') {
+        el.focus();
+      }
+    });
+  }, []);
+
   const handleFocus = useCallback((e: React.FocusEvent<HTMLTextAreaElement>) => {
-    log('FOCUS');
     e.stopPropagation();
-  }, [log]);
+  }, []);
 
-  const handleBlur = useCallback((e: React.FocusEvent<HTMLTextAreaElement>) => {
-    const activeElement = document.activeElement as HTMLElement;
-    log('BLUR', 'activeElement:', activeElement?.tagName, activeElement?.className);
-    e.stopPropagation();
-  }, [log]);
-
-  const handleKeyDownWithLog = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    log('KEYDOWN', e.key);
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     // Enter to send, Shift+Enter for new line
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -137,11 +97,7 @@ const SupportReplyComposer: React.FC<SupportReplyComposerProps> = ({
         handleSubmit(e);
       }
     }
-  }, [draft, sending, handleSubmit, log]);
-
-  const handleKeyUp = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    log('KEYUP', e.key);
-  }, [log]);
+  }, [draft, sending, handleSubmit]);
 
   return (
     <div
@@ -156,8 +112,7 @@ const SupportReplyComposer: React.FC<SupportReplyComposerProps> = ({
           ref={textareaRef}
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          onKeyDown={handleKeyDownWithLog}
-          onKeyUp={handleKeyUp}
+          onKeyDown={handleKeyDown}
           onMouseDown={stopPropagation}
           onClick={stopPropagation}
           onFocus={handleFocus}
@@ -167,13 +122,19 @@ const SupportReplyComposer: React.FC<SupportReplyComposerProps> = ({
           disabled={disabled || sending}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm resize-none disabled:opacity-50 disabled:cursor-not-allowed"
         />
-      <div className="flex justify-end mt-2">
+      <div 
+        className="flex justify-end mt-2"
+        onMouseDown={markUserIntentionalBlur}
+        onPointerDown={markUserIntentionalBlur}
+      >
         <Button
           type="button"
           variant="primary"
           disabled={!draft.trim() || disabled || sending}
           size="sm"
           onClick={handleSubmit}
+          onMouseDown={markUserIntentionalBlur}
+          onPointerDown={markUserIntentionalBlur}
         >
           {sending ? t('common:buttons.sending', { defaultValue: 'Sending...' }) : t('common:buttons.reply', { defaultValue: 'Reply' })}
         </Button>
