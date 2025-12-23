@@ -67,7 +67,7 @@ export function useSupportThread({
     });
   }, []);
 
-  // Send a reply with optimistic UI
+  // Send a reply with optimistic UI - stable as long as ticketId doesn't change
   const sendReply = useCallback(async (content: string): Promise<void> => {
     if (!ticketId) throw new Error('No ticket selected');
 
@@ -111,7 +111,7 @@ export function useSupportThread({
       setReplies(prev => prev.filter(r => r.id !== tempReply.id));
       throw error;
     }
-  }, [ticketId, apiClient, appendReply]);
+  }, [ticketId, apiClient, appendReply, messagesEndRef]);
 
   // Load initial replies when ticket changes
   useEffect(() => {

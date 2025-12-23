@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   LifeBuoy,
@@ -36,14 +36,17 @@ const Support: React.FC = () => {
   const { user } = useUser();
   const queryClient = useQueryClient();
   
+  // Stable callback for ticket updates
+  const handleTicketUpdate = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['support-tickets'] });
+  }, [queryClient]);
+
   // Use shared thread hook for replies management
   const currentUserId = user?.id || '';
   const { replies, sendReply, messagesEndRef, scrollContainerRef } = useSupportThread({
     ticketId: selectedTicket?.id || null,
     userId: currentUserId,
-    onTicketUpdate: () => {
-      queryClient.invalidateQueries({ queryKey: ['support-tickets'] });
-    },
+    onTicketUpdate: handleTicketUpdate,
   });
 
   // Fetch current user to check assignment
@@ -121,13 +124,23 @@ const Support: React.FC = () => {
     assignTicketMutation.mutate(ticketId);
   };
 
-  // Stable callback for sending replies
+  // Memoize ticketId to ensure stable prop
+  const currentTicketId = useMemo(() => selectedTicket?.id || null, [selectedTicket?.id]);
+
+  // Stable callback for sending replies - sendReply already has ticketId in closure
   const handleSendReply = useCallback(async (content: string) => {
     await sendReply(content);
     // Invalidate queries to refresh ticket list
     queryClient.invalidateQueries({ queryKey: ['support-tickets'] });
-    queryClient.invalidateQueries({ queryKey: ['support-ticket', selectedTicket?.id] });
-  }, [sendReply, selectedTicket?.id, queryClient]);
+    if (currentTicketId) {
+      queryClient.invalidateQueries({ queryKey: ['support-ticket', currentTicketId] });
+    }
+  }, [sendReply, queryClient, currentTicketId]);
+
+  // Memoize whether to show composer (stable boolean)
+  const showComposer = useMemo(() => {
+    return selectedTicket && selectedTicket.status !== 'CLOSED';
+  }, [selectedTicket?.id, selectedTicket?.status]);
 
   // Auto-scroll to bottom on mount or when selected ticket changes
   useEffect(() => {
@@ -532,11 +545,10 @@ const Support: React.FC = () => {
               </div>
 
               {/* Reply Box */}
-              {selectedTicket.status !== 'CLOSED' && (
+              {showComposer && currentTicketId && (
                 <div className="p-6 border-t border-gray-200">
                   <SupportReplyComposer
-                    key={selectedTicket.id}
-                    ticketId={selectedTicket.id}
+                    ticketId={currentTicketId}
                     onSend={handleSendReply}
                     placeholder={t('admin:support.replyPlaceholder')}
                   />

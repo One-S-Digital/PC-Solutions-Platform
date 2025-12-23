@@ -22,6 +22,17 @@ const SupportReplyComposer: React.FC<SupportReplyComposerProps> = ({
   const [sending, setSending] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  // Debug: Track mount/unmount
+  React.useEffect(() => {
+    console.log('[SupportReplyComposer] mount', ticketId);
+    return () => console.log('[SupportReplyComposer] unmount', ticketId);
+  }, [ticketId]);
+
+  // Debug: Track renders
+  React.useEffect(() => {
+    console.log('[SupportReplyComposer] render', ticketId);
+  });
+
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     const content = draft.trim();

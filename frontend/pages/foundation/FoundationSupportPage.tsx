@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { STANDARD_INPUT_FIELD } from '../../constants';
@@ -72,9 +72,7 @@ const FoundationSupportPage: React.FC = () => {
   const { replies, sendReply, messagesEndRef, scrollContainerRef } = useSupportThread({
     ticketId: selectedTicket?.id || null,
     userId: currentUser?.id || '',
-    onTicketUpdate: () => {
-      fetchTickets();
-    },
+    onTicketUpdate: handleTicketUpdate,
   });
 
   // New ticket form
@@ -90,7 +88,7 @@ const FoundationSupportPage: React.FC = () => {
     { questionKey: "foundationSupportPage.faq.recruitment.q", answerKey: "foundationSupportPage.faq.recruitment.a" },
   ];
 
-  // Fetch tickets
+  // Fetch tickets - memoized to prevent handleSendReply recreation
   const fetchTickets = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -107,6 +105,11 @@ const FoundationSupportPage: React.FC = () => {
       setLoading(false);
     }
   }, [request, t]);
+
+  // Stable callback for ticket updates
+  const handleTicketUpdate = useCallback(() => {
+    fetchTickets();
+  }, [fetchTickets]);
 
   useEffect(() => {
     fetchTickets();
@@ -149,11 +152,20 @@ const FoundationSupportPage: React.FC = () => {
     }
   };
 
-  // Stable callback for sending replies
+  // Memoize ticketId to ensure stable prop
+  const currentTicketId = useMemo(() => selectedTicket?.id || null, [selectedTicket?.id]);
+
+  // Stable callback for sending replies - sendReply already has ticketId in closure
   const handleSendReply = useCallback(async (content: string) => {
     await sendReply(content);
-    await fetchTickets();
+    // Refresh tickets list after sending
+    fetchTickets();
   }, [sendReply, fetchTickets]);
+
+  // Memoize whether to show composer (stable boolean)
+  const showComposer = useMemo(() => {
+    return selectedTicket && selectedTicket.status !== 'CLOSED';
+  }, [selectedTicket?.id, selectedTicket?.status]);
 
   // Auto-scroll to bottom on mount or when selected ticket changes
   useEffect(() => {
@@ -223,11 +235,10 @@ const FoundationSupportPage: React.FC = () => {
         </div>
 
         {/* Response form */}
-        {selectedTicket.status !== 'CLOSED' && (
+        {showComposer && currentTicketId && (
           <div className="border-t pt-4">
             <SupportReplyComposer
-              key={selectedTicket.id}
-              ticketId={selectedTicket.id}
+              ticketId={currentTicketId}
               onSend={handleSendReply}
               placeholder={t('common:supportPage.ticketForm.responsePlaceholder')}
             />
