@@ -45,13 +45,6 @@ const ParentSupportPage: React.FC = () => {
   const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  // Use shared thread hook for replies management
-  const { replies, sendReply, messagesEndRef, scrollContainerRef } = useSupportThread({
-    ticketId: selectedTicket?.id || null,
-    userId: currentUser?.id || '',
-    onTicketUpdate: handleTicketUpdate,
-  });
-
   // New ticket form
   const [ticketSubject, setTicketSubject] = useState('');
   const [ticketMessage, setTicketMessage] = useState('');
@@ -84,6 +77,13 @@ const ParentSupportPage: React.FC = () => {
   const handleTicketUpdate = useCallback(() => {
     fetchTickets();
   }, [fetchTickets]);
+
+  // Use shared thread hook for replies management (moved after handleTicketUpdate is defined)
+  const { replies, sendReply, messagesEndRef, scrollContainerRef } = useSupportThread({
+    ticketId: selectedTicket?.id || null,
+    userId: currentUser?.id || '',
+    onTicketUpdate: handleTicketUpdate,
+  });
 
   // Submit new ticket
   const handleTicketSubmit = async (e: React.FormEvent) => {
