@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { XMarkIcon, CheckCircleIcon, ClockIcon, EnvelopeIcon, PhoneIcon } from '@heroicons/react/24/outline';
-import { PricingPlan, SubscriptionTier } from '../../types';
+import { PricingPlan, SubscriptionTier, UserRole } from '../../types';
 import Button from '../ui/Button';
 import { useAppContext } from '../../contexts/AppContext';
 
@@ -212,10 +212,18 @@ const SubscriptionRequestModal: React.FC<SubscriptionRequestModalProps> = ({
               </p>
             </div>
             <div className="text-right">
-              <p className="text-2xl font-bold text-swiss-teal">{formatPrice()}</p>
-              <p className="text-sm text-gray-500">
-                /{billingPeriod === 'yearly' ? t('subscription:requestForm.year', 'year') : t('subscription:requestForm.month', 'month')}
-              </p>
+              {plan.role === UserRole.FOUNDATION ? (
+                <>
+                  <p className="text-2xl font-bold text-swiss-teal">{formatPrice()}</p>
+                  <p className="text-sm text-gray-500">
+                    /{billingPeriod === 'yearly' ? t('subscription:requestForm.year', 'year') : t('subscription:requestForm.month', 'month')}
+                  </p>
+                </>
+              ) : (
+                <p className="text-lg font-semibold text-swiss-teal">
+                  {t('subscription:requestForm.priceOnRequest', 'Price on request')}
+                </p>
+              )}
             </div>
           </div>
         </div>

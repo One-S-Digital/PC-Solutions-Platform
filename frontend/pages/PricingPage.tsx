@@ -115,11 +115,22 @@ const PricingPage: React.FC = () => {
     return map;
   }, [activeSubscriptionPlans]);
 
+  const resolveSubscriptionPlanId = (plan: PricingPlan): string | undefined => {
+    // Prefer matching by backend plan name (works for Suppliers/Service Providers too).
+    const normalized = (plan.name || '').trim().toLowerCase();
+    const byName = activeSubscriptionPlans.find(
+      (p) => (p?.name || '').trim().toLowerCase() === normalized
+    );
+    if (byName?.id) return byName.id;
+
+    // Fallback for foundation plans that follow tier codes.
+    const tier = getPlanTier(plan);
+    return activePlanIdByCode.get(String(tier).toUpperCase());
+  };
+
 
   const PlanCard: React.FC<{ plan: PricingPlan }> = ({ plan }) => {
     const translatedPlan = translatePlan(plan, isAnnual);
-    const isSupplierOrProvider =
-      plan.role === UserRole.PRODUCT_SUPPLIER || plan.role === UserRole.SERVICE_PROVIDER;
     
     return (
       <Card className={`flex flex-col p-6 border-2 ${plan.isPopular ? 'border-swiss-mint' : 'border-gray-200'} relative`} hoverEffect>
@@ -130,7 +141,7 @@ const PricingPage: React.FC = () => {
         )}
         <h3 className="text-2xl font-bold text-swiss-charcoal text-center mt-3">{plan.emoji} {translatedPlan.name}</h3>
         
-        {!isSupplierOrProvider && (translatedPlan.monthlyPriceText || translatedPlan.annualPlanText) && (
+        {(translatedPlan.monthlyPriceText || translatedPlan.annualPlanText) && (
           <div className="my-4 text-center space-y-1">
             {translatedPlan.monthlyPriceText && (
               <p className="text-xl font-semibold text-gray-800">{translatedPlan.monthlyPriceText}</p>
@@ -155,27 +166,16 @@ const PricingPage: React.FC = () => {
             </li>
           ))}
         </ul>
-        {isSupplierOrProvider ? (
-          <Button
-            variant="primary"
-            size="lg"
-            className="w-full mt-6"
-            onClick={() => {
-              window.location.href = 'mailto:hello@procrechesolutions.com';
-            }}
-          >
-            {t('pricingPage.enquireButton')}
-          </Button>
-        ) : (
-          <Button
-            variant={plan.isPopular ? 'primary' : 'outline'}
-            size="lg"
-            className="w-full mt-6"
-            onClick={() => handleChoosePlan(plan)}
-          >
-            {fromSignup ? t('pricingPage.selectAndContinue') : t('pricingPage.choosePlan')}
-          </Button>
-        )}
+        <Button
+          variant={plan.isPopular ? 'primary' : 'outline'}
+          size="lg"
+          className="w-full mt-6"
+          onClick={() => handleChoosePlan(plan)}
+        >
+          {plan.role === UserRole.PRODUCT_SUPPLIER || plan.role === UserRole.SERVICE_PROVIDER
+            ? t('pricingPage.enquireButton')
+            : (fromSignup ? t('pricingPage.selectAndContinue') : t('pricingPage.choosePlan'))}
+        </Button>
       </Card>
     );
   };
@@ -249,7 +249,7 @@ const PricingPage: React.FC = () => {
           plan={selectedPlan}
           billingPeriod={isAnnual ? 'yearly' : 'monthly'}
           tier={getPlanTier(selectedPlan)}
-          subscriptionPlanId={activePlanIdByCode.get(getPlanTier(selectedPlan))}
+          subscriptionPlanId={resolveSubscriptionPlanId(selectedPlan)}
           onSubmit={handleSubmitRequest}
           isLoading={isSubmitting}
         />

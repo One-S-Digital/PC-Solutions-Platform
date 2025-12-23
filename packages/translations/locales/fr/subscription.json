@@ -34,6 +34,7 @@
     "title": "Demander un abonnement",
     "subtitle": "Complétez le formulaire ci-dessous pour demander votre abonnement",
     "selectedPlan": "Plan sélectionné",
+    "priceOnRequest": "Prix sur demande",
     "billedMonthly": "Facturé mensuellement",
     "billedAnnually": "Facturé annuellement",
     "year": "année",

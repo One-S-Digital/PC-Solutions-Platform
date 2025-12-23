@@ -34,6 +34,7 @@
     "title": "Request Subscription",
     "subtitle": "Complete the form below to request your subscription",
     "selectedPlan": "Selected Plan",
+    "priceOnRequest": "Price on request",
     "billedMonthly": "Billed monthly",
     "billedAnnually": "Billed annually",
     "year": "year",
