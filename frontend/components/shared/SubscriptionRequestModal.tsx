@@ -100,7 +100,20 @@ const SubscriptionRequestModal: React.FC<SubscriptionRequestModalProps> = ({
     }
 
     if (isFoundation && (!tier || !billingPeriod)) {
-      setError(t('subscription:requestForm.validation.required', 'Please fill in all required fields'));
+      // This should not happen in normal usage (tier/billingPeriod are provided by the caller for foundation plans)
+      // If it does, it indicates a wiring/config issue rather than missing user input.
+      console.error('SubscriptionRequestModal: tier and billingPeriod are required for foundation plans', {
+        tier,
+        billingPeriod,
+        planName: plan?.name,
+        subscriptionPlanId,
+      });
+      setError(
+        t(
+          'subscription:requestForm.validation.planNotConfigured',
+          'This plan is not configured yet. Please contact support.'
+        )
+      );
       return;
     }
 
