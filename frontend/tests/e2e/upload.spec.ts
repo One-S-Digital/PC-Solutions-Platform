@@ -19,20 +19,25 @@ test('file upload zone accepts files and shows preview', async ({ page }) => {
   // Test file drag and drop functionality
   await test.step('Test drag and drop', () => {
     const uploadZone = page.locator('[data-testid="file-upload-zone"], .border-dashed').first();
-    if (uploadZone.isVisible()) {
-      // Simulate drag and drop (would need actual file in real test)
-      expect(uploadZone).toBeAttached();
-    }
+    // NOTE: isVisible() is async; await it to avoid unhandled rejections.
+    return uploadZone.isVisible().then(async (visible) => {
+      if (visible) {
+        // Simulate drag and drop (would need actual file in real test)
+        await expect(uploadZone).toBeAttached();
+      }
+    });
   });
 
   // Test file validation
   await test.step('Test file validation', () => {
     const fileInputElement = page.locator('input[type="file"]').first();
-    if (fileInputElement.isVisible()) {
-      // Check accepted file types attribute
-      const acceptTypes = fileInputElement.getAttribute('accept');
-      expect(acceptTypes).toBeTruthy();
-    }
+    return fileInputElement.isVisible().then(async (visible) => {
+      if (visible) {
+        // Check accepted file types attribute
+        const acceptTypes = await fileInputElement.getAttribute('accept');
+        expect(acceptTypes).toBeTruthy();
+      }
+    });
   });
 });
 
