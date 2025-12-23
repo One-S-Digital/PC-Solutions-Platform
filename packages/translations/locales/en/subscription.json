@@ -50,7 +50,8 @@
     "submitButton": "Submit Request",
     "submitting": "Submitting...",
     "validation": {
-      "required": "Please fill in all required fields"
+      "required": "Please fill in all required fields",
+      "planNotConfigured": "This plan is not configured yet. Please contact support."
     },
     "success": {
       "title": "Request Submitted!",

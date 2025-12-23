@@ -50,7 +50,8 @@
     "submitButton": "Soumettre la demande",
     "submitting": "Envoi en cours...",
     "validation": {
-      "required": "Veuillez remplir tous les champs obligatoires"
+      "required": "Veuillez remplir tous les champs obligatoires",
+      "planNotConfigured": "Ce plan n'est pas encore configuré. Veuillez contacter le support."
     },
     "success": {
       "title": "Demande soumise !",

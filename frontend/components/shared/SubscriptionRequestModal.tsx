@@ -11,6 +11,11 @@ interface SubscriptionRequestModalProps {
   plan: PricingPlan;
   billingPeriod: 'monthly' | 'yearly';
   tier: SubscriptionTier;
+  /**
+   * Backend `SubscriptionPlan.id` used by /subscriptions/request.
+   * Pricing cards use static `PRICING_PLANS`, so we pass the real plan id separately.
+   */
+  subscriptionPlanId?: string;
   onSubmit: (data: SubscriptionRequestFormData) => Promise<void>;
   isLoading?: boolean;
 }
@@ -33,6 +38,7 @@ const SubscriptionRequestModal: React.FC<SubscriptionRequestModalProps> = ({
   plan,
   billingPeriod,
   tier,
+  subscriptionPlanId,
   onSubmit,
   isLoading = false,
 }) => {
@@ -77,9 +83,19 @@ const SubscriptionRequestModal: React.FC<SubscriptionRequestModalProps> = ({
       return;
     }
 
+    if (!subscriptionPlanId) {
+      setError(
+        t(
+          'subscription:requestForm.validation.planNotConfigured',
+          'This plan is not configured yet. Please contact support.'
+        )
+      );
+      return;
+    }
+
     try {
       await onSubmit({
-        planId: plan.id || '',
+        planId: subscriptionPlanId,
         tier,
         billingPeriod,
         contactName: contactName.trim(),
@@ -96,11 +112,15 @@ const SubscriptionRequestModal: React.FC<SubscriptionRequestModalProps> = ({
   };
 
   const formatPrice = () => {
-    const price = billingPeriod === 'yearly' && plan.annualPrice ? plan.annualPrice : plan.price;
+    const price =
+      billingPeriod === 'yearly'
+        ? plan.price?.annually
+        : plan.price?.monthly;
+    const numericPrice = typeof price === 'number' && Number.isFinite(price) ? price : 0;
     return new Intl.NumberFormat('de-CH', {
       style: 'currency',
-      currency: plan.currency || 'CHF',
-    }).format(price || 0);
+      currency: 'CHF',
+    }).format(numericPrice);
   };
 
   // Success view after submission

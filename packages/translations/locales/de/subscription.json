@@ -50,7 +50,8 @@
     "submitButton": "Anfrage senden",
     "submitting": "Wird gesendet...",
     "validation": {
-      "required": "Bitte füllen Sie alle Pflichtfelder aus"
+      "required": "Bitte füllen Sie alle Pflichtfelder aus",
+      "planNotConfigured": "Dieser Plan ist noch nicht konfiguriert. Bitte kontaktieren Sie den Support."
     },
     "success": {
       "title": "Anfrage gesendet!",

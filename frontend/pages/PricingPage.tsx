@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { PricingPlan, UserRole, SubscriptionTier } from '../types';
@@ -15,6 +15,8 @@ import { useFrontendSettings } from '../hooks/useFrontendSettings';
 import { APP_NAME } from '../constants';
 import SubscriptionRequestModal, { SubscriptionRequestFormData } from '../components/shared/SubscriptionRequestModal';
 import { useSubscription } from '../contexts/SubscriptionContext';
+import { apiService } from '../services/api';
+import type { SubscriptionPlan } from '../contexts/SubscriptionContext';
 
 const PricingPage: React.FC = () => {
   const { t } = useTranslation(['pricing', 'common']);
@@ -28,11 +30,32 @@ const PricingPage: React.FC = () => {
   const [selectedPlan, setSelectedPlan] = useState<PricingPlan | null>(null);
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeSubscriptionPlans, setActiveSubscriptionPlans] = useState<SubscriptionPlan[]>([]);
 
   const fromSignup = location.state?.fromSignup || false;
   const userRoleFromSignup = location.state?.role as UserRole | undefined;
 
   const { foundation: daycarePlans, supplier: supplierPlan, serviceProvider: serviceProviderPlan } = pricingService.getPlansByRole();
+
+  // Fetch backend subscription plans so the request payload has a real `planId`
+  useEffect(() => {
+    let isMounted = true;
+    apiService
+      .get<SubscriptionPlan[]>('/subscriptions/plans')
+      .then((res) => {
+        if (!isMounted) return;
+        if (res?.success && Array.isArray(res.data)) {
+          setActiveSubscriptionPlans(res.data);
+        }
+      })
+      .catch(() => {
+        // Best-effort only: UI can still render prices from PRICING_PLANS.
+        // Submission will show a friendly error if planId is missing.
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleChoosePlan = (plan: PricingPlan) => {
     // If user is logged in, show the request modal
@@ -81,6 +104,16 @@ const PricingPage: React.FC = () => {
     };
     return tierMap[plan.name] || SubscriptionTier.BASIC;
   };
+
+  const activePlanIdByCode = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const p of activeSubscriptionPlans) {
+      if (p?.code && p?.id) {
+        map.set(String(p.code).toUpperCase(), p.id);
+      }
+    }
+    return map;
+  }, [activeSubscriptionPlans]);
 
 
   const PlanCard: React.FC<{ plan: PricingPlan }> = ({ plan }) => {
@@ -216,6 +249,7 @@ const PricingPage: React.FC = () => {
           plan={selectedPlan}
           billingPeriod={isAnnual ? 'yearly' : 'monthly'}
           tier={getPlanTier(selectedPlan)}
+          subscriptionPlanId={activePlanIdByCode.get(getPlanTier(selectedPlan))}
           onSubmit={handleSubmitRequest}
           isLoading={isSubmitting}
         />
