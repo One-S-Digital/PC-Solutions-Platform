@@ -80,7 +80,7 @@ const SignupPage: React.FC = () => {
         });
 
         if (currentStatus === 'ready') {
-          setSuccessRedirect(getSuccessRedirectForRole(selectedRole));
+          setSuccessRedirect(getSuccessRedirectForRole());
           setCurrentStep(3);
           return;
         }
@@ -132,25 +132,18 @@ const SignupPage: React.FC = () => {
 
   const [verificationCode, setVerificationCode] = useState('');
   const [verificationError, setVerificationError] = useState('');
+  const [isResendingCode, setIsResendingCode] = useState(false);
+  const [resendSuccessMessage, setResendSuccessMessage] = useState('');
+  const [resendCooldownSeconds, setResendCooldownSeconds] = useState(0);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaError, setCaptchaError] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [webhookStatus, setWebhookStatus] = useState<'pending' | 'processing' | 'ready' | 'error'>('pending');
   const [webhookError, setWebhookError] = useState<string | null>(null);
 
-  const roleRequiresPricing = (role: SignupRole | null) =>
-    role !== null && [SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(role);
+  const getSuccessRedirectForRole = () => ({ path: '/dashboard' });
 
-  const getSuccessRedirectForRole = (role: SignupRole | null) => {
-    if (roleRequiresPricing(role) && role) {
-      return { path: '/pricing', state: { fromSignup: true, role } };
-    }
-    return { path: '/dashboard' };
-  };
-
-  const successButtonLabel = roleRequiresPricing(selectedRole)
-    ? t('goToPricingButton', 'Go to Pricing')
-    : t('goToDashboardButton');
+  const successButtonLabel = t('goToDashboardButton');
 
     const requiresOrganizationDetails =
       selectedRole !== null &&
@@ -199,7 +192,7 @@ const SignupPage: React.FC = () => {
     setErrors({});
     setCurrentStep(2);
     setHasStartedSignup(true);
-    setSuccessRedirect(getSuccessRedirectForRole(role));
+    setSuccessRedirect(getSuccessRedirectForRole());
   };
 
   const handleBackToRoleSelection = () => {
@@ -357,6 +350,17 @@ const SignupPage: React.FC = () => {
     console.error('CAPTCHA error');
   };
 
+  // Cooldown timer for resending verification code
+  useEffect(() => {
+    if (resendCooldownSeconds <= 0) return;
+
+    const intervalId = window.setInterval(() => {
+      setResendCooldownSeconds(prev => Math.max(0, prev - 1));
+    }, 1000);
+
+    return () => window.clearInterval(intervalId);
+  }, [resendCooldownSeconds]);
+
   // State to track if there's an email conflict (account exists with different auth method)
   const [emailConflictError, setEmailConflictError] = useState(false);
   // State for general OAuth profile completion errors (visible in a banner, not attached to email field)
@@ -398,7 +402,7 @@ const SignupPage: React.FC = () => {
        
        if (response.ok) {
            await refreshCurrentUser();
-           setSuccessRedirect(getSuccessRedirectForRole(selectedRole));
+           setSuccessRedirect(getSuccessRedirectForRole());
            setCurrentStep(3);
        } else {
            const errorData = await response.json().catch(() => ({}));
@@ -478,7 +482,7 @@ const SignupPage: React.FC = () => {
         if (result.status === 'complete') {
           try {
             await setActive({ session: result.createdSessionId });
-            setSuccessRedirect(getSuccessRedirectForRole(selectedRole));
+            setSuccessRedirect(getSuccessRedirectForRole());
             setCurrentStep(3);
           } catch (setActiveError: any) {
             console.error('Session activation failed:', setActiveError);
@@ -589,7 +593,21 @@ const SignupPage: React.FC = () => {
       let errorMessage = t('signup:errors.invalidVerificationCode');
 
       if (err?.errors && err.errors.length > 0) {
-        errorMessage = err.errors[0]?.message || errorMessage;
+        const firstError = err.errors[0];
+        const clerkCode = firstError?.code as string | undefined;
+
+        if (
+          clerkCode === 'form_code_expired' ||
+          clerkCode === 'verification_expired' ||
+          clerkCode === 'verification_code_expired'
+        ) {
+          errorMessage = t(
+            'common:verificationCodeExpired',
+            'This verification code has expired. Please request a new one.'
+          );
+        } else {
+          errorMessage = firstError?.message || errorMessage;
+        }
       } else if (err instanceof Error && err.message) {
         errorMessage = err.message;
       }
@@ -598,6 +616,32 @@ const SignupPage: React.FC = () => {
     } finally {
       setIsLoading(false);
       setIsVerifying(false);
+    }
+  };
+
+  const handleResendVerificationCode = async () => {
+    if (!signUp) return;
+    if (isResendingCode || resendCooldownSeconds > 0) return;
+
+    setIsResendingCode(true);
+    setVerificationError('');
+    setResendSuccessMessage('');
+
+    try {
+      await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
+      setResendSuccessMessage(t('common:verificationCodeResent', 'A new verification code has been sent.'));
+      // Prevent accidental/spam clicks
+      setResendCooldownSeconds(30);
+    } catch (err: any) {
+      let message = t('common:resendVerificationCodeFailed', 'Failed to resend the code. Please try again.');
+      if (err?.errors?.[0]?.message) {
+        message = err.errors[0].message;
+      } else if (err instanceof Error && err.message) {
+        message = err.message;
+      }
+      setVerificationError(message);
+    } finally {
+      setIsResendingCode(false);
     }
   };
   
@@ -620,7 +664,13 @@ const SignupPage: React.FC = () => {
       ) : (
         <div className="relative">
           <input 
-            type={(name === 'password' && !showPassword) || (name === 'confirmPassword' && !showConfirmPassword) ? 'password' : type}
+            type={
+              name === 'password'
+                ? (showPassword ? 'text' : 'password')
+                : name === 'confirmPassword'
+                  ? (showConfirmPassword ? 'text' : 'password')
+                  : type
+            }
             id={name} 
             name={name} 
             value={String(formData[name as keyof SignupFormData] ?? '')}
@@ -938,6 +988,8 @@ const SignupPage: React.FC = () => {
                             value={verificationCode}
                             onChange={(e) => {
                               setVerificationCode(e.target.value);
+                              if (verificationError) setVerificationError('');
+                              if (resendSuccessMessage) setResendSuccessMessage('');
                             }}
                             className={STANDARD_INPUT_FIELD}
                             placeholder="000000"
@@ -946,6 +998,9 @@ const SignupPage: React.FC = () => {
                           />
                             {verificationError && (
                               <p className="text-xs text-swiss-coral mt-1">{verificationError}</p>
+                            )}
+                            {resendSuccessMessage && (
+                              <p className="text-xs text-swiss-mint mt-1">{resendSuccessMessage}</p>
                             )}
                           </div>
                           <Button 
@@ -957,6 +1012,28 @@ const SignupPage: React.FC = () => {
                           >
                             {(isLoading || isVerifying) ? t('common:verifying', 'Verifying...') : t('common:buttons.verifyEmail', 'Verify Email')}
                           </Button>
+
+                          <div className="flex items-center justify-between">
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="px-0"
+                              disabled={isResendingCode || resendCooldownSeconds > 0}
+                              onClick={handleResendVerificationCode}
+                            >
+                              {isResendingCode
+                                ? t('common:resending', 'Resending...')
+                                : t('common:buttons.resendCode', 'Resend code')}
+                            </Button>
+                            {resendCooldownSeconds > 0 && (
+                              <span className="text-xs text-gray-500">
+                                {t('common:resendAvailableIn', 'Resend available in {{seconds}}s', {
+                                  seconds: resendCooldownSeconds,
+                                })}
+                              </span>
+                            )}
+                          </div>
                         </form>
                       </>
                     )}

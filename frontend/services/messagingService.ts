@@ -68,6 +68,7 @@ class MessagingService {
         dataLength: Array.isArray(response.data) ? response.data.length : 'N/A',
         dataStructure: response.data && typeof response.data === 'object' ? Object.keys(response.data).slice(0, 5) : 'N/A',
       });
+      }
       
       // Handle empty array case - this is valid
       if (response.success === false) {

@@ -22,7 +22,8 @@
     "needHelp": "Need help?",
     "contactUs": "Contact us",
     "featureNotAvailableTitle": "Feature Not Available",
-    "featureNotAvailableMessage": "This feature requires a higher tier plan. Upgrade to access {{feature}}."
+    "featureNotAvailableMessage": "This feature requires a higher tier plan. Upgrade to access {{feature}}.",
+    "requestSubscription": "Request Subscription"
   },
   "tier": {
     "basic": "Basic",
@@ -33,24 +34,48 @@
   "requestForm": {
     "title": "Request Subscription",
     "subtitle": "Complete the form below to request your subscription",
+    "titles": {
+      "foundation": "Request Subscription",
+      "supplier": "Supplier enquiry",
+      "serviceProvider": "Service provider enquiry"
+    },
+    "subtitles": {
+      "foundation": "Complete the form below to request your subscription",
+      "supplier": "Tell us about your company and products. We will contact you with pricing and next steps.",
+      "serviceProvider": "Tell us about your company and services. We will contact you with pricing and next steps."
+    },
     "selectedPlan": "Selected Plan",
+    "priceOnRequest": "Price on request",
     "billedMonthly": "Billed monthly",
     "billedAnnually": "Billed annually",
     "year": "year",
     "month": "month",
+    "roleLabel": {
+      "supplier": "Supplier",
+      "serviceProvider": "Service provider"
+    },
+    "organizationName": "Organization / Company",
+    "organizationNamePlaceholder": "Your organization name",
     "contactName": "Contact Name",
     "contactNamePlaceholder": "Your full name",
     "contactEmail": "Email Address",
     "contactEmailPlaceholder": "your@email.com",
     "contactPhone": "Phone Number",
     "contactPhonePlaceholder": "+41 XX XXX XX XX",
+    "website": "Website",
+    "websitePlaceholder": "https://example.com",
     "preferredContact": "Preferred Contact Method",
     "message": "Additional Message",
     "messagePlaceholder": "Any questions or special requirements...",
+    "messageSupplier": "Tell us about your products",
+    "messageSupplierPlaceholder": "What do you sell? Any focus categories, MOQ, regions served, etc.",
+    "messageServiceProvider": "Tell us about your services",
+    "messageServiceProviderPlaceholder": "What services do you offer? Coverage region, pricing model, availability, etc.",
     "submitButton": "Submit Request",
     "submitting": "Submitting...",
     "validation": {
-      "required": "Please fill in all required fields"
+      "required": "Please fill in all required fields",
+      "planNotConfigured": "This plan is not configured yet. Please contact support."
     },
     "success": {
       "title": "Request Submitted!",
@@ -64,6 +89,11 @@
       "step2": "Receive an invoice via email",
       "step3": "Pay the invoice",
       "step4": "Your subscription is activated"
+    },
+    "howItWorksVendor": {
+      "step1": "Submit your enquiry",
+      "step2": "We contact you with pricing",
+      "step3": "You receive next steps to get listed"
     }
   },
   "featureGate": {

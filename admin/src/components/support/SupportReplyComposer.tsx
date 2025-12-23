@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import Button from '../ui/Button';
+import Button from '../design-system/Button';
 
 interface SupportReplyComposerProps {
   ticketId: string;

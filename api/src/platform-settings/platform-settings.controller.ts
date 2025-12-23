@@ -10,6 +10,7 @@ import {
   UseGuards,
   HttpStatus,
   HttpException,
+  Request,
 } from '@nestjs/common';
 import { PlatformSettingsService } from './platform-settings.service';
 import { CreatePlatformSettingsDto, UpdatePlatformSettingsDto } from './dto/platform-settings.dto';
@@ -134,11 +135,18 @@ export class PlatformSettingsController {
 
   @Put('maintenance-mode')
   @Roles(UserRole.SUPER_ADMIN)
-  async toggleMaintenanceMode(@Body() body: { enabled: boolean; message?: string }) {
+  async toggleMaintenanceMode(
+    @Request() req: any,
+    @Body() body: { enabled: boolean; message?: string },
+  ) {
     try {
+      // AuditLog.actorId references the `User` table, so prefer the profile user ID if available.
+      const profileUserId: string | undefined = req?.context?.profileUserId || req?.user?.id || undefined;
+      const clerkUserId: string | undefined = req?.context?.clerkUserId || req?.context?.userId || req?.clerk?.userId || undefined;
       const result = await this.platformSettingsService.toggleMaintenanceMode(
         body.enabled,
         body.message,
+        { profileUserId, clerkUserId },
       );
       return {
         success: true,

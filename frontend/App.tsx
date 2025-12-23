@@ -86,7 +86,6 @@ import EducatorSupportPage from './pages/educator/EducatorSupportPage';
 // Parent Pages
 import ParentDashboardPage from './pages/parent/ParentDashboardPage';
 import ParentSupportPage from './pages/parent/ParentSupportPage';
-import PricingPage from './pages/PricingPage';
 import PublicPartnersPage from './pages/PublicPartnersPage';
 import ProfilePage from './pages/ProfilePage';
 import OrganizationProfileViewPage from './pages/profile/OrganizationProfileViewPage';
@@ -115,7 +114,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactElement; roles: UserRole[]
  * 
  * Note: The SubscriptionPaywall component already handles:
  * - Checking if user's role requires subscription
- * - Allowing access to always-allowed routes (settings, profile, pricing)
+ * - Allowing access to always-allowed routes (settings, profile, support)
  * - Showing appropriate paywall UI based on subscription status
  * 
  * @param roles - Array of UserRoles that can access this route
@@ -537,7 +536,6 @@ const App: React.FC = () => {
               <Routes>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignupPage />} />
-                <Route path="/pricing" element={<PricingPage />} />
                 <Route path="/partners" element={<PublicPartnersPage />} />
                 <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
                 <Route path="/*" element={<ProtectedLayout />} />

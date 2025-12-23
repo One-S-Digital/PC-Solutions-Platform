@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@clerk/clerk-react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { 
   AdminCard, 
   AdminButton, 
@@ -87,6 +88,7 @@ interface SystemHealth {
 export default function SystemConfigurationPage() {
   const { t } = useTranslation(['admin', 'common']);
   const { getToken } = useAuth();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'settings' | 'integrations' | 'maintenance' | 'health' | 'templates'>('settings');
   const [settings, setSettings] = useState<SystemSetting[]>([]);
   const [integrations, setIntegrations] = useState<IntegrationConfig[]>([]);
@@ -904,16 +906,24 @@ export default function SystemConfigurationPage() {
           <AdminCard className="p-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-admin-text">{t('admin:settings.systemConfig.emailTemplates.title')}</h3>
-              <AdminButton variant="primary" size="sm">
-                {t('admin:settings.systemConfig.emailTemplates.createTemplate')}
+              <AdminButton
+                variant="primary"
+                size="sm"
+                onClick={() => navigate({ search: '?tab=emailTemplates' })}
+              >
+                {t('admin:settings.systemConfig.emailTemplates.goToTemplates')}
               </AdminButton>
             </div>
             
             <div className="text-center py-8">
               <div className="text-4xl mb-4">📧</div>
-              <h4 className="text-lg font-medium text-admin-text mb-2">{t('admin:settings.systemConfig.emailTemplates.title')}</h4>
-              <p className="text-admin-muted mb-4">{t('admin:settings.systemConfig.emailTemplates.description')}</p>
-              <AdminButton variant="primary">
+              <h4 className="text-lg font-medium text-admin-text mb-2">
+                {t('admin:settings.systemConfig.emailTemplates.title')}
+              </h4>
+              <p className="text-admin-muted mb-4">
+                Email templates are managed in the main <strong>Settings → Email Templates</strong> tab.
+              </p>
+              <AdminButton variant="primary" onClick={() => navigate({ search: '?tab=emailTemplates' })}>
                 {t('admin:settings.systemConfig.emailTemplates.goToTemplates')}
               </AdminButton>
             </div>

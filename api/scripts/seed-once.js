@@ -390,31 +390,37 @@ async function main() {
       },
     ];
 
-    for (const tpl of emailTemplates) {
-      await prisma.emailTemplate.upsert({
-        where: { event: tpl.event },
-        update: {
-          name: tpl.name,
-          subject: tpl.subject,
-          htmlContent: tpl.htmlContent.trim(),
-          textContent: tpl.textContent.trim(),
-          variables: tpl.variables,
-          category: tpl.category,
-          isActive: true,
-        },
-        create: {
-          name: tpl.name,
-          event: tpl.event,
-          subject: tpl.subject,
-          htmlContent: tpl.htmlContent.trim(),
-          textContent: tpl.textContent.trim(),
-          variables: tpl.variables,
-          category: tpl.category,
-          isActive: true,
-        },
-      });
+    try {
+      for (const tpl of emailTemplates) {
+        await prisma.emailTemplate.upsert({
+          where: { event: tpl.event },
+          update: {
+            name: tpl.name,
+            subject: tpl.subject,
+            htmlContent: tpl.htmlContent.trim(),
+            textContent: tpl.textContent.trim(),
+            variables: tpl.variables,
+            category: tpl.category,
+            isActive: true,
+          },
+          create: {
+            name: tpl.name,
+            event: tpl.event,
+            subject: tpl.subject,
+            htmlContent: tpl.htmlContent.trim(),
+            textContent: tpl.textContent.trim(),
+            variables: tpl.variables,
+            category: tpl.category,
+            isActive: true,
+          },
+        });
+      }
+      console.log('🌱 Seed: email templates ensured (4)');
+    } catch (err) {
+      // Older production databases might be missing this table due to historical migration drift.
+      // A forward-only migration exists to fix this; don't block deploy if it's not applied yet.
+      console.log('⚠️ Seed: email templates skipped (table missing or schema mismatch)');
     }
-    console.log('🌱 Seed: email templates ensured (4)');
 
     console.log('✅ Seed: completed');
   } catch (err) {
