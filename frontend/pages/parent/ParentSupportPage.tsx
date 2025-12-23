@@ -16,7 +16,6 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
 import { useAppContext } from '../../contexts/AppContext';
-import { useSupportSocket } from '../../hooks/useSupportSocket';
 import {
   supportApi,
   SupportTicket,
@@ -28,18 +27,15 @@ import {
   TICKET_STATUS_LABELS,
   TicketCategory,
   TicketPriority,
+  TicketResponse,
 } from '../../services/supportService';
+import { useSupportThread } from '../../hooks/useSupportThread';
+import SupportReplyComposer from '../../components/support/SupportReplyComposer';
 
 const ParentSupportPage: React.FC = () => {
   const { t, i18n } = useTranslation(['dashboard', 'common']);
   const { request } = useAuthenticatedApi();
   const { currentUser } = useAppContext();
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const replyTextareaRef = useRef<HTMLTextAreaElement>(null);
-  const wasFocusedRef = useRef(false);
-  const isTypingRef = useRef(false);
-  const pendingUpdatesRef = useRef<any[]>([]);
 
   // State
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
@@ -48,7 +44,15 @@ const ParentSupportPage: React.FC = () => {
   const [showNewTicketForm, setShowNewTicketForm] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [newResponse, setNewResponse] = useState('');
+
+  // Use shared thread hook for replies management
+  const { replies, sendReply, messagesEndRef, scrollContainerRef } = useSupportThread({
+    ticketId: selectedTicket?.id || null,
+    userId: currentUser?.id || '',
+    onTicketUpdate: () => {
+      fetchTickets();
+    },
+  });
 
   // New ticket form
   const [ticketSubject, setTicketSubject] = useState('');
@@ -115,147 +119,11 @@ const ParentSupportPage: React.FC = () => {
     }
   };
 
-  // Submit response to ticket with optimistic UI
-  const handleResponseSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedTicket || !newResponse.trim()) return;
-
-    setSubmitting(true);
-    const messageToSend = newResponse.trim();
-    const previousTicket = selectedTicket;
-
-    // Optimistic update
-    const tempReply = {
-      id: `temp-${Date.now()}`,
-      message: messageToSend,
-      isStaff: false,
-      createdAt: new Date().toISOString(),
-      userName: currentUser ? `${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim() || currentUser.email || 'You' : 'You',
-    };
-    setSelectedTicket({
-      ...previousTicket,
-      responses: [...previousTicket.responses, tempReply],
-    });
-    setNewResponse('');
-
-    try {
-      const config = supportApi.respondToTicketConfig(selectedTicket.id, { message: messageToSend });
-      const res = await request<SupportTicket>(config.endpoint, {
-        method: config.method,
-        body: config.body,
-      });
-
-      if (res.success && res.data) {
-        // Update with real data (deduplicated and sorted)
-        const updatedResponses = res.data.responses.sort(
-          (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        );
-        setSelectedTicket({
-          ...res.data,
-          responses: updatedResponses,
-        });
-        setError(null);
-        await fetchTickets();
-        // Scroll to bottom
-        setTimeout(() => {
-          messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
-      } else {
-        // Rollback on error
-        setSelectedTicket(previousTicket);
-        setNewResponse(messageToSend);
-        setError(t('common:errors.submitFailed'));
-      }
-    } catch (err) {
-      console.error('Error submitting response:', err);
-      // Rollback on error
-      setSelectedTicket(previousTicket);
-      setNewResponse(messageToSend);
-      setError(t('common:errors.submitFailed'));
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  // WebSocket for real-time updates
-  const { isConnected: isSocketConnected } = useSupportSocket({
-    ticketId: selectedTicket?.id || null,
-    userId: currentUser?.id || '',
-    onNewReply: (reply) => {
-      if (selectedTicket && !selectedTicket.responses.find(r => r.id === reply.id)) {
-        // If user is typing, queue the update instead of applying immediately
-        if (isTypingRef.current) {
-          pendingUpdatesRef.current.push(reply);
-          return;
-        }
-        
-        // Deduplicate and sort
-        const updatedResponses = [...selectedTicket.responses, reply].sort(
-          (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        );
-        setSelectedTicket({
-          ...selectedTicket,
-          responses: updatedResponses,
-        });
-        
-        // Scroll to bottom if user is near bottom
-        if (scrollContainerRef.current) {
-          const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
-          const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
-          if (isNearBottom) {
-            setTimeout(() => {
-              messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-            }, 100);
-          }
-        }
-      }
-    },
-    onTicketUpdate: () => {
-      // Refresh ticket list
-      fetchTickets();
-    },
-  });
-
-  // Polling fallback when WebSocket is not connected
-  useEffect(() => {
-    if (!selectedTicket || isSocketConnected) return;
-
-    const pollInterval = setInterval(async () => {
-      try {
-        // Skip polling if user is typing
-        if (isTypingRef.current) {
-          return;
-        }
-        
-        const res = await request<SupportTicket>(supportApi.getTicketEndpoint(selectedTicket.id));
-        if (res.success && res.data) {
-          const updatedTicket = res.data;
-          // Only update if responses changed
-          const currentResponseIds = new Set(selectedTicket.responses.map(r => r.id));
-          const newResponseIds = new Set(updatedTicket.responses.map(r => r.id));
-          if (currentResponseIds.size !== newResponseIds.size || 
-              [...newResponseIds].some(id => !currentResponseIds.has(id))) {
-            setSelectedTicket(updatedTicket);
-            
-            // Scroll to bottom if user is near bottom
-            if (scrollContainerRef.current) {
-              const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
-              const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
-              if (isNearBottom) {
-                setTimeout(() => {
-                  messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-                }, 100);
-              }
-            }
-          }
-        }
-      } catch (error) {
-        console.error('Error polling ticket updates:', error);
-      }
-    }, 5000); // Poll every 5 seconds
-
-    return () => clearInterval(pollInterval);
-  }, [selectedTicket?.id, isSocketConnected, request]);
+  // Stable callback for sending replies
+  const handleSendReply = useCallback(async (content: string) => {
+    await sendReply(content);
+    await fetchTickets();
+  }, [sendReply, fetchTickets]);
 
   // Auto-scroll to bottom on mount or when selected ticket changes
   useEffect(() => {
@@ -305,9 +173,7 @@ const ParentSupportPage: React.FC = () => {
           ref={scrollContainerRef}
           className="space-y-3 mb-4 max-h-96 overflow-y-auto"
         >
-          {[...selectedTicket.responses]
-            .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
-            .map(response => (
+          {replies.map(response => (
               <div 
                 key={response.id} 
                 className={`p-4 rounded-lg ${response.isStaff ? 'bg-swiss-teal/10 ml-4' : 'bg-gray-50 mr-4'}`}
@@ -328,69 +194,14 @@ const ParentSupportPage: React.FC = () => {
 
         {/* Response form */}
         {selectedTicket.status !== 'CLOSED' && (
-          <form onSubmit={handleResponseSubmit} className="border-t pt-4">
-            <textarea
-              ref={replyTextareaRef}
-              value={newResponse}
-              onChange={(e) => {
-                setNewResponse(e.target.value);
-                isTypingRef.current = true;
-                // Clear typing flag after 1 second of no typing
-                clearTimeout((window as any).typingTimeout);
-                (window as any).typingTimeout = setTimeout(() => {
-                  isTypingRef.current = false;
-                  // Apply any pending updates
-                  if (pendingUpdatesRef.current.length > 0 && selectedTicket) {
-                    const allResponses = [...selectedTicket.responses, ...pendingUpdatesRef.current];
-                    const deduplicated = allResponses.filter((r, i, self) => 
-                      i === self.findIndex(resp => resp.id === r.id)
-                    );
-                    const sorted = deduplicated.sort(
-                      (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-                    );
-                    setSelectedTicket({
-                      ...selectedTicket,
-                      responses: sorted,
-                    });
-                    pendingUpdatesRef.current = [];
-                  }
-                }, 1000);
-              }}
-              onFocus={() => {
-                isTypingRef.current = true;
-              }}
-              onBlur={() => {
-                // Small delay before clearing typing flag
-                setTimeout(() => {
-                  isTypingRef.current = false;
-                  // Apply any pending updates
-                  if (pendingUpdatesRef.current.length > 0 && selectedTicket) {
-                    const allResponses = [...selectedTicket.responses, ...pendingUpdatesRef.current];
-                    const deduplicated = allResponses.filter((r, i, self) => 
-                      i === self.findIndex(resp => resp.id === r.id)
-                    );
-                    const sorted = deduplicated.sort(
-                      (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-                    );
-                    setSelectedTicket({
-                      ...selectedTicket,
-                      responses: sorted,
-                    });
-                    pendingUpdatesRef.current = [];
-                  }
-                }, 200);
-              }}
+          <div className="border-t pt-4">
+            <SupportReplyComposer
+              key={selectedTicket.id}
+              ticketId={selectedTicket.id}
+              onSend={handleSendReply}
               placeholder={t('common:supportPage.ticketForm.responsePlaceholder')}
-              rows={3}
-              className={STANDARD_INPUT_FIELD}
-              required
             />
-            <div className="flex justify-end mt-2">
-              <Button type="submit" variant="primary" disabled={submitting || !newResponse.trim()}>
-                {submitting ? <ArrowPathIcon className="w-4 h-4 animate-spin" /> : t('common:buttons.reply')}
-              </Button>
-            </div>
-          </form>
+          </div>
         )}
       </Card>
     );

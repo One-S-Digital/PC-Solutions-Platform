@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   LifeBuoy,
@@ -18,10 +18,11 @@ import {
 } from 'lucide-react';
 import { useApiClient, apiService } from '../services/api';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
-import { SupportTicket, TicketCategory, TicketPriority, TicketStatus, TicketStats } from '../types';
+import { SupportTicket, TicketCategory, TicketPriority, TicketStatus, TicketStats, TicketResponse } from '../types';
 import { useTranslation } from 'react-i18next';
-import { useSupportSocket } from '../hooks/useSupportSocket';
 import { useUser } from '@clerk/clerk-react';
+import { useSupportThread } from '../hooks/useSupportThread';
+import SupportReplyComposer from '../components/support/SupportReplyComposer';
 
 const Support: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -29,19 +30,21 @@ const Support: React.FC = () => {
   const [selectedPriority, setSelectedPriority] = useState<TicketPriority | ''>('');
   const [selectedCategory, setSelectedCategory] = useState<TicketCategory | ''>('');
   const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
-  const [replyMessage, setReplyMessage] = useState('');
-  const [responses, setResponses] = useState<TicketResponse[]>([]);
 
   const apiClient = useApiClient();
   const { t } = useTranslation(['common', 'admin']);
   const { user } = useUser();
   const queryClient = useQueryClient();
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const replyTextareaRef = useRef<HTMLTextAreaElement>(null);
-  const wasFocusedRef = useRef(false);
-  const isTypingRef = useRef(false);
-  const pendingUpdatesRef = useRef<any[]>([]);
+  
+  // Use shared thread hook for replies management
+  const currentUserId = user?.id || '';
+  const { replies, sendReply, messagesEndRef, scrollContainerRef } = useSupportThread({
+    ticketId: selectedTicket?.id || null,
+    userId: currentUserId,
+    onTicketUpdate: () => {
+      queryClient.invalidateQueries({ queryKey: ['support-tickets'] });
+    },
+  });
 
   // Fetch current user to check assignment
   const { data: currentUserResponse } = useQuery({
@@ -109,57 +112,6 @@ const Support: React.FC = () => {
     },
   });
 
-  // Reply to ticket mutation with optimistic UI
-  const replyMutation = useMutation({
-    mutationFn: ({ ticketId, message }: { ticketId: string; message: string }) =>
-      apiService.respondToTicket(apiClient, ticketId, message),
-    onMutate: async ({ ticketId, message }) => {
-      // Cancel outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ['support-ticket', ticketId] });
-
-      // Snapshot previous value
-      const previousTicket = selectedTicket;
-
-      // Optimistically update UI
-      if (previousTicket && previousTicket.id === ticketId) {
-        const tempReply = {
-          id: `temp-${Date.now()}`,
-          message,
-          isStaff: true,
-          createdAt: new Date().toISOString(),
-          userName: user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.emailAddresses[0]?.emailAddress || 'Admin' : 'Admin',
-        };
-        // Update responses state separately (doesn't cause textarea re-render)
-        setResponses(prev => [...prev, tempReply]);
-        setSelectedTicket({
-          ...previousTicket,
-          responses: [...previousTicket.responses, tempReply],
-        });
-      }
-
-      return { previousTicket };
-    },
-    onError: (err, variables, context) => {
-      // Rollback on error
-      if (context?.previousTicket) {
-        setSelectedTicket(context.previousTicket);
-        setResponses(context.previousTicket.responses || []);
-      }
-    },
-    onSuccess: (response, { ticketId }) => {
-      // Update with real data
-      const updatedTicket = response.data.data;
-      setSelectedTicket(updatedTicket);
-      setResponses(updatedTicket.responses || []);
-      queryClient.invalidateQueries({ queryKey: ['support-tickets'] });
-      queryClient.invalidateQueries({ queryKey: ['support-ticket', ticketId] });
-      setReplyMessage('');
-      // Scroll to bottom
-      setTimeout(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-    },
-  });
 
   const handleStatusChange = (ticketId: string, status: TicketStatus) => {
     updateStatusMutation.mutate({ ticketId, status });
@@ -169,109 +121,13 @@ const Support: React.FC = () => {
     assignTicketMutation.mutate(ticketId);
   };
 
-  const handleReply = () => {
-    if (!selectedTicket || !replyMessage.trim()) return;
-    replyMutation.mutate({ ticketId: selectedTicket.id, message: replyMessage });
-  };
-
-  // WebSocket for real-time updates
-  const currentUserId = user?.id || '';
-  const { isConnected: isSocketConnected } = useSupportSocket({
-    ticketId: selectedTicket?.id || null,
-    userId: currentUserId,
-    onNewReply: (reply) => {
-      if (selectedTicket && !responses.find(r => r.id === reply.id)) {
-        // If user is typing, queue the update instead of applying immediately
-        if (isTypingRef.current) {
-          pendingUpdatesRef.current.push(reply);
-          return;
-        }
-        
-        // Update only the responses state, not the entire ticket
-        setResponses(prev => {
-          const updated = [...prev, reply].sort(
-            (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-          );
-          return updated;
-        });
-        
-        // Also update ticket for consistency, but this won't affect textarea
-        setSelectedTicket(prev => prev ? {
-          ...prev,
-          responses: [...(prev.responses || []), reply].sort(
-            (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-          ),
-        } : null);
-        
-        // Scroll to bottom if user is near bottom
-        if (scrollContainerRef.current) {
-          const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
-          const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
-          if (isNearBottom) {
-            setTimeout(() => {
-              messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-            }, 100);
-          }
-        }
-      }
-    },
-    onTicketUpdate: (ticket) => {
-      // Update ticket in list if needed
-      queryClient.invalidateQueries({ queryKey: ['support-tickets'] });
-    },
-  });
-
-  // Polling fallback when WebSocket is not connected
-  useEffect(() => {
-    if (!selectedTicket || isSocketConnected) return;
-
-    const pollInterval = setInterval(async () => {
-      try {
-        // Skip polling if user is typing
-        if (isTypingRef.current) {
-          return;
-        }
-        
-        const response = await apiService.getSupportTicket(apiClient, selectedTicket.id);
-        if (response.data.data) {
-          const updatedTicket = response.data.data;
-          // Only update if responses changed
-          const currentResponseIds = new Set(responses.map(r => r.id));
-          const newResponseIds = new Set(updatedTicket.responses.map(r => r.id));
-          if (currentResponseIds.size !== newResponseIds.size || 
-              [...newResponseIds].some(id => !currentResponseIds.has(id))) {
-            // Update responses state separately
-            setResponses(updatedTicket.responses || []);
-            setSelectedTicket(updatedTicket);
-            
-            // Scroll to bottom if user is near bottom
-            if (scrollContainerRef.current) {
-              const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
-              const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
-              if (isNearBottom) {
-                setTimeout(() => {
-                  messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-                }, 100);
-              }
-            }
-          }
-        }
-      } catch (error) {
-        console.error('Error polling ticket updates:', error);
-      }
-    }, 5000); // Poll every 5 seconds
-
-    return () => clearInterval(pollInterval);
-  }, [selectedTicket?.id, isSocketConnected, apiClient]);
-
-  // Sync responses when ticket changes
-  useEffect(() => {
-    if (selectedTicket) {
-      setResponses(selectedTicket.responses || []);
-    } else {
-      setResponses([]);
-    }
-  }, [selectedTicket?.id]);
+  // Stable callback for sending replies
+  const handleSendReply = useCallback(async (content: string) => {
+    await sendReply(content);
+    // Invalidate queries to refresh ticket list
+    queryClient.invalidateQueries({ queryKey: ['support-tickets'] });
+    queryClient.invalidateQueries({ queryKey: ['support-ticket', selectedTicket?.id] });
+  }, [sendReply, selectedTicket?.id, queryClient]);
 
   // Auto-scroll to bottom on mount or when selected ticket changes
   useEffect(() => {
@@ -648,9 +504,7 @@ const Support: React.FC = () => {
                   </div>
 
                   {/* Responses - sorted by createdAt */}
-                  {[...selectedTicket.responses]
-                    .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
-                    .map((response) => (
+                  {replies.map((response) => (
                       <div
                         key={response.id}
                         className={`border-l-4 ${
@@ -678,87 +532,16 @@ const Support: React.FC = () => {
               </div>
 
               {/* Reply Box */}
-              <div className="p-6 border-t border-gray-200">
-                <textarea
-                  ref={replyTextareaRef}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm resize-none"
-                  rows={3}
-                  placeholder={t('admin:support.replyPlaceholder')}
-                  value={replyMessage}
-                  onChange={(e) => {
-                    setReplyMessage(e.target.value);
-                    isTypingRef.current = true;
-                    // Clear typing flag after 1 second of no typing
-                    clearTimeout((window as any).typingTimeout);
-                    (window as any).typingTimeout = setTimeout(() => {
-                      isTypingRef.current = false;
-                  // Apply any pending updates
-                  if (pendingUpdatesRef.current.length > 0) {
-                    setResponses(prev => {
-                      const allResponses = [...prev, ...pendingUpdatesRef.current];
-                      const deduplicated = allResponses.filter((r, i, self) => 
-                        i === self.findIndex(resp => resp.id === r.id)
-                      );
-                      return deduplicated.sort(
-                        (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-                      );
-                    });
-                    if (selectedTicket) {
-                      setSelectedTicket({
-                        ...selectedTicket,
-                        responses: [...responses, ...pendingUpdatesRef.current].filter((r, i, self) => 
-                          i === self.findIndex(resp => resp.id === r.id)
-                        ).sort(
-                          (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-                        ),
-                      });
-                    }
-                    pendingUpdatesRef.current = [];
-                  }
-                    }, 1000);
-                  }}
-                  onFocus={() => {
-                    isTypingRef.current = true;
-                  }}
-                  onBlur={() => {
-                    // Small delay before clearing typing flag
-                    setTimeout(() => {
-                      isTypingRef.current = false;
-                  // Apply any pending updates
-                  if (pendingUpdatesRef.current.length > 0) {
-                    setResponses(prev => {
-                      const allResponses = [...prev, ...pendingUpdatesRef.current];
-                      const deduplicated = allResponses.filter((r, i, self) => 
-                        i === self.findIndex(resp => resp.id === r.id)
-                      );
-                      return deduplicated.sort(
-                        (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-                      );
-                    });
-                    if (selectedTicket) {
-                      setSelectedTicket({
-                        ...selectedTicket,
-                        responses: [...responses, ...pendingUpdatesRef.current].filter((r, i, self) => 
-                          i === self.findIndex(resp => resp.id === r.id)
-                        ).sort(
-                          (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-                        ),
-                      });
-                    }
-                    pendingUpdatesRef.current = [];
-                  }
-                    }, 200);
-                  }}
-                />
-                <button
-                  onClick={handleReply}
-                  disabled={!replyMessage.trim() || replyMutation.isPending}
-                  className="mt-2 w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg flex items-center justify-center text-sm"
-                >
-                  <Send className="h-4 w-4 mr-2" />
-                  {replyMutation.isPending ? t('admin:support.sending') : t('admin:support.sendReply')}
-                </button>
-              </div>
+              {selectedTicket.status !== 'CLOSED' && (
+                <div className="p-6 border-t border-gray-200">
+                  <SupportReplyComposer
+                    key={selectedTicket.id}
+                    ticketId={selectedTicket.id}
+                    onSend={handleSendReply}
+                    placeholder={t('admin:support.replyPlaceholder')}
+                  />
+                </div>
+              )}
             </div>
           ) : (
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
