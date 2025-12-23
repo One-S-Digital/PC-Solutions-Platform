@@ -114,7 +114,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactElement; roles: UserRole[]
  * 
  * Note: The SubscriptionPaywall component already handles:
  * - Checking if user's role requires subscription
- * - Allowing access to always-allowed routes (settings, profile, pricing)
+ * - Allowing access to always-allowed routes (settings, profile, support)
  * - Showing appropriate paywall UI based on subscription status
  * 
  * @param roles - Array of UserRoles that can access this route

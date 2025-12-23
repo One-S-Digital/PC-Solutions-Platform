@@ -80,7 +80,7 @@ const SignupPage: React.FC = () => {
         });
 
         if (currentStatus === 'ready') {
-          setSuccessRedirect(getSuccessRedirectForRole(selectedRole));
+          setSuccessRedirect(getSuccessRedirectForRole());
           setCurrentStep(3);
           return;
         }
@@ -138,9 +138,7 @@ const SignupPage: React.FC = () => {
   const [webhookStatus, setWebhookStatus] = useState<'pending' | 'processing' | 'ready' | 'error'>('pending');
   const [webhookError, setWebhookError] = useState<string | null>(null);
 
-  const getSuccessRedirectForRole = (role: SignupRole | null) => {
-    return { path: '/dashboard' };
-  };
+  const getSuccessRedirectForRole = () => ({ path: '/dashboard' });
 
   const successButtonLabel = t('goToDashboardButton');
 
@@ -191,7 +189,7 @@ const SignupPage: React.FC = () => {
     setErrors({});
     setCurrentStep(2);
     setHasStartedSignup(true);
-    setSuccessRedirect(getSuccessRedirectForRole(role));
+    setSuccessRedirect(getSuccessRedirectForRole());
   };
 
   const handleBackToRoleSelection = () => {
@@ -390,7 +388,7 @@ const SignupPage: React.FC = () => {
        
        if (response.ok) {
            await refreshCurrentUser();
-           setSuccessRedirect(getSuccessRedirectForRole(selectedRole));
+           setSuccessRedirect(getSuccessRedirectForRole());
            setCurrentStep(3);
        } else {
            const errorData = await response.json().catch(() => ({}));
@@ -470,7 +468,7 @@ const SignupPage: React.FC = () => {
         if (result.status === 'complete') {
           try {
             await setActive({ session: result.createdSessionId });
-            setSuccessRedirect(getSuccessRedirectForRole(selectedRole));
+            setSuccessRedirect(getSuccessRedirectForRole());
             setCurrentStep(3);
           } catch (setActiveError: any) {
             console.error('Session activation failed:', setActiveError);
