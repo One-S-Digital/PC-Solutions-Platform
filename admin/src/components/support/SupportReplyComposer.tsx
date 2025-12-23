@@ -97,8 +97,6 @@ const SupportReplyComposer: React.FC<SupportReplyComposerProps> = ({
     };
 
     return setupFocusTracing(el);
-
-    return setupFocusTracing(el);
   }, []);
 
   const displayPlaceholder = placeholder || t('admin:support.replyPlaceholder', { defaultValue: 'Type your reply...' });
