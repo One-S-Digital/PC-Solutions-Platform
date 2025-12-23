@@ -644,8 +644,8 @@ const SignupPage: React.FC = () => {
       setResendCooldownSeconds(30);
     } catch (err: any) {
       let message = t('common:resendVerificationCodeFailed', 'Failed to resend the code. Please try again.');
-      if (err?.errors && err.errors.length > 0) {
-        message = err.errors[0]?.message || message;
+      if (err?.errors?.[0]?.message) {
+        message = err.errors[0].message;
       } else if (err instanceof Error && err.message) {
         message = err.message;
       }
@@ -1022,7 +1022,7 @@ const SignupPage: React.FC = () => {
                               type="button"
                               variant="ghost"
                               size="sm"
-                              className="px-0 shadow-none hover:shadow-none"
+                              className="px-0"
                               disabled={isResendingCode || resendCooldownSeconds > 0}
                               onClick={handleResendVerificationCode}
                             >
