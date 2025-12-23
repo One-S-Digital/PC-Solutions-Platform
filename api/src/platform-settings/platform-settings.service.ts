@@ -132,7 +132,7 @@ export class PlatformSettingsService {
     const settings = await this.getPlatformSettings();
     return {
       enabled: settings?.maintenanceMode || false,
-      message: settings?.platformDescription || 'System is under maintenance',
+      message: settings?.maintenanceMessage || 'System is under maintenance',
     };
   }
 
@@ -141,7 +141,8 @@ export class PlatformSettingsService {
     message?: string,
     actorId?: string,
   ): Promise<PlatformSettings> {
-    let settings = await this.getPlatformSettings();
+    const previous = await this.getPlatformSettings();
+    let settings = previous;
 
     if (!settings) {
       // Create default settings if none exist
@@ -160,6 +161,34 @@ export class PlatformSettingsService {
         },
         actorId,
       );
+    }
+
+    // Write audit log entry (System Config uses this for auditing)
+    try {
+      await this.prisma.auditLog.create({
+        data: {
+          entity: 'PlatformSettings',
+          entityId: settings.id,
+          action: enabled ? 'maintenance.enable' : 'maintenance.disable',
+          actorId: actorId || null,
+          diff: {
+            before: {
+              maintenanceMode: previous?.maintenanceMode ?? false,
+              maintenanceMessage: previous?.maintenanceMessage ?? null,
+            },
+            after: {
+              maintenanceMode: enabled,
+              maintenanceMessage: message ?? null,
+            },
+          },
+          metadata: {
+            source: 'platform-settings',
+            timestamp: new Date().toISOString(),
+          },
+        },
+      });
+    } catch {
+      // Audit logging should not block maintenance toggling.
     }
 
     // Emit specific event for maintenance mode changes

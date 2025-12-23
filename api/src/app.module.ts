@@ -52,6 +52,8 @@ import { PromoCodesModule } from './promo-codes/promo-codes.module';
 import { VendorClientsModule } from './vendor-clients/vendor-clients.module';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
+import { MaintenanceModeMiddleware } from './common/middleware/maintenance-mode.middleware';
+import { MaintenanceModule } from './maintenance/maintenance.module';
 
 import {
   AUTH_REQUESTS_LIMIT,
@@ -144,6 +146,7 @@ import {
     OrganizationDocumentsModule,
     PromoCodesModule,
     VendorClientsModule,
+    MaintenanceModule,
   ],
   controllers: [AppController],
   providers: [
@@ -152,6 +155,7 @@ import {
       provide: APP_GUARD,
       useClass: CustomThrottlerGuard,
     },
+    MaintenanceModeMiddleware,
   ],
 })
 export class AppModule implements NestModule {
@@ -170,6 +174,11 @@ export class AppModule implements NestModule {
         'api/health/*rest',
         'api/webhooks/*rest',
       )
+      .forRoutes('*');
+
+    // Global maintenance mode gate (platform-settings is the source of truth)
+    consumer
+      .apply(MaintenanceModeMiddleware)
       .forRoutes('*');
   }
 }
