@@ -27,17 +27,18 @@ export interface JobListingFormData {
 }
 
 const CONTRACT_TYPES = [
+  // Backend prisma enum: JobContractType (FULL_TIME | PART_TIME | CDI | CDD | INTERNSHIP)
   { value: 'FULL_TIME', label: 'Full-Time' },
   { value: 'PART_TIME', label: 'Part-Time' },
-  { value: 'CONTRACT', label: 'Contract' },
-  { value: 'TEMPORARY', label: 'Temporary' },
+  { value: 'CDI', label: 'CDI' },
+  { value: 'CDD', label: 'CDD' },
   { value: 'INTERNSHIP', label: 'Internship' },
 ];
 
 const JOB_STATUS_OPTIONS = [
   { value: 'DRAFT', label: 'Draft' },
   { value: 'PUBLISHED', label: 'Published' },
-  { value: 'PAUSED', label: 'Paused' },
+  { value: 'FILLED', label: 'Filled' },
   { value: 'CLOSED', label: 'Closed' },
 ];
 
@@ -365,8 +366,8 @@ const AddJobListingModal: React.FC<AddJobListingModalProps> = ({
                             ? 'bg-green-600 text-white border-green-600'
                             : status.value === 'DRAFT'
                             ? 'bg-gray-600 text-white border-gray-600'
-                            : status.value === 'PAUSED'
-                            ? 'bg-yellow-500 text-white border-yellow-500'
+                            : status.value === 'FILLED'
+                            ? 'bg-blue-600 text-white border-blue-600'
                             : 'bg-red-600 text-white border-red-600'
                           : 'bg-white text-gray-700 border-gray-300 hover:border-blue-500'
                       }`}

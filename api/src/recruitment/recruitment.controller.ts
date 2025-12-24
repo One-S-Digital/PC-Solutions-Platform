@@ -30,7 +30,18 @@ export class RecruitmentController {
   @Post('job-listings')
   @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   createJobListing(@Body() createJobListingDto: CreateJobListingDto, @Request() req) {
-    const foundationId = req.user.organizationId;
+    const foundationId =
+      // Allow ADMIN/SUPER_ADMIN to target a specific foundation (used in dev/testing)
+      (req?.user?.role === UserRole.ADMIN || req?.user?.role === UserRole.SUPER_ADMIN
+        ? createJobListingDto.foundationId
+        : undefined) ??
+      // Default to authenticated user's organizationId (FOUNDATION users)
+      req?.user?.organizationId;
+
+    if (!foundationId) {
+      throw new ForbiddenException('Missing foundation context for job listing creation');
+    }
+
     return this.recruitmentService.createJobListing(createJobListingDto, foundationId);
   }
 
@@ -166,6 +177,7 @@ export class RecruitmentController {
 
   // Candidate endpoints
   @Get('candidates')
+  @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   findAllCandidates(
     @Query('role') role?: string,
     @Query('skills') skills?: string,
