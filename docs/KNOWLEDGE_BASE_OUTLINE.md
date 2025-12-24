@@ -5,6 +5,7 @@ This document outlines the structure and sections for the comprehensive Knowledg
 ---
 
 ## Table of Contents
+For frontend
 
 1. [Getting Started](#1-getting-started)
 2. [Foundation (Daycare) User Guide](#2-foundation-daycare-user-guide)
@@ -12,10 +13,13 @@ This document outlines the structure and sections for the comprehensive Knowledg
 4. [Service Provider User Guide](#4-service-provider-user-guide)
 5. [Educator (Candidate) User Guide](#5-educator-candidate-user-guide)
 6. [Parent User Guide](#6-parent-user-guide)
-7. [Administrator User Guide](#7-administrator-user-guide)
+
 8. [Common Features (All Users)](#8-common-features-all-users)
 9. [Billing & Subscriptions](#9-billing--subscriptions)
 10. [Troubleshooting & FAQ](#10-troubleshooting--faq)
+
+For admin dashboard
+7. [Administrator User Guide](#7-administrator-user-guide)
 
 ---
 
@@ -64,8 +68,7 @@ This document outlines the structure and sections for the comprehensive Knowledg
 - Quick stats (Enrolled, Available spots, Pending applications, Upcoming appointments)
 - Recent activity feed
 - Quick actions menu
-- Today at a glance / Calendar preview
-- Weather widget
+- Today at a glance / Calendar preview  
 
 ### 2.2 Organization Profile
 - Editing company information
@@ -137,12 +140,12 @@ This document outlines the structure and sections for the comprehensive Knowledg
 
 ### 2.8 E-Learning Module
 - Browsing courses
-- Content types (Courses, Videos, PDFs, Links)
+- Content types (Videos, PDFs, Links)
 - Filtering by category
 - Searching content
 - Viewing/watching content
 - Downloading materials
-- Tracking progress
+
 
 ### 2.9 State Policies Hub
 - Browsing policies by canton
@@ -154,10 +157,7 @@ This document outlines the structure and sections for the comprehensive Knowledg
 - Overview of analytics features
 - Spending by category reports
 - Parent lead conversion funnel
-- Staff training completion tracking
-- Enrollment trends
 - Exporting data to CSV
-- Time range filtering
 
 ### 2.11 Messaging
 - Starting a new conversation
@@ -266,6 +266,10 @@ This document outlines the structure and sections for the comprehensive Knowledg
 - Submitting support tickets
 - Ticket management
 
+### 3.11 Discount Termnation
+- What are they
+- How it works
+- what is the purpose
 ---
 
 ## 4. Service Provider User Guide
@@ -342,6 +346,11 @@ This document outlines the structure and sections for the comprehensive Knowledg
 - FAQ section
 - Submitting support tickets
 - Ticket management
+
+### 4.10 Discount Termnation
+- What are they
+- How it works
+- what is the purpose
 
 ---
 
@@ -453,10 +462,6 @@ This document outlines the structure and sections for the comprehensive Knowledg
 - Communicating with daycares
 - Marking favorites
 
-### 6.4 Browsing Services (Marketplace)
-- Viewing available services
-- Service categories
-- Contacting service providers
 
 ### 6.5 Profile Management
 - Updating personal information
@@ -479,78 +484,6 @@ This document outlines the structure and sections for the comprehensive Knowledg
 - Contact support
 
 ---
-
-## 7. Administrator User Guide
-
-### 7.1 Admin Dashboard
-- Platform overview
-- Quick stats
-- System health monitoring
-
-### 7.2 User Management
-- Viewing all users
-- User filters and search
-- User details view
-- Managing user roles
-- Role change history
-- User status management
-
-### 7.3 Foundation Management
-- Viewing all foundations
-- Foundation details
-- Subscription status
-- Activity monitoring
-
-### 7.4 Vendor Management
-- Product supplier management
-- Service provider management
-- Vendor onboarding
-
-### 7.5 Content Management Dashboard
-- E-Learning content management
-  - Adding courses
-  - Adding videos
-  - Adding PDFs
-  - Adding external links
-  - Content metadata (title, description, category, language, access roles)
-  - Publishing/unpublishing content
-  - Content moderation
-- HR Documents management
-- State Policies management
-
-### 7.6 Recruitment Oversight
-- Viewing all job listings
-- Moderating job posts
-- Candidate pool management
-
-### 7.7 Marketplace Oversight
-- Product listings moderation
-- Service listings moderation
-- Partner management
-
-### 7.8 Discount & Terminations
-- Managing discount codes
-- Subscription terminations
-- Promotional campaigns
-
-### 7.9 Support Ticket Management
-- Viewing all tickets
-- Ticket assignment
-- Responding to tickets
-- Escalation procedures
-- Ticket analytics
-
-### 7.10 System Monitoring
-- System health metrics
-- Error tracking
-- Performance monitoring
-- Audit logs
-
-### 7.11 Platform Settings
-- Frontend settings configuration
-- Logo and branding
-- Email templates
-- System configuration
 
 ---
 
@@ -626,11 +559,11 @@ This document outlines the structure and sections for the comprehensive Knowledg
 
 ### 9.4 Payment Methods
 - Adding a payment method
-- Supported payment types (Credit/Debit cards)
+- Supported payment types (bank trnasfer on invoice, Credit/Debit cards)
 - Updating payment information
-- Payment security (Stripe)
+- Payment security (Stripe) (coming soon)
 
-### 9.5 Billing History & Invoices
+### 9.5 Billing History & Invoices (coming soon)
 - Viewing billing history
 - Downloading invoices
 - Invoice details
@@ -708,15 +641,92 @@ This document outlines the structure and sections for the comprehensive Knowledg
 - Edge
 - Mobile browsers
 
-### D. Data Security & Compliance
+  ### D. Data Security & Compliance
 - GDPR compliance
 - Data encryption
 - Security certifications
 
-### E. API Documentation (For Integrations)
-- API overview (if applicable)
-- Authentication
-- Endpoints reference
+### E. API Documentation (For Integrations) (Only text needed is contact admin for any enquiries)
+- API overview (if applicable) (Only text needed is contact admin for any enquiries)
+- Authentication (Only text needed is contact admin for any enquiries)
+- Endpoints reference (Only text needed is contact admin for any enquiries)
+
+### This section needs to go in a separate docs/ knowledge base in the admin dashboard ###
+
+## 7. Administrator User Guide
+
+### 7.1 Admin Dashboard
+- Platform overview
+- Quick stats
+- System health monitoring
+
+### 7.2 User Management
+- Viewing all users
+- User filters and search
+- User details view
+- Managing user roles
+- Role change history
+- User status management
+
+### 7.3 Foundation Management
+- Viewing all foundations
+- Foundation details
+- Subscription status
+- Activity monitoring
+
+### 7.4 Vendor Management
+- Product supplier management
+- Service provider management
+- Vendor onboarding
+
+### 7.5 Content Management Dashboard
+- E-Learning content management
+  - Adding courses
+  - Adding videos
+  - Adding PDFs
+  - Adding external links
+  - Content metadata (title, description, category, language, access roles)
+  - Publishing/unpublishing content
+  - Content moderation
+- HR Documents management
+- State Policies management
+
+### 7.6 Recruitment Oversight
+- Viewing all job listings
+- Moderating job posts
+- Candidate pool management
+
+### 7.7 Marketplace Oversight
+- Product listings moderation
+- Service listings moderation
+- Partner management
+
+### 7.8 Discount & Terminations
+- Managing discount codes
+- Subscription terminations
+- Promotional campaigns
+
+### 7.9 Support Ticket Management
+- Viewing all tickets
+- Ticket assignment
+- Responding to tickets
+- Escalation procedures
+- Ticket analytics
+
+### 7.10 System Monitoring
+- System health metrics
+- Error tracking
+- Performance monitoring
+- Audit logs
+
+### 7.11 Platform Settings
+- Frontend settings configuration
+- Logo and branding
+- Email templates
+- System configuration
+
+
+
 
 ---
 
