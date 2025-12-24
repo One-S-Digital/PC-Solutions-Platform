@@ -238,6 +238,41 @@ const SUBSCRIPTION_REQUIRED_ROLES: UserRole[] = [
 
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
 
+/**
+ * E2E provider (Playwright): avoids Clerk and external services.
+ * Provides enough surface area for pages used in E2E tests.
+ */
+export const SubscriptionProviderE2E: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const value: SubscriptionContextType = {
+    hasActiveSubscription: false,
+    requiresSubscription: false,
+    status: null,
+    isLoading: false,
+    error: null,
+    subscription: null,
+    features: [],
+    limits: null,
+    plan: null,
+    expiresAt: null,
+    isTrialing: false,
+    trialDaysRemaining: null,
+    daysUntilExpiry: null,
+    cancelAtPeriodEnd: false,
+    paymentGateway: null,
+    refreshSubscription: async () => undefined,
+    hasFeature: () => false,
+    checkLimit: () => true,
+    requestSubscription: async () => ({
+      message: 'E2E mock subscription request',
+      subscriptionId: 'e2e-mock-sub-id',
+      status: 'PENDING',
+      checkoutUrl: null,
+    }),
+  };
+
+  return <SubscriptionContext.Provider value={value}>{children}</SubscriptionContext.Provider>;
+};
+
 // =====================================
 // PROVIDER
 // =====================================

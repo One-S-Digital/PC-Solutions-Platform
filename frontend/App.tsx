@@ -13,11 +13,11 @@ import ELearningPage from './pages/ELearningPage';
 import UsersPage from './pages/UsersPage';
 import SettingsPage from './pages/SettingsPage';
 import ProfileEditPage from './pages/ProfileEditPage';
-import { AppContextProvider, useAppContext } from './contexts/AppContext';
+import { AppContextProvider, AppContextProviderE2E, useAppContext } from './contexts/AppContext';
 import { CartProvider } from './contexts/CartContext';
 import { MessagingProvider } from './contexts/MessagingContext';
 import { NotificationProvider } from './contexts/NotificationContext';
-import { SubscriptionProvider } from './contexts/SubscriptionContext';
+import { SubscriptionProvider, SubscriptionProviderE2E } from './contexts/SubscriptionContext';
 import { SubscriptionPaywall } from './components/shared/SubscriptionPaywall';
 import { useAuthContext } from './providers/AuthProvider';
 import { UserRole } from './types';
@@ -90,6 +90,8 @@ import PublicPartnersPage from './pages/PublicPartnersPage';
 import ProfilePage from './pages/ProfilePage';
 import OrganizationProfileViewPage from './pages/profile/OrganizationProfileViewPage';
 import EducatorProfileViewPage from './pages/profile/EducatorProfileViewPage';
+import LoginPageE2E from './pages/LoginPageE2E';
+import SignupPageE2E from './pages/SignupPageE2E';
 
 
 const ProtectedRoute: React.FC<{ children: React.ReactElement; roles: UserRole[] }> = ({ children, roles }): React.ReactElement | null => {
@@ -526,6 +528,35 @@ const FrontendSettingsManager: React.FC = () => {
 };
 
 const App: React.FC = () => {
+  const isE2E = import.meta.env.MODE === 'e2e' || import.meta.env.VITE_E2E_TEST === 'true';
+
+  // E2E mode: avoid external dependencies (Clerk/backend) and keep routes deterministic for Playwright.
+  if (isE2E) {
+    return (
+      <AppContextProviderE2E>
+        <SubscriptionProviderE2E>
+          <FrontendSettingsManager />
+          <Routes>
+            <Route path="/login" element={<LoginPageE2E />} />
+            <Route path="/signup" element={<SignupPageE2E />} />
+            <Route path="/pricing" element={<PricingPage />} />
+            <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
+
+            {/* Protected routes: always redirect to login in E2E */}
+            <Route path="/dashboard" element={<Navigate to="/login" replace />} />
+            <Route path="/settings/*" element={<Navigate to="/login" replace />} />
+            <Route path="/marketplace/*" element={<Navigate to="/login" replace />} />
+            <Route path="/recruitment/*" element={<Navigate to="/login" replace />} />
+            <Route path="/admin/*" element={<Navigate to="/login" replace />} />
+
+            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </Routes>
+        </SubscriptionProviderE2E>
+      </AppContextProviderE2E>
+    );
+  }
+
   return (
     <AppContextProvider>
       <FrontendSettingsManager />

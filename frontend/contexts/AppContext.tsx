@@ -6,6 +6,7 @@ import i18n from '../i18n';
 import { useRecruitmentApi } from '../hooks/useRecruitmentApi';
 import { ApiError } from '../services/api';
 import { useAuthenticatedApi } from '../hooks/useAuthenticatedApi';
+import { apiService } from '../services/api';
 
 // Default platform settings - should come from API
 const DEFAULT_PLATFORM_SETTINGS: PlatformSettings = {
@@ -60,6 +61,86 @@ interface AppContextType {
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
+
+/**
+ * E2E provider (Playwright): avoids Clerk and external services.
+ * Provides enough surface area for pages used in E2E tests.
+ */
+export const AppContextProviderE2E: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [leads, setLeads] = useState<ParentLead[]>([]);
+  const [serviceRequests, setServiceRequests] = useState<ServiceRequest[]>([]);
+  const [vendorClients, setVendorClients] = useState<VendorClient[]>([]);
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [userFiles, setUserFiles] = useState<DocumentItem[]>([]);
+  const [platformSettings, setPlatformSettings] = useState<PlatformSettings>(DEFAULT_PLATFORM_SETTINGS);
+  const [language, setLanguage] = useState<SupportedLanguage>('EN');
+  const [favoriteCandidateIds, setFavoriteCandidateIds] = useState<string[]>([]);
+
+  const submitParentLead = useCallback(async (leadData: any) => {
+    // Hit the same shape as production (tests intercept /parent-leads)
+    await apiService.post('/parent-leads', leadData).catch(() => undefined);
+  }, []);
+
+  const noopAsync = useCallback(async () => undefined, []);
+  const noopBool = useCallback(() => false, []);
+
+  const toggleFavoriteCandidate = useCallback((candidateId: string) => {
+    setFavoriteCandidateIds((prev) =>
+      prev.includes(candidateId) ? prev.filter((id) => id !== candidateId) : [...prev, candidateId]
+    );
+  }, []);
+
+  const isCandidateFavorite = useCallback(
+    (candidateId: string) => favoriteCandidateIds.includes(candidateId),
+    [favoriteCandidateIds]
+  );
+
+  const addUserFile = useCallback((_file: File) => undefined, []);
+  const deleteUserFile = useCallback((_fileId: string) => undefined, []);
+  const renameUserFile = useCallback((_fileId: string, _newName: string) => undefined, []);
+
+  return (
+    <AppContext.Provider
+      value={{
+        currentUser,
+        setCurrentUser,
+        login: async () => ({ success: true }),
+        logout: () => undefined,
+        signup: async () => ({ success: true }),
+        leads,
+        setLeads,
+        leadsLoading: false,
+        submitParentLead,
+        favoriteCandidateIds,
+        toggleFavoriteCandidate,
+        isCandidateFavorite,
+        language,
+        setLanguage,
+        applications,
+        applyForJob: async () => ({ success: true, message: 'ok' }),
+        userFiles,
+        addUserFile,
+        deleteUserFile,
+        renameUserFile,
+        platformSettings,
+        setPlatformSettings,
+        updateCurrentUserInfo: noopAsync,
+        serviceRequests,
+        serviceRequestsLoading: false,
+        submitServiceRequest: noopAsync,
+        vendorClients,
+        vendorClientsLoading: false,
+        updateVendorClientStatus: noopAsync,
+        refreshLeads: noopAsync,
+        refreshServiceRequests: noopAsync,
+        refreshVendorClients: noopAsync,
+      }}
+    >
+      {children}
+    </AppContext.Provider>
+  );
+};
 
 export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   // Use Clerk authentication from AuthProvider

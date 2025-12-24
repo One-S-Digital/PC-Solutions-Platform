@@ -5,6 +5,43 @@ import HttpBackend from 'i18next-http-backend';
 import { IndexedDBBackend } from './i18n/indexeddb-backend';
 
 // ============================================================
+// POST-PROCESSORS
+// ============================================================
+// Ensure UI text starts with a capital letter (where appropriate).
+// This mitigates inconsistent capitalization in translation values.
+// ============================================================
+
+const capitalizeFirstLetter = (value: unknown, lng?: string): unknown => {
+  if (typeof value !== 'string' || value.length === 0) return value;
+
+  // Don't change emails/urls or placeholder-only strings.
+  if (value.startsWith('http://') || value.startsWith('https://')) return value;
+  if (value.includes('@') && !value.includes(' ')) return value;
+  if (value.startsWith('{{')) return value;
+
+  const first = value[0];
+  // Only change if the first character is a lowercase letter.
+  // (If the string starts with punctuation/placeholders, we leave it alone to avoid breaking e.g. "{{count}} items".)
+  if (!/^[a-zà-öø-ÿ]$/u.test(first)) return value;
+
+  const locale = lng?.split('-')[0];
+  return first.toLocaleUpperCase(locale) + value.slice(1);
+};
+
+interface PostProcessorOptions {
+  lng?: string;
+  [key: string]: unknown;
+}
+
+// Register post-processor before init()
+i18n.use({
+  type: 'postProcessor',
+  name: 'capitalizeFirst',
+  process: (value, _key, options) =>
+    capitalizeFirstLetter(value, (options as PostProcessorOptions | undefined)?.lng) as string,
+});
+
+// ============================================================
 // AUTOMATIC NAMESPACE DISCOVERY
 // ============================================================
 // Uses Vite's import.meta.glob to automatically discover all
@@ -303,6 +340,7 @@ i18n
     pluralSeparator: '_', // Use underscore for pluralization (e.g., items_one, items_other)
     keySeparator: '.', // Use dot for nested keys
     nsSeparator: ':', // Use colon for namespace separation
+    postProcess: ['capitalizeFirst'],
     interpolation: {
       escapeValue: false,
       format: (value: unknown, format: string | undefined, lng: string | undefined) => {

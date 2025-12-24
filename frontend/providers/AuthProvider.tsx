@@ -814,6 +814,36 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
 };
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const isE2E = import.meta.env.MODE === 'e2e' || import.meta.env.VITE_E2E_TEST === 'true';
+
+  // E2E mode: avoid Clerk + backend dependency for Playwright tests.
+  if (isE2E) {
+    return (
+      <AuthContext.Provider
+        value={{
+          currentUser: null,
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          setCurrentUser: (() => {}) as any,
+          isLoading: false,
+          isAuthenticated: false,
+          authError: null,
+          isSigningOut: false,
+          clearAuthError: () => undefined,
+          login: async () => ({ success: true }),
+          logout: async () => undefined,
+          signup: async () => ({ success: true }),
+          updateCurrentUserInfo: async () => undefined,
+          refreshCurrentUser: async () => undefined,
+          changePassword: async () => undefined,
+          changeEmail: async () => undefined,
+          verifyEmailChange: async () => undefined,
+        }}
+      >
+        {children}
+      </AuthContext.Provider>
+    );
+  }
+
   const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
   if (!publishableKey) {
