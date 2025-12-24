@@ -1,6 +1,7 @@
 import { Controller, Get, Put, Post, Body, Param, UseGuards, Request, UnauthorizedException, NotFoundException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { PrismaService } from '../prisma/prisma.service';
+import { IsOptional, IsString, IsArray, IsNumber, IsUrl } from 'class-validator';
 
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -12,56 +13,199 @@ import { TranslationService } from '../translation/translation.service';
 import { FIELDS_BY_ENTITY } from '../translation/translation.config';
 
 export class UpdateProfileDto {
+  @IsOptional()
+  @IsString()
   firstName?: string;
+
+  @IsOptional()
+  @IsString()
   lastName?: string;
+
+  @IsOptional()
+  @IsString()
   phoneNumber?: string;
+
+  @IsOptional()
+  @IsString()
   workExperience?: string;
+
+  @IsOptional()
+  @IsString()
   education?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   certifications?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   skills?: string[];
+
+  @IsOptional()
+  @IsString()
   availability?: string;
+
+  @IsOptional()
+  @IsString()
   cvUrl?: string;
+
+  @IsOptional()
+  @IsString()
   shortBio?: string;
+
+  @IsOptional()
+  @IsString()
   avatarAssetId?: string;
+
   // Organization fields
+  @IsOptional()
+  @IsString()
   organizationName?: string;
+
+  @IsOptional()
+  @IsString()
   description?: string;
+
+  @IsOptional()
+  @IsString()
   contactPerson?: string;
+
+  @IsOptional()
+  @IsString()
   canton?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   languages?: string[];
+
+  @IsOptional()
+  @IsNumber()
   capacity?: number;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   pedagogy?: string[];
+
+  @IsOptional()
+  @IsString()
   productCategory?: string;
+
+  @IsOptional()
+  @IsString()
   serviceType?: string;
+
+  @IsOptional()
+  @IsNumber()
   minimumOrderQuantity?: number;
+
+  @IsOptional()
+  @IsString()
   directOrderLink?: string;
+
+  @IsOptional()
+  @IsString()
   catalogUrl?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   serviceCategories?: string[];
+
+  @IsOptional()
+  @IsString()
   deliveryType?: string;
+
+  @IsOptional()
+  @IsString()
   bookingLink?: string;
+
   // Parent fields
+  @IsOptional()
+  @IsNumber()
   childAge?: number;
+
+  @IsOptional()
+  @IsString()
   preferredLocation?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   preferredLanguages?: string[];
+
+  @IsOptional()
+  @IsString()
   specialRequirements?: string;
 }
 
 export class CreateOrganizationDto {
+  @IsString()
   name: string;
+
+  @IsString()
   type: string;
+
+  @IsOptional()
+  @IsString()
   contactPerson?: string;
+
+  @IsOptional()
+  @IsString()
   phoneNumber?: string;
+
+  @IsOptional()
+  @IsString()
   canton?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   languages?: string[];
+
+  @IsOptional()
+  @IsNumber()
   capacity?: number;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   pedagogy?: string[];
+
+  @IsOptional()
+  @IsString()
   productCategory?: string;
+
+  @IsOptional()
+  @IsString()
   serviceType?: string;
+
+  @IsOptional()
+  @IsNumber()
   minimumOrderQuantity?: number;
+
+  @IsOptional()
+  @IsString()
   directOrderLink?: string;
+
+  @IsOptional()
+  @IsString()
   catalogUrl?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   serviceCategories?: string[];
+
+  @IsOptional()
+  @IsString()
   deliveryType?: string;
+
+  @IsOptional()
+  @IsString()
   bookingLink?: string;
 }
 
