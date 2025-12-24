@@ -2,7 +2,7 @@ import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, Requ
 import { Public } from '../auth/decorators/public.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { UserRole, JobStatus, JobContractType, OrganizationType, SubscriptionStatus } from '@prisma/client';
+import { Prisma, UserRole, JobStatus, JobContractType, OrganizationType, SubscriptionStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCandidateDto } from './dto/create-candidate.dto';
 import { CreateJobListingDto } from '../recruitment/dto/create-job-listing.dto';
@@ -22,7 +22,7 @@ type RequestWithUser = {
 export class CompatController {
   constructor(private prisma: PrismaService) {}
 
-  private marketplaceActiveSubscriptionWhere(now: Date) {
+  private marketplaceActiveSubscriptionWhere(now: Date): Prisma.SubscriptionWhereInput {
     return {
       OR: [
         {
@@ -38,7 +38,7 @@ export class CompatController {
           OR: [{ gracePeriodEnd: null }, { gracePeriodEnd: { gt: now } }],
         },
       ],
-    } as const;
+    };
   }
 
   private canBypassMarketplaceSubscriptionGate(user: RequestUser | undefined, organizationId: string): boolean {
