@@ -28,11 +28,17 @@ const capitalizeFirstLetter = (value: unknown, lng?: string): unknown => {
   return first.toLocaleUpperCase(locale) + value.slice(1);
 };
 
+interface PostProcessorOptions {
+  lng?: string;
+  [key: string]: unknown;
+}
+
 // Register post-processor before init()
 i18n.use({
   type: 'postProcessor',
   name: 'capitalizeFirst',
-  process: (value, _key, options) => capitalizeFirstLetter(value, (options as any)?.lng) as string,
+  process: (value, _key, options) =>
+    capitalizeFirstLetter(value, (options as PostProcessorOptions | undefined)?.lng) as string,
 });
 
 // ============================================================

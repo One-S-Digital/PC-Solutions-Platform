@@ -262,7 +262,12 @@ export const SubscriptionProviderE2E: React.FC<{ children: ReactNode }> = ({ chi
     refreshSubscription: async () => undefined,
     hasFeature: () => false,
     checkLimit: () => true,
-    requestSubscription: async () => ({ success: true }),
+    requestSubscription: async () => ({
+      message: 'E2E mock subscription request',
+      subscriptionId: 'e2e-mock-sub-id',
+      status: 'PENDING',
+      checkoutUrl: null,
+    }),
   };
 
   return <SubscriptionContext.Provider value={value}>{children}</SubscriptionContext.Provider>;
