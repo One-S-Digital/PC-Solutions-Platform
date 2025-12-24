@@ -1,7 +1,7 @@
 import { Controller, Get, Put, Post, Body, Param, UseGuards, Request, UnauthorizedException, NotFoundException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { PrismaService } from '../prisma/prisma.service';
-import { IsOptional, IsString, IsArray, IsNumber, IsUrl } from 'class-validator';
+import { IsOptional, IsString, IsArray, IsUrl, IsInt, IsPositive, Min } from 'class-validator';
 
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -48,7 +48,7 @@ export class UpdateProfileDto {
   availability?: string;
 
   @IsOptional()
-  @IsString()
+  @IsUrl()
   cvUrl?: string;
 
   @IsOptional()
@@ -82,7 +82,8 @@ export class UpdateProfileDto {
   languages?: string[];
 
   @IsOptional()
-  @IsNumber()
+  @IsInt()
+  @IsPositive()
   capacity?: number;
 
   @IsOptional()
@@ -99,15 +100,16 @@ export class UpdateProfileDto {
   serviceType?: string;
 
   @IsOptional()
-  @IsNumber()
+  @IsInt()
+  @Min(1)
   minimumOrderQuantity?: number;
 
   @IsOptional()
-  @IsString()
+  @IsUrl()
   directOrderLink?: string;
 
   @IsOptional()
-  @IsString()
+  @IsUrl()
   catalogUrl?: string;
 
   @IsOptional()
@@ -120,12 +122,13 @@ export class UpdateProfileDto {
   deliveryType?: string;
 
   @IsOptional()
-  @IsString()
+  @IsUrl()
   bookingLink?: string;
 
   // Parent fields
   @IsOptional()
-  @IsNumber()
+  @IsInt()
+  @Min(0)
   childAge?: number;
 
   @IsOptional()
@@ -167,7 +170,8 @@ export class CreateOrganizationDto {
   languages?: string[];
 
   @IsOptional()
-  @IsNumber()
+  @IsInt()
+  @IsPositive()
   capacity?: number;
 
   @IsOptional()
@@ -184,15 +188,16 @@ export class CreateOrganizationDto {
   serviceType?: string;
 
   @IsOptional()
-  @IsNumber()
+  @IsInt()
+  @Min(1)
   minimumOrderQuantity?: number;
 
   @IsOptional()
-  @IsString()
+  @IsUrl()
   directOrderLink?: string;
 
   @IsOptional()
-  @IsString()
+  @IsUrl()
   catalogUrl?: string;
 
   @IsOptional()
@@ -205,7 +210,7 @@ export class CreateOrganizationDto {
   deliveryType?: string;
 
   @IsOptional()
-  @IsString()
+  @IsUrl()
   bookingLink?: string;
 }
 
