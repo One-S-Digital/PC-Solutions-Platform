@@ -80,7 +80,7 @@ const SignupPage: React.FC = () => {
         });
 
         if (currentStatus === 'ready') {
-          setSuccessRedirect(getSuccessRedirectForRole(selectedRole));
+          setSuccessRedirect(getSuccessRedirectForRole());
           setCurrentStep(3);
           return;
         }
@@ -132,25 +132,18 @@ const SignupPage: React.FC = () => {
 
   const [verificationCode, setVerificationCode] = useState('');
   const [verificationError, setVerificationError] = useState('');
+  const [isResendingCode, setIsResendingCode] = useState(false);
+  const [resendSuccessMessage, setResendSuccessMessage] = useState('');
+  const [resendCooldownSeconds, setResendCooldownSeconds] = useState(0);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaError, setCaptchaError] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [webhookStatus, setWebhookStatus] = useState<'pending' | 'processing' | 'ready' | 'error'>('pending');
   const [webhookError, setWebhookError] = useState<string | null>(null);
 
-  const roleRequiresPricing = (role: SignupRole | null) =>
-    role !== null && [SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(role);
+  const getSuccessRedirectForRole = () => ({ path: '/dashboard' });
 
-  const getSuccessRedirectForRole = (role: SignupRole | null) => {
-    if (roleRequiresPricing(role) && role) {
-      return { path: '/pricing', state: { fromSignup: true, role } };
-    }
-    return { path: '/dashboard' };
-  };
-
-  const successButtonLabel = roleRequiresPricing(selectedRole)
-    ? t('goToPricingButton', 'Go to Pricing')
-    : t('goToDashboardButton');
+  const successButtonLabel = t('goToDashboardButton');
 
     const requiresOrganizationDetails =
       selectedRole !== null &&
@@ -199,7 +192,7 @@ const SignupPage: React.FC = () => {
     setErrors({});
     setCurrentStep(2);
     setHasStartedSignup(true);
-    setSuccessRedirect(getSuccessRedirectForRole(role));
+    setSuccessRedirect(getSuccessRedirectForRole());
   };
 
   const handleBackToRoleSelection = () => {
@@ -357,6 +350,17 @@ const SignupPage: React.FC = () => {
     console.error('CAPTCHA error');
   };
 
+  // Cooldown timer for resending verification code
+  useEffect(() => {
+    if (resendCooldownSeconds <= 0) return;
+
+    const intervalId = window.setInterval(() => {
+      setResendCooldownSeconds(prev => Math.max(0, prev - 1));
+    }, 1000);
+
+    return () => window.clearInterval(intervalId);
+  }, [resendCooldownSeconds]);
+
   // State to track if there's an email conflict (account exists with different auth method)
   const [emailConflictError, setEmailConflictError] = useState(false);
   // State for general OAuth profile completion errors (visible in a banner, not attached to email field)
@@ -398,7 +402,7 @@ const SignupPage: React.FC = () => {
        
        if (response.ok) {
            await refreshCurrentUser();
-           setSuccessRedirect(getSuccessRedirectForRole(selectedRole));
+           setSuccessRedirect(getSuccessRedirectForRole());
            setCurrentStep(3);
        } else {
            const errorData = await response.json().catch(() => ({}));
@@ -478,7 +482,7 @@ const SignupPage: React.FC = () => {
         if (result.status === 'complete') {
           try {
             await setActive({ session: result.createdSessionId });
-            setSuccessRedirect(getSuccessRedirectForRole(selectedRole));
+            setSuccessRedirect(getSuccessRedirectForRole());
             setCurrentStep(3);
           } catch (setActiveError: any) {
             console.error('Session activation failed:', setActiveError);
@@ -589,7 +593,21 @@ const SignupPage: React.FC = () => {
       let errorMessage = t('signup:errors.invalidVerificationCode');
 
       if (err?.errors && err.errors.length > 0) {
-        errorMessage = err.errors[0]?.message || errorMessage;
+        const firstError = err.errors[0];
+        const clerkCode = firstError?.code as string | undefined;
+
+        if (
+          clerkCode === 'form_code_expired' ||
+          clerkCode === 'verification_expired' ||
+          clerkCode === 'verification_code_expired'
+        ) {
+          errorMessage = t(
+            'common:verificationCodeExpired',
+            'This verification code has expired. Please request a new one.'
+          );
+        } else {
+          errorMessage = firstError?.message || errorMessage;
+        }
       } else if (err instanceof Error && err.message) {
         errorMessage = err.message;
       }
@@ -598,6 +616,32 @@ const SignupPage: React.FC = () => {
     } finally {
       setIsLoading(false);
       setIsVerifying(false);
+    }
+  };
+
+  const handleResendVerificationCode = async () => {
+    if (!signUp) return;
+    if (isResendingCode || resendCooldownSeconds > 0) return;
+
+    setIsResendingCode(true);
+    setVerificationError('');
+    setResendSuccessMessage('');
+
+    try {
+      await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
+      setResendSuccessMessage(t('common:verificationCodeResent', 'A new verification code has been sent.'));
+      // Prevent accidental/spam clicks
+      setResendCooldownSeconds(30);
+    } catch (err: any) {
+      let message = t('common:resendVerificationCodeFailed', 'Failed to resend the code. Please try again.');
+      if (err?.errors?.[0]?.message) {
+        message = err.errors[0].message;
+      } else if (err instanceof Error && err.message) {
+        message = err.message;
+      }
+      setVerificationError(message);
+    } finally {
+      setIsResendingCode(false);
     }
   };
   
@@ -620,7 +664,13 @@ const SignupPage: React.FC = () => {
       ) : (
         <div className="relative">
           <input 
-            type={(name === 'password' && !showPassword) || (name === 'confirmPassword' && !showConfirmPassword) ? 'password' : type}
+            type={
+              name === 'password'
+                ? (showPassword ? 'text' : 'password')
+                : name === 'confirmPassword'
+                  ? (showConfirmPassword ? 'text' : 'password')
+                  : type
+            }
             id={name} 
             name={name} 
             value={String(formData[name as keyof SignupFormData] ?? '')}
@@ -654,19 +704,19 @@ const SignupPage: React.FC = () => {
   if (!isLoaded) {
     return (
       <div className="min-h-screen bg-page-bg flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-swiss-mint"></div>
+        <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-b-2 border-swiss-mint"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4">
-      <Card className="w-full max-w-2xl p-8 shadow-xl">
+    <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-3 sm:p-4 md:p-6">
+      <Card className="w-full max-w-2xl p-4 sm:p-6 md:p-8 shadow-xl">
         {currentStep === 3 ? (
           <div className="text-center">
-            <CheckCircleIcon className="w-16 h-16 text-swiss-mint mx-auto mb-4"/>
-            <h1 className="text-2xl font-bold text-swiss-charcoal">{t('submissionSuccessTitle')}</h1>
-            <p className="text-gray-600 mt-2 mb-6">{t('submissionSuccessMessage')}</p>
+            <CheckCircleIcon className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 text-swiss-mint mx-auto mb-3 sm:mb-4"/>
+            <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-swiss-charcoal">{t('submissionSuccessTitle')}</h1>
+            <p className="text-sm sm:text-base text-gray-600 mt-2 mb-4 sm:mb-6">{t('submissionSuccessMessage')}</p>
             <div className="space-y-3">
               <Button
                 onClick={() => navigate(successRedirect.path, { state: successRedirect.state })}
@@ -691,30 +741,30 @@ const SignupPage: React.FC = () => {
                 <img 
                   src={settings.logoAsset.publicUrl} 
                   alt={settings.siteName || APP_NAME} 
-                  className="h-20 w-auto mx-auto mb-2" 
+                  className="h-14 sm:h-16 md:h-20 w-auto mx-auto mb-2" 
                 />
               ) : (
-                <SquaresPlusIcon className="w-14 h-14 text-swiss-mint mx-auto mb-2" />
+                <SquaresPlusIcon className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 text-swiss-mint mx-auto mb-2" />
               )}
-              <h1 className="text-2xl font-bold text-swiss-charcoal">{formTitle}</h1>
-              <p className="text-sm text-gray-500 mt-1">{progressText}</p>
+              <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-swiss-charcoal">{formTitle}</h1>
+              <p className="text-xs sm:text-sm text-gray-500 mt-1">{progressText}</p>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2 mb-6">
-              <div className="bg-swiss-mint h-2 rounded-full transition-all duration-300 ease-in-out" style={{ width: currentStep === 1 ? '50%' : '100%' }}></div>
+            <div className="w-full bg-gray-200 rounded-full h-1.5 sm:h-2 mb-4 sm:mb-6">
+              <div className="bg-swiss-mint h-1.5 sm:h-2 rounded-full transition-all duration-300 ease-in-out" style={{ width: currentStep === 1 ? '50%' : '100%' }}></div>
             </div>
 
             {currentStep === 1 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 {rolesConfig.map(({ role, nameKey, icon: Icon, subtitleKey }, index) => (
                   <button 
                     key={role} 
                     onClick={() => handleRoleSelect(role)} 
                     aria-pressed={selectedRole === role}
-                    className={`p-6 border-2 rounded-lg text-center transition-all duration-200 ease-in-out hover:shadow-lg hover:border-swiss-mint hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-swiss-mint border-gray-300 bg-white ${index === rolesConfig.length - 1 ? 'sm:col-span-2' : ''}`}
+                    className={`p-4 sm:p-5 md:p-6 border-2 rounded-lg text-center transition-all duration-200 ease-in-out hover:shadow-lg hover:border-swiss-mint hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-swiss-mint border-gray-300 bg-white ${index === rolesConfig.length - 1 ? 'sm:col-span-2' : ''}`}
                   >
-                    <Icon className="w-10 h-10 mx-auto mb-2 text-gray-400" />
-                    <span className="block font-semibold text-swiss-charcoal">{t(nameKey)}</span>
-                    {subtitleKey && <span className="block text-sm text-gray-500 mt-1">{t(subtitleKey)}</span>}
+                    <Icon className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 mx-auto mb-2 text-gray-400" />
+                    <span className="block text-sm sm:text-base font-semibold text-swiss-charcoal">{t(nameKey)}</span>
+                    {subtitleKey && <span className="block text-xs sm:text-sm text-gray-500 mt-1">{t(subtitleKey)}</span>}
                   </button>
                 ))}
               </div>
@@ -799,7 +849,7 @@ const SignupPage: React.FC = () => {
                 )}
 
                 {!showVerificationStep && !emailConflictError && (
-                  <form onSubmit={handleSubmit} className="space-y-4">
+                  <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
                       {requiresOrganizationDetails && renderField('organisationName', 'labels.organisationName', 'text', true, 'placeholders.organisationName')}
                     {renderField('contactPerson', selectedRole === SignupRole.PARENT ? 'labels.parentName' : 'labels.contactPerson', 'text', true, selectedRole === SignupRole.PARENT ? 'placeholders.parentName' : 'placeholders.contactPerson')}
                     
@@ -883,11 +933,11 @@ const SignupPage: React.FC = () => {
                       {captchaError && <p className="text-xs text-swiss-coral mt-2 text-center">{captchaError}</p>}
                     </div>
                     
-                    <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-4">
-                      <Button type="button" variant="light" onClick={handleBackToRoleSelection} leftIcon={ArrowLeftIcon} className="w-full sm:w-auto">
+                    <div className="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-3 pt-3 sm:pt-4">
+                      <Button type="button" variant="light" onClick={handleBackToRoleSelection} leftIcon={ArrowLeftIcon} className="w-full sm:w-auto text-sm sm:text-base">
                         {t('common:buttons.goBack')}
                       </Button>
-                      <Button type="submit" variant="primary" size="lg" className="w-full sm:w-auto bg-swiss-mint hover:bg-opacity-90" disabled={isLoading}>
+                      <Button type="submit" variant="primary" size="lg" className="w-full sm:w-auto bg-swiss-mint hover:bg-opacity-90 text-sm sm:text-base" disabled={isLoading}>
                         {isLoading 
                           ? (needsProfileCompletion ? t('signup:completingProfile', 'Completing Profile...') : t('signup:creatingAccount', 'Creating Account...')) 
                           : (needsProfileCompletion ? t('signup:completeProfile', 'Complete Profile') : t('common:buttons.createAccount'))}
@@ -938,6 +988,8 @@ const SignupPage: React.FC = () => {
                             value={verificationCode}
                             onChange={(e) => {
                               setVerificationCode(e.target.value);
+                              if (verificationError) setVerificationError('');
+                              if (resendSuccessMessage) setResendSuccessMessage('');
                             }}
                             className={STANDARD_INPUT_FIELD}
                             placeholder="000000"
@@ -946,6 +998,9 @@ const SignupPage: React.FC = () => {
                           />
                             {verificationError && (
                               <p className="text-xs text-swiss-coral mt-1">{verificationError}</p>
+                            )}
+                            {resendSuccessMessage && (
+                              <p className="text-xs text-swiss-mint mt-1">{resendSuccessMessage}</p>
                             )}
                           </div>
                           <Button 
@@ -957,6 +1012,28 @@ const SignupPage: React.FC = () => {
                           >
                             {(isLoading || isVerifying) ? t('common:verifying', 'Verifying...') : t('common:buttons.verifyEmail', 'Verify Email')}
                           </Button>
+
+                          <div className="flex items-center justify-between">
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="px-0"
+                              disabled={isResendingCode || resendCooldownSeconds > 0}
+                              onClick={handleResendVerificationCode}
+                            >
+                              {isResendingCode
+                                ? t('common:resending', 'Resending...')
+                                : t('common:buttons.resendCode', 'Resend code')}
+                            </Button>
+                            {resendCooldownSeconds > 0 && (
+                              <span className="text-xs text-gray-500">
+                                {t('common:resendAvailableIn', 'Resend available in {{seconds}}s', {
+                                  seconds: resendCooldownSeconds,
+                                })}
+                              </span>
+                            )}
+                          </div>
                         </form>
                       </>
                     )}
@@ -965,7 +1042,7 @@ const SignupPage: React.FC = () => {
               </>
             )}
             
-            <p className="mt-6 text-center text-sm text-gray-600">
+            <p className="mt-4 sm:mt-6 text-center text-xs sm:text-sm text-gray-600">
               {t('common:loginPage.alreadyAccount')}{' '}
               <Link to="/login" className="font-medium text-swiss-mint hover:underline">
                 {t('common:buttons.login')}
@@ -974,7 +1051,7 @@ const SignupPage: React.FC = () => {
 
             {/* Sign out option for users completing profile who want to start fresh */}
             {needsProfileCompletion && (
-              <div className="mt-4 pt-4 border-t border-gray-200 text-center">
+              <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-200 text-center">
                 <p className="text-xs text-gray-500 mb-2">
                   {t('signup:oauthCompletion.wrongAccount', 'Wrong account? Sign out and try again.')}
                 </p>
@@ -987,7 +1064,7 @@ const SignupPage: React.FC = () => {
                     await logout();
                     navigate('/login', { replace: true });
                   }}
-                  className="text-gray-600 hover:text-gray-800"
+                  className="text-gray-600 hover:text-gray-800 text-xs sm:text-sm"
                 >
                   {t('common:loginPage.signOutButton', 'Sign Out')}
                 </Button>

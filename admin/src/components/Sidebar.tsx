@@ -24,6 +24,8 @@ import {
   LifeBuoy,
   MapPin,
   FileCheck,
+  CreditCard,
+  Tag,
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useSettings } from '../hooks/useSettings'
@@ -46,10 +48,12 @@ const navigation = [
   { key: 'parentLeads', href: '/parent-leads', icon: Heart },
   { key: 'ordersAppointments', href: '/orders', icon: ShoppingCart },
   { key: 'content', href: '/content', icon: FileText },
-  { key: 'cantons', href: '/cantons', icon: MapPin },
-  { key: 'policyReview', href: '/policies/review', icon: FileCheck },
   { key: 'messages', href: '/messaging', icon: MessageSquare },
   { key: 'support', href: '/support', icon: LifeBuoy },
+  { key: 'cantons', href: '/cantons', icon: MapPin },
+  { key: 'policyReview', href: '/policies/review', icon: FileCheck },
+  { key: 'discountTerminations', href: '/discount-terminations', icon: Tag },
+  { key: 'subscriptions', href: '/subscriptions', icon: CreditCard },
   { key: 'systemMonitoring', href: '/system', icon: Monitor },
   { key: 'translations', href: '/translations', icon: Globe },
   { key: 'designSystem', href: '/design-system', icon: Palette },
@@ -76,12 +80,11 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
           <img
             src={getAdminLogo()}
             alt={t('admin:sidebar.adminLogo', 'Admin Logo')}
-            className="h-[69px] w-auto mr-2.5"
+            className="h-[69px] w-auto"
           />
         ) : (
-          <Shield className="h-[69px] w-[69px] text-swiss-mint mr-2.5" />
+          <Shield className="h-[69px] w-[69px] text-swiss-mint" />
         )}
-        <h1 className="text-2xl font-bold text-swiss-charcoal">{t('common:admin', 'Admin')}</h1>
       </div>
 
       <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto">

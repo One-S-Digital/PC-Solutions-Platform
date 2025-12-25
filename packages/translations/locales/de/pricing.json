@@ -76,6 +76,8 @@
         "name": "Grundlegend"
       },
       "suppliersAndProvidersTitle": "Für Lieferanten und Dienstleister",
+      "enquireButton": "Anfragen",
+      "comingSoon": "Demnächst verfügbar",
       "selectAndContinue": "Auswählen und fortfahren",
       "featureFallback": "Inklusive Leistung",
       "subtitleSignup": "Erstellen Sie Ihr Konto und legen Sie los",
@@ -204,6 +206,8 @@
       "name": "Grundlegend"
     },
     "suppliersAndProvidersTitle": "Für Lieferanten und Dienstleister",
+    "enquireButton": "Anfragen",
+    "comingSoon": "Demnächst verfügbar",
     "selectAndContinue": "Auswählen und fortfahren",
     "featureFallback": "Inklusive Leistung",
     "subtitleSignup": "Erstellen Sie Ihr Konto und legen Sie los",

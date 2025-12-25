@@ -1,16 +1,54 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
 import { Public } from '../auth/decorators/public.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { UserRole, JobStatus, JobContractType, OrganizationType } from '@prisma/client';
+import { Prisma, UserRole, JobStatus, JobContractType, OrganizationType, SubscriptionStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCandidateDto } from './dto/create-candidate.dto';
 import { CreateJobListingDto } from '../recruitment/dto/create-job-listing.dto';
+
+type RequestUser = {
+  role?: UserRole;
+  organizationId?: string;
+  orgId?: string;
+};
+
+type RequestWithUser = {
+  user?: RequestUser;
+};
 
 @Controller('compat')
 @UseGuards(RolesGuard)
 export class CompatController {
   constructor(private prisma: PrismaService) {}
+
+  private marketplaceActiveSubscriptionWhere(now: Date): Prisma.SubscriptionWhereInput {
+    return {
+      OR: [
+        {
+          status: SubscriptionStatus.ACTIVE,
+          OR: [{ currentPeriodEnd: null }, { currentPeriodEnd: { gt: now } }],
+        },
+        {
+          status: SubscriptionStatus.TRIAL,
+          OR: [{ trialEnd: null }, { trialEnd: { gt: now } }],
+        },
+        {
+          status: SubscriptionStatus.GRACE_PERIOD,
+          OR: [{ gracePeriodEnd: null }, { gracePeriodEnd: { gt: now } }],
+        },
+      ],
+    };
+  }
+
+  private canBypassMarketplaceSubscriptionGate(user: RequestUser | undefined, organizationId: string): boolean {
+    const role = user?.role;
+    if (role === UserRole.ADMIN || role === UserRole.SUPER_ADMIN) return true;
+
+    // Different parts of the app use different shapes for "current org"
+    const userOrgId = user?.organizationId || user?.orgId;
+    return Boolean(userOrgId && userOrgId === organizationId);
+  }
 
   @Get('products')
   @Public()
@@ -310,6 +348,18 @@ export class CompatController {
       if (type) {
         const orgType = this.mapToOrganizationType(type);
         where.type = orgType;
+
+        // Marketplace visibility gate:
+        // if requesting suppliers or service providers, only return orgs with an active subscription.
+        if (
+          orgType === OrganizationType.PRODUCT_SUPPLIER ||
+          orgType === OrganizationType.SERVICE_PROVIDER
+        ) {
+          const now = new Date();
+          where.subscriptions = {
+            some: this.marketplaceActiveSubscriptionWhere(now),
+          };
+        }
       }
       
       // Filter by region
@@ -421,8 +471,9 @@ export class CompatController {
 
   @Get('organizations/:id')
   @Public()
-  async getOrganizationById(@Param('id') id: string) {
+  async getOrganizationById(@Param('id') id: string, @Request() req: RequestWithUser) {
     try {
+      const now = new Date();
       const org = await this.prisma.organization.findUnique({
         where: { id },
         include: {
@@ -443,10 +494,44 @@ export class CompatController {
               },
             },
           },
+          // Include organization members with user details for messaging functionality.
+          // Ordered by creation date ascending; the first member (oldest) is assumed
+          // to be the primary contact for the organization.
+          members: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  email: true,
+                  role: true,
+                },
+              },
+            },
+            orderBy: { createdAt: 'asc' },
+          },
+          subscriptions: {
+            where: this.marketplaceActiveSubscriptionWhere(now),
+            select: { id: true },
+          },
         },
       });
       if (!org) {
         return { success: false, message: 'Organization not found', timestamp: new Date().toISOString() };
+      }
+
+      // Marketplace visibility gate for vendor profiles (supplier/service provider).
+      // Vendors without an active subscription should not appear as marketplace profiles.
+      // Allow bypass for admins and members of the organization.
+      if (
+        (org.type === OrganizationType.PRODUCT_SUPPLIER ||
+          org.type === OrganizationType.SERVICE_PROVIDER) &&
+        !this.canBypassMarketplaceSubscriptionGate(req?.user, org.id)
+      ) {
+        if (!org.subscriptions || org.subscriptions.length === 0) {
+          return { success: false, message: 'Organization not found', timestamp: new Date().toISOString() };
+        }
       }
       
       // Transform to include legacy fields

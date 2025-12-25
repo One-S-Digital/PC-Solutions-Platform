@@ -12,24 +12,38 @@ import {
   Request,
   Logger,
   BadRequestException,
+  ForbiddenException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CompleteProfileDto } from './dto/complete-profile.dto';
+import { InviteUserDto } from './dto/invite-user.dto';
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '@prisma/client';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Public } from '../auth/decorators/public.decorator';
 import { AllowPending } from '../auth/decorators/allow-pending.decorator';
+import { ConfigService } from '@nestjs/config';
+import { createClerkClient } from '@clerk/clerk-sdk-node';
 
 @Controller('users')
 @UseGuards(ClerkAuthGuard, RolesGuard)
 export class UsersController {
   private readonly logger = new Logger(UsersController.name);
+  private clerk: any;
 
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly configService: ConfigService,
+  ) {
+    const clerkSecretKey = this.configService.get<string>('CLERK_SECRET_KEY');
+    if (clerkSecretKey) {
+      this.clerk = createClerkClient({ secretKey: clerkSecretKey });
+    }
+  }
 
   /**
    * Extract the changedBy identifier from a request object.
@@ -60,6 +74,76 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  /**
+   * Invite a user by email and pre-assign a role.
+   *
+   * Permission rules:
+   * - SUPER_ADMIN can invite users with ANY role (including SUPER_ADMIN).
+   * - ADMIN can invite users with any role EXCEPT SUPER_ADMIN.
+   *
+   * Note: This creates a Clerk invitation; the user will appear in the DB after signup + webhook processing.
+   */
+  @Post('invite')
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
+  async inviteUser(@Body() dto: InviteUserDto, @Request() request) {
+    const callerRole = (request.context?.role || request.user?.role) as UserRole | undefined;
+
+    if (callerRole === UserRole.ADMIN && dto.role === UserRole.SUPER_ADMIN) {
+      throw new ForbiddenException('Only SUPER_ADMIN can create SUPER_ADMIN users');
+    }
+
+    if (!this.clerk) {
+      throw new BadRequestException('Clerk is not configured on the API');
+    }
+
+    // Clerk SDK (v5) invitation API.
+    // We keep types loose here to avoid coupling to SDK internals.
+    const maskedEmail = dto.email ? `${dto.email.substring(0, 3)}***@${dto.email.split('@')[1] || '***'}` : '***';
+    let invitation: any;
+    try {
+      invitation = await (this.clerk as any).invitations.createInvitation({
+        emailAddress: dto.email,
+        redirectUrl: dto.redirectUrl,
+        publicMetadata: { role: dto.role },
+      });
+    } catch (error: any) {
+      const status = error?.status ?? error?.response?.status;
+      const code = error?.errors?.[0]?.code ?? error?.code;
+      const message = error?.message ?? error?.errors?.[0]?.message ?? 'Unknown Clerk error';
+
+      this.logger.error('Failed to create Clerk invitation', {
+        maskedEmail,
+        role: dto.role,
+        status,
+        code,
+        message,
+        errors: error?.errors,
+      });
+
+      // Common cases: already invited / duplicate, validation, rate limiting
+      if (status === 429 || code === 'rate_limited') {
+        throw new BadRequestException('Invitation rate limit exceeded. Please try again later.');
+      }
+
+      if (status === 422 || code === 'duplicate_record' || code === 'form_identifier_exists') {
+        throw new BadRequestException('An invitation has already been sent to this email');
+      }
+
+      if (status >= 400 && status < 500) {
+        throw new BadRequestException('Failed to send invitation. Please check the email and try again.');
+      }
+
+      throw new InternalServerErrorException('Failed to send invitation. Please try again later.');
+    }
+
+    return {
+      success: true,
+      message: 'Invitation created successfully',
+      data: invitation,
+      timestamp: new Date().toISOString(),
+    };
+  }
+
   @Get()
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
   findAll(
@@ -78,16 +162,85 @@ export class UsersController {
 
   @Get('me')
   async getCurrentUser(@Request() request) {
-    const user = await this.usersService.findByClerkId(request.user.clerkId);
+    const clerkId = request.user.clerkId;
+    let user = await this.usersService.findByClerkId(clerkId);
+    
+    // Check if we need to handle admin role sync from Clerk
+    // This handles two cases:
+    // 1. User doesn't exist in DB but has admin role in Clerk -> auto-create
+    // 2. User exists in DB with wrong role but has admin role in Clerk -> auto-update
+    if (this.clerk) {
+      try {
+        const clerkUser = await this.clerk.users.getUser(clerkId);
+        const clerkRole = clerkUser.publicMetadata?.role as string;
+        
+        // Check if user has ADMIN or SUPER_ADMIN role in Clerk's publicMetadata
+        if (clerkRole === UserRole.ADMIN || clerkRole === UserRole.SUPER_ADMIN) {
+          
+          if (!user) {
+            // Case 1: User doesn't exist - auto-create admin user
+            this.logger.log(`🔐 [AUTO-CREATE ADMIN] Detected admin user ${clerkId} with role ${clerkRole} in Clerk publicMetadata. Auto-creating...`);
+            
+            const email = clerkUser.emailAddresses?.[0]?.emailAddress || `${clerkId}@admin.local`;
+            const firstName = clerkUser.firstName || 'Admin';
+            const lastName = clerkUser.lastName || 'User';
+            
+            // Use completeProfile to create the user with admin role
+            user = await this.usersService.completeProfile(clerkId, email, {
+              role: clerkRole as UserRole,
+              contactPerson: `${firstName} ${lastName}`.trim(),
+            });
+            
+            this.logger.log(`✅ [AUTO-CREATE ADMIN] Successfully created admin user ${clerkId} with role ${clerkRole}`);
+            
+            // Fetch the full user data
+            user = await this.usersService.findByClerkId(clerkId);
+            
+            if (user) {
+              return {
+                success: true,
+                data: user,
+              };
+            }
+          } else if (user.role !== clerkRole) {
+            // Case 2: User exists but role doesn't match Clerk - sync the role
+            this.logger.log(`🔄 [ADMIN ROLE SYNC] User ${clerkId} exists with role ${user.role} but Clerk has ${clerkRole}. Syncing...`);
+            
+            try {
+              // Update the user's role to match Clerk
+              await this.usersService.updateRoleByClerkId(clerkId, clerkRole as UserRole, 'system', 'Admin role sync from Clerk publicMetadata');
+              
+              // Refetch the user with updated role
+              user = await this.usersService.findByClerkId(clerkId);
+              
+              this.logger.log(`✅ [ADMIN ROLE SYNC] Successfully synced role for user ${clerkId} to ${clerkRole}`);
+              
+              if (user) {
+                return {
+                  success: true,
+                  data: user,
+                };
+              }
+            } catch (syncError) {
+              this.logger.warn(`⚠️ [ADMIN ROLE SYNC] Failed to sync role: ${syncError.message}`);
+              // Continue with existing user if sync fails
+            }
+          }
+        }
+      } catch (error) {
+        this.logger.warn(`⚠️ [AUTO-CREATE ADMIN] Failed to check/create admin user: ${error.message}`);
+        // Continue to return pending response if auto-creation fails
+      }
+    }
     
     if (!user) {
-      // User doesn't exist yet (webhook hasn't processed)
+      // User doesn't exist yet (webhook hasn't processed) and not an admin
       // Return a temporary response indicating the user is being processed
       return {
         success: true,
         data: {
           id: 'pending',
-          clerkId: request.user.clerkId,
+          clerkId: clerkId,
           email: request.user.email,
           role: 'PENDING',
           isPending: true,
@@ -162,13 +315,42 @@ export class UsersController {
   }
 
   @Patch(':id')
-  @Roles(UserRole.SUPER_ADMIN)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
     @Request() request,
   ) {
-    return this.usersService.update(id, updateUserDto, this.getChangedBy(request));
+    const callerRole = request.context?.role || request.user?.role;
+    return this.usersService.update(id, updateUserDto, this.getChangedBy(request), callerRole);
+  }
+
+  /**
+   * Elevate a user to an admin role (ADMIN or SUPER_ADMIN).
+   * Only SUPER_ADMIN can perform this action.
+   * This endpoint ensures proper audit trail and syncs with Clerk.
+   */
+  @Post(':id/elevate-to-admin')
+  @Roles(UserRole.SUPER_ADMIN)
+  async elevateToAdmin(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() body: { targetRole: UserRole; reason?: string },
+    @Request() request,
+  ) {
+    this.logger.log(`🔺 [ELEVATE] Super admin ${this.getChangedBy(request)} elevating user ${id} to ${body.targetRole}`);
+    
+    const result = await this.usersService.elevateToAdmin(
+      id,
+      body.targetRole,
+      this.getChangedBy(request),
+      body.reason,
+    );
+    
+    return {
+      success: true,
+      message: `User elevated to ${body.targetRole} successfully`,
+      data: result,
+    };
   }
 
   @Delete(':id')

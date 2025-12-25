@@ -144,6 +144,10 @@
     "subtitle": "Choose your role to get started",
     "title": "Join PC Solutions Platform"
   },
+  "profileCompletion": {
+    "message": "Please complete your profile to continue",
+    "emailFromAccount": "Email from account"
+  },
   "errors": {
     "profileCompletionFailedTitle": "Profile Completion Failed",
     "organisationNameRequired": "Organisation Name Required",

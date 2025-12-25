@@ -134,7 +134,7 @@ class MarketplaceService {
   }
 
   async updateProduct(id: string, data: ProductUpdateData): Promise<Product> {
-    const response = await apiService.put<Product>(API_ENDPOINTS.marketplace.products.update(id), data);
+    const response = await apiService.patch<Product>(API_ENDPOINTS.marketplace.products.update(id), data);
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to update product');
     }
@@ -180,7 +180,9 @@ class MarketplaceService {
 
   async getServiceById(id: string): Promise<Service> {
     const currentLang = i18n.language || 'en';
-    const response = await apiService.get<Service>(`/services/${id}?lang=${currentLang}`);
+    const response = await apiService.get<Service>(
+      `${API_ENDPOINTS.marketplace.services.get(id)}?lang=${currentLang}`
+    );
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to fetch service');
     }
@@ -188,7 +190,7 @@ class MarketplaceService {
   }
 
   async createService(data: ServiceCreateData): Promise<Service> {
-    const response = await apiService.post<Service>('/services', data);
+    const response = await apiService.post<Service>(API_ENDPOINTS.marketplace.services.create, data);
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to create service');
     }
@@ -196,7 +198,7 @@ class MarketplaceService {
   }
 
   async updateService(id: string, data: ServiceUpdateData): Promise<Service> {
-    const response = await apiService.put<Service>(`/services/${id}`, data);
+    const response = await apiService.patch<Service>(API_ENDPOINTS.marketplace.services.update(id), data);
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to update service');
     }
@@ -204,7 +206,7 @@ class MarketplaceService {
   }
 
   async deleteService(id: string): Promise<void> {
-    const response = await apiService.delete(`/services/${id}`);
+    const response = await apiService.delete(API_ENDPOINTS.marketplace.services.delete(id));
     if (!response.success) {
       throw new Error(response.message || 'Failed to delete service');
     }

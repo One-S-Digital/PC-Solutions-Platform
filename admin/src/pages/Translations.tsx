@@ -17,6 +17,7 @@ import {
   Package,
   Database,
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { useApiClient, apiService } from '../services/api';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import Card from '../components/design-system/Card';
@@ -33,6 +34,18 @@ interface TranslationKey {
       needsReview: boolean;
     };
   };
+}
+
+interface TranslationIssue {
+  type: 'missing' | 'needsReview';
+  namespace: string;
+  key: string;
+  lang: string;
+  enValue?: string | null;
+  value?: string | null;
+  needsReview?: boolean;
+  updatedAt?: string | null;
+  updatedBy?: string | null;
 }
 
 const LANGUAGES = ['en', 'fr', 'de'];
@@ -59,10 +72,18 @@ export default function Translations() {
   const [newReleaseVersion, setNewReleaseVersion] = useState('');
   const [newReleaseDescription, setNewReleaseDescription] = useState('');
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
-  const [activeTab, setActiveTab] = useState<'translations' | 'audit' | 'releases'>('translations');
+  const [activeTab, setActiveTab] = useState<'translations' | 'issues' | 'audit' | 'releases'>('translations');
   const [forceRetranslate, setForceRetranslate] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [includePlaceholders, setIncludePlaceholders] = useState(false);
+
+  // Issues tab state (separate from main list filters)
+  const [issuesType, setIssuesType] = useState<'missing' | 'needsReview'>('needsReview');
+  const [issuesLang, setIssuesLang] = useState<'en' | 'fr' | 'de'>('fr');
+  const [issuesNamespace, setIssuesNamespace] = useState<string>('');
+  const [issuesSearchQuery, setIssuesSearchQuery] = useState('');
+  const [issuesPage, setIssuesPage] = useState(1);
+  const [selectedIssueRows, setSelectedIssueRows] = useState<Set<string>>(new Set());
 
   const apiClient = useApiClient();
   const queryClient = useQueryClient();
@@ -131,8 +152,47 @@ export default function Translations() {
     setPage(1);
   }, [selectedNamespace, searchQuery]);
 
+  // Reset issues pagination when issues filters change
+  useEffect(() => {
+    setIssuesPage(1);
+    setSelectedIssueRows(new Set());
+  }, [issuesType, issuesLang, issuesNamespace, issuesSearchQuery]);
+
   const keys: TranslationKey[] = keysResponse?.data?.data || [];
   const pagination = keysResponse?.data?.pagination;
+
+  // Issues query (missing translations + needs review)
+  const {
+    data: issuesResponse,
+    isLoading: issuesLoading,
+    error: issuesError,
+    refetch: refetchIssues,
+  } = useQuery({
+    queryKey: [
+      'translation-issues',
+      issuesType,
+      issuesLang,
+      issuesNamespace,
+      issuesSearchQuery,
+      issuesPage,
+      limit,
+    ],
+    queryFn: async () => {
+      const response = await apiService.getTranslationIssues(apiClient, {
+        type: issuesType,
+        lang: issuesLang,
+        namespace: issuesNamespace || undefined,
+        search: issuesSearchQuery || undefined,
+        page: issuesPage,
+        limit,
+      });
+      return response;
+    },
+    enabled: !!apiClient && activeTab === 'issues',
+  });
+
+  const issues: TranslationIssue[] = issuesResponse?.data?.data || [];
+  const issuesPagination = issuesResponse?.data?.pagination;
 
   // Update translation mutation
   const updateMutation = useMutation({
@@ -182,7 +242,10 @@ export default function Translations() {
     onSuccess: () => {
       setNewReleaseVersion('');
       setNewReleaseDescription('');
-      alert('Translation release created successfully!');
+      toast.success('Translation release created.');
+    },
+    onError: (error: any) => {
+      toast.error(`Failed to create release: ${error.response?.data?.message || error.message}`);
     },
   });
 
@@ -203,10 +266,12 @@ export default function Translations() {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['translation-keys'] });
-      alert(`Successfully translated ${data.data.translated} ${data.data.translated === 1 ? 'translation' : 'translations'}!`);
+      toast.success(
+        `Translated ${data.data.translated} ${data.data.translated === 1 ? 'item' : 'items'}.`,
+      );
     },
     onError: (error: any) => {
-      alert(`Translation failed: ${error.response?.data?.message || error.message}`);
+      toast.error(`Translation failed: ${error.response?.data?.message || error.message}`);
     },
   });
 
@@ -217,10 +282,10 @@ export default function Translations() {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['translation-keys'] });
-      alert(`Successfully cleaned up ${data.data.cleaned} translations with prefixes!`);
+      toast.success(`Cleaned ${data.data.cleaned} translation(s).`);
     },
     onError: (error: any) => {
-      alert(`Cleanup failed: ${error.response?.data?.message || error.message}`);
+      toast.error(`Cleanup failed: ${error.response?.data?.message || error.message}`);
     },
   });
 
@@ -231,16 +296,10 @@ export default function Translations() {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['translation-keys'] });
-      alert(
-        `✅ English cleanup complete!\n\n` +
-          `📊 Updated ${data.data.cleaned} English translations that looked like raw keys,\n` +
-          `out of ${data.data.affected} total English entries scanned.\n\n` +
-          `🔄 Translation version updated - frontend will reload translations automatically.\n\n` +
-          `💡 If you don't see changes immediately, refresh the page (Ctrl+R or F5) to clear the browser cache.`,
-      );
+      toast.success(`Fixed ${data.data.cleaned} English label(s).`);
     },
     onError: (error: any) => {
-      alert(`Cleanup failed: ${error.response?.data?.message || error.message}`);
+      toast.error(`Cleanup failed: ${error.response?.data?.message || error.message}`);
     },
   });
 
@@ -258,63 +317,214 @@ export default function Translations() {
         .map(([key, count]) => `  ${key}: ${count} keys`)
         .join('\n');
       
-      alert(
-        `✅ Successfully imported ${data.data.imported} translations from JSON files!\n\n` +
-        `📊 Details:\n${details}\n\n` +
-        `🔄 Translation cache cleared - you can now translate these keys.`
-      );
+      toast.success(`Imported ${data.data.imported} translation(s) from JSON files.`);
     },
     onError: (error: any) => {
-      alert(`Import failed: ${error.response?.data?.message || error.message}`);
+      toast.error(`Import failed: ${error.response?.data?.message || error.message}`);
     },
   });
 
-  // Full Sync mutation - does everything in one click!
-  // Uses extended timeout since this can take 5-10 minutes
+  // Full Sync state
+  const [fullSyncJobId, setFullSyncJobId] = useState<string | null>(null);
+  const [fullSyncStatus, setFullSyncStatus] = useState<'idle' | 'polling' | 'done' | 'error'>('idle');
+
+  // Full Sync mutation - starts async job and returns jobId
   const fullSyncMutation = useMutation({
     mutationFn: async () => {
-      // Create a custom axios instance with extended timeout for this long operation
-      const longTimeoutClient = apiClient;
-      // Note: The actual timeout is set on the client creation, but the server will continue
-      // even if the client times out. We handle this gracefully.
-      const result = await apiService.fullSync(longTimeoutClient);
-      return result;
+      const result = await apiService.fullSync(apiClient);
+      if (result.status === 202 && result.data?.jobId) {
+        return result.data.jobId;
+      }
+      throw new Error('Failed to start full sync job');
     },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['translation-keys'] });
-      queryClient.invalidateQueries({ queryKey: ['namespaces'] });
-      
-      alert(
-        `🎉 Full Sync Complete!\n\n` +
-        `📥 Imported: ${data.data.imported} EN keys\n` +
-        `🇫🇷 Translated FR: ${data.data.translatedFr} keys\n` +
-        `🇩🇪 Translated DE: ${data.data.translatedDe} keys\n` +
-        `📤 Exported: ${data.data.exported} keys to JSON files\n\n` +
-        `✅ Now restart your frontend (pnpm dev) and refresh the page!`
-      );
+    onSuccess: (jobId) => {
+      setFullSyncJobId(jobId);
+      setFullSyncStatus('polling');
     },
     onError: (error: any) => {
-      const isTimeout = error.code === 'ECONNABORTED' || error.message?.includes('timeout');
-      
-      if (isTimeout) {
-        alert(
-          `⏱️ Request timed out, but the sync is still running on the server!\n\n` +
-          `The translation process takes 5-10 minutes. The server will continue processing.\n\n` +
-          `Please wait a few minutes, then:\n` +
-          `1. Restart your frontend (pnpm dev)\n` +
-          `2. Refresh this page\n` +
-          `3. Check the translation list for updated entries`
-        );
-      } else if (error.response?.status === 429) {
-        alert(
-          `⚠️ Rate limited: Please wait 5 minutes before running Full Sync again.\n\n` +
-          `This limit prevents overloading the translation service.`
-        );
+      if (error.response?.status === 429) {
+        toast.warning('Rate limited: please wait 5 minutes before running Full Sync again.');
       } else {
-        alert(`Full sync failed: ${error.response?.data?.message || error.message}\n\nTry running individual steps from Advanced Options instead.`);
+        toast.error(`Failed to start full sync: ${error.response?.data?.message || error.message}`);
       }
+      setFullSyncStatus('error');
     },
   });
+
+  // Retry wrapper with exponential backoff for Render hibernation resilience
+  const pollWithRetry = async (
+    fn: () => Promise<any>,
+    maxAttempts: number = 5
+  ): Promise<any> => {
+    const delays = [1000, 2000, 4000, 8000]; // 1s, 2s, 4s, 8s
+    let lastError: any;
+
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      try {
+        return await fn();
+      } catch (error: any) {
+        lastError = error;
+        
+        // Check if error is retryable (502, 503, 504, network error, or timeout)
+        const isRetryable =
+          error?.response?.status === 502 ||
+          error?.response?.status === 503 ||
+          error?.response?.status === 504 ||
+          error?.code === 'ERR_NETWORK' ||
+          error?.code === 'ECONNABORTED' ||
+          error?.message?.includes('timeout');
+
+        if (!isRetryable || attempt === maxAttempts - 1) {
+          // Not retryable or last attempt - throw immediately
+          throw error;
+        }
+
+        // Log retry with clear message
+        const delay = delays[Math.min(attempt, delays.length - 1)];
+        console.log(
+          `🔄 API waking up, retrying... (attempt ${attempt + 1}/${maxAttempts}, waiting ${delay}ms)`
+        );
+        
+        // Wait with exponential backoff
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
+    }
+
+    throw lastError;
+  };
+
+  // Warm up API with health check before starting polling (optional)
+  const warmUpApi = async () => {
+    try {
+      // Use cache buster to ensure fresh health check and wake up hibernated instance
+      // No custom headers to avoid CORS preflight issues
+      await apiClient.get(`/health?ts=${Date.now()}`);
+      console.log('✅ API health check successful');
+    } catch (error) {
+      // Non-blocking: if health check fails, continue anyway
+      console.warn('⚠️ API health check failed, continuing anyway:', error);
+    }
+  };
+
+  // Poll job status with resilient retry on 503/network errors
+  useEffect(() => {
+    if (fullSyncStatus !== 'polling' || !fullSyncJobId) return;
+
+    let pollInterval = 10000; // Start with 10 seconds
+    let consecutiveFailures = 0;
+    let consecutiveMissingJobs = 0; // Track transient job missing cases
+    let pollTimeout: NodeJS.Timeout;
+    let isMounted = true;
+
+    const poll = async () => {
+      if (!isMounted) return;
+
+      try {
+        // Wrap the API call with retry logic for Render hibernation
+        const result = await pollWithRetry(() =>
+          apiService.getFullSyncStatus(apiClient, fullSyncJobId)
+        );
+        const job = result.data?.job;
+
+        if (!job) {
+          // Treat missing job as transient - allow next poll before erroring
+          consecutiveMissingJobs++;
+          if (consecutiveMissingJobs >= 2) {
+            // Only error after 2 consecutive missing jobs (transient handling)
+            if (!isMounted) return;
+            clearTimeout(pollTimeout);
+            setFullSyncStatus('error');
+            toast.error('Job not found or expired. The sync may have completed or been cancelled.');
+            return;
+          }
+          // Allow next scheduled poll to run
+          console.warn('⚠️ Job not found, will retry on next poll cycle');
+          toast.warning('Job status temporarily unavailable, retrying...', { duration: 3000 });
+          return;
+        }
+
+        // Reset missing job counter on success
+        consecutiveMissingJobs = 0;
+
+        // Reset interval on success
+        consecutiveFailures = 0;
+        pollInterval = 10000;
+
+        if (job.status === 'done') {
+          if (!isMounted) return;
+          clearTimeout(pollTimeout);
+          setFullSyncStatus('done');
+          queryClient.invalidateQueries({ queryKey: ['translation-keys'] });
+          queryClient.invalidateQueries({ queryKey: ['namespaces'] });
+          
+          const duration = job.duration ? `${Math.round(job.duration / 1000)}s` : 'unknown';
+          const resultData = job.result;
+          toast.success(`Full Sync complete (${duration}).`);
+          toast.message(
+            `Imported: ${resultData?.imported || 0} · FR: ${resultData?.translatedFr || 0} · DE: ${
+              resultData?.translatedDe || 0
+            } · Exported: ${resultData?.exported || 0}`,
+          );
+          
+          // Reset after showing alert
+          setTimeout(() => {
+            if (isMounted) {
+              setFullSyncJobId(null);
+              setFullSyncStatus('idle');
+            }
+          }, 1000);
+          return;
+        } else if (job.status === 'error') {
+          if (!isMounted) return;
+          clearTimeout(pollTimeout);
+          setFullSyncStatus('error');
+          toast.error(job.error?.message || 'Full Sync failed.');
+          setFullSyncJobId(null);
+          setFullSyncStatus('idle');
+          return;
+        }
+        // If status is 'queued' or 'running', continue polling
+      } catch (error: any) {
+        // Only log non-retryable errors or final failures after all retries
+        if (
+          error?.response?.status !== 502 &&
+          error?.response?.status !== 503 &&
+          error?.response?.status !== 504 &&
+          error?.code !== 'ERR_NETWORK' &&
+          error?.code !== 'ECONNABORTED'
+        ) {
+          console.error('Error polling job status (non-retryable):', error);
+        }
+        
+        consecutiveFailures++;
+        
+        // Backoff: 10s → 20s → 30s (max) for consecutive poll cycles
+        // Note: Individual requests already retry with exponential backoff via pollWithRetry
+        if (consecutiveFailures === 1) {
+          pollInterval = 20000;
+        } else if (consecutiveFailures >= 2) {
+          pollInterval = 30000;
+        }
+      }
+
+      // Schedule next poll
+      if (isMounted) {
+        pollTimeout = setTimeout(poll, pollInterval);
+      }
+    };
+
+    // Warm up API before starting polling (non-blocking)
+    warmUpApi().then(() => {
+      if (isMounted) {
+        pollTimeout = setTimeout(poll, pollInterval);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      clearTimeout(pollTimeout);
+    };
+  }, [fullSyncStatus, fullSyncJobId, apiClient, queryClient]);
 
   // Auto-fix hardcoded strings mutation
   const autoFixMutation = useMutation({
@@ -445,7 +655,95 @@ export default function Translations() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['translation-keys'] });
       setSelectedKeys(new Set());
-      alert(`Successfully approved ${data.data.approved} translations!`);
+      toast.success(`Approved ${data.data.approved} translation(s).`);
+    },
+  });
+
+  // Bulk approve for issues tab (reuses same endpoint but separate selection state)
+  const bulkApproveIssuesMutation = useMutation({
+    mutationFn: async (keys: Array<{ namespace: string; key: string; lang: string }>) => {
+      return apiService.bulkApproveTranslations(apiClient, keys);
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['translation-issues'] });
+      queryClient.invalidateQueries({ queryKey: ['translation-keys'] });
+      setSelectedIssueRows(new Set());
+      toast.success(`Approved ${data.data.approved} translation(s).`);
+    },
+    onError: (error: any) => {
+      toast.error(`Approve failed: ${error.response?.data?.message || error.message}`);
+    },
+  });
+
+  // Translate a set of missing keys (Issues tab)
+  const translateIssuesMutation = useMutation({
+    mutationFn: async (items: Array<{ namespace: string; key: string; lang: string }>) => {
+      if (items.length === 0) {
+        return { translated: 0 };
+      }
+      const targetLang = items[0].lang;
+      const byNamespace = new Map<string, string[]>();
+      for (const item of items) {
+        if (item.lang !== targetLang) {
+          throw new Error('All selected rows must share the same target language');
+        }
+        const list = byNamespace.get(item.namespace) ?? [];
+        list.push(item.key);
+        byNamespace.set(item.namespace, list);
+      }
+
+      const results = await Promise.all(
+        Array.from(byNamespace.entries()).map(async ([ns, keys]) => {
+          const res = await apiService.translateMissing(
+            apiClient,
+            'en',
+            targetLang,
+            ns,
+            keys,
+            false,
+            includePlaceholders,
+          );
+          return res.data.translated || 0;
+        }),
+      );
+
+      return { translated: results.reduce((a, b) => a + b, 0) };
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['translation-issues'] });
+      queryClient.invalidateQueries({ queryKey: ['translation-keys'] });
+      toast.success(`Translated ${data.translated} key(s) to ${issuesLang.toUpperCase()}.`);
+    },
+    onError: (error: any) => {
+      toast.error(`Translation failed: ${error.response?.data?.message || error.message}`);
+    },
+  });
+
+  // Row-level: translate one key to FR/DE quickly (Translations tab)
+  const translateSingleKeyMutation = useMutation({
+    mutationFn: async (item: { namespace: string; key: string; targets: string[] }) => {
+      const results = await Promise.all(
+        item.targets.map(async (targetLang) => {
+          const res = await apiService.translateMissing(
+            apiClient,
+            'en',
+            targetLang,
+            item.namespace,
+            [item.key],
+            forceRetranslate,
+            includePlaceholders,
+          );
+          return res.data.translated || 0;
+        }),
+      );
+      return results.reduce((a, b) => a + b, 0);
+    },
+    onSuccess: (translated) => {
+      queryClient.invalidateQueries({ queryKey: ['translation-keys'] });
+      toast.success(`Translated ${translated} item(s).`);
+    },
+    onError: (error: any) => {
+      toast.error(`Translation failed: ${error.response?.data?.message || error.message}`);
     },
   });
 
@@ -554,7 +852,7 @@ export default function Translations() {
 
   const handleCreateRelease = () => {
     if (!newReleaseVersion) {
-      alert('Please enter a version number');
+      toast.warning('Please enter a version number.');
       return;
     }
     releaseMutation.mutate({
@@ -589,7 +887,7 @@ export default function Translations() {
       }
     });
     if (keysToApprove.length === 0) {
-      alert('Please select translations to approve');
+      toast.warning('Please select translations to approve.');
       return;
     }
     bulkApproveMutation.mutate(keysToApprove);
@@ -673,6 +971,50 @@ export default function Translations() {
     return selectedKeys.has(`${namespace}::${key}::${lang}`);
   };
 
+  const issueRowId = (i: TranslationIssue) => `${i.type}::${i.namespace}::${i.key}::${i.lang}`;
+
+  const toggleIssueRowSelection = (issue: TranslationIssue) => {
+    const id = issueRowId(issue);
+    setSelectedIssueRows((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const isIssueRowSelected = (issue: TranslationIssue) => {
+    return selectedIssueRows.has(issueRowId(issue));
+  };
+
+  const openIssueInEditor = (issue: TranslationIssue) => {
+    setActiveTab('translations');
+    setSelectedNamespace(issue.namespace);
+    setSearchQuery(issue.key);
+    setPage(1);
+    toast.message(`Opened ${issue.namespace}:${issue.key} in Translations tab.`);
+  };
+
+  const copyKeyToClipboard = async (namespace: string, key: string) => {
+    try {
+      await navigator.clipboard.writeText(`${namespace}:${key}`);
+      toast.success('Copied key to clipboard.');
+    } catch (e) {
+      // Fallback for older browsers
+      try {
+        const textArea = document.createElement('textarea');
+        textArea.value = `${namespace}:${key}`;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        toast.success('Copied key to clipboard.');
+      } catch {
+        toast.error('Failed to copy key.');
+      }
+    }
+  };
+
   return (
     <div className="space-y-6 p-6">
       {/* Header */}
@@ -708,6 +1050,17 @@ export default function Translations() {
             } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
           >
             {t('admin:translations.tabs.translations', 'Translations')}
+          </button>
+          <button
+            onClick={() => setActiveTab('issues')}
+            className={`${
+              activeTab === 'issues'
+                ? 'border-swiss-mint text-swiss-mint'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2`}
+          >
+            <AlertCircle className="h-4 w-4" />
+            {t('admin:translations.tabs.issues', 'Issues')}
           </button>
           <button
             onClick={() => setActiveTab('audit')}
@@ -832,14 +1185,16 @@ export default function Translations() {
                   fullSyncMutation.mutate();
                 }
               }}
-              disabled={fullSyncMutation.isPending}
+              disabled={fullSyncMutation.isPending || fullSyncStatus === 'polling'}
               variant="primary"
               className="text-lg px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-lg"
             >
-              {fullSyncMutation.isPending ? (
+              {fullSyncMutation.isPending || fullSyncStatus === 'polling' ? (
                 <>
                   <RefreshCw className="w-5 h-5 mr-2 animate-spin inline" />
-                  {t('admin:translations.oneClickSync.syncing', 'Syncing... (this takes a few minutes)')}
+                  {fullSyncStatus === 'polling' 
+                    ? t('admin:translations.oneClickSync.syncing', 'Syncing... (this takes a few minutes)')
+                    : t('admin:translations.oneClickSync.starting', 'Starting sync...')}
                 </>
               ) : (
                 <>
@@ -1258,7 +1613,56 @@ export default function Translations() {
                         );
                       })}
                       <td className="px-4 py-3 whitespace-nowrap text-sm">
-                        {/* Additional actions can go here */}
+                        <div className="flex items-center gap-3">
+                          <button
+                            onClick={() => copyKeyToClipboard(item.namespace, item.key)}
+                            className="text-gray-600 text-xs hover:underline"
+                          >
+                            {t('admin:translations.issues.actions.copy', 'Copy')}
+                          </button>
+                          <button
+                            onClick={() =>
+                              translateSingleKeyMutation.mutate({
+                                namespace: item.namespace,
+                                key: item.key,
+                                targets: ['fr', 'de'],
+                              })
+                            }
+                            disabled={translateSingleKeyMutation.isPending}
+                            className="text-emerald-700 text-xs hover:underline disabled:opacity-50"
+                            title={t('admin:translations.advanced.translateMissing', 'Translate Missing (FR/DE)')}
+                          >
+                            {t('admin:translations.issues.actions.translate', 'Translate')}
+                          </button>
+                          <button
+                            onClick={async () => {
+                              if (
+                                !confirm(
+                                  `Delete translations for ${item.namespace}:${item.key}?\n\nThis will remove any existing EN/FR/DE values for this key.`,
+                                )
+                              ) {
+                                return;
+                              }
+                              try {
+                                const langsToDelete = LANGUAGES.filter(
+                                  (l) => !!item.translations[l]?.value,
+                                );
+                                await Promise.all(
+                                  langsToDelete.map((l) =>
+                                    apiService.deleteTranslation(apiClient, item.namespace, item.key, l),
+                                  ),
+                                );
+                                queryClient.invalidateQueries({ queryKey: ['translation-keys'] });
+                                toast.success('Deleted translation(s).');
+                              } catch (err: any) {
+                                toast.error(`Delete failed: ${err.response?.data?.message || err.message}`);
+                              }
+                            }}
+                            className="text-red-600 text-xs hover:underline"
+                          >
+                            {t('common:buttons.delete', 'Delete')}
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -1334,6 +1738,341 @@ export default function Translations() {
         </div>
       </Card>
         </>
+      )}
+
+      {activeTab === 'issues' && (
+        <div className="space-y-6">
+          <Card className="p-6">
+            <div className="flex items-center justify-between gap-4 flex-wrap">
+              <div>
+                <h2 className="text-xl font-semibold flex items-center gap-2">
+                  <AlertCircle className="h-5 w-5 text-orange-600" />
+                  {t('admin:translations.issues.title', 'Translation Issues')}
+                </h2>
+                <p className="text-sm text-gray-600 mt-1">
+                  {t(
+                    'admin:translations.issues.subtitle',
+                    'Triage missing translations and review queue in one place.',
+                  )}
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <Button onClick={() => refetchIssues()} variant="secondary" className="flex items-center gap-2">
+                  <RefreshCw className="h-4 w-4" />
+                  {t('common:buttons.refresh', 'Refresh')}
+                </Button>
+              </div>
+            </div>
+
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('admin:translations.issues.filters.type', 'Issue Type')}
+                </label>
+                <select
+                  value={issuesType}
+                  onChange={(e) => setIssuesType(e.target.value as any)}
+                  className="w-full border rounded px-3 py-2"
+                >
+                  <option value="needsReview">{t('admin:translations.issues.types.needsReview', 'Needs review')}</option>
+                  <option value="missing">{t('admin:translations.issues.types.missing', 'Missing translation')}</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('admin:translations.issues.filters.language', 'Language')}
+                </label>
+                <select
+                  value={issuesLang}
+                  onChange={(e) => setIssuesLang(e.target.value as any)}
+                  className="w-full border rounded px-3 py-2"
+                >
+                  <option value="fr">{t('common:languageLabels.fr', 'Français')}</option>
+                  <option value="de">{t('common:languageLabels.de', 'Deutsch')}</option>
+                  <option value="en">{t('common:languageLabels.en', 'English')}</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('admin:translations.filters.namespace', 'Namespace')}
+                </label>
+                <select
+                  value={issuesNamespace}
+                  onChange={(e) => setIssuesNamespace(e.target.value)}
+                  className="w-full border rounded px-3 py-2"
+                >
+                  <option value="">{t('common:allnamespaces', 'All namespaces')}</option>
+                  {namespaces.map((ns) => (
+                    <option key={ns} value={ns}>
+                      {ns}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('admin:translations.filters.search', 'Search')}
+                </label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder={t('admin:translations.searchPlaceholder', 'Search for keys or values...')}
+                    value={issuesSearchQuery}
+                    onChange={(e) => setIssuesSearchQuery(e.target.value)}
+                    className="w-full border rounded px-3 py-2 pl-10"
+                  />
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          <Card className="p-6">
+            {issuesError && (
+              <div className="text-red-600 text-sm mb-4">
+                {t('admin:translations.issues.error', 'Failed to load issues.')}
+              </div>
+            )}
+
+            {/* Bulk actions */}
+            {selectedIssueRows.size > 0 && (
+              <div className="mb-4 flex items-center justify-between gap-3 flex-wrap">
+                <div className="text-sm text-gray-700">
+                  {t('admin:translations.issues.selectedCount', '{{count}} selected', {
+                    count: selectedIssueRows.size,
+                  })}
+                </div>
+                <div className="flex gap-2 flex-wrap">
+                  {issuesType === 'missing' ? (
+                    <Button
+                      variant="secondary"
+                      disabled={translateIssuesMutation.isPending}
+                      onClick={() => {
+                        const selected = issues
+                          .filter((i) => selectedIssueRows.has(issueRowId(i)))
+                          .map((i) => ({ namespace: i.namespace, key: i.key, lang: i.lang }));
+                        translateIssuesMutation.mutate(selected);
+                      }}
+                      className="text-sm"
+                    >
+                      {translateIssuesMutation.isPending
+                        ? t('admin:translations.issues.translating', 'Translating...')
+                        : t('admin:translations.issues.translateSelected', 'Translate Selected')}
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="secondary"
+                      disabled={bulkApproveIssuesMutation.isPending}
+                      onClick={() => {
+                        const keysToApprove = issues
+                          .filter((i) => selectedIssueRows.has(issueRowId(i)))
+                          .map((i) => ({ namespace: i.namespace, key: i.key, lang: i.lang }));
+                        bulkApproveIssuesMutation.mutate(keysToApprove);
+                      }}
+                      className="text-sm"
+                    >
+                      {bulkApproveIssuesMutation.isPending
+                        ? t('admin:translations.moreOptions.approving', 'Approving...')
+                        : t('admin:translations.moreOptions.approveSelected', 'Approve {{count}} Selected', {
+                            count: selectedIssueRows.size,
+                          })}
+                    </Button>
+                  )}
+
+                  <Button
+                    variant="ghost"
+                    className="text-sm"
+                    onClick={() => setSelectedIssueRows(new Set())}
+                  >
+                    {t('common:buttons.clear', 'Clear')}
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {issuesLoading ? (
+              <div className="flex items-center justify-center h-40">
+                <LoadingSpinner size="large" />
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-12">
+                        <input
+                          type="checkbox"
+                          checked={
+                            issues.length > 0 &&
+                            issues.every((i) => selectedIssueRows.has(issueRowId(i)))
+                          }
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedIssueRows(new Set(issues.map((i) => issueRowId(i))));
+                            } else {
+                              setSelectedIssueRows(new Set());
+                            }
+                          }}
+                        />
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {t('admin:translations.table.namespace', 'Namespace')}
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {t('admin:translations.table.key', 'Key')}
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {t('common:languageLabels.en', 'English')}
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {t(`common:languageLabels.${issuesLang}`, issuesLang)}
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {t('admin:translations.issues.table.issue', 'Issue')}
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {t('admin:translations.table.actions', 'Actions')}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {issues.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="px-4 py-8 text-center text-gray-500">
+                          {t('admin:translations.issues.none', 'No issues found')}
+                        </td>
+                      </tr>
+                    ) : (
+                      issues.map((issue) => (
+                        <tr key={issueRowId(issue)} className="hover:bg-gray-50">
+                          <td className="px-4 py-3 whitespace-nowrap text-sm">
+                            <input
+                              type="checkbox"
+                              checked={isIssueRowSelected(issue)}
+                              onChange={() => toggleIssueRowSelection(issue)}
+                            />
+                          </td>
+                          <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {issue.namespace}
+                          </td>
+                          <td className="px-4 py-3 whitespace-nowrap text-sm font-mono text-gray-600">
+                            {issue.key}
+                          </td>
+                          <td className="px-4 py-3 text-sm text-gray-800">
+                            {issue.enValue || <span className="text-gray-400 italic">—</span>}
+                          </td>
+                          <td className="px-4 py-3 text-sm">
+                            {issue.type === 'missing' ? (
+                              <span className="text-gray-400 italic">
+                                {t('admin:translations.missing', 'Missing')}
+                              </span>
+                            ) : (
+                              <span className="text-orange-700">{issue.value}</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 whitespace-nowrap text-sm">
+                            {issue.type === 'missing' ? (
+                              <span className="inline-flex items-center px-2 py-1 text-xs rounded bg-red-50 text-red-700 border border-red-200">
+                                {t('admin:translations.issues.types.missing', 'Missing translation')}
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center px-2 py-1 text-xs rounded bg-orange-50 text-orange-700 border border-orange-200">
+                                {t('admin:translations.stats.needsReview', 'Needs Review')}
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 whitespace-nowrap text-sm">
+                            <div className="flex gap-2 flex-wrap">
+                              <button
+                                onClick={() => openIssueInEditor(issue)}
+                                className="text-blue-600 text-xs hover:underline"
+                              >
+                                {t('admin:translations.issues.actions.open', 'Open')}
+                              </button>
+                              <button
+                                onClick={() => copyKeyToClipboard(issue.namespace, issue.key)}
+                                className="text-gray-600 text-xs hover:underline"
+                              >
+                                {t('admin:translations.issues.actions.copy', 'Copy')}
+                              </button>
+                              {issue.type === 'missing' ? (
+                                <button
+                                  onClick={() =>
+                                    translateIssuesMutation.mutate([
+                                      { namespace: issue.namespace, key: issue.key, lang: issue.lang },
+                                    ])
+                                  }
+                                  className="text-emerald-700 text-xs hover:underline"
+                                  disabled={translateIssuesMutation.isPending}
+                                >
+                                  {t('admin:translations.issues.actions.translate', 'Translate')}
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() =>
+                                    reviewMutation.mutate({
+                                      namespace: issue.namespace,
+                                      key: issue.key,
+                                      lang: issue.lang,
+                                    })
+                                  }
+                                  className="text-emerald-700 text-xs hover:underline"
+                                  disabled={reviewMutation.isPending}
+                                >
+                                  {t('admin:translations.issues.actions.markReviewed', 'Mark reviewed')}
+                                </button>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* Issues pagination */}
+            {issuesPagination && issuesPagination.totalPages > 1 && (
+              <div className="mt-4 flex items-center justify-between">
+                <div className="text-sm text-gray-700">
+                  {t('admin:translations.pagination.showingResults', 'Showing {{start}} to {{end}} of {{total}} results', {
+                    start: (issuesPagination.page - 1) * issuesPagination.limit + 1,
+                    end: Math.min(issuesPagination.page * issuesPagination.limit, issuesPagination.total),
+                    total: issuesPagination.total,
+                  })}
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    onClick={() => setIssuesPage(issuesPage - 1)}
+                    disabled={issuesPage === 1}
+                    variant="secondary"
+                    className="text-sm px-3 py-1"
+                  >
+                    {t('common:buttons.previous', 'Previous')}
+                  </Button>
+                  <span className="flex items-center px-4 text-sm text-gray-700">
+                    {t('admin:translations.pagination.pageOfTotal', 'Page {{page}} of {{totalPages}}', {
+                      page: issuesPagination.page,
+                      totalPages: issuesPagination.totalPages,
+                    })}
+                  </span>
+                  <Button
+                    onClick={() => setIssuesPage((p) => p + 1)}
+                    disabled={!issuesPagination.hasMore}
+                    variant="secondary"
+                    className="text-sm px-3 py-1"
+                  >
+                    {t('common:buttons.next', 'Next')}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </Card>
+        </div>
       )}
 
       {activeTab === 'audit' && (

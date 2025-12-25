@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useApiClient } from '../services/api';
 import { 
   CheckCircleIcon,
@@ -33,12 +34,12 @@ interface PolicyReviewFormData {
   contentPreview: string;
 }
 
-const POLICY_CATEGORIES = [
-  'Education Policy',
-  'Health & Safety',
-  'Labor & Employment',
-  'Child Protection',
-  'Other',
+const getPolicyCategories = (t: (key: string) => string) => [
+  { value: 'EducationPolicy', label: t('content:policyCategories.EducationPolicy') },
+  { value: 'Health&Safety', label: t('content:policyCategories.Health&Safety') },
+  { value: 'Labor&Employment', label: t('content:policyCategories.Labor&Employment') },
+  { value: 'ChildProtection', label: t('content:policyCategories.ChildProtection') },
+  { value: 'Other', label: t('content:policyCategories.Other') },
 ];
 
 const PolicyCard: React.FC<{
@@ -81,6 +82,7 @@ const PolicyReviewPanel: React.FC<{
   onReject: (id: string, reason: string) => void;
   onClose: () => void;
 }> = ({ policy, onApprove, onReject, onClose }) => {
+  const { t } = useTranslation(['content', 'admin']);
   const [form, setForm] = useState<PolicyReviewFormData>({
     title: policy.title,
     contentCategory: policy.contentCategory || 'Other',
@@ -140,8 +142,8 @@ const PolicyReviewPanel: React.FC<{
             onChange={e => setForm({...form, contentCategory: e.target.value})}
             className="w-full border rounded px-3 py-2"
           >
-            {POLICY_CATEGORIES.map(cat => (
-              <option key={cat} value={cat}>{cat}</option>
+            {getPolicyCategories(t).map(cat => (
+              <option key={cat.value} value={cat.value}>{cat.label}</option>
             ))}
           </select>
         </div>

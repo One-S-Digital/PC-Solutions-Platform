@@ -24,7 +24,7 @@ export class BillingController {
   @ApiOperation({ summary: 'Create monthly subscription checkout session' })
   @ApiResponse({ status: 200, description: 'Checkout session created successfully' })
   async createMonthlyCheckout(@Request() req, @Body() createCheckoutDto: CreateCheckoutSessionDto) {
-    const userId = req.context.userId;
+    const userId = req.context?.profileUserId || req.user?.id;
     return this.billingService.createCheckoutSession(userId, 'monthly', 'recurring', createCheckoutDto.planCode);
   }
 
@@ -33,7 +33,7 @@ export class BillingController {
   @ApiOperation({ summary: 'Create annual recurring subscription checkout session' })
   @ApiResponse({ status: 200, description: 'Checkout session created successfully' })
   async createAnnualRecurringCheckout(@Request() req, @Body() createCheckoutDto: CreateCheckoutSessionDto) {
-    const userId = req.context.userId;
+    const userId = req.context?.profileUserId || req.user?.id;
     return this.billingService.createCheckoutSession(userId, 'annual', 'recurring', createCheckoutDto.planCode);
   }
 
@@ -42,7 +42,7 @@ export class BillingController {
   @ApiOperation({ summary: 'Create annual one-time payment checkout session' })
   @ApiResponse({ status: 200, description: 'Checkout session created successfully' })
   async createAnnualOnetimeCheckout(@Request() req, @Body() createCheckoutDto: CreateCheckoutSessionDto) {
-    const userId = req.context.userId;
+    const userId = req.context?.profileUserId || req.user?.id;
     return this.billingService.createCheckoutSession(userId, 'annual', 'one_time', createCheckoutDto.planCode);
   }
 
@@ -51,7 +51,7 @@ export class BillingController {
   @ApiOperation({ summary: 'Get user subscription status' })
   @ApiResponse({ status: 200, description: 'Subscription status retrieved successfully' })
   async getSubscriptionStatus(@Request() req) {
-    const userId = req.context.userId;
+    const userId = req.context?.profileUserId || req.user?.id;
     return this.billingService.getSubscriptionStatus(userId);
   }
 
@@ -60,7 +60,7 @@ export class BillingController {
   @ApiOperation({ summary: 'Create Stripe customer portal session' })
   @ApiResponse({ status: 200, description: 'Portal session created successfully' })
   async createPortalSession(@Request() req) {
-    const userId = req.context.userId;
+    const userId = req.context?.profileUserId || req.user?.id;
     return this.billingService.createPortalSession(userId);
   }
 

@@ -47,10 +47,15 @@ enum AssetKind {
 }
 
 enum SubscriptionStatus {
-  ACTIVE
-  INACTIVE
-  CANCELLED
-  PAST_DUE
+  ACTIVE        // Subscription is active and valid
+  INACTIVE      // Subscription is inactive (not started or expired)
+  PAUSED        // Subscription is temporarily paused
+  CANCELLED     // Subscription has been cancelled
+  EXPIRED       // Subscription period has ended
+  TRIAL         // Subscription is in trial period
+  PAST_DUE      // Payment is past due (for future Stripe use)
+  PENDING       // Subscription is pending activation
+  GRACE_PERIOD  // In grace period after failed payment/expiry
 }
 
 enum SubscriptionTier {
@@ -73,6 +78,9 @@ enum JobContractType {
   CDI
   CDD
   INTERNSHIP
+  REPLACEMENT
+  TEMPORARY
+  FREELANCE
 }
 
 enum ServiceCategory {
@@ -148,6 +156,34 @@ enum InquiryStatus {
   CANCELLED
 }
 
+// Tracks whether a vendor (supplier/service provider) considers a daycare an active client
+// (used for discount termination workflows when daycares churn).
+enum VendorClientReason {
+  NEW
+  TRIAL
+  CONTRACT
+  PAUSED
+  TERMINATED
+}
+
+enum SubscriptionRequestStatus {
+  PENDING           // Just submitted, awaiting review
+  UNDER_REVIEW      // Admin is reviewing
+  INVOICE_SENT      // Invoice has been sent to customer
+  PAYMENT_PENDING   // Waiting for payment confirmation
+  PAYMENT_RECEIVED  // Payment confirmed
+  ACTIVATED         // Subscription created and activated
+  DECLINED          // Request was declined
+  CANCELLED         // Customer cancelled the request
+}
+
+enum SubscriptionCancellationRequestStatus {
+  PENDING    // Customer requested cancellation, awaiting admin action
+  APPROVED   // Admin approved and processed the cancellation
+  DECLINED   // Admin declined the cancellation request
+  CANCELLED  // Request withdrawn/cancelled by customer (future use)
+}
+
 // Core Models
 model User {
   id        String   @id @default(uuid())
@@ -158,18 +194,23 @@ model User {
   role      UserRole
 
   // Additional fields for educators from onboarding guide
-  phoneNumber    String?
-  workExperience String? // JSON string or text field
-  education      String? // JSON string or text field
-  certifications String[] // Array of certifications
-  skills         String[] // Array of skills
-  availability   String? // Availability information
-  cvUrl          String? // URL to CV document
-  shortBio       String? // Short bio/description for profile
+  phoneNumber          String?
+  workExperience       String? // JSON string or text field
+  education            String? // JSON string or text field
+  certifications       String[] // Array of certifications
+  skills               String[] // Array of skills
+  availability         String? // Legacy: simple text availability information
+  availabilitySettings Json?   // New: structured Calendly-style availability schedule
+  cvUrl                String? // URL to CV document
+  shortBio             String? // Short bio/description for profile
 
   // Avatar asset relation
   avatarAssetId String?
   avatarAsset   Asset?  @relation("UserAvatar", fields: [avatarAssetId], references: [id])
+
+  // Cover image asset relation (educator profile cover)
+  coverAssetId String?
+  coverAsset   Asset?  @relation("UserCover", fields: [coverAssetId], references: [id])
 
   // Stripe integration
   stripeCustomerId String? @unique
@@ -182,11 +223,14 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Relations
-  organizations     UserOrganization[]
-  applications      JobApplication[]
-  subscriptions     UserSubscription[]
-  mainSubscriptions Subscription[] // Main subscription model
-  licenses          License[]
+  contactInfo            UserContactInfo?
+  organizations          UserOrganization[]
+  applications           JobApplication[]
+  subscriptions          UserSubscription[]
+  mainSubscriptions      Subscription[] // Main subscription model
+  subscriptionRequests   SubscriptionRequest[] // Subscription requests
+  subscriptionCancellationRequests SubscriptionCancellationRequest[] // Subscription cancellation requests
+  licenses               License[]
 
   // E-Learning relations
   courseEnrollments CourseEnrollment[]
@@ -227,7 +271,26 @@ model User {
   // Calendar event relations
   calendarEvents         CalendarEvent[]  @relation("UserCalendarEvents")
 
+  // Vendor client management (discount terminations)
+  vendorClientMarks VendorClient[]
+
   @@map("users")
+}
+
+// User contact info is intentionally separated from the authentication email.
+// This allows a user to publish/share a "contact" email without changing the
+// email used for authentication (User.email / AppUser.email / Clerk).
+model UserContactInfo {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  contactEmail String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_contact_infos")
 }
 
 model Organization {
@@ -267,6 +330,7 @@ model Organization {
   coverAsset   Asset?  @relation("OrganizationCover", fields: [coverAssetId], references: [id])
 
   // Relations
+  contactInfo      OrganizationContactInfo?
   members          UserOrganization[]
   products         Product[]
   catalogs         Catalog[]
@@ -285,7 +349,34 @@ model Organization {
   sentInquiries     Inquiry[] @relation("InquiryBuyer")    // Inquiries this org has sent
   receivedInquiries Inquiry[] @relation("InquirySupplier") // Inquiries this org has received (suppliers)
 
+  // Subscription request relations
+  subscriptionRequests SubscriptionRequest[]
+  subscriptionCancellationRequests SubscriptionCancellationRequest[]
+
+  // Promo codes for suppliers and service providers
+  promoCodes PromoCode[]
+
+  // Vendor client relationships (discount termination workflow)
+  vendorClientsAsVendor VendorClient[] @relation("VendorClientVendor")
+  vendorClientsAsOrg    VendorClient[] @relation("VendorClientOrg")
+
   @@map("organizations")
+}
+
+// Organization contact info is intentionally separated from the authentication email.
+// This allows organizations to publish a "contact" email without changing the user's
+// login/authentication email (User.email / AppUser.email).
+model OrganizationContactInfo {
+  id             String   @id @default(uuid())
+  organizationId String   @unique
+  contactEmail   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("organization_contact_infos")
 }
 
 model UserOrganization {
@@ -299,6 +390,54 @@ model UserOrganization {
 
   @@id([userId, organizationId])
   @@map("user_organizations")
+}
+
+// Vendor <-> daycare relationship for discounts/active client tracking
+model VendorClient {
+  id             String             @id @default(uuid())
+  vendorId       String
+  orgId          String
+  isActive       Boolean            @default(true)
+  reason         VendorClientReason?
+  note           String?
+  markedByUserId String?
+  markedAt       DateTime           @default(now())
+  deactivatedAt  DateTime?
+  lastAdminNotifiedAt DateTime?
+
+  // Relations
+  vendor   Organization @relation("VendorClientVendor", fields: [vendorId], references: [id], onDelete: Cascade)
+  org      Organization @relation("VendorClientOrg", fields: [orgId], references: [id], onDelete: Cascade)
+  markedBy User?        @relation(fields: [markedByUserId], references: [id], onDelete: SetNull)
+
+  @@unique([vendorId, orgId], name: "vendorId_orgId")
+  @@index([vendorId])
+  @@index([orgId])
+  @@map("vendor_clients")
+}
+
+// Promo Codes for Product Suppliers and Service Providers
+model PromoCode {
+  id             String   @id @default(uuid())
+  code           String
+  discountType   String   // 'Percentage' | 'FixedAmount' | 'FreeMinutes'
+  value          Float
+  expiryDate     DateTime
+  status         String   @default("Active") // 'Active' | 'Expired' | 'Disabled'
+  description    String?
+  usageCount     Int      @default(0)
+  maxUsage       Int?     // Optional max usage limit
+  organizationId String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([code, organizationId])
+  @@index([organizationId])
+  @@index([status])
+  @@map("promo_codes")
 }
 
 // Organization Profile Documents (Catalogs, Company Profiles, etc.)
@@ -389,6 +528,7 @@ model Asset {
 
   // User asset relations
   userAvatars User[] @relation("UserAvatar")
+  userCovers  User[] @relation("UserCover")
 
   // Product relations
   products Product[]
@@ -597,26 +737,66 @@ model JobApplication {
 
 model Subscription {
   id                   String             @id @default(uuid())
+  
+  // Owner (one of these must be set)
   userId               String? // Optional user ID for user-based subscriptions
   organizationId       String? // Optional organization ID for org-based subscriptions
+  
+  // Plan Details
   planId               String
-  stripeSubscriptionId String?            @unique
-  stripeCustomerId     String? // Stripe customer ID
   tier                 SubscriptionTier
-  status               SubscriptionStatus @default(ACTIVE)
+  
+  // Status
+  status               SubscriptionStatus @default(PENDING)
+  
+  // Period Management
   currentPeriodStart   DateTime?
   currentPeriodEnd     DateTime?
+  trialStart           DateTime?          @map("trial_start")
+  trialEnd             DateTime?          @map("trial_end")
+  pausedAt             DateTime?          @map("paused_at")
+  pausedUntil          DateTime?          @map("paused_until")
+  
+  // Cancellation
   cancelAtPeriodEnd    Boolean            @default(false)
   canceledAt           DateTime?
+  cancellationReason   String?            @map("cancellation_reason")
+  
+  // Stripe Integration (prepared for future)
+  stripeSubscriptionId String?            @unique
+  stripeCustomerId     String?
+  
+  // Manual Management Fields
+  isManual             Boolean            @default(true) @map("is_manual")
+  activatedBy          String?            @map("activated_by")
+  activatedAt          DateTime?          @map("activated_at")
+  
+  // Grace Period
+  gracePeriodEnd       DateTime?          @map("grace_period_end")
+  
+  // Metadata
+  notes                String?            @db.Text
+  metadata             Json?
+  
   createdAt            DateTime           @default(now())
   updatedAt            DateTime           @updatedAt
 
   // Relations
-  user         User?                @relation(fields: [userId], references: [id])
-  organization Organization?        @relation(fields: [organizationId], references: [id])
-  plan         SubscriptionPlan     @relation(fields: [planId], references: [id])
-  transactions BillingTransaction[]
+  user                User?                 @relation(fields: [userId], references: [id])
+  organization        Organization?         @relation(fields: [organizationId], references: [id])
+  plan                SubscriptionPlan      @relation(fields: [planId], references: [id])
+  transactions        BillingTransaction[]
+  actions             SubscriptionAction[]
+  schedules           SubscriptionSchedule[]
+  subscriptionNotes   SubscriptionNote[]
+  subscriptionRequest SubscriptionRequest?  // Link to original request
+  cancellationRequests SubscriptionCancellationRequest[]
 
+  @@index([userId])
+  @@index([organizationId])
+  @@index([status])
+  @@index([currentPeriodEnd])
+  @@index([isManual], map: "subscriptions_is_manual_idx")
   @@map("subscriptions")
 }
 
@@ -1442,36 +1622,242 @@ model UserNotificationPreferences {
 // Subscription Management System
 model SubscriptionPlan {
   id            String   @id @default(uuid())
+  
+  // Basic Info
   name          String
-  description   String
+  code          String?  @unique // BASIC, ESSENTIAL, PROFESSIONAL, ENTERPRISE
+  description   String   @db.Text
+  
+  // Pricing
   price         Float
   currency      String   @default("CHF")
-  billingPeriod String   @default("monthly") // monthly, yearly
+  billingPeriod String   @default("monthly") @map("billing_period") // monthly, quarterly, yearly
+  
+  // Features
   features      String[] // Array of feature names
-  limits        Json // Usage limits as JSON
-  isActive      Boolean  @default(true)
-  isPopular     Boolean  @default(false)
-  stripePriceId String?
+  limits        Json     // Usage limits as JSON { "parentEnquiries": 15, "teamMembers": 5, ... }
+  
+  // Access Control
+  allowedRoles  String[] @default([]) @map("allowed_roles") // Which user roles can subscribe
+  
+  // Trial
+  trialDays     Int      @default(0) @map("trial_days")
+  
+  // Display
+  isActive      Boolean  @default(true) @map("is_active")
+  isPopular     Boolean  @default(false) @map("is_popular")
+  displayOrder  Int      @default(0) @map("display_order")
+  
+  // Stripe (prepared for future)
+  stripePriceId   String? @map("stripe_price_id")
+  stripeProductId String? @map("stripe_product_id")
+  
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   // Relations
-  subscriptions Subscription[]
+  subscriptions          Subscription[]
+  subscriptionRequests   SubscriptionRequest[]
 
   @@map("subscription_plans")
 }
 
+// Subscription Request Model - Manages the request lifecycle before subscription activation
+model SubscriptionRequest {
+  id                String   @id @default(uuid())
+  
+  // Requester (one must be set)
+  userId            String?
+  organizationId    String?
+  
+  // Request Details
+  planId            String
+  tier              SubscriptionTier
+  billingPeriod     String   @default("monthly") @map("billing_period") // monthly, quarterly, yearly
+  
+  // Contact Information (for reaching out)
+  contactName       String?  @map("contact_name")
+  contactEmail      String   @map("contact_email")
+  contactPhone      String?  @map("contact_phone")
+  preferredContact  String?  @default("email") @map("preferred_contact") // email, phone
+  
+  // Additional Context
+  message           String?  @db.Text
+  notes             String?  @db.Text  // Admin notes
+  
+  // Status Workflow
+  status            SubscriptionRequestStatus @default(PENDING)
+  
+  // Invoice/Payment Tracking
+  invoiceNumber     String?  @map("invoice_number")
+  invoiceSentAt     DateTime? @map("invoice_sent_at")
+  invoiceAmount     Float?   @map("invoice_amount")
+  invoiceCurrency   String?  @default("CHF") @map("invoice_currency")
+  paymentReceivedAt DateTime? @map("payment_received_at")
+  paymentReference  String?  @map("payment_reference")
+  
+  // Subscription Link (when activated)
+  subscriptionId    String?  @unique @map("subscription_id")
+  
+  // Timestamps
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+  reviewedAt        DateTime? @map("reviewed_at")
+  reviewedBy        String?  @map("reviewed_by")
+  processedAt       DateTime? @map("processed_at")
+  processedBy       String?  @map("processed_by")
+  declinedAt        DateTime? @map("declined_at")
+  declinedBy        String?  @map("declined_by")
+  declineReason     String?  @db.Text @map("decline_reason")
+  
+  // Relations
+  user              User?         @relation(fields: [userId], references: [id])
+  organization      Organization? @relation(fields: [organizationId], references: [id])
+  plan              SubscriptionPlan @relation(fields: [planId], references: [id])
+  subscription      Subscription? @relation(fields: [subscriptionId], references: [id])
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([userId])
+  @@index([organizationId])
+  @@map("subscription_requests")
+}
+
+// Subscription Cancellation Request Model - User requests cancellation for admin processing
+model SubscriptionCancellationRequest {
+  id              String   @id @default(uuid())
+
+  // Related subscription
+  subscriptionId  String   @map("subscription_id")
+
+  // Requester context (one may be set; kept for admin filtering)
+  userId          String?  @map("user_id")
+  organizationId  String?  @map("organization_id")
+
+  // Customer-provided reason/context
+  reason          String?  @db.Text
+
+  // Workflow
+  status          SubscriptionCancellationRequestStatus @default(PENDING)
+
+  // Timestamps / processing metadata
+  requestedAt     DateTime @default(now()) @map("requested_at")
+  processedAt     DateTime? @map("processed_at")
+  processedBy     String?  @map("processed_by")
+  notes           String?  @db.Text  // Admin notes
+
+  // Relations
+  subscription    Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  user            User?         @relation(fields: [userId], references: [id])
+  organization    Organization? @relation(fields: [organizationId], references: [id])
+
+  @@index([status])
+  @@index([requestedAt])
+  @@index([subscriptionId])
+  @@index([userId])
+  @@index([organizationId])
+  @@map("subscription_cancellation_requests")
+}
+
+// Subscription Settings - Admin configurable settings for subscription management
+model SubscriptionSettings {
+  id                        String   @id @default(uuid())
+  
+  // Admin Notification Settings
+  notificationEmail         String?  @map("notification_email") // Email to receive new request notifications
+  enableEmailNotifications  Boolean  @default(true) @map("enable_email_notifications")
+  
+  // Default Settings
+  defaultTrialDays          Int      @default(14) @map("default_trial_days")
+  defaultGracePeriodDays    Int      @default(7) @map("default_grace_period_days")
+  
+  // Invoice Settings
+  invoicePrefix             String   @default("INV-") @map("invoice_prefix")
+  invoiceNextNumber         Int      @default(1001) @map("invoice_next_number")
+  
+  // Payment Terms
+  paymentTermsDays          Int      @default(30) @map("payment_terms_days")
+  
+  // Response Time (for user communication)
+  estimatedResponseHours    Int      @default(48) @map("estimated_response_hours")
+  
+  createdAt                 DateTime @default(now()) @map("created_at")
+  updatedAt                 DateTime @updatedAt @map("updated_at")
+
+  @@map("subscription_settings")
+}
+
+// Subscription Action (Audit Log)
+model SubscriptionAction {
+  id             String   @id @default(uuid())
+  subscriptionId String   @map("subscription_id")
+  action         String   // CREATE, ACTIVATE, PAUSE, RESUME, CANCEL, RENEW, UPGRADE, DOWNGRADE, EXPIRE
+  previousStatus String?  @map("previous_status")
+  newStatus      String   @map("new_status")
+  reason         String?
+  notes          String?  @db.Text
+  performedBy    String   @map("performed_by") // Admin user ID
+  performedAt    DateTime @default(now()) @map("performed_at")
+  metadata       Json?    // Additional context data
+  
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  
+  @@index([subscriptionId])
+  @@index([performedAt])
+  @@map("subscription_actions")
+}
+
+// Subscription Schedule (Future Actions)
+model SubscriptionSchedule {
+  id              String    @id @default(uuid())
+  subscriptionId  String    @map("subscription_id")
+  scheduledAction String    @map("scheduled_action") // ACTIVATE, CANCEL, PAUSE, RESUME, UPGRADE, DOWNGRADE
+  scheduledDate   DateTime  @map("scheduled_date")
+  targetPlanId    String?   @map("target_plan_id") // For upgrade/downgrade
+  isProcessed     Boolean   @default(false) @map("is_processed")
+  processedAt     DateTime? @map("processed_at")
+  createdBy       String    @map("created_by")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  
+  subscription    Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  
+  @@index([scheduledDate, isProcessed])
+  @@map("subscription_schedules")
+}
+
+// Subscription Note (Admin Notes)
+model SubscriptionNote {
+  id             String   @id @default(uuid())
+  subscriptionId String   @map("subscription_id")
+  note           String   @db.Text
+  isInternal     Boolean  @default(true) @map("is_internal") // Internal admin note vs customer-visible
+  createdBy      String   @map("created_by")
+  createdAt      DateTime @default(now())
+  
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  
+  @@index([subscriptionId])
+  @@map("subscription_notes")
+}
+
 model PricingTier {
   id            String   @id @default(uuid())
+  role          UserRole @default(FOUNDATION)
+  subscriptionTier SubscriptionTier @default(BASIC) @map("subscription_tier")
   name          String
   basePrice     Float
   currency      String   @default("CHF")
   billingPeriod String   @default("monthly") // monthly, yearly
   discounts     Json // Discount configuration as JSON
   isActive      Boolean  @default(true)
+  displayOrder  Int      @default(0) @map("display_order")
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
+  @@index([role])
+  @@index([subscriptionTier])
+  @@index([role, subscriptionTier])
+  @@unique([role, subscriptionTier, billingPeriod])
   @@map("pricing_tiers")
 }
 

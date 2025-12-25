@@ -23,15 +23,16 @@ export class CreateMessageDto {
   @IsString()
   receiverId?: string;
 
+  @IsOptional()
   @IsString()
-  content: string;
+  content?: string;
 
   @IsOptional()
   @IsEnum(MessageType)
   messageType?: MessageType;
 
   @IsOptional()
-  @IsUrl()
+  @IsString()
   fileUrl?: string;
 
   @IsOptional()

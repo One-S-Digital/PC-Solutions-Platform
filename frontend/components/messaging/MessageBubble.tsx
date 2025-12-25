@@ -9,6 +9,7 @@ import { useAuth } from '@clerk/clerk-react';
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
 import { apiService } from '../../services/api';
 import DocumentPreviewModal from '../DocumentPreviewModal';
+import { isOwnMessage } from '../../utils/messageOwnership';
 
 interface MessageBubbleProps {
   message: Message;
@@ -20,7 +21,27 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
   const { t } = useTranslation(['messages', 'common']);
   const { getToken } = useAuth();
   const { authenticatedDownload } = useAuthenticatedApi();
-  const isCurrentUserSender = message.senderId === currentUser?.id;
+  
+  // Single source of truth for ownership - use shared utility
+  // Use normalized senderId from message (already set by messagingService.transformMessage)
+  const messageSenderId = message.senderId || (message as any).senderId || '';
+  const isOwn = isOwnMessage(messageSenderId, currentUser?.id);
+  
+  // Dev-only diagnostics (log only when IDs are missing or first render per message)
+  const loggedRef = useRef<Set<string>>(new Set());
+  if (import.meta.env.DEV && !loggedRef.current.has(message.id)) {
+    const shouldLog = !currentUser?.id || !messageSenderId || !isOwn;
+    if (shouldLog) {
+      console.log('🔍 MessageBubble ownership check:', {
+        messageId: message.id,
+        messageSenderId,
+        currentUserId: currentUser?.id,
+        isOwn,
+        messagePreview: message.content?.substring(0, 30),
+      });
+      loggedRef.current.add(message.id);
+    }
+  }
   const isImage = message.messageType === 'IMAGE' && message.fileUrl;
   const isFile = message.messageType === 'FILE' && message.fileUrl;
   const isDeleted = message.content === '[Message deleted]';
@@ -188,9 +209,9 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
 
   if (isDeleted) {
     return (
-      <div className={`flex mb-3 ${isCurrentUserSender ? 'justify-end' : 'justify-start'}`}>
+      <div className={`flex mb-3 ${isOwn ? 'justify-end' : 'justify-start'}`}>
         <div className={`max-w-xs lg:max-w-md px-4 py-2.5 rounded-xl shadow-soft ${
-          isCurrentUserSender 
+          isOwn 
             ? 'bg-gray-300 text-gray-500 rounded-br-none' 
             : 'bg-gray-200 text-gray-500 rounded-bl-none'
         }`}>
@@ -202,19 +223,19 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
 
   return (
     <div 
-      className={`flex mb-3 ${isCurrentUserSender ? 'justify-end' : 'justify-start'} group`}
-      onMouseEnter={() => isCurrentUserSender && !isEditing && setShowActions(true)}
+      className={`flex mb-3 ${isOwn ? 'justify-end' : 'justify-start'} group`}
+      onMouseEnter={() => isOwn && !isEditing && setShowActions(true)}
       onMouseLeave={() => setShowActions(false)}
-      onFocus={() => isCurrentUserSender && !isEditing && setShowActions(true)}
+      onFocus={() => isOwn && !isEditing && setShowActions(true)}
       onBlur={(e) => !e.currentTarget.contains(e.relatedTarget as Node) && setShowActions(false)}
-      tabIndex={isCurrentUserSender ? 0 : -1}
+      tabIndex={isOwn ? 0 : -1}
     >
       <div className={`max-w-xs lg:max-w-md px-4 py-2.5 rounded-xl shadow-soft relative ${
-        isCurrentUserSender 
+        isOwn 
           ? 'bg-swiss-mint text-white rounded-br-none' 
           : 'bg-gray-100 text-swiss-charcoal rounded-bl-none'
       }`}>
-        {isCurrentUserSender && showActions && !isEditing && (
+        {isOwn && showActions && !isEditing && (
           <div className="absolute -top-8 right-0 flex space-x-1 bg-white rounded-lg shadow-lg p-1">
             <button
               onClick={() => setIsEditing(true)}
@@ -232,7 +253,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
             </button>
           </div>
         )}
-        {!isCurrentUserSender && (
+        {!isOwn && (
           <p className="text-xs font-semibold mb-0.5 text-swiss-teal">{message.senderName}</p>
         )}
         
@@ -272,20 +293,20 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
         {isFile && message.fileUrl && (
           <div className="mb-2">
             <div className={`flex items-center space-x-2 p-2 rounded-lg ${
-              isCurrentUserSender 
+              isOwn 
                 ? 'bg-swiss-mint/20 text-white' 
                 : 'bg-gray-200 text-swiss-charcoal'
             }`}>
               <button
                 onClick={() => setShowPreview(true)}
                 className="flex items-center space-x-2 flex-1 min-w-0 text-left hover:opacity-80 transition-opacity cursor-pointer"
-                title={t('common:preview', 'Preview')}
+                title={t('common:previewLabel', 'Preview')}
               >
                 <DocumentIcon className="w-5 h-5 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{message.fileName || 'File'}</p>
                   {message.fileSize && (
-                    <p className={`text-xs ${isCurrentUserSender ? 'text-swiss-mint/70' : 'text-gray-500'}`}>
+                    <p className={`text-xs ${isOwn ? 'text-swiss-mint/70' : 'text-gray-500'}`}>
                       {formatFileSize(message.fileSize)}
                     </p>
                   )}
@@ -298,7 +319,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
                     handleFileDownload(e);
                   }}
                   className={`p-1.5 rounded hover:opacity-80 transition-opacity ${
-                    isCurrentUserSender 
+                    isOwn 
                       ? 'hover:bg-swiss-mint/30 text-white' 
                       : 'hover:bg-gray-300 text-swiss-charcoal'
                   }`}
@@ -347,7 +368,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
           <p className="text-sm whitespace-pre-wrap">{message.content}</p>
         )}
 
-        <p className={`text-xs mt-1 ${isCurrentUserSender ? 'text-swiss-mint/70 text-right' : 'text-gray-400 text-left'}`}>
+        <p className={`text-xs mt-1 ${isOwn ? 'text-swiss-mint/70 text-right' : 'text-gray-400 text-left'}`}>
           {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </p>
       </div>

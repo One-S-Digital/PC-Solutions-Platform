@@ -1,4 +1,4 @@
-import { Injectable, Inject, Optional } from '@nestjs/common';
+import { Injectable, Inject, Optional, Logger, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { CreateConversationDto } from './dto/create-conversation.dto';
@@ -8,27 +8,57 @@ import { UserRole } from '@prisma/client';
 
 @Injectable()
 export class MessagingService {
+  private readonly logger = new Logger('MessagingService');
   /**
    * Extract storage key from a full URL or return the key if it's already a key
    * Handles URLs like: https://assets.procrechesolutions.com/messages/... or /api/upload/download/...
-   * Returns the storage key portion
+   * Returns the storage key portion, or null if fileUrl is invalid/missing
    */
-  private extractStorageKey(fileUrl: string | undefined): string | undefined {
-    if (!fileUrl) return undefined;
+  /**
+   * Extract storage key from a full URL or return the key if it's already a key
+   * Handles URLs like: https://assets.procrechesolutions.com/messages/... or /api/upload/download/...
+   * Returns the storage key portion, or null if fileUrl is invalid/missing
+   * Tolerant of both storage keys and full URLs - never throws on parsing errors
+   */
+  private extractStorageKey(fileUrl: string | undefined | null): string | null {
+    // Return null for missing/invalid values - let validation handle it
+    if (!fileUrl || typeof fileUrl !== 'string' || fileUrl.trim().length === 0) {
+      return null;
+    }
+    
+    const trimmed = fileUrl.trim();
     
     // If it's already a relative download URL, extract the key
-    if (fileUrl.startsWith('/api/upload/download/')) {
-      return fileUrl.replace('/api/upload/download/', '');
+    if (trimmed.startsWith('/api/upload/download/')) {
+      const key = trimmed.replace('/api/upload/download/', '').trim();
+      return key.length > 0 ? key : null;
     }
     
     // If it's a full URL, extract the path after the domain
     try {
-      const url = new URL(fileUrl);
-      // Remove leading slash and return the path
-      return url.pathname.startsWith('/') ? url.pathname.substring(1) : url.pathname;
+      const url = new URL(trimmed);
+      // Extract path and remove leading slash
+      const path = url.pathname.startsWith('/') ? url.pathname.substring(1) : url.pathname;
+      // Return path if it's not empty, otherwise return null
+      return path.length > 0 ? path : null;
     } catch {
-      // If it's not a valid URL, assume it's already a storage key
-      return fileUrl;
+      // If it's not a valid URL, check if it looks like a storage key
+      // Storage keys typically don't contain :// or start with http
+      if (!trimmed.includes('://') && !trimmed.startsWith('http')) {
+        // Check if it matches expected storage key patterns (e.g., uploads/..., messages/..., elearning/...)
+        const storageKeyPattern = /^(uploads|messages|elearning|documents|avatars|logos)\/.+/;
+        if (storageKeyPattern.test(trimmed)) {
+          // Assume it's already a storage key
+          return trimmed;
+        }
+        // If it doesn't match pattern but looks like a key (no protocol), still accept it
+        // This allows for flexibility in storage key formats
+        if (trimmed.length > 0 && !trimmed.includes('://')) {
+          return trimmed;
+        }
+      }
+      // Invalid format - return null (validation will handle the error)
+      return null;
     }
   }
 
@@ -79,7 +109,8 @@ export class MessagingService {
    * Resolve rawUserId (Clerk ID or AppUser ID) to User.id
    * @returns User.id or null if not found
    */
-  private async resolveUserId(rawUserId: string): Promise<string | null> {
+  private async resolveUserId(rawUserId: string, requestId?: string): Promise<string | null> {
+    const logContext = { rawUserId, requestId: requestId || 'no-request-id' };
     let userClerkId: string;
     let userAppUser;
 
@@ -100,6 +131,10 @@ export class MessagingService {
     }
 
     if (!userAppUser) {
+      this.logger.warn({
+        message: 'resolveUserId: AppUser not found',
+        ...logContext,
+      });
       return null;
     }
 
@@ -108,7 +143,17 @@ export class MessagingService {
       select: { id: true },
     });
 
-    return user?.id || null;
+    if (!user) {
+      this.logger.warn({
+        message: 'resolveUserId: User not found in User table',
+        ...logContext,
+        appUserId: userAppUser.id,
+        clerkId: userClerkId,
+      });
+      return null;
+    }
+
+    return user.id;
   }
 
   /**
@@ -122,15 +167,8 @@ export class MessagingService {
         return Object.values(UserRole);
       
       case UserRole.ADMIN:
-        // Admin can message: ADMIN, EDUCATOR, PARENT, FOUNDATION, PRODUCT_SUPPLIER, SERVICE_PROVIDER
-        return [
-          UserRole.ADMIN,
-          UserRole.EDUCATOR,
-          UserRole.PARENT,
-          UserRole.FOUNDATION,
-          UserRole.PRODUCT_SUPPLIER,
-          UserRole.SERVICE_PROVIDER,
-        ];
+        // Admin can message anyone (handled separately in getRecipients and createConversation)
+        return Object.values(UserRole);
       
       case UserRole.EDUCATOR:
         // Educator can message: EDUCATOR, ADMIN, PARENT
@@ -149,12 +187,22 @@ export class MessagingService {
         ];
       
       case UserRole.FOUNDATION:
-      case UserRole.PRODUCT_SUPPLIER:
-      case UserRole.SERVICE_PROVIDER:
-        // Foundation/Supplier/Service Provider can message each other + ADMIN
+        // Foundation can message: FOUNDATION, ADMIN
         return [
           UserRole.FOUNDATION,
+          UserRole.ADMIN,
+        ];
+      
+      case UserRole.PRODUCT_SUPPLIER:
+        // Product Supplier can message: PRODUCT_SUPPLIER, ADMIN
+        return [
           UserRole.PRODUCT_SUPPLIER,
+          UserRole.ADMIN,
+        ];
+      
+      case UserRole.SERVICE_PROVIDER:
+        // Service Provider can message: SERVICE_PROVIDER, ADMIN
+        return [
           UserRole.SERVICE_PROVIDER,
           UserRole.ADMIN,
         ];
@@ -166,14 +214,126 @@ export class MessagingService {
   }
 
   // Conversation Management
+  /**
+   * Get available recipients for messaging (for user picker)
+   * ADMIN/SUPER_ADMIN can see all users, others see only allowed roles
+   */
+  async getRecipients(requesterId: string, search?: string, page: number = 1, limit: number = 50) {
+    const logContext = { requesterId, search, page, limit };
+    
+    try {
+      // Resolve requester to User.id
+      const requesterUserId = await this.resolveUserId(requesterId);
+      if (!requesterUserId) {
+        this.logger.warn({
+          message: 'getRecipients: Requester lookup failed',
+          ...logContext,
+        });
+        throw new Error('Requester not found');
+      }
+
+      // Get requester's role
+      const requesterUser = await this.prisma.user.findUnique({
+        where: { id: requesterUserId },
+        select: { id: true, role: true },
+      });
+
+      if (!requesterUser) {
+        throw new Error('Requester user record not found');
+      }
+
+      const requesterRole = requesterUser.role;
+      const skip = (page - 1) * limit;
+
+      // Build base query
+      const where: any = {
+        isActive: true, // Only active users
+      };
+
+      // Apply role-based filtering (unless ADMIN/SUPER_ADMIN)
+      if (requesterRole !== UserRole.SUPER_ADMIN && requesterRole !== UserRole.ADMIN) {
+        const allowedRoles = this.getAllowedMessagingRoles(requesterRole);
+        where.role = { in: allowedRoles };
+      }
+
+      // Apply search filter (after role filtering)
+      if (search && search.trim().length > 0) {
+        const searchTerm = search.trim();
+        where.OR = [
+          { firstName: { contains: searchTerm, mode: 'insensitive' } },
+          { lastName: { contains: searchTerm, mode: 'insensitive' } },
+          { email: { contains: searchTerm, mode: 'insensitive' } },
+        ];
+      }
+
+      // Exclude requester from results
+      where.id = { not: requesterUserId };
+
+      // Fetch users with organization info
+      const [users, total] = await Promise.all([
+        this.prisma.user.findMany({
+          where,
+          skip,
+          take: limit,
+          orderBy: [
+            { firstName: 'asc' },
+            { lastName: 'asc' },
+          ],
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            role: true,
+            organizations: {
+              take: 1,
+              include: {
+                organization: {
+                  select: {
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
+        }),
+        this.prisma.user.count({ where }),
+      ]);
+
+      // Transform to minimal response format
+      const recipients = users.map(user => ({
+        id: user.id,
+        name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'Unknown User',
+        email: user.email || '',
+        role: user.role,
+        organizationName: user.organizations?.[0]?.organization?.name || null,
+      }));
+
+      return {
+        recipients,
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      };
+    } catch (error) {
+      this.logger.error({
+        message: 'getRecipients: Error fetching recipients',
+        error: error instanceof Error ? error.message : String(error),
+        ...logContext,
+      });
+      throw error;
+    }
+  }
+
   async createConversation(createConversationDto: CreateConversationDto, creatorId: string) {
     const { type, title, participantIds } = createConversationDto;
 
-    console.log('🔵 [createConversation] Starting conversation creation:', {
+    this.logger.log({
+      message: 'createConversation: Starting',
       type,
-      title,
-      participantIds,
       creatorId,
+      participantCount: participantIds.length,
     });
 
     // The creatorId can be either AppUser.id or Clerk ID (user_xxx)
@@ -220,64 +380,85 @@ export class MessagingService {
     const creatorRole = creatorUser.role;
     
     // Get AppUsers for all participants to find their clerkIds
-    // Filter out any invalid IDs first
-    let participantAppUsers = await this.prisma.appUser.findMany({
+    // Participant IDs can be: AppUser.id, User.id (profile), or Clerk ID
+    // First, try to find by AppUser.id
+    const participantAppUsers = await this.prisma.appUser.findMany({
       where: { id: { in: participantIds } },
       select: { id: true, clerkId: true },
     });
     
-    if (participantAppUsers.length !== participantIds.length) {
-      const foundIds = new Set(participantAppUsers.map(u => u.id));
-      const missingIds = participantIds.filter(id => !foundIds.has(id));
-      
-      // Log for debugging
-      console.error('Invalid participant IDs:', {
-        requested: participantIds,
-        found: participantAppUsers.map(u => u.id),
-        missing: missingIds,
+    const foundAppUserIds = new Set(participantAppUsers.map(u => u.id));
+    const missingIds = participantIds.filter(id => !foundAppUserIds.has(id));
+    
+    if (missingIds.length > 0) {
+      this.logger.log({
+        message: 'createConversation: Some IDs not found in AppUser table, checking User table',
+        missingIds,
       });
       
       // Try to find missing IDs in the User table (they might be User.id instead of AppUser.id)
-      // If found, get their AppUser records via clerkId
-      const missingUserRecords = await this.prisma.user.findMany({
+      const userRecordsById = await this.prisma.user.findMany({
         where: { id: { in: missingIds } },
         select: { id: true, clerkId: true },
       });
       
-      if (missingUserRecords.length > 0) {
-        // These are User.id, need to find corresponding AppUser records
-        const clerkIds = missingUserRecords.map(u => u.clerkId);
+      // Create a map of User.id -> clerkId for found records
+      const userIdToClerkId = new Map(userRecordsById.map(u => [u.id, u.clerkId]));
+      const foundClerkIdsFromUserTable = userRecordsById.map(u => u.clerkId);
+      
+      if (foundClerkIdsFromUserTable.length > 0) {
+        // Get corresponding AppUser records via clerkId
         const correspondingAppUsers = await this.prisma.appUser.findMany({
-          where: { clerkId: { in: clerkIds } },
+          where: { clerkId: { in: foundClerkIdsFromUserTable } },
           select: { id: true, clerkId: true },
         });
         
         // Add found AppUsers to the list
         participantAppUsers.push(...correspondingAppUsers);
         
-        // Update foundIds
-        correspondingAppUsers.forEach(u => foundIds.add(u.id));
+        // Track which User.id values have been resolved
+        correspondingAppUsers.forEach(appUser => {
+          // Find the User.id that corresponds to this clerkId
+          userRecordsById.forEach(userRecord => {
+            if (userRecord.clerkId === appUser.clerkId) {
+              foundAppUserIds.add(userRecord.id); // Mark the User.id as found
+            }
+          });
+          foundAppUserIds.add(appUser.id);
+        });
       }
       
-      // Filter out any remaining invalid IDs (those not found in either AppUser or User table)
-      const validParticipantIds = participantIds.filter(id => foundIds.has(id));
-      const stillMissing = participantIds.filter(id => !foundIds.has(id));
+      // Check for any remaining IDs that might be Clerk IDs
+      const stillMissingIds = missingIds.filter(id => !foundAppUserIds.has(id) && !userIdToClerkId.has(id));
+      const potentialClerkIds = stillMissingIds.filter(id => id.startsWith('user_'));
       
-      if (stillMissing.length > 0) {
-        console.warn(`⚠️ Some participant IDs not found in either AppUser or User table and will be excluded: ${stillMissing.join(', ')}`);
+      if (potentialClerkIds.length > 0) {
+        const clerkIdAppUsers = await this.prisma.appUser.findMany({
+          where: { clerkId: { in: potentialClerkIds } },
+          select: { id: true, clerkId: true },
+        });
+        participantAppUsers.push(...clerkIdAppUsers);
+        clerkIdAppUsers.forEach(u => foundAppUserIds.add(u.clerkId));
       }
       
-      if (validParticipantIds.length === 0) {
+      // Final check for remaining invalid IDs
+      const finalMissingIds = participantIds.filter(id => {
+        // Check if it's found as AppUser.id, User.id (resolved to AppUser), or Clerk ID
+        if (foundAppUserIds.has(id)) return false;
+        if (userIdToClerkId.has(id)) return false;
+        return true;
+      });
+      
+      if (finalMissingIds.length > 0) {
+        this.logger.warn({
+          message: 'createConversation: Some participant IDs not found and will be excluded',
+          missingIds: finalMissingIds,
+        });
+      }
+      
+      if (participantAppUsers.length === 0) {
         throw new Error(`No valid participant IDs found. All requested IDs were invalid: ${participantIds.join(', ')}`);
       }
-      
-      // Update participantIds array to only include valid ones
-      participantIds.length = 0;
-      participantIds.push(...validParticipantIds);
-      
-      // Also filter participantAppUsers to only include those with valid IDs
-      const validAppUserIds = new Set(validParticipantIds);
-      participantAppUsers = participantAppUsers.filter(u => validAppUserIds.has(u.id));
     }
     
     // Get User records for all participants by clerkId (including roles for access control)
@@ -288,8 +469,8 @@ export class MessagingService {
     });
 
     // Role-based access control: Check if creator can message each participant
-    // SUPER_ADMIN can message anyone
-    if (creatorRole !== UserRole.SUPER_ADMIN) {
+    // ADMIN and SUPER_ADMIN can message anyone
+    if (creatorRole !== UserRole.SUPER_ADMIN && creatorRole !== UserRole.ADMIN) {
       const allowedRoles = this.getAllowedMessagingRoles(creatorRole);
       const unauthorizedParticipants = participantUsers.filter(
         participant => !allowedRoles.includes(participant.role)
@@ -297,7 +478,7 @@ export class MessagingService {
 
       if (unauthorizedParticipants.length > 0) {
         const unauthorizedRoles = unauthorizedParticipants.map(p => p.role).join(', ');
-        throw new Error(
+        throw new ForbiddenException(
           `You do not have permission to message users with the following roles: ${unauthorizedRoles}. ` +
           `Your role (${creatorRole}) can only message: ${allowedRoles.join(', ')}`
         );
@@ -315,7 +496,10 @@ export class MessagingService {
     
     if (validParticipantAppUsers.length < participantAppUsers.length) {
       const missingClerkIds = clerkIds.filter(id => !foundClerkIds.has(id));
-      console.warn(`⚠️ Some participants don't have User records and will be excluded: ${missingClerkIds.join(', ')}`);
+      this.logger.warn({
+        message: 'createConversation: Some participants do not have User records and will be excluded',
+        missingClerkIds,
+      });
     }
     
     // Map participant AppUser IDs to User IDs
@@ -331,9 +515,6 @@ export class MessagingService {
     // Ensure creator is in the participant list (avoid duplicates)
     const allParticipantIds = new Set([creatorUser.id, ...participantUserIds]);
     const uniqueParticipantIds = Array.from(allParticipantIds);
-    
-    console.log('🔵 [createConversation] Final participant User IDs:', uniqueParticipantIds);
-    console.log('🔵 [createConversation] Creating conversation in database...');
 
     try {
       const conversation = await this.prisma.conversation.create({
@@ -361,10 +542,10 @@ export class MessagingService {
       },
     });
       
-      console.log('✅ [createConversation] Conversation created successfully:', {
-        id: conversation.id,
+      this.logger.log({
+        message: 'createConversation: Conversation created successfully',
+        conversationId: conversation.id,
         type: conversation.type,
-        title: conversation.title,
         participantCount: conversation.participants.length,
       });
       
@@ -374,30 +555,29 @@ export class MessagingService {
         messages: this.transformMessagesForResponse(conversation.messages || []),
       };
     } catch (error) {
-      console.error('❌ [createConversation] Error creating conversation:', error);
-      console.error('❌ [createConversation] Error details:', {
-        message: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : undefined,
+      this.logger.error({
+        message: 'createConversation: Error creating conversation',
+        error: error instanceof Error ? error.message : String(error),
         code: (error as any)?.code,
-        meta: (error as any)?.meta,
       });
       throw error;
     }
   }
 
-  async getUserConversations(rawUserId: string) {
+  async getUserConversations(rawUserId: string, requestId?: string) {
+    const logContext = { rawUserId, requestId: requestId || 'no-request-id' };
+    
     try {
-      console.log('🔵 [getUserConversations] Starting with rawUserId:', rawUserId);
-      
       // Convert rawUserId (Clerk ID or AppUser ID) to User.id
-      const finalUserId = await this.resolveUserId(rawUserId);
+      const finalUserId = await this.resolveUserId(rawUserId, requestId);
       
       if (!finalUserId) {
-        console.warn('⚠️ [getUserConversations] User not found:', rawUserId);
+        this.logger.warn({
+          message: 'getUserConversations: User lookup failed',
+          ...logContext,
+        });
         return [];
       }
-
-      console.log('🔵 [getUserConversations] Final User ID:', finalUserId);
 
       // Get user's role for filtering
       const userWithRole = await this.prisma.user.findUnique({
@@ -470,6 +650,13 @@ export class MessagingService {
         orderBy: { lastMessageAt: 'desc' },
       });
 
+      this.logger.log({
+        message: 'getUserConversations: Query completed',
+        ...logContext,
+        finalUserId,
+        conversationCount: conversations.length,
+      });
+
       // Transform messages in conversations to use secure download URLs
       return conversations.map(conv => ({
         ...conv,
@@ -478,9 +665,18 @@ export class MessagingService {
     } catch (error: unknown) {
       // Handle case where conversations table doesn't exist (P2021)
       if (error && typeof error === 'object' && 'code' in error && (error as any).code === 'P2021') {
-        console.warn('Conversations table does not exist, returning empty array');
+        this.logger.warn({
+          message: 'getUserConversations: Conversations table does not exist',
+          ...logContext,
+          errorCode: 'P2021',
+        });
         return [];
       }
+      this.logger.error({
+        message: 'getUserConversations: Unexpected error',
+        ...logContext,
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw error;
     }
   }
@@ -532,15 +728,65 @@ export class MessagingService {
   async createMessage(createMessageDto: CreateMessageDto, rawSenderId: string) {
     const { conversationId, receiverId, content, messageType, fileUrl, fileName, fileSize, mimeType } = createMessageDto;
     
+    // DEV-only logging
+    if (process.env.NODE_ENV !== 'production') {
+      this.logger.debug({
+        message: 'createMessage: Received DTO',
+        conversationId,
+        content: content ? `${content.substring(0, 50)}...` : undefined,
+        messageType,
+        hasFileUrl: !!fileUrl,
+        fileUrl: fileUrl ? `${fileUrl.substring(0, 50)}...` : undefined,
+      });
+    }
+    
+    // Validate message content and file requirements based on messageType
+    const finalMessageType = messageType || 'TEXT';
+    const trimmedContent = content ? content.trim() : '';
+    const hasContent = trimmedContent.length > 0;
+    const hasFile = fileUrl && fileUrl.trim().length > 0;
+    
+    // DEV-only logging
+    if (process.env.NODE_ENV !== 'production') {
+      this.logger.debug({
+        message: 'createMessage: Validation state',
+        finalMessageType,
+        hasContent,
+        hasFile,
+      });
+    }
+    
+    // Validation rules
+    if (finalMessageType === 'TEXT') {
+      // TEXT messages: content must be non-empty, no file fields allowed
+      if (!hasContent) {
+        throw new BadRequestException('TEXT messages must have non-empty content');
+      }
+      // Ignore file fields for TEXT messages
+    } else if (finalMessageType === 'IMAGE' || finalMessageType === 'FILE') {
+      // IMAGE/FILE messages: fileUrl is required, content is optional (caption)
+      if (!hasFile) {
+        throw new BadRequestException(`${finalMessageType} messages must have a file attachment (fileUrl is required)`);
+      }
+    } else {
+      throw new BadRequestException(`Invalid messageType: ${finalMessageType}`);
+    }
+    
+    // If neither content nor file is present, reject
+    if (!hasContent && !hasFile) {
+      throw new BadRequestException('Message must have content or an attachment');
+    }
+    
     // Extract storage key from fileUrl to avoid storing full public URLs (security)
     // Store only the storage key, which will be converted to secure download URL when retrieved
-    const storageKey = this.extractStorageKey(fileUrl);
-
-    console.log('🔵 [createMessage] Starting message creation:', {
-      conversationId,
-      rawSenderId,
-      content: content?.substring(0, 50),
-    });
+    // Only extract if fileUrl is provided (for IMAGE/FILE messages)
+    let storageKey: string | null = null;
+    if (hasFile && fileUrl) {
+      storageKey = this.extractStorageKey(fileUrl);
+      if (!storageKey) {
+        throw new BadRequestException('Invalid fileUrl format. Expected storage key or valid URL.');
+      }
+    }
 
     // Convert senderId (Clerk ID or AppUser ID) to User.id
     // senderId can be either Clerk ID (user_xxx) or AppUser.id (UUID)
@@ -580,7 +826,6 @@ export class MessagingService {
     }
 
     const finalSenderUserId = senderUser.id;
-    console.log('🔵 [createMessage] Sender User ID:', finalSenderUserId);
 
     // Convert receiverId if provided (same logic)
     let finalReceiverUserId: string | null = null;
@@ -621,20 +866,32 @@ export class MessagingService {
       data: { lastMessageAt: new Date() },
     });
 
-    console.log('🔵 [createMessage] Creating message in database...');
     try {
+      // Prepare message data - ensure file fields are null for TEXT messages
+      const messageData: any = {
+        conversationId,
+        senderId: finalSenderUserId,
+        receiverId: finalReceiverUserId,
+        content: trimmedContent || '', // Use trimmed content or empty string
+        messageType: finalMessageType,
+      };
+      
+      // Only include file fields for IMAGE/FILE messages
+      if (finalMessageType === 'IMAGE' || finalMessageType === 'FILE') {
+        messageData.fileUrl = storageKey || null;
+        messageData.fileName = fileName || null;
+        messageData.fileSize = fileSize || null;
+        messageData.mimeType = mimeType || null;
+      } else {
+        // TEXT messages should have null file fields
+        messageData.fileUrl = null;
+        messageData.fileName = null;
+        messageData.fileSize = null;
+        messageData.mimeType = null;
+      }
+      
       const message = await this.prisma.message.create({
-        data: {
-          conversationId,
-          senderId: finalSenderUserId,
-          receiverId: finalReceiverUserId,
-          content,
-          messageType,
-          fileUrl: storageKey, // Store only the storage key, not the full URL
-          fileName,
-          fileSize,
-          mimeType,
-        },
+        data: messageData,
         include: {
           sender: true,
           receiver: true,
@@ -650,10 +907,10 @@ export class MessagingService {
         },
       });
       
-      console.log('✅ [createMessage] Message created successfully:', {
-        id: message.id,
+      this.logger.log({
+        message: 'createMessage: Message created successfully',
+        messageId: message.id,
         conversationId: message.conversationId,
-        senderId: message.senderId,
       });
       
       // Transform message to use secure download URL
@@ -666,7 +923,10 @@ export class MessagingService {
       
       return transformedMessage;
     } catch (error) {
-      console.error('❌ [createMessage] Error creating message:', error);
+      this.logger.error({
+        message: 'createMessage: Error creating message',
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw error;
     }
   }
@@ -1023,4 +1283,5 @@ export class MessagingService {
       totalUsers,
     };
   }
+
 }

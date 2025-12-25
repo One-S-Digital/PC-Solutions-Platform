@@ -1,0 +1,165 @@
+{
+  "paywall": {
+    "requiredTitle": "Subscription Required",
+    "requiredMessage": "An active subscription is required to access this feature. Choose a plan to get started.",
+    "pendingTitle": "Subscription Pending",
+    "pendingMessage": "Your subscription request is being processed. Our team will contact you shortly to activate your account.",
+    "expiredTitle": "Subscription Expired",
+    "expiredMessage": "Your subscription has expired. Renew now to regain access to all features.",
+    "cancelledTitle": "Subscription Cancelled",
+    "cancelledMessage": "Your subscription has been cancelled. Subscribe again to continue using the platform.",
+    "pausedTitle": "Subscription Paused",
+    "pausedMessage": "Your subscription is currently paused. Contact support to resume access.",
+    "pastDueTitle": "Payment Required",
+    "pastDueMessage": "Your payment is overdue. Please update your payment method to restore access.",
+    "graceTitle": "Grace Period",
+    "graceMessage": "Your subscription is in a grace period. Please renew soon to avoid losing access.",
+    "viewPlans": "View Subscription Plans",
+    "manageBilling": "Manage Billing",
+    "viewProfile": "View Profile",
+    "contactSupport": "Contact Support",
+    "manageSubscription": "Manage your subscription",
+    "needHelp": "Need help?",
+    "contactUs": "Contact us",
+    "featureNotAvailableTitle": "Feature Not Available",
+    "featureNotAvailableMessage": "This feature requires a higher tier plan. Upgrade to access {{feature}}.",
+    "requestSubscription": "Request Subscription"
+  },
+  "tier": {
+    "basic": "Basic",
+    "essential": "Essential",
+    "professional": "Professional",
+    "enterprise": "Enterprise"
+  },
+  "requestForm": {
+    "title": "Request Subscription",
+    "subtitle": "Complete the form below to request your subscription",
+    "titles": {
+      "foundation": "Request Subscription",
+      "supplier": "Supplier enquiry",
+      "serviceProvider": "Service provider enquiry"
+    },
+    "subtitles": {
+      "foundation": "Complete the form below to request your subscription",
+      "supplier": "Tell us about your company and products. We will contact you with pricing and next steps.",
+      "serviceProvider": "Tell us about your company and services. We will contact you with pricing and next steps."
+    },
+    "selectedPlan": "Selected Plan",
+    "priceOnRequest": "Price on request",
+    "billedMonthly": "Billed monthly",
+    "billedAnnually": "Billed annually",
+    "year": "year",
+    "month": "month",
+    "roleLabel": {
+      "supplier": "Supplier",
+      "serviceProvider": "Service provider"
+    },
+    "organizationName": "Organization / Company",
+    "organizationNamePlaceholder": "Your organization name",
+    "contactName": "Contact Name",
+    "contactNamePlaceholder": "Your full name",
+    "contactEmail": "Email Address",
+    "contactEmailPlaceholder": "your@email.com",
+    "contactPhone": "Phone Number",
+    "contactPhonePlaceholder": "+41 XX XXX XX XX",
+    "website": "Website",
+    "websitePlaceholder": "https://example.com",
+    "preferredContact": "Preferred Contact Method",
+    "message": "Additional Message",
+    "messagePlaceholder": "Any questions or special requirements...",
+    "messageSupplier": "Tell us about your products",
+    "messageSupplierPlaceholder": "What do you sell? Any focus categories, MOQ, regions served, etc.",
+    "messageServiceProvider": "Tell us about your services",
+    "messageServiceProviderPlaceholder": "What services do you offer? Coverage region, pricing model, availability, etc.",
+    "submitButton": "Submit Request",
+    "submitting": "Submitting...",
+    "validation": {
+      "required": "Please fill in all required fields",
+      "planNotConfigured": "This plan is not configured yet. Please contact support."
+    },
+    "success": {
+      "title": "Request Submitted!",
+      "description": "Thank you for your interest in the {{planName}} plan. Our team will review your request and send you an invoice within 48 hours.",
+      "estimatedTime": "Estimated response time: 24-48 hours",
+      "emailSent": "A confirmation email has been sent to {{email}}"
+    },
+    "howItWorks": {
+      "title": "How it works:",
+      "step1": "Submit your request",
+      "step2": "Receive an invoice via email",
+      "step3": "Pay the invoice",
+      "step4": "Your subscription is activated"
+    },
+    "howItWorksVendor": {
+      "step1": "Submit your enquiry",
+      "step2": "We contact you with pricing",
+      "step3": "You receive next steps to get listed"
+    }
+  },
+  "featureGate": {
+    "locked": "This feature requires a plan upgrade",
+    "upgrade": "Upgrade Plan"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "paused": "Paused",
+    "cancelled": "Cancelled",
+    "expired": "Expired",
+    "trial": "Trial",
+    "pastDue": "Past Due",
+    "pending": "Pending",
+    "gracePeriod": "Grace Period"
+  },
+  "request": {
+    "title": "Request Subscription",
+    "selectPlan": "Select a Plan",
+    "billingPeriod": "Billing Period",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "yearlyDiscount": "Save 10%",
+    "notes": "Additional Notes",
+    "notesPlaceholder": "Any special requirements or questions...",
+    "submit": "Submit Request",
+    "submitting": "Submitting...",
+    "successTitle": "Request Submitted",
+    "successMessage": "Your subscription request has been submitted successfully. Our team will contact you shortly.",
+    "errorTitle": "Request Failed",
+    "errorMessage": "There was an error submitting your request. Please try again."
+  },
+  "info": {
+    "currentPlan": "Current Plan",
+    "currentPeriod": "Current Period",
+    "noPlan": "No active plan",
+    "expiresOn": "Expires on {{date}}",
+    "trialEndsOn": "Trial ends on {{date}}",
+    "daysRemaining": "{{days}} days remaining",
+    "trialDaysRemaining": "{{days}} trial days remaining",
+    "cancelAtPeriodEnd": "Cancels at period end",
+    "features": "Features",
+    "limits": "Usage Limits",
+    "unlimited": "Unlimited"
+  },
+  "actions": {
+    "upgrade": "Upgrade Plan",
+    "downgrade": "Downgrade Plan",
+    "renew": "Renew Subscription",
+    "cancel": "Cancel Subscription",
+    "resume": "Resume Subscription",
+    "managePayment": "Manage Payment Method"
+  },
+  "errors": {
+    "fetchFailed": "Failed to load subscription information",
+    "cancelRequestFailed": "Failed to submit cancellation request",
+    "requestFailed": "Failed to submit subscription request",
+    "contextMissing": "useSubscription must be used within a SubscriptionProvider",
+    "featureNotAvailable": "This feature is not available in your current plan"
+  },
+  "badge": {
+    "trial": "Trial",
+    "active": "Active",
+    "expiringSoon": "Expiring Soon",
+    "expired": "Expired",
+    "pending": "Pending"
+  }
+}

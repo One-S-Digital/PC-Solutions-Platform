@@ -144,6 +144,10 @@
     "subtitle": "Wählen Sie Ihre Rolle, um zu beginnen",
     "title": "Treten Sie der PC Solutions Plattform bei"
   },
+  "profileCompletion": {
+    "message": "Bitte vervollständigen Sie Ihr Profil, um fortzufahren",
+    "emailFromAccount": "E-Mail vom Konto"
+  },
   "errors": {
     "profileCompletionFailedTitle": "Profilvervollständigung fehlgeschlagen",
     "organisationNameRequired": "Organisationsname ist erforderlich",

@@ -1,5 +1,6 @@
 
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { JobListing } from '../../types';
 import { STANDARD_INPUT_FIELD, ICON_INPUT_FIELD, SWISS_CANTONS } from '../../constants';
 import Card from '../../components/ui/Card';
@@ -74,6 +75,8 @@ const EducatorJobBoardPage: React.FC = () => {
   const { applyForJob } = useAppContext();
   const { addNotification } = useNotifications();
   const { listJobListings } = useRecruitmentApi();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const [jobListings, setJobListings] = useState<JobListing[]>([]);
   const [loading, setLoading] = useState(true);
@@ -106,6 +109,26 @@ const EducatorJobBoardPage: React.FC = () => {
   useEffect(() => {
     fetchJobs();
   }, [fetchJobs]);
+
+  // If navigated from the dashboard recommendations, open the requested job in the modal.
+  useEffect(() => {
+    const openJobId = (location.state as any)?.openJobId as string | undefined;
+    if (!openJobId) return;
+    if (loading) return;
+    if (jobListings.length === 0) return;
+
+    const job = jobListings.find((j) => j.id === openJobId);
+    if (!job) {
+      // Clear the state so we don't keep trying.
+      navigate(location.pathname, { replace: true, state: {} });
+      return;
+    }
+
+    setSelectedJob(job);
+    setIsDetailModalOpen(true);
+    // Clear the state so refresh/back doesn't re-open.
+    navigate(location.pathname, { replace: true, state: {} });
+  }, [jobListings, loading, location.pathname, location.state, navigate]);
 
   const filteredJobs = useMemo(
     () =>
@@ -167,7 +190,7 @@ const EducatorJobBoardPage: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
             <label htmlFor="filterCanton" className="block text-xs font-medium text-gray-500 mb-1">
-              {t('labels.region')}
+              {t('common:labels.region')}
             </label>
             <select id="filterCanton" value={filterCanton} onChange={(e) => setFilterCanton(e.target.value)} className={STANDARD_INPUT_FIELD}>
               {cantons.map((c) => (
@@ -179,7 +202,7 @@ const EducatorJobBoardPage: React.FC = () => {
           </div>
           <div>
             <label htmlFor="filterContractType" className="block text-xs font-medium text-gray-500 mb-1">
-              {t('labels.allContractTypes')}
+              {t('common:labels.allContractTypes')}
             </label>
               <select id="filterContractType" value={filterContractType} onChange={(e) => setFilterContractType(e.target.value)} className={STANDARD_INPUT_FIELD}>
                 {contractTypes.map((ct) => {
@@ -196,7 +219,7 @@ const EducatorJobBoardPage: React.FC = () => {
                       case 'FULL_TIME':
                         return t('recruitment:contractTypes.fullTime', 'Full-time');
                       default:
-                        return t('labels.allContractTypes');
+                        return t('common:labels.allContractTypes');
                     }
                   })();
                   return (

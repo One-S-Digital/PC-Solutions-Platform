@@ -9,6 +9,21 @@ interface MirrorRolePayload {
   role: string;
 }
 
+interface EmailSyncPayload {
+  clerkId: string;
+  newEmail: string;
+  errorMessage?: string;
+  attemptedAt?: string;
+}
+
+interface EmailDeletePayload {
+  clerkId: string;
+  emailAddressId: string;
+  emailAddress?: string;
+  reason?: string;
+  scheduledAt?: string;
+}
+
 @Injectable()
 export class OutboxWorker {
   private readonly logger = new Logger(OutboxWorker.name);
@@ -60,6 +75,10 @@ export class OutboxWorker {
   private async processJob(job: { topic: string; payload: any }) {
     if (job.topic === 'mirror.role') {
       await this.mirrorRoleToClerk(job.payload as MirrorRolePayload);
+    } else if (job.topic === 'clerk.email.sync') {
+      await this.syncEmailToClerk(job.payload as EmailSyncPayload);
+    } else if (job.topic === 'clerk.email.delete') {
+      await this.deleteOldEmailFromClerk(job.payload as EmailDeletePayload);
     } else {
       this.logger.warn(`Unknown outbox topic: ${job.topic}`);
     }
@@ -87,6 +106,122 @@ export class OutboxWorker {
         return; // Don't throw error for non-existent users
       }
       throw error; // Re-throw other errors
+    }
+  }
+
+  /**
+   * Sync email to Clerk authentication provider (retry handler for outbox).
+   * This is called when the initial sync failed and was queued for retry.
+   */
+  private async syncEmailToClerk(payload: EmailSyncPayload) {
+    const { clerkId, newEmail } = payload;
+    
+    this.logger.log(`📧 [OUTBOX] Retrying email sync to Clerk: ${clerkId} -> ${newEmail}`);
+    
+    try {
+      // First check if user exists in Clerk
+      const clerkUser = await this.clerk.users.getUser(clerkId);
+      
+      // Check if the new email already exists for this user
+      const existingEmailAddress = clerkUser.emailAddresses?.find(
+        (ea: any) => ea.emailAddress.toLowerCase() === newEmail.toLowerCase()
+      );
+      
+      if (existingEmailAddress) {
+        // Email already exists, just make sure it's set as primary
+        if (clerkUser.primaryEmailAddressId !== existingEmailAddress.id) {
+          this.logger.log(`📧 [OUTBOX] Setting existing email as primary for ${clerkId}`);
+          await this.clerk.users.updateUser(clerkId, {
+            primaryEmailAddressId: existingEmailAddress.id,
+          });
+        } else {
+          this.logger.log(`📧 [OUTBOX] Email ${newEmail} is already the primary email for ${clerkId}`);
+        }
+      } else {
+        // Create a new email address for the user
+        this.logger.log(`📧 [OUTBOX] Creating new email address ${newEmail} for ${clerkId}`);
+        await this.clerk.emailAddresses.createEmailAddress({
+          userId: clerkId,
+          emailAddress: newEmail,
+          verified: true, // Admin updates should skip verification
+          primary: true, // Set as primary immediately
+        });
+      }
+      
+      this.logger.log(`✅ [OUTBOX] Successfully synced email for ${clerkId}`);
+    } catch (error: any) {
+      if (error?.status === 404) {
+        this.logger.warn(`User ${clerkId} not found in Clerk, skipping email sync`);
+        return; // Don't throw error for non-existent users
+      }
+      throw error; // Re-throw other errors for retry
+    }
+  }
+
+  /**
+   * Delete old email from Clerk after grace period has expired.
+   * This is scheduled when a user's email is changed to clean up the old address.
+   */
+  private async deleteOldEmailFromClerk(payload: EmailDeletePayload) {
+    const { clerkId, emailAddressId, emailAddress, reason } = payload;
+    
+    this.logger.log(
+      `🗑️ [OUTBOX] Deleting old email ${emailAddress || emailAddressId} for user ${clerkId}. ` +
+      `Reason: ${reason || 'Grace period expired'}`
+    );
+    
+    try {
+      // First check if user still exists in Clerk
+      const clerkUser = await this.clerk.users.getUser(clerkId);
+      
+      // Check if the email address still exists and is not the primary
+      const emailToDelete = clerkUser.emailAddresses?.find(
+        (ea: any) => ea.id === emailAddressId
+      );
+      
+      if (!emailToDelete) {
+        this.logger.log(
+          `ℹ️ [OUTBOX] Email ${emailAddressId} no longer exists for user ${clerkId}, ` +
+          `skipping deletion (may have been manually deleted)`
+        );
+        return;
+      }
+      
+      // Safety check: Don't delete the primary email
+      if (clerkUser.primaryEmailAddressId === emailAddressId) {
+        this.logger.warn(
+          `⚠️ [OUTBOX] Cannot delete email ${emailAddressId} - it is now the primary email ` +
+          `for user ${clerkId}. The user may have reverted the change.`
+        );
+        return;
+      }
+      
+      // Safety check: Don't delete if it's the only email left
+      const emailCount = clerkUser.emailAddresses?.length || 0;
+      if (emailCount <= 1) {
+        this.logger.warn(
+          `⚠️ [OUTBOX] Cannot delete email ${emailAddressId} - it is the only email ` +
+          `for user ${clerkId}. Skipping to prevent account lockout.`
+        );
+        return;
+      }
+      
+      // Delete the old email address
+      await this.clerk.emailAddresses.deleteEmailAddress(emailAddressId);
+      
+      this.logger.log(
+        `✅ [OUTBOX] Successfully deleted old email ${emailAddress || emailAddressId} ` +
+        `for user ${clerkId}`
+      );
+    } catch (error: any) {
+      if (error?.status === 404) {
+        this.logger.warn(
+          `User or email ${clerkId}/${emailAddressId} not found in Clerk, ` +
+          `skipping deletion (may have been already deleted)`
+        );
+        return; // Don't throw error for non-existent resources
+      }
+      throw error; // Re-throw other errors for retry
     }
   }
 

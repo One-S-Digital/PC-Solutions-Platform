@@ -21,7 +21,7 @@
         "other": "Andere Ressourcen"
       },
       "categoryDisplay": {
-        "viewCategoryAria": "Ansicht {{Titel}}",
+        "viewCategoryAria": "Ansicht {{title}}",
         "documentsCount_one": "{{count}} Dokument",
         "documentsCount_other": "{{count}} Dokumente"
       },
@@ -38,7 +38,7 @@
         "languageLabel": "Sprache",
         "versionLabel": "Version"
       },
-      "documentsInCategoryTitle": "{{Kategorie}} Dokumente",
+      "documentsInCategoryTitle": "{{category}} Dokumente",
       "backToCategoriesButton": "Zurück zu Kategorien",
       "buttons": {
         "uploadDocument": "Dokument hochladen"
@@ -63,21 +63,38 @@
         "manageAlerts": "Warnungen verwalten"
       },
       "emptyState": {
-        "noPolicies": "Keine Richtlinien verfügbar"
+        "noPolicies": "Keine Richtlinien verfügbar",
+        "noPoliciesFoundForFilters": "Keine Richtlinien für die ausgewählten Filter gefunden",
+        "noPoliciesMatchFilters": "Keine Richtlinien entsprechen Ihren Filtern"
       },
+      "errors": {
+        "downloadFailed": "Download fehlgeschlagen"
+      },
+      "filters": {
+        "allCantonsRegions": "Alle Kantone und Regionen",
+        "ariaLabelCategory": "Nach Kategorie filtern",
+        "ariaLabelCanton": "Nach Kanton filtern",
+        "ariaLabelPolicyType": "Nach Richtlinientyp filtern",
+        "canton": "Kanton",
+        "policyType": "Richtlinientyp",
+        "region": "Region"
+      },
+      "labels": {
+        "category": "Kategorie",
+        "effective": "Wirksam",
+        "published": "Veröffentlicht",
+        "type": "Typ",
+        "updated": "Aktualisiert"
+      },
+      "loading": "Laden...",
+      "selectCanton": "Kanton auswählen",
       "sections": {
+        "categories": "Kategorien",
         "compliance": "Einhaltung der Vorschriften",
         "downloads": "Herunterladen",
         "updates": "Aktualisierungen"
       },
-      "filters": {
-        "policyType": "Richtlinientyp",
-        "canton": "Kanton",
-        "region": "Region",
-        "ariaLabelPolicyType": "Nach Richtlinientyp filtern",
-        "ariaLabelCanton": "Nach Kanton filtern",
-        "ariaLabelCategory": "Nach Kategorie filtern"
-      },
+      "subtitle": "Offizielle Kinderbetreuungsrichtlinien der Schweizer Kantone",
       "tabs": {
         "cantonal": "Kantonal",
         "national": "National"
@@ -182,6 +199,8 @@
     },
     "adminNote": "Admin Dashboard zum Hinzufügen/Bearbeiten von Richtlinien verwenden",
     "loading": "Richtlinien laden...",
+    "selectCanton": "Kanton auswählen",
+    "subtitle": "Offizielle Kinderbetreuungsrichtlinien der Schweizer Kantone",
     "title": "Staatliche Richtlinien"
   },
   "contentManagementDashboard": {
@@ -225,7 +244,7 @@
     "confirmDeleteDocument": "Möchten Sie dieses Dokument wirklich löschen?",
     "allDocumentsCategory": "Alle Dokumente",
     "noDocumentsAvailable": "Keine Dokumente verfügbar",
-    "uploadButton": "[DE] Upload Document",
+    "uploadButton": "Dokument hochladen",
     "searchPlaceholder": "Dokumente durchsuchen...",
     "categoriesTitle": "HR-Dokumentkategorien",
     "allItemsCount": "{{count}} Dokumente",

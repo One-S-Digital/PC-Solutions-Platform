@@ -18,8 +18,13 @@ export type SubscriptionTier = (typeof SubscriptionTier)[keyof typeof Subscripti
 export declare const SubscriptionStatus: {
     readonly ACTIVE: "ACTIVE";
     readonly INACTIVE: "INACTIVE";
+    readonly PAUSED: "PAUSED";
     readonly CANCELLED: "CANCELLED";
+    readonly EXPIRED: "EXPIRED";
+    readonly TRIAL: "TRIAL";
     readonly PAST_DUE: "PAST_DUE";
+    readonly PENDING: "PENDING";
+    readonly GRACE_PERIOD: "GRACE_PERIOD";
 };
 export type SubscriptionStatus = (typeof SubscriptionStatus)[keyof typeof SubscriptionStatus];
 export declare const AssetKind: {
@@ -60,6 +65,9 @@ export declare const JobContractType: {
     readonly CDI: "CDI";
     readonly CDD: "CDD";
     readonly INTERNSHIP: "INTERNSHIP";
+    readonly REPLACEMENT: "REPLACEMENT";
+    readonly TEMPORARY: "TEMPORARY";
+    readonly FREELANCE: "FREELANCE";
 };
 export type JobContractType = (typeof JobContractType)[keyof typeof JobContractType];
 export declare const ServiceCategory: {

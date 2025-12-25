@@ -21,7 +21,7 @@
         "other": "Autres ressources"
       },
       "categoryDisplay": {
-        "viewCategoryAria": "Voir {{titre}}",
+        "viewCategoryAria": "Voir {{title}}",
         "documentsCount_one": "{{count}} document",
         "documentsCount_other": "{{count}} documents"
       },
@@ -38,7 +38,7 @@
         "languageLabel": "Langue",
         "versionLabel": "Version"
       },
-      "documentsInCategoryTitle": "{{catégorie}} Documents",
+      "documentsInCategoryTitle": "{{category}} Documents",
       "backToCategoriesButton": "Retour aux catégories",
       "buttons": {
         "uploadDocument": "Télécharger un document"
@@ -63,21 +63,38 @@
         "manageAlerts": "Gérer les alertes"
       },
       "emptyState": {
-        "noPolicies": "Aucune politique disponible"
+        "noPolicies": "Aucune politique disponible",
+        "noPoliciesFoundForFilters": "Aucune politique trouvée pour les filtres sélectionnés",
+        "noPoliciesMatchFilters": "Aucune politique ne correspond à vos filtres"
       },
+      "errors": {
+        "downloadFailed": "Échec du téléchargement"
+      },
+      "filters": {
+        "allCantonsRegions": "Tous les cantons et régions",
+        "ariaLabelCategory": "Filtrer par catégorie",
+        "ariaLabelCanton": "Filtrer par canton",
+        "ariaLabelPolicyType": "Filtrer par type de politique",
+        "canton": "Canton",
+        "policyType": "Type de politique",
+        "region": "Région"
+      },
+      "labels": {
+        "category": "Catégorie",
+        "effective": "Effectif",
+        "published": "Publié",
+        "type": "Type",
+        "updated": "Mis à jour"
+      },
+      "loading": "Chargement...",
+      "selectCanton": "Sélectionner un canton",
       "sections": {
+        "categories": "Catégories",
         "compliance": "Conformité",
         "downloads": "Téléchargements",
         "updates": "Mises à jour"
       },
-      "filters": {
-        "policyType": "Type de politique",
-        "canton": "Canton",
-        "region": "Région",
-        "ariaLabelPolicyType": "Filtrer par type de politique",
-        "ariaLabelCanton": "Filtrer par canton",
-        "ariaLabelCategory": "Filtrer par catégorie"
-      },
+      "subtitle": "Politiques officielles de garde d'enfants des cantons suisses",
       "tabs": {
         "cantonal": "Cantonal",
         "national": "Nationales"
@@ -147,9 +164,9 @@
       "noPoliciesMatchFilters": "Aucune politique ne correspond aux filtres actuels",
       "noPolicies": "Aucune politique disponible"
     },
-    "filters": {
-      "allCantonsRegions": "Tous les cantons Régions",
-      "policyType": "Type de politique",
+      "filters": {
+        "allCantonsRegions": "Tous les cantons et régions",
+        "policyType": "Type de politique",
       "canton": "Canton",
       "region": "Région",
       "ariaLabelPolicyType": "Filtrer par type de politique",
@@ -183,6 +200,8 @@
     },
     "adminNote": "Utiliser le tableau de bord de l'administrateur pour ajouter/modifier des politiques",
     "loading": "Chargement des politiques...",
+    "selectCanton": "Sélectionner un canton",
+    "subtitle": "Politiques officielles de garde d'enfants des cantons suisses",
     "title": "Politiques nationales"
   },
   "contentManagementDashboard": {
@@ -197,7 +216,7 @@
   },
   "hrProcedures": {
     "categoryDisplay": {
-      "viewCategoryAria": "Voir {{titre}}",
+      "viewCategoryAria": "Voir {{title}}",
       "documentsCount_one": "{{count}} document",
       "documentsCount_other": "{{count}} documents"
     },
@@ -214,7 +233,7 @@
       "languageLabel": "Langue",
       "versionLabel": "Version"
     },
-    "documentsInCategoryTitle": "{{catégorie}} Documents",
+    "documentsInCategoryTitle": "{{category}} Documents",
     "backToCategoriesButton": "Retour aux catégories",
     "buttons": {
       "uploadDocument": "Télécharger un document"

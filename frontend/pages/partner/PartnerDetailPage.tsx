@@ -27,10 +27,13 @@ import {
   UserCircleIcon
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
-import { useMessaging } from '../../contexts/MessagingContext';
+import { useOrganizationMessaging } from '../../hooks/useOrganizationMessaging';
 import ActiveClientToggle from '../../components/shared/ActiveClientToggle';
+import OrganizationDocumentsList from '../../components/profile/OrganizationDocumentsList';
 import { formatServiceCategory, formatServiceDeliveryType, formatCategory } from '../../utils/serviceFormatting';
 import { organizationService } from '../../services/organizationService';
+import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
+import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/solid';
 
 interface ProductItemProps {
   product: Product;
@@ -112,6 +115,128 @@ const ProductItemCard: React.FC<ProductItemProps> = ({ product, partner, isFound
   );
 };
 
+// Promo Code Input Component
+interface PromoCodeInputProps {
+  partnerId: string;
+}
+
+const PromoCodeInput: React.FC<PromoCodeInputProps> = ({ partnerId }) => {
+  const { t } = useTranslation(['dashboard', 'common']);
+  const { request } = useAuthenticatedApi();
+  const [promoCode, setPromoCode] = useState('');
+  const [isValidating, setIsValidating] = useState(false);
+  const [validationResult, setValidationResult] = useState<{
+    valid: boolean;
+    message: string;
+    discount?: string;
+  } | null>(null);
+
+  const handleApplyPromoCode = async () => {
+    if (!promoCode.trim()) return;
+
+    setIsValidating(true);
+    setValidationResult(null);
+
+    try {
+      const response = await request<{
+        success: boolean;
+        valid: boolean;
+        data?: {
+          discountType: string;
+          value: number;
+          description?: string;
+        };
+      }>(`/promo-codes/validate/${partnerId}?code=${encodeURIComponent(promoCode.trim())}`);
+
+      const res = response as any;
+      if (res.success && res.valid && res.data) {
+        let discountText = '';
+        switch (res.data.discountType) {
+          case 'Percentage':
+            discountText = `${res.data.value}% off`;
+            break;
+          case 'FixedAmount':
+            discountText = `CHF ${res.data.value} off`;
+            break;
+          case 'FreeMinutes':
+            discountText = `${res.data.value} free minutes`;
+            break;
+          default:
+            discountText = `${res.data.value}`;
+        }
+
+        setValidationResult({
+          valid: true,
+          message: t('partnerDetailPage.promoCodeValid', 'Promo code applied!'),
+          discount: discountText,
+        });
+      } else {
+        setValidationResult({
+          valid: false,
+          message: t('partnerDetailPage.promoCodeInvalid', 'Invalid or expired promo code'),
+        });
+      }
+    } catch (error) {
+      console.error('Failed to validate promo code:', error);
+      setValidationResult({
+        valid: false,
+        message: t('partnerDetailPage.promoCodeError', 'Failed to validate promo code'),
+      });
+    } finally {
+      setIsValidating(false);
+    }
+  };
+
+  return (
+    <Card className="mt-6 p-4 bg-gray-50">
+      <h3 className="text-md font-semibold text-swiss-charcoal mb-2 flex items-center gap-2">
+        <TagIcon className="w-5 h-5 text-swiss-mint" />
+        {t('partnerDetailPage.promoCodeTitle')}
+      </h3>
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={promoCode}
+          onChange={(e) => {
+            setPromoCode(e.target.value.toUpperCase());
+            setValidationResult(null);
+          }}
+          placeholder={t('partnerDetailPage.promoCodePlaceholder')}
+          className={`${STANDARD_INPUT_FIELD} flex-grow`}
+          onKeyDown={(e) => e.key === 'Enter' && handleApplyPromoCode()}
+        />
+        <Button
+          variant="outline"
+          size="md"
+          onClick={handleApplyPromoCode}
+          disabled={isValidating || !promoCode.trim()}
+        >
+          {isValidating ? '...' : t('partnerDetailPage.applyPromoButton')}
+        </Button>
+      </div>
+      {validationResult && (
+        <div
+          className={`mt-2 flex items-center gap-2 text-sm ${
+            validationResult.valid ? 'text-green-600' : 'text-red-600'
+          }`}
+        >
+          {validationResult.valid ? (
+            <CheckCircleIcon className="w-5 h-5" />
+          ) : (
+            <ExclamationCircleIcon className="w-5 h-5" />
+          )}
+          <span>
+            {validationResult.message}
+            {validationResult.discount && (
+              <span className="font-semibold ml-1">({validationResult.discount})</span>
+            )}
+          </span>
+        </div>
+      )}
+    </Card>
+  );
+};
+
 // Loading skeleton for products/services
 const ItemSkeleton: React.FC = () => (
   <Card className="p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 animate-pulse">
@@ -131,7 +256,7 @@ const PartnerDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const { currentUser } = useAppContext();
   const cart = useCart();
-  const { startOrGetConversation } = useMessaging();
+  const { sendMessageToOrganization } = useOrganizationMessaging();
   
   const [partner, setPartner] = useState<Organization | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
@@ -181,13 +306,10 @@ const PartnerDetailPage: React.FC = () => {
   const isSupplier = partner?.type === OrganizationType.PRODUCT_SUPPLIER;
   const isServiceProvider = partner?.type === OrganizationType.SERVICE_PROVIDER;
 
-  const handleSendMessage = () => {
-    if (!partner) {
-      alert("Could not find organization to message.");
-      return;
-    }
-    // For now, navigate to messages with a placeholder
-    navigate('/messages');
+  const handleSendMessage = async () => {
+    if (!partner || !currentUser) return;
+    const fallbackRole = isSupplier ? UserRole.PRODUCT_SUPPLIER : UserRole.SERVICE_PROVIDER;
+    await sendMessageToOrganization(partner, fallbackRole);
   };
 
   const handleOpenServiceRequestModal = (service: Service) => {
@@ -226,7 +348,7 @@ const PartnerDetailPage: React.FC = () => {
         </Button>
         
         <Card className="overflow-hidden animate-pulse">
-          <div className="h-48 bg-gray-200" />
+          <div className="w-full aspect-[4/1] bg-gray-200" />
           <div className="p-6 pt-28 sm:pt-6 sm:pl-36">
             <div className="h-8 bg-gray-200 rounded w-1/3 mb-2" />
             <div className="h-4 bg-gray-200 rounded w-1/4 mb-4" />
@@ -304,7 +426,7 @@ const PartnerDetailPage: React.FC = () => {
 
       {/* Header Section */}
       <Card className="overflow-hidden">
-        <div className="h-48 bg-gray-200 relative">
+        <div className="w-full aspect-[4/1] bg-gray-200 relative">
           <img 
             src={coverImageUrl} 
             alt={`${partner.name} cover`} 
@@ -431,7 +553,7 @@ const PartnerDetailPage: React.FC = () => {
                 </span>
               )}
             </div>
-            <p className="text-sm text-gray-500">{t('partnerDetailPage.reviewsPlaceholder')}</p>
+            <p className="text-sm text-gray-500">{t('dashboard:partnerDetailPage.reviewsPlaceholder', 'No reviews yet')}</p>
           </Card>
         </div>
 
@@ -462,7 +584,7 @@ const PartnerDetailPage: React.FC = () => {
               ) : (
                 <div className="text-center py-8">
                   <ShoppingCartIcon className="w-12 h-12 mx-auto text-gray-300 mb-4" />
-                  <p className="text-gray-500">{t('partnerDetailPage.noProductsListed')}</p>
+                  <p className="text-gray-500">{t('dashboard:partnerDetailPage.noProductsListed', 'No products listed')}</p>
                 </div>
               )
             )}
@@ -513,29 +635,20 @@ const PartnerDetailPage: React.FC = () => {
               ) : (
                 <div className="text-center py-8">
                   <WrenchScrewdriverIcon className="w-12 h-12 mx-auto text-gray-300 mb-4" />
-                  <p className="text-gray-500">{t('partnerDetailPage.noServicesListed')}</p>
+                  <p className="text-gray-500">{t('dashboard:partnerDetailPage.noServicesListed', 'No services listed')}</p>
                 </div>
               )
             )}
             
-            {isFoundationUser && isSupplier && products.length > 0 && (
-              <Card className="mt-6 p-4 bg-gray-50">
-                <h3 className="text-md font-semibold text-swiss-charcoal mb-2">
-                  {t('partnerDetailPage.promoCodeTitle')}
-                </h3>
-                <div className="flex gap-2">
-                  <input 
-                    type="text" 
-                    placeholder={t('partnerDetailPage.promoCodePlaceholder')} 
-                    className={`${STANDARD_INPUT_FIELD} flex-grow`} 
-                  />
-                  <Button variant="outline" size="md">
-                    {t('partnerDetailPage.applyPromoButton')}
-                  </Button>
-                </div>
-              </Card>
+            {isFoundationUser && (isSupplier || isServiceProvider) && (products.length > 0 || services.length > 0) && (
+              <PromoCodeInput partnerId={partner.id} />
             )}
           </Card>
+
+          {/* Documents Section - For Suppliers and Service Providers */}
+          {(isSupplier || isServiceProvider) && (
+            <OrganizationDocumentsList organizationId={partner.id} />
+          )}
         </div>
       </div>
       

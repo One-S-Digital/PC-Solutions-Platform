@@ -434,10 +434,7 @@ const SupplierProductListingsPage: React.FC = () => {
     return (
       <Card className="p-6 text-center">
         <p className="text-gray-600">
-          {t(
-            'dashboard:supplierProductListingsPage.noOrgMessage',
-            'You need an organization to manage product listings.',
-          )}
+          {t('dashboard:supplierProductListingsPage.noOrgMessage')}
         </p>
       </Card>
     );

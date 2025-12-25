@@ -19,6 +19,7 @@ export class UploadController {
   private readonly logger = new Logger(UploadController.name);
   private readonly allowedOrigins: string[];
   private readonly malwareScanningEnabled: boolean;
+  private readonly malwareScanRequired: boolean;
 
   constructor(
     private readonly r2Service: CloudflareR2Service,
@@ -33,11 +34,18 @@ export class UploadController {
     const appOrigin = this.configService.get<string>('APP_ORIGIN');
     this.allowedOrigins = [adminOrigin, appOrigin].filter((origin): origin is string => !!origin);
     
-    // Check if malware scanning is enabled (defaults to true in production)
-    const scanningConfig = this.configService.get<string>('MALWARE_SCANNING_ENABLED', 'true');
-    this.malwareScanningEnabled = scanningConfig.toLowerCase() !== 'false';
+    // Check if malware scanning is enabled
+    // Defaults to false - ClamAV requires separate infrastructure
+    // Enable only if CLAMAV_HOST is configured and accessible
+    const scanningConfig = this.configService.get<string>('MALWARE_SCANNING_ENABLED', 'false');
+    this.malwareScanningEnabled = scanningConfig.toLowerCase() === 'true';
     
-    this.logger.log(`Upload security initialized - CORS origins: ${this.allowedOrigins.join(', ')}, Malware scanning: ${this.malwareScanningEnabled ? 'enabled' : 'disabled'}`);
+    // Check if malware scanning is required (blocks uploads when scanner unavailable)
+    // Only relevant if MALWARE_SCANNING_ENABLED=true
+    const scanRequiredConfig = this.configService.get<string>('MALWARE_SCAN_REQUIRED', 'false');
+    this.malwareScanRequired = scanRequiredConfig.toLowerCase() === 'true';
+    
+    this.logger.log(`Upload security initialized - CORS origins: ${this.allowedOrigins.join(', ')}, Malware scanning: ${this.malwareScanningEnabled ? 'enabled' : 'disabled'}${this.malwareScanningEnabled ? `, Scan required: ${this.malwareScanRequired ? 'yes' : 'no (graceful degradation)'}` : ''}`);
   }
 
   /**
@@ -144,13 +152,17 @@ export class UploadController {
             throw error; // Re-throw malware detection errors
           }
           
-          // Log error but continue upload if scanner is unavailable (graceful degradation)
-          this.logger.error(`⚠️ Malware scan failed (scanner unavailable): ${file.originalname}`, error);
+          // Log error when scanner is unavailable
+          this.logger.warn(`⚠️ Malware scan failed (scanner unavailable): ${file.originalname} - ${(error as Error).message || 'Connection refused'}`);
           
-          // Block uploads when scanner is unavailable in production
-          if (process.env.NODE_ENV === 'production') {
+          // Block uploads if MALWARE_SCAN_REQUIRED=true, otherwise allow graceful degradation
+          if (this.malwareScanRequired) {
+            this.logger.error(`❌ Upload blocked - malware scanning is required but scanner unavailable`);
             throw new ServiceUnavailableException('Security scanner unavailable. Please try again later.');
           }
+          
+          // Graceful degradation: allow upload to proceed with warning
+          this.logger.warn(`⚠️ Proceeding with upload without malware scan (MALWARE_SCAN_REQUIRED=false): ${file.originalname}`);
         }
       }
 
@@ -364,16 +376,16 @@ export class UploadController {
 
   /**
    * Proxy endpoint to download files with authentication and authorization
-   * GET /api/upload/download/*
+   * GET /api/upload/download/*path
    */
-  @Options('download/*')
+  @Options('download/*path')
   async downloadFileOptions(@Req() req: Request, @Res() res: Response) {
     // Set restrictive CORS headers for preflight
     this.setCorsHeaders(req, res);
     res.status(200).send();
   }
 
-  @Get('download/*')
+  @Get('download/*path')
   @UploadThrottle()
   async downloadFile(
     @Req() req: Request,

@@ -30,7 +30,7 @@ const ProviderServiceCard: React.FC<ServiceCardProps> = ({ service, onEdit, onDe
             <div className="p-5 flex flex-col flex-grow">
             <h3 className="text-lg font-semibold text-swiss-charcoal mb-1 group-hover:text-swiss-teal transition-colors">{service.title}</h3>
             <p className="text-xs text-gray-500 mb-2">
-                <TagIcon className="w-3.5 h-3.5 inline mr-1 opacity-70" /> {t('serviceProviderListingsPage.card.category')}: {categoryLabel} | <WrenchScrewdriverIcon className="w-3.5 h-3.5 inline mr-1 opacity-70" /> {t('serviceProviderListingsPage.card.delivery')}: {deliveryLabel}
+                <TagIcon className="w-3.5 h-3.5 inline mr-1 opacity-70" /> {t('dashboard:serviceProviderListingsPage.card.category')}: {categoryLabel} | <WrenchScrewdriverIcon className="w-3.5 h-3.5 inline mr-1 opacity-70" /> {t('dashboard:serviceProviderListingsPage.card.delivery')}: {deliveryLabel}
             </p>
             <p className="text-sm text-gray-600 mb-3 flex-grow line-clamp-3">{service.description}</p>
             {service.priceInfo && <p className="text-sm font-semibold text-swiss-mint mb-3">{service.priceInfo}</p>}
@@ -75,7 +75,7 @@ const ServiceProviderListingsPage: React.FC = () => {
       }
     } catch (err) {
       console.error('Failed to fetch services:', err);
-      setError(t('serviceProviderListingsPage.loadError', 'Failed to load services'));
+      setError(t('dashboard:serviceProviderListingsPage.loadError', 'Failed to load services'));
     } finally {
       setLoading(false);
     }
@@ -103,7 +103,7 @@ const ServiceProviderListingsPage: React.FC = () => {
 
   const handleServiceSubmit = async (data: Partial<Omit<Service, 'id' | 'providerId' | 'providerName' | 'providerLogo'>>, file?: File) => {
     if (!currentUser || !currentUser.orgId || !currentUser.orgName) {
-      alert("User organization details are missing.");
+      alert(t('dashboard:serviceProviderListingsPage.missingOrgDetails', 'User organization details are missing.'));
       return;
     }
 
@@ -151,13 +151,13 @@ const ServiceProviderListingsPage: React.FC = () => {
           providerId,
           providerName,
           providerLogo,
-          title: data.title || 'Untitled Service',
+          title: data.title || t('dashboard:serviceProviderListingsPage.defaultTitle', 'Untitled Service'),
           description: data.description || '',
           category: data.category || ServiceCategory.OTHER,
-          availability: data.availability || 'By appointment',
+          availability: data.availability || t('dashboard:serviceProviderListingsPage.defaultAvailability', 'By appointment'),
           tags: data.tags || [],
-          deliveryType: data.deliveryType || 'On-site',
-          priceInfo: data.priceInfo || t('serviceProviderListingsPage.defaultPriceInfo', 'Contact for quote'),
+          deliveryType: data.deliveryType || t('dashboard:serviceProviderListingsPage.defaultDeliveryType', 'On-site'),
+          priceInfo: data.priceInfo || t('dashboard:serviceProviderListingsPage.defaultPriceInfo', 'Contact for quote'),
           imageUrl,
           isActive: true,
           ...data,
@@ -175,12 +175,12 @@ const ServiceProviderListingsPage: React.FC = () => {
       handleCloseModal();
     } catch (err) {
       console.error('Failed to save service:', err);
-      alert(t('serviceProviderListingsPage.saveError', 'Failed to save service'));
+      alert(t('dashboard:serviceProviderListingsPage.saveError', 'Failed to save service'));
     }
   };
 
   const handleDeleteService = async (serviceId: string) => {
-    if (!window.confirm(t('serviceProviderListingsPage.confirmDelete'))) {
+    if (!window.confirm(t('dashboard:serviceProviderListingsPage.confirmDelete'))) {
       return;
     }
 
@@ -225,9 +225,9 @@ const ServiceProviderListingsPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-center">
-        <h1 className="text-3xl font-bold text-swiss-charcoal mb-4 md:mb-0">{t('serviceProviderListingsPage.title')}</h1>
+        <h1 className="text-3xl font-bold text-swiss-charcoal mb-4 md:mb-0">{t('dashboard:serviceProviderListingsPage.title')}</h1>
         <Button variant="primary" leftIcon={PlusCircleIcon} onClick={() => handleOpenModal()}>
-          {t('serviceProviderListingsPage.addNewServiceButton')}
+          {t('dashboard:serviceProviderListingsPage.addNewServiceButton')}
         </Button>
       </div>
 
@@ -235,7 +235,7 @@ const ServiceProviderListingsPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <input
             type="text"
-            placeholder={t('serviceProviderListingsPage.searchPlaceholder')}
+            placeholder={t('dashboard:serviceProviderListingsPage.searchPlaceholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className={STANDARD_INPUT_FIELD}
@@ -257,9 +257,9 @@ const ServiceProviderListingsPage: React.FC = () => {
       {filteredServiceListings.length === 0 ? (
         <Card className="p-10 text-center">
           <WrenchScrewdriverIcon className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-          <h2 className="text-xl font-semibold text-swiss-charcoal mb-2">{t('serviceProviderListingsPage.emptyState.title')}</h2>
+          <h2 className="text-xl font-semibold text-swiss-charcoal mb-2">{t('dashboard:serviceProviderListingsPage.emptyState.title')}</h2>
           <p className="text-gray-500">
-            {serviceListings.length > 0 ? t('serviceProviderListingsPage.emptyState.noMatch') : t('serviceProviderListingsPage.emptyState.noServicesYet')}
+            {serviceListings.length > 0 ? t('dashboard:serviceProviderListingsPage.emptyState.noMatch') : t('dashboard:serviceProviderListingsPage.emptyState.noServicesYet')}
           </p>
         </Card>
       ) : (

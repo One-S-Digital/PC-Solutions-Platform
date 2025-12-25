@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
+import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { useAppContext } from '../contexts/AppContext';
 import { useNotifications } from '../contexts/NotificationContext';
 import { useAuthenticatedApi } from '../hooks/useAuthenticatedApi';
@@ -45,6 +45,7 @@ const ServiceProviderSettingsPage: React.FC = () => {
   const { addNotification } = useNotifications();
   const { request } = useAuthenticatedApi();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [formData, setFormData] = useState<SettingsFormData | null>(null);
   const [initialFormData, setInitialFormData] = useState<SettingsFormData | null>(null);
@@ -169,6 +170,19 @@ const ServiceProviderSettingsPage: React.FC = () => {
       setActiveSectionId(sections[0].id);
     }
   }, [sections, activeSectionId]);
+
+  // Deep-link support: /settings/service-provider#billingSubscription (optionally ?focus=manage-subscription)
+  useEffect(() => {
+    const hashSectionId = (location.hash || '').replace('#', '').trim();
+    if (!hashSectionId) return;
+    const hasSection = sections.some(s => s.id === hashSectionId);
+    if (!hasSection) return;
+
+    setActiveSectionId(hashSectionId);
+    requestAnimationFrame(() => {
+      sectionRefs.current[hashSectionId]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }, [location.hash, sections]);
 
   const handleFormChange = (field: keyof SettingsFormData, value: any) => {
     setFormData(prev => (prev ? { ...prev, [field]: value } : null));

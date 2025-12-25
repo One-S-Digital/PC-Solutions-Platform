@@ -1,0 +1,165 @@
+{
+  "paywall": {
+    "requiredTitle": "Abonnement requis",
+    "requiredMessage": "Un abonnement actif est requis pour accéder à cette fonctionnalité. Choisissez un plan pour commencer.",
+    "pendingTitle": "Abonnement en attente",
+    "pendingMessage": "Votre demande d'abonnement est en cours de traitement. Notre équipe vous contactera prochainement pour activer votre compte.",
+    "expiredTitle": "Abonnement expiré",
+    "expiredMessage": "Votre abonnement a expiré. Renouvelez maintenant pour retrouver l'accès à toutes les fonctionnalités.",
+    "cancelledTitle": "Abonnement annulé",
+    "cancelledMessage": "Votre abonnement a été annulé. Réabonnez-vous pour continuer à utiliser la plateforme.",
+    "pausedTitle": "Abonnement suspendu",
+    "pausedMessage": "Votre abonnement est actuellement suspendu. Contactez le support pour reprendre l'accès.",
+    "pastDueTitle": "Paiement requis",
+    "pastDueMessage": "Votre paiement est en retard. Veuillez mettre à jour votre mode de paiement pour restaurer l'accès.",
+    "graceTitle": "Période de grâce",
+    "graceMessage": "Votre abonnement est en période de grâce. Veuillez renouveler bientôt pour éviter de perdre l'accès.",
+    "viewPlans": "Voir les plans d'abonnement",
+    "manageBilling": "Gérer la facturation",
+    "viewProfile": "Voir le profil",
+    "contactSupport": "Contacter le support",
+    "manageSubscription": "Gérer votre abonnement",
+    "needHelp": "Besoin d'aide ?",
+    "contactUs": "Contactez-nous",
+    "featureNotAvailableTitle": "Fonctionnalité non disponible",
+    "featureNotAvailableMessage": "Cette fonctionnalité nécessite un plan supérieur. Mettez à niveau pour accéder à {{feature}}.",
+    "requestSubscription": "Demander un abonnement"
+  },
+  "tier": {
+    "basic": "Basique",
+    "essential": "Essentiel",
+    "professional": "Professionnel",
+    "enterprise": "Entreprise"
+  },
+  "requestForm": {
+    "title": "Demander un abonnement",
+    "subtitle": "Complétez le formulaire ci-dessous pour demander votre abonnement",
+    "titles": {
+      "foundation": "Demander un abonnement",
+      "supplier": "Demande d’information (fournisseur)",
+      "serviceProvider": "Demande d’information (prestataire)"
+    },
+    "subtitles": {
+      "foundation": "Complétez le formulaire ci-dessous pour demander votre abonnement",
+      "supplier": "Parlez-nous de votre entreprise et de vos produits. Nous vous contacterons avec le tarif et les prochaines étapes.",
+      "serviceProvider": "Parlez-nous de votre entreprise et de vos services. Nous vous contacterons avec le tarif et les prochaines étapes."
+    },
+    "selectedPlan": "Plan sélectionné",
+    "priceOnRequest": "Prix sur demande",
+    "billedMonthly": "Facturé mensuellement",
+    "billedAnnually": "Facturé annuellement",
+    "year": "année",
+    "month": "mois",
+    "roleLabel": {
+      "supplier": "Fournisseur",
+      "serviceProvider": "Prestataire"
+    },
+    "organizationName": "Organisation / entreprise",
+    "organizationNamePlaceholder": "Nom de votre organisation",
+    "contactName": "Nom du contact",
+    "contactNamePlaceholder": "Votre nom complet",
+    "contactEmail": "Adresse e-mail",
+    "contactEmailPlaceholder": "votre@email.com",
+    "contactPhone": "Numéro de téléphone",
+    "contactPhonePlaceholder": "+41 XX XXX XX XX",
+    "website": "Site web",
+    "websitePlaceholder": "https://exemple.com",
+    "preferredContact": "Méthode de contact préférée",
+    "message": "Message supplémentaire",
+    "messagePlaceholder": "Questions ou exigences particulières...",
+    "messageSupplier": "Parlez-nous de vos produits",
+    "messageSupplierPlaceholder": "Que vendez-vous ? Catégories, MOQ, zones desservies, etc.",
+    "messageServiceProvider": "Parlez-nous de vos services",
+    "messageServiceProviderPlaceholder": "Quels services proposez-vous ? Zone, modèle tarifaire, disponibilités, etc.",
+    "submitButton": "Soumettre la demande",
+    "submitting": "Envoi en cours...",
+    "validation": {
+      "required": "Veuillez remplir tous les champs obligatoires",
+      "planNotConfigured": "Ce plan n'est pas encore configuré. Veuillez contacter le support."
+    },
+    "success": {
+      "title": "Demande soumise !",
+      "description": "Merci de votre intérêt pour le plan {{planName}}. Notre équipe examinera votre demande et vous enverra une facture dans les 48 heures.",
+      "estimatedTime": "Temps de réponse estimé : 24-48 heures",
+      "emailSent": "Un e-mail de confirmation a été envoyé à {{email}}"
+    },
+    "howItWorks": {
+      "title": "Comment ça fonctionne :",
+      "step1": "Soumettez votre demande",
+      "step2": "Recevez une facture par e-mail",
+      "step3": "Payez la facture",
+      "step4": "Votre abonnement est activé"
+    },
+    "howItWorksVendor": {
+      "step1": "Soumettez votre demande d’information",
+      "step2": "Nous vous contactons avec le tarif",
+      "step3": "Vous recevez les prochaines étapes pour être référencé"
+    }
+  },
+  "featureGate": {
+    "locked": "Cette fonctionnalité nécessite une mise à niveau du plan",
+    "upgrade": "Mettre à niveau"
+  },
+  "status": {
+    "active": "Actif",
+    "inactive": "Inactif",
+    "paused": "Suspendu",
+    "cancelled": "Annulé",
+    "expired": "Expiré",
+    "trial": "Essai",
+    "pastDue": "En retard",
+    "pending": "En attente",
+    "gracePeriod": "Période de grâce"
+  },
+  "request": {
+    "title": "Demander un abonnement",
+    "selectPlan": "Sélectionner un plan",
+    "billingPeriod": "Période de facturation",
+    "monthly": "Mensuel",
+    "yearly": "Annuel",
+    "yearlyDiscount": "Économisez 10%",
+    "notes": "Notes supplémentaires",
+    "notesPlaceholder": "Exigences particulières ou questions...",
+    "submit": "Soumettre la demande",
+    "submitting": "Envoi en cours...",
+    "successTitle": "Demande soumise",
+    "successMessage": "Votre demande d'abonnement a été soumise avec succès. Notre équipe vous contactera prochainement.",
+    "errorTitle": "Échec de la demande",
+    "errorMessage": "Une erreur s'est produite lors de l'envoi de votre demande. Veuillez réessayer."
+  },
+  "info": {
+    "currentPlan": "Plan actuel",
+    "currentPeriod": "Période en cours",
+    "noPlan": "Aucun plan actif",
+    "expiresOn": "Expire le {{date}}",
+    "trialEndsOn": "L'essai se termine le {{date}}",
+    "daysRemaining": "{{days}} jours restants",
+    "trialDaysRemaining": "{{days}} jours d'essai restants",
+    "cancelAtPeriodEnd": "Annulation à la fin de la période",
+    "features": "Fonctionnalités",
+    "limits": "Limites d'utilisation",
+    "unlimited": "Illimité"
+  },
+  "actions": {
+    "upgrade": "Mettre à niveau",
+    "downgrade": "Rétrograder",
+    "renew": "Renouveler l'abonnement",
+    "cancel": "Annuler l'abonnement",
+    "resume": "Reprendre l'abonnement",
+    "managePayment": "Gérer le mode de paiement"
+  },
+  "errors": {
+    "cancelRequestFailed": "Échec de l'envoi de la demande d'annulation",
+    "fetchFailed": "Échec du chargement des informations d'abonnement",
+    "requestFailed": "Échec de l'envoi de la demande d'abonnement",
+    "contextMissing": "useSubscription doit être utilisé dans un SubscriptionProvider",
+    "featureNotAvailable": "Cette fonctionnalité n'est pas disponible dans votre plan actuel"
+  },
+  "badge": {
+    "trial": "Essai",
+    "active": "Actif",
+    "expiringSoon": "Expire bientôt",
+    "expired": "Expiré",
+    "pending": "En attente"
+  }
+}

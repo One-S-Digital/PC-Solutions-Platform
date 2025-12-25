@@ -80,20 +80,28 @@ const EducatorProfileViewPage: React.FC = () => {
     fetchCandidate();
   }, [id, getCandidateById]);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!candidate) return;
-    const conversationId = startOrGetConversation(candidate.id, candidate.name, UserRole.EDUCATOR);
-    navigate(`/messages/${conversationId}`);
+    try {
+      const conversationId = await startOrGetConversation(candidate.id, candidate.name, UserRole.EDUCATOR);
+      navigate(`/messages/${conversationId}`);
+    } catch (error) {
+      console.error('Failed to start conversation:', error);
+    }
   };
 
   const handleInviteToApply = async () => {
     if (!candidate || !currentUser) return;
-    const conversationId = await startOrGetConversation(candidate.id, candidate.name, UserRole.EDUCATOR);
-    await sendMessage(
-      conversationId,
-      `Dear ${candidate.name},\n\nWe were impressed with your profile and would like to invite you to apply for a position with our daycare. Please let us know if you're interested.\n\nBest regards,`,
-    );
-    navigate(`/messages/${conversationId}`);
+    try {
+      const conversationId = await startOrGetConversation(candidate.id, candidate.name, UserRole.EDUCATOR);
+      await sendMessage(
+        conversationId,
+        `Dear ${candidate.name},\n\nWe were impressed with your profile and would like to invite you to apply for a position with our daycare. Please let us know if you're interested.\n\nBest regards,`,
+      );
+      navigate(`/messages/${conversationId}`);
+    } catch (error) {
+      console.error('Failed to send invitation:', error);
+    }
   };
 
   if (loading) {
@@ -153,6 +161,7 @@ const EducatorProfileViewPage: React.FC = () => {
 
   const isOwnProfile = currentUser?.id === candidate.id;
   const isFoundationUser = currentUser?.role === UserRole.FOUNDATION;
+  const isAdminOrSuperAdmin = currentUser?.role === UserRole.ADMIN || currentUser?.role === UserRole.SUPER_ADMIN;
 
   return (
     <div className="space-y-6">
@@ -163,7 +172,7 @@ const EducatorProfileViewPage: React.FC = () => {
       {/* Social Media Style Header with Cover Image and Avatar */}
       <Card className="overflow-hidden p-0">
         {/* Cover Image Section */}
-        <div className="h-64 bg-gradient-to-r from-swiss-mint/20 to-swiss-teal/20 relative">
+        <div className="w-full aspect-[4/1] bg-gradient-to-r from-swiss-mint/20 to-swiss-teal/20 relative">
           <div className="w-full h-full bg-gradient-to-br from-swiss-mint/30 via-swiss-teal/20 to-swiss-mint/30" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
           
@@ -411,12 +420,14 @@ const EducatorProfileViewPage: React.FC = () => {
         </div>
       </div>
 
-      {!isOwnProfile && isFoundationUser && (
+      {!isOwnProfile && (isFoundationUser || isAdminOrSuperAdmin) && (
         <Card className="p-6">
           <div className="flex flex-col sm:flex-row justify-center items-center space-y-3 sm:space-y-0 sm:space-x-3">
-            <Button variant="primary" leftIcon={PlusCircleIcon} onClick={handleInviteToApply}>
-              {t('profile:educator.inviteToApply', 'Invite to Apply')}
-            </Button>
+            {isFoundationUser && (
+              <Button variant="primary" leftIcon={PlusCircleIcon} onClick={handleInviteToApply}>
+                {t('profile:educator.inviteToApply', 'Invite to Apply')}
+              </Button>
+            )}
             <Button variant="outline" leftIcon={EnvelopeIcon} onClick={handleSendMessage}>
               {t('common:buttons.sendMessage', 'Send Message')}
             </Button>

@@ -2,8 +2,25 @@ cd -- "$(dirname -- "$0")/.." || {
   echo "Error: Failed to change to repository root directory"
   exit 1
 }
-# Validate translation files before commit
-node scripts/validate-translations.mjs
 
-# Run linting on staged files (optional - can be slow)
-# pnpm lint
+# Run lint-staged on staged files (optional - non-blocking)
+if command -v lint-staged >/dev/null 2>&1; then
+  lint-staged || echo "⚠️  lint-staged had issues, but continuing with other checks..."
+else
+  echo "lint-staged not configured at repo root; skipping"
+fi
+
+# Validate translation files (mandatory - fails commit on error)
+node scripts/validate-translations.mjs || exit 1
+
+# Extract i18n keys from codebase (mandatory - fails commit on error)
+pnpm run extract:i18n-keys || exit 1
+
+# Check for missing i18n keys (mandatory - fails commit on error)
+pnpm run check:i18n-keys || exit 1
+
+# Find hardcoded strings that should be translated (mandatory - fails commit on error)
+node scripts/find-hardcoded-strings.mjs || exit 1
+
+# Lint translation values for quality issues (mandatory - fails commit on error)
+node scripts/lint-translation-values.mjs || exit 1

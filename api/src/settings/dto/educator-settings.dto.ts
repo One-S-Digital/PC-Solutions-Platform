@@ -1,9 +1,13 @@
 import {
   IsArray,
   IsEmail,
+  IsObject,
   IsOptional,
   IsString,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
+import { EducatorAvailabilitySettingsDto } from './educator-availability.dto';
 
 export class UpdateEducatorSettingsDto {
   @IsString()
@@ -14,6 +18,11 @@ export class UpdateEducatorSettingsDto {
 
   @IsEmail()
   email: string;
+
+  // Separate from authentication email: used for "contact info" on the profile.
+  @IsOptional()
+  @IsEmail()
+  contactEmail?: string;
 
   @IsString()
   phoneNumber: string;
@@ -32,8 +41,15 @@ export class UpdateEducatorSettingsDto {
   @IsString({ each: true })
   skills: string[];
 
+  @IsOptional()
   @IsString()
-  availability: string;
+  availability?: string; // Legacy: simple text availability (kept for backward compatibility)
+
+  @IsOptional()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => EducatorAvailabilitySettingsDto)
+  availabilitySettings?: EducatorAvailabilitySettingsDto; // New: structured availability schedule
 
   @IsString()
   cvUrl: string;
@@ -45,4 +61,8 @@ export class UpdateEducatorSettingsDto {
   @IsOptional()
   @IsString()
   avatarAssetId?: string;
+
+  @IsOptional()
+  @IsString()
+  coverAssetId?: string;
 }

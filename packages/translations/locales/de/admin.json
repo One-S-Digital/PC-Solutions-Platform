@@ -149,8 +149,13 @@
         },
         "alerts": {
           "createFailed": "Fehler beim Erstellen der Einstellung: {{message}}",
-          "created": "Systemeinstellung erfolgreich erstellt!"
+          "created": "Systemeinstellung erfolgreich erstellt!",
+          "updated": "Einstellung erfolgreich aktualisiert!",
+          "updateFailed": "Fehler beim Aktualisieren der Einstellung: {{message}}"
         },
+        "editTitle": "Einstellung bearbeiten",
+        "description": "Beschreibung",
+        "gracePeriodHint": "Geben Sie die Anzahl der Tage ein (z.B. 7)",
         "badges": {
           "encrypted": "Verschlüsselt",
           "public": "Öffentlich"
@@ -310,6 +315,20 @@
         "updateMessage": "Nachricht aktualisieren",
         "updating": "Aktualisieren...",
         "title": "Plattformeinstellungen"
+      },
+      "userEmailSettings": {
+        "title": "Benutzer-E-Mail-Einstellungen",
+        "gracePeriodLabel": "Karenzzeit für E-Mail-Änderung (Tage)",
+        "gracePeriodDescription": "Wenn ein Benutzer seine E-Mail-Adresse ändert, wird die alte E-Mail für diese Anzahl von Tagen aufbewahrt, bevor sie automatisch gelöscht wird. Dies ermöglicht es Benutzern, ihr Konto bei Bedarf wiederherzustellen. Auf 0 setzen für sofortige Löschung.",
+        "daysLabel": "Tage",
+        "saveButton": "E-Mail-Einstellungen speichern",
+        "saving": "Speichern...",
+        "updated": "E-Mail-Karenzzeit erfolgreich aktualisiert",
+        "updateFailed": "Fehler beim Aktualisieren der E-Mail-Karenzzeit-Einstellung",
+        "invalidDays": "Bitte geben Sie eine gültige Anzahl von Tagen ein (0-365)",
+        "authRequired": "Authentifizierung erforderlich",
+        "noteTitle": "Hinweis:",
+        "noteDescription": "Diese Einstellung existiert auch in Systemkonfiguration → Systemeinstellungen unter der Kategorie \"email\" als \"email.grace_period_days\"."
       },
       "siteDescriptionPlaceholder": "Seitenbeschreibung eingeben",
       "contactEmailPlaceholder": "kontakt@beispiel.com",
@@ -604,6 +623,8 @@
     "content": "Inhalt",
     "messages": "Nachrichten",
     "support": "Support",
+    "discountTerminations": "Rabattkündigungen",
+    "subscriptions": "Abonnements",
     "systemMonitoring": "Systemüberwachung",
     "translations": "Übersetzungen",
     "designSystem": "Design-System",
@@ -947,7 +968,7 @@
       "suggestion": "Versuchen Sie, Ihre Suchkriterien anzupassen oder fügen Sie einen neuen Dienst hinzu."
     },
     "addService": "Dienst hinzufügen",
-    "subtitle": "Verwalten von Diensten und Angeboten ({{Zahl}} insgesamt)",
+    "subtitle": "Verwalten von Diensten und Angeboten ({{count}} insgesamt)",
     "title": "Dienstleistungen"
   },
   "partnersPage": {
@@ -1358,6 +1379,23 @@
       "initializing": "Initialisierung...",
       "failedToLoad": "Fehler beim Laden der Konversationen.",
       "failedToLoadMessages": "Fehler beim Laden der Nachrichten."
+    },
+    "newConversation": {
+      "title": "Neue Konversation",
+      "button": "Neue Konversation",
+      "searchPlaceholder": "Benutzer nach Name oder E-Mail suchen...",
+      "selectUser": "Wählen Sie einen Benutzer aus, um eine Konversation zu starten",
+      "startConversation": "Konversation starten",
+      "starting": "Starte...",
+      "cancel": "Abbrechen",
+      "noUsersFound": "Keine Benutzer gefunden",
+      "noUsersAvailable": "Keine Benutzer verfügbar",
+      "tryDifferentSearch": "Versuchen Sie einen anderen Suchbegriff",
+      "startTyping": "Beginnen Sie mit der Eingabe, um nach Benutzern zu suchen",
+      "typeAtLeast": "Geben Sie mindestens 2 Zeichen ein, um zu suchen",
+      "tryAgain": "Bitte versuchen Sie es erneut",
+      "success": "Konversation gestartet!",
+      "error": "Fehler beim Starten der Konversation"
     }
   },
   "systemMonitor": {
@@ -1524,5 +1562,269 @@
       "loadFailed": "Fehler beim Laden der Übersetzungen",
       "description": "Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut."
     }
+  },
+  "subscriptions": {
+    "title": "Abonnementverwaltung",
+    "subtitle": "Abonnements, Pläne und Abrechnung verwalten",
+    "newSubscription": "Neues Abonnement",
+    "selectRoleType": "Benutzertyp zur Abonnementverwaltung auswählen",
+    "totalUsers": "Benutzer insgesamt",
+    "subscribed": "abonniert",
+    "backToRoles": "Zurück zur Rollenauswahl",
+    "subscriptions": "Abonnements",
+    "managingUsers": "{{count}} Benutzer verwalten",
+    "searchUsers": "Benutzer nach Name oder E-Mail suchen...",
+    "noUsersFound": "Keine Benutzer gefunden",
+    "noSubscription": "Kein Abonnement",
+    "roles": {
+      "foundations": "Stiftungen",
+      "productSuppliers": "Produktlieferanten",
+      "serviceProviders": "Dienstleister",
+      "educators": "Pädagogen",
+      "parents": "Eltern"
+    },
+    "stats": {
+      "activeSubscriptions": "Aktive Abonnements",
+      "trialSubscriptions": "Testabonnements",
+      "expiringSoon": "Bald ablaufend",
+      "monthlyRevenue": "Monatliche Einnahmen"
+    },
+    "filters": {
+      "searchPlaceholder": "Nach Name oder E-Mail suchen...",
+      "allStatuses": "Alle Status",
+      "allPlans": "Alle Pläne",
+      "clearFilters": "Filter löschen"
+    },
+    "table": {
+      "subscriber": "Abonnent",
+      "plan": "Plan",
+      "status": "Status",
+      "periodEnd": "Periodenende",
+      "actions": "Aktionen"
+    },
+    "userTable": {
+      "user": "Benutzer",
+      "email": "E-Mail",
+      "organization": "Organisation",
+      "subscriptionStatus": "Abonnementstatus",
+      "plan": "Plan",
+      "actions": "Aktionen"
+    },
+    "status": {
+      "active": "Aktiv",
+      "inactive": "Inaktiv",
+      "paused": "Pausiert",
+      "cancelled": "Gekündigt",
+      "expired": "Abgelaufen",
+      "trial": "Testversion",
+      "past_due": "Überfällig",
+      "pending": "Ausstehend",
+      "grace_period": "Karenzzeit"
+    },
+    "tier": {
+      "basic": "Basis",
+      "essential": "Essential",
+      "professional": "Professional",
+      "enterprise": "Enterprise",
+      "help": "Die Stufe gilt für Funktionszugriff und Preis-Konfiguration für Stiftungen."
+    },
+    "tierSection": {
+      "title": "Abonnementstufe",
+      "subtitle": "Abonnementstufen und Preise für Stiftungen konfigurieren.",
+      "add": "Stufe hinzufügen",
+      "empty": "Noch keine Stufen konfiguriert.",
+      "table": {
+        "tier": "Stufe",
+        "billing": "Abrechnung",
+        "price": "Preis",
+        "active": "Aktiv",
+        "actions": "Aktionen"
+      }
+    },
+    "tierEditor": {
+      "createTitle": "Abonnementstufe erstellen",
+      "editTitle": "Abonnementstufe bearbeiten",
+      "success": "Abonnementstufe erfolgreich gespeichert",
+      "error": "Fehler beim Speichern der Abonnementstufe: ",
+      "deleteSuccess": "Abonnementstufe erfolgreich gelöscht",
+      "deleteError": "Fehler beim Löschen der Abonnementstufe: ",
+      "confirmDelete": "Diese Stufe löschen?",
+      "billing": {
+        "monthly": "Monatlich",
+        "yearly": "Jährlich"
+      },
+      "fields": {
+        "subscriptionTier": "Stufe",
+        "billingPeriod": "Abrechnungszeitraum",
+        "name": "Name",
+        "namePlaceholder": "z.B. Stiftung - Essential",
+        "basePrice": "Grundpreis",
+        "currency": "Währung",
+        "yearlyDiscount": "Jahresrabatt (%)",
+        "displayOrder": "Anzeigereihenfolge",
+        "isActive": "Aktiv",
+        "isActiveHelp": "Inaktive Stufen sind bei Auswahl und Preisberechnung ausgeblendet.",
+        "volumeDiscounts": "Mengenrabatte",
+        "volumeDiscountsHelp": "Optional: Rabatte basierend auf Menge.",
+        "noVolumeDiscounts": "Keine Mengenrabatte konfiguriert.",
+        "minQuantity": "Mindestmenge",
+        "discountPercentage": "Rabatt (%)"
+      },
+      "actions": {
+        "addVolumeDiscount": "Hinzufügen",
+        "saving": "Speichern...",
+        "save": "Speichern"
+      },
+      "validation": {
+        "basePrice": "Der Grundpreis muss eine gültige Zahl sein.",
+        "yearlyDiscount": "Der Jahresrabatt muss zwischen 0 und 100 liegen.",
+        "displayOrder": "Die Anzeigereihenfolge muss eine gültige Zahl sein."
+      }
+    },
+    "actions": {
+      "activate": "Aktivieren",
+      "pause": "Pausieren",
+      "resume": "Fortsetzen",
+      "cancel": "Kündigen",
+      "renew": "Verlängern",
+      "extend": "Erweitern",
+      "upgrade": "Upgrade",
+      "downgrade": "Downgrade",
+      "delete": "Abonnement löschen",
+      "viewHistory": "Verlauf anzeigen",
+      "addNote": "Notiz hinzufügen"
+    },
+    "details": {
+      "title": "Abonnementdetails",
+      "subscriber": "Abonnent",
+      "plan": "Plan",
+      "tier": "Stufe",
+      "status": "Status",
+      "periodStart": "Periodenbeginn",
+      "periodEnd": "Periodenende",
+      "trialEnd": "Testende",
+      "type": "Typ",
+      "manual": "Manuell",
+      "stripeManaged": "Stripe-verwaltet",
+      "notes": "Notizen",
+      "selectSubscription": "Wählen Sie ein Abonnement aus, um Details anzuzeigen"
+    },
+    "expiring": {
+      "title": "Bald ablaufend",
+      "noSubscriptions": "Keine Abonnements laufen bald ab"
+    },
+    "editSubscription": {
+      "title": "Abonnement bearbeiten",
+      "status": "Abonnementstatus",
+      "plan": "Abonnementplan",
+      "selectPlan": "Plan auswählen...",
+      "subscriptionPeriod": "Abonnementlaufzeit",
+      "subscriptionPeriodHelp": "Wählen Sie, wie lange dieses Abonnement aktiv sein soll.",
+      "monthlyRecurringHelp": "Wird jeden Monat automatisch verlängert, bis es von einem Administrator gekündigt, pausiert oder geändert wird.",
+      "period": {
+        "selectPeriod": "Zeitraum auswählen...",
+        "monthlyRecurring": "Monatlich wiederkehrend",
+        "oneMonth": "1 Monat",
+        "threeMonths": "3 Monate",
+        "sixMonths": "6 Monate",
+        "oneYear": "1 Jahr",
+        "twoYears": "2 Jahre"
+      },
+      "notes": "Notizen (optional)",
+      "notesPlaceholder": "Notizen zu diesem Abonnement hinzufügen...",
+      "edit": "Bearbeiten",
+      "saving": "Speichern...",
+      "save": "Änderungen speichern",
+      "success": "Abonnement erfolgreich aktualisiert",
+      "error": "Fehler beim Aktualisieren des Abonnements: ",
+      "currentInfo": "Aktuelle Abonnementinformationen",
+      "planLabel": "Plan",
+      "periodLabel": "Zeitraum",
+      "enquiryBased": "Preisgestaltung auf Anfrage",
+      "noPlansAvailable": "Keine Abonnementpläne verfügbar. Bitte erstellen Sie Pläne über die API oder das Datenbank-Seed."
+    },
+    "planEditor": {
+      "open": "Pläne bearbeiten",
+      "title": "Abonnementplan-Editor",
+      "plan": "Plan",
+      "billingPeriod": "Abonnement",
+      "billingPeriodHelp": "Wählen Sie den für diesen Plan angezeigten Abonnementzeitraum aus.",
+      "billingOptions": {
+        "thirtyDays": "30 Tage",
+        "monthlyRecurring": "Monatlich wiederkehrend",
+        "oneYear": "1 Jahr",
+        "monthly": "Monatlich",
+        "quarterly": "Vierteljährlich",
+        "yearly": "Jährlich"
+      },
+      "currentInfo": "Aktuelle Planinfo",
+      "price": "Preis",
+      "currentBillingPeriod": "Aktuelles Abonnement",
+      "saving": "Speichern...",
+      "save": "Änderungen speichern",
+      "success": "Plan erfolgreich aktualisiert",
+      "error": "Fehler beim Aktualisieren des Plans: ",
+      "noPlansAvailable": "Keine Abonnementpläne verfügbar. Bitte führen Sie das Datenbank-Seed aus oder erstellen Sie Pläne über die API."
+    },
+    "createSubscription": {
+      "title": "Abonnement erstellen"
+    },
+    "modal": {
+      "pause": {
+        "title": "Abonnement pausieren",
+        "description": "Dieses Abonnement pausieren. Der Abonnent verliert den Zugang bis zur Fortsetzung."
+      },
+      "cancel": {
+        "title": "Abonnement kündigen",
+        "description": "Dieses Abonnement kündigen. Diese Aktion kann durch Verlängerung rückgängig gemacht werden."
+      },
+      "renew": {
+        "title": "Abonnement verlängern",
+        "description": "Dieses Abonnement für einen weiteren Abrechnungszeitraum verlängern."
+      },
+      "extend": {
+        "title": "Abonnement erweitern",
+        "description": "Den Abonnementzeitraum um zusätzliche Tage erweitern.",
+        "additionalDays": "Zusätzliche Tage"
+      },
+      "upgrade": {
+        "title": "Abonnement upgraden",
+        "description": "Auf einen höheren Plan upgraden."
+      },
+      "downgrade": {
+        "title": "Abonnement downgraden",
+        "description": "Auf einen niedrigeren Plan downgraden (wird am Periodenende wirksam)."
+      },
+      "reason": "Grund",
+      "reasonPlaceholder": "Grund eingeben...",
+      "newPlan": "Neuer Plan",
+      "selectPlan": "Plan auswählen...",
+      "confirm": "Bestätigen",
+      "cancelButton": "Abbrechen"
+    },
+    "create": {
+      "title": "Neues Abonnement erstellen",
+      "subscriberType": "Abonnententyp",
+      "user": "Benutzer",
+      "organization": "Organisation",
+      "userId": "Benutzer-ID",
+      "organizationId": "Organisations-ID",
+      "userIdPlaceholder": "Benutzer-ID eingeben...",
+      "organizationIdPlaceholder": "Organisations-ID eingeben...",
+      "plan": "Plan",
+      "selectPlan": "Plan auswählen...",
+      "duration": "Dauer (Monate)",
+      "includeTrial": "{{days}}-tägige Testphase einschließen",
+      "notes": "Notizen (optional)",
+      "notesPlaceholder": "Notizen hinzufügen...",
+      "creating": "Wird erstellt...",
+      "createButton": "Abonnement erstellen"
+    },
+    "pagination": {
+      "showing": "Zeige {{from}} bis {{to}} von {{total}}",
+      "previous": "Zurück",
+      "next": "Weiter"
+    },
+    "noSubscriptions": "Keine Abonnements gefunden"
   }
 }

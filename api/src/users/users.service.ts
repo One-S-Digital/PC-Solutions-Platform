@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ConflictException, Logger } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, ForbiddenException, Logger } from '@nestjs/common';
 import { Prisma, UserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -6,6 +6,13 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { CompleteProfileDto } from './dto/complete-profile.dto';
 import { PrincipalService } from '../principal/principal.service';
 import { RoleSyncService } from '../sync/role-sync.service';
+import { ConfigService } from '@nestjs/config';
+import { createClerkClient } from '@clerk/clerk-sdk-node';
+
+/**
+ * Roles considered "admin-level" roles in the system.
+ */
+const ADMIN_ROLES: UserRole[] = [UserRole.SUPER_ADMIN, UserRole.ADMIN];
 
 const userProfileInclude = {
   avatarAsset: true,
@@ -45,12 +52,188 @@ export interface FindAllUsersParams {
 @Injectable()
 export class UsersService {
   private readonly logger = new Logger(UsersService.name);
+  private clerk: any;
 
   constructor(
     private prisma: PrismaService,
     private readonly principal: PrincipalService,
     private readonly roleSyncService: RoleSyncService,
-  ) {}
+    private readonly configService: ConfigService,
+  ) {
+    const clerkSecretKey = this.configService.get<string>('CLERK_SECRET_KEY');
+    if (clerkSecretKey) {
+      this.clerk = createClerkClient({ secretKey: clerkSecretKey });
+    }
+  }
+
+  /**
+   * Sync a user's email to Clerk authentication provider.
+   * This ensures the login email matches the database email when an admin updates it.
+   * 
+   * Clerk handles emails specially - each user can have multiple email addresses.
+   * To update the primary email, we need to:
+   * 1. Create a new email address for the user
+   * 2. Set it as primary
+   * 3. Schedule old email for deletion after grace period
+   * 
+   * @param clerkId - The Clerk user ID
+   * @param newEmail - The new email address to set
+   * @param skipVerification - Whether to skip email verification (true for admin updates)
+   * @throws Error if sync fails (caller should handle by creating outbox entry)
+   */
+  private async syncEmailToClerk(clerkId: string, newEmail: string, skipVerification = true): Promise<void> {
+    if (!this.clerk) {
+      this.logger.warn(`⚠️ [EMAIL SYNC] Clerk not configured, skipping email sync for ${clerkId}`);
+      return;
+    }
+
+    this.logger.log(`📧 [EMAIL SYNC] Syncing email to Clerk for user ${clerkId}: ${newEmail}`);
+    
+    // Get the current user from Clerk to find existing email addresses
+    const clerkUser = await this.clerk.users.getUser(clerkId);
+    const oldPrimaryEmailId = clerkUser.primaryEmailAddressId;
+    const oldPrimaryEmail = clerkUser.emailAddresses?.find(
+      (ea: any) => ea.id === oldPrimaryEmailId
+    )?.emailAddress;
+    
+    // Check if the new email already exists for this user
+    const existingEmailAddress = clerkUser.emailAddresses?.find(
+      (ea: any) => ea.emailAddress.toLowerCase() === newEmail.toLowerCase()
+    );
+    
+    if (existingEmailAddress) {
+      // Email already exists, just make sure it's set as primary
+      if (clerkUser.primaryEmailAddressId !== existingEmailAddress.id) {
+        this.logger.log(`📧 [EMAIL SYNC] Setting existing email as primary for ${clerkId}`);
+        await this.clerk.users.updateUser(clerkId, {
+          primaryEmailAddressId: existingEmailAddress.id,
+        });
+      } else {
+        this.logger.log(`📧 [EMAIL SYNC] Email ${newEmail} is already the primary email for ${clerkId}`);
+      }
+      return;
+    }
+    
+    // Create a new email address for the user
+    this.logger.log(`📧 [EMAIL SYNC] Creating new email address ${newEmail} for ${clerkId}`);
+    await this.clerk.emailAddresses.createEmailAddress({
+      userId: clerkId,
+      emailAddress: newEmail,
+      verified: skipVerification, // Admin updates should skip verification
+      primary: true, // Set as primary immediately
+    });
+    
+    // Schedule old email for deletion after grace period
+    // This allows users time to verify the new email works and recover if needed
+    if (oldPrimaryEmailId) {
+      await this.scheduleOldEmailDeletion(clerkId, oldPrimaryEmailId, oldPrimaryEmail);
+    }
+    
+    this.logger.log(`✅ [EMAIL SYNC] Email sync completed for ${clerkId}`);
+  }
+
+  /**
+   * Schedule the old email address for deletion after a grace period.
+   * Default grace period is 7 days, configurable via System Settings in admin dashboard.
+   * Setting key: email.grace_period_days (category: email)
+   */
+  private async scheduleOldEmailDeletion(
+    clerkId: string, 
+    emailAddressId: string, 
+    emailAddress?: string
+  ): Promise<void> {
+    // Get grace period from system settings, fallback to env var, then default to 7 days
+    let gracePeriodDays = 7;
+    
+    try {
+      const setting = await this.prisma.systemSettings.findUnique({
+        where: { key: 'email.grace_period_days' },
+      });
+      if (setting?.value) {
+        gracePeriodDays = Number(setting.value) || 7;
+      } else {
+        // Fallback to env var for backwards compatibility
+        gracePeriodDays = this.configService.get<number>('EMAIL_GRACE_PERIOD_DAYS') || 7;
+      }
+    } catch {
+      // If system settings table doesn't exist yet, use env var fallback
+      gracePeriodDays = this.configService.get<number>('EMAIL_GRACE_PERIOD_DAYS') || 7;
+    }
+    
+    const deletionDate = new Date(Date.now() + gracePeriodDays * 24 * 60 * 60 * 1000);
+    
+    try {
+      await this.prisma.outbox.create({
+        data: {
+          topic: 'clerk.email.delete',
+          payload: { 
+            clerkId, 
+            emailAddressId,
+            emailAddress: emailAddress || 'unknown',
+            reason: 'Grace period expired after email change',
+            scheduledAt: new Date().toISOString(),
+          },
+          nextRunAt: deletionDate, // Won't be processed until this date
+        },
+      });
+      
+      this.logger.log(
+        `📅 [EMAIL SYNC] Old email ${emailAddress || emailAddressId} scheduled for deletion ` +
+        `after ${gracePeriodDays} days (${deletionDate.toISOString()}) for user ${clerkId}`
+      );
+    } catch (error: any) {
+      // Non-critical error - the new email is already working
+      this.logger.warn(
+        `⚠️ [EMAIL SYNC] Could not schedule old email deletion: ${error.message}. ` +
+        `Manual cleanup may be needed for user ${clerkId}`
+      );
+    }
+  }
+
+  /**
+   * Queue a failed email sync for retry via the outbox pattern.
+   * This ensures eventual consistency between the database and Clerk.
+   */
+  private async queueEmailSyncForRetry(clerkId: string, newEmail: string, errorMessage: string): Promise<void> {
+    try {
+      await this.prisma.outbox.create({
+        data: {
+          topic: 'clerk.email.sync',
+          payload: { 
+            clerkId, 
+            newEmail, 
+            errorMessage,
+            attemptedAt: new Date().toISOString(),
+          },
+        },
+      });
+      this.logger.log(`📤 [EMAIL SYNC] Queued email sync for retry: ${clerkId} -> ${newEmail}`);
+    } catch (outboxError: any) {
+      // If we can't even create the outbox entry, log it prominently
+      this.logger.error(`🚨 [EMAIL SYNC] CRITICAL: Failed to queue email sync for retry: ${outboxError.message}`);
+      this.logger.error(`🚨 [EMAIL SYNC] Manual intervention required for user ${clerkId} email: ${newEmail}`);
+    }
+  }
+
+  /**
+   * Safely sync email to Clerk with outbox fallback for failures.
+   * This method handles errors gracefully by queuing failed syncs for retry.
+   */
+  private async syncEmailToClerkWithFallback(clerkId: string, newEmail: string): Promise<void> {
+    try {
+      await this.syncEmailToClerk(clerkId, newEmail);
+    } catch (error: any) {
+      this.logger.error(`❌ [EMAIL SYNC] Failed to sync email to Clerk for ${clerkId}: ${error.message}`);
+      
+      // Log more details for debugging
+      if (error.errors) {
+        this.logger.error(`❌ [EMAIL SYNC] Clerk errors: ${JSON.stringify(error.errors)}`);
+      }
+      
+      // Queue for retry via outbox pattern
+      await this.queueEmailSyncForRetry(clerkId, newEmail, error.message);
+    }
+  }
 
   private serializeDate(value: Date | string | null | undefined): string | null | undefined {
     if (value instanceof Date) {
@@ -260,6 +443,24 @@ export class UsersService {
           changedBy: clerkId,
           reason: 'Profile completion role update',
         });
+      }
+      
+      // Sync email to both AppUser and User if provided and AppUser email is missing
+      if (email && !existingUser.email) {
+        this.logger.log(`📧 [COMPLETE PROFILE] Syncing email to existing user...`);
+        await this.prisma.appUser.update({
+          where: { id: existingUser.id },
+          data: { email },
+        });
+        // Also update User table if it exists
+        await this.prisma.user.updateMany({
+          where: { clerkId },
+          data: { email },
+        });
+        
+        // Sync email to Clerk so login email matches database email
+        this.logger.log(`📧 [COMPLETE PROFILE] Syncing email to Clerk for ${clerkId}...`);
+        await this.syncEmailToClerkWithFallback(clerkId, email);
       }
     } else {
       // Check if an account with this email already exists (for a DIFFERENT clerkId)
@@ -671,7 +872,7 @@ export class UsersService {
         user = await this.prisma.user.create({
           data: {
             clerkId,
-            email: appUser.email || updateUserDto.email || '',
+            email: appUser.email || updateUserDto.email || null, // Allow NULL - do not use empty string
             firstName: updateUserDto.firstName || null,
             lastName: updateUserDto.lastName || null,
             role: appUser.role,
@@ -706,11 +907,16 @@ export class UsersService {
       }
 
       // Also update email in AppUser if changed
-      if (updateUserDto.email && updateUserDto.email !== appUser.email) {
+      const isEmailChanging = updateUserDto.email && updateUserDto.email !== appUser.email;
+      if (isEmailChanging) {
         await this.prisma.appUser.update({
           where: { id: appUser.id },
           data: { email: updateUserDto.email },
         });
+        
+        // Sync email to Clerk so login email matches database email
+        this.logger.log(`📧 [updateByClerkId] Email changed for user ${clerkId}, syncing to Clerk...`);
+        await this.syncEmailToClerkWithFallback(clerkId, updateUserDto.email!);
       }
 
         // Return full User profile
@@ -722,11 +928,16 @@ export class UsersService {
       console.log('Falling back to AppUser-only update');
       
       // Update AppUser email if provided
-      if (updateUserDto.email) {
+      const isEmailChangingFallback = updateUserDto.email && updateUserDto.email !== appUser.email;
+      if (isEmailChangingFallback) {
         await this.prisma.appUser.update({
           where: { id: appUser.id },
           data: { email: updateUserDto.email },
         });
+        
+        // Still try to sync email to Clerk even if User table update failed
+        this.logger.log(`📧 [updateByClerkId fallback] Email changed for user ${clerkId}, syncing to Clerk...`);
+        await this.syncEmailToClerkWithFallback(clerkId, updateUserDto.email!);
       }
       
         // Return AppUser data in User format
@@ -735,7 +946,149 @@ export class UsersService {
     }
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto, changedBy?: string) {
+  /**
+   * Validate if a role change is allowed based on the caller's role.
+   *
+   * Rules (per admin dashboard requirements):
+   * - SUPER_ADMIN can assign any role.
+   * - ADMIN can assign ADMIN and any non-super-admin role, but cannot assign SUPER_ADMIN.
+   * - ADMIN cannot change (demote) an existing SUPER_ADMIN.
+   * 
+   * @param targetRole - The role to assign
+   * @param callerRole - The role of the user making the change
+   * @param previousRole - Optional: current role of the target user (for demotion protection)
+   * @throws ForbiddenException if the caller cannot assign the target role
+   */
+  validateRoleElevation(targetRole: UserRole, callerRole?: UserRole, previousRole?: UserRole): void {
+    // Default-deny only the most privileged escalation if callerRole is missing
+    if (!callerRole) {
+      if (targetRole === UserRole.SUPER_ADMIN) {
+        throw new ForbiddenException('Only SUPER_ADMIN can assign SUPER_ADMIN role');
+      }
+      return;
+    }
+
+    // Admin cannot create/promote SUPER_ADMIN
+    if (callerRole === UserRole.ADMIN && targetRole === UserRole.SUPER_ADMIN) {
+      throw new ForbiddenException('Only SUPER_ADMIN can assign SUPER_ADMIN role');
+    }
+
+    // Admin cannot demote an existing SUPER_ADMIN
+    if (callerRole === UserRole.ADMIN && previousRole === UserRole.SUPER_ADMIN && targetRole !== UserRole.SUPER_ADMIN) {
+      throw new ForbiddenException('Only SUPER_ADMIN can change a SUPER_ADMIN role');
+    }
+  }
+
+  /**
+   * Elevate a user to admin role with full profile reset.
+   * This is a specialized method for role elevation that ensures
+   * proper audit trail, Clerk synchronization, and profile cleanup.
+   * 
+   * When elevating from a general role (EDUCATOR, PARENT, etc.) to an admin role,
+   * the user's profile is reset to treat them as a fresh admin account:
+   * - Profile-specific data is cleared (workExperience, education, skills, etc.)
+   * - Organization associations are removed
+   * - Basic identity info is preserved (email, firstName, lastName)
+   * 
+   * @param userId - The AppUser ID to elevate
+   * @param targetRole - The admin role to assign (ADMIN or SUPER_ADMIN)
+   * @param changedBy - The clerkId or identifier of who made the change
+   * @param reason - Optional reason for the role change
+   */
+  async elevateToAdmin(
+    userId: string,
+    targetRole: UserRole,
+    changedBy: string,
+    reason?: string,
+  ) {
+    // Validate the target role is an admin role
+    if (!ADMIN_ROLES.includes(targetRole)) {
+      throw new ForbiddenException('This method is only for elevating to admin roles');
+    }
+
+    const appUser = await this.prisma.appUser.findUnique({
+      where: { id: userId },
+    });
+
+    if (!appUser) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Don't allow re-elevation to the same role
+    if (appUser.role === targetRole) {
+      this.logger.log(`User ${userId} already has role ${targetRole}`);
+      return this.findByClerkId(appUser.clerkId);
+    }
+
+    const previousRole = appUser.role;
+    const isElevatingFromGeneralRole = !ADMIN_ROLES.includes(previousRole);
+    
+    this.logger.log(`🔺 [ELEVATE TO ADMIN] Elevating user ${userId} from ${previousRole} to ${targetRole}`);
+
+    // Perform role change and profile reset in a transaction
+    await this.prisma.$transaction(async (tx) => {
+      // Use RoleSyncService for proper Clerk sync and audit trail
+      await this.roleSyncService.changeRole({
+        appUserId: userId,
+        newRole: targetRole,
+        changedBy,
+        reason: reason || `Role elevation to ${targetRole}`,
+        tx,
+      });
+
+      // If elevating from a general role to admin, reset the profile
+      if (isElevatingFromGeneralRole) {
+        this.logger.log(`🔄 [ELEVATE TO ADMIN] Resetting profile for user ${userId} (was ${previousRole})`);
+
+        // Check if User profile exists
+        const userProfile = await tx.user.findUnique({
+          where: { clerkId: appUser.clerkId },
+        });
+
+        if (userProfile) {
+          // Reset profile-specific fields but preserve identity info
+          await tx.user.update({
+            where: { clerkId: appUser.clerkId },
+            data: {
+              role: targetRole,
+              // Clear profile-specific data
+              workExperience: null,
+              education: null,
+              certifications: [],
+              skills: [],
+              availability: null,
+              cvUrl: null,
+              shortBio: null,
+              // Keep: email, firstName, lastName, phoneNumber, avatarAssetId
+            },
+          });
+          this.logger.log(`✅ [ELEVATE TO ADMIN] Profile data cleared for user ${userId}`);
+
+          // Remove all organization associations
+          const deletedOrgs = await tx.userOrganization.deleteMany({
+            where: { userId: userProfile.id },
+          });
+          
+          if (deletedOrgs.count > 0) {
+            this.logger.log(`✅ [ELEVATE TO ADMIN] Removed ${deletedOrgs.count} organization association(s) for user ${userId}`);
+          }
+        }
+      } else {
+        // Just update the role in User profile if it exists (switching between admin roles)
+        await tx.user.updateMany({
+          where: { clerkId: appUser.clerkId },
+          data: { role: targetRole },
+        });
+      }
+    });
+
+    this.logger.log(`✅ [ELEVATE TO ADMIN] User ${userId} elevated from ${previousRole} to ${targetRole}`);
+
+    // Return the fully refreshed user profile
+    return this.findByClerkId(appUser.clerkId);
+  }
+
+  async update(id: string, updateUserDto: UpdateUserDto, changedBy?: string, callerRole?: UserRole) {
     const appUser = await this.prisma.appUser.findUnique({
       where: { id },
     });
@@ -744,18 +1097,31 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    // Check if role is changing - if so, use RoleSyncService for proper Clerk sync
+    // Check if role is changing - if so, validate and use RoleSyncService for proper Clerk sync
     const isRoleChanging = updateUserDto.role && updateUserDto.role !== appUser.role;
+    const previousRole = appUser.role;
+    const targetRole = updateUserDto.role;
+    
+    // Check if we're elevating from a general role to an admin role
+    const isElevatingToAdmin = isRoleChanging && 
+      targetRole && 
+      ADMIN_ROLES.includes(targetRole) && 
+      !ADMIN_ROLES.includes(previousRole);
+    
+    // Validate role elevation if changing to an admin role
+    if (isRoleChanging && updateUserDto.role) {
+      this.validateRoleElevation(updateUserDto.role, callerRole, previousRole);
+    }
 
     // Update both AppUser and User profile in a transaction for data consistency
     const result = await this.prisma.$transaction(async (tx) => {
       // Handle role change through RoleSyncService (includes Clerk sync)
-      if (isRoleChanging) {
+      if (isRoleChanging && targetRole) {
         await this.roleSyncService.changeRole({
           appUserId: id,
-          newRole: updateUserDto.role as UserRole,
+          newRole: targetRole,
           changedBy: changedBy || 'system',
-          reason: 'Admin user update',
+          reason: isElevatingToAdmin ? `Role elevation from ${previousRole} to ${targetRole}` : 'Admin user update',
           tx,
         });
       }
@@ -776,20 +1142,54 @@ export class UsersService {
       });
 
       if (existingUser) {
-        const userUpdateData: any = {};
-        if (updateUserDto.email !== undefined) userUpdateData.email = updateUserDto.email;
-        if (updateUserDto.firstName !== undefined) userUpdateData.firstName = updateUserDto.firstName;
-        if (updateUserDto.lastName !== undefined) userUpdateData.lastName = updateUserDto.lastName;
-        if (updateUserDto.phoneNumber !== undefined) userUpdateData.phoneNumber = updateUserDto.phoneNumber;
-        // Role is already handled by RoleSyncService
-
-        if (Object.keys(userUpdateData).length > 0) {
+        // If elevating to admin from a general role, reset profile-specific data
+        if (isElevatingToAdmin) {
+          this.logger.log(`🔄 [UPDATE] Resetting profile for user ${id} during elevation from ${previousRole} to ${targetRole}`);
+          
           userProfile = await tx.user.update({
             where: { clerkId: appUser.clerkId },
-            data: userUpdateData,
+            data: {
+              role: targetRole,
+              email: updateUserDto.email || existingUser.email,
+              firstName: updateUserDto.firstName !== undefined ? updateUserDto.firstName : existingUser.firstName,
+              lastName: updateUserDto.lastName !== undefined ? updateUserDto.lastName : existingUser.lastName,
+              phoneNumber: updateUserDto.phoneNumber !== undefined ? updateUserDto.phoneNumber : existingUser.phoneNumber,
+              // Clear profile-specific data
+              workExperience: null,
+              education: null,
+              certifications: [],
+              skills: [],
+              availability: null,
+              cvUrl: null,
+              shortBio: null,
+            },
           });
+          
+          // Remove all organization associations
+          const deletedOrgs = await tx.userOrganization.deleteMany({
+            where: { userId: existingUser.id },
+          });
+          
+          if (deletedOrgs.count > 0) {
+            this.logger.log(`✅ [UPDATE] Removed ${deletedOrgs.count} organization association(s) for user ${id}`);
+          }
         } else {
-          userProfile = existingUser;
+          // Normal update - just update the provided fields
+          const userUpdateData: any = {};
+          if (updateUserDto.email !== undefined) userUpdateData.email = updateUserDto.email;
+          if (updateUserDto.firstName !== undefined) userUpdateData.firstName = updateUserDto.firstName;
+          if (updateUserDto.lastName !== undefined) userUpdateData.lastName = updateUserDto.lastName;
+          if (updateUserDto.phoneNumber !== undefined) userUpdateData.phoneNumber = updateUserDto.phoneNumber;
+          if (isRoleChanging && targetRole) userUpdateData.role = targetRole;
+
+          if (Object.keys(userUpdateData).length > 0) {
+            userProfile = await tx.user.update({
+              where: { clerkId: appUser.clerkId },
+              data: userUpdateData,
+            });
+          } else {
+            userProfile = existingUser;
+          }
         }
       }
 
@@ -797,6 +1197,14 @@ export class UsersService {
     });
 
     const { updatedAppUser, userProfile } = result;
+
+    // Sync email to Clerk if it was changed
+    // This ensures the user can log in with their new email
+    const isEmailChanging = updateUserDto.email && updateUserDto.email !== appUser.email;
+    if (isEmailChanging && updateUserDto.email) {
+      this.logger.log(`📧 [UPDATE] Email changed for user ${id}, syncing to Clerk...`);
+      await this.syncEmailToClerkWithFallback(appUser.clerkId, updateUserDto.email);
+    }
 
     // Fetch the latest role (in case it was updated by RoleSyncService)
     const latestAppUser = await this.prisma.appUser.findUnique({ where: { id } });
@@ -865,6 +1273,23 @@ export class UsersService {
       updatedAt: updatedAppUser.updatedAt,
       organizations: [],
     };
+  }
+
+  /**
+   * Update a user's role by Clerk ID.
+   * Used for syncing admin roles from Clerk publicMetadata to the database.
+   */
+  async updateRoleByClerkId(clerkId: string, newRole: UserRole, changedBy: string, reason?: string) {
+    this.logger.log(`🔄 [UPDATE ROLE BY CLERK ID] Updating role for ${clerkId} to ${newRole}`);
+    
+    await this.roleSyncService.changeRoleByClerkId({
+      clerkId,
+      newRole,
+      changedBy,
+      reason: reason || 'Role update by Clerk ID',
+    });
+    
+    this.logger.log(`✅ [UPDATE ROLE BY CLERK ID] Role updated for ${clerkId} to ${newRole}`);
   }
 
   async removeRole(userId: string, role: UserRole, changedBy?: string) {

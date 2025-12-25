@@ -174,21 +174,19 @@ export default function AdminCustomLoginForm() {
     return (
       <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
         <Card className="w-full max-w-md p-8 shadow-xl">
-          <div className="text-center mb-8">
-            <div className="mx-auto h-[92px] w-[92px] bg-swiss-mint rounded-full flex items-center justify-center mb-6">
-              {getAdminLogo(settings) ? (
-                <img 
-                  src={getAdminLogo(settings)!} 
-                  alt={t('common:adminlogo')} 
-                  className="h-[46px] w-[46px] object-contain"
-                />
-              ) : (
-                <SquaresPlusIcon className="h-[46px] w-[46px] text-white" />
-              )}
-            </div>
-          </div>
+        <div className="text-center mb-8">
+          {getAdminLogo(settings) ? (
+            <img 
+              src={getAdminLogo(settings)!} 
+              alt={t('common:adminlogo')} 
+              className="h-[92px] w-auto mx-auto mb-3"
+            />
+          ) : (
+            <SquaresPlusIcon className="h-16 w-16 text-swiss-mint mx-auto mb-3" />
+          )}
+        </div>
 
-          <div className="space-y-6">
+        <div className="space-y-6">
             <div className="flex justify-center mb-4">
               <CheckCircleIcon className="w-16 h-16 text-swiss-mint" />
             </div>
@@ -246,17 +244,15 @@ export default function AdminCustomLoginForm() {
     <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
       <Card className="w-full max-w-md p-8 shadow-xl">
         <div className="text-center mb-8">
-          <div className="mx-auto h-[92px] w-[92px] bg-swiss-mint rounded-full flex items-center justify-center mb-6">
-            {getAdminLogo(settings) ? (
-              <img 
-                src={getAdminLogo(settings)!} 
-                alt={t('common:adminlogo')} 
-                className="h-[46px] w-[46px] object-contain"
-              />
-            ) : (
-              <SquaresPlusIcon className="h-[46px] w-[46px] text-white" />
-            )}
-          </div>
+          {getAdminLogo(settings) ? (
+            <img 
+              src={getAdminLogo(settings)!} 
+              alt={t('common:adminlogo')} 
+              className="h-[92px] w-auto mx-auto mb-3"
+            />
+          ) : (
+            <SquaresPlusIcon className="h-16 w-16 text-swiss-mint mx-auto mb-3" />
+          )}
           <h1 className="text-2xl font-bold text-swiss-charcoal">{t('admin:auth.login.title')}</h1>
           <p className="text-sm text-gray-500">{t('admin:auth.login.subtitle')}</p>
         </div>

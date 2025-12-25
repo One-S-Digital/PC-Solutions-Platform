@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { DeepLService } from '../translation/deepl.service';
 import { TranslationMemoryService } from '../translation/translation-memory.service';
 import { CostTrackingService } from '../translation/cost-tracking.service';
+import { Prisma } from '@prisma/client';
 
 export interface StaticTranslationDto {
   namespace: string;
@@ -24,6 +25,23 @@ export interface TranslationQuality {
   isValid: boolean;
 }
 
+export type StaticTranslationIssueType = 'missing' | 'needsReview';
+
+export interface StaticTranslationIssue {
+  type: StaticTranslationIssueType;
+  namespace: string;
+  key: string;
+  /** Target language for the issue (e.g. fr/de). For "missing" this is the missing language. */
+  lang: string;
+  /** English source value (when available) */
+  enValue?: string | null;
+  /** Current value in target language (null for missing) */
+  value?: string | null;
+  needsReview?: boolean;
+  updatedAt?: Date | null;
+  updatedBy?: string | null;
+}
+
 /**
  * Progress callback for long-running operations
  */
@@ -34,9 +52,38 @@ export type ProgressCallback = (progress: {
   details?: any;
 }) => void;
 
+interface FullSyncJob {
+  status: 'queued' | 'running' | 'done' | 'error';
+  progress?: string;
+  result?: any;
+  error?: any;
+  startedAt?: number;
+  completedAt?: number;
+}
+
+interface FullSyncDebugStep {
+  label: string;
+  tMs: number;
+  heapMb: number;
+  atIso: string;
+}
+
+interface FullSyncDebugSnapshot {
+  jobId: string | null;
+  startTimeIso: string;
+  lastUpdatedIso: string;
+  steps: FullSyncDebugStep[];
+}
+
 @Injectable()
 export class StaticTranslationService {
   private readonly logger = new Logger(StaticTranslationService.name);
+  
+  // Job queue for async full-sync operations (in-memory, single instance)
+  private fullSyncJobs = new Map<string, FullSyncJob>();
+
+  // In-memory debug snapshot of the last full sync run
+  private lastFullSyncDebug: FullSyncDebugSnapshot | null = null;
   
   // Increased cache TTL - invalidation is handled via releases, not expiry
   private readonly CACHE_TTL = 24 * 60 * 60; // 24 hours (was 15 minutes)
@@ -44,6 +91,8 @@ export class StaticTranslationService {
   // Batch processing configuration
   private readonly BATCH_SIZE = 50; // Optimal batch size for DeepL API
   private readonly MAX_CONCURRENT_BATCHES = 3; // Parallel batch processing
+  // Chunk size for yielding inside heavy loops to keep event loop responsive
+  private readonly LOOP_YIELD_CHUNK = 500;
   
   // Configurable log level
   private readonly LOG_LEVEL: 'debug' | 'info' | 'warn' | 'error';
@@ -80,6 +129,14 @@ export class StaticTranslationService {
   }
 
   /**
+   * Yield back to the event loop from inside long-running loops.
+   * This helps keep the process responsive during heavy CPU/IO work.
+   */
+  private async yieldLoop(): Promise<void> {
+    await new Promise<void>((resolve) => setImmediate(resolve));
+  }
+
+  /**
    * Split array into chunks for batch processing
    */
   private chunkArray<T>(array: T[], chunkSize: number): T[][] {
@@ -88,6 +145,214 @@ export class StaticTranslationService {
       chunks.push(array.slice(i, i + chunkSize));
     }
     return chunks;
+  }
+
+  /**
+   * List translation issues for the admin UI.
+   *
+   * Supported issue types:
+   * - "missing": English key exists but target language is missing
+   * - "needsReview": target translation exists and is flagged for review
+   */
+  async listIssues(params: {
+    type: StaticTranslationIssueType;
+    lang?: string;
+    namespace?: string;
+    search?: string;
+    page?: number;
+    limit?: number;
+  }): Promise<{
+    data: StaticTranslationIssue[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPages: number;
+      hasMore: boolean;
+    };
+  }> {
+    const type = params.type;
+    const lang = params.lang?.trim();
+    const namespace = params.namespace?.trim();
+    const search = params.search?.trim();
+    const page = Math.max(1, params.page ?? 1);
+    const limit = Math.min(200, Math.max(1, params.limit ?? 50));
+    const offset = (page - 1) * limit;
+
+    if (type === 'missing') {
+      if (!lang) {
+        throw new Error('lang is required for missing issues');
+      }
+      if (lang === 'en') {
+        // Missing EN isn't meaningful in our system (EN is source-of-truth)
+        return {
+          data: [],
+          pagination: { page, limit, total: 0, totalPages: 0, hasMore: false },
+        };
+      }
+
+      const conditions: Prisma.Sql[] = [
+        Prisma.sql`en.lang = 'en'`,
+        Prisma.sql`st.namespace IS NULL`, // missing target row
+      ];
+
+      if (namespace) {
+        conditions.push(Prisma.sql`en.namespace = ${namespace}`);
+      }
+
+      if (search) {
+        const like = `%${search}%`;
+        conditions.push(
+          Prisma.sql`(en.key ILIKE ${like} OR en.value ILIKE ${like} OR en.namespace ILIKE ${like})`,
+        );
+      }
+
+      const whereSql = Prisma.join(conditions, ' AND ');
+
+      const countRows = await this.prisma.$queryRaw<{ count: bigint }[]>(
+        Prisma.sql`
+          SELECT COUNT(*)::bigint AS count
+          FROM static_translations en
+          LEFT JOIN static_translations st
+            ON st.namespace = en.namespace
+           AND st.key = en.key
+           AND st.lang = ${lang}
+          WHERE ${whereSql}
+        `,
+      );
+      const total = Number(countRows?.[0]?.count ?? 0);
+
+      const rows = await this.prisma.$queryRaw<
+        Array<{
+          namespace: string;
+          key: string;
+          lang: string;
+          enValue: string | null;
+        }>
+      >(
+        Prisma.sql`
+          SELECT
+            en.namespace AS namespace,
+            en.key AS key,
+            ${lang} AS lang,
+            en.value AS "enValue"
+          FROM static_translations en
+          LEFT JOIN static_translations st
+            ON st.namespace = en.namespace
+           AND st.key = en.key
+           AND st.lang = ${lang}
+          WHERE ${whereSql}
+          ORDER BY en.namespace ASC, en.key ASC
+          LIMIT ${limit} OFFSET ${offset}
+        `,
+      );
+
+      const data: StaticTranslationIssue[] = rows.map((r) => ({
+        type: 'missing',
+        namespace: r.namespace,
+        key: r.key,
+        lang: r.lang,
+        enValue: r.enValue,
+        value: null,
+        needsReview: false,
+      }));
+
+      return {
+        data,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: total === 0 ? 0 : Math.ceil(total / limit),
+          hasMore: offset + limit < total,
+        },
+      };
+    }
+
+    // needsReview
+    const conditions: Prisma.Sql[] = [Prisma.sql`st."needsReview" = true`];
+    if (lang) {
+      conditions.push(Prisma.sql`st.lang = ${lang}`);
+    }
+    if (namespace) {
+      conditions.push(Prisma.sql`st.namespace = ${namespace}`);
+    }
+    if (search) {
+      const like = `%${search}%`;
+      conditions.push(
+        Prisma.sql`(st.key ILIKE ${like} OR st.value ILIKE ${like} OR st.namespace ILIKE ${like} OR en.value ILIKE ${like})`,
+      );
+    }
+    const whereSql = Prisma.join(conditions, ' AND ');
+
+    const countRows = await this.prisma.$queryRaw<{ count: bigint }[]>(
+      Prisma.sql`
+        SELECT COUNT(*)::bigint AS count
+        FROM static_translations st
+        JOIN static_translations en
+          ON en.namespace = st.namespace
+         AND en.key = st.key
+         AND en.lang = 'en'
+        WHERE ${whereSql}
+      `,
+    );
+    const total = Number(countRows?.[0]?.count ?? 0);
+
+    const rows = await this.prisma.$queryRaw<
+      Array<{
+        namespace: string;
+        key: string;
+        lang: string;
+        value: string | null;
+        updatedAt: Date | null;
+        updatedBy: string | null;
+        needsReview: boolean;
+        enValue: string | null;
+      }>
+    >(
+      Prisma.sql`
+        SELECT
+          st.namespace AS namespace,
+          st.key AS key,
+          st.lang AS lang,
+          st.value AS value,
+          st."updatedAt" AS "updatedAt",
+          st."updatedBy" AS "updatedBy",
+          st."needsReview" AS "needsReview",
+          en.value AS "enValue"
+        FROM static_translations st
+        JOIN static_translations en
+          ON en.namespace = st.namespace
+         AND en.key = st.key
+         AND en.lang = 'en'
+        WHERE ${whereSql}
+        ORDER BY st."updatedAt" DESC
+        LIMIT ${limit} OFFSET ${offset}
+      `,
+    );
+
+    const data: StaticTranslationIssue[] = rows.map((r) => ({
+      type: 'needsReview',
+      namespace: r.namespace,
+      key: r.key,
+      lang: r.lang,
+      value: r.value,
+      enValue: r.enValue,
+      needsReview: r.needsReview,
+      updatedAt: r.updatedAt,
+      updatedBy: r.updatedBy,
+    }));
+
+    return {
+      data,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: total === 0 ? 0 : Math.ceil(total / limit),
+        hasMore: offset + limit < total,
+      },
+    };
   }
 
   /**
@@ -806,6 +1071,7 @@ export class StaticTranslationService {
     reportProgress(3, 6, 'Identifying translations to process...');
 
     let translatedCount = 0;
+    let processedCount = 0;
 
     // For each source translation, check if target translation exists
     let adminDesignSystemProcessed = 0;
@@ -813,6 +1079,11 @@ export class StaticTranslationService {
     let adminDesignSystemTranslated = 0;
     
     for (const source of sourceTranslations) {
+      // Yield periodically to avoid blocking the event loop on very large datasets
+      if (processedCount > 0 && processedCount % this.LOOP_YIELD_CHUNK === 0) {
+        await this.yieldLoop();
+      }
+      processedCount++;
       const isAdminDesignSystem = source.namespace === 'admin' && source.key.startsWith('designSystem.');
       
       const existing = await this.prisma.staticTranslation.findUnique({
@@ -1644,13 +1915,22 @@ export class StaticTranslationService {
     const fs = require('fs');
     const path = require('path');
     
-    // Use environment variable if set (for production), otherwise use default path (for development)
-    // In production, set TRANSLATION_LOCALES_PATH to the absolute path of the locales directory
+    // Path resolution priority:
+    // 1. TRANSLATION_LOCALES_PATH env var (if explicitly set)
+    // 2. dist/locales (production-safe, files copied during build)
+    // 3. ../packages/translations/locales (local development fallback)
+    const distLocalesPath = path.join(process.cwd(), 'dist', 'locales');
     const localesPath = process.env.TRANSLATION_LOCALES_PATH || 
-      path.join(process.cwd(), '..', 'packages', 'translations', 'locales');
+      (fs.existsSync(distLocalesPath)
+        ? distLocalesPath
+        : path.join(process.cwd(), '..', 'packages', 'translations', 'locales'));
     const languages = ['en', 'fr', 'de'];
     
-    this.logger.log(`📦 Importing translations from JSON files in ${localesPath}`);
+    // Startup diagnostic log: resolved path and existence
+    const pathExists = fs.existsSync(localesPath);
+    this.logger.log(
+      `📦 Static translation locales path: ${localesPath} (exists=${pathExists})`,
+    );
     
     if (!fs.existsSync(localesPath)) {
       throw new Error(`Locales directory not found: ${localesPath}`);
@@ -1658,6 +1938,7 @@ export class StaticTranslationService {
     
     const translations: Array<{ namespace: string; key: string; lang: string; value: string }> = [];
     const details: Record<string, number> = {};
+    let processedKeysCount = 0;
     
     for (const lang of languages) {
       const langPath = path.join(localesPath, lang);
@@ -1668,6 +1949,11 @@ export class StaticTranslationService {
       }
       
       const files = fs.readdirSync(langPath).filter((f: string) => f.endsWith('.json'));
+      this.logger.log(
+        `📂 Found ${files.length} JSON files for language "${lang}" in ${langPath}: ${files.join(
+          ', ',
+        )}`,
+      );
       
       for (const file of files) {
         const namespace = file.replace('.json', '');
@@ -1692,8 +1978,10 @@ export class StaticTranslationService {
           
           // Flatten nested JSON into flat keys
           const flatKeys = this.flattenObject(json);
-          
-          for (const [key, value] of Object.entries(flatKeys)) {
+          const entries = Object.entries(flatKeys);
+
+          for (let i = 0; i < entries.length; i++) {
+            const [key, value] = entries[i] as [string, any];
             if (typeof value === 'string') {
               // CRITICAL: Strip prefixes at import time - never store prefixes in database
               // This ensures clean data and prevents the need to strip prefixes in multiple places
@@ -1707,6 +1995,12 @@ export class StaticTranslationService {
               
               const detailKey = `${lang}/${namespace}`;
               details[detailKey] = (details[detailKey] || 0) + 1;
+
+              processedKeysCount++;
+              // Yield periodically to keep the event loop responsive on very large files
+              if (processedKeysCount > 0 && processedKeysCount % this.LOOP_YIELD_CHUNK === 0) {
+                await this.yieldLoop();
+              }
             }
           }
           
@@ -1996,15 +2290,22 @@ export class StaticTranslationService {
     const fs = require('fs');
     const path = require('path');
     
-    // Use environment variable if set (for production), otherwise use default path (for development)
+    // Path resolution priority:
+    // 1. TRANSLATION_LOCALES_PATH env var (if explicitly set)
+    // 2. dist/locales (production-safe, files copied during build)
+    // 3. ../packages/translations/locales (local development fallback)
+    const distLocalesPath = path.join(process.cwd(), 'dist', 'locales');
     const localesPath = process.env.TRANSLATION_LOCALES_PATH || 
-      path.join(process.cwd(), '..', 'packages', 'translations', 'locales');
+      (fs.existsSync(distLocalesPath)
+        ? distLocalesPath
+        : path.join(process.cwd(), '..', 'packages', 'translations', 'locales'));
     const languages = ['en', 'fr', 'de'];
     
     this.logger.log(`📤 Exporting translations to JSON files in ${localesPath}`);
     
     const details: Record<string, number> = {};
     let totalExported = 0;
+    let processedTranslationsCount = 0;
     
     for (const lang of languages) {
       // Get all translations for this language
@@ -2016,11 +2317,18 @@ export class StaticTranslationService {
       
       // Group by namespace
       const grouped: Record<string, Array<{ key: string; value: string }>> = {};
-      for (const t of translations) {
+      for (let i = 0; i < translations.length; i++) {
+        const t = translations[i];
         if (!grouped[t.namespace]) {
           grouped[t.namespace] = [];
         }
         grouped[t.namespace].push({ key: t.key, value: t.value });
+
+        processedTranslationsCount++;
+        // Yield periodically when grouping large translation sets
+        if (processedTranslationsCount > 0 && processedTranslationsCount % this.LOOP_YIELD_CHUNK === 0) {
+          await this.yieldLoop();
+        }
       }
       
       // Write each namespace to a file
@@ -2250,14 +2558,29 @@ export class StaticTranslationService {
    * This is the one-click solution for the admin panel
    * Includes backup creation and validation
    */
-  async fullSync(updatedBy?: string): Promise<{
+  async fullSync(updatedBy?: string, jobId?: string): Promise<{
     imported: number;
     translatedFr: number;
     translatedDe: number;
     exported: number;
     backupId?: string;
   }> {
-    this.logger.log('🔄 Starting full sync...');
+    const startTime = Date.now();
+    const getHeapMb = () => Math.round(process.memoryUsage().heapUsed / (1024 * 1024));
+    const logStep = (label: string) => {
+      const ms = Date.now() - startTime;
+      const heapMb = getHeapMb();
+      const atIso = new Date().toISOString();
+      this.logger.log(`[FullSync] ${label} (t=${ms}ms, heap=${heapMb} MB)`);
+      this.updateFullSyncDebug(jobId ?? null, {
+        label,
+        tMs: ms,
+        heapMb,
+        atIso,
+      });
+    };
+
+    logStep('🔄 Starting full sync...');
     
     // Step 0: Create backup before any changes
     this.logger.log('📦 Step 0: Creating backup...');
@@ -2269,11 +2592,15 @@ export class StaticTranslationService {
     } catch (error: any) {
       this.logger.warn(`   Backup warning: ${error.message} (continuing anyway)`);
     }
+    logStep('Step 0: Backup complete');
+    await new Promise<void>((resolve) => setImmediate(resolve));
     
     // Step 1: Import EN from JSON files (with validation)
     this.logger.log('📥 Step 1: Importing EN translations from JSON files...');
     const importResult = await this.importFromJsonFiles(updatedBy);
     this.logger.log(`   Imported: ${importResult.imported}`);
+    logStep('Step 1: Import complete');
+    await new Promise<void>((resolve) => setImmediate(resolve));
     
     // Step 2: Translate missing FR
     this.logger.log('🇫🇷 Step 2: Translating to French...');
@@ -2284,6 +2611,8 @@ export class StaticTranslationService {
     } catch (error: any) {
       this.logger.warn(`   FR translation error: ${error.message}`);
     }
+    logStep('Step 2: FR translation complete');
+    await new Promise<void>((resolve) => setImmediate(resolve));
     
     // Step 3: Translate missing DE
     this.logger.log('🇩🇪 Step 3: Translating to German...');
@@ -2294,11 +2623,15 @@ export class StaticTranslationService {
     } catch (error: any) {
       this.logger.warn(`   DE translation error: ${error.message}`);
     }
+    logStep('Step 3: DE translation complete');
+    await new Promise<void>((resolve) => setImmediate(resolve));
     
     // Step 4: Export to JSON files
     this.logger.log('📤 Step 4: Exporting to JSON files...');
     const exportResult = await this.exportToJsonFiles();
     this.logger.log(`   Exported: ${exportResult.exported}`);
+    logStep('Step 4: Export complete');
+    await new Promise<void>((resolve) => setImmediate(resolve));
     
     // Step 5: Cleanup old audit logs (run periodically)
     try {
@@ -2306,10 +2639,13 @@ export class StaticTranslationService {
     } catch (error: any) {
       this.logger.warn(`   Audit cleanup warning: ${error.message}`);
     }
-    
+    logStep('Step 5: Audit cleanup complete');
+    await new Promise<void>((resolve) => setImmediate(resolve));
+
     // Clear cache
     await this.cacheManager.reset();
-    
+    logStep('Cache reset complete');
+
     this.logger.log('✅ Full sync complete!');
     
     return {
@@ -2318,6 +2654,140 @@ export class StaticTranslationService {
       translatedDe,
       exported: exportResult.exported,
       backupId,
+    };
+  }
+
+  /**
+   * Start full sync asynchronously (non-blocking)
+   * Returns jobId immediately, sync runs in background
+   * Prevents duplicate jobs - if one is already queued/running, returns that jobId
+   */
+  startFullSync(userId?: string): string {
+    // Check for existing queued or running job
+    for (const [existingJobId, job] of this.fullSyncJobs.entries()) {
+      if (job.status === 'queued' || job.status === 'running') {
+        this.logger.log(`[FullSync] Job already in progress, returning existing jobId: ${existingJobId}`);
+        return existingJobId;
+      }
+    }
+
+    // Cleanup old jobs (older than 1 hour)
+    this.cleanupOldJobs();
+
+    const jobId = crypto.randomUUID();
+    const startedAt = Date.now();
+    
+    this.fullSyncJobs.set(jobId, {
+      status: 'queued',
+      startedAt,
+    });
+
+    // Initialize debug snapshot for this run
+    this.lastFullSyncDebug = {
+      jobId,
+      startTimeIso: new Date(startedAt).toISOString(),
+      lastUpdatedIso: new Date(startedAt).toISOString(),
+      steps: [],
+    };
+
+    // Run sync in background (non-blocking)
+    setImmediate(async () => {
+      this.fullSyncJobs.set(jobId, {
+        status: 'running',
+        progress: 'Starting full sync...',
+        startedAt,
+      });
+
+      try {
+        const result = await this.fullSync(userId, jobId);
+        this.fullSyncJobs.set(jobId, {
+          status: 'done',
+          result,
+          startedAt,
+          completedAt: Date.now(),
+        });
+        this.logger.log(`[FullSync] Job ${jobId} completed successfully`);
+      } catch (error: any) {
+        this.fullSyncJobs.set(jobId, {
+          status: 'error',
+          error: {
+            message: error?.message,
+            stack: error?.stack,
+          },
+          startedAt,
+          completedAt: Date.now(),
+        });
+        this.logger.error(`[FullSync] Job ${jobId} failed: ${error?.message}`);
+      }
+    });
+
+    return jobId;
+  }
+
+  /**
+   * Cleanup old jobs (older than 1 hour) to prevent memory leak
+   */
+  private cleanupOldJobs(): void {
+    const oneHourAgo = Date.now() - (60 * 60 * 1000);
+    let cleaned = 0;
+
+    for (const [jobId, job] of this.fullSyncJobs.entries()) {
+      const jobTime = job.completedAt || job.startedAt || 0;
+      if (jobTime < oneHourAgo) {
+        this.fullSyncJobs.delete(jobId);
+        cleaned++;
+
+        // If we're cleaning up the job that matches the last debug snapshot,
+        // clear the snapshot as well.
+        if (this.lastFullSyncDebug && this.lastFullSyncDebug.jobId === jobId) {
+          this.lastFullSyncDebug = null;
+        }
+      }
+    }
+
+    if (cleaned > 0) {
+      this.logger.log(`[FullSync] Cleaned up ${cleaned} old job(s)`);
+    }
+  }
+
+  /**
+   * Get full sync job status
+   */
+  getFullSyncJob(jobId: string): FullSyncJob | null {
+    return this.fullSyncJobs.get(jobId) || null;
+  }
+
+  /**
+   * Get the last full sync debug snapshot (in-memory only)
+   */
+  getLastFullSyncDebug(): FullSyncDebugSnapshot | null {
+    return this.lastFullSyncDebug;
+  }
+
+  /**
+   * Internal helper to update the in-memory full sync debug snapshot
+   */
+  private updateFullSyncDebug(jobId: string | null, step: FullSyncDebugStep): void {
+    if (!jobId) {
+      return;
+    }
+
+    const nowIso = step.atIso;
+
+    if (!this.lastFullSyncDebug || this.lastFullSyncDebug.jobId !== jobId) {
+      this.lastFullSyncDebug = {
+        jobId,
+        startTimeIso: new Date(Date.now() - step.tMs).toISOString(),
+        lastUpdatedIso: nowIso,
+        steps: [step],
+      };
+      return;
+    }
+
+    this.lastFullSyncDebug = {
+      ...this.lastFullSyncDebug,
+      lastUpdatedIso: nowIso,
+      steps: [...this.lastFullSyncDebug.steps, step],
     };
   }
 }

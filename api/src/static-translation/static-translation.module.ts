@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { StaticTranslationController } from './static-translation.controller';
+import { StaticTranslationPublicController } from './static-translation.public.controller';
 import { StaticTranslationService } from './static-translation.service';
 import { PrismaModule } from '../prisma/prisma.module';
 import { AuthModule } from '../auth/auth.module';
@@ -16,7 +17,7 @@ import { TranslationQueueModule } from '../translation/translation-queue.module'
       max: 1000, // maximum number of items in cache
     }),
   ],
-  controllers: [StaticTranslationController],
+  controllers: [StaticTranslationController, StaticTranslationPublicController],
   providers: [StaticTranslationService],
   exports: [StaticTranslationService],
 })

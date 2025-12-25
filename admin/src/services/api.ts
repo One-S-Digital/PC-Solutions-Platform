@@ -10,6 +10,7 @@ import {
   Product, 
   Service, 
   ApiResponse,
+  InviteUserResponse,
   AnalyticsOverview,
   UserAnalytics,
   OrgAnalytics,
@@ -22,18 +23,21 @@ import {
   PartnerType
 } from '../types/api'
 import { AxiosInstance } from 'axios'
+import { UserRole } from '../types'
 
 
 // Use environment variable for API base URL, fallback to '/api' for development
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api'
 
-// Log the API base URL for debugging
-console.log('🔧 API Base URL configured:', {
-  VITE_API_URL: import.meta.env.VITE_API_URL,
-  API_BASE_URL: API_BASE_URL,
-  NODE_ENV: import.meta.env.NODE_ENV,
-  MODE: import.meta.env.MODE
-})
+// Log the API base URL for debugging (dev only)
+if (import.meta.env.DEV) {
+  console.log('🔧 API Base URL configured:', {
+    VITE_API_URL: import.meta.env.VITE_API_URL,
+    API_BASE_URL: API_BASE_URL,
+    NODE_ENV: import.meta.env.NODE_ENV,
+    MODE: import.meta.env.MODE
+  })
+}
 
 // Create axios instance
 const api = axios.create({
@@ -66,7 +70,9 @@ const isDevelopmentMode = () => {
 
 // Development API client (with auth using getToken callback)
 const createDevApiClient = (getToken: () => Promise<string | null>) => {
-  console.log('🔧 Creating development API client with baseURL:', API_BASE_URL)
+  if (import.meta.env.DEV) {
+    console.log('🔧 Creating development API client with baseURL:', API_BASE_URL)
+  }
   
   const devApi = axios.create({
     baseURL: API_BASE_URL,
@@ -88,23 +94,45 @@ const createDevApiClient = (getToken: () => Promise<string | null>) => {
     async (config) => {
       try {
         const token = await getToken();
-        
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
-          logger.log('🔧 Dev API Request:', {
-            url: config.url,
-            method: config.method,
-            hasAuth: true,
-            mode: 'development'
-          });
-        } else {
-          // No token - might be public endpoint or user not logged in yet
-          logger.log('🔧 Dev API Request:', {
+        const url = config.url || '';
+        const isAdminStatus =
+          url.includes('/static-translations/admin/full-sync/') &&
+          url.endsWith('/status');
+        const isPublicFullSyncStatus =
+          url.includes('/static-translations/public/full-sync/') &&
+          url.endsWith('/status');
+
+        // Ensure headers object exists
+        config.headers = config.headers || {};
+
+        if (isAdminStatus || isPublicFullSyncStatus) {
+          // Public status endpoints - DO NOT send Authorization
+          delete (config.headers as any).Authorization;
+          delete (config.headers as any).authorization;
+          logger.log('🔧 Dev API Request (public full-sync status, no auth)', {
             url: config.url,
             method: config.method,
             hasAuth: false,
-            mode: 'development'
+            mode: 'development',
           });
+        } else {
+          if (token) {
+            (config.headers as any).Authorization = `Bearer ${token}`;
+            logger.log('🔧 Dev API Request:', {
+              url: config.url,
+              method: config.method,
+              hasAuth: true,
+              mode: 'development',
+            });
+          } else {
+            // No token - might be public endpoint or user not logged in yet
+            logger.log('🔧 Dev API Request:', {
+              url: config.url,
+              method: config.method,
+              hasAuth: false,
+              mode: 'development',
+            });
+          }
         }
       } catch (error) {
         logger.error('❌ Dev API token error:', error);
@@ -159,11 +187,24 @@ export const useApiClient = () => {
       },
     })
 
-    console.log('🔧 Creating production API client with baseURL:', API_BASE_URL)
+    if (import.meta.env.DEV) {
+      console.log('🔧 Creating production API client with baseURL:', API_BASE_URL)
+    }
 
+    // Enable retries ONLY for status polling requests (GET /static-translations/admin/full-sync/*/status)
     axiosRetry(apiWithAuth, {
-      retries: 0,
-      retryCondition: () => false,
+      retries: 3,
+      retryDelay: axiosRetry.exponentialDelay,
+      retryCondition: (error) => {
+        const url = error.config?.url ?? '';
+        const isStatusPoll =
+          url.includes('/static-translations/admin/full-sync/') &&
+          url.includes('/status');
+        const isGet = (error.config?.method ?? 'get').toLowerCase() === 'get';
+        const status = error.response?.status;
+        // Retry on network errors and HTTP 502/503/504 for status polling only
+        return isGet && isStatusPoll && (!status || [502, 503, 504].includes(status));
+      },
     })
 
 
@@ -171,18 +212,38 @@ export const useApiClient = () => {
       async (config) => {
         try {
           const token = await getToken()
-          
-          if (token) {
-            config.headers.Authorization = `Bearer ${token}`
-            logger.log('✅ Admin Dashboard API token added:', {
+          const url = config.url || ''
+          const isAdminStatus =
+            url.includes('/static-translations/admin/full-sync/') &&
+            url.endsWith('/status')
+          const isPublicFullSyncStatus =
+            url.includes('/static-translations/public/full-sync/') &&
+            url.endsWith('/status')
+
+          // Ensure headers object exists
+          config.headers = config.headers || {}
+
+          if (isAdminStatus || isPublicFullSyncStatus) {
+            // Public full-sync status endpoints - DO NOT send Authorization
+            delete (config.headers as any).Authorization
+            delete (config.headers as any).authorization
+            logger.log('✅ Admin Dashboard API public full-sync status request (no auth):', {
               url: config.url,
-              hasAuth: true
-            });
+              hasAuth: false,
+            })
           } else {
-            logger.warn('⚠️ Admin Dashboard API no token available:', {
-              url: config.url,
-              hasAuth: false
-            });
+            if (token) {
+              ;(config.headers as any).Authorization = `Bearer ${token}`
+              logger.log('✅ Admin Dashboard API token added:', {
+                url: config.url,
+                hasAuth: true,
+              })
+            } else {
+              logger.warn('⚠️ Admin Dashboard API no token available:', {
+                url: config.url,
+                hasAuth: false,
+              })
+            }
           }
         } catch (error) {
           logger.error('❌ Admin Dashboard API token error:', {
@@ -239,10 +300,29 @@ export const publicApi = {
 export const apiService = {
   // Users
   getUsers: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<User[]>>('/users'),
+  getAdminUsers: (apiClient: AxiosInstance, params?: { page?: number; limit?: number; search?: string; role?: string }) => 
+    apiClient.get<ApiResponse<{ users: User[]; total: number; page: number; limit: number; totalPages: number }>>('/admin/users', { params }),
   getUserById: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<User>>(`/users/${id}`),
   createUser: (apiClient: AxiosInstance, userData: Partial<User>) => apiClient.post<ApiResponse<User>>('/users', userData),
-  updateUser: (apiClient: AxiosInstance, id: string, userData: Partial<User>) => apiClient.patch<ApiResponse<User>>(`/users/${id}`, userData),
+  inviteUser: (
+    apiClient: AxiosInstance,
+    payload: { email: string; role: UserRole; redirectUrl?: string; reason?: string },
+  ) => apiClient.post<ApiResponse<InviteUserResponse>>('/users/invite', payload),
+  updateUser: (apiClient: AxiosInstance, id: string, userData: Partial<User>) => {
+    // Exclude id from the body - it's already in the URL and not allowed in UpdateUserDto
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id: _id, ...updateData } = userData
+    return apiClient.patch<ApiResponse<User>>(`/users/${id}`, updateData)
+  },
   deleteUser: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/users/${id}`),
+  
+  // Role Elevation - Super Admin only
+  elevateUserToAdmin: (
+    apiClient: AxiosInstance, 
+    userId: string, 
+    targetRole: 'ADMIN' | 'SUPER_ADMIN',
+    reason?: string
+  ) => apiClient.post<ApiResponse<User>>(`/users/${userId}/elevate-to-admin`, { targetRole, reason }),
 
   // Organizations
   getOrganizations: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Organization[]>>('/compat/organizations'),
@@ -251,20 +331,31 @@ export const apiService = {
   updateOrganization: (apiClient: AxiosInstance, id: string, orgData: Partial<Organization>) => apiClient.put<ApiResponse<Organization>>(`/compat/organizations/${id}`, orgData),
   deleteOrganization: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/compat/organizations/${id}`),
 
-  // Products
+  // Discount Terminations / Vendor Clients (Admin)
+  getVendorClients: (
+    apiClient: AxiosInstance,
+    params?: { vendorId?: string; orgId?: string; isActive?: boolean; reason?: string },
+  ) => apiClient.get<ApiResponse<any[]>>('/admin/vendor-clients', { params }),
+  upsertVendorClient: (
+    apiClient: AxiosInstance,
+    data: { vendorId: string; orgId: string; isActive: boolean; reason?: string; note?: string },
+  ) => apiClient.post<ApiResponse<any>>('/admin/vendor-clients', data),
 
+  // Products
+  // Note: GET list uses compat controller, CRUD operations use marketplace controller
   getProducts: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Product[]>>('/compat/products'),
-  getProductById: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Product>>(`/products/${id}`),
-  createProduct: (apiClient: AxiosInstance, productData: Partial<Product>) => apiClient.post<ApiResponse<Product>>('/products', productData),
-  updateProduct: (apiClient: AxiosInstance, id: string, productData: Partial<Product>) => apiClient.put<ApiResponse<Product>>(`/products/${id}`, productData),
-  deleteProduct: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/products/${id}`),
+  getProductById: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Product>>(`/marketplace/products/${id}`),
+  createProduct: (apiClient: AxiosInstance, productData: Partial<Product>) => apiClient.post<ApiResponse<Product>>('/marketplace/products', productData),
+  updateProduct: (apiClient: AxiosInstance, id: string, productData: Partial<Product>) => apiClient.patch<ApiResponse<Product>>(`/marketplace/products/${id}`, productData),
+  deleteProduct: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/marketplace/products/${id}`),
 
   // Services
+  // Note: GET list uses compat controller, CRUD operations use marketplace controller
   getServices: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Service[]>>('/compat/services'),
-  getService: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Service>>(`/compat/services/${id}`),
-  createService: (apiClient: AxiosInstance, serviceData: Partial<Service>) => apiClient.post<ApiResponse<Service>>('/compat/services', serviceData),
-  updateService: (apiClient: AxiosInstance, id: string, serviceData: Partial<Service>) => apiClient.put<ApiResponse<Service>>(`/compat/services/${id}`, serviceData),
-  deleteService: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/compat/services/${id}`),
+  getService: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Service>>(`/marketplace/services/${id}`),
+  createService: (apiClient: AxiosInstance, serviceData: Partial<Service>) => apiClient.post<ApiResponse<Service>>('/marketplace/services', serviceData),
+  updateService: (apiClient: AxiosInstance, id: string, serviceData: Partial<Service>) => apiClient.patch<ApiResponse<Service>>(`/marketplace/services/${id}`, serviceData),
+  deleteService: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/marketplace/services/${id}`),
 
   // Job Listings
   getJobListings: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<JobListing[]>>('/compat/job-listings'),
@@ -295,7 +386,7 @@ export const apiService = {
     education?: string;
     availability?: string;
     shortBio?: string;
-  }) => apiClient.post<ApiResponse<Candidate>>('/candidates', candidateData),
+  }) => apiClient.post<ApiResponse<Candidate>>('/compat/candidates', candidateData),
 
 
   // Content Management - E-Learning
@@ -422,7 +513,8 @@ export const apiService = {
   // NOTE: Endpoint paths changed from /messages/* to /messaging/* - ensure backend is deployed first
   getConversations: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Conversation[]>>('/messaging/conversations'),
   getConversation: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Conversation>>(`/messaging/conversations/${id}`),
-  createConversation: (apiClient: AxiosInstance, data: Omit<Conversation, 'id' | 'lastMessageSnippet' | 'lastMessageAt' | 'unreadCount'>) => apiClient.post<ApiResponse<Conversation>>('/messaging/conversations', data),
+  createConversation: (apiClient: AxiosInstance, data: { type: 'DIRECT' | 'GROUP' | 'SUPPORT'; participantIds: string[]; title?: string }) => 
+    apiClient.post<ApiResponse<any>>('/messaging/conversations', data),
   getMessages: (apiClient: AxiosInstance, conversationId: string) => apiClient.get<ApiResponse<Message[]>>(`/messaging/conversations/${conversationId}/messages`),
   sendMessage: (apiClient: AxiosInstance, data: { conversationId: string; content: string }) => apiClient.post<ApiResponse<Message>>('/messaging/messages', data),
   markMessageAsRead: (apiClient: AxiosInstance, id: string) => apiClient.put<ApiResponse<Message>>(`/messaging/messages/${id}/read`),
@@ -473,7 +565,9 @@ export const apiService = {
   // Logo and Favicon Uploads
   uploadLogo: (apiClient: AxiosInstance, formData: FormData, onProgress?: (progress: number) => void) => {
     const fullUrl = `${apiClient.defaults.baseURL}/admin/frontend-settings/logo`
-    console.log('🔄 API: uploadLogo called with full URL:', fullUrl)
+    if (import.meta.env.DEV) {
+      console.log('🔄 API: uploadLogo called with full URL:', fullUrl)
+    }
     return apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/logo', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -489,7 +583,9 @@ export const apiService = {
 
   uploadFavicon: (apiClient: AxiosInstance, formData: FormData, onProgress?: (progress: number) => void) => {
     const fullUrl = `${apiClient.defaults.baseURL}/admin/frontend-settings/favicon`
-    console.log('🔄 API: uploadFavicon called with full URL:', fullUrl)
+    if (import.meta.env.DEV) {
+      console.log('🔄 API: uploadFavicon called with full URL:', fullUrl)
+    }
     return apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/favicon', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -505,7 +601,9 @@ export const apiService = {
 
   uploadAdminLogo: (apiClient: AxiosInstance, formData: FormData, onProgress?: (progress: number) => void) => {
     const fullUrl = `${apiClient.defaults.baseURL}/admin/frontend-settings/admin-logo`
-    console.log('🔄 API: uploadAdminLogo called with full URL:', fullUrl)
+    if (import.meta.env.DEV) {
+      console.log('🔄 API: uploadAdminLogo called with full URL:', fullUrl)
+    }
     return apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/admin-logo', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -521,7 +619,9 @@ export const apiService = {
 
   uploadAdminFavicon: (apiClient: AxiosInstance, formData: FormData, onProgress?: (progress: number) => void) => {
     const fullUrl = `${apiClient.defaults.baseURL}/admin/frontend-settings/admin-favicon`
-    console.log('🔄 API: uploadAdminFavicon called with full URL:', fullUrl)
+    if (import.meta.env.DEV) {
+      console.log('🔄 API: uploadAdminFavicon called with full URL:', fullUrl)
+    }
     return apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/admin-favicon', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -537,7 +637,9 @@ export const apiService = {
 
   uploadSidebarLogo: (apiClient: AxiosInstance, formData: FormData, onProgress?: (progress: number) => void) => {
     const fullUrl = `${apiClient.defaults.baseURL}/admin/frontend-settings/sidebar-logo`
-    console.log('🔄 API: uploadSidebarLogo called with full URL:', fullUrl)
+    if (import.meta.env.DEV) {
+      console.log('🔄 API: uploadSidebarLogo called with full URL:', fullUrl)
+    }
     return apiClient.post<ApiResponse<UploadedAsset>>('/admin/frontend-settings/sidebar-logo', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -602,6 +704,18 @@ export const apiService = {
     apiClient: AxiosInstance,
     params?: { namespace?: string; lang?: string; search?: string; page?: number; limit?: number }
   ) => apiClient.get<ApiResponse<any[]>>('/static-translations/admin/keys', { params }),
+
+  getTranslationIssues: (
+    apiClient: AxiosInstance,
+    params?: {
+      type?: 'missing' | 'needsReview';
+      lang?: string;
+      namespace?: string;
+      search?: string;
+      page?: number;
+      limit?: number;
+    },
+  ) => apiClient.get<ApiResponse<any[]>>('/static-translations/admin/issues', { params }),
 
   getTranslation: (
     apiClient: AxiosInstance,
@@ -773,13 +887,37 @@ export const apiService = {
     apiClient.post<
       ApiResponse<{
         success: boolean;
-        imported: number;
-        translatedFr: number;
-        translatedDe: number;
-        exported: number;
+        jobId: string;
         message: string;
       }>
-    >('/static-translations/admin/full-sync', {}, { timeout: 600000 }), // 10 minute timeout
+    >('/static-translations/admin/full-sync', {}, { timeout: 30000 }), // 30 second timeout (should return 202 immediately)
+
+  getFullSyncStatus: (
+    apiClient: AxiosInstance,
+    jobId: string
+  ) =>
+    apiClient.get<
+      ApiResponse<{
+        success: boolean;
+        job?: {
+          status: 'queued' | 'running' | 'done' | 'error';
+          progress?: string;
+          result?: {
+            imported: number;
+            translatedFr: number;
+            translatedDe: number;
+            exported: number;
+            backupId?: string;
+          };
+          error?: {
+            message: string;
+            stack?: string;
+          };
+          duration?: number;
+        };
+        error?: string;
+      }>
+    >(`/static-translations/public/full-sync/${jobId}/status`, { timeout: 30000 }),
 
   autoFixHardcodedStrings: (
     apiClient: AxiosInstance

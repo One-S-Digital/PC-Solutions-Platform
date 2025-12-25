@@ -113,3 +113,6 @@ export interface TicketStats {
   byPriority: Record<string, number>;
   byCategory: Record<string, number>;
 }
+
+// Re-export subscription types
+export * from './subscription';

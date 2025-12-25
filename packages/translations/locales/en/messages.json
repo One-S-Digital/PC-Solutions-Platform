@@ -1,58 +1,69 @@
 {
-  "messages": {
-    "emptyState": {
-      "noConversationSelectedSubtitle": "Select a conversation to start messaging",
-      "noConversationSelectedTitle": "No Conversation Selected",
-      "noConversationsYet": "No conversations yet",
-      "selectConversation": "Select a conversation to start messaging"
-    },
-    "placeholders": {
-      "searchConversations": "Search conversations...",
-      "typeMessage": "Type a message..."
-    },
-    "noConversationsFound": "No conversations found",
-    "buttons": {
-      "sendMessage": "Send Message",
-      "newGroup": "New Group"
-    },
-    "searchPlaceholder": "Search conversations...",
-    "filters": {
-      "unread": "Unread",
-      "all": "All"
-    },
-    "tabs": {
-      "unread": "Unread",
-      "all": "All Messages"
-    },
-    "title": "Messages"
+  "buttons": {
+    "newChat": "New Chat",
+    "newGroup": "New Group",
+    "sendMessage": "Send"
   },
+  "confirmDelete": "confirm Delete",
+  "deleteMessage": "delete Message.",
+  "editMessage": "edit Message.",
   "emptyState": {
     "noConversationSelectedSubtitle": "Select a conversation to start messaging",
     "noConversationSelectedTitle": "No Conversation Selected",
     "noConversationsYet": "No Conversations Yet",
     "selectConversation": "Select a conversation to start messaging"
   },
+  "errors": {
+    "fileTooLarge": "file Too Large"
+  },
+  "filters": {
+    "all": "All",
+    "unread": "Unread"
+  },
+  "loadingMore": "loading More",
+  "messageDeleted": "message Deleted",
+  "messageUpdated": "message Updated",
+  "messages": {
+    "buttons": {
+      "newGroup": "New Group",
+      "sendMessage": "Send Message"
+    },
+    "emptyState": {
+      "noConversationSelectedSubtitle": "Select a conversation to start messaging",
+      "noConversationSelectedTitle": "No Conversation Selected",
+      "noConversationsYet": "No conversations yet",
+      "selectConversation": "Select a conversation to start messaging"
+    },
+    "filters": {
+      "all": "All",
+      "unread": "Unread"
+    },
+    "noConversationsFound": "No conversations found",
+    "placeholders": {
+      "searchConversations": "Search conversations...",
+      "typeMessage": "Type a message..."
+    },
+    "searchPlaceholder": "Search conversations...",
+    "tabs": {
+      "all": "All Messages",
+      "unread": "Unread"
+    },
+    "title": "Messages"
+  },
+  "noConversationsFound": "No Conversations Found",
+  "noMessagesYet": "No Messages Yet",
   "placeholders": {
+    "addCaption": "add Caption",
     "searchConversations": "Search Conversations",
     "typeMessage": "Type a message..."
   },
-  "noConversationsFound": "No Conversations Found",
-  "buttons": {
-    "sendMessage": "Send",
-    "newGroup": "New Group",
-    "newChat": "New Chat"
-  },
+  "scrollForMore": "scroll For More",
   "searchPlaceholder": "Search conversations...",
-  "filters": {
-    "unread": "Unread",
-    "all": "All"
-  },
-  "noMessagesYet": "No Messages Yet",
   "tabs": {
-    "unread": "Unread",
-    "all": "All Messages"
+    "all": "All Messages",
+    "unread": "Unread"
   },
+  "title": "Messages",
   "unknownUser": "Unknown User",
-  "youPrefix": "You: ",
-  "title": "Messages"
+  "youPrefix": "You: "
 }

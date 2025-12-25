@@ -14,6 +14,40 @@ async function bootstrap() {
   });
   const logger = app.get(AppLoggerService);
   
+  // CORS configuration - MUST run before helmet
+  const prodAllowed = new Set([
+    'https://app.procrechesolutions.com',
+    'https://admin.procrechesolutions.com',
+  ]);
+
+  app.enableCors({
+    origin: (origin, cb) => {
+      // Allow non-browser clients (curl/postman) with no Origin header
+      if (!origin) return cb(null, true);
+
+      // In non-production, allow all origins for easier testing
+      if (process.env.NODE_ENV !== 'production') return cb(null, true);
+
+      // In production, only allow known origins
+      return cb(null, prodAllowed.has(origin));
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-Requested-With',
+      'Accept',
+      'svix-id',
+      'svix-timestamp',
+      'svix-signature',
+      'X-Trace-Id',
+    ],
+    exposedHeaders: ['Content-Type', 'Authorization', 'x-build-commit', 'X-Trace-Id'],
+    maxAge: 86400,
+    optionsSuccessStatus: 204,
+  });
+  
   // Raw body for webhook route
   app.use('/api/webhooks/clerk', express.raw({ type: 'application/json' }));
   
@@ -35,7 +69,10 @@ async function bootstrap() {
   app.use(express.urlencoded({ extended: true }));
 
   // Security middleware
-  app.use(helmet());
+  app.use(helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+    crossOriginEmbedderPolicy: false,
+  }));
   // Resolve compression middleware across CJS/ESM export shapes
   let compressionFn: any;
   try {
@@ -77,50 +114,6 @@ async function bootstrap() {
   // Set global prefix
   app.setGlobalPrefix('api');
 
-  // CORS - Enhanced configuration
-  const allowedOrigins = process.env.NODE_ENV === 'production' 
-    ? [
-        'https://app.procrechesolutions.com', 
-        'https://admin.procrechesolutions.com'
-      ]
-    : true;
-
-  app.enableCors({
-    origin: allowedOrigins,
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: [
-      'Content-Type', 
-      'Authorization', 
-      'X-Requested-With', 
-      'Accept',
-      'svix-id',
-      'svix-timestamp',
-      'svix-signature',
-    ],
-    exposedHeaders: ['Content-Type', 'Authorization'],
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
-  });
-
-  // CORS debugging middleware (only when DEBUG_CORS is enabled)
-  if (process.env.DEBUG_CORS === 'true') {
-    app.use((req, res, next) => {
-      const isPreflight = req.method === 'OPTIONS';
-      
-      if (isPreflight || req.method === 'PUT' || req.method === 'PATCH') {
-        logger.debug('CORS Request', 'CORSMiddleware', {
-          method: req.method,
-          url: req.url,
-          origin: req.headers.origin,
-          isPreflight,
-        });
-      }
-      
-      next();
-    });
-  }
-
   // Swagger documentation
   if (process.env.NODE_ENV !== 'production') {
     const config = new DocumentBuilder()
@@ -140,7 +133,28 @@ async function bootstrap() {
 
   const port = parseInt(process.env.PORT || '3000', 10);
   await app.listen(port, '0.0.0.0'); // Bind to all interfaces for Render
-  
+
+  // Log route map once at startup for debugging
+  try {
+    const server = app.getHttpServer();
+    const router = (server as any)?._events?.request?._router;
+    if (router?.stack) {
+      const routes = router.stack
+        .filter((l: any) => l.route)
+        .map(
+          (l: any) =>
+            Object.keys(l.route.methods)
+              .map((m) => m.toUpperCase())
+              .join(',') +
+            ' ' +
+            l.route.path,
+        );
+      logger.log(`ROUTES: ${JSON.stringify(routes)}`, 'Bootstrap');
+    }
+  } catch (e) {
+    logger.error('Failed to log route map', (e as any)?.message || e);
+  }
+
   logger.log(`Application is running on port ${port}`, 'Bootstrap');
   if (process.env.NODE_ENV !== 'production') {
     logger.log(`Swagger documentation: http://localhost:${port}/api/docs`, 'Bootstrap');

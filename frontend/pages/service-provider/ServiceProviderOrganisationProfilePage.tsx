@@ -22,6 +22,7 @@ import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
 import { useAppContext } from '../../contexts/AppContext';
 import { useNotifications } from '../../contexts/NotificationContext';
 import ProfileDocumentsSettings from '../../components/settings/sections/ProfileDocumentsSettings';
+import PromoCodesDisplaySection from '../../components/profile/PromoCodesDisplaySection';
 import { UserRole } from '../../types';
 
 interface ServiceProviderSettingsData {
@@ -161,7 +162,7 @@ const ServiceProviderOrganisationProfilePage: React.FC = () => {
     if (currentUser.role !== UserRole.SERVICE_PROVIDER) {
       setServiceProviderSettings(null);
       setOrganizationDetails(null);
-      setError(t('organizationProfileForm.accessDenied', 'Access denied.'));
+      setError(t('common:organizationProfileForm.accessDenied', 'Access denied.'));
       setIsLoading(false);
       return;
     }
@@ -370,7 +371,7 @@ const ServiceProviderOrganisationProfilePage: React.FC = () => {
           {/* Cover Image and Logo Section */}
           <Card className="overflow-hidden">
             <div 
-              className="h-48 bg-cover bg-center"
+              className="w-full aspect-[4/1] bg-cover bg-center"
               style={{ backgroundImage: `url(${coverImageUrl})` }}
             />
             <div className="relative px-6 pb-6">
@@ -556,6 +557,9 @@ const ServiceProviderOrganisationProfilePage: React.FC = () => {
               </div>
             )}
           </Card>
+
+          {/* Promo Codes Section */}
+          <PromoCodesDisplaySection isOwnProfile={true} />
 
           {/* Documents Section */}
           <Card className="p-6">

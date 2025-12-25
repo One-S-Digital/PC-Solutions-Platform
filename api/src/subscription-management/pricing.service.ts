@@ -1,20 +1,28 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { SubscriptionTier, UserRole } from '@workspace/types';
 
 export interface PricingTier {
   id: string;
+  role: UserRole;
+  subscriptionTier: SubscriptionTier;
   name: string;
   basePrice: number;
   currency: string;
   billingPeriod: 'monthly' | 'yearly';
   discounts: {
-    yearlyDiscount: number; // Percentage discount for yearly billing
-    volumeDiscounts: Array<{
+    /**
+     * Percentage discount for yearly billing.
+     * Optional to allow partial updates / DTO input; defaults are applied at write-time.
+     */
+    yearlyDiscount?: number;
+    volumeDiscounts?: Array<{
       minQuantity: number;
       discountPercentage: number;
     }>;
   };
   isActive: boolean;
+  displayOrder: number;
 }
 
 export interface DynamicPricingRule {
@@ -45,6 +53,8 @@ export class PricingService {
     try {
       const tier = await this.prisma.pricingTier.create({
         data: {
+          role: (tierData.role as any) || UserRole.FOUNDATION,
+          subscriptionTier: (tierData.subscriptionTier as any) || SubscriptionTier.BASIC,
           name: tierData.name!,
           basePrice: tierData.basePrice!,
           currency: tierData.currency || 'CHF',
@@ -54,6 +64,7 @@ export class PricingService {
             volumeDiscounts: [],
           },
           isActive: tierData.isActive ?? true,
+          displayOrder: tierData.displayOrder ?? 0,
         },
       });
 
@@ -71,7 +82,6 @@ export class PricingService {
         where: { id: tierId },
         data: {
           ...tierData,
-          updatedAt: new Date(),
         },
       });
 
@@ -83,11 +93,31 @@ export class PricingService {
     }
   }
 
-  async getAllPricingTiers(): Promise<PricingTier[]> {
+  async getAllPricingTiers(options?: {
+    role?: UserRole;
+    subscriptionTier?: SubscriptionTier;
+    includeInactive?: boolean;
+  }): Promise<PricingTier[]> {
+    const includeInactive = options?.includeInactive ?? false;
+
     return this.prisma.pricingTier.findMany({
-      where: { isActive: true },
-      orderBy: { basePrice: 'asc' },
+      where: {
+        ...(includeInactive ? {} : { isActive: true }),
+        ...(options?.role ? { role: options.role as any } : {}),
+        ...(options?.subscriptionTier ? { subscriptionTier: options.subscriptionTier as any } : {}),
+      },
+      orderBy: [{ displayOrder: 'asc' }, { basePrice: 'asc' }],
     }) as unknown as Promise<PricingTier[]>;
+  }
+
+  async deletePricingTier(tierId: string): Promise<void> {
+    try {
+      await this.prisma.pricingTier.delete({ where: { id: tierId } });
+      this.logger.log(`Deleted pricing tier: ${tierId}`);
+    } catch (error) {
+      this.logger.error(`Failed to delete pricing tier: ${(error as Error).message}`);
+      throw error;
+    }
   }
 
   async calculatePrice(

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   LifeBuoy,
@@ -18,16 +18,11 @@ import {
 } from 'lucide-react';
 import { useApiClient, apiService } from '../services/api';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
-import { SupportTicket, TicketCategory, TicketPriority, TicketStatus, TicketStats } from '../types';
+import { SupportTicket, TicketCategory, TicketPriority, TicketStatus, TicketStats, TicketResponse } from '../types';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '@clerk/clerk-react';
-
-type AttachmentInfo = {
-  url: string;
-  name: string;
-  size?: number;
-  mimeType?: string;
-};
+import { useUser } from '@clerk/clerk-react';
+import { useSupportThread } from '../hooks/useSupportThread';
+import SupportReplyComposer from '../components/support/SupportReplyComposer';
 
 const Support: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -35,118 +30,24 @@ const Support: React.FC = () => {
   const [selectedPriority, setSelectedPriority] = useState<TicketPriority | ''>('');
   const [selectedCategory, setSelectedCategory] = useState<TicketCategory | ''>('');
   const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
-  const [replyMessage, setReplyMessage] = useState('');
-  const [replyAttachment, setReplyAttachment] = useState<AttachmentInfo | null>(null);
-  const [uploadingReplyFile, setUploadingReplyFile] = useState(false);
 
   const apiClient = useApiClient();
   const { t } = useTranslation(['common', 'admin']);
-  const { getToken } = useAuth();
-
+  const { user } = useUser();
   const queryClient = useQueryClient();
-  const apiBaseUrl = import.meta.env.VITE_API_URL || '/api';
+  
+  // Stable callback for ticket updates
+  const handleTicketUpdate = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['support-tickets'] });
+  }, [queryClient]);
 
-  const uploadSupportAttachment = useCallback(
-    async (file: File): Promise<AttachmentInfo> => {
-      const token = await getToken();
-      if (!token) {
-        throw new Error('Authentication token not available');
-      }
-
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('assetKind', 'DOCUMENT');
-
-      const response = await fetch(`${apiBaseUrl}/upload/file`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        throw new Error(data.message || `Upload failed (${response.status})`);
-      }
-
-      const data = await response.json();
-      const asset = data.asset || data.data?.asset;
-
-      if (!asset || !(asset.url || asset.publicUrl)) {
-        throw new Error('Upload response missing asset URL');
-      }
-
-      return {
-        url: asset.url || asset.publicUrl,
-        name: asset.filename || file.name,
-        size: asset.size ?? file.size,
-        mimeType: asset.mimeType || file.type,
-      };
-    },
-    [apiBaseUrl, getToken],
-  );
-
-  const downloadAttachment = useCallback(
-    async (fileUrl: string, fileName: string) => {
-      const token = await getToken();
-      if (!token) {
-        throw new Error('Authentication token not available');
-      }
-
-      let downloadUrl = fileUrl;
-      if (fileUrl.startsWith('/api/upload/download/')) {
-        const storageKey = fileUrl.substring('/api/upload/download/'.length);
-        downloadUrl = `${apiBaseUrl}/upload/download/${storageKey}`;
-      } else if (fileUrl.startsWith('http')) {
-        try {
-          const urlObj = new URL(fileUrl);
-          const path = urlObj.pathname.startsWith('/api/upload/download/')
-            ? urlObj.pathname.substring('/api/upload/download/'.length)
-            : urlObj.pathname.substring(1);
-          downloadUrl = `${apiBaseUrl}/upload/download/${path}`;
-        } catch {
-          downloadUrl = `${apiBaseUrl}/upload/download/${fileUrl.replace('/api/upload/download/', '')}`;
-        }
-      } else {
-        downloadUrl = `${apiBaseUrl}/upload/download/${fileUrl}`;
-      }
-
-      const response = await fetch(downloadUrl, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const blob = await response.blob();
-      const blobUrl = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = blobUrl;
-      link.download = fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(blobUrl);
-    },
-    [apiBaseUrl, getToken],
-  );
-
-  const handleReplyFileSelect = useCallback(
-    async (file?: File | null) => {
-      if (!file) return;
-      setUploadingReplyFile(true);
-      try {
-        const attachment = await uploadSupportAttachment(file);
-        setReplyAttachment(attachment);
-      } catch (error) {
-        console.error('Failed to upload attachment', error);
-        alert(t('common:errors.submitFailed'));
-      } finally {
-        setUploadingReplyFile(false);
-      }
-    },
-    [uploadSupportAttachment, t],
-  );
+  // Use shared thread hook for replies management
+  const currentUserId = user?.id || '';
+  const { replies, sendReply, messagesEndRef, scrollContainerRef } = useSupportThread({
+    ticketId: selectedTicket?.id || null,
+    userId: currentUserId,
+    onTicketUpdate: handleTicketUpdate,
+  });
 
   // Fetch current user to check assignment
   const { data: currentUserResponse } = useQuery({
@@ -214,28 +115,6 @@ const Support: React.FC = () => {
     },
   });
 
-  // Reply to ticket mutation
-  const replyMutation = useMutation({
-    mutationFn: ({ ticketId, message, attachment }: { ticketId: string; message: string; attachment?: AttachmentInfo | null }) =>
-      apiService.respondToTicket(apiClient, ticketId, {
-        message,
-        attachmentUrl: attachment?.url,
-        attachmentName: attachment?.name,
-        attachmentSize: attachment?.size,
-        attachmentMimeType: attachment?.mimeType,
-      }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['support-tickets'] });
-      setReplyMessage('');
-      setReplyAttachment(null);
-      if (selectedTicket) {
-        apiService.getSupportTicket(apiClient, selectedTicket.id).then((response) => {
-          setSelectedTicket(response.data.data);
-        });
-      }
-    },
-  });
-
   const handleStatusChange = (ticketId: string, status: TicketStatus) => {
     updateStatusMutation.mutate({ ticketId, status });
   };
@@ -244,10 +123,32 @@ const Support: React.FC = () => {
     assignTicketMutation.mutate(ticketId);
   };
 
-  const handleReply = () => {
-    if (!selectedTicket || !replyMessage.trim()) return;
-    replyMutation.mutate({ ticketId: selectedTicket.id, message: replyMessage, attachment: replyAttachment });
-  };
+  // Memoize ticketId to ensure stable prop
+  const currentTicketId = useMemo(() => selectedTicket?.id || null, [selectedTicket?.id]);
+
+  // Stable callback for sending replies - sendReply already has ticketId in closure
+  const handleSendReply = useCallback(async (content: string) => {
+    await sendReply(content);
+    // Invalidate queries to refresh ticket list
+    queryClient.invalidateQueries({ queryKey: ['support-tickets'] });
+    if (currentTicketId) {
+      queryClient.invalidateQueries({ queryKey: ['support-ticket', currentTicketId] });
+    }
+  }, [sendReply, queryClient, currentTicketId]);
+
+  // Memoize whether to show composer (stable boolean)
+  const showComposer = useMemo(() => {
+    return selectedTicket && selectedTicket.status !== 'CLOSED';
+  }, [selectedTicket?.id, selectedTicket?.status]);
+
+  // Auto-scroll to bottom on mount or when selected ticket changes
+  useEffect(() => {
+    if (selectedTicket) {
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  }, [selectedTicket?.id]);
 
   const getStatusColor = (status: TicketStatus): string => {
     switch (status) {
@@ -320,7 +221,7 @@ const Support: React.FC = () => {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">{t('common:open')}</p>
+              <p className="text-sm font-medium text-gray-600">{t('common:supportPage.stats.open')}</p>
               <p className="text-2xl font-bold text-yellow-600">{stats.open}</p>
             </div>
             <AlertCircle className="h-8 w-8 text-yellow-500" />
@@ -329,7 +230,7 @@ const Support: React.FC = () => {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">{t('common:inprogress')}</p>
+              <p className="text-sm font-medium text-gray-600">{t('common:supportPage.stats.inProgress')}</p>
               <p className="text-2xl font-bold text-blue-600">{stats.inProgress}</p>
             </div>
             <Clock className="h-8 w-8 text-blue-500" />
@@ -338,7 +239,7 @@ const Support: React.FC = () => {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">{t('common:resolved')}</p>
+              <p className="text-sm font-medium text-gray-600">{t('common:supportPage.stats.resolved')}</p>
               <p className="text-2xl font-bold text-green-600">{stats.resolved}</p>
             </div>
             <CheckCircle className="h-8 w-8 text-green-500" />
@@ -347,7 +248,7 @@ const Support: React.FC = () => {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">{t('common:total')}</p>
+              <p className="text-sm font-medium text-gray-600">{t('common:supportPage.stats.total')}</p>
               <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
             </div>
             <TrendingUp className="h-8 w-8 text-gray-500" />
@@ -359,7 +260,7 @@ const Support: React.FC = () => {
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div className="flex items-center gap-2 mb-4">
           <Filter className="h-5 w-5 text-gray-500" />
-          <h2 className="text-lg font-semibold text-gray-900">{t('common:filters')}</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{t('common:filters.title')}</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="relative">
@@ -377,7 +278,7 @@ const Support: React.FC = () => {
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value as TicketStatus | '')}
           >
-            <option value="">{t('common:allstatus')}</option>
+            <option value="">{t('common:filters.status.all')}</option>
             <option value="OPEN">{t('common:open')}</option>
             <option value="IN_PROGRESS">{t('common:inprogress')}</option>
             <option value="RESOLVED">{t('common:resolved')}</option>
@@ -388,7 +289,7 @@ const Support: React.FC = () => {
             value={selectedPriority}
             onChange={(e) => setSelectedPriority(e.target.value as TicketPriority | '')}
           >
-            <option value="">{t('common:allpriority')}</option>
+            <option value="">{t('common:filters.priority.all')}</option>
             <option value="LOW">{t('common:low')}</option>
             <option value="MEDIUM">{t('common:medium')}</option>
             <option value="HIGH">{t('common:high')}</option>
@@ -399,7 +300,7 @@ const Support: React.FC = () => {
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value as TicketCategory | '')}
           >
-            <option value="">{t('common:allcategory')}</option>
+            <option value="">{t('common:filters.category.all')}</option>
             <option value="GENERAL">{t('common:general')}</option>
             <option value="TECHNICAL">{t('common:technical')}</option>
             <option value="BILLING">{t('common:billing')}</option>
@@ -594,7 +495,10 @@ const Support: React.FC = () => {
                 </div>
               </div>
 
-              <div className="p-6 max-h-96 overflow-y-auto">
+              <div 
+                ref={scrollContainerRef}
+                className="p-6 max-h-96 overflow-y-auto"
+              >
                 <div className="space-y-4">
                   {/* Original Message */}
                   <div className="border-l-4 border-blue-500 pl-4">
@@ -630,95 +534,44 @@ const Support: React.FC = () => {
                     )}
                   </div>
 
-                  {/* Responses */}
-                  {selectedTicket.responses.map((response) => (
-                    <div
-                      key={response.id}
-                      className={`border-l-4 ${
-                        response.isStaff ? 'border-green-500' : 'border-gray-300'
-                      } pl-4`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-gray-900">
-                          {response.userName || t('common:unknown')}
-                          {response.isStaff && (
-                            <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
-                              {t('admin:support.staff')}
-                            </span>
-                          )}
-                        </span>
-                        <span className="text-xs text-gray-500">
-                          {new Date(response.createdAt).toLocaleString()}
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-700">{response.message}</p>
-                        {response.attachmentUrl && (
-                          <div className="mt-2 flex items-center gap-2">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                downloadAttachment(
-                                  response.attachmentUrl || '',
-                                  response.attachmentName || 'attachment',
-                                ).catch((err) => console.error('Attachment download failed', err))
-                              }
-                              className="text-blue-600 hover:text-blue-800 text-xs font-medium underline"
-                            >
-                              {t('common:supportPage.downloadAttachment', 'Download attachment')}
-                            </button>
-                            {response.attachmentName && (
-                              <span className="text-xs text-gray-600 truncate max-w-xs">{response.attachmentName}</span>
+                  {/* Responses - sorted by createdAt */}
+                  {replies.map((response) => (
+                      <div
+                        key={response.id}
+                        className={`border-l-4 ${
+                          response.isStaff ? 'border-green-500' : 'border-gray-300'
+                        } pl-4`}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-medium text-gray-900">
+                            {response.userName || t('common:unknown')}
+                            {response.isStaff && (
+                              <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
+                                {t('admin:support.staff')}
+                              </span>
                             )}
-                          </div>
-                        )}
-                    </div>
-                  ))}
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            {new Date(response.createdAt).toLocaleString()}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-700">{response.message}</p>
+                      </div>
+                    ))}
+                  <div ref={messagesEndRef} />
                 </div>
               </div>
 
               {/* Reply Box */}
-              <div className="p-6 border-t border-gray-200">
-                <textarea
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm resize-none"
-                  rows={3}
-                  placeholder={t('admin:support.replyPlaceholder')}
-                  value={replyMessage}
-                  onChange={(e) => setReplyMessage(e.target.value)}
-                />
-                <div className="flex flex-wrap items-center gap-3 mt-2">
-                  <input
-                    type="file"
-                    onChange={(e) => handleReplyFileSelect(e.target.files?.[0])}
-                    disabled={uploadingReplyFile}
-                    className="text-sm"
+              {showComposer && currentTicketId && (
+                <div className="p-6 border-t border-gray-200">
+                  <SupportReplyComposer
+                    ticketId={currentTicketId}
+                    onSend={handleSendReply}
+                    placeholder={t('admin:support.replyPlaceholder')}
                   />
-                  {uploadingReplyFile && (
-                    <span className="text-xs text-gray-500">
-                      {t('common:uploading', 'Uploading...')}
-                    </span>
-                  )}
-                  {replyAttachment && (
-                    <div className="flex items-center gap-2 text-sm text-gray-700 bg-white border border-gray-200 rounded px-2 py-1">
-                      <span className="truncate max-w-xs">{replyAttachment.name}</span>
-                      <button
-                        type="button"
-                        className="text-blue-600 hover:text-blue-800 text-xs"
-                        onClick={() => setReplyAttachment(null)}
-                      >
-                        {t('common:buttons.remove', 'Remove')}
-                      </button>
-                    </div>
-                  )}
                 </div>
-                <button
-                  onClick={handleReply}
-                  disabled={!replyMessage.trim() || replyMutation.isPending}
-                  className="mt-2 w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg flex items-center justify-center text-sm"
-                >
-                  <Send className="h-4 w-4 mr-2" />
-                  {replyMutation.isPending ? t('admin:support.sending') : t('admin:support.sendReply')}
-                </button>
-              </div>
+              )}
             </div>
           ) : (
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">

@@ -56,21 +56,38 @@
         "manageAlerts": "Manage Alerts"
       },
       "emptyState": {
-        "noPolicies": "No policies available"
+        "noPolicies": "No policies available",
+        "noPoliciesFoundForFilters": "No policies found for selected filters",
+        "noPoliciesMatchFilters": "No policies match your filters"
       },
+      "errors": {
+        "downloadFailed": "Download failed"
+      },
+      "filters": {
+        "allCantonsRegions": "All Cantons and Regions",
+        "ariaLabelCategory": "Filter by category",
+        "ariaLabelCanton": "Filter by canton",
+        "ariaLabelPolicyType": "Filter by policy type",
+        "canton": "Canton",
+        "policyType": "Policy Type",
+        "region": "Region"
+      },
+      "labels": {
+        "category": "Category",
+        "effective": "Effective",
+        "published": "Published",
+        "type": "Type",
+        "updated": "Updated"
+      },
+      "loading": "Loading...",
+      "selectCanton": "Select a Canton",
       "sections": {
+        "categories": "Categories",
         "compliance": "Compliance",
         "downloads": "Downloads",
         "updates": "Updates"
       },
-      "filters": {
-        "policyType": "Policy Type",
-        "canton": "Canton",
-        "region": "Region",
-        "ariaLabelPolicyType": "Filter by policy type",
-        "ariaLabelCanton": "Filter by canton",
-        "ariaLabelCategory": "Filter by category"
-      },
+      "subtitle": "Official daycare policies from Swiss cantons",
       "tabs": {
         "cantonal": "Cantonal",
         "national": "National"
@@ -165,6 +182,8 @@
     },
     "adminNote": "Use Admin Dashboard to add/edit policies",
     "loading": "Loading policies...",
+    "selectCanton": "Select a Canton",
+    "subtitle": "Official daycare policies from Swiss cantons",
     "title": "State Policies"
   },
   "contentManagementDashboard": {

@@ -48,7 +48,6 @@ interface UniversalFileUploaderProps {
 }
 
 const UniversalFileUploader: React.FC<UniversalFileUploaderProps> = ({
-  const { t } = useTranslation(['common']);
   kind,
   currentAsset,
   fallbackUrl,
@@ -64,6 +63,7 @@ const UniversalFileUploader: React.FC<UniversalFileUploaderProps> = ({
   accessRoles = [],
   className = '',
 }) => {
+  const { t } = useTranslation(['common']);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -350,7 +350,7 @@ const UniversalFileUploader: React.FC<UniversalFileUploaderProps> = ({
         {mimeType.startsWith('image/') && (
           <img
             src={previewUrl}
-            alt={t('common:preview')}
+            alt={t('common:previewLabel', 'Preview')}
             className="max-w-full max-h-48 object-contain border border-gray-200 rounded bg-white"
           />
         )}

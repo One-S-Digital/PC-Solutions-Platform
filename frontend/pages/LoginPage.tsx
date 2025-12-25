@@ -187,39 +187,39 @@ const LoginPage: React.FC = () => {
   // Show "Active Session" UI - let user choose to go to dashboard or sign out
   if (isSignedIn && currentUser) {
     return (
-      <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
-        <Card className="w-full max-w-md p-8 shadow-xl">
-          <div className="text-center mb-8">
+      <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-2 sm:p-3 md:p-4 lg:p-6">
+        <Card className="w-full max-w-md p-3 sm:p-4 md:p-6 shadow-xl">
+          <div className="text-center mb-3 sm:mb-4 md:mb-5">
             {settings?.logoAsset?.publicUrl ? (
               <img 
                 src={settings.logoAsset.publicUrl} 
                 alt={settings.siteName || APP_NAME} 
-                className="h-[92px] w-auto mx-auto mb-3" 
+                className="h-12 sm:h-14 md:h-[72px] w-auto mx-auto mb-1.5 sm:mb-2" 
               />
             ) : (
-              <SquaresPlusIcon className="h-16 w-16 text-swiss-mint mx-auto mb-3" />
+              <SquaresPlusIcon className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-swiss-mint mx-auto mb-1.5 sm:mb-2" />
             )}
-            <h1 className="text-2xl font-bold text-swiss-charcoal">
+            <h1 className="text-base sm:text-lg md:text-xl font-bold text-swiss-charcoal">
               {t('common:loginPage.title', { appName: settings?.siteName || APP_NAME })}
             </h1>
           </div>
 
-          <div className="space-y-6">
-            <div className="flex justify-center mb-4">
-              <CheckCircleIcon className="w-16 h-16 text-swiss-mint" />
+          <div className="space-y-3 sm:space-y-4">
+            <div className="flex justify-center mb-2 sm:mb-3">
+              <CheckCircleIcon className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 text-swiss-mint" />
             </div>
-            <h2 className="text-2xl font-bold text-swiss-charcoal text-center">
+            <h2 className="text-base sm:text-lg md:text-xl font-bold text-swiss-charcoal text-center">
               {t('common:loginPage.alreadySignedInTitle', 'Active Session Detected')}
             </h2>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
               <p className="text-sm text-blue-800 text-center">
                 <strong>Welcome back, {currentUser.firstName || 'User'}!</strong>
               </p>
-              <p className="text-xs text-blue-700 text-center mt-2">
+              <p className="text-xs text-blue-700 text-center mt-1.5">
                 {t('common:loginPage.alreadySignedInDescription', 'You are already logged in. Choose an option below to continue.')}
               </p>
             </div>
-            <div className="flex flex-col space-y-3">
+            <div className="flex flex-col space-y-2">
               <Button
                 type="button"
                 variant="primary"
@@ -243,7 +243,7 @@ const LoginPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="mt-8 text-center text-sm text-gray-600 space-y-2">
+          <div className="mt-3 sm:mt-4 md:mt-5 text-center text-xs text-gray-600 space-y-1.5">
             <p>
               {t('common:loginPage.noAccount')}{' '}
               <Link to="/signup" className="font-medium text-swiss-mint hover:underline">
@@ -252,7 +252,7 @@ const LoginPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="mt-6 flex justify-center">
+          <div className="mt-3 sm:mt-4 flex justify-center">
             <LanguageSwitcher />
           </div>
         </Card>
@@ -265,7 +265,7 @@ const LoginPage: React.FC = () => {
   if (isSigningOut || isSigningOutGlobal) {
     return (
       <div className="min-h-screen bg-page-bg flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-swiss-mint"></div>
+        <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-b-2 border-swiss-mint"></div>
       </div>
     );
   }
@@ -275,33 +275,33 @@ const LoginPage: React.FC = () => {
   // Redirect them to signup page to select a role and complete registration
   if (isSignedIn && !currentUser && !isAuthLoading && !isSigningOut && !isSigningOutGlobal) {
     return (
-      <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
-        <Card className="w-full max-w-md p-8 shadow-xl">
-          <div className="text-center mb-8">
+      <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-2 sm:p-3 md:p-4 lg:p-6">
+        <Card className="w-full max-w-md p-3 sm:p-4 md:p-6 shadow-xl">
+          <div className="text-center mb-3 sm:mb-4 md:mb-5">
             {settings?.logoAsset?.publicUrl ? (
               <img 
                 src={settings.logoAsset.publicUrl} 
                 alt={settings.siteName || APP_NAME} 
-                className="h-[92px] w-auto mx-auto mb-3" 
+                className="h-12 sm:h-14 md:h-[72px] w-auto mx-auto mb-1.5 sm:mb-2" 
               />
             ) : (
-              <SquaresPlusIcon className="h-16 w-16 text-swiss-mint mx-auto mb-3" />
+              <SquaresPlusIcon className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-swiss-mint mx-auto mb-1.5 sm:mb-2" />
             )}
-            <h1 className="text-2xl font-bold text-swiss-charcoal">
+            <h1 className="text-base sm:text-lg md:text-xl font-bold text-swiss-charcoal">
               {t('common:loginPage.completeRegistration', 'Complete Your Registration')}
             </h1>
           </div>
 
-          <div className="space-y-6">
-            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-              <p className="text-sm text-blue-800 mb-2">
+          <div className="space-y-3 sm:space-y-4">
+            <div className="mb-3 p-2.5 bg-blue-50 border border-blue-200 rounded-md">
+              <p className="text-sm text-blue-800 mb-1.5">
                 <strong>{t('common:loginPage.almostThere', 'Almost there!')}</strong>
               </p>
               <p className="text-xs text-blue-700">
                 {t('common:loginPage.completeProfileMessage', 'You\'re signed in with Google. To finish setting up your account, please select a role and complete your profile.')}
               </p>
             </div>
-            <div className="flex flex-col space-y-3">
+            <div className="flex flex-col space-y-2">
               <Button
                 type="button"
                 variant="primary"
@@ -324,7 +324,7 @@ const LoginPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="mt-6 flex justify-center">
+          <div className="mt-3 sm:mt-4 flex justify-center">
             <LanguageSwitcher />
           </div>
         </Card>
@@ -334,32 +334,32 @@ const LoginPage: React.FC = () => {
 
   // SCENARIO C: Not signed in - Show login form
   return (
-    <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
-      <Card className="w-full max-w-md p-8 shadow-xl">
-        <div className="text-center mb-8">
+    <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-2 sm:p-3 md:p-4 lg:p-6">
+      <Card className="w-full max-w-md p-3 sm:p-4 md:p-6 shadow-xl">
+        <div className="text-center mb-3 sm:mb-4 md:mb-5">
           {settings?.logoAsset?.publicUrl ? (
             <img 
               src={settings.logoAsset.publicUrl} 
               alt={settings.siteName || APP_NAME} 
-              className="h-[92px] w-auto mx-auto mb-3" 
+              className="h-12 sm:h-14 md:h-[72px] w-auto mx-auto mb-1.5 sm:mb-2" 
             />
           ) : (
-            <SquaresPlusIcon className="h-16 w-16 text-swiss-mint mx-auto mb-3" />
+            <SquaresPlusIcon className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-swiss-mint mx-auto mb-1.5 sm:mb-2" />
           )}
-          <h1 className="text-2xl font-bold text-swiss-charcoal">
+          <h1 className="text-base sm:text-lg md:text-xl font-bold text-swiss-charcoal">
             {t('common:loginPage.title', { appName: settings?.siteName || APP_NAME })}
           </h1>
-          <p className="text-sm text-gray-500">{t('common:loginPage.subtitle')}</p>
+          <p className="text-xs text-gray-500">{t('common:loginPage.subtitle')}</p>
         </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md text-sm">
+          <div className="mb-2 sm:mb-3 p-2 bg-red-100 text-red-700 rounded-md text-xs sm:text-sm">
             {error}
           </div>
         )}
 
         {/* Login Form - Only rendered when NOT signed in */}
-        <form onSubmit={handleLogin} className="space-y-6">
+        <form onSubmit={handleLogin} className="space-y-3 sm:space-y-4">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                   {t('common:loginPage.emailLabel')}
@@ -413,60 +413,54 @@ const LoginPage: React.FC = () => {
               </Button>
             </form>
 
-            <div className="mt-6">
+            <div className="mt-3 sm:mt-4">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-200"></div>
                 </div>
-                <div className="relative flex justify-center text-sm">
+                <div className="relative flex justify-center text-xs">
                   <span className="px-2 bg-white text-gray-500">
                     {t('common:loginPage.orContinueWith')}
                   </span>
                 </div>
               </div>
 
-              <div className="mt-4">
+              <div className="mt-2 sm:mt-3">
                 <Button
                   variant="light"
                   onClick={() => handleSocialLogin('oauth_google')}
                   className="w-full"
                   disabled={isSubmitting}
                 >
-                  <GoogleIcon className="w-5 h-5 mr-2" /> {t('common:loginPage.google')}
+                  <GoogleIcon className="w-4 h-4 sm:w-5 sm:h-5 mr-2" /> {t('common:loginPage.google')}
                 </Button>
               </div>
             </div>
 
-        <div className="mt-8 text-center text-sm text-gray-600 space-y-2">
+        <div className="mt-3 sm:mt-4 md:mt-5 text-center text-xs text-gray-600 space-y-1.5">
           <p>
             {t('common:loginPage.noAccount')}{' '}
             <Link to="/signup" className="font-medium text-swiss-mint hover:underline">
               {t('common:buttons.signup')}
             </Link>
           </p>
-          <p>
-            {t('common:loginPage.viewPlansPrompt')}{' '}
-            <Link to="/pricing" className="font-medium text-swiss-mint hover:underline">
-              {t('common:loginPage.viewPlans')}
-            </Link>
-          </p>
-          <div className="border-t border-gray-200 pt-4 mt-4">
-            <p className="text-sm text-gray-600 text-center mb-3">
+          <div className="border-t border-gray-200 pt-2 sm:pt-3 mt-2 sm:mt-3">
+            <p className="text-xs text-gray-600 text-center mb-1.5 sm:mb-2">
               {t('common:loginPage.parentLookingForCreche')}
             </p>
               <div className="text-center">
                 <Link 
                   to="/parent-lead-form" 
-                  className="inline-flex items-center px-4 py-2 text-swiss-teal font-medium rounded-md hover:bg-swiss-teal/5 transition-colors duration-200 border border-swiss-teal/20 hover:border-swiss-teal/40"
+                  className="inline-flex items-center px-2.5 py-1 sm:px-3 sm:py-1.5 text-xs sm:text-sm text-swiss-teal font-medium rounded-md hover:bg-swiss-teal/5 transition-colors duration-200 border border-swiss-teal/20 hover:border-swiss-teal/40"
                 >
-                  <HomeIcon className="w-5 h-5 mr-2" aria-hidden="true" />
+                  <HomeIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" aria-hidden="true" />
                   {t('common:loginPage.findCrecheHere')}
                 </Link>
               </div>
           </div>
         </div>
 
-        <div className="mt-6 flex justify-center">
+        <div className="mt-3 sm:mt-4 flex justify-center">
           <LanguageSwitcher />
         </div>
       </Card>

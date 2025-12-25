@@ -69,7 +69,7 @@ const SupplierOrdersPage: React.FC = () => {
       }
     } catch (err) {
       console.error('Failed to fetch data:', err);
-      setError(t('supplierOrdersPage.loadError', 'Failed to load data'));
+      setError(t('dashboard:supplierOrdersPage.loadError', 'Failed to load data'));
     } finally {
       setLoading(false);
     }
@@ -146,7 +146,7 @@ const SupplierOrdersPage: React.FC = () => {
       }
     } catch (err) {
       console.error('Failed to update order status:', err);
-      alert(t('supplierOrdersPage.updateError', 'Failed to update order status'));
+      alert(t('dashboard:supplierOrdersPage.updateError', 'Failed to update order status'));
     }
   };
 
@@ -194,7 +194,7 @@ const SupplierOrdersPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 className="text-3xl font-bold text-swiss-charcoal">{t('supplierOrdersPage.title', 'Orders & Inquiries')}</h1>
+        <h1 className="text-3xl font-bold text-swiss-charcoal">{t('dashboard:supplierOrdersPage.title', 'Orders & Inquiries')}</h1>
         
         {/* Tab Selector */}
         <div className="flex gap-2 bg-gray-100 rounded-lg p-1">
@@ -206,7 +206,7 @@ const SupplierOrdersPage: React.FC = () => {
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            {t('supplierOrdersPage.tabs.orders', 'Direct Orders')}
+            {t('dashboard:supplierOrdersPage.tabs.orders', 'Direct Orders')}
             {myOrders.length > 0 && (
               <span className="ml-2 bg-swiss-teal/10 text-swiss-teal px-2 py-0.5 rounded-full text-xs">
                 {myOrders.length}
@@ -221,7 +221,7 @@ const SupplierOrdersPage: React.FC = () => {
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            {t('supplierOrdersPage.tabs.inquiries', 'Inquiries')}
+            {t('dashboard:supplierOrdersPage.tabs.inquiries', 'Inquiries')}
             {inquiries.length > 0 && (
               <span className="ml-2 bg-swiss-coral/10 text-swiss-coral px-2 py-0.5 rounded-full text-xs">
                 {inquiries.filter(i => i.status === InquiryStatus.NEW).length > 0 
@@ -238,7 +238,7 @@ const SupplierOrdersPage: React.FC = () => {
         <>
           <Card className="p-4">
             <div className="flex flex-wrap gap-2 items-center">
-              <span className="text-sm font-medium mr-2">{t('supplierOrdersPage.filterByStatus')}:</span>
+              <span className="text-sm font-medium mr-2">{t('dashboard:supplierOrdersPage.filterByStatus')}:</span>
               {orderStatuses.map(status => (
                 <Button 
                   key={status} 
@@ -257,11 +257,11 @@ const SupplierOrdersPage: React.FC = () => {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('supplierOrdersPage.table.orderId')}</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('supplierOrdersPage.table.foundation')}</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('supplierOrdersPage.table.date')}</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('supplierOrdersPage.table.total')}</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('supplierOrdersPage.table.status')}</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('dashboard:supplierOrdersPage.table.orderId')}</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('dashboard:supplierOrdersPage.table.foundation')}</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('dashboard:supplierOrdersPage.table.date')}</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('dashboard:supplierOrdersPage.table.total')}</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('dashboard:supplierOrdersPage.table.status')}</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -281,7 +281,7 @@ const SupplierOrdersPage: React.FC = () => {
                 </tbody>
               </table>
               {filteredOrders.length === 0 && (
-                <p className="text-center text-gray-500 py-8">{t('supplierOrdersPage.emptyState', 'No orders found')}</p>
+                <p className="text-center text-gray-500 py-8">{t('dashboard:supplierOrdersPage.emptyState', 'No orders found')}</p>
               )}
             </div>
           </Card>
@@ -293,7 +293,7 @@ const SupplierOrdersPage: React.FC = () => {
         <>
           <Card className="p-4">
             <div className="flex flex-wrap gap-2 items-center">
-              <span className="text-sm font-medium mr-2">{t('supplierOrdersPage.filterByStatus')}:</span>
+              <span className="text-sm font-medium mr-2">{t('dashboard:supplierOrdersPage.filterByStatus')}:</span>
               {inquiryStatuses.map(status => (
                 <Button 
                   key={status} 
@@ -312,12 +312,12 @@ const SupplierOrdersPage: React.FC = () => {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('supplierOrdersPage.inquiryTable.id', 'ID')}</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('supplierOrdersPage.inquiryTable.from', 'From')}</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('supplierOrdersPage.inquiryTable.subject', 'Subject')}</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('supplierOrdersPage.inquiryTable.date', 'Date')}</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('supplierOrdersPage.inquiryTable.urgency', 'Urgency')}</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('supplierOrdersPage.inquiryTable.status', 'Status')}</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('dashboard:supplierOrdersPage.inquiryTable.id', 'ID')}</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('dashboard:supplierOrdersPage.inquiryTable.from', 'From')}</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('dashboard:supplierOrdersPage.inquiryTable.subject', 'Subject')}</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('dashboard:supplierOrdersPage.inquiryTable.date', 'Date')}</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('dashboard:supplierOrdersPage.inquiryTable.urgency', 'Urgency')}</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('dashboard:supplierOrdersPage.inquiryTable.status', 'Status')}</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -349,7 +349,7 @@ const SupplierOrdersPage: React.FC = () => {
                 </tbody>
               </table>
               {filteredInquiries.length === 0 && (
-                <p className="text-center text-gray-500 py-8">{t('supplierOrdersPage.noInquiries', 'No inquiries found')}</p>
+                <p className="text-center text-gray-500 py-8">{t('dashboard:supplierOrdersPage.noInquiries', 'No inquiries found')}</p>
               )}
             </div>
           </Card>

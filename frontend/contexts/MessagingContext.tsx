@@ -71,6 +71,12 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
       }
       
       const userConvs = await messagingService.getConversations(token);
+      if (import.meta.env.DEV) {
+        console.log('📊 MessagingContext: REST response received', {
+          rawCount: userConvs.length,
+          conversationIds: userConvs.map(c => c.id),
+        });
+      }
       setConversations(userConvs);
       
       // Only preload messages for the active conversation (if any)
@@ -271,17 +277,67 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
         return;
       }
       
-      const newMessage = await messagingService.sendMessage({
-        conversationId,
-        content,
-        messageType,
-        ...(fileMetadata && {
-          fileUrl: fileMetadata.fileUrl,
-          fileName: fileMetadata.fileName,
-          fileSize: fileMetadata.fileSize,
-          mimeType: fileMetadata.mimeType,
-        })
-      }, token);
+      // Build payload dynamically - strict rules for TEXT vs IMAGE/FILE
+      const finalMessageType = messageType || 'TEXT';
+      const trimmedContent = content ? content.trim() : '';
+      
+      let payload: any;
+      
+      // TEXT messages: content is required, no file fields
+      if (finalMessageType === 'TEXT') {
+        if (!trimmedContent || trimmedContent.length === 0) {
+          throw new Error('TEXT messages must have non-empty content');
+        }
+        
+        payload = {
+          conversationId,
+          content: trimmedContent,
+          messageType: 'TEXT' as const,
+        };
+        
+        // DEV-only logging
+        if (import.meta.env.DEV) {
+          console.log('[MessagingContext.sendMessage] TEXT payload:', payload);
+        }
+      }
+      // IMAGE/FILE messages: fileUrl required, content optional
+      else if ((finalMessageType === 'IMAGE' || finalMessageType === 'FILE') && fileMetadata) {
+        if (!fileMetadata.fileUrl || !fileMetadata.fileUrl.trim()) {
+          throw new Error('fileUrl is required for IMAGE/FILE messages');
+        }
+        
+        payload = {
+          conversationId,
+          messageType: finalMessageType,
+          fileUrl: fileMetadata.fileUrl.trim(),
+        };
+        
+        // Optional caption
+        if (trimmedContent.length > 0) {
+          payload.content = trimmedContent;
+        }
+        
+        // Optional file metadata (only include if present and valid)
+        if (fileMetadata.fileName && fileMetadata.fileName.trim()) {
+          payload.fileName = fileMetadata.fileName.trim();
+        }
+        if (fileMetadata.fileSize !== undefined && fileMetadata.fileSize !== null && fileMetadata.fileSize > 0) {
+          payload.fileSize = fileMetadata.fileSize;
+        }
+        if (fileMetadata.mimeType && fileMetadata.mimeType.trim()) {
+          payload.mimeType = fileMetadata.mimeType.trim();
+        }
+        
+        // DEV-only logging
+        if (import.meta.env.DEV) {
+          console.log('[MessagingContext.sendMessage] IMAGE/FILE payload:', payload);
+        }
+      } else {
+        // Fallback: should not reach here
+        throw new Error(`Invalid message type: ${finalMessageType}`);
+      }
+      
+      const newMessage = await messagingService.sendMessage(payload, token);
 
       // Add message to local state immediately for optimistic UI
       setMessagesByConversation(prev => ({

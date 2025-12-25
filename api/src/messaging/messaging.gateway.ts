@@ -8,7 +8,10 @@ import {
   MessageBody,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Logger } from '@nestjs/common';
+import { Logger, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { verifyToken } from '@clerk/backend';
+import { PrismaService } from '../prisma/prisma.service';
 
 @WebSocketGateway({
   cors: {
@@ -21,6 +24,7 @@ import { Logger } from '@nestjs/common';
   },
   namespace: '/messaging',
 })
+@Injectable()
 export class MessagingGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
@@ -29,48 +33,195 @@ export class MessagingGateway
 
   private readonly logger = new Logger(MessagingGateway.name);
   private connectedClients = new Map<string, { userId: string; conversationIds: Set<string> }>();
+  private readonly secretKey: string;
+  private readonly issuer: string;
+  private readonly authorizedParties: string[];
+  private readonly jwtKey?: string;
+
+  constructor(
+    private configService: ConfigService,
+    private prisma: PrismaService,
+  ) {
+    // Get Clerk secret key
+    this.secretKey = this.configService.get<string>('CLERK_SECRET_KEY', '');
+    if (!this.secretKey) {
+      throw new Error('CLERK_SECRET_KEY is not configured');
+    }
+
+    // Determine issuer based on Clerk instance (same logic as ClerkAuthGuard)
+    const publishableKey = this.configService.get<string>('CLERK_PUBLISHABLE_KEY', '');
+    if (publishableKey.includes('test')) {
+      const instanceId = publishableKey.split('_')[2]?.split('.')[0];
+      this.issuer = `https://${instanceId}.clerk.accounts.dev`;
+    } else {
+      this.issuer = this.configService.get<string>('CLERK_ISSUER', 'https://clerk.yourdomain.com');
+    }
+
+    // Authorized parties
+    const adminOrigin = this.configService.get<string>('ADMIN_ORIGIN');
+    const appOrigin = this.configService.get<string>('APP_ORIGIN');
+    const extraAzp = this.configService.get<string>('AUTHORIZED_PARTIES');
+    const azpList = [adminOrigin, appOrigin]
+      .filter((v): v is string => !!v && v.trim().length > 0);
+    if (extraAzp) {
+      azpList.push(
+        ...extraAzp
+          .split(',')
+          .map(s => s.trim())
+          .filter(Boolean),
+      );
+    }
+    this.authorizedParties = azpList;
+
+    // Optional static JWT verification key
+    this.jwtKey = this.configService.get<string>('CLERK_JWT_KEY');
+  }
 
   afterInit(server: Server) {
     this.logger.log('Messaging WebSocket Gateway initialized on namespace /messaging');
   }
 
+  /**
+   * Extract token from WebSocket handshake
+   */
+  private extractToken(client: Socket): string | null {
+    // Try auth.token first (common for Socket.IO clients)
+    if (client.handshake.auth?.token) {
+      return client.handshake.auth.token;
+    }
+    
+    // Try Authorization header (Bearer token)
+    const authHeader = client.handshake.headers.authorization;
+    if (authHeader?.startsWith('Bearer ')) {
+      return authHeader.slice(7);
+    }
+    
+    return null;
+  }
+
+  /**
+   * Verify Clerk JWT token and extract payload
+   */
+  private async verifyClerkToken(token: string): Promise<{ sub: string } | null> {
+    try {
+      const decodeBase64Url = (s: string) => 
+        Buffer.from(s.replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('utf8');
+      const [rawHeader, rawPayload] = token.split('.');
+      let decodedPayload: any = undefined;
+      try {
+        decodedPayload = JSON.parse(decodeBase64Url(rawPayload));
+      } catch {}
+
+      const options: any = {
+        secretKey: this.secretKey,
+        authorizedParties: this.authorizedParties.length > 0 ? this.authorizedParties : undefined,
+        clockSkewInMs: 60_000,
+      };
+      
+      if (decodedPayload?.iss) {
+        options.issuer = decodedPayload.iss;
+      } else if (this.issuer) {
+        options.issuer = this.issuer;
+      }
+      
+      if (this.jwtKey) {
+        options.jwtKey = this.jwtKey;
+      }
+
+      const payload = await verifyToken(token, options);
+      return { sub: payload.sub };
+    } catch (error) {
+      return null;
+    }
+  }
+
+  /**
+   * Resolve Clerk ID to internal User.id
+   */
+  private async resolveUserId(clerkId: string): Promise<string | null> {
+    const appUser = await this.prisma.appUser.findUnique({
+      where: { clerkId },
+      select: { id: true, clerkId: true },
+    });
+
+    if (!appUser) {
+      return null;
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { clerkId: appUser.clerkId },
+      select: { id: true },
+    });
+
+    return user?.id || null;
+  }
+
   async handleConnection(client: Socket) {
     try {
-      const token = client.handshake.auth?.token || client.handshake.query?.token;
+      const socketId = client.id;
       
-      // TODO: CRITICAL - Implement JWT authentication before production
-      // Required implementation:
-      // 1. Inject JwtService or ClerkService
-      // 2. Validate the token
-      // 3. Extract authenticated userId from token payload
-      // 4. Reject connections with invalid/missing tokens
-      //
-      // Example:
-      // if (!token) {
-      //   this.logger.warn(`Connection rejected: missing token`);
-      //   client.disconnect();
-      //   return;
-      // }
-      // const payload = await this.jwtService.verifyAsync(token);
-      // const userId = payload.sub || payload.userId;
-      // if (!userId) {
-      //   this.logger.warn(`Connection rejected: invalid token`);
-      //   client.disconnect();
-      //   return;
-      // }
+      // Extract token
+      const token = this.extractToken(client);
       
-      // TEMPORARY: Using query userId (INSECURE - allows impersonation)
-      const userId = client.handshake.query?.userId as string || client.id;
+      if (!token) {
+        this.logger.warn({
+          message: 'WebSocket connection rejected: missing token',
+          socketId,
+        });
+        client.disconnect(true);
+        return;
+      }
+
+      // Verify token
+      const tokenPayload = await this.verifyClerkToken(token);
       
-      this.connectedClients.set(client.id, {
+      if (!tokenPayload || !tokenPayload.sub) {
+        this.logger.warn({
+          message: 'WebSocket connection rejected: invalid token',
+          socketId,
+        });
+        client.disconnect(true);
+        return;
+      }
+
+      const clerkId = tokenPayload.sub;
+
+      // Resolve to internal User.id
+      const userId = await this.resolveUserId(clerkId);
+      
+      if (!userId) {
+        this.logger.warn({
+          message: 'WebSocket connection rejected: user not provisioned',
+          socketId,
+          clerkId,
+        });
+        client.disconnect(true);
+        return;
+      }
+
+      // Store on socket for use in message handlers
+      client.data.userId = userId;
+      client.data.clerkId = clerkId;
+
+      // Store in connected clients map
+      this.connectedClients.set(socketId, {
         userId,
         conversationIds: new Set(),
       });
       
-      this.logger.log(`Client connected: ${client.id} (User: ${userId})`);
+      this.logger.log({
+        message: 'WS connected',
+        nsp: client.nsp.name,
+        socketId,
+        hasUserId: !!client.data.userId,
+      });
     } catch (error) {
-      this.logger.error('WebSocket connection error:', error);
-      client.disconnect();
+      this.logger.error({
+        message: 'WebSocket connection error',
+        socketId: client.id,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      client.disconnect(true);
     }
   }
 
@@ -91,6 +242,12 @@ export class MessagingGateway
     @MessageBody() data: { conversationId: string },
     client: Socket,
   ) {
+    const userId = client.data.userId;
+    if (!userId) {
+      client.emit('error', { message: 'Unauthorized' });
+      return;
+    }
+
     const clientData = this.connectedClients.get(client.id);
     if (!clientData) {
       client.emit('error', { message: 'Client not found' });
@@ -103,25 +260,32 @@ export class MessagingGateway
       return;
     }
 
-    // TODO: CRITICAL - Add authorization check before production
-    // Required implementation:
-    // 1. Inject ConversationService or PrismaService
-    // 2. Verify user is a participant in the conversation
-    // 3. Reject if not authorized
-    //
-    // Example:
-    // const isParticipant = await this.conversationService.isUserParticipant(
-    //   data.conversationId,
-    //   clientData.userId
-    // );
-    // if (!isParticipant) {
-    //   client.emit('error', { message: 'Unauthorized to join conversation' });
-    //   return;
-    // }
+    // Verify user is a participant in the conversation
+    const conversation = await this.prisma.conversation.findFirst({
+      where: {
+        id: data.conversationId,
+        participants: {
+          some: {
+            userId,
+            isActive: true,
+          },
+        },
+      },
+    });
+
+    if (!conversation) {
+      client.emit('error', { message: 'Unauthorized to join conversation' });
+      return;
+    }
 
     clientData.conversationIds.add(data.conversationId);
     client.join(`conversation:${data.conversationId}`);
-    this.logger.log(`Client ${client.id} joined conversation ${data.conversationId}`);
+    this.logger.log({
+      message: 'Client joined conversation',
+      socketId: client.id,
+      userId,
+      conversationId: data.conversationId,
+    });
   }
 
   @SubscribeMessage('leave-conversation')
@@ -142,6 +306,11 @@ export class MessagingGateway
     @MessageBody() data: { conversationId: string },
     client: Socket,
   ) {
+    const userId = client.data.userId;
+    if (!userId) {
+      return;
+    }
+
     const clientData = this.connectedClients.get(client.id);
     if (!clientData || !clientData.conversationIds.has(data.conversationId)) {
       return;
@@ -150,7 +319,7 @@ export class MessagingGateway
     // Broadcast to all clients in the conversation except the sender
     client.to(`conversation:${data.conversationId}`).emit('user-typing', {
       conversationId: data.conversationId,
-      userId: clientData.userId,
+      userId,
       isTyping: true,
     });
   }
@@ -160,6 +329,11 @@ export class MessagingGateway
     @MessageBody() data: { conversationId: string },
     client: Socket,
   ) {
+    const userId = client.data.userId;
+    if (!userId) {
+      return;
+    }
+
     const clientData = this.connectedClients.get(client.id);
     if (!clientData || !clientData.conversationIds.has(data.conversationId)) {
       return;
@@ -168,7 +342,7 @@ export class MessagingGateway
     // Broadcast to all clients in the conversation except the sender
     client.to(`conversation:${data.conversationId}`).emit('user-typing', {
       conversationId: data.conversationId,
-      userId: clientData.userId,
+      userId,
       isTyping: false,
     });
   }

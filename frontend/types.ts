@@ -1,3 +1,6 @@
+// Re-export availability types for convenience
+export type { EducatorAvailabilitySettings } from './types/availability';
+
 export enum UserRole {
   SUPER_ADMIN = 'SUPER_ADMIN',
   ADMIN = 'ADMIN',
@@ -6,6 +9,13 @@ export enum UserRole {
   SERVICE_PROVIDER = 'SERVICE_PROVIDER',
   EDUCATOR = 'EDUCATOR',
   PARENT = 'PARENT',
+}
+
+export enum SubscriptionTier {
+  BASIC = 'BASIC',
+  ESSENTIAL = 'ESSENTIAL',
+  PROFESSIONAL = 'PROFESSIONAL',
+  ENTERPRISE = 'ENTERPRISE',
 }
 
 export interface User {
@@ -222,7 +232,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [ServiceCategory.CLEANING, 
 export type ServiceDeliveryType = 'On-site' | 'Remote' | 'Hybrid';
 export const SERVICE_DELIVERY_TYPES: ServiceDeliveryType[] = ['On-site', 'Remote', 'Hybrid'];
 
-export type JobContractType = 'FULL_TIME' | 'PART_TIME' | 'CDI' | 'CDD' | 'INTERNSHIP' | 'FREELANCE';
+export type JobContractType = 'FULL_TIME' | 'PART_TIME' | 'CDI' | 'CDD' | 'INTERNSHIP' | 'FREELANCE' | 'REPLACEMENT' | 'TEMPORARY';
 
 export const JobStatus = {
     DRAFT: 'DRAFT',
@@ -239,7 +249,29 @@ export const JobContractTypeValue = {
     CDD: 'CDD',
     INTERNSHIP: 'INTERNSHIP',
     FREELANCE: 'FREELANCE',
+    REPLACEMENT: 'REPLACEMENT',
+    TEMPORARY: 'TEMPORARY',
 } as const;
+
+// Employment type for job postings (aligned with candidate availability)
+export type JobEmploymentType = 'FULL_TIME' | 'PART_TIME' | 'REPLACEMENT';
+
+export const JobEmploymentTypeValue = {
+    FULL_TIME: 'FULL_TIME',
+    PART_TIME: 'PART_TIME',
+    REPLACEMENT: 'REPLACEMENT',
+} as const;
+
+export const JOB_EMPLOYMENT_TYPES: JobEmploymentType[] = ['FULL_TIME', 'PART_TIME', 'REPLACEMENT'];
+
+// Work schedule preferences for job postings
+export interface JobWorkSchedule {
+    expectedHoursPerWeek?: number;
+    preferredDays?: number[]; // 0-6 for Sunday-Saturday
+    preferredTimeSlot?: 'MORNING' | 'AFTERNOON' | 'FULL_DAY' | 'FLEXIBLE';
+    startTime?: string; // HH:MM format
+    endTime?: string; // HH:MM format
+}
 
 export interface JobListing {
     id: string;
@@ -248,6 +280,8 @@ export interface JobListing {
     foundationName?: string;
     location?: string;
     contractType: JobContractType;
+    employmentType?: JobEmploymentType;
+    workSchedule?: JobWorkSchedule;
     startDate?: string;
     status: JobStatus;
     description?: string;
@@ -457,6 +491,7 @@ export const POLICY_CATEGORIES = [
     'Other',
 ] as const;
 export type PolicyCategory = typeof POLICY_CATEGORIES[number];
+// i18n-ignore-next-line (enum fallback labels - display uses translation keys)
 export const POLICY_CATEGORY_LABELS: Record<PolicyCategory, string> = {
     'Education Policy': 'Education Policy',
     'Health & Safety': 'Health & Safety',
@@ -876,7 +911,8 @@ interface BaseSettings {
     education?: string;
     certifications?: string[];
     skills?: string[];
-    availability?: string;
+    availability?: string; // Legacy: simple text availability
+    availabilitySettings?: EducatorAvailabilitySettings; // New: structured availability schedule
     cvUrl?: string;
 }
 

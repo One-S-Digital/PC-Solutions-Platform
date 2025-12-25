@@ -47,7 +47,13 @@
     "dragHint": "Drag to move, corners to resize",
     "qualityNote": "Image will be saved as high-quality JPEG",
     "processing": "Processing...",
-    "apply": "Apply Crop"
+    "apply": "Apply Crop",
+    "presets": {
+      "profilePhoto": "Profile Photo",
+      "logo": "Logo",
+      "coverImage": "Cover Image",
+      "banner": "Banner"
+    }
   },
   "avatarSection": {
     "uploadAvatar": "Upload Photo",
@@ -143,8 +149,9 @@
     "shortBioPlaceholder": "Tell others about yourself, your experience, and what makes you unique...",
     "bioHint": "This will appear on your public profile",
     "skills": "Skills & Specialties",
-    "skillsLabel": "Skills (comma-separated)",
+    "skillsLabel": "Skills",
     "skillsPlaceholder": "e.g., Early Childhood Education, Special Needs, Bilingual",
+    "skillsHint": "Type and press Enter to add skills",
     "workExperience": "Work Experience",
     "workExperienceLabel": "Work Experience",
     "workExperiencePlaceholder": "Describe your work experience...",
@@ -154,8 +161,9 @@
     "educationPlaceholder": "List your educational background...",
     "educationHint": "You can use JSON format or plain text",
     "certifications": "Certifications",
-    "certificationsLabel": "Certifications (comma-separated)",
+    "certificationsLabel": "Certifications",
     "certificationsPlaceholder": "e.g., CPR Certified, Early Childhood Education Certificate",
+    "certificationsHint": "Type and press Enter to add certifications",
     "availability": "Availability",
     "availabilityLabel": "Availability Information",
     "availabilityPlaceholder": "Describe your availability...",
@@ -163,9 +171,117 @@
     "cvUpload": "Upload CV",
     "cvDragDrop": "Drag & drop your CV here",
     "cvHint": "Accepted formats: PDF, DOC, DOCX (Max 5MB). This will be shared with foundations when you apply for jobs.",
+    "cvDocument": "CV document",
+    "viewDocument": "View document",
     "cvUrl": "CV URL",
     "cvUrlPlaceholder": "https://example.com/cv.pdf",
     "cvUrlHint": "Link to your CV or resume document"
+  },
+  "availability": {
+    "title": "Availability Schedule",
+    "subtitle": "Set your working schedule so daycares can find you for replacement positions",
+    "employmentType": {
+      "label": "Employment Type Preference",
+      "fullTime": "Full-Time",
+      "fullTimeDesc": "Available for full-time positions (40h/week)",
+      "partTime": "Part-Time",
+      "partTimeDesc": "Available for part-time positions",
+      "customSchedule": "Replacement/Substitute",
+      "customScheduleDesc": "Available for replacement work with specific hours"
+    },
+    "weeklySchedule": {
+      "title": "Weekly Schedule",
+      "subtitle": "Set your regular availability for each day",
+      "days": {
+        "sunday": "Sunday",
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday"
+      },
+      "daysShort": {
+        "sunday": "Sun",
+        "monday": "Mon",
+        "tuesday": "Tue",
+        "wednesday": "Wed",
+        "thursday": "Thu",
+        "friday": "Fri",
+        "saturday": "Sat"
+      },
+      "notAvailable": "Unavailable",
+      "addSlot": "Add time slot",
+      "removeSlot": "Remove",
+      "hoursPerWeek": "hours/week",
+      "daysLabel": "days",
+      "quickActions": {
+        "title": "Quick actions",
+        "enableWeekdays": "Enable weekdays",
+        "clearAll": "Clear all",
+        "copyMondayToWeekdays": "Copy Monday to weekdays"
+      }
+    },
+    "timeSlot": {
+      "from": "From",
+      "to": "to",
+      "invalid": "End time must be after start time"
+    },
+    "dateOverrides": {
+      "title": "Date Overrides",
+      "subtitle": "Mark specific dates as unavailable or add extra hours",
+      "addOverride": "Add Date Override",
+      "editOverride": "Edit Date Override",
+      "unavailable": "Unavailable",
+      "customHours": "Custom Hours",
+      "availableHours": "Available Hours",
+      "reason": "Reason (optional)",
+      "reasonPlaceholder": {
+        "unavailable": "e.g., Holiday, Vacation, Training",
+        "custom": "e.g., Extra hours available"
+      },
+      "noOverrides": "No date overrides set",
+      "noOverridesHint": "Add overrides for holidays, vacations, or extra hours",
+      "pastOverrides": "{{count}} past override(s)",
+      "validation": {
+        "selectDate": "Please select a date",
+        "dateExists": "This date already has an override",
+        "pastDate": "Cannot set override for past dates"
+      }
+    },
+    "preview": {
+      "title": "Calendar Preview",
+      "available": "Available",
+      "partiallyAvailable": "Partially Available",
+      "unavailable": "Unavailable",
+      "override": "Override"
+    },
+    "notes": {
+      "title": "Additional Notes",
+      "placeholder": "Add any additional information about your availability (e.g., preferred areas, travel distance, special conditions)..."
+    },
+    "presets": {
+      "title": "Quick Setup",
+      "fullTimeStandard": "Full-Time Standard",
+      "fullTimeStandardDesc": "Monday to Friday, 8:00 AM - 5:00 PM",
+      "partTimeMornings": "Part-Time Mornings",
+      "partTimeMorningsDesc": "Monday to Friday, 8:00 AM - 12:00 PM",
+      "partTimeAfternoons": "Part-Time Afternoons",
+      "partTimeAfternoonsDesc": "Monday to Friday, 1:00 PM - 6:00 PM",
+      "flexibleWeekdays": "Flexible Weekdays",
+      "flexibleWeekdaysDesc": "Monday to Friday, flexible hours",
+      "apply": "Apply"
+    },
+    "advanced": {
+      "title": "Advanced Settings",
+      "timezone": "Timezone",
+      "availableFrom": "Available From (optional)",
+      "availableUntil": "Available Until (optional)"
+    },
+    "info": {
+      "title": "How it works",
+      "description": "Your availability is visible to daycares searching for replacement staff. They can filter by days and times you're available to find the perfect match for their needs."
+    }
   },
   "profileEdit": {
     "organizationProfile": "Organization Profile",
@@ -206,6 +322,9 @@
     "maxFileSize": "Maximum file size is 50MB.",
     "noFileUrl": "Document URL not available.",
     "downloadFailedMessage": "Failed to download document.",
+    "unknownSize": "Unknown size",
+    "untitledDocument": "Untitled document",
+    "previewIframeTitle": "Document Preview",
     "types": {
       "catalog": "Product Catalog",
       "company_profile": "Company Profile",

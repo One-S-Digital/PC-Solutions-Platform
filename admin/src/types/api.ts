@@ -305,6 +305,11 @@ export interface Message {
   content: string;
   createdAt: string;
   isRead?: boolean;
+  messageType?: 'TEXT' | 'FILE' | 'IMAGE' | 'SYSTEM';
+  fileUrl?: string;
+  fileName?: string;
+  fileSize?: number;
+  mimeType?: string;
 }
 
 export interface FileUploadResult {
@@ -458,6 +463,15 @@ export interface ApiResponse<T> {
     prevPage?: number;
   };
   timestamp: string;
+}
+
+export interface InviteUserResponse {
+  id: string;
+  emailAddress: string;
+  status?: string;
+  createdAt?: number;
+  publicMetadata?: Record<string, unknown>;
+  [key: string]: unknown;
 }
 
 // Partner types

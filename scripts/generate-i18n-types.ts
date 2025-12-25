@@ -9,8 +9,10 @@
 import fs from 'fs';
 import path from 'path';
 
-const LOCALES_DIR = path.join(__dirname, '../packages/translations/locales/en');
-const OUTPUT_FILE = path.join(__dirname, '../frontend/i18n/types.ts');
+// Resolve paths from project root (works for both CJS and ESM/ts-node)
+const ROOT_DIR = path.resolve(process.cwd());
+const LOCALES_DIR = path.join(ROOT_DIR, 'packages/translations/locales/en');
+const OUTPUT_FILE = path.join(ROOT_DIR, 'frontend/i18n/types.ts');
 
 interface TranslationObject {
   [key: string]: string | TranslationObject;
@@ -57,6 +59,11 @@ function generateTypes(): void {
   // Process each namespace file
   for (const file of files) {
     const namespace = file.replace('.json', '');
+    // Guard against accidental ".json" file -> empty namespace.
+    if (!namespace) {
+      console.warn(`⚠️  Skipping invalid namespace file: ${file}`);
+      continue;
+    }
     const filePath = path.join(LOCALES_DIR, file);
     
     try {
@@ -121,9 +128,13 @@ ${allKeys.map(key => `  | '${key}'`).join('\n')};
   for (const [namespace, keys] of Object.entries(namespaceKeys)) {
     const typeName = namespace.charAt(0).toUpperCase() + namespace.slice(1) + 'Key';
     content += `// Keys available in ${namespace} namespace\n`;
-    content += `export type ${typeName} =\n`;
-    content += keys.map(key => `  | '${key}'`).join('\n');
-    content += ';\n\n';
+    if (!keys || keys.length === 0) {
+      content += `export type ${typeName} = never;\n\n`;
+    } else {
+      content += `export type ${typeName} =\n`;
+      content += keys.map(key => `  | '${key}'`).join('\n');
+      content += ';\n\n';
+    }
   }
 
   // Add namespace type

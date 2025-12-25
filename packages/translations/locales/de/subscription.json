@@ -1,0 +1,165 @@
+{
+  "paywall": {
+    "requiredTitle": "Abonnement erforderlich",
+    "requiredMessage": "Ein aktives Abonnement ist erforderlich, um auf diese Funktion zuzugreifen. Wählen Sie einen Plan, um zu beginnen.",
+    "pendingTitle": "Abonnement ausstehend",
+    "pendingMessage": "Ihre Abonnementanfrage wird bearbeitet. Unser Team wird Sie in Kürze kontaktieren, um Ihr Konto zu aktivieren.",
+    "expiredTitle": "Abonnement abgelaufen",
+    "expiredMessage": "Ihr Abonnement ist abgelaufen. Erneuern Sie jetzt, um wieder Zugang zu allen Funktionen zu erhalten.",
+    "cancelledTitle": "Abonnement gekündigt",
+    "cancelledMessage": "Ihr Abonnement wurde gekündigt. Abonnieren Sie erneut, um die Plattform weiter zu nutzen.",
+    "pausedTitle": "Abonnement pausiert",
+    "pausedMessage": "Ihr Abonnement ist derzeit pausiert. Kontaktieren Sie den Support, um den Zugang fortzusetzen.",
+    "pastDueTitle": "Zahlung erforderlich",
+    "pastDueMessage": "Ihre Zahlung ist überfällig. Bitte aktualisieren Sie Ihre Zahlungsmethode, um den Zugang wiederherzustellen.",
+    "graceTitle": "Karenzzeit",
+    "graceMessage": "Ihr Abonnement befindet sich in der Karenzzeit. Bitte erneuern Sie bald, um den Zugang nicht zu verlieren.",
+    "viewPlans": "Abonnementpläne ansehen",
+    "manageBilling": "Abrechnung verwalten",
+    "viewProfile": "Profil ansehen",
+    "contactSupport": "Support kontaktieren",
+    "manageSubscription": "Ihr Abonnement verwalten",
+    "needHelp": "Brauchen Sie Hilfe?",
+    "contactUs": "Kontaktieren Sie uns",
+    "featureNotAvailableTitle": "Funktion nicht verfügbar",
+    "featureNotAvailableMessage": "Diese Funktion erfordert einen höheren Plan. Upgraden Sie, um auf {{feature}} zuzugreifen.",
+    "requestSubscription": "Abonnement anfordern"
+  },
+  "tier": {
+    "basic": "Basis",
+    "essential": "Essentiell",
+    "professional": "Professionell",
+    "enterprise": "Unternehmen"
+  },
+  "requestForm": {
+    "title": "Abonnement anfordern",
+    "subtitle": "Füllen Sie das untenstehende Formular aus, um Ihr Abonnement anzufordern",
+    "titles": {
+      "foundation": "Abonnement anfordern",
+      "supplier": "Anfrage (Lieferant)",
+      "serviceProvider": "Anfrage (Dienstleister)"
+    },
+    "subtitles": {
+      "foundation": "Füllen Sie das untenstehende Formular aus, um Ihr Abonnement anzufordern",
+      "supplier": "Erzählen Sie uns von Ihrem Unternehmen und Ihren Produkten. Wir melden uns mit Preisen und den nächsten Schritten.",
+      "serviceProvider": "Erzählen Sie uns von Ihrem Unternehmen und Ihren Dienstleistungen. Wir melden uns mit Preisen und den nächsten Schritten."
+    },
+    "selectedPlan": "Ausgewählter Plan",
+    "priceOnRequest": "Preis auf Anfrage",
+    "billedMonthly": "Monatlich abgerechnet",
+    "billedAnnually": "Jährlich abgerechnet",
+    "year": "Jahr",
+    "month": "Monat",
+    "roleLabel": {
+      "supplier": "Lieferant",
+      "serviceProvider": "Dienstleister"
+    },
+    "organizationName": "Organisation / Unternehmen",
+    "organizationNamePlaceholder": "Name Ihrer Organisation",
+    "contactName": "Kontaktname",
+    "contactNamePlaceholder": "Ihr vollständiger Name",
+    "contactEmail": "E-Mail-Adresse",
+    "contactEmailPlaceholder": "ihre@email.com",
+    "contactPhone": "Telefonnummer",
+    "contactPhonePlaceholder": "+41 XX XXX XX XX",
+    "website": "Website",
+    "websitePlaceholder": "https://beispiel.de",
+    "preferredContact": "Bevorzugte Kontaktmethode",
+    "message": "Zusätzliche Nachricht",
+    "messagePlaceholder": "Fragen oder besondere Anforderungen...",
+    "messageSupplier": "Erzählen Sie uns von Ihren Produkten",
+    "messageSupplierPlaceholder": "Was verkaufen Sie? Kategorien, MOQ, Regionen, usw.",
+    "messageServiceProvider": "Erzählen Sie uns von Ihren Dienstleistungen",
+    "messageServiceProviderPlaceholder": "Welche Dienstleistungen bieten Sie an? Region, Preismodell, Verfügbarkeit, usw.",
+    "submitButton": "Anfrage senden",
+    "submitting": "Wird gesendet...",
+    "validation": {
+      "required": "Bitte füllen Sie alle Pflichtfelder aus",
+      "planNotConfigured": "Dieser Plan ist noch nicht konfiguriert. Bitte kontaktieren Sie den Support."
+    },
+    "success": {
+      "title": "Anfrage gesendet!",
+      "description": "Vielen Dank für Ihr Interesse am {{planName}} Plan. Unser Team wird Ihre Anfrage prüfen und Ihnen innerhalb von 48 Stunden eine Rechnung zusenden.",
+      "estimatedTime": "Geschätzte Antwortzeit: 24-48 Stunden",
+      "emailSent": "Eine Bestätigungs-E-Mail wurde an {{email}} gesendet"
+    },
+    "howItWorks": {
+      "title": "So funktioniert es:",
+      "step1": "Senden Sie Ihre Anfrage",
+      "step2": "Erhalten Sie eine Rechnung per E-Mail",
+      "step3": "Zahlen Sie die Rechnung",
+      "step4": "Ihr Abonnement wird aktiviert"
+    },
+    "howItWorksVendor": {
+      "step1": "Senden Sie Ihre Anfrage",
+      "step2": "Wir melden uns mit Preisen",
+      "step3": "Sie erhalten die nächsten Schritte für die Listung"
+    }
+  },
+  "featureGate": {
+    "locked": "Diese Funktion erfordert ein Plan-Upgrade",
+    "upgrade": "Plan upgraden"
+  },
+  "status": {
+    "active": "Aktiv",
+    "inactive": "Inaktiv",
+    "paused": "Pausiert",
+    "cancelled": "Gekündigt",
+    "expired": "Abgelaufen",
+    "trial": "Testversion",
+    "pastDue": "Überfällig",
+    "pending": "Ausstehend",
+    "gracePeriod": "Karenzzeit"
+  },
+  "request": {
+    "title": "Abonnement anfordern",
+    "selectPlan": "Plan auswählen",
+    "billingPeriod": "Abrechnungszeitraum",
+    "monthly": "Monatlich",
+    "yearly": "Jährlich",
+    "yearlyDiscount": "10% sparen",
+    "notes": "Zusätzliche Anmerkungen",
+    "notesPlaceholder": "Besondere Anforderungen oder Fragen...",
+    "submit": "Anfrage senden",
+    "submitting": "Wird gesendet...",
+    "successTitle": "Anfrage gesendet",
+    "successMessage": "Ihre Abonnementanfrage wurde erfolgreich gesendet. Unser Team wird Sie in Kürze kontaktieren.",
+    "errorTitle": "Anfrage fehlgeschlagen",
+    "errorMessage": "Beim Senden Ihrer Anfrage ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
+  },
+  "info": {
+    "currentPlan": "Aktueller Plan",
+    "currentPeriod": "Aktueller Zeitraum",
+    "noPlan": "Kein aktiver Plan",
+    "expiresOn": "Läuft ab am {{date}}",
+    "trialEndsOn": "Testversion endet am {{date}}",
+    "daysRemaining": "{{days}} Tage verbleibend",
+    "trialDaysRemaining": "{{days}} Testtage verbleibend",
+    "cancelAtPeriodEnd": "Kündigung zum Periodenende",
+    "features": "Funktionen",
+    "limits": "Nutzungslimits",
+    "unlimited": "Unbegrenzt"
+  },
+  "actions": {
+    "upgrade": "Plan upgraden",
+    "downgrade": "Plan herabstufen",
+    "renew": "Abonnement erneuern",
+    "cancel": "Abonnement kündigen",
+    "resume": "Abonnement fortsetzen",
+    "managePayment": "Zahlungsmethode verwalten"
+  },
+  "errors": {
+    "cancelRequestFailed": "Fehler beim Senden der Kündigungsanfrage",
+    "fetchFailed": "Fehler beim Laden der Abonnementinformationen",
+    "requestFailed": "Fehler beim Senden der Abonnementanfrage",
+    "contextMissing": "useSubscription muss innerhalb eines SubscriptionProvider verwendet werden",
+    "featureNotAvailable": "Diese Funktion ist in Ihrem aktuellen Plan nicht verfügbar"
+  },
+  "badge": {
+    "trial": "Testversion",
+    "active": "Aktiv",
+    "expiringSoon": "Läuft bald ab",
+    "expired": "Abgelaufen",
+    "pending": "Ausstehend"
+  }
+}

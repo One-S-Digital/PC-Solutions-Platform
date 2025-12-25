@@ -76,6 +76,8 @@
         "name": "De base"
       },
       "suppliersAndProvidersTitle": "Pour les fournisseurs et prestataires de services",
+      "enquireButton": "Renseignez-vous",
+      "comingSoon": "Bientôt disponible",
       "selectAndContinue": "Sélectionner et continuer",
       "featureFallback": "Caractéristiques incluses",
       "subtitleSignup": "Créez votre compte pour commencer",
@@ -204,6 +206,8 @@
       "name": "De base"
     },
     "suppliersAndProvidersTitle": "Pour les fournisseurs et prestataires de services",
+    "enquireButton": "Renseignez-vous",
+    "comingSoon": "Bientôt disponible",
     "selectAndContinue": "Sélectionner et continuer",
     "featureFallback": "Caractéristiques incluses",
     "subtitleSignup": "Créez votre compte pour commencer",

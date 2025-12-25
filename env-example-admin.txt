@@ -8,6 +8,10 @@ VITE_CLERK_PUBLISHABLE_KEY=pk_test_your_clerk_publishable_key_here
 # API Configuration
 VITE_API_URL=http://localhost:3000/api
 
+# Frontend URL (RECOMMENDED)
+# Used for "View Profile" links from the admin dashboard to the main app.
+VITE_FRONTEND_URL=http://localhost:3000
+
 # Environment
 VITE_NODE_ENV=development
 

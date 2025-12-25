@@ -15,6 +15,8 @@ test('non-super-admin cannot access super-admin routes', async ({ page }) => {
   
   for (const route of adminRoutes) {
     await page.goto(route);
+    // Allow SPA redirects to settle
+    await page.waitForTimeout(250);
     
     // Should either:
     // 1. Redirect to login (if not authenticated)
@@ -23,10 +25,10 @@ test('non-super-admin cannot access super-admin routes', async ({ page }) => {
     
     const currentUrl = page.url();
     const shouldRedirectToLogin = currentUrl.includes('/login');
-    const shouldShowForbidden = page.locator('[data-testid="forbidden"], .error[contains(text(), "Access")], [data-testid="access-denied"]');
+    const shouldShowForbidden = page.getByText(/forbidden|access denied|unauthorized|not allowed/i);
     
     // At least one of these conditions should be true for non-admin routes
-    expect(shouldRedirectToLogin || await shouldShowForbidden.count() > 0 || currentUrl.includes('/404')).toBe(true);
+    expect(shouldRedirectToLogin || (await shouldShowForbidden.count()) > 0 || currentUrl.includes('/404')).toBe(true);
   }
 });
 

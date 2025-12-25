@@ -1,12 +1,14 @@
 
 import React, { useState, useEffect, FormEvent } from 'react';
-import { JobListing, JobStatus } from '../../types';
+import { JobListing, JobStatus, JobEmploymentType, JobWorkSchedule } from '../../types';
 import { STANDARD_INPUT_FIELD } from '../../constants';
 import Button from '../ui/Button';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../contexts/AppContext';
 import { JobListingInput } from '../../hooks/useRecruitmentApi';
+import JobEmploymentTypeSelector from './JobEmploymentTypeSelector';
+import WorkScheduleSelector from './WorkScheduleSelector';
 
 interface JobPostModalProps {
   isOpen: boolean;
@@ -18,13 +20,19 @@ interface JobPostModalProps {
 type JobFormData = JobListingInput;
 
 const JobPostModal: React.FC<JobPostModalProps> = ({ isOpen, onClose, onSubmit, existingJob }) => {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t } = useTranslation(['recruitment', 'common']);
   const { currentUser } = useAppContext();
 
   const initialFormState: JobFormData = {
     title: '',
     location: '',
     contractType: 'FULL_TIME',
+    employmentType: 'FULL_TIME' as JobEmploymentType,
+    workSchedule: {
+      expectedHoursPerWeek: 40,
+      preferredDays: [1, 2, 3, 4, 5], // Mon-Fri
+      preferredTimeSlot: 'FULL_DAY',
+    } as JobWorkSchedule,
     startDate: new Date().toISOString().split('T')[0],
     description: '',
     requirements: [''],
@@ -52,6 +60,8 @@ const JobPostModal: React.FC<JobPostModalProps> = ({ isOpen, onClose, onSubmit, 
             salary: existingJob.salary ?? '',
             salaryRange: existingJob.salaryRange ?? '',
             contractType: existingJob.contractType ?? 'FULL_TIME',
+            employmentType: existingJob.employmentType ?? 'FULL_TIME',
+            workSchedule: existingJob.workSchedule ?? initialFormState.workSchedule,
             startDate: existingJob.startDate ? existingJob.startDate.split('T')[0] : '',
             status: existingJob.status ?? JobStatus.DRAFT,
           });
@@ -95,6 +105,10 @@ const JobPostModal: React.FC<JobPostModalProps> = ({ isOpen, onClose, onSubmit, 
       startDate: formData.startDate || undefined,
       salary: formData.salary || undefined,
       salaryRange: formData.salaryRange || undefined,
+      employmentType: formData.employmentType,
+      workSchedule: (formData.employmentType === 'PART_TIME' || formData.employmentType === 'REPLACEMENT')
+        ? formData.workSchedule
+        : undefined,
       status: formData.status ?? JobStatus.PUBLISHED,
     };
     onSubmit(sanitizedData);
@@ -133,7 +147,7 @@ const JobPostModal: React.FC<JobPostModalProps> = ({ isOpen, onClose, onSubmit, 
       <div className="w-full max-w-2xl bg-white shadow-xl rounded-lg overflow-hidden">
         <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-swiss-charcoal">
-            {existingJob ? t('recruitmentPage.jobPostModal.editTitle') : t('recruitmentPage.jobPostModal.addTitle')}
+            {existingJob ? t('recruitment:jobPostModal.editTitle') : t('recruitment:jobPostModal.addTitle')}
           </h2>
           <button onClick={onClose} className="p-1 rounded-full text-gray-400 hover:text-gray-600" aria-label={t('common:buttons.close')}>
             <XMarkIcon className="w-6 h-6" />
@@ -141,49 +155,72 @@ const JobPostModal: React.FC<JobPostModalProps> = ({ isOpen, onClose, onSubmit, 
         </div>
         
         <form onSubmit={handleSubmit}>
-          <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+          <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+            {/* Basic Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">{t('recruitmentPage.jobPostModal.jobTitle')} *</label>
+                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">{t('recruitment:jobPostModal.jobTitle')} *</label>
                 <input type="text" name="title" id="title" value={formData.title} onChange={handleChange} required className={STANDARD_INPUT_FIELD} />
               </div>
               <div>
-                <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">{t('recruitmentPage.jobPostModal.location')} *</label>
+                <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">{t('recruitment:jobPostModal.location')} *</label>
                 <input type="text" name="location" id="location" value={formData.location} onChange={handleChange} required className={STANDARD_INPUT_FIELD} />
               </div>
               <div>
-                <label htmlFor="contractType" className="block text-sm font-medium text-gray-700 mb-1">{t('recruitmentPage.jobPostModal.contractType')} *</label>
-              <select name="contractType" id="contractType" value={formData.contractType} onChange={handleChange} required className={STANDARD_INPUT_FIELD}>
-                <option value="FULL_TIME">{t('recruitmentPage.contractTypes.fullTime', 'Full-time')}</option>
-                <option value="PART_TIME">{t('recruitmentPage.contractTypes.partTime', 'Part-time')}</option>
-                <option value="CDI">{t('recruitmentPage.contractTypes.cdi', 'CDI')}</option>
-                <option value="CDD">{t('recruitmentPage.contractTypes.cdd', 'CDD')}</option>
-                <option value="INTERNSHIP">{t('recruitmentPage.contractTypes.internship', 'Internship')}</option>
+                <label htmlFor="contractType" className="block text-sm font-medium text-gray-700 mb-1">{t('recruitment:jobPostModal.contractType')} *</label>
+                <select name="contractType" id="contractType" value={formData.contractType} onChange={handleChange} required className={STANDARD_INPUT_FIELD}>
+                  <option value="FULL_TIME">{t('recruitment:contractTypes.fullTime')}</option>
+                  <option value="PART_TIME">{t('recruitment:contractTypes.partTime')}</option>
+                  <option value="CDI">{t('recruitment:contractTypes.cdi')}</option>
+                  <option value="CDD">{t('recruitment:contractTypes.cdd')}</option>
+                  <option value="INTERNSHIP">{t('recruitment:contractTypes.internship')}</option>
+                  <option value="REPLACEMENT">{t('recruitment:contractTypes.replacement')}</option>
+                  <option value="TEMPORARY">{t('recruitment:contractTypes.temporary')}</option>
+                  <option value="FREELANCE">{t('recruitment:contractTypes.freelance')}</option>
                 </select>
               </div>
               <div>
-                <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-1">{t('recruitmentPage.jobPostModal.startDate')} *</label>
+                <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-1">{t('recruitment:jobPostModal.startDate')} *</label>
                 <input type="date" name="startDate" id="startDate" value={formData.startDate} onChange={handleChange} required className={STANDARD_INPUT_FIELD} />
               </div>
             </div>
+
+            {/* Employment Type Selection - Aligned with Candidate Availability */}
+            <JobEmploymentTypeSelector
+              value={formData.employmentType || 'FULL_TIME'}
+              onChange={(type) => setFormData(prev => ({ ...prev, employmentType: type }))}
+            />
+
+            {/* Work Schedule - Shown for Part-Time and Replacement positions */}
+            {(formData.employmentType === 'PART_TIME' || formData.employmentType === 'REPLACEMENT') && (
+              <WorkScheduleSelector
+                value={formData.workSchedule || {}}
+                onChange={(schedule) => setFormData(prev => ({ ...prev, workSchedule: schedule }))}
+              />
+            )}
+
+            {/* Salary */}
             <div>
-              <label htmlFor="salaryRange" className="block text-sm font-medium text-gray-700 mb-1">{t('recruitmentPage.jobPostModal.salaryRange')}</label>
-              <input type="text" name="salaryRange" id="salaryRange" value={formData.salaryRange || ''} onChange={handleChange} className={STANDARD_INPUT_FIELD} placeholder={t('recruitmentPage.jobPostModal.salaryRangePlaceholder')}/>
+              <label htmlFor="salaryRange" className="block text-sm font-medium text-gray-700 mb-1">{t('recruitment:jobPostModal.salaryRange')}</label>
+              <input type="text" name="salaryRange" id="salaryRange" value={formData.salaryRange || ''} onChange={handleChange} className={STANDARD_INPUT_FIELD} placeholder={t('recruitment:jobPostModal.salaryRangePlaceholder')}/>
             </div>
+
+            {/* Description */}
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">{t('recruitmentPage.jobPostModal.description')} *</label>
+              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">{t('recruitment:jobPostModal.description')} *</label>
               <textarea name="description" id="description" value={formData.description} onChange={handleChange} required rows={5} className={STANDARD_INPUT_FIELD}></textarea>
             </div>
             
-            {renderDynamicList('responsibilities', 'recruitmentPage.jobPostModal.responsibilities', 'recruitmentPage.jobPostModal.responsibilityPlaceholder', 'recruitmentPage.jobPostModal.addResponsibility')}
-            {renderDynamicList('qualifications', 'recruitmentPage.jobPostModal.qualifications', 'recruitmentPage.jobPostModal.qualificationPlaceholder', 'recruitmentPage.jobPostModal.addQualification')}
-            {renderDynamicList('benefits', 'recruitmentPage.jobPostModal.benefits', 'recruitmentPage.jobPostModal.benefitPlaceholder', 'recruitmentPage.jobPostModal.addBenefit')}
-            {renderDynamicList('requirements', 'recruitmentPage.jobPostModal.requirements', 'recruitmentPage.jobPostModal.requirementPlaceholder', 'recruitmentPage.jobPostModal.addRequirement')}
+            {/* Dynamic Lists */}
+            {renderDynamicList('responsibilities', 'recruitment:jobPostModal.responsibilities', 'recruitment:jobPostModal.responsibilityPlaceholder', 'recruitment:jobPostModal.addResponsibility')}
+            {renderDynamicList('qualifications', 'recruitment:jobPostModal.qualifications', 'recruitment:jobPostModal.qualificationPlaceholder', 'recruitment:jobPostModal.addQualification')}
+            {renderDynamicList('benefits', 'recruitment:jobPostModal.benefits', 'recruitment:jobPostModal.benefitPlaceholder', 'recruitment:jobPostModal.addBenefit')}
+            {renderDynamicList('requirements', 'recruitment:jobPostModal.requirements', 'recruitment:jobPostModal.requirementPlaceholder', 'recruitment:jobPostModal.addRequirement')}
 
           </div>
           <div className="px-6 py-4 bg-gray-50 border-t flex justify-end space-x-3">
             <Button type="button" variant="light" onClick={onClose}>{t('common:buttons.cancel')}</Button>
-            <Button type="submit" variant="primary">{existingJob ? t('common:buttons.saveChanges') : t('recruitmentPage.jobPostModal.postJob')}</Button>
+            <Button type="submit" variant="primary">{existingJob ? t('common:buttons.saveChanges') : t('recruitment:jobPostModal.postJob')}</Button>
           </div>
         </form>
       </div>

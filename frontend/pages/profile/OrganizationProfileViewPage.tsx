@@ -9,7 +9,7 @@ import OrganizationPublicProfile from '../../components/profile/OrganizationPubl
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
 import { Organization, UserRole } from '../../types';
 import { useAppContext } from '../../contexts/AppContext';
-import { useMessaging } from '../../contexts/MessagingContext';
+import { useOrganizationMessaging } from '../../hooks/useOrganizationMessaging';
 
 const OrganizationProfileViewPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -17,7 +17,7 @@ const OrganizationProfileViewPage: React.FC = () => {
   const { t } = useTranslation(['profile', 'common']);
   const { request } = useAuthenticatedApi();
   const { currentUser } = useAppContext();
-  const { startOrGetConversation } = useMessaging();
+  const { sendMessageToOrganization } = useOrganizationMessaging();
 
   const [organization, setOrganization] = useState<Organization | null>(null);
   const [loading, setLoading] = useState(true);
@@ -123,24 +123,9 @@ const OrganizationProfileViewPage: React.FC = () => {
     fetchOrganization();
   }, [id, request]);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!organization || !currentUser) return;
-    
-    // Find the primary contact user for this organization from the API response
-    const orgData = (organization as any).__rawData || organization;
-    const primaryMember = orgData.members?.[0]?.user;
-    if (primaryMember) {
-      const conversationId = startOrGetConversation(
-        primaryMember.id,
-        primaryMember.firstName && primaryMember.lastName
-          ? `${primaryMember.firstName} ${primaryMember.lastName}`
-          : organization.name,
-        primaryMember.role || UserRole.FOUNDATION
-      );
-      navigate(`/messages/${conversationId}`);
-    } else {
-      alert(t('profile:organization.noContactAvailable', 'No contact available for this organization.'));
-    }
+    await sendMessageToOrganization(organization, UserRole.FOUNDATION);
   };
 
   if (loading) {
@@ -182,7 +167,7 @@ const OrganizationProfileViewPage: React.FC = () => {
       {/* Social Media Style Header with Cover Image and Avatar */}
       <Card className="overflow-hidden p-0">
         {/* Cover Image Section */}
-        <div className="h-64 bg-gradient-to-r from-swiss-mint/20 to-swiss-teal/20 relative">
+        <div className="w-full aspect-[4/1] bg-gradient-to-r from-swiss-mint/20 to-swiss-teal/20 relative">
           {organization.coverImageUrl ? (
             <img
               src={organization.coverImageUrl}
@@ -218,7 +203,12 @@ const OrganizationProfileViewPage: React.FC = () => {
                 <p className="text-gray-600 mt-3 max-w-2xl">{organization.description}</p>
               )}
             </div>
-            {currentUser && currentUser.id !== (organization as any).__rawData?.members?.[0]?.user?.id && (
+            {currentUser && (
+              // Show message button if: user is not a member of this org OR user is admin/super admin
+              !((organization as any).__rawData?.members || []).some((m: any) => m?.user?.id === currentUser.id) ||
+              currentUser.role === UserRole.ADMIN ||
+              currentUser.role === UserRole.SUPER_ADMIN
+            ) && (
               <div className="flex flex-wrap gap-2">
                 <Button
                   variant="primary"
@@ -236,7 +226,7 @@ const OrganizationProfileViewPage: React.FC = () => {
       {/* Organization Details - Always visible */}
       <div className="w-full">
         {organization ? (
-          <OrganizationPublicProfile organization={organization} showActions={true} />
+          <OrganizationPublicProfile organization={organization} showActions={true} currentUser={currentUser} />
         ) : (
           <Card className="p-6">
             <p className="text-gray-500 text-center">Loading organization details...</p>

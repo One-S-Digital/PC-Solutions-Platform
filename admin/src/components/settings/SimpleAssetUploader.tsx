@@ -169,7 +169,7 @@ const SimpleAssetUploader: React.FC<SimpleAssetUploaderProps> = ({
         <div className="relative inline-block">
           <img
             src={previewUrl || currentAsset?.publicUrl}
-            alt={t('common:preview')}
+            alt={t('common:previewLabel', 'Preview')}
             className="h-20 w-20 object-cover rounded-lg border border-gray-300"
           />
           <button

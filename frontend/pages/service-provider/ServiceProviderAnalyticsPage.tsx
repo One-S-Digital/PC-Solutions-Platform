@@ -17,7 +17,7 @@ const ServiceProviderAnalyticsPage: React.FC = () => {
         {type === 'pie' && <ChartPieIcon className="h-12 w-12" />}
       </div>
       <p className="text-sm font-medium text-gray-600">{t(titleKey)}</p>
-      <p className="text-xs text-gray-400">{t('supplierAnalyticsPage.mockChartText', { type })}</p>
+      <p className="text-xs text-gray-400">{t('serviceProviderAnalyticsPage.mockChartText', { type })}</p>
     </div>
   );
 

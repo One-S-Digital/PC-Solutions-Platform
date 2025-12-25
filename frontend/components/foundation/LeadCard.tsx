@@ -15,6 +15,7 @@ interface LeadCardProps {
   onUpdateLead: (updatedLead: ParentLead) => void;
 }
 
+// Explicit namespace to avoid dashboard/common collision
 const LeadCard: React.FC<LeadCardProps> = ({ lead, foundationOrgId, onUpdateLead }) => {
   const { t, i18n } = useTranslation(['dashboard', 'common']);
   const [showResponseInput, setShowResponseInput] = useState(false);
@@ -54,7 +55,7 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, foundationOrgId, onUpdateLead
 
   const handleMessageParent = () => {
     if (!lead.parentId || !lead.contactName) {
-        alert(t('leadCard.alert.missingParentInfo'));
+        alert(t('common:leadCard.alert.missingParentInfo'));
         return;
     }
     const conversationId = startOrGetConversation(lead.parentId, lead.contactName, UserRole.PARENT);
@@ -65,11 +66,11 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, foundationOrgId, onUpdateLead
 
   const getStatusInfo = (status: FoundationLeadResponseStatus) => {
     switch(status) {
-        case FoundationLeadResponseStatus.NOT_RESPONDED: return { className: 'bg-gray-200 text-gray-700', label: t('leadCard.status.notResponded') };
-        case FoundationLeadResponseStatus.INTERESTED: return { className: 'bg-green-100 text-green-700', label: t('leadCard.status.interested') };
-        case FoundationLeadResponseStatus.NOT_INTERESTED: return { className: 'bg-red-100 text-red-700', label: t('leadCard.status.notInterested') };
-        case FoundationLeadResponseStatus.NEEDS_MORE_INFO: return { className: 'bg-yellow-100 text-yellow-700', label: t('leadCard.status.needsMoreInfo') };
-        case FoundationLeadResponseStatus.ENROLLED: return { className: 'bg-purple-100 text-purple-700', label: t('leadCard.status.enrolled') };
+        case FoundationLeadResponseStatus.NOT_RESPONDED: return { className: 'bg-gray-200 text-gray-700', label: t('dashboard:leadCard.status.notResponded') };
+        case FoundationLeadResponseStatus.INTERESTED: return { className: 'bg-green-100 text-green-700', label: t('dashboard:leadCard.status.interested') };
+        case FoundationLeadResponseStatus.NOT_INTERESTED: return { className: 'bg-red-100 text-red-700', label: t('dashboard:leadCard.status.notInterested') };
+        case FoundationLeadResponseStatus.NEEDS_MORE_INFO: return { className: 'bg-yellow-100 text-yellow-700', label: t('dashboard:leadCard.status.needsMoreInfo') };
+        case FoundationLeadResponseStatus.ENROLLED: return { className: 'bg-purple-100 text-purple-700', label: t('dashboard:leadCard.status.enrolled') };
         default: return { className: 'bg-gray-200 text-gray-700', label: status };
     }
   };
@@ -81,22 +82,22 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, foundationOrgId, onUpdateLead
       <div>
         <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold text-swiss-charcoal">
-              {t('leadCard.title', { name: lead.contactName })}
+              {t('common:leadCard.title', { name: lead.contactName })}
             </h3>
             <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${currentStatusInfo.className}`}>
                 {currentStatusInfo.label}
             </span>
         </div>
         <p className="text-sm text-gray-500">
-          {t('leadCard.forLocation', { canton: lead.canton, municipality: lead.municipality ? `- ${lead.municipality}` : '' })}
+          {t('common:leadCard.forLocation', { canton: lead.canton, municipality: lead.municipality ? `- ${lead.municipality}` : '' })}
         </p>
       </div>
       
       <div className="text-sm text-gray-700 space-y-1">
-        <p><strong>{t('leadCard.childAge')}:</strong> {lead.childAge}</p>
-        <p><strong>{t('leadCard.desiredStart')}:</strong> {new Date(lead.desiredStartDate).toLocaleDateString(i18n.language)}</p>
-        <p><strong>{t('leadCard.submittedOn')}:</strong> {new Date(lead.submissionDate).toLocaleDateString(i18n.language)}</p>
-        {lead.specialNeeds && <p><strong>{t('leadCard.notes')}:</strong> <span className="italic">{lead.specialNeeds}</span></p>}
+        <p><strong>{t('common:leadCard.childAge')}:</strong> {lead.childAge}</p>
+        <p><strong>{t('common:leadCard.desiredStart')}:</strong> {new Date(lead.desiredStartDate).toLocaleDateString(i18n.language)}</p>
+        <p><strong>{t('common:leadCard.submittedOn')}:</strong> {new Date(lead.submissionDate).toLocaleDateString(i18n.language)}</p>
+        {lead.specialNeeds && <p><strong>{t('common:leadCard.notes')}:</strong> <span className="italic">{lead.specialNeeds}</span></p>}
       </div>
 
       {/* Initial Action Buttons (if not yet responded or needs more info) */}
@@ -111,19 +112,19 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, foundationOrgId, onUpdateLead
                 variant="primary" 
                 size="sm" 
                 leftIcon={CheckCircleIcon}
-                onClick={() => handleResponse(FoundationLeadResponseStatus.INTERESTED, t('leadCard.defaultMessages.interested'))}
+                onClick={() => handleResponse(FoundationLeadResponseStatus.INTERESTED, t('common:leadCard.defaultMessages.interested'))}
                 disabled={getMyResponseStatus() === FoundationLeadResponseStatus.INTERESTED}
             >
-              {t('leadCard.buttons.interested')}
+              {t('common:leadCard.buttons.interested')}
             </Button>
             <Button 
                 variant="danger" 
                 size="sm" 
                 leftIcon={XCircleIcon}
-                onClick={() => handleResponse(FoundationLeadResponseStatus.NOT_INTERESTED, t('leadCard.defaultMessages.notInterested'))}
+                onClick={() => handleResponse(FoundationLeadResponseStatus.NOT_INTERESTED, t('common:leadCard.defaultMessages.notInterested'))}
                 disabled={getMyResponseStatus() === FoundationLeadResponseStatus.NOT_INTERESTED}
             >
-              {t('leadCard.buttons.notInterested')}
+              {t('common:leadCard.buttons.notInterested')}
             </Button>
             <Button 
                 variant="outline" 
@@ -132,13 +133,13 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, foundationOrgId, onUpdateLead
                 onClick={() => setShowResponseInput(true)}
                 disabled={getMyResponseStatus() === FoundationLeadResponseStatus.NEEDS_MORE_INFO}
             >
-              {t('leadCard.buttons.needInfo')}
+              {t('common:leadCard.buttons.needInfo')}
             </Button>
           </div>
           {showResponseInput && (
             <div className="mt-2 p-3 bg-gray-50 rounded-md">
               <label htmlFor={`response-text-${lead.id}`} className="block text-sm font-medium text-gray-700 mb-1">
-                {t('leadCard.questionFor', { name: lead.contactName })}:
+                {t('common:leadCard.questionFor', { name: lead.contactName })}:
               </label>
               <textarea
                 id={`response-text-${lead.id}`}
@@ -146,7 +147,7 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, foundationOrgId, onUpdateLead
                 onChange={(e) => setResponseText(e.target.value)}
                 rows={2}
                 className="input-field w-full text-sm" // Assuming input-field is globally styled or use STANDARD_INPUT_FIELD
-                placeholder={t('leadCard.questionPlaceholder')}
+                placeholder={t('common:leadCard.questionPlaceholder')}
               />
               <div className="mt-2 flex justify-end space-x-2">
                 <Button variant="ghost" size="sm" onClick={() => setShowResponseInput(false)}>{t('common:buttons.cancel')}</Button>
@@ -157,7 +158,7 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, foundationOrgId, onUpdateLead
                     disabled={!responseText.trim()}
                     leftIcon={PaperAirplaneIcon}
                 >
-                    {t('leadCard.buttons.sendQuestion')}
+                    {t('common:leadCard.buttons.sendQuestion')}
                 </Button>
               </div>
             </div>
@@ -169,8 +170,8 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, foundationOrgId, onUpdateLead
       {myResponse && (
         <div className="mt-3 pt-3 border-t border-gray-200">
             <div className="p-3 bg-gray-50 rounded-md text-sm mb-3">
-                <p className="font-medium">{t('leadCard.yourResponse')}: <span className={`${currentStatusInfo.className} px-1.5 py-0.5 rounded`}>{currentStatusInfo.label}</span></p>
-                {myResponse.messageToParent && <p className="italic mt-1">{t('leadCard.messageSent')}: "{myResponse.messageToParent}"</p>}
+                <p className="font-medium">{t('common:leadCard.yourResponse')}: <span className={`${currentStatusInfo.className} px-1.5 py-0.5 rounded`}>{currentStatusInfo.label}</span></p>
+                {myResponse.messageToParent && <p className="italic mt-1">{t('common:leadCard.messageSent')}: "{myResponse.messageToParent}"</p>}
             </div>
              <div className="flex flex-wrap gap-2 justify-end">
                 <Button 
@@ -179,7 +180,7 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, foundationOrgId, onUpdateLead
                     leftIcon={ChatBubbleLeftEllipsisIcon}
                     onClick={handleMessageParent}
                 >
-                    {t('leadCard.buttons.messageParent')}
+                    {t('common:leadCard.buttons.messageParent')}
                 </Button>
                 {myResponse.status === FoundationLeadResponseStatus.INTERESTED && (
                     <Button 
@@ -187,9 +188,9 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, foundationOrgId, onUpdateLead
                         size="sm" 
                         leftIcon={CheckCircleIcon}
                         className="bg-purple-600 hover:bg-purple-700"
-                        onClick={() => handleResponse(FoundationLeadResponseStatus.ENROLLED, t('leadCard.defaultMessages.enrolled'))}
+                        onClick={() => handleResponse(FoundationLeadResponseStatus.ENROLLED, t('common:leadCard.defaultMessages.enrolled'))}
                     >
-                      {t('leadCard.buttons.markEnrolled')}
+                      {t('common:leadCard.buttons.markEnrolled')}
                     </Button>
                 )}
             </div>

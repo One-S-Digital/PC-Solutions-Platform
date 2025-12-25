@@ -28,7 +28,6 @@ interface AssetUploaderProps {
 }
 
 const AssetUploader: React.FC<AssetUploaderProps> = ({
-  const { t } = useTranslation(['common']);
   kind,
   currentAsset,
   fallbackUrl,
@@ -38,8 +37,9 @@ const AssetUploader: React.FC<AssetUploaderProps> = ({
   description,
   maxSize = 2 * 1024 * 1024, // 2MB default
   acceptedTypes = ['image/png', 'image/svg+xml'],
-  requireSquare = false
+  requireSquare = false,
 }) => {
+  const { t } = useTranslation(['common']);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -328,12 +328,12 @@ const AssetUploader: React.FC<AssetUploaderProps> = ({
             {currentAsset?.mimeType === 'image/svg+xml' || previewUrl.endsWith('.svg') ? (
               <div 
                 className="w-16 h-16 border border-gray-200 rounded bg-white flex items-center justify-center"
-                dangerouslySetInnerHTML={{ __html: `<img src="${previewUrl}" alt={t('common:preview')} style="max-width: 100%; max-height: 100%;" />` }}
+                dangerouslySetInnerHTML={{ __html: `<img src="${previewUrl}" alt={t('common:previewLabel', 'Preview')} style="max-width: 100%; max-height: 100%;" />` }}
               />
             ) : (
               <img
                 src={previewUrl}
-                alt={t('common:preview')}
+                alt={t('common:previewLabel', 'Preview')}
                 className="w-16 h-16 object-contain border border-gray-200 rounded bg-white"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;

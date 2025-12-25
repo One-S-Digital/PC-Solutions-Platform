@@ -70,6 +70,42 @@ export class StaticTranslationController {
   }
 
   /**
+   * Admin: List translation issues (missing translations / needs review)
+   */
+  @Get('admin/issues')
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'List translation issues (admin)' })
+  async listIssues(
+    @Query('type') type: 'missing' | 'needsReview' = 'needsReview',
+    @Query('lang') lang?: string,
+    @Query('namespace') namespace?: string,
+    @Query('search') search?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    const pageNum = page ? parseInt(page, 10) : 1;
+    const limitNum = limit ? parseInt(limit, 10) : 50;
+    const result = await this.service.listIssues({
+      type,
+      lang,
+      namespace,
+      search,
+      page: pageNum,
+      limit: limitNum,
+    });
+    return {
+      success: true,
+      version: 1,
+      message: 'Translation issues retrieved successfully',
+      data: result.data,
+      pagination: result.pagination,
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  /**
    * Admin: Get single translation
    */
   @Get('admin/:namespace/:key/:lang')
@@ -376,9 +412,8 @@ export class StaticTranslationController {
    * Admin: Full sync - Import, Translate, and Export in one step
    * This is the simplified workflow that does everything at once
    * 
-   * NOTE: This is a long-running operation (5-10 mins). The frontend should
-   * handle timeouts gracefully - the sync will continue on the server even
-   * if the HTTP connection times out.
+   * Returns 202 Accepted immediately with a jobId. The sync runs in the background.
+   * Use the status endpoint to check progress.
    */
   @Post('admin/full-sync')
   @UseGuards(RolesGuard)
@@ -386,24 +421,102 @@ export class StaticTranslationController {
   @SkipThrottle({ default: false }) // Re-enable throttling for this endpoint
   @Throttle({ default: { limit: 1, ttl: 300000 } }) // Only allow 1 request per 5 minutes
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Full sync: Import EN, Translate FR/DE, Export to files (admin)' })
+  @ApiOperation({ summary: 'Start full sync: Import EN, Translate FR/DE, Export to files (admin)' })
+  @ApiResponse({ status: 202, description: 'Sync job started' })
   async fullSync(
     @Request() req: any,
+    @Res() res: Response,
+  ): Promise<void> {
+    const startedAt = Date.now();
+    const userId = req.user?.id;
+    
+    console.log('[FullSync] START', {
+      userId,
+      method: req.method,
+      url: req.url,
+      path: req.path,
+    });
+
+    try {
+      const jobId = this.service.startFullSync(userId);
+      
+      console.log('[FullSync] Job queued', {
+        jobId,
+        userId,
+        ms: Date.now() - startedAt,
+      });
+
+      res.status(202).json({
+        success: true,
+        jobId,
+        message: 'Full sync job started. Use the status endpoint to check progress.',
+      });
+    } catch (error: any) {
+      console.error('[FullSync] FAIL (queue)', {
+        ms: Date.now() - startedAt,
+        userId,
+        message: error?.message,
+        stack: error?.stack,
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Admin: Get full sync job status
+   * 
+   * CRITICAL: This endpoint must NEVER block.
+   * - Only reads from in-memory job state (no DB, no filesystem, no translation logic)
+   * - Returns immediately (<50ms)
+   * - No locks, no async operations
+   */
+  @Get('admin/full-sync/:jobId/status')
+  @Public()
+  @SkipThrottle() // Skip throttling to ensure instant response
+  @ApiOperation({ summary: 'Get full sync job status (admin)' })
+  @ApiResponse({ status: 200, description: 'Job status retrieved' })
+  @ApiResponse({ status: 200, description: 'Job not found (returns success: true, job: null)' })
+  async fullSyncStatus(
+    @Param('jobId') jobId: string,
   ): Promise<{
     success: boolean;
-    imported: number;
-    translatedFr: number;
-    translatedDe: number;
-    exported: number;
-    message: string;
+    job?: any;
+    error?: string;
   }> {
-    const userId = req.user?.id;
-    const result = await this.service.fullSync(userId);
-    return {
-      success: true,
-      ...result,
-      message: `Imported ${result.imported} EN keys, translated ${result.translatedFr} FR + ${result.translatedDe} DE, exported ${result.exported} to files`,
-    };
+    try {
+      // Only read from in-memory Map - no DB, no filesystem, no async operations
+      const job = this.service.getFullSyncJob(jobId);
+
+      // If job is missing or expired, return success with null job (never 404, never throw)
+      if (!job) {
+        return {
+          success: true,
+          job: null,
+          message: 'Job not found or expired',
+        } as any;
+      }
+
+      // Calculate duration synchronously (only uses Date.now() and job timestamps)
+      const duration = job.completedAt && job.startedAt
+        ? job.completedAt - job.startedAt
+        : job.startedAt
+        ? Date.now() - job.startedAt
+        : undefined;
+
+      return {
+        success: true,
+        job: {
+          ...job,
+          duration,
+        },
+      };
+    } catch (error: any) {
+      // Always return JSON, never throw
+      return {
+        success: false,
+        error: error?.message || 'Failed to retrieve job status',
+      };
+    }
   }
 
   /**
@@ -549,6 +662,7 @@ export class StaticTranslationController {
    * Used by i18next-http-backend for runtime loading
    * Includes ETag and Cache-Control headers for efficient caching
    * NOTE: Must be defined LAST to avoid matching admin/system routes
+   * Admin routes are defined first, so they take precedence over this parameterized route
    */
   @Get(':lang/:namespace')
   @Public() // Public endpoint - no auth required
@@ -562,6 +676,7 @@ export class StaticTranslationController {
     @Param('lang') lang: string,
     @Param('namespace') namespace: string,
     @Res() res: Response,
+    @Request() req: any,
     @Query('v') version?: string,
     @Headers('if-none-match') ifNoneMatch?: string,
   ): Promise<void> {
@@ -569,6 +684,7 @@ export class StaticTranslationController {
     console.log(`[Translation] Request received: lang="${lang}", namespace="${namespace}"`);
     
     // Input validation - prevent injection and invalid requests
+    // Note: The regex constraint in the route already ensures lang is en|fr|de, but we validate again for safety
     const supportedLangs = ['en', 'fr', 'de'];
     if (!supportedLangs.includes(lang)) {
       console.warn(`[Translation] Invalid language: "${lang}"`);

@@ -8,6 +8,7 @@ export { leadsService } from './leadsService';
 
 // Foundation-specific services
 export { foundationDashboardApi } from './foundationDashboardService';
+export { educatorDashboardApi } from './educatorDashboardService';
 export { foundationAnalyticsApi, downloadCsv } from './foundationAnalyticsService';
 export { foundationOrdersApi, getOrderStatusClass, getServiceStatusClass } from './foundationOrdersService';
 export { foundationLeadsApi, getLeadStatusInfo, getResponseStatusInfo } from './foundationLeadsService';
@@ -36,6 +37,11 @@ export type {
   WeatherData,
   CreateCalendarEventData,
 } from './foundationDashboardService';
+export type {
+  EducatorDashboardStats,
+  EducatorDashboardJob,
+  EducatorJobApplicationStatus,
+} from './educatorDashboardService';
 export type {
   SpendingData,
   LeadFunnelData,

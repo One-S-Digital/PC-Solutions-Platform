@@ -79,6 +79,9 @@ VITE_CLERK_PUBLISHABLE_KEY=pk_test_your_clerk_publishable_key_here
 # API Configuration
 VITE_API_URL=http://localhost:3000/api
 
+# Frontend URL (recommended; used for "View Profile" links)
+VITE_FRONTEND_URL=http://localhost:3000
+
 # Environment
 VITE_NODE_ENV=development
 ```
@@ -136,6 +139,7 @@ In your Render admin service, set the following environment variables:
 |----------|-------------|---------|
 | `VITE_CLERK_PUBLISHABLE_KEY` | Clerk publishable key (production) | `pk_live_...` |
 | `VITE_API_URL` | API service URL | `https://your-api-service.onrender.com/api` |
+| `VITE_FRONTEND_URL` | Frontend base URL (used for admin "View Profile" links) | `https://app.yourdomain.com` |
 | `VITE_NODE_ENV` | Environment mode | `production` |
 
 ## Service Configuration

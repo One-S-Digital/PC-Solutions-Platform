@@ -182,10 +182,12 @@ export class OrganizationDocumentsController {
   }
 
   /**
-   * Get public documents for a specific organization (for public profile viewing)
+   * Get documents for a specific organization (for viewing organization profiles)
+   * Any authenticated user can access this endpoint to view organization documents
+   * No @Roles() decorator means all authenticated users are allowed
    */
   @Get('public/:organizationId')
-  @ApiOperation({ summary: 'Get public organization documents' })
+  @ApiOperation({ summary: 'Get organization documents for profile viewing' })
   @ApiParam({ name: 'organizationId', description: 'Organization ID' })
   @ApiResponse({
     status: 200,

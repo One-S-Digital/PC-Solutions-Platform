@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { STANDARD_INPUT_FIELD } from '../../constants';
@@ -16,6 +16,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
+import { useAppContext } from '../../contexts/AppContext';
 import {
   supportApi,
   SupportTicket,
@@ -27,7 +28,10 @@ import {
   TICKET_STATUS_LABELS,
   TicketCategory,
   TicketPriority,
+  TicketResponse,
 } from '../../services/supportService';
+import { useSupportThread } from '../../hooks/useSupportThread';
+import SupportReplyComposer from '../../components/support/SupportReplyComposer';
 
 type AttachmentInfo = {
   url: string;
@@ -61,6 +65,7 @@ const FAQItem: React.FC<FAQItemProps> = ({ questionKey, answerKey }) => {
 const FoundationSupportPage: React.FC = () => {
   const { t, i18n } = useTranslation(['dashboard', 'common']);
   const { request, authenticatedUpload, authenticatedDownload } = useAuthenticatedApi();
+  const { currentUser } = useAppContext();
 
   // State
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
@@ -69,11 +74,8 @@ const FoundationSupportPage: React.FC = () => {
   const [showNewTicketForm, setShowNewTicketForm] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [newResponse, setNewResponse] = useState('');
   const [ticketAttachment, setTicketAttachment] = useState<AttachmentInfo | null>(null);
-  const [responseAttachment, setResponseAttachment] = useState<AttachmentInfo | null>(null);
   const [uploadingTicketFile, setUploadingTicketFile] = useState(false);
-  const [uploadingResponseFile, setUploadingResponseFile] = useState(false);
 
   // New ticket form
   const [ticketSubject, setTicketSubject] = useState('');
@@ -122,22 +124,7 @@ const FoundationSupportPage: React.FC = () => {
     }
   };
 
-  const handleResponseFileSelect = async (file?: File | null) => {
-    if (!file) return;
-    setUploadingResponseFile(true);
-    try {
-      const attachment = await uploadAttachment(file);
-      setResponseAttachment(attachment);
-      setError(null);
-    } catch (err) {
-      console.error('Error uploading response attachment:', err);
-      setError(t('common:errors.submitFailed'));
-    } finally {
-      setUploadingResponseFile(false);
-    }
-  };
-
-  // Fetch tickets
+  // Fetch tickets - memoized to prevent handleSendReply recreation
   const fetchTickets = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -154,6 +141,18 @@ const FoundationSupportPage: React.FC = () => {
       setLoading(false);
     }
   }, [request, t]);
+
+  // Stable callback for ticket updates
+  const handleTicketUpdate = useCallback(() => {
+    fetchTickets();
+  }, [fetchTickets]);
+
+  // Use shared thread hook for replies management (moved after handleTicketUpdate is defined)
+  const { replies, sendReply, messagesEndRef, scrollContainerRef } = useSupportThread({
+    ticketId: selectedTicket?.id || null,
+    userId: currentUser?.id || '',
+    onTicketUpdate: handleTicketUpdate,
+  });
 
   useEffect(() => {
     fetchTickets();
@@ -201,42 +200,29 @@ const FoundationSupportPage: React.FC = () => {
     }
   };
 
-  // Submit response to ticket
-  const handleResponseSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedTicket || !newResponse.trim()) return;
+  // Memoize ticketId to ensure stable prop
+  const currentTicketId = useMemo(() => selectedTicket?.id || null, [selectedTicket?.id]);
 
-    setSubmitting(true);
+  // Stable callback for sending replies - sendReply already has ticketId in closure
+  const handleSendReply = useCallback(async (content: string) => {
+    await sendReply(content);
+    // Refresh tickets list after sending
+    fetchTickets();
+  }, [sendReply, fetchTickets]);
 
-    try {
-      const config = supportApi.respondToTicketConfig(selectedTicket.id, {
-        message: newResponse,
-        attachmentUrl: responseAttachment?.url,
-        attachmentName: responseAttachment?.name,
-        attachmentSize: responseAttachment?.size,
-        attachmentMimeType: responseAttachment?.mimeType,
-      });
-      const res = await request<SupportTicket>(config.endpoint, {
-        method: config.method,
-        body: config.body,
-      });
+  // Memoize whether to show composer (stable boolean)
+  const showComposer = useMemo(() => {
+    return selectedTicket && selectedTicket.status !== 'CLOSED';
+  }, [selectedTicket?.id, selectedTicket?.status]);
 
-      if (res.success && res.data) {
-        setSelectedTicket(res.data);
-        setNewResponse('');
-        setResponseAttachment(null);
-        setError(null);
-        await fetchTickets();
-      } else {
-        setError(t('common:errors.submitFailed'));
-      }
-    } catch (err) {
-      console.error('Error submitting response:', err);
-      setError(t('common:errors.submitFailed'));
-    } finally {
-      setSubmitting(false);
+  // Auto-scroll to bottom on mount or when selected ticket changes
+  useEffect(() => {
+    if (selectedTicket) {
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
     }
-  };
+  }, [selectedTicket?.id]);
 
   // Ticket detail modal/card
   const TicketDetail = () => {
@@ -292,89 +278,39 @@ const FoundationSupportPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Responses */}
-        <div className="space-y-3 mb-4">
-          {selectedTicket.responses.map(response => (
-            <div 
-              key={response.id} 
-              className={`p-4 rounded-lg ${response.isStaff ? 'bg-swiss-teal/10 ml-4' : 'bg-gray-50 mr-4'}`}
-            >
-              <div className="flex justify-between items-start mb-2">
-                <span className={`text-xs font-medium ${response.isStaff ? 'text-swiss-teal' : 'text-gray-600'}`}>
-                  {response.isStaff ? t('common:supportPage.staffResponse') : response.userName || t('common:supportPage.you')}
-                </span>
-                <span className="text-xs text-gray-400">
-                  {new Date(response.createdAt).toLocaleString(i18n.language)}
-                </span>
-              </div>
-              <p className="text-sm text-gray-700 whitespace-pre-wrap">{response.message}</p>
-              {response.attachmentUrl && (
-                <div className="mt-2 flex items-center gap-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    type="button"
-                    onClick={() =>
-                      authenticatedDownload(
-                        response.attachmentUrl || '',
-                        response.attachmentName || 'attachment',
-                      )
-                    }
-                  >
-                    {t('common:supportPage.downloadAttachment', 'Download attachment')}
-                  </Button>
-                  {response.attachmentName && (
-                    <span className="text-xs text-gray-600 truncate max-w-xs">{response.attachmentName}</span>
-                  )}
+        {/* Responses - sorted by createdAt */}
+        <div 
+          ref={scrollContainerRef}
+          className="space-y-3 mb-4 max-h-96 overflow-y-auto"
+        >
+            {replies.map((response: TicketResponse) => (
+              <div 
+                key={response.id} 
+                className={`p-4 rounded-lg ${response.isStaff ? 'bg-swiss-teal/10 ml-4' : 'bg-gray-50 mr-4'}`}
+              >
+                <div className="flex justify-between items-start mb-2">
+                  <span className={`text-xs font-medium ${response.isStaff ? 'text-swiss-teal' : 'text-gray-600'}`}>
+                    {response.isStaff ? t('common:supportPage.staffResponse') : response.userName || t('common:supportPage.you')}
+                  </span>
+                  <span className="text-xs text-gray-400">
+                    {new Date(response.createdAt).toLocaleString(i18n.language)}
+                  </span>
                 </div>
-              )}
-            </div>
-          ))}
+                <p className="text-sm text-gray-700 whitespace-pre-wrap">{response.message}</p>
+              </div>
+            ))}
+          <div ref={messagesEndRef} />
         </div>
 
         {/* Response form */}
-        {selectedTicket.status !== 'CLOSED' && (
-          <form onSubmit={handleResponseSubmit} className="border-t pt-4">
-            <textarea
-              value={newResponse}
-              onChange={(e) => setNewResponse(e.target.value)}
+        {showComposer && currentTicketId && (
+          <div className="border-t pt-4">
+            <SupportReplyComposer
+              ticketId={currentTicketId}
+              onSend={handleSendReply}
               placeholder={t('common:supportPage.ticketForm.responsePlaceholder')}
-              rows={3}
-              className={STANDARD_INPUT_FIELD}
-              required
             />
-            <div className="flex flex-wrap items-center gap-3 mt-2">
-              <input
-                type="file"
-                onChange={(e) => handleResponseFileSelect(e.target.files?.[0])}
-                disabled={uploadingResponseFile}
-                className="text-sm"
-              />
-              {uploadingResponseFile && (
-                <span className="text-xs text-gray-500">
-                  {t('common:uploading', 'Uploading...')}
-                </span>
-              )}
-              {responseAttachment && (
-                <div className="flex items-center gap-2 text-sm text-gray-700 bg-white border border-gray-200 rounded px-2 py-1">
-                  <span className="truncate max-w-xs">{responseAttachment.name}</span>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    type="button"
-                    onClick={() => setResponseAttachment(null)}
-                  >
-                    {t('common:buttons.remove', 'Remove')}
-                  </Button>
-                </div>
-              )}
-            </div>
-            <div className="flex justify-end mt-2">
-              <Button type="submit" variant="primary" disabled={submitting || !newResponse.trim()}>
-                {submitting ? <ArrowPathIcon className="w-4 h-4 animate-spin" /> : t('common:buttons.reply')}
-              </Button>
-            </div>
-          </form>
+          </div>
         )}
       </Card>
     );

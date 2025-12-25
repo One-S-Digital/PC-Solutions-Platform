@@ -92,7 +92,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
     },
     { path: '/hr-procedures', nameKey: 'sidebar.hrProcedures', icon: DocumentTextIcon, roles: [UserRole.FOUNDATION] },
     { path: '/e-learning', nameKey: 'sidebar.eLearning', icon: AcademicCapIcon, roles: [UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
-    { path: '/state-policies', nameKey: 'sidebar.statePolicies', icon: NewspaperIcon, roles: [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.EDUCATOR, UserRole.PARENT] },
+    { path: '/state-policies', nameKey: 'sidebar.statePolicies', icon: NewspaperIcon, roles: [UserRole.FOUNDATION] },
     { path: '/foundation/analytics', nameKey: 'sidebar.analytics', icon: PresentationChartLineIcon, roles: [UserRole.FOUNDATION] },
     { path: '/messages', nameKey: 'sidebar.messages', icon: ChatBubbleLeftEllipsisIcon, roles: [UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]},
     { path: '/foundation/organisation-profile', nameKey: 'sidebar.organisationProfile', icon: BuildingOfficeIcon, roles: [UserRole.FOUNDATION] }, // Kept for Foundation, hidden for Admin/SA
@@ -154,13 +154,13 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
         }
       }}
       className={({ isActive }) =>
-        `flex items-center px-4 py-2.5 text-sm rounded-button transition-colors duration-150 ease-in-out group ${
-          isSubItem ? 'pl-10' : 'pl-4' 
+        `flex items-center px-2 md:px-3 lg:px-4 py-2 lg:py-2.5 text-xs md:text-sm rounded-button transition-colors duration-150 ease-in-out group ${
+          isSubItem ? 'pl-7 md:pl-8 lg:pl-10' : 'pl-2 md:pl-3 lg:pl-4' 
         } ${isActive ? 'bg-swiss-mint/10 text-swiss-mint font-medium' : 'text-gray-600 hover:bg-gray-100 hover:text-swiss-charcoal'}`
       }
     >
-      <item.icon className={`w-5 h-5 mr-3 ${isSubItem ? 'group-hover:text-swiss-mint' : 'group-hover:text-swiss-mint'}`} />
-      {t(item.nameKey)}
+      <item.icon className={`w-4 h-4 lg:w-5 lg:h-5 mr-2 lg:mr-3 flex-shrink-0 ${isSubItem ? 'group-hover:text-swiss-mint' : 'group-hover:text-swiss-mint'}`} />
+      <span className="truncate">{t(item.nameKey)}</span>
     </NavLink>
   );
 
@@ -170,29 +170,29 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
 
 
   return (
-    <div className="w-full bg-white border-r border-gray-200/80 flex flex-col shadow-sm h-full"> {/* Ensure full height for mobile overlay */}
+    <div className="w-full md:w-56 lg:w-64 bg-white border-r border-gray-200/80 flex flex-col shadow-sm h-full"> {/* Responsive width for desktop sidebar */}
       {isMobileView && (
-        <div className="flex justify-between items-center h-20 px-4 border-b border-gray-200/80">
+        <div className="flex justify-between items-center h-16 sm:h-20 px-3 sm:px-4 border-b border-gray-200/80">
             <div className="flex items-center">
                 {sidebarLogoUrl ? (
-                  <img src={sidebarLogoUrl} alt={settings?.siteName || t('appName')} className="h-[63px] w-auto mr-2" />
+                  <img src={sidebarLogoUrl} alt={settings?.siteName || t('appName')} className="h-12 sm:h-[63px] w-auto mr-2" />
                 ) : (
-                  <SquaresPlusIcon className="h-[63px] w-[63px] text-swiss-mint mr-2" />
+                  <SquaresPlusIcon className="h-12 w-12 sm:h-[63px] sm:w-[63px] text-swiss-mint mr-2" />
                 )}
             </div>
           {/* Close button for mobile view - managed by MainLayout now */}
         </div>
       )}
       {!isMobileView && (
-        <div className="h-20 flex items-center justify-center px-6 border-b border-gray-200/80"> 
+        <div className="h-16 lg:h-20 flex items-center justify-center px-3 lg:px-6 border-b border-gray-200/80"> 
             {sidebarLogoUrl ? (
-              <img src={sidebarLogoUrl} alt={settings?.siteName || t('appName')} className="h-[69px] w-auto mr-2.5" />
+              <img src={sidebarLogoUrl} alt={settings?.siteName || t('appName')} className="h-12 lg:h-[69px] w-auto mr-2 lg:mr-2.5" />
             ) : (
-              <SquaresPlusIcon className="h-[69px] w-[69px] text-swiss-mint mr-2.5" />
+              <SquaresPlusIcon className="h-12 w-12 lg:h-[69px] lg:w-[69px] text-swiss-mint mr-2 lg:mr-2.5" />
             )}
         </div>
       )}
-      <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto"> 
+      <nav className="flex-1 p-2 md:p-3 lg:p-4 space-y-1 lg:space-y-1.5 overflow-y-auto"> 
         {userSpecificNavItems.map((item) => {
           // Hide "Organisation Profile" if user is Admin or Super Admin but not Foundation
           if (item.path === '/foundation/organisation-profile' && (isAdminOrSuperAdmin && !isFoundationUser)) {
@@ -233,16 +233,16 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
                       // This ensures the chevron works for items like "Content" that also navigate
                       toggleMenu(item.nameKey);
                     }}
-                    className="flex items-center justify-between w-full px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-100 hover:text-swiss-charcoal rounded-button transition-colors duration-150 ease-in-out group"
+                    className="flex items-center justify-between w-full px-2 md:px-3 lg:px-4 py-2 lg:py-2.5 text-xs md:text-sm text-gray-600 hover:bg-gray-100 hover:text-swiss-charcoal rounded-button transition-colors duration-150 ease-in-out group"
                   >
-                    <div className="flex items-center">
-                      <item.icon className="w-5 h-5 mr-3 text-gray-500 group-hover:text-swiss-mint" />
-                      <span className="font-medium">{t(item.nameKey)}</span>
+                    <div className="flex items-center min-w-0 flex-1">
+                      <item.icon className="w-4 h-4 lg:w-5 lg:h-5 mr-2 lg:mr-3 text-gray-500 group-hover:text-swiss-mint flex-shrink-0" />
+                      <span className="font-medium truncate">{t(item.nameKey)}</span>
                     </div>
-                    {openMenus[item.nameKey] ? <ChevronUpIcon className="w-4 h-4" /> : <ChevronDownIcon className="w-4 h-4" />}
+                    {openMenus[item.nameKey] ? <ChevronUpIcon className="w-3.5 h-3.5 lg:w-4 lg:h-4 flex-shrink-0 ml-1" /> : <ChevronDownIcon className="w-3.5 h-3.5 lg:w-4 lg:h-4 flex-shrink-0 ml-1" />}
                   </button>
                   {openMenus[item.nameKey] && (
-                    <div className="mt-1 ml-2 space-y-1"> 
+                    <div className="mt-0.5 lg:mt-1 ml-1 lg:ml-2 space-y-0.5 lg:space-y-1"> 
                       {item.subItems.map((subItem) => (
                         <NavLinkItem key={subItem.nameKey + subItem.path} item={subItem} isSubItem={true} />
                       ))}
@@ -256,29 +256,30 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
           );
         })}
       </nav>
-      <div className="p-5 border-t border-gray-200/80 mt-auto">
+      <div className="p-3 lg:p-5 border-t border-gray-200/80 mt-auto">
         {currentUser && (
-           <div className="flex items-center mb-4">
-            <img src={currentUser.avatarUrl || `https://ui-avatars.com/api/?name=${currentUser.name.replace(' ', '+')}&background=48CFAE&color=fff&rounded=true&size=128`} alt={currentUser.name} className="w-11 h-11 rounded-full mr-3 border-2 border-swiss-mint/30" />
-            <div>
-              <p className="text-base font-semibold text-swiss-charcoal">{currentUser.name}</p>
-              <p className="text-xs text-gray-500">{translateUserRole(currentUser.role, t)}</p>
+           <div className="flex items-center mb-3 lg:mb-4">
+            <img src={currentUser.avatarUrl || `https://ui-avatars.com/api/?name=${currentUser.name.replace(' ', '+')}&background=48CFAE&color=fff&rounded=true&size=128`} alt={currentUser.name} className="w-9 lg:w-11 h-9 lg:h-11 rounded-full mr-2 lg:mr-3 border-2 border-swiss-mint/30" />
+            <div className="min-w-0 flex-1">
+              <p className="text-sm lg:text-base font-semibold text-swiss-charcoal truncate">{currentUser.name}</p>
+              <p className="text-xs text-gray-500 truncate">{translateUserRole(currentUser.role, t)}</p>
             </div>
           </div>
         )}
         {hasSubscription && (
-          <div className="bg-swiss-sand/20 p-4 rounded-card text-center">
-              <p className="text-sm text-swiss-charcoal font-semibold">{t('dashboard:sidebar.currentPlan', { plan: currentUser.plan })}</p>
-              <p className="text-xs text-gray-600 mb-2.5">{t('dashboard:sidebar.manageSubscriptionDesc')}</p>
+          <div className="bg-swiss-sand/20 p-3 lg:p-4 rounded-card text-center">
+              <p className="text-xs lg:text-sm text-swiss-charcoal font-semibold">{t('dashboard:sidebar.currentPlan', { plan: currentUser.plan })}</p>
+              <p className="text-xs text-gray-600 mb-2 lg:mb-2.5 hidden lg:block">{t('dashboard:sidebar.manageSubscriptionDesc')}</p>
               <button 
                 onClick={() => {
                     const targetPath = currentUser?.role === UserRole.SERVICE_PROVIDER ? '/settings/service-provider' : '/settings';
-                    navigate(targetPath);
+                    // Deep-link directly to Billing & Subscription (and the manage section)
+                    navigate(`${targetPath}?focus=manage-subscription#billingSubscription`);
                     if (onLinkClick) onLinkClick();
                 }}
-                className="w-full bg-swiss-coral text-white text-sm px-4 py-2 rounded-button hover:bg-opacity-90 transition-colors shadow-soft flex items-center justify-center"
+                className="w-full bg-swiss-coral text-white text-xs lg:text-sm px-3 lg:px-4 py-1.5 lg:py-2 rounded-button hover:bg-opacity-90 transition-colors shadow-soft flex items-center justify-center"
               >
-                  <WalletIcon className="w-4 h-4 mr-2"/>
+                  <WalletIcon className="w-3.5 h-3.5 lg:w-4 lg:h-4 mr-1.5 lg:mr-2"/>
                   {t('dashboard:sidebar.billingSubscription')}
               </button>
           </div>

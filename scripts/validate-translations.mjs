@@ -184,11 +184,9 @@ function main() {
   console.log('\n' + '─'.repeat(50));
   
   if (hasErrors) {
-    console.log(`\n⚠️  Found issues in translation files (${validFiles}/${totalFiles} clean)`);
-    console.log('   Run Full Sync from admin to clean up corrupted keys.\n');
-    // Don't block commits - these are pre-existing issues
-    // Change to process.exit(1) once files are cleaned up
-    process.exit(0);
+    console.log(`\n❌ Found errors in translation files (${validFiles}/${totalFiles} clean)`);
+    console.log('   Fix the errors above before committing.\n');
+    process.exit(1);
   } else {
     logSuccess(`All ${totalFiles} translation files are valid!\n`);
     process.exit(0);

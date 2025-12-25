@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@clerk/clerk-react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { 
   AdminCard, 
   AdminButton, 
@@ -87,6 +88,7 @@ interface SystemHealth {
 export default function SystemConfigurationPage() {
   const { t } = useTranslation(['admin', 'common']);
   const { getToken } = useAuth();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'settings' | 'integrations' | 'maintenance' | 'health' | 'templates'>('settings');
   const [settings, setSettings] = useState<SystemSetting[]>([]);
   const [integrations, setIntegrations] = useState<IntegrationConfig[]>([]);
@@ -96,6 +98,8 @@ export default function SystemConfigurationPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showCreateSetting, setShowCreateSetting] = useState(false);
+  const [showEditSetting, setShowEditSetting] = useState(false);
+  const [editingSetting, setEditingSetting] = useState<SystemSetting | null>(null);
   const [showCreateIntegration, setShowCreateIntegration] = useState(false);
   const [showCreateSchedule, setShowCreateSchedule] = useState(false);
   const [newSetting, setNewSetting] = useState({
@@ -256,6 +260,41 @@ export default function SystemConfigurationPage() {
       fetchSettings();
     } catch (err: any) {
       alert(t('admin:settings.systemConfig.systemSettings.alerts.createFailed', { message: err.message }));
+    }
+  };
+
+  const handleEditSetting = (setting: SystemSetting) => {
+    setEditingSetting(setting);
+    setShowEditSetting(true);
+  };
+
+  const handleUpdateSetting = async () => {
+    if (!editingSetting) return;
+    
+    try {
+      const token = await getToken();
+      const response = await fetch(`/api/admin/system-configuration/settings/${editingSetting.key}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          value: editingSetting.value,
+          description: editingSetting.description,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update system setting');
+      }
+
+      alert(t('admin:settings.systemConfig.systemSettings.alerts.updated', 'Setting updated successfully'));
+      setShowEditSetting(false);
+      setEditingSetting(null);
+      fetchSettings();
+    } catch (err: any) {
+      alert(t('admin:settings.systemConfig.systemSettings.alerts.updateFailed', { message: err.message }));
     }
   };
 
@@ -527,7 +566,11 @@ export default function SystemConfigurationPage() {
                     </AdminTableCell>
                     <AdminTableCell>
                       <div className="flex gap-2">
-                        <AdminButton variant="outline" size="sm">
+                        <AdminButton 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleEditSetting(setting)}
+                        >
                           {t('admin:settings.systemConfig.systemSettings.buttons.edit')}
                         </AdminButton>
                         <AdminButton variant="secondary" size="sm">
@@ -539,6 +582,82 @@ export default function SystemConfigurationPage() {
                 ))}
               </AdminTableBody>
             </AdminTable>
+
+            {/* Edit Setting Modal */}
+            {showEditSetting && editingSetting && (
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                    {t('admin:settings.systemConfig.systemSettings.editTitle', 'Edit Setting')}
+                  </h3>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {t('admin:settings.systemConfig.systemSettings.tableHeaders.key')}
+                      </label>
+                      <input
+                        type="text"
+                        value={editingSetting.key}
+                        disabled
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-500"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {t('admin:settings.systemConfig.systemSettings.tableHeaders.value')}
+                      </label>
+                      <input
+                        type="text"
+                        value={typeof editingSetting.value === 'string' ? editingSetting.value : JSON.stringify(editingSetting.value)}
+                        onChange={(e) => setEditingSetting({ ...editingSetting, value: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                      {editingSetting.key === 'email.grace_period_days' && (
+                        <p className="mt-1 text-sm text-gray-500">
+                          {t('admin:settings.systemConfig.systemSettings.gracePeriodHint', 'Enter the number of days (e.g., 7)')}
+                        </p>
+                      )}
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {t('admin:settings.systemConfig.systemSettings.description', 'Description')}
+                      </label>
+                      <textarea
+                        value={editingSetting.description}
+                        onChange={(e) => setEditingSetting({ ...editingSetting, description: e.target.value })}
+                        rows={3}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    
+                    <div className="text-sm text-gray-500">
+                      <p><strong>{t('admin:settings.systemConfig.systemSettings.tableHeaders.category')}:</strong> {editingSetting.category}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6 flex justify-end gap-3">
+                    <AdminButton
+                      variant="secondary"
+                      onClick={() => {
+                        setShowEditSetting(false);
+                        setEditingSetting(null);
+                      }}
+                    >
+                      {t('common:cancel', 'Cancel')}
+                    </AdminButton>
+                    <AdminButton
+                      variant="primary"
+                      onClick={handleUpdateSetting}
+                    >
+                      {t('common:save', 'Save')}
+                    </AdminButton>
+                  </div>
+                </div>
+              </div>
+            )}
           </AdminCard>
         )}
 
@@ -787,16 +906,24 @@ export default function SystemConfigurationPage() {
           <AdminCard className="p-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-admin-text">{t('admin:settings.systemConfig.emailTemplates.title')}</h3>
-              <AdminButton variant="primary" size="sm">
-                {t('admin:settings.systemConfig.emailTemplates.createTemplate')}
+              <AdminButton
+                variant="primary"
+                size="sm"
+                onClick={() => navigate({ search: '?tab=emailTemplates' })}
+              >
+                {t('admin:settings.systemConfig.emailTemplates.goToTemplates')}
               </AdminButton>
             </div>
             
             <div className="text-center py-8">
               <div className="text-4xl mb-4">📧</div>
-              <h4 className="text-lg font-medium text-admin-text mb-2">{t('admin:settings.systemConfig.emailTemplates.title')}</h4>
-              <p className="text-admin-muted mb-4">{t('admin:settings.systemConfig.emailTemplates.description')}</p>
-              <AdminButton variant="primary">
+              <h4 className="text-lg font-medium text-admin-text mb-2">
+                {t('admin:settings.systemConfig.emailTemplates.title')}
+              </h4>
+              <p className="text-admin-muted mb-4">
+                Email templates are managed in the main <strong>Settings → Email Templates</strong> tab.
+              </p>
+              <AdminButton variant="primary" onClick={() => navigate({ search: '?tab=emailTemplates' })}>
                 {t('admin:settings.systemConfig.emailTemplates.goToTemplates')}
               </AdminButton>
             </div>

@@ -59,6 +59,17 @@ class MessagingService {
     try {
       const response = await apiService.get<Conversation[]>('/messaging/conversations', { token });
       
+      if (import.meta.env.DEV) {
+        console.log('📊 messagingService.getConversations: Raw API response', {
+        hasResponse: !!response,
+        success: response.success,
+        hasData: !!response.data,
+        dataType: Array.isArray(response.data) ? 'array' : typeof response.data,
+        dataLength: Array.isArray(response.data) ? response.data.length : 'N/A',
+        dataStructure: response.data && typeof response.data === 'object' ? Object.keys(response.data).slice(0, 5) : 'N/A',
+      });
+      }
+      
       // Handle empty array case - this is valid
       if (response.success === false) {
         console.error('❌ Failed to fetch conversations');
@@ -67,11 +78,36 @@ class MessagingService {
       
       // If data is undefined or null, return empty array (valid - user has no conversations)
       if (response.data === undefined || response.data === null) {
+        if (import.meta.env.DEV) {
+          console.log('📊 messagingService.getConversations: Response data is null/undefined, returning empty array');
+        }
         return [];
       }
       
-      // Ensure data is an array
-      const conversations = Array.isArray(response.data) ? response.data : [];
+      // Handle ResponseEnvelope: if data.data exists, use that (nested envelope)
+      let conversations: any[] = [];
+      if (response.data && typeof response.data === 'object' && 'data' in response.data && Array.isArray(response.data.data)) {
+        // Nested envelope: { success: true, data: { data: [...] } }
+        conversations = response.data.data;
+        if (import.meta.env.DEV) {
+          console.log('📊 messagingService.getConversations: Unwrapped nested envelope, found', conversations.length, 'conversations');
+        }
+      } else if (Array.isArray(response.data)) {
+        // Direct array: { success: true, data: [...] }
+        conversations = response.data;
+        if (import.meta.env.DEV) {
+          console.log('📊 messagingService.getConversations: Direct array in response.data, found', conversations.length, 'conversations');
+        }
+      } else {
+        if (import.meta.env.DEV) {
+          console.warn('📊 messagingService.getConversations: Unexpected response.data format', {
+            type: typeof response.data,
+            isArray: Array.isArray(response.data),
+            keys: response.data && typeof response.data === 'object' ? Object.keys(response.data) : 'N/A',
+          });
+        }
+        conversations = [];
+      }
       
       // Transform and deduplicate by ID (keep first occurrence)
       const transformed = conversations.map(conv => this.transformConversation(conv));
@@ -161,7 +197,31 @@ class MessagingService {
   }
 
   async sendMessage(data: MessageCreateData, token?: string): Promise<Message> {
+    // DEV-only logging: log exact payload being sent
+    if (import.meta.env.DEV) {
+      console.log('[messagingService.sendMessage] Payload:', {
+        conversationId: data.conversationId,
+        content: data.content,
+        messageType: data.messageType,
+        fileUrl: data.fileUrl,
+        fileName: data.fileName,
+        fileSize: data.fileSize,
+        mimeType: data.mimeType,
+        receiverId: (data as any).receiverId,
+      });
+    }
+    
     const response = await apiService.post<Message>('/messaging/messages', data, { token });
+    
+    // DEV-only logging: log response
+    if (import.meta.env.DEV) {
+      console.log('[messagingService.sendMessage] Response:', {
+        success: response.success,
+        message: response.message,
+        status: response.data ? 'OK' : 'ERROR',
+      });
+    }
+    
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to send message');
     }
@@ -220,6 +280,43 @@ class MessagingService {
     }
   }
 
+  // Recipients (for user picker)
+  async getRecipients(search?: string, page: number = 1, limit: number = 50, token?: string): Promise<{
+    recipients: Array<{
+      id: string;
+      name: string;
+      email: string;
+      role: string;
+      organizationName: string | null;
+    }>;
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }> {
+    const params: any = { page, limit };
+    if (search && search.trim().length > 0) {
+      params.search = search.trim();
+    }
+    const response = await apiService.get<{
+      recipients: Array<{
+        id: string;
+        name: string;
+        email: string;
+        role: string;
+        organizationName: string | null;
+      }>;
+      total: number;
+      page: number;
+      limit: number;
+      totalPages: number;
+    }>('/messaging/recipients', { token, params });
+    if (!response.success || !response.data) {
+      throw new Error(response.message || 'Failed to fetch recipients');
+    }
+    return response.data;
+  }
+
   // Transform conversation data to include legacy fields for UI compatibility
   private transformConversation(conv: any): Conversation {
     const participants = conv.participants || [];
@@ -247,6 +344,10 @@ class MessagingService {
 
   // Transform message data to include legacy fields for UI compatibility
   transformMessage(msg: any): Message {
+    // Normalize senderId - ensure it's always present and consistent
+    // Try multiple possible locations (handles various API response shapes)
+    const senderId = msg.senderId || msg.sender?.id || (msg as any).senderId || '';
+    
     // Use file metadata from database fields first (new format)
     let fileUrl: string | undefined = msg.fileUrl;
     let fileName: string | undefined = msg.fileName;
@@ -291,7 +392,7 @@ class MessagingService {
     return {
       id: msg.id,
       conversationId: msg.conversationId,
-      senderId: msg.senderId,
+      senderId: senderId, // Use normalized senderId
       senderName: msg.sender ? `${msg.sender.firstName || ''} ${msg.sender.lastName || ''}`.trim() || msg.sender.email || 'Unknown' : 'Unknown',
       senderRole: msg.sender?.role || 'USER',
       content: content,

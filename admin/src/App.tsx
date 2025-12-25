@@ -25,6 +25,8 @@ import SupportPage from './pages/Support';
 import CantonsPage from './pages/Cantons';
 import CantonDetailPage from './pages/CantonDetail';
 import PolicyReviewPage from './pages/PolicyReview';
+import SubscriptionsPage from './pages/Subscriptions';
+import DiscountTerminationsPage from './pages/DiscountTerminations';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -94,6 +96,8 @@ function App() {
           <Route path="cantons" element={<CantonsPage />} />
           <Route path="cantons/:code" element={<CantonDetailPage />} />
           <Route path="policies/review" element={<PolicyReviewPage />} />
+          <Route path="discount-terminations" element={<DiscountTerminationsPage />} />
+          <Route path="subscriptions" element={<SubscriptionsPage />} />
           <Route path="system" element={<SystemMonitorPage />} />
           <Route path="translations" element={<TranslationsPage />} />
           <Route path="settings" element={<SettingsPage />} />

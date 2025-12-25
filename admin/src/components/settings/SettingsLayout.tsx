@@ -2,6 +2,7 @@ import React from 'react'
 import { Tab } from '@headlessui/react'
 import { Settings as SettingsIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { useLocation, useNavigate } from 'react-router-dom'
 import GeneralSettings from './GeneralSettings'
 import BrandingSettings from './BrandingSettings'
 import ContentSettings from './ContentSettings'
@@ -12,6 +13,8 @@ import SystemConfigurationPage from '../../pages/SystemConfigurationPage'
 
 const SettingsLayout: React.FC = () => {
   const { t } = useTranslation(['admin', 'common'])
+  const location = useLocation()
+  const navigate = useNavigate()
   
   const tabs = [
     { name: t('admin:settings.tabs.general'), key: 'general', component: GeneralSettings },
@@ -26,6 +29,21 @@ const SettingsLayout: React.FC = () => {
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
+
+  const selectedIndex = React.useMemo(() => {
+    const params = new URLSearchParams(location.search)
+    const tabKey = params.get('tab')
+    if (!tabKey) return 0
+    const idx = tabs.findIndex((t) => t.key === tabKey)
+    return idx >= 0 ? idx : 0
+  }, [location.search, tabs])
+
+  const handleTabChange = (idx: number) => {
+    const tabKey = tabs[idx]?.key
+    const params = new URLSearchParams(location.search)
+    if (tabKey) params.set('tab', tabKey)
+    navigate({ pathname: location.pathname, search: params.toString() ? `?${params.toString()}` : '' }, { replace: true })
+  }
 
   return (
     <div className="space-y-8">
@@ -42,7 +60,7 @@ function classNames(...classes: string[]) {
 
       {/* Settings Tabs */}
       <div className="bg-white rounded-card shadow-soft border border-gray-200">
-        <Tab.Group>
+        <Tab.Group selectedIndex={selectedIndex} onChange={handleTabChange}>
           <div className="border-b border-gray-200">
             <Tab.List className="flex space-x-8 px-6">
               {tabs.map((tab) => (

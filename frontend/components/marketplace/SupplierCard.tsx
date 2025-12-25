@@ -82,7 +82,7 @@ const SupplierCard: React.FC<SupplierCardProps> = ({ supplier, onViewProfile }) 
         
         <p className="text-sm text-gray-600 mb-3 flex-grow line-clamp-2 text-center">
           <TagIcon className="w-4 h-4 inline mr-1 opacity-60" /> 
-          {t('supplierCard.specializesIn', { mainCategoriesTagline })}
+          {t('common:supplierCard.specializesIn', { mainCategoriesTagline })}
         </p>
         
         <div className="mt-auto">
@@ -93,7 +93,7 @@ const SupplierCard: React.FC<SupplierCardProps> = ({ supplier, onViewProfile }) 
             leftIcon={EyeIcon}
             onClick={() => onViewProfile(supplier.id)}
           >
-            {t('supplierCard.viewProfileAndProducts')}
+            {t('common:supplierCard.viewProfileAndProducts')}
           </Button>
         </div>
       </div>

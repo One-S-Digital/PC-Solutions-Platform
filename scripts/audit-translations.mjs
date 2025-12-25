@@ -23,12 +23,17 @@ function collectKeys(dirPath, language = 'en') {
   }
   
   // Scan all namespaces
-  const files = fs.readdirSync(path.join(dirPath, language)).filter(f => f.endsWith('.json'));
+  const langDir = path.join(dirPath, language);
+  if (!fs.existsSync(langDir)) {
+    return {};
+  }
+
+  const files = fs.readdirSync(langDir).filter(f => f.endsWith('.json'));
   const keysByNamespace = {};
   
   files.forEach(file => {
     const namespace = file.replace('.json', '');
-    const content = JSON.parse(fs.readFileSync(path.join(dirPath, language, file), 'utf8'));
+    const content = JSON.parse(fs.readFileSync(path.join(langDir, file), 'utf8'));
     const nsKeys = new Set();
     
     traverse(content);
@@ -42,25 +47,10 @@ function collectKeys(dirPath, language = 'en') {
 
 console.log('🔍 Translation Key Audit\n');
 
-// Frontend
-const frontendKeys = collectKeys(path.join(__dirname, '../frontend/public/locales'));
-console.log('📁 FRONTEND:');
-Object.entries(frontendKeys).forEach(([ns, keys]) => {
-  console.log(`  ${ns}: ${keys.length} keys`);
-});
-console.log(`  Total: ${Object.values(frontendKeys).flat().length} keys\n`);
-
-// Admin
-const adminKeys = collectKeys(path.join(__dirname, '../admin/src/i18n/locales'));
-console.log('📁 ADMIN:');
-Object.entries(adminKeys).forEach(([ns, keys]) => {
-  console.log(`  ${ns}: ${keys.length} keys`);
-});
-console.log(`  Total: ${Object.values(adminKeys).flat().length} keys\n`);
-
-// Packages
-const packagesKeys = collectKeys(path.join(__dirname, '../packages/translations/locales'));
-console.log('📁 PACKAGES:');
+// Canonical translation source for this repo is packages/translations/locales
+const packagesLocalesDir = path.join(__dirname, '../packages/translations/locales');
+const packagesKeys = collectKeys(packagesLocalesDir);
+console.log('📁 PACKAGES (source of truth):');
 Object.entries(packagesKeys).forEach(([ns, keys]) => {
   console.log(`  ${ns}: ${keys.length} keys`);
 });
@@ -69,12 +59,8 @@ console.log(`  Total: ${Object.values(packagesKeys).flat().length} keys\n`);
 // Save audit report
 const report = {
   timestamp: new Date().toISOString(),
-  frontend: frontendKeys,
-  admin: adminKeys,
   packages: packagesKeys,
   summary: {
-    frontendTotal: Object.values(frontendKeys).flat().length,
-    adminTotal: Object.values(adminKeys).flat().length,
     packagesTotal: Object.values(packagesKeys).flat().length
   }
 };

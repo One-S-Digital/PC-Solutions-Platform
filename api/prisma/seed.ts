@@ -10,25 +10,215 @@ async function main() {
   console.log('📋 Creating plans and prices...');
   await seedPlansAndPrices();
 
-  // 2. Test users removed for production
+  // 2. Create Subscription Plans (for admin subscription management)
+  console.log('📋 Creating subscription plans...');
+  await seedSubscriptionPlans();
 
-  // 3. Create Enterprise Tenant Structure
+  // 3. Test users removed for production
+
+  // 4. Create Enterprise Tenant Structure
   console.log('🏢 Creating enterprise tenant structure...');
   await seedEnterpriseStructure();
 
-  // 4. Create Sample Content
+  // 5. Create Sample Content
   console.log('📄 Creating sample content...');
   await seedSampleContent();
 
-  // 5. Create Feature Flags
+  // 6. Create Feature Flags
   console.log('🚩 Setting up feature flags...');
   await seedFeatureFlags();
 
-  // 6. Seed Cantons
+  // 7. Seed Cantons
   console.log('🇨🇭 Seeding Swiss cantons...');
   await seedCantons();
 
+  // 8. Create Email Templates (for admin email template management)
+  console.log('📧 Creating email templates...');
+  await seedEmailTemplates();
+
   console.log('✅ Seeding completed successfully!');
+}
+
+async function seedEmailTemplates() {
+  const templates = [
+    {
+      name: 'Account verification',
+      event: 'account_verification',
+      subject: 'Verify Your Account - Pro Crèche Solutions',
+      category: 'authentication',
+      variables: ['firstName', 'verificationUrl'],
+      htmlContent: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2>Welcome to Pro Crèche Solutions!</h2>
+          <p>Hello {{firstName}},</p>
+          <p>Thank you for registering with Pro Crèche Solutions. Please verify your email address by clicking the button below:</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="{{verificationUrl}}" style="background-color: #3B82F6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Verify Email</a>
+          </div>
+          <p>If you didn't create an account, please ignore this email.</p>
+          <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+        </div>
+      `,
+      textContent: `
+        Welcome to Pro Crèche Solutions!
+
+        Hello {{firstName}},
+
+        Thank you for registering with Pro Crèche Solutions. Please verify your email address by visiting the following link:
+
+        {{verificationUrl}}
+
+        If you didn't create an account, please ignore this email.
+
+        Best regards,
+        The Pro Crèche Solutions Team
+      `,
+    },
+    {
+      name: 'Password reset',
+      event: 'password_reset',
+      subject: 'Reset Your Password - Pro Crèche Solutions',
+      category: 'authentication',
+      variables: ['firstName', 'resetUrl'],
+      htmlContent: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2>Password Reset Request</h2>
+          <p>Hello {{firstName}},</p>
+          <p>We received a request to reset your password. Click the button below to create a new password:</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="{{resetUrl}}" style="background-color: #EF4444; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Reset Password</a>
+          </div>
+          <p>This link will expire in 1 hour for security reasons.</p>
+          <p>If you didn't request this password reset, please ignore this email.</p>
+          <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+        </div>
+      `,
+      textContent: `
+        Password Reset Request
+
+        Hello {{firstName}},
+
+        We received a request to reset your password. Visit the following link to create a new password:
+
+        {{resetUrl}}
+
+        This link will expire in 1 hour for security reasons.
+
+        If you didn't request this password reset, please ignore this email.
+
+        Best regards,
+        The Pro Crèche Solutions Team
+      `,
+    },
+    {
+      name: 'Welcome email',
+      event: 'welcome_email',
+      subject: 'Welcome to Pro Crèche Solutions!',
+      category: 'userManagement',
+      variables: ['firstName', 'dashboardUrl'],
+      htmlContent: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2>Welcome to Pro Crèche Solutions!</h2>
+          <p>Hello {{firstName}},</p>
+          <p>Welcome to Pro Crèche Solutions! We're excited to have you join our community of childcare professionals.</p>
+          <p>Here's what you can do next:</p>
+          <ul>
+            <li>Complete your profile</li>
+            <li>Explore job opportunities</li>
+            <li>Connect with organizations</li>
+            <li>Browse our marketplace</li>
+          </ul>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="{{dashboardUrl}}" style="background-color: #3B82F6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Get Started</a>
+          </div>
+          <p>If you have any questions, feel free to contact our support team.</p>
+          <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+        </div>
+      `,
+      textContent: `
+        Welcome to Pro Crèche Solutions!
+
+        Hello {{firstName}},
+
+        Welcome to Pro Crèche Solutions! We're excited to have you join our community of childcare professionals.
+
+        Here's what you can do next:
+        - Complete your profile
+        - Explore job opportunities
+        - Connect with organizations
+        - Browse our marketplace
+
+        Get started: {{dashboardUrl}}
+
+        If you have any questions, feel free to contact our support team.
+
+        Best regards,
+        The Pro Crèche Solutions Team
+      `,
+    },
+    {
+      name: 'New message',
+      event: 'new_message',
+      subject: 'New Message from {{senderName}}',
+      category: 'messaging',
+      variables: ['firstName', 'senderName', 'messagePreview', 'messageUrl'],
+      htmlContent: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2>New Message</h2>
+          <p>Hello {{firstName}},</p>
+          <p>You have received a new message from <strong>{{senderName}}</strong>:</p>
+          <div style="background-color: #F3F4F6; padding: 15px; border-radius: 6px; margin: 20px 0;">
+            <p style="margin: 0;">{{messagePreview}}</p>
+          </div>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="{{messageUrl}}" style="background-color: #3B82F6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">View Message</a>
+          </div>
+          <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+        </div>
+      `,
+      textContent: `
+        New Message
+
+        Hello {{firstName}},
+
+        You have received a new message from {{senderName}}:
+
+        {{messagePreview}}
+
+        View message: {{messageUrl}}
+
+        Best regards,
+        The Pro Crèche Solutions Team
+      `,
+    },
+  ];
+
+  for (const template of templates) {
+    await prisma.emailTemplate.upsert({
+      where: { event: template.event },
+      update: {
+        name: template.name,
+        subject: template.subject,
+        htmlContent: template.htmlContent.trim(),
+        textContent: template.textContent.trim(),
+        variables: template.variables,
+        category: template.category,
+        isActive: true,
+      },
+      create: {
+        name: template.name,
+        event: template.event,
+        subject: template.subject,
+        htmlContent: template.htmlContent.trim(),
+        textContent: template.textContent.trim(),
+        variables: template.variables,
+        category: template.category,
+        isActive: true,
+      },
+    });
+  }
+
+  console.log(`✅ Email templates ensured (${templates.length})`);
 }
 
 async function seedPlansAndPrices() {
@@ -173,6 +363,313 @@ async function seedPlansAndPrices() {
 }
 
 // Test users seeding removed for production - users should be created through Clerk authentication
+
+async function seedSubscriptionPlans() {
+  // Create subscription plans matching the 5 plans on the pricing page
+  // These are used by the admin subscription management system
+
+  // 1. Foundation Basic - CHF 69/month
+  await prisma.subscriptionPlan.upsert({
+    where: { code: 'BASIC' },
+    update: {
+      name: 'Basic',
+      description: 'Perfect for small daycares who want essential tools without complexity. Get immediate access to suppliers, compliance info, and support.',
+      price: 69.00,
+      currency: 'CHF',
+      billingPeriod: 'monthly',
+      features: [
+        'Supplier & service provider marketplace',
+        'State policy hub (by canton)',
+        'Multilingual interface (EN/FR/DE)',
+        'Email support',
+      ],
+      limits: {
+        parentEnquiries: 0,
+        marketplace: true,
+        policyHub: true,
+        multiLanguage: true,
+      },
+      allowedRoles: ['FOUNDATION'],
+      trialDays: 14,
+      isActive: true,
+      isPopular: false,
+      displayOrder: 1,
+    },
+    create: {
+      name: 'Basic',
+      code: 'BASIC',
+      description: 'Perfect for small daycares who want essential tools without complexity. Get immediate access to suppliers, compliance info, and support.',
+      price: 69.00,
+      currency: 'CHF',
+      billingPeriod: 'monthly',
+      features: [
+        'Supplier & service provider marketplace',
+        'State policy hub (by canton)',
+        'Multilingual interface (EN/FR/DE)',
+        'Email support',
+      ],
+      limits: {
+        parentEnquiries: 0,
+        marketplace: true,
+        policyHub: true,
+        multiLanguage: true,
+      },
+      allowedRoles: ['FOUNDATION'],
+      trialDays: 14,
+      isActive: true,
+      isPopular: false,
+      displayOrder: 1,
+    },
+  });
+
+  // 2. Foundation Essential - CHF 129/month (Popular)
+  await prisma.subscriptionPlan.upsert({
+    where: { code: 'ESSENTIAL' },
+    update: {
+      name: 'Essential',
+      description: 'Perfect for single-site daycares who want to save time with parent leads and compliant HR tools. Win parents faster, stay compliant, and manage enquiries with ease.',
+      price: 129.00,
+      currency: 'CHF',
+      billingPeriod: 'monthly',
+      features: [
+        'Everything in Basic',
+        'Parent leads inbox + auto-matching system',
+        'HR & compliance document library (Swiss-validated)',
+        'Parent enquiry tracker with quick replies',
+      ],
+      limits: {
+        parentEnquiries: 15,
+        marketplace: true,
+        policyHub: true,
+        multiLanguage: true,
+        hrLibrary: true,
+        parentLeads: true,
+      },
+      allowedRoles: ['FOUNDATION'],
+      trialDays: 14,
+      isActive: true,
+      isPopular: true,
+      displayOrder: 2,
+    },
+    create: {
+      name: 'Essential',
+      code: 'ESSENTIAL',
+      description: 'Perfect for single-site daycares who want to save time with parent leads and compliant HR tools. Win parents faster, stay compliant, and manage enquiries with ease.',
+      price: 129.00,
+      currency: 'CHF',
+      billingPeriod: 'monthly',
+      features: [
+        'Everything in Basic',
+        'Parent leads inbox + auto-matching system',
+        'HR & compliance document library (Swiss-validated)',
+        'Parent enquiry tracker with quick replies',
+      ],
+      limits: {
+        parentEnquiries: 15,
+        marketplace: true,
+        policyHub: true,
+        multiLanguage: true,
+        hrLibrary: true,
+        parentLeads: true,
+      },
+      allowedRoles: ['FOUNDATION'],
+      trialDays: 14,
+      isActive: true,
+      isPopular: true,
+      displayOrder: 2,
+    },
+  });
+
+  // 3. Foundation Professional - CHF 259/month
+  await prisma.subscriptionPlan.upsert({
+    where: { code: 'PROFESSIONAL' },
+    update: {
+      name: 'Professional',
+      description: 'Perfect for medium-sized daycares ready to grow and professionalize operations. Recruit and train staff, handle unlimited parent enquiries, and deliver excellence.',
+      price: 259.00,
+      currency: 'CHF',
+      billingPeriod: 'monthly',
+      features: [
+        'Everything in Essential',
+        'Recruitment module',
+        'Unlimited parent enquiries',
+        'E-learning for staff',
+        'Team management & tools',
+        'Priority support',
+      ],
+      limits: {
+        parentEnquiries: -1,
+        marketplace: true,
+        policyHub: true,
+        multiLanguage: true,
+        hrLibrary: true,
+        parentLeads: true,
+        recruitment: true,
+        eLearning: true,
+        teamManagement: true,
+      },
+      allowedRoles: ['FOUNDATION'],
+      trialDays: 14,
+      isActive: true,
+      isPopular: false,
+      displayOrder: 3,
+    },
+    create: {
+      name: 'Professional',
+      code: 'PROFESSIONAL',
+      description: 'Perfect for medium-sized daycares ready to grow and professionalize operations. Recruit and train staff, handle unlimited parent enquiries, and deliver excellence.',
+      price: 259.00,
+      currency: 'CHF',
+      billingPeriod: 'monthly',
+      features: [
+        'Everything in Essential',
+        'Recruitment module',
+        'Unlimited parent enquiries',
+        'E-learning for staff',
+        'Team management & tools',
+        'Priority support',
+      ],
+      limits: {
+        parentEnquiries: -1,
+        marketplace: true,
+        policyHub: true,
+        multiLanguage: true,
+        hrLibrary: true,
+        parentLeads: true,
+        recruitment: true,
+        eLearning: true,
+        teamManagement: true,
+      },
+      allowedRoles: ['FOUNDATION'],
+      trialDays: 14,
+      isActive: true,
+      isPopular: false,
+      displayOrder: 3,
+    },
+  });
+
+  // 4. Suppliers - Enquiry-based pricing
+  await prisma.subscriptionPlan.upsert({
+    where: { code: 'SUPPLIERS' },
+    update: {
+      name: 'Suppliers',
+      description: 'Perfect for suppliers focused on daycare market growth. Pricing based on enquiry.',
+      price: 0,
+      currency: 'CHF',
+      billingPeriod: 'enquiry',
+      features: [
+        'Product listings & marketplace access',
+        'Lead management system',
+        'Order tracking & fulfillment',
+        'Multi-language support',
+        'Sales analytics dashboard',
+        'Email support',
+      ],
+      limits: {
+        productListings: -1,
+        marketplace: true,
+        leadManagement: true,
+        orderTracking: true,
+        analytics: true,
+      },
+      allowedRoles: ['PRODUCT_SUPPLIER'],
+      trialDays: 0,
+      isActive: true,
+      isPopular: false,
+      displayOrder: 4,
+    },
+    create: {
+      name: 'Suppliers',
+      code: 'SUPPLIERS',
+      description: 'Perfect for suppliers focused on daycare market growth. Pricing based on enquiry.',
+      price: 0,
+      currency: 'CHF',
+      billingPeriod: 'enquiry',
+      features: [
+        'Product listings & marketplace access',
+        'Lead management system',
+        'Order tracking & fulfillment',
+        'Multi-language support',
+        'Sales analytics dashboard',
+        'Email support',
+      ],
+      limits: {
+        productListings: -1,
+        marketplace: true,
+        leadManagement: true,
+        orderTracking: true,
+        analytics: true,
+      },
+      allowedRoles: ['PRODUCT_SUPPLIER'],
+      trialDays: 0,
+      isActive: true,
+      isPopular: false,
+      displayOrder: 4,
+    },
+  });
+
+  // 5. Service Providers - Enquiry-based pricing
+  await prisma.subscriptionPlan.upsert({
+    where: { code: 'SERVICE_PROVIDERS' },
+    update: {
+      name: 'Service Providers',
+      description: 'Perfect for service providers targeting professional daycare partnerships. Pricing based on enquiry.',
+      price: 0,
+      currency: 'CHF',
+      billingPeriod: 'enquiry',
+      features: [
+        'Service listings & marketplace access',
+        'Appointment scheduling system',
+        'Client relationship management',
+        'Revenue tracking & reporting',
+        'Multi-language support',
+        'Priority support',
+      ],
+      limits: {
+        serviceListings: -1,
+        marketplace: true,
+        scheduling: true,
+        crm: true,
+        revenueTracking: true,
+      },
+      allowedRoles: ['SERVICE_PROVIDER'],
+      trialDays: 0,
+      isActive: true,
+      isPopular: false,
+      displayOrder: 5,
+    },
+    create: {
+      name: 'Service Providers',
+      code: 'SERVICE_PROVIDERS',
+      description: 'Perfect for service providers targeting professional daycare partnerships. Pricing based on enquiry.',
+      price: 0,
+      currency: 'CHF',
+      billingPeriod: 'enquiry',
+      features: [
+        'Service listings & marketplace access',
+        'Appointment scheduling system',
+        'Client relationship management',
+        'Revenue tracking & reporting',
+        'Multi-language support',
+        'Priority support',
+      ],
+      limits: {
+        serviceListings: -1,
+        marketplace: true,
+        scheduling: true,
+        crm: true,
+        revenueTracking: true,
+      },
+      allowedRoles: ['SERVICE_PROVIDER'],
+      trialDays: 0,
+      isActive: true,
+      isPopular: false,
+      displayOrder: 5,
+    },
+  });
+
+  console.log('✅ Subscription plans created successfully (5 plans matching pricing page)');
+}
 
 async function seedEnterpriseStructure() {
   // Create Sunrise Group enterprise

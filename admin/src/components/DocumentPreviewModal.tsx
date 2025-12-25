@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef } from 'react';
 import { XMarkIcon, ArrowDownTrayIcon, LinkIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
 import { useAuth } from '@clerk/clerk-react';
 import { useTranslation } from 'react-i18next';
@@ -18,11 +19,179 @@ export default function DocumentPreviewModal({
   fileType,
 }: DocumentPreviewModalProps) {
   const { getToken } = useAuth();
+  const { t } = useTranslation(['common']);
+  const [previewBlobUrl, setPreviewBlobUrl] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadError, setLoadError] = useState(false);
+  const blobUrlRef = useRef<string | null>(null);
+  const isFetchingRef = useRef(false);
+  const lastFileUrlRef = useRef<string | null>(null);
+  
+  // Fetch file with authentication and create blob URL for preview
+  useEffect(() => {
+    if (!isOpen || !fileUrl) {
+      // Clean up blob URL when modal closes
+      if (blobUrlRef.current) {
+        window.URL.revokeObjectURL(blobUrlRef.current);
+        blobUrlRef.current = null;
+        setPreviewBlobUrl(null);
+      }
+      lastFileUrlRef.current = null;
+      return;
+    }
+
+    // Skip if this is the same file URL we already processed
+    if (lastFileUrlRef.current === fileUrl && blobUrlRef.current) {
+      setIsLoading(false);
+      return;
+    }
+
+    // Check if fileUrl is already a blob URL (from previous fetch or message)
+    const isAlreadyBlobUrl = fileUrl?.startsWith('blob:');
+    if (isAlreadyBlobUrl) {
+      // Use the blob URL directly
+      setPreviewBlobUrl(fileUrl);
+      setIsLoading(false);
+      lastFileUrlRef.current = fileUrl;
+      return;
+    }
+
+    // Check if this is a secure download URL that needs authentication
+    const isSecureDownloadUrl = fileUrl?.startsWith('/api/upload/download/') || 
+                                (fileUrl?.startsWith('http') && fileUrl?.includes('/api/upload/download/'));
+    
+    // Skip blob URL creation for external URLs that don't need auth (YouTube, Vimeo, etc.)
+    const isExternalVideo = fileUrl?.includes('youtube.com') || fileUrl?.includes('youtu.be') || fileUrl?.includes('vimeo.com');
+    const needsAuthentication = isSecureDownloadUrl && !isExternalVideo;
+
+    if (!needsAuthentication) {
+      // For external URLs that don't need auth, use them directly
+      setPreviewBlobUrl(fileUrl);
+      setIsLoading(false);
+      lastFileUrlRef.current = fileUrl;
+      return;
+    }
+
+    // Prevent double-fetch
+    if (isFetchingRef.current) {
+      return;
+    }
+
+    isFetchingRef.current = true;
+    setIsLoading(true);
+    setLoadError(false);
+
+    const fetchAuthenticatedFile = async () => {
+      try {
+        const token = await getToken();
+        if (!token) {
+          setLoadError(true);
+          setIsLoading(false);
+          isFetchingRef.current = false;
+          return;
+        }
+
+        // Determine the download URL - handle both relative and absolute URLs
+        // This matches the frontend implementation for consistency
+        let downloadUrl: string;
+        const apiBaseUrl = import.meta.env.VITE_API_URL || '/api';
+
+        if (fileUrl.startsWith('/api/upload/download/')) {
+          // Relative URL: /api/upload/download/storage-key
+          const storageKey = fileUrl.replace('/api/upload/download/', '');
+          downloadUrl = `${apiBaseUrl}/upload/download/${storageKey}`;
+        } else if (fileUrl.startsWith('http://') || fileUrl.startsWith('https://')) {
+          // Absolute URL: extract the path
+          try {
+            const url = new URL(fileUrl);
+            if (url.pathname.startsWith('/api/upload/download/')) {
+              // Already has /api/upload/download/ in path
+              const storageKey = url.pathname.replace('/api/upload/download/', '');
+              downloadUrl = `${apiBaseUrl}/upload/download/${storageKey}`;
+            } else if (fileUrl.includes('/api/upload/download/')) {
+              // Extract from full URL
+              const match = fileUrl.match(/\/api\/upload\/download\/(.+)$/);
+              if (match) {
+                downloadUrl = `${apiBaseUrl}/upload/download/${match[1]}`;
+              } else {
+                downloadUrl = fileUrl; // Fallback to original
+              }
+            } else {
+              // Assume the pathname is the storage key
+              const storageKey = url.pathname.startsWith('/') ? url.pathname.substring(1) : url.pathname;
+              downloadUrl = `${apiBaseUrl}/upload/download/${storageKey}`;
+            }
+          } catch (e) {
+            console.error('Error parsing fileUrl:', e);
+            // Fallback: try to extract from the URL string
+            const match = fileUrl.match(/\/api\/upload\/download\/(.+)$/);
+            if (match) {
+              downloadUrl = `${apiBaseUrl}/upload/download/${match[1]}`;
+            } else {
+              downloadUrl = fileUrl; // Use original as fallback
+            }
+          }
+        } else {
+          // Assume it's a storage key
+          downloadUrl = `${apiBaseUrl}/upload/download/${fileUrl}`;
+        }
+
+        const response = await fetch(downloadUrl, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to load file: ${response.statusText}`);
+        }
+
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+        
+        // Clean up previous blob URL
+        if (blobUrlRef.current) {
+          window.URL.revokeObjectURL(blobUrlRef.current);
+        }
+        
+        blobUrlRef.current = blobUrl;
+        setPreviewBlobUrl(blobUrl);
+        
+        // Small delay to ensure content is ready to render (like frontend version)
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 100);
+        
+        isFetchingRef.current = false;
+        lastFileUrlRef.current = fileUrl; // Track that we've processed this fileUrl
+      } catch (error) {
+        console.error('Failed to load authenticated file:', error);
+        setLoadError(true);
+        setIsLoading(false);
+        isFetchingRef.current = false;
+      }
+    };
+
+    fetchAuthenticatedFile();
+
+    // Cleanup on unmount
+    return () => {
+      isFetchingRef.current = false;
+      if (blobUrlRef.current) {
+        window.URL.revokeObjectURL(blobUrlRef.current);
+        blobUrlRef.current = null;
+      }
+    };
+  }, [isOpen, fileUrl, getToken]); // Removed previewBlobUrl from deps to prevent re-renders
   
   if (!isOpen) return null;
 
-  // Debug logging
-  console.log('DocumentPreviewModal:', { fileUrl, fileName, fileType });
+  // Debug logging (only once per fileUrl change)
+  const loggedFileUrlRef = useRef<string | null>(null);
+  if (import.meta.env.DEV && fileUrl && loggedFileUrlRef.current !== fileUrl) {
+    console.log('DocumentPreviewModal:', { fileUrl, fileName, fileType });
+    loggedFileUrlRef.current = fileUrl;
+  }
 
   const handleDownload = async () => {
     try {
@@ -104,6 +273,40 @@ export default function DocumentPreviewModal({
       );
     }
 
+    // Check if file needs authentication (secure download URL)
+    const needsAuth = fileUrl?.startsWith('/api/upload/download/') || 
+                      (fileUrl?.startsWith('http') && fileUrl?.includes('/api/upload/download/'));
+    
+    // Use blob URL if available, otherwise use original URL (only for external/public URLs)
+    const previewUrl = (needsAuth && previewBlobUrl) ? previewBlobUrl : (previewBlobUrl || fileUrl);
+
+    // Show loading state if we're fetching authenticated content
+    if (isLoading && needsAuth) {
+      return (
+        <div className="w-full h-full flex flex-col items-center justify-center bg-gray-50">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-swiss-mint mb-4"></div>
+          <p className="text-gray-600">{t('common:loading', 'Loading...')}</p>
+        </div>
+      );
+    }
+
+    // Show error state
+    if (loadError) {
+      return (
+        <div className="w-full h-full flex flex-col items-center justify-center bg-gray-50 text-gray-600">
+          <p className="text-lg mb-4">Failed to load file</p>
+          <p className="text-sm mb-6">Please try downloading the file instead</p>
+          <button
+            onClick={handleDownload}
+            className="px-4 py-2 bg-blue-600 text-white rounded flex items-center space-x-2 hover:bg-blue-700"
+          >
+            <ArrowDownTrayIcon className="w-4 h-4" />
+            <span>{t('common:download', 'Download')}</span>
+          </button>
+        </div>
+      );
+    }
+
     // Detect video sources early (before type checks)
     const isYouTube = fileUrl.includes('youtube.com') || fileUrl.includes('youtu.be');
     const isVimeo = fileUrl.includes('vimeo.com');
@@ -157,14 +360,13 @@ export default function DocumentPreviewModal({
       }
       
       // Native video player for uploaded video files
-      console.log('🎬 Native video player:', { fileUrl, fileName, fileType: normalizedFileType });
-      
       // Detect MIME type from URL extension
       let mimeType = 'video/mp4'; // default
-      if (fileUrl.includes('.webm')) mimeType = 'video/webm';
-      else if (fileUrl.includes('.ogg')) mimeType = 'video/ogg';
-      else if (fileUrl.includes('.mov')) mimeType = 'video/quicktime';
-      else if (fileUrl.includes('.avi')) mimeType = 'video/x-msvideo';
+      const urlToCheck = previewUrl || fileUrl;
+      if (urlToCheck.includes('.webm')) mimeType = 'video/webm';
+      else if (urlToCheck.includes('.ogg')) mimeType = 'video/ogg';
+      else if (urlToCheck.includes('.mov')) mimeType = 'video/quicktime';
+      else if (urlToCheck.includes('.avi')) mimeType = 'video/x-msvideo';
       
       return (
         <div className="w-full h-full flex items-center justify-center bg-black">
@@ -174,14 +376,14 @@ export default function DocumentPreviewModal({
             title={fileName}
             preload="metadata"
             onError={(e) => {
-              console.error('❌ Video load error:', e, { fileUrl, mimeType });
+              console.error('❌ Video load error:', e, { previewUrl, mimeType });
             }}
             onLoadedMetadata={() => {
               console.log('✅ Video metadata loaded');
             }}
           >
-            <source src={fileUrl} type={mimeType} />
-            <source src={fileUrl} />
+            <source src={previewUrl} type={mimeType} />
+            <source src={previewUrl} />
             Your browser does not support the video tag.
           </video>
         </div>
@@ -239,13 +441,71 @@ export default function DocumentPreviewModal({
     }
 
     // PDF Preview (check both fileType and URL extension)
-    const isPDFFile = fileUrl.toLowerCase().includes('.pdf');
-    if (normalizedFileType === 'PDF' || isPDFFile) {
+    const isPDFFile = normalizedFileType === 'PDF' || 
+                      fileType.toLowerCase().includes('pdf') ||
+                      fileUrl.toLowerCase().includes('.pdf') ||
+                      fileName?.toLowerCase().endsWith('.pdf');
+    
+    if (isPDFFile) {
+      // Don't render PDF if we need auth but don't have blob URL yet
+      if (needsAuth && !previewBlobUrl && isLoading) {
+        return (
+          <div className="w-full h-full flex flex-col items-center justify-center bg-gray-50">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-swiss-mint mb-4"></div>
+            <p className="text-gray-600">{t('common:loading', 'Loading...')}</p>
+          </div>
+        );
+      }
+      
+      // Don't render PDF if we need auth but blob URL failed to load
+      if (needsAuth && !previewBlobUrl && loadError) {
+        return (
+          <div className="w-full h-full flex flex-col items-center justify-center bg-gray-50 text-gray-600">
+            <p className="text-lg mb-4">Failed to load file</p>
+            <p className="text-sm mb-6">Please try downloading the file instead</p>
+            <button
+              onClick={handleDownload}
+              className="px-4 py-2 bg-blue-600 text-white rounded flex items-center space-x-2 hover:bg-blue-700"
+            >
+              <ArrowDownTrayIcon className="w-4 h-4" />
+              <span>{t('common:download', 'Download')}</span>
+            </button>
+          </div>
+        );
+      }
+      
+      // Ensure we have a valid preview URL
+      if (!previewUrl) {
+        return (
+          <div className="w-full h-full flex flex-col items-center justify-center bg-gray-50 text-gray-600">
+            <p className="text-lg mb-4">Failed to load file</p>
+            <p className="text-sm mb-6">Please try downloading the file instead</p>
+            <button
+              onClick={handleDownload}
+              className="px-4 py-2 bg-blue-600 text-white rounded flex items-center space-x-2 hover:bg-blue-700"
+            >
+              <ArrowDownTrayIcon className="w-4 h-4" />
+              <span>{t('common:download', 'Download')}</span>
+            </button>
+          </div>
+        );
+      }
+      
       return (
         <iframe
-          src={fileUrl}
+          src={previewUrl}
           className="w-full h-full border-0"
           title={fileName}
+          onLoad={() => {
+            // PDF loaded successfully
+            if (import.meta.env.DEV) {
+              console.log('✅ PDF loaded in iframe:', fileName);
+            }
+          }}
+          onError={(e) => {
+            console.error('❌ PDF iframe load error:', e, { previewUrl, fileName });
+            setLoadError(true);
+          }}
         />
       );
     }
@@ -255,9 +515,12 @@ export default function DocumentPreviewModal({
       return (
         <div className="w-full h-full flex items-center justify-center bg-gray-50">
           <img
-            src={fileUrl}
+            src={previewUrl}
             alt={fileName}
             className="max-w-full max-h-full object-contain"
+            onError={(e) => {
+              console.error('Image load error:', e);
+            }}
           />
         </div>
       );

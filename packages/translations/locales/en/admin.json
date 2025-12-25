@@ -149,8 +149,13 @@
         },
         "alerts": {
           "createFailed": "Failed to create setting: {{message}}",
-          "created": "System setting created successfully!"
+          "created": "System setting created successfully!",
+          "updated": "Setting updated successfully!",
+          "updateFailed": "Failed to update setting: {{message}}"
         },
+        "editTitle": "Edit Setting",
+        "description": "Description",
+        "gracePeriodHint": "Enter the number of days (e.g., 7)",
         "badges": {
           "encrypted": "Encrypted",
           "public": "Public"
@@ -310,6 +315,20 @@
         "updateMessage": "Update Message",
         "updating": "Updating...",
         "title": "Platform Settings"
+      },
+      "userEmailSettings": {
+        "title": "User Email Settings",
+        "gracePeriodLabel": "Email Change Grace Period (Days)",
+        "gracePeriodDescription": "When a user changes their email address, the old email is retained for this many days before being automatically deleted. This allows users to recover their account if needed. Set to 0 to delete immediately.",
+        "daysLabel": "days",
+        "saveButton": "Save Email Settings",
+        "saving": "Saving...",
+        "updated": "Email grace period updated successfully",
+        "updateFailed": "Failed to update email grace period setting",
+        "invalidDays": "Please enter a valid number of days (0-365)",
+        "authRequired": "Authentication required",
+        "noteTitle": "Note:",
+        "noteDescription": "This setting also exists in System Config → System Settings under the \"email\" category as \"email.grace_period_days\"."
       },
       "siteDescriptionPlaceholder": "Enter site description",
       "contactEmailPlaceholder": "contact@example.com",
@@ -591,6 +610,8 @@
     "content": "Content",
     "messages": "Messages",
     "support": "Support",
+    "discountTerminations": "Discount Terminations",
+    "subscriptions": "Subscription Management",
     "systemMonitoring": "System Monitoring",
     "translations": "Translations",
     "designSystem": "Design System",
@@ -1042,6 +1063,24 @@
       "deleting": "Deleting...",
       "delete": "Delete User"
     },
+    "elevateUser": {
+      "title": "Elevate to Admin",
+      "elevate": "Elevate to Admin",
+      "changeRole": "Change Admin Role",
+      "selectRole": "Select Admin Role",
+      "currentRole": "Current role:",
+      "adminDescription": "Can manage users, content, and organizations",
+      "superAdminDescription": "Full system access including role management",
+      "reason": "Reason for Elevation",
+      "reasonPlaceholder": "Explain why this user needs admin privileges...",
+      "reasonRequired": "Please provide a reason for this role elevation",
+      "reasonHint": "This reason will be recorded in the audit log.",
+      "elevating": "Elevating...",
+      "confirm": "Elevate User",
+      "failed": "Failed to elevate user",
+      "alreadyAdmin": "Note:",
+      "alreadyAdminMessage": "This user already has an admin role. You can change their role level below."
+    },
     "table": {
       "user": "User",
       "role": "Role",
@@ -1332,6 +1371,23 @@
       "initializing": "Initializing...",
       "failedToLoad": "Failed to load conversations.",
       "failedToLoadMessages": "Failed to load messages."
+    },
+    "newConversation": {
+      "title": "New Conversation",
+      "button": "New Conversation",
+      "searchPlaceholder": "Search users by name or email...",
+      "selectUser": "Select a user to start a conversation",
+      "startConversation": "Start Conversation",
+      "starting": "Starting...",
+      "cancel": "Cancel",
+      "noUsersFound": "No users found",
+      "noUsersAvailable": "No users available",
+      "tryDifferentSearch": "Try a different search term",
+      "startTyping": "Start typing to search for users",
+      "typeAtLeast": "Type at least 2 characters to search",
+      "tryAgain": "Please try again",
+      "success": "Conversation started!",
+      "error": "Failed to start conversation"
     }
   },
   "systemMonitor": {
@@ -1497,6 +1553,417 @@
     "error": {
       "loadFailed": "Failed to load translations",
       "description": "Please check your connection and try again."
+    }
+  },
+  "subscriptions": {
+    "title": "Subscription Management",
+    "subtitle": "Manage subscriptions, plans, and billing",
+    "newSubscription": "New Subscription",
+    "selectRoleType": "Select User Type to Manage Subscriptions",
+    "totalUsers": "total users",
+    "subscribed": "subscribed",
+    "backToRoles": "Back to Role Selection",
+    "subscriptions": "Subscriptions",
+    "managingUsers": "Managing {{count}} users",
+    "searchUsers": "Search users by name or email...",
+    "noUsersFound": "No users found",
+    "noSubscription": "No Subscription",
+    "roles": {
+      "foundations": "Foundations",
+      "productSuppliers": "Product Suppliers",
+      "serviceProviders": "Service Providers",
+      "educators": "Educators",
+      "parents": "Parents"
+    },
+    "stats": {
+      "activeSubscriptions": "Active Subscriptions",
+      "trialSubscriptions": "Trial Subscriptions",
+      "expiringSoon": "Expiring Soon",
+      "monthlyRevenue": "Monthly Revenue"
+    },
+    "filters": {
+      "searchPlaceholder": "Search by name or email...",
+      "allStatuses": "All Statuses",
+      "allPlans": "All Plans",
+      "clearFilters": "Clear Filters"
+    },
+    "table": {
+      "subscriber": "Subscriber",
+      "plan": "Plan",
+      "status": "Status",
+      "periodEnd": "Period End",
+      "actions": "Actions"
+    },
+    "userTable": {
+      "user": "User",
+      "email": "Email",
+      "organization": "Organization",
+      "subscriptionStatus": "Subscription Status",
+      "plan": "Plan",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "paused": "Paused",
+      "cancelled": "Cancelled",
+      "expired": "Expired",
+      "trial": "Trial",
+      "past_due": "Past Due",
+      "pending": "Pending",
+      "grace_period": "Grace Period"
+    },
+    "tier": {
+      "basic": "Basic",
+      "essential": "Essential",
+      "professional": "Professional",
+      "enterprise": "Enterprise",
+      "help": "Tier applies to Foundation feature access and pricing configuration."
+    },
+    "tierSection": {
+      "title": "Subscription Tier",
+      "subtitle": "Configure Foundation subscription tiers and pricing.",
+      "add": "Add Tier",
+      "empty": "No tiers configured yet.",
+      "table": {
+        "tier": "Tier",
+        "billing": "Billing",
+        "price": "Price",
+        "active": "Active",
+        "actions": "Actions"
+      }
+    },
+    "tierEditor": {
+      "createTitle": "Create Subscription Tier",
+      "editTitle": "Edit Subscription Tier",
+      "success": "Subscription tier saved successfully",
+      "error": "Failed to save subscription tier: ",
+      "deleteSuccess": "Subscription tier deleted successfully",
+      "deleteError": "Failed to delete subscription tier: ",
+      "confirmDelete": "Delete this tier?",
+      "billing": {
+        "monthly": "Monthly",
+        "yearly": "Yearly"
+      },
+      "fields": {
+        "subscriptionTier": "Tier",
+        "billingPeriod": "Billing Period",
+        "name": "Name",
+        "namePlaceholder": "e.g. Foundation - Essential",
+        "basePrice": "Base Price",
+        "currency": "Currency",
+        "yearlyDiscount": "Yearly Discount (%)",
+        "displayOrder": "Display Order",
+        "isActive": "Active",
+        "isActiveHelp": "Inactive tiers are hidden from selection and pricing.",
+        "volumeDiscounts": "Volume Discounts",
+        "volumeDiscountsHelp": "Optional: discounts based on quantity.",
+        "noVolumeDiscounts": "No volume discounts configured.",
+        "minQuantity": "Min Quantity",
+        "discountPercentage": "Discount (%)"
+      },
+      "actions": {
+        "addVolumeDiscount": "Add",
+        "saving": "Saving...",
+        "save": "Save"
+      },
+      "validation": {
+        "basePrice": "Base price must be a valid number.",
+        "yearlyDiscount": "Yearly discount must be between 0 and 100.",
+        "displayOrder": "Display order must be a valid number."
+      }
+    },
+    "actions": {
+      "activate": "Activate",
+      "pause": "Pause",
+      "resume": "Resume",
+      "cancel": "Cancel",
+      "renew": "Renew",
+      "extend": "Extend",
+      "upgrade": "Upgrade",
+      "downgrade": "Downgrade",
+      "delete": "Delete Subscription",
+      "viewHistory": "View History",
+      "addNote": "Add Note"
+    },
+    "details": {
+      "title": "Subscription Details",
+      "subscriber": "Subscriber",
+      "plan": "Plan",
+      "tier": "Tier",
+      "status": "Status",
+      "periodStart": "Period Start",
+      "periodEnd": "Period End",
+      "trialEnd": "Trial End",
+      "type": "Type",
+      "manual": "Manual",
+      "stripeManaged": "Stripe-managed",
+      "notes": "Notes",
+      "selectSubscription": "Select a subscription to view details"
+    },
+    "expiring": {
+      "title": "Expiring Soon",
+      "noSubscriptions": "No subscriptions expiring soon"
+    },
+    "editSubscription": {
+      "title": "Edit Subscription",
+      "status": "Subscription Status",
+      "plan": "Subscription Plan",
+      "selectPlan": "Select a plan...",
+      "subscriptionPeriod": "Subscription Period",
+      "subscriptionPeriodHelp": "Select how long this subscription should be active.",
+      "monthlyRecurringHelp": "Auto-renews every month until cancelled, paused, or changed by an admin.",
+      "period": {
+        "selectPeriod": "Select a period...",
+        "monthlyRecurring": "Monthly Recurring",
+        "oneMonth": "1 Month",
+        "threeMonths": "3 Months",
+        "sixMonths": "6 Months",
+        "oneYear": "1 Year",
+        "twoYears": "2 Years"
+      },
+      "notes": "Notes (optional)",
+      "notesPlaceholder": "Add notes about this subscription...",
+      "edit": "Edit",
+      "saving": "Saving...",
+      "save": "Save Changes",
+      "success": "Subscription updated successfully",
+      "error": "Failed to update subscription: ",
+      "currentInfo": "Current Subscription Info",
+      "planLabel": "Plan",
+      "periodLabel": "Period",
+      "enquiryBased": "Enquiry-based pricing",
+      "noPlansAvailable": "No subscription plans available. Please create subscription plans first via the API or database seed."
+    },
+    "planEditor": {
+      "open": "Edit Plans",
+      "title": "Subscription Plan Editor",
+      "plan": "Plan",
+      "billingPeriod": "Subscription",
+      "billingPeriodHelp": "Select the subscription billing period shown for this plan.",
+      "billingOptions": {
+        "thirtyDays": "30 Days",
+        "monthlyRecurring": "Monthly Recurring",
+        "oneYear": "1 Year",
+        "monthly": "Monthly",
+        "quarterly": "Quarterly",
+        "yearly": "Yearly"
+      },
+      "currentInfo": "Current Plan Info",
+      "price": "Price",
+      "currentBillingPeriod": "Current Subscription",
+      "saving": "Saving...",
+      "save": "Save Changes",
+      "success": "Plan updated successfully",
+      "error": "Failed to update plan: ",
+      "noPlansAvailable": "No subscription plans available. Please run the database seed or create plans via the API."
+    },
+    "createSubscription": {
+      "title": "Create Subscription"
+    },
+    "modal": {
+      "pause": {
+        "title": "Pause Subscription",
+        "description": "Pause this subscription. The subscriber will lose access until resumed."
+      },
+      "cancel": {
+        "title": "Cancel Subscription",
+        "description": "Cancel this subscription. This action can be reversed by renewal."
+      },
+      "renew": {
+        "title": "Renew Subscription",
+        "description": "Renew this subscription for another billing period."
+      },
+      "extend": {
+        "title": "Extend Subscription",
+        "description": "Extend the subscription period by additional days.",
+        "additionalDays": "Additional Days"
+      },
+      "upgrade": {
+        "title": "Upgrade Subscription",
+        "description": "Upgrade to a higher plan."
+      },
+      "downgrade": {
+        "title": "Downgrade Subscription",
+        "description": "Downgrade to a lower plan (takes effect at period end)."
+      },
+      "reason": "Reason",
+      "reasonPlaceholder": "Enter reason...",
+      "newPlan": "New Plan",
+      "selectPlan": "Select a plan...",
+      "confirm": "Confirm",
+      "cancelButton": "Cancel"
+    },
+    "create": {
+      "title": "Create New Subscription",
+      "subscriberType": "Subscriber Type",
+      "user": "User",
+      "organization": "Organization",
+      "userId": "User ID",
+      "organizationId": "Organization ID",
+      "userIdPlaceholder": "Enter user ID...",
+      "organizationIdPlaceholder": "Enter organization ID...",
+      "plan": "Plan",
+      "selectPlan": "Select a plan...",
+      "duration": "Duration (months)",
+      "includeTrial": "Include {{days}}-day trial period",
+      "notes": "Notes (optional)",
+      "notesPlaceholder": "Add notes...",
+      "creating": "Creating...",
+      "createButton": "Create Subscription"
+    },
+    "pagination": {
+      "showing": "Showing {{from}} to {{to}} of {{total}}",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "noSubscriptions": "No subscriptions found",
+    "tabs": {
+      "subscriptions": "Subscriptions",
+      "requests": "Subscription Requests",
+      "cancellations": "Cancellation Requests"
+    },
+    "requestStatus": {
+      "pending": "Pending",
+      "under_review": "Under Review",
+      "invoice_sent": "Invoice Sent",
+      "payment_pending": "Payment Pending",
+      "payment_received": "Payment Received",
+      "activated": "Activated",
+      "declined": "Declined",
+      "cancelled": "Cancelled"
+    },
+    "requests": {
+      "noRequests": "No subscription requests found",
+      "filter": {
+        "allStatuses": "All Statuses"
+      },
+      "stats": {
+        "pending": "Pending",
+        "underReview": "Under Review",
+        "invoiceSent": "Invoice Sent",
+        "paymentReceived": "Payment Received",
+        "activated": "Activated"
+      },
+      "table": {
+        "contact": "Contact",
+        "plan": "Plan",
+        "tier": "Tier",
+        "status": "Status",
+        "date": "Date",
+        "actions": "Actions"
+      },
+      "detail": {
+        "title": "Subscription Request",
+        "submitted": "Submitted on {{date}}",
+        "status": "Status",
+        "contactInfo": "Contact Information",
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone",
+        "preferredContact": "Preferred Contact",
+        "planDetails": "Plan Details",
+        "plan": "Plan",
+        "tier": "Tier",
+        "billingPeriod": "Billing Period",
+        "message": "Message",
+        "invoiceInfo": "Invoice Information",
+        "invoiceNumber": "Invoice Number",
+        "amount": "Amount",
+        "sentAt": "Sent At",
+        "paymentInfo": "Payment Information",
+        "paymentReference": "Reference",
+        "receivedAt": "Received At",
+        "notes": "Admin Notes",
+        "declineReason": "Decline Reason"
+      },
+      "actions": {
+        "review": "Mark Under Review",
+        "sendInvoice": "Send Invoice",
+        "confirmPayment": "Confirm Payment",
+        "activate": "Activate Subscription",
+        "decline": "Decline"
+      },
+      "reviewSuccess": "Request marked as under review",
+      "reviewError": "Failed to review request: ",
+      "invoiceSentSuccess": "Invoice sent successfully",
+      "invoiceSentError": "Failed to send invoice: ",
+      "paymentConfirmedSuccess": "Payment confirmed successfully",
+      "paymentConfirmedError": "Failed to confirm payment: ",
+      "activatedSuccess": "Subscription activated successfully",
+      "activatedError": "Failed to activate subscription: ",
+      "declinedSuccess": "Request declined",
+      "declinedError": "Failed to decline request: ",
+      "invoiceModal": {
+        "title": "Send Invoice",
+        "sendingTo": "Sending invoice to",
+        "invoiceNumber": "Invoice Number",
+        "amount": "Amount",
+        "currency": "Currency",
+        "notes": "Notes (optional)",
+        "sendEmailNotification": "Send email notification to customer",
+        "send": "Send Invoice"
+      },
+      "paymentModal": {
+        "title": "Confirm Payment",
+        "forInvoice": "For Invoice",
+        "reference": "Payment Reference (optional)",
+        "date": "Payment Date",
+        "notes": "Notes (optional)",
+        "autoActivate": "Automatically activate subscription",
+        "confirm": "Confirm Payment"
+      },
+      "declineModal": {
+        "title": "Decline Request",
+        "warning": "You are about to decline the subscription request from",
+        "reason": "Reason for Declining",
+        "notes": "Internal Notes (optional)",
+        "sendEmailNotification": "Send email notification to customer",
+        "decline": "Decline Request"
+      }
+    },
+    "cancellations": {
+      "noRequests": "No cancellation requests found",
+      "filter": {
+        "allStatuses": "All Statuses"
+      },
+      "table": {
+        "subscriber": "Subscriber",
+        "plan": "Plan",
+        "status": "Status",
+        "requestedAt": "Requested",
+        "reason": "Reason",
+        "actions": "Actions"
+      },
+      "actions": {
+        "approve": "Approve",
+        "decline": "Decline"
+      },
+      "status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "declined": "Declined",
+        "cancelled": "Cancelled"
+      }
+    },
+    "settings": {
+      "title": "Subscription Settings",
+      "updateSuccess": "Settings updated successfully",
+      "updateError": "Failed to update settings: ",
+      "emailSection": "Email Notifications",
+      "enableNotifications": "Enable Email Notifications",
+      "enableNotificationsHelp": "Receive emails for new subscription requests",
+      "notificationEmail": "Notification Email",
+      "notificationEmailHelp": "Email address to receive subscription request notifications",
+      "invoiceSection": "Invoice Settings",
+      "invoicePrefix": "Invoice Prefix",
+      "nextInvoiceNumber": "Next Invoice Number",
+      "paymentTerms": "Payment Terms (days)",
+      "defaultsSection": "Subscription Defaults",
+      "defaultTrialDays": "Default Trial Days",
+      "gracePeriodDays": "Grace Period Days",
+      "estimatedResponseHours": "Estimated Response Time (hours)",
+      "estimatedResponseHoursHelp": "Shown to users when they submit a request"
     }
   }
 }

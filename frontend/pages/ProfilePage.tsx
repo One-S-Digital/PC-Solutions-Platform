@@ -122,7 +122,7 @@ const ProfilePage: React.FC = () => {
               {t('profile:actions.viewOrganizationProfile', 'View Organization Profile')}
             </Button>
           )}
-          <Button variant="light" onClick={() => navigate('/settings')}>
+          <Button variant="light" onClick={() => navigate('/settings/profile')}>
             {t('profile:actions.goToSettings')}
           </Button>
         </div>

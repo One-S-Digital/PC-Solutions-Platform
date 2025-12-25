@@ -8,7 +8,6 @@ import {
   BadRequestException,
   UseGuards,
   UseInterceptors,
-  Logger,
 } from '@nestjs/common';
 import { AssetKind } from '@prisma/client';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -35,8 +34,6 @@ import { FIELDS_BY_ENTITY } from '../translation/translation.config';
 @UseInterceptors(EnsureProfileInterceptor)
 @ApiBearerAuth()
 export class SettingsController {
-  private readonly logger = new Logger(SettingsController.name);
-
   constructor(
     private readonly prisma: PrismaService,
     private readonly principal: PrincipalService,
@@ -106,6 +103,7 @@ export class SettingsController {
             include: {
               logoAsset: true,
               coverAsset: true,
+              contactInfo: true,
             },
           },
         },
@@ -127,7 +125,9 @@ export class SettingsController {
       success: true,
       data: {
         companyName: organization.name,
-        contactEmail: user.email,
+        // Contact email is stored separately from authentication email.
+        // For backward compatibility, fall back to the user's auth email if unset.
+        contactEmail: (organization as any).contactInfo?.contactEmail ?? user.email,
         phoneNumber: organization.phoneNumber ?? '',
         contactPerson: organization.contactPerson ?? '',
         address: organization.region ?? '',
@@ -169,26 +169,27 @@ export class SettingsController {
         'Cover image',
       );
 
-      await tx.user.update({
-        where: { id: profileId },
-        data: {
-          email: settings.contactEmail,
-        },
-      });
-
-      await tx.appUser.update({
-        where: { id: accountId },
-        data: {
-          email: settings.contactEmail,
-        },
-      });
-
       const userOrg = await tx.userOrganization.findFirst({
         where: { userId: profileId },
         include: { organization: true },
       });
 
       if (userOrg?.organization) {
+        // PATCH semantics: only update contactEmail when provided.
+        // Store contact email separately (does NOT touch auth email).
+        if (settings.contactEmail !== undefined) {
+          await tx.organizationContactInfo.upsert({
+            where: { organizationId: userOrg.organizationId },
+            create: {
+              organizationId: userOrg.organizationId,
+              contactEmail: settings.contactEmail || null,
+            },
+            update: {
+              contactEmail: settings.contactEmail || null,
+            },
+          });
+        }
+
         // Update existing organization
         await tx.organization.update({
           where: { id: userOrg.organizationId },
@@ -227,6 +228,14 @@ export class SettingsController {
             isActive: true,
             ...(settings.logoAssetId !== undefined && { logoAssetId: settings.logoAssetId || null }),
             ...(settings.coverAssetId !== undefined && { coverAssetId: settings.coverAssetId || null }),
+          },
+        });
+
+        // Create contact info record for the new org (does NOT touch auth email).
+        await tx.organizationContactInfo.create({
+          data: {
+            organizationId: newOrganization.id,
+            contactEmail: settings.contactEmail,
           },
         });
 
@@ -280,7 +289,11 @@ export class SettingsController {
   @ApiResponse({ status: 200, description: 'Settings retrieved successfully' })
   async getEducatorSettings(@Request() req) {
     const { clerkUserId } = this.getContext(req);
-    const { user } = await this.principal.getOrBootstrapAccountAndProfile(clerkUserId);
+    const { user } = await this.principal.getOrBootstrapAccountAndProfile(clerkUserId, {
+      avatarAsset: true, // Include avatar asset relation
+      coverAsset: true, // Include cover asset relation
+      contactInfo: true,
+    });
 
     return {
       success: true,
@@ -288,6 +301,9 @@ export class SettingsController {
         firstName: user.firstName ?? '',
         lastName: user.lastName ?? '',
         email: user.email,
+        // Contact email is stored separately from authentication email.
+        // For backward compatibility, fall back to the user's auth email if unset.
+        contactEmail: (user as any).contactInfo?.contactEmail ?? user.email,
         phoneNumber: user.phoneNumber ?? '',
         workExperience: user.workExperience ?? '',
         education: user.education ?? '',
@@ -297,6 +313,9 @@ export class SettingsController {
         cvUrl: user.cvUrl ?? '',
         shortBio: user.shortBio ?? '',
         avatarAssetId: user.avatarAssetId ?? '',
+        avatarUrl: (user as any).avatarAsset?.publicUrl ?? '', // Compute from asset relation
+        coverAssetId: (user as any).coverAssetId ?? '',
+        coverImageUrl: (user as any).coverAsset?.publicUrl ?? null,
       },
     };
   }
@@ -318,6 +337,13 @@ export class SettingsController {
         [AssetKind.AVATAR],
         'Avatar',
       );
+      await this.validateAssetForUsage(
+        tx,
+        settings.coverAssetId,
+        accountId,
+        [AssetKind.COVER_IMAGE],
+        'Cover image',
+      );
 
       await tx.user.update({
         where: { id: profileId },
@@ -334,8 +360,23 @@ export class SettingsController {
         cvUrl: settings.cvUrl,
         shortBio: settings.shortBio,
         ...(settings.avatarAssetId !== undefined && { avatarAssetId: settings.avatarAssetId || null }),
+        ...(settings.coverAssetId !== undefined && { coverAssetId: settings.coverAssetId || null }),
       },
       });
+
+      // Store contact email separately (does NOT touch auth email).
+      if (settings.contactEmail !== undefined) {
+        await tx.userContactInfo.upsert({
+          where: { userId: profileId },
+          create: {
+            userId: profileId,
+            contactEmail: settings.contactEmail || null,
+          },
+          update: {
+            contactEmail: settings.contactEmail || null,
+          },
+        });
+      }
 
       if (settings.email) {
         await tx.appUser.update({
@@ -368,6 +409,7 @@ export class SettingsController {
             include: {
               logoAsset: true,
               coverAsset: true,
+              contactInfo: true,
             },
           },
         },
@@ -389,7 +431,9 @@ export class SettingsController {
       success: true,
       data: {
         companyName: organization.name,
-        contactEmail: user.email,
+        // Contact email is stored separately from authentication email.
+        // For backward compatibility, fall back to the user's auth email if unset.
+        contactEmail: (organization as any).contactInfo?.contactEmail ?? user.email,
         phoneNumber: organization.phoneNumber ?? '',
         contactPerson: organization.contactPerson ?? '',
         address: organization.region ?? '',
@@ -434,26 +478,27 @@ export class SettingsController {
         'Cover image',
       );
 
-      await tx.user.update({
-        where: { id: profileId },
-        data: {
-          email: settings.contactEmail,
-        },
-      });
-
-      await tx.appUser.update({
-        where: { id: accountId },
-        data: {
-          email: settings.contactEmail,
-        },
-      });
-
       const userOrg = await tx.userOrganization.findFirst({
         where: { userId: profileId },
         include: { organization: true },
       });
 
       if (userOrg?.organization) {
+        // PATCH semantics: only update contactEmail when provided.
+        // Store contact email separately (does NOT touch auth email).
+        if (settings.contactEmail !== undefined) {
+          await tx.organizationContactInfo.upsert({
+            where: { organizationId: userOrg.organizationId },
+            create: {
+              organizationId: userOrg.organizationId,
+              contactEmail: settings.contactEmail || null,
+            },
+            update: {
+              contactEmail: settings.contactEmail || null,
+            },
+          });
+        }
+
         // Update existing organization
         const updatedOrganization = await tx.organization.update({
           where: { id: userOrg.organizationId },
@@ -498,6 +543,14 @@ export class SettingsController {
             isActive: true,
             ...(settings.logoAssetId !== undefined && { logoAssetId: settings.logoAssetId || null }),
             ...(settings.coverAssetId !== undefined && { coverAssetId: settings.coverAssetId || null }),
+          },
+        });
+
+        // Create contact info record for the new org (does NOT touch auth email).
+        await tx.organizationContactInfo.create({
+          data: {
+            organizationId: newOrganization.id,
+            contactEmail: settings.contactEmail,
           },
         });
 
@@ -555,6 +608,7 @@ export class SettingsController {
             include: {
               logoAsset: true,
               coverAsset: true,
+              contactInfo: true,
             },
           },
         },
@@ -576,7 +630,9 @@ export class SettingsController {
       success: true,
       data: {
         companyName: organization.name,
-        contactEmail: user.email,
+        // Contact email is stored separately from authentication email.
+        // For backward compatibility, fall back to the user's auth email if unset.
+        contactEmail: (organization as any).contactInfo?.contactEmail ?? user.email,
         phoneNumber: organization.phoneNumber ?? '',
         contactPerson: organization.contactPerson ?? '',
         address: organization.region ?? '',
@@ -600,343 +656,123 @@ export class SettingsController {
   @ApiOperation({ summary: 'Update service provider settings' })
   @ApiResponse({ status: 200, description: 'Settings updated successfully' })
   async updateServiceProviderSettings(@Request() req, @Body() settings: UpdateServiceProviderSettingsDto) {
-    const startTime = Date.now();
-    this.logger.log('🔍 [DEBUG] updateServiceProviderSettings - START');
-    
-    try {
-      // Log incoming request data
-      this.logger.log('🔍 [DEBUG] Request context extraction', {
-        hasRequest: !!req,
-        hasContext: !!req?.context,
-        contextKeys: req?.context ? Object.keys(req.context) : [],
-      });
+    const { profileId, accountId } = this.getContext(req);
 
-      const { profileId, accountId } = this.getContext(req);
-      
-      this.logger.log('🔍 [DEBUG] Context extracted', {
-        profileId,
-        accountId,
-        profileIdType: typeof profileId,
-        accountIdType: typeof accountId,
-      });
+    await this.prisma.$transaction(async (tx) => {
+      // Validate asset ownership and kind before updating
+      // Use accountId (AppUser.id) since Asset.uploadedById references AppUser
+      await this.validateAssetForUsage(tx, settings.logoAssetId, accountId, [AssetKind.LOGO], 'Logo');
+      await this.validateAssetForUsage(tx, settings.coverAssetId, accountId, [AssetKind.COVER_IMAGE], 'Cover image');
 
-      // Log incoming settings data
-      this.logger.log('🔍 [DEBUG] Incoming settings data', {
-        companyName: settings.companyName,
-        contactEmail: settings.contactEmail,
-        phoneNumber: settings.phoneNumber,
-        contactPerson: settings.contactPerson,
-        address: settings.address,
-        canton: settings.canton,
-        regionsServed: settings.regionsServed,
-        regionsServedType: Array.isArray(settings.regionsServed) ? 'array' : typeof settings.regionsServed,
-        regionsServedLength: Array.isArray(settings.regionsServed) ? settings.regionsServed.length : 'N/A',
-        description: settings.description,
-        vatNumber: settings.vatNumber,
-        languages: settings.languages,
-        languagesType: Array.isArray(settings.languages) ? 'array' : typeof settings.languages,
-        languagesLength: Array.isArray(settings.languages) ? settings.languages.length : 'N/A',
-        serviceType: settings.serviceType,
-        serviceCategories: settings.serviceCategories,
-        serviceCategoriesType: Array.isArray(settings.serviceCategories) ? 'array' : typeof settings.serviceCategories,
-        serviceCategoriesLength: Array.isArray(settings.serviceCategories) ? settings.serviceCategories.length : 'N/A',
-        deliveryType: settings.deliveryType,
-        bookingLink: settings.bookingLink,
-        allKeys: Object.keys(settings),
-      });
-
-      await this.prisma.$transaction(async (tx) => {
-        this.logger.log('🔍 [DEBUG] Transaction started');
-
-        try {
-          // Validate asset ownership and kind before updating
-          // Use accountId (AppUser.id) since Asset.uploadedById references AppUser
-          await this.validateAssetForUsage(
-            tx,
-            settings.logoAssetId,
-            accountId,
-            [AssetKind.LOGO],
-            'Logo',
-          );
-          await this.validateAssetForUsage(
-            tx,
-            settings.coverAssetId,
-            accountId,
-            [AssetKind.COVER_IMAGE],
-            'Cover image',
-          );
-
-          // Step 1: Update User
-          this.logger.log('🔍 [DEBUG] Step 1: Updating User', {
-            profileId,
-            email: settings.contactEmail,
-          });
-          
-          const updatedUser = await tx.user.update({
-            where: { id: profileId },
-            data: {
-              email: settings.contactEmail,
-            },
-          });
-          
-          this.logger.log('🔍 [DEBUG] Step 1: User updated successfully', {
-            userId: updatedUser.id,
-            email: updatedUser.email,
-          });
-
-          // Step 2: Update AppUser
-          this.logger.log('🔍 [DEBUG] Step 2: Updating AppUser', {
-            accountId,
-            email: settings.contactEmail,
-          });
-          
-          const updatedAppUser = await tx.appUser.update({
-            where: { id: accountId },
-            data: {
-              email: settings.contactEmail,
-            },
-          });
-          
-          this.logger.log('🔍 [DEBUG] Step 2: AppUser updated successfully', {
-            appUserId: updatedAppUser.id,
-            email: updatedAppUser.email,
-          });
-
-          // Step 3: Find UserOrganization
-          this.logger.log('🔍 [DEBUG] Step 3: Finding UserOrganization', {
-            userId: profileId,
-          });
-          
-          const userOrg = await tx.userOrganization.findFirst({
-            where: { userId: profileId },
-            include: { organization: true },
-          });
-          
-          this.logger.log('🔍 [DEBUG] Step 3: UserOrganization query result', {
-            found: !!userOrg,
-            hasOrganization: !!userOrg?.organization,
-            userId: userOrg?.userId,
-            organizationId: userOrg?.organizationId,
-            role: userOrg?.role,
-            organizationName: userOrg?.organization?.name,
-          });
-
-          if (userOrg?.organization) {
-            // Update existing organization
-            this.logger.log('🔍 [DEBUG] Step 4: Updating existing organization', {
-              organizationId: userOrg.organizationId,
-              updateData: {
-                name: settings.companyName,
-                phoneNumber: settings.phoneNumber,
-                contactPerson: settings.contactPerson,
-                region: settings.address,
-                canton: settings.canton,
-                regionsServed: settings.regionsServed ?? [],
-                description: settings.description,
-                vatNumber: settings.vatNumber,
-                languages: settings.languages ?? [],
-                serviceType: settings.serviceType,
-                serviceCategories: settings.serviceCategories ?? [],
-                deliveryType: settings.deliveryType,
-                bookingLink: settings.bookingLink,
-              },
-            });
-
-            const updateData = {
-              name: settings.companyName,
-              phoneNumber: settings.phoneNumber,
-              contactPerson: settings.contactPerson,
-              region: settings.address,
-              canton: settings.canton,
-              regionsServed: settings.regionsServed ?? [],
-              description: settings.description,
-              vatNumber: settings.vatNumber,
-              languages: settings.languages ?? [],
-              serviceType: settings.serviceType,
-              serviceCategories: settings.serviceCategories ?? [],
-              deliveryType: settings.deliveryType,
-              bookingLink: settings.bookingLink,
-              ...(settings.logoAssetId !== undefined && { logoAssetId: settings.logoAssetId || null }),
-              ...(settings.coverAssetId !== undefined && { coverAssetId: settings.coverAssetId || null }),
-            };
-
-            // Validate array fields
-            this.logger.log('🔍 [DEBUG] Validating array fields', {
-              regionsServed: {
-                value: updateData.regionsServed,
-                isArray: Array.isArray(updateData.regionsServed),
-                type: typeof updateData.regionsServed,
-              },
-              languages: {
-                value: updateData.languages,
-                isArray: Array.isArray(updateData.languages),
-                type: typeof updateData.languages,
-              },
-              serviceCategories: {
-                value: updateData.serviceCategories,
-                isArray: Array.isArray(updateData.serviceCategories),
-                type: typeof updateData.serviceCategories,
-              },
-            });
-
-            const updatedOrg = await tx.organization.update({
-              where: { id: userOrg.organizationId },
-              data: updateData,
-            });
-            
-            this.logger.log('🔍 [DEBUG] Step 4: Organization updated successfully', {
-              organizationId: updatedOrg.id,
-              name: updatedOrg.name,
-            });
-          } else {
-            // Create new organization if it doesn't exist
-            this.logger.log('🔍 [DEBUG] Step 4: Creating new organization', {
-              createData: {
-                name: settings.companyName,
-                type: 'SERVICE_PROVIDER',
-                phoneNumber: settings.phoneNumber,
-                contactPerson: settings.contactPerson,
-                region: settings.address,
-                canton: settings.canton,
-                regionsServed: settings.regionsServed ?? [],
-                description: settings.description,
-                vatNumber: settings.vatNumber,
-                languages: settings.languages ?? [],
-                serviceType: settings.serviceType,
-                serviceCategories: settings.serviceCategories ?? [],
-                deliveryType: settings.deliveryType,
-                bookingLink: settings.bookingLink,
-                isActive: true,
-              },
-            });
-
-            const createData = {
-              name: settings.companyName,
-              type: 'SERVICE_PROVIDER' as const,
-              phoneNumber: settings.phoneNumber,
-              contactPerson: settings.contactPerson,
-              region: settings.address,
-              canton: settings.canton,
-              regionsServed: settings.regionsServed ?? [],
-              description: settings.description,
-              vatNumber: settings.vatNumber,
-              languages: settings.languages ?? [],
-              serviceType: settings.serviceType,
-              serviceCategories: settings.serviceCategories ?? [],
-              deliveryType: settings.deliveryType,
-              bookingLink: settings.bookingLink,
-              isActive: true,
-              ...(settings.logoAssetId !== undefined && { logoAssetId: settings.logoAssetId || null }),
-              ...(settings.coverAssetId !== undefined && { coverAssetId: settings.coverAssetId || null }),
-            };
-
-            // Validate array fields
-            this.logger.log('🔍 [DEBUG] Validating array fields for creation', {
-              regionsServed: {
-                value: createData.regionsServed,
-                isArray: Array.isArray(createData.regionsServed),
-                type: typeof createData.regionsServed,
-              },
-              languages: {
-                value: createData.languages,
-                isArray: Array.isArray(createData.languages),
-                type: typeof createData.languages,
-              },
-              serviceCategories: {
-                value: createData.serviceCategories,
-                isArray: Array.isArray(createData.serviceCategories),
-                type: typeof createData.serviceCategories,
-              },
-            });
-
-            const newOrganization = await tx.organization.create({
-              data: createData,
-            });
-            
-            this.logger.log('🔍 [DEBUG] Step 4: Organization created successfully', {
-              organizationId: newOrganization.id,
-              name: newOrganization.name,
-            });
-
-            // Link user to the new organization
-            this.logger.log('🔍 [DEBUG] Step 5: Creating UserOrganization link', {
-              userId: profileId,
-              organizationId: newOrganization.id,
-              role: UserRole.SERVICE_PROVIDER,
-            });
-
-            const newUserOrg = await tx.userOrganization.create({
-              data: {
-                userId: profileId,
-                organizationId: newOrganization.id,
-                role: UserRole.SERVICE_PROVIDER,
-              },
-            });
-            
-            this.logger.log('🔍 [DEBUG] Step 5: UserOrganization link created successfully', {
-              userId: newUserOrg.userId,
-              organizationId: newUserOrg.organizationId,
-              role: newUserOrg.role,
-            });
-          }
-
-          this.logger.log('🔍 [DEBUG] Transaction completed successfully');
-        } catch (txError) {
-          this.logger.error('🔍 [DEBUG] Error within transaction', {
-            error: txError instanceof Error ? txError.message : String(txError),
-            errorName: txError instanceof Error ? txError.name : typeof txError,
-            errorStack: txError instanceof Error ? txError.stack : undefined,
-            errorCode: (txError as any)?.code,
-            errorMeta: (txError as any)?.meta,
-            fullError: JSON.stringify(txError, Object.getOwnPropertyNames(txError)),
-          });
-          throw txError;
-        }
-      });
-
-      // Update translations after transaction completes
-      const userOrg = await this.prisma.userOrganization.findFirst({
+      const userOrg = await tx.userOrganization.findFirst({
         where: { userId: profileId },
         include: { organization: true },
       });
-      
-      if (userOrg?.organization && userOrg.organization.description?.trim()) {
-        const translatableFields = FIELDS_BY_ENTITY.organization || ['description'];
-        const translationPayload: Record<string, any> = {
-          description: userOrg.organization.description,
-        };
-        
-        await this.translationService.saveEntityWithTranslations(
-          'organization',
-          userOrg.organization.id,
-          translationPayload,
-          translatableFields,
-        );
+
+      if (userOrg?.organization) {
+        // PATCH semantics: only update contactEmail when provided.
+        // Store contact email separately (does NOT touch auth email).
+        if (settings.contactEmail !== undefined) {
+          await tx.organizationContactInfo.upsert({
+            where: { organizationId: userOrg.organizationId },
+            create: {
+              organizationId: userOrg.organizationId,
+              contactEmail: settings.contactEmail || null,
+            },
+            update: {
+              contactEmail: settings.contactEmail || null,
+            },
+          });
+        }
+
+        await tx.organization.update({
+          where: { id: userOrg.organizationId },
+          data: {
+            name: settings.companyName,
+            phoneNumber: settings.phoneNumber,
+            contactPerson: settings.contactPerson,
+            region: settings.address,
+            canton: settings.canton,
+            regionsServed: settings.regionsServed ?? [],
+            description: settings.description,
+            vatNumber: settings.vatNumber,
+            languages: settings.languages ?? [],
+            serviceType: settings.serviceType,
+            serviceCategories: settings.serviceCategories ?? [],
+            deliveryType: settings.deliveryType,
+            bookingLink: settings.bookingLink,
+            ...(settings.logoAssetId !== undefined && { logoAssetId: settings.logoAssetId || null }),
+            ...(settings.coverAssetId !== undefined && { coverAssetId: settings.coverAssetId || null }),
+          },
+        });
+
+        return;
       }
 
-      const duration = Date.now() - startTime;
-      this.logger.log('🔍 [DEBUG] updateServiceProviderSettings - SUCCESS', {
-        duration: `${duration}ms`,
+      const newOrganization = await tx.organization.create({
+        data: {
+          name: settings.companyName,
+          type: 'SERVICE_PROVIDER',
+          phoneNumber: settings.phoneNumber,
+          contactPerson: settings.contactPerson,
+          region: settings.address,
+          canton: settings.canton,
+          regionsServed: settings.regionsServed ?? [],
+          description: settings.description,
+          vatNumber: settings.vatNumber,
+          languages: settings.languages ?? [],
+          serviceType: settings.serviceType,
+          serviceCategories: settings.serviceCategories ?? [],
+          deliveryType: settings.deliveryType,
+          bookingLink: settings.bookingLink,
+          isActive: true,
+          ...(settings.logoAssetId !== undefined && { logoAssetId: settings.logoAssetId || null }),
+          ...(settings.coverAssetId !== undefined && { coverAssetId: settings.coverAssetId || null }),
+        },
       });
 
-      return {
-        success: true,
-        message: 'Settings updated successfully',
-      };
-    } catch (error) {
-      const duration = Date.now() - startTime;
-      this.logger.error('🔍 [DEBUG] updateServiceProviderSettings - ERROR', {
-        duration: `${duration}ms`,
-        error: error instanceof Error ? error.message : String(error),
-        errorName: error instanceof Error ? error.name : typeof error,
-        errorStack: error instanceof Error ? error.stack : undefined,
-        errorCode: (error as any)?.code,
-        errorMeta: (error as any)?.meta,
-        prismaCode: (error as any)?.code?.startsWith('P') ? (error as any).code : undefined,
-        fullError: JSON.stringify(error, Object.getOwnPropertyNames(error)),
+      // Store contact email separately (does NOT touch auth email).
+      await tx.organizationContactInfo.create({
+        data: {
+          organizationId: newOrganization.id,
+          contactEmail: settings.contactEmail,
+        },
       });
-      throw error;
+
+      // Link user to the new organization
+      await tx.userOrganization.create({
+        data: {
+          userId: profileId,
+          organizationId: newOrganization.id,
+          role: UserRole.SERVICE_PROVIDER,
+        },
+      });
+    });
+
+    // Update translations after transaction completes
+    const userOrg = await this.prisma.userOrganization.findFirst({
+      where: { userId: profileId },
+      include: { organization: true },
+    });
+
+    if (userOrg?.organization && userOrg.organization.description?.trim()) {
+      const translatableFields = FIELDS_BY_ENTITY.organization || ['description'];
+      const translationPayload: Record<string, any> = {
+        description: userOrg.organization.description,
+      };
+
+      await this.translationService.saveEntityWithTranslations(
+        'organization',
+        userOrg.organization.id,
+        translationPayload,
+        translatableFields,
+      );
     }
+
+    return {
+      success: true,
+      message: 'Settings updated successfully',
+    };
   }
 
   // ─────────────────────────────────────────────────────────────
@@ -949,7 +785,9 @@ export class SettingsController {
   @ApiResponse({ status: 200, description: 'Settings retrieved successfully' })
   async getParentSettings(@Request() req) {
     const { clerkUserId } = this.getContext(req);
-    const { user } = await this.principal.getOrBootstrapAccountAndProfile(clerkUserId);
+    const { user } = await this.principal.getOrBootstrapAccountAndProfile(clerkUserId, {
+      contactInfo: true,
+    });
 
     return {
       success: true,
@@ -957,6 +795,9 @@ export class SettingsController {
         firstName: user.firstName ?? '',
         lastName: user.lastName ?? '',
         email: user.email,
+        // Contact email is stored separately from authentication email.
+        // For backward compatibility, fall back to the user's auth email if unset.
+        contactEmail: (user as any).contactInfo?.contactEmail ?? user.email,
         phoneNumber: user.phoneNumber ?? '',
         childAge: 0,
         preferredLocation: '',
@@ -994,6 +835,20 @@ export class SettingsController {
           ...(settings.avatarAssetId !== undefined && { avatarAssetId: settings.avatarAssetId || null }),
         },
       });
+
+      // Store contact email separately (does NOT touch auth email).
+      if (settings.contactEmail !== undefined) {
+        await tx.userContactInfo.upsert({
+          where: { userId: profileId },
+          create: {
+            userId: profileId,
+            contactEmail: settings.contactEmail || null,
+          },
+          update: {
+            contactEmail: settings.contactEmail || null,
+          },
+        });
+      }
 
       if (settings.email) {
         await tx.appUser.update({
