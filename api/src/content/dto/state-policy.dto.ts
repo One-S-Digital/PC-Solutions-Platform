@@ -185,6 +185,17 @@ export class UpdateStatePolicyDto {
   @IsString()
   category?: PolicyCategory;
 
+  // Alias for category (frontend sends contentCategory)
+  @IsOptional()
+  @Transform(({ value }) => {
+    if (typeof value === 'string' && POLICY_CATEGORIES.includes(value as any)) {
+      return value;
+    }
+    return undefined;
+  })
+  @IsString()
+  contentCategory?: PolicyCategory;
+
   @IsOptional()
   @Transform(({ value }) => {
     if (typeof value === 'string') {
@@ -297,6 +308,10 @@ export class UpdateStatePolicyDto {
   @IsArray()
   @IsString({ each: true })
   tags?: string[];
+
+  @IsOptional()
+  @IsString()
+  crawlStatus?: string; // pending_review, approved, rejected
 }
 
 export class GetStatePoliciesQueryDto {

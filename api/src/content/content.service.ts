@@ -1062,6 +1062,17 @@ export class ContentService {
 
     const where: any = {
       category: 'STATE_POLICY',
+      // Only show approved policies in content list (exclude pending review)
+      // Policies with crawlStatus: 'pending_review' should only appear in review queue
+      AND: [
+        {
+          OR: [
+            { crawlStatus: null }, // No crawl status (manually uploaded)
+            { crawlStatus: 'approved' }, // Approved from review queue
+            { crawlStatus: { not: 'pending_review' } }, // Any other status except pending
+          ],
+        },
+      ],
     };
 
     if (category) {
@@ -1089,11 +1100,14 @@ export class ContentService {
     }
 
     if (search) {
-      where.OR = [
-        { title: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } },
-        { tags: { has: search } },
-      ];
+      // Add search conditions to AND array
+      where.AND.push({
+        OR: [
+          { title: { contains: search, mode: 'insensitive' } },
+          { description: { contains: search, mode: 'insensitive' } },
+          { tags: { has: search } },
+        ],
+      });
     }
 
     try {
@@ -1211,7 +1225,10 @@ export class ContentService {
           ...(dto.title && { title: dto.title }),
           ...(dto.description && { description: dto.description }),
           ...(dto.contentPreview && { contentPreview: dto.contentPreview }),
-          ...(dto.category && { contentCategory: dto.category }),
+          // Support both category and contentCategory (frontend sends contentCategory)
+          ...((dto.category || dto.contentCategory) && { 
+            contentCategory: dto.contentCategory || dto.category 
+          }),
           ...(dto.language && { language: dto.language }),
           ...(dto.country && { country: dto.country }),
           ...(dto.region && { region: dto.region }),
@@ -1225,6 +1242,7 @@ export class ContentService {
           ...(dto.effectiveDate && { effectiveDate: new Date(dto.effectiveDate) }),
           ...(dto.expirationDate && { expirationDate: new Date(dto.expirationDate) }),
           ...(dto.externalLink && { externalLink: dto.externalLink }),
+          ...(dto.crawlStatus && { crawlStatus: dto.crawlStatus }),
         },
         include: {
           uploader: {

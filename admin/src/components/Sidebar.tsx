@@ -73,6 +73,24 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
     return null
   }
 
+  // Helper to get sidebar label with proper fallback
+  const getSidebarLabel = (key: string) => {
+    // Try admin namespace first, then common, then format the key as fallback
+    const adminKey = `admin:sidebar.${key}`
+    const commonKey = `common:sidebar.${key}`
+    const adminLabel = t(adminKey, '')
+    const commonLabel = t(commonKey, '')
+    
+    if (adminLabel && adminLabel !== adminKey) return adminLabel
+    if (commonLabel && commonLabel !== commonKey) return commonLabel
+    
+    // Format key as fallback: "cantons" -> "Cantons", "policyReview" -> "Policy Review"
+    return key
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, str => str.toUpperCase())
+      .trim()
+  }
+
   const SidebarContent = () => (
     <div className="w-full bg-white border-r border-gray-200/80 flex flex-col shadow-sm h-full">
       <div className="h-20 flex items-center justify-center px-6 border-b border-gray-200/80">
@@ -108,7 +126,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
                   isActive ? 'text-swiss-mint' : 'text-gray-400 group-hover:text-swiss-mint'
                 )}
               />
-              {t(`admin:sidebar.${item.key}`, item.key)}
+              {getSidebarLabel(item.key)}
             </NavLink>
           )
         })}

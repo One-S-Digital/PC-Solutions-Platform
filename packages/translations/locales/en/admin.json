@@ -610,6 +610,8 @@
     "content": "Content",
     "messages": "Messages",
     "support": "Support",
+    "cantons": "Cantons",
+    "policyReview": "Policy Review",
     "discountTerminations": "Discount Terminations",
     "subscriptions": "Subscription Management",
     "systemMonitoring": "System Monitoring",
@@ -1964,6 +1966,109 @@
       "gracePeriodDays": "Grace Period Days",
       "estimatedResponseHours": "Estimated Response Time (hours)",
       "estimatedResponseHoursHelp": "Shown to users when they submit a request"
+    }
+  },
+  "policyReview": {
+    "title": "Policy Review Queue",
+    "subtitle": "Review and approve crawled policy documents",
+    "filters": {
+      "allCantons": "All Cantons",
+      "changedOnly": "Changed only"
+    },
+    "emptyState": {
+      "noPolicies": "No policies pending review"
+    },
+    "panel": {
+      "title": "Review Policy",
+      "officialSource": "Official Source:",
+      "titleLabel": "Title:",
+      "categoryLabel": "Category:",
+      "documentTypeLabel": "Document Type:",
+      "summaryLabel": "Summary (for users):",
+      "summaryPlaceholder": "Brief description of this document...",
+      "approveButton": "Approve & Publish",
+      "rejectButton": "Reject",
+      "rejectPrompt": "Reason for rejection:",
+      "approveSuccess": "Policy approved and published",
+      "rejectSuccess": "Policy rejected",
+      "approveError": "Failed to approve policy",
+      "rejectError": "Failed to reject policy"
+    },
+    "policyCard": {
+      "unknownDate": "Unknown"
+    }
+  },
+  "cantons": {
+    "title": "Canton Policy Sources",
+    "subtitle": "Manage policy document sources for each Swiss canton",
+    "emptyState": {
+      "noCantons": "No cantons found. Run the seed script to populate canton data."
+    },
+    "card": {
+      "code": "Code:",
+      "sources": "Sources",
+      "documents": "Documents",
+      "pendingReview": "Pending Review",
+      "defaultLanguage": "Default language:"
+    },
+    "detail": {
+      "title": "Canton Policy Sources",
+      "code": "Code:",
+      "defaultLanguage": "Default language:",
+      "addSourceButton": "+ Add Source",
+      "table": {
+        "label": "LABEL",
+        "url": "URL",
+        "type": "TYPE",
+        "status": "STATUS",
+        "lastCrawl": "LAST CRAWL",
+        "actions": "ACTIONS"
+      },
+      "emptyState": {
+        "noSources": "No sources configured. Add a source to start crawling."
+      },
+      "actions": {
+        "crawlNow": "Crawl Now",
+        "edit": "Edit"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "success": "Success",
+        "error": "Error",
+        "pending": "Pending",
+        "never": "Never",
+        "crawling": "Crawling..."
+      },
+      "crawlSuccess": "Crawl triggered successfully",
+      "crawlError": "Failed to trigger crawl"
+    },
+    "addSource": {
+      "title": "Add Source",
+      "label": "Label",
+      "labelPlaceholder": "e.g., SCAJE - Main Page",
+      "url": "URL",
+      "urlPlaceholder": "https://www.vd.ch/themes/...",
+      "sourceType": "Source Type",
+      "renderType": "Render Type",
+      "cssSelector": "CSS Selector (optional)",
+      "cssSelectorPlaceholder": "e.g., .content-area, #main-content",
+      "cssSelectorHelp": "Limit link extraction to specific container",
+      "crawlFrequency": "Crawl Frequency (days)",
+      "cancel": "Cancel",
+      "create": "Create Source",
+      "createLoading": "Creating...",
+      "error": "Failed to create source"
+    },
+    "editSource": {
+      "title": "Edit Source",
+      "update": "Update Source",
+      "updateLoading": "Updating...",
+      "error": "Failed to update source"
+    },
+    "error": {
+      "retry": "Retry",
+      "fetchError": "Failed to fetch cantons"
     }
   }
 }

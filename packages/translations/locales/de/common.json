@@ -1968,7 +1968,13 @@
   },
   "showPassword": "Passwort anzeigen",
   "sidebar": {
-    "ordersAppointments": "orders Appointments"
+    "cantons": "Kantone",
+    "ordersAppointments": "orders Appointments",
+    "policyReview": "Richtlinienprüfung"
+  },
+  "dashboard": {
+    "live": "Live",
+    "systemHealthy": "Alle Systeme funktionieren"
   },
   "signIn": "Anmelden",
   "signOut": "Abmelden",

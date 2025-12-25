@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useApiClient } from '../services/api';
 import { 
   ArrowLeftIcon,
@@ -40,6 +41,7 @@ interface AddSourceModalProps {
 }
 
 const AddSourceModal: React.FC<AddSourceModalProps> = ({ cantonId, onClose, onSuccess }) => {
+  const { t } = useTranslation(['admin']);
   const apiClient = useApiClient();
   const [form, setForm] = useState({
     label: '',
@@ -66,7 +68,7 @@ const AddSourceModal: React.FC<AddSourceModalProps> = ({ cantonId, onClose, onSu
       onSuccess();
       onClose();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to create source');
+      setError(err.response?.data?.message || t('admin:cantons.addSource.error'));
     } finally {
       setLoading(false);
     }
@@ -75,7 +77,7 @@ const AddSourceModal: React.FC<AddSourceModalProps> = ({ cantonId, onClose, onSu
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-        <h2 className="text-xl font-bold mb-4">Add Source</h2>
+        <h2 className="text-xl font-bold mb-4">{t('admin:cantons.addSource.title')}</h2>
         
         {error && (
           <div className="bg-red-50 border border-red-200 rounded p-3 mb-4">
@@ -85,32 +87,32 @@ const AddSourceModal: React.FC<AddSourceModalProps> = ({ cantonId, onClose, onSu
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Label</label>
+            <label className="block text-sm font-medium mb-1">{t('admin:cantons.addSource.label')}</label>
             <input
               type="text"
               required
               value={form.label}
               onChange={e => setForm({...form, label: e.target.value})}
               className="w-full border rounded px-3 py-2"
-              placeholder="e.g., SCAJE - Main Page"
+              placeholder={t('admin:cantons.addSource.labelPlaceholder')}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">URL</label>
+            <label className="block text-sm font-medium mb-1">{t('admin:cantons.addSource.url')}</label>
             <input
               type="url"
               required
               value={form.url}
               onChange={e => setForm({...form, url: e.target.value})}
               className="w-full border rounded px-3 py-2"
-              placeholder="https://www.vd.ch/themes/..."
+              placeholder={t('admin:cantons.addSource.urlPlaceholder')}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Source Type</label>
+              <label className="block text-sm font-medium mb-1">{t('admin:cantons.addSource.sourceType')}</label>
               <select
                 value={form.sourceType}
                 onChange={e => setForm({...form, sourceType: e.target.value})}
@@ -124,7 +126,7 @@ const AddSourceModal: React.FC<AddSourceModalProps> = ({ cantonId, onClose, onSu
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Render Type</label>
+              <label className="block text-sm font-medium mb-1">{t('admin:cantons.addSource.renderType')}</label>
               <select
                 value={form.renderType}
                 onChange={e => setForm({...form, renderType: e.target.value})}
@@ -137,19 +139,19 @@ const AddSourceModal: React.FC<AddSourceModalProps> = ({ cantonId, onClose, onSu
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">CSS Selector (optional)</label>
+            <label className="block text-sm font-medium mb-1">{t('admin:cantons.addSource.cssSelector')}</label>
             <input
               type="text"
               value={form.cssSelector}
               onChange={e => setForm({...form, cssSelector: e.target.value})}
               className="w-full border rounded px-3 py-2"
-              placeholder="e.g., .content-area, #main-content"
+              placeholder={t('admin:cantons.addSource.cssSelectorPlaceholder')}
             />
-            <p className="text-xs text-gray-500 mt-1">Limit link extraction to specific container</p>
+            <p className="text-xs text-gray-500 mt-1">{t('admin:cantons.addSource.cssSelectorHelp')}</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Crawl Frequency (days)</label>
+            <label className="block text-sm font-medium mb-1">{t('admin:cantons.addSource.crawlFrequency')}</label>
             <input
               type="number"
               min="1"
@@ -166,14 +168,14 @@ const AddSourceModal: React.FC<AddSourceModalProps> = ({ cantonId, onClose, onSu
               onClick={onClose}
               className="px-4 py-2 border rounded hover:bg-gray-50"
             >
-              Cancel
+              {t('admin:cantons.addSource.cancel')}
             </button>
             <button
               type="submit"
               disabled={loading}
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
             >
-              {loading ? 'Creating...' : 'Create Source'}
+              {loading ? t('admin:cantons.addSource.createLoading') : t('admin:cantons.addSource.create')}
             </button>
           </div>
         </form>
@@ -182,8 +184,14 @@ const AddSourceModal: React.FC<AddSourceModalProps> = ({ cantonId, onClose, onSu
   );
 };
 
-const StatusBadge: React.FC<{ status?: string }> = ({ status }) => {
-  if (!status) return <span className="text-gray-400 text-xs">Never</span>;
+const StatusBadge: React.FC<{ status?: string; t: (key: string) => string }> = ({ status, t }) => {
+  if (!status) return <span className="text-gray-400 text-xs">{t('admin:cantons.detail.status.never')}</span>;
+  
+  const statusMap: Record<string, string> = {
+    success: t('admin:cantons.detail.status.success'),
+    failed: t('admin:cantons.detail.status.error'),
+    partial: t('admin:cantons.detail.status.pending'),
+  };
   
   const colors: Record<string, string> = {
     success: 'bg-green-100 text-green-800',
@@ -193,12 +201,170 @@ const StatusBadge: React.FC<{ status?: string }> = ({ status }) => {
 
   return (
     <span className={`px-2 py-1 rounded text-xs font-medium ${colors[status] || 'bg-gray-100 text-gray-800'}`}>
-      {status}
+      {statusMap[status] || status}
     </span>
   );
 };
 
+interface EditSourceModalProps {
+  source: CantonSource;
+  onClose: () => void;
+  onSuccess: () => void;
+}
+
+const EditSourceModal: React.FC<EditSourceModalProps> = ({ source, onClose, onSuccess }) => {
+  const { t } = useTranslation(['admin']);
+  const apiClient = useApiClient();
+  const [form, setForm] = useState({
+    label: source.label,
+    url: source.url,
+    sourceType: source.sourceType,
+    renderType: source.renderType,
+    cssSelector: source.cssSelector || '',
+    crawlFrequencyDays: source.crawlFrequencyDays,
+    isActive: source.isActive,
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      await apiClient.patch(`/admin/crawler/sources/${source.id}`, {
+        ...form,
+        cssSelector: form.cssSelector || undefined,
+      });
+      onSuccess();
+      onClose();
+    } catch (err: any) {
+      setError(err.response?.data?.message || t('admin:cantons.editSource.error'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <h2 className="text-xl font-bold mb-4">{t('admin:cantons.editSource.title')}</h2>
+        
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded p-3 mb-4">
+            <p className="text-red-800 text-sm">{error}</p>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">Label</label>
+            <input
+              type="text"
+              required
+              value={form.label}
+              onChange={e => setForm({...form, label: e.target.value})}
+              className="w-full border rounded px-3 py-2"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">URL</label>
+            <input
+              type="url"
+              required
+              value={form.url}
+              onChange={e => setForm({...form, url: e.target.value})}
+              className="w-full border rounded px-3 py-2"
+              placeholder="https://www.vd.ch/themes/..."
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Source Type</label>
+            <select
+              value={form.sourceType}
+              onChange={e => setForm({...form, sourceType: e.target.value})}
+              className="w-full border rounded px-3 py-2"
+            >
+              <option value="landing">Landing</option>
+              <option value="directives">Directives</option>
+              <option value="laws">Laws</option>
+              <option value="federal">Federal</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Render Type</label>
+            <select
+              value={form.renderType}
+              onChange={e => setForm({...form, renderType: e.target.value})}
+              className="w-full border rounded px-3 py-2"
+            >
+              <option value="static">Static</option>
+              <option value="dynamic">Dynamic (Playwright)</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">CSS Selector (optional)</label>
+            <input
+              type="text"
+              value={form.cssSelector}
+              onChange={e => setForm({...form, cssSelector: e.target.value})}
+              className="w-full border rounded px-3 py-2"
+              placeholder="e.g., #main-content"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Crawl Frequency (days)</label>
+            <input
+              type="number"
+              min="1"
+              max="365"
+              value={form.crawlFrequencyDays}
+              onChange={e => setForm({...form, crawlFrequencyDays: parseInt(e.target.value) || 7})}
+              className="w-full border rounded px-3 py-2"
+            />
+          </div>
+
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              checked={form.isActive}
+              onChange={e => setForm({...form, isActive: e.target.checked})}
+              className="mr-2"
+            />
+            <label className="text-sm font-medium">{t('admin:cantons.detail.status.active')}</label>
+          </div>
+
+          <div className="flex justify-end space-x-3 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50"
+              disabled={loading}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+              disabled={loading}
+            >
+              {loading ? t('admin:cantons.editSource.updateLoading') : t('admin:cantons.editSource.update')}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 export default function CantonDetailPage() {
+  const { t } = useTranslation(['admin']);
   const { code } = useParams<{ code: string }>();
   const navigate = useNavigate();
   const apiClient = useApiClient();
@@ -206,6 +372,7 @@ export default function CantonDetailPage() {
   const [sources, setSources] = useState<CantonSource[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddSource, setShowAddSource] = useState(false);
+  const [editingSource, setEditingSource] = useState<CantonSource | null>(null);
   const [triggeringCrawl, setTriggeringCrawl] = useState<number | null>(null);
 
   useEffect(() => {
@@ -233,15 +400,15 @@ export default function CantonDetailPage() {
   };
 
   const handleTriggerCrawl = async (sourceId: number) => {
-    if (!confirm('Trigger crawl for this source now?')) return;
+    if (!confirm(t('admin:cantons.detail.actions.crawlNow'))) return;
     
     setTriggeringCrawl(sourceId);
     try {
       await apiClient.post(`/admin/crawler/trigger/${sourceId}`);
-      alert('Crawl triggered successfully');
+      alert(t('admin:cantons.detail.crawlSuccess'));
       fetchData();
     } catch (err: any) {
-      alert(`Failed to trigger crawl: ${err.response?.data?.message || err.message}`);
+      alert(`${t('admin:cantons.detail.crawlError')}: ${err.response?.data?.message || err.message}`);
     } finally {
       setTriggeringCrawl(null);
     }
@@ -280,7 +447,7 @@ export default function CantonDetailPage() {
           </button>
           <div>
             <h1 className="text-2xl font-bold">{canton.name}</h1>
-            <p className="text-gray-500">Code: {canton.code} | Default language: {canton.defaultLang}</p>
+            <p className="text-gray-500">{t('admin:cantons.detail.code')} {canton.code} | {t('admin:cantons.detail.defaultLanguage')} {canton.defaultLang}</p>
           </div>
         </div>
         <button 
@@ -288,7 +455,7 @@ export default function CantonDetailPage() {
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center gap-2"
         >
           <PlusIcon className="h-5 w-5" />
-          Add Source
+          {t('admin:cantons.detail.addSourceButton')}
         </button>
       </div>
 
@@ -297,12 +464,12 @@ export default function CantonDetailPage() {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Label</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">URL</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Last Crawl</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin:cantons.detail.table.label')}</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin:cantons.detail.table.url')}</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin:cantons.detail.table.type')}</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin:cantons.detail.table.status')}</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin:cantons.detail.table.lastCrawl')}</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin:cantons.detail.table.actions')}</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -325,22 +492,29 @@ export default function CantonDetailPage() {
                   </span>
                 </td>
                 <td className="px-4 py-3 text-sm">
-                  <StatusBadge status={source.lastCrawlStatus} />
+                  <StatusBadge status={source.lastCrawlStatus} t={t} />
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-500">
                   {source.lastCrawlAt 
                     ? new Date(source.lastCrawlAt).toLocaleDateString()
-                    : 'Never'}
+                    : t('admin:cantons.detail.status.never')}
                 </td>
                 <td className="px-4 py-3 text-sm">
                   <div className="flex space-x-2">
+                    <button 
+                      onClick={() => setEditingSource(source)}
+                      className="text-gray-600 hover:text-gray-900 text-sm flex items-center gap-1"
+                      title="Edit source"
+                    >
+                      <PencilIcon className="h-4 w-4" />
+                    </button>
                     <button 
                       onClick={() => handleTriggerCrawl(source.id)}
                       disabled={triggeringCrawl === source.id}
                       className="text-blue-600 hover:underline text-sm disabled:opacity-50 flex items-center gap-1"
                     >
                       <PlayIcon className="h-4 w-4" />
-                      {triggeringCrawl === source.id ? 'Crawling...' : 'Crawl Now'}
+                      {triggeringCrawl === source.id ? t('admin:cantons.detail.status.crawling') : t('admin:cantons.detail.actions.crawlNow')}
                     </button>
                   </div>
                 </td>
@@ -351,7 +525,7 @@ export default function CantonDetailPage() {
         
         {sources.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500">No sources configured. Add a source to start crawling.</p>
+            <p className="text-gray-500">{t('admin:cantons.detail.emptyState.noSources')}</p>
           </div>
         )}
       </div>
@@ -360,6 +534,14 @@ export default function CantonDetailPage() {
         <AddSourceModal 
           cantonId={canton.id}
           onClose={() => setShowAddSource(false)}
+          onSuccess={fetchData}
+        />
+      )}
+
+      {editingSource && (
+        <EditSourceModal 
+          source={editingSource}
+          onClose={() => setEditingSource(null)}
           onSuccess={fetchData}
         />
       )}

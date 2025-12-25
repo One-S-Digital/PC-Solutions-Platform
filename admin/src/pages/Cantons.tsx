@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useApiClient } from '../services/api';
 import { 
   MapPinIcon, 
@@ -23,6 +24,7 @@ interface Canton {
 }
 
 export default function CantonsPage() {
+  const { t } = useTranslation(['admin']);
   const apiClient = useApiClient();
   const [cantons, setCantons] = useState<Canton[]>([]);
   const [loading, setLoading] = useState(true);
@@ -41,7 +43,7 @@ export default function CantonsPage() {
         setCantons(response.data);
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to fetch cantons');
+      setError(err.response?.data?.message || t('admin:cantons.error.fetchError'));
       console.error('Failed to fetch cantons:', err);
     } finally {
       setLoading(false);
@@ -67,7 +69,7 @@ export default function CantonsPage() {
             onClick={fetchCantons}
             className="mt-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
           >
-            Retry
+            {t('admin:cantons.error.retry')}
           </button>
         </div>
       </div>
@@ -77,8 +79,8 @@ export default function CantonsPage() {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Canton Policy Sources</h1>
-        <p className="text-gray-600 mt-1">Manage policy document sources for each Swiss canton</p>
+        <h1 className="text-2xl font-bold text-gray-900">{t('admin:cantons.title')}</h1>
+        <p className="text-gray-600 mt-1">{t('admin:cantons.subtitle')}</p>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -93,7 +95,7 @@ export default function CantonsPage() {
                 <MapPinIcon className="h-5 w-5 text-gray-400" />
                 <div>
                   <h3 className="font-semibold text-gray-900">{canton.name}</h3>
-                  <p className="text-sm text-gray-500">Code: {canton.code}</p>
+                  <p className="text-sm text-gray-500">{t('admin:cantons.card.code')} {canton.code}</p>
                 </div>
               </div>
             </div>
@@ -102,7 +104,7 @@ export default function CantonsPage() {
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-600 flex items-center gap-1">
                   <DocumentTextIcon className="h-4 w-4" />
-                  Sources
+                  {t('admin:cantons.card.sources')}
                 </span>
                 <span className="font-medium">{canton.sourcesCount}</span>
               </div>
@@ -110,7 +112,7 @@ export default function CantonsPage() {
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-600 flex items-center gap-1">
                   <DocumentTextIcon className="h-4 w-4" />
-                  Documents
+                  {t('admin:cantons.card.documents')}
                 </span>
                 <span className="font-medium">{canton.documentsCount}</span>
               </div>
@@ -119,7 +121,7 @@ export default function CantonsPage() {
                 <div className="flex items-center justify-between text-sm bg-yellow-50 p-2 rounded">
                   <span className="text-yellow-800 flex items-center gap-1">
                     <ExclamationTriangleIcon className="h-4 w-4" />
-                    Pending Review
+                    {t('admin:cantons.card.pendingReview')}
                   </span>
                   <span className="font-medium text-yellow-800">{canton.pendingReview}</span>
                 </div>
@@ -128,7 +130,7 @@ export default function CantonsPage() {
             
             <div className="mt-3 pt-3 border-t border-gray-200">
               <p className="text-xs text-gray-500">
-                Default language: <span className="font-medium">{canton.defaultLang.toUpperCase()}</span>
+                {t('admin:cantons.card.defaultLanguage')} <span className="font-medium">{canton.defaultLang.toUpperCase()}</span>
               </p>
             </div>
           </Link>
@@ -137,7 +139,7 @@ export default function CantonsPage() {
       
       {cantons.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-500">No cantons found. Run the seed script to populate canton data.</p>
+          <p className="text-gray-500">{t('admin:cantons.emptyState.noCantons')}</p>
         </div>
       )}
     </div>

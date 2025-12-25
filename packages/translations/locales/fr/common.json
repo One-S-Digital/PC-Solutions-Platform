@@ -1945,7 +1945,13 @@
   },
   "showPassword": "Afficher le mot de passe",
   "sidebar": {
-    "ordersAppointments": "orders Appointments"
+    "cantons": "Cantons",
+    "ordersAppointments": "orders Appointments",
+    "policyReview": "Révision des politiques"
+  },
+  "dashboard": {
+    "live": "En direct",
+    "systemHealthy": "Tous les systèmes opérationnels"
   },
   "signIn": "Se connecter",
   "signOut": "Se déconnecter",

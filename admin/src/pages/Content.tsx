@@ -28,6 +28,8 @@ interface UploadedContent {
   publicUrl: string;
   updatedAt: string;
   fileUrl?: string;
+  externalLink?: string; // For crawled policies with external URLs
+  officialUrl?: string; // Alternative field name for official source URL
 }
 
 interface PaginationInfo {
@@ -389,10 +391,24 @@ export default function Content() {
   };
 
   const handleView = (content: UploadedContent) => {
-    if (!content.fileUrl && !content.publicUrl) {
+    // For crawled policies, they have external links instead of files
+    const hasFile = content.fileUrl || content.publicUrl;
+    const hasExternalLink = content.externalLink || content.officialUrl;
+    
+    if (!hasFile && !hasExternalLink) {
       alert(t('admin:content.noFileUrl', 'No file URL available for this content'));
       return;
     }
+    
+    // If it's an external link (crawled policy), open in new tab instead of preview modal
+    if (hasExternalLink && !hasFile) {
+      const url = content.externalLink || content.officialUrl;
+      if (url) {
+        window.open(url, '_blank', 'noopener,noreferrer');
+        return;
+      }
+    }
+    
     setPreviewContent(content);
   };
 
@@ -705,11 +721,11 @@ export default function Content() {
       />
 
       {/* Preview Modal */}
-      {previewContent && (
+      {previewContent && (previewContent.fileUrl || previewContent.publicUrl) && (
         <DocumentPreviewModal
           isOpen={!!previewContent}
           onClose={() => setPreviewContent(null)}
-          fileUrl={previewContent.fileUrl || previewContent.publicUrl}
+          fileUrl={previewContent.fileUrl || previewContent.publicUrl || ''}
           fileName={previewContent.title}
           fileType={previewContent.type || 'document'}
         />

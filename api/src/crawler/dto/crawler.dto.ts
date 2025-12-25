@@ -1,4 +1,5 @@
 import { IsString, IsOptional, IsInt, IsBoolean, IsEnum, Min, Max } from 'class-validator';
+import { Type, Transform } from 'class-transformer';
 
 export enum SourceType {
   LANDING = 'landing',
@@ -84,12 +85,18 @@ export class ReviewQueueQueryDto {
 
   @IsBoolean()
   @IsOptional()
+  @Transform(({ value }) => {
+    if (value === 'true' || value === true) return true;
+    if (value === 'false' || value === false) return false;
+    return undefined;
+  })
   hasChanges?: boolean;
 
   @IsInt()
   @Min(1)
-  @Max(100)
+  @Max(500)
   @IsOptional()
-  limit?: number = 50;
+  @Type(() => Number)
+  limit?: number = 100;
 }
 

@@ -623,6 +623,8 @@
     "content": "Contenu",
     "messages": "Messages",
     "support": "Support",
+    "cantons": "Cantons",
+    "policyReview": "Révision des politiques",
     "discountTerminations": "Résiliations de remise",
     "subscriptions": "Abonnements",
     "systemMonitoring": "Surveillance du système",
@@ -1826,5 +1828,108 @@
       "next": "Suivant"
     },
     "noSubscriptions": "Aucun abonnement trouvé"
+  },
+  "policyReview": {
+    "title": "File d'attente de révision des politiques",
+    "subtitle": "Examiner et approuver les documents de politique explorés",
+    "filters": {
+      "allCantons": "Tous les cantons",
+      "changedOnly": "Modifiés uniquement"
+    },
+    "emptyState": {
+      "noPolicies": "Aucune politique en attente de révision"
+    },
+    "panel": {
+      "title": "Réviser la politique",
+      "officialSource": "Source officielle :",
+      "titleLabel": "Titre :",
+      "categoryLabel": "Catégorie :",
+      "documentTypeLabel": "Type de document :",
+      "summaryLabel": "Résumé (pour les utilisateurs) :",
+      "summaryPlaceholder": "Brève description de ce document...",
+      "approveButton": "Approuver et publier",
+      "rejectButton": "Rejeter",
+      "rejectPrompt": "Raison du rejet :",
+      "approveSuccess": "Politique approuvée et publiée",
+      "rejectSuccess": "Politique rejetée",
+      "approveError": "Échec de l'approbation de la politique",
+      "rejectError": "Échec du rejet de la politique"
+    },
+    "policyCard": {
+      "unknownDate": "Inconnu"
+    }
+  },
+  "cantons": {
+    "title": "Sources de politiques cantonales",
+    "subtitle": "Gérer les sources de documents de politique pour chaque canton suisse",
+    "emptyState": {
+      "noCantons": "Aucun canton trouvé. Exécutez le script de seed pour remplir les données des cantons."
+    },
+    "card": {
+      "code": "Code :",
+      "sources": "Sources",
+      "documents": "Documents",
+      "pendingReview": "En attente de révision",
+      "defaultLanguage": "Langue par défaut :"
+    },
+    "detail": {
+      "title": "Sources de politiques cantonales",
+      "code": "Code :",
+      "defaultLanguage": "Langue par défaut :",
+      "addSourceButton": "+ Ajouter une source",
+      "table": {
+        "label": "ÉTIQUETTE",
+        "url": "URL",
+        "type": "TYPE",
+        "status": "STATUT",
+        "lastCrawl": "DERNIER EXPLORATION",
+        "actions": "ACTIONS"
+      },
+      "emptyState": {
+        "noSources": "Aucune source configurée. Ajoutez une source pour commencer l'exploration."
+      },
+      "actions": {
+        "crawlNow": "Explorer maintenant",
+        "edit": "Modifier"
+      },
+      "status": {
+        "active": "Actif",
+        "inactive": "Inactif",
+        "success": "Succès",
+        "error": "Erreur",
+        "pending": "En attente",
+        "never": "Jamais",
+        "crawling": "Exploration en cours..."
+      },
+      "crawlSuccess": "Exploration déclenchée avec succès",
+      "crawlError": "Échec du déclenchement de l'exploration"
+    },
+    "addSource": {
+      "title": "Ajouter une source",
+      "label": "Étiquette",
+      "labelPlaceholder": "p. ex., SCAJE - Page principale",
+      "url": "URL",
+      "urlPlaceholder": "https://www.vd.ch/themes/...",
+      "sourceType": "Type de source",
+      "renderType": "Type de rendu",
+      "cssSelector": "Sélecteur CSS (optionnel)",
+      "cssSelectorPlaceholder": "p. ex., .content-area, #main-content",
+      "cssSelectorHelp": "Limiter l'extraction de liens à un conteneur spécifique",
+      "crawlFrequency": "Fréquence d'exploration (jours)",
+      "cancel": "Annuler",
+      "create": "Créer la source",
+      "createLoading": "Création...",
+      "error": "Échec de la création de la source"
+    },
+    "editSource": {
+      "title": "Modifier la source",
+      "update": "Mettre à jour la source",
+      "updateLoading": "Mise à jour...",
+      "error": "Échec de la mise à jour de la source"
+    },
+    "error": {
+      "retry": "Réessayer",
+      "fetchError": "Échec de la récupération des cantons"
+    }
   }
 }

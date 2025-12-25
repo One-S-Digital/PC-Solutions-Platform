@@ -128,6 +128,28 @@ export class CrawlerService {
 
     try {
       // Step 1: Fetch and parse source page (only HTML page, not PDFs)
+      this.logger.log(`Starting crawl for source: ${source.label} (${source.url})`);
+      
+      // Validate URL format before attempting fetch
+      try {
+        this.validateUrl(source.url);
+        this.logger.debug(`URL validation passed for: ${source.url}`);
+      } catch (validationError: any) {
+        const errorMsg = `Invalid URL format: ${validationError.message}`;
+        this.logger.error(errorMsg);
+        await this.prisma.cantonSource.update({
+          where: { id: sourceId },
+          data: {
+            lastCrawlAt: new Date(),
+            lastCrawlStatus: 'failed',
+            lastCrawlError: errorMsg,
+            nextCrawlAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+          },
+        });
+        throw new Error(errorMsg);
+      }
+
+      this.logger.debug(`Attempting to fetch page: ${source.url} (renderType: ${source.renderType})`);
       const html = await this.fetchPage(source.url, source.renderType === 'dynamic');
       const candidates = this.htmlParser.extractLinks(html, source.url, source.cssSelector);
       results.discovered = candidates.length;
@@ -144,9 +166,10 @@ export class CrawlerService {
           // This is acceptable since we're mostly doing lightweight HEAD requests
           // (separate from 30s per-source delay in scheduler)
           await this.delay(500);
-        } catch (error) {
-          results.errors.push(`${candidate.url}: ${error.message}`);
-          this.logger.error(`Failed to process ${candidate.url}: ${error.message}`);
+        } catch (error: any) {
+          const errorMsg = error.message || 'Unknown error';
+          results.errors.push(`${candidate.url}: ${errorMsg}`);
+          this.logger.error(`Failed to process ${candidate.url}: ${errorMsg}`);
         }
       }
 
@@ -162,13 +185,16 @@ export class CrawlerService {
       });
 
       return results;
-    } catch (error) {
+    } catch (error: any) {
+      const errorMsg = error.message || 'Unknown error occurred';
+      this.logger.error(`Crawl failed for source ${sourceId}: ${errorMsg}`);
+      
       await this.prisma.cantonSource.update({
         where: { id: sourceId },
         data: {
           lastCrawlAt: new Date(),
           lastCrawlStatus: 'failed',
-          lastCrawlError: error.message,
+          lastCrawlError: errorMsg,
           nextCrawlAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // Retry in 1 day
         },
       });
@@ -410,47 +436,86 @@ export class CrawlerService {
       return this.playwrightRenderer.fetchWithPlaywright(url);
     }
 
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'ProCreche-PolicyCrawler/1.0 (policy-updates@procreche.ch)',
-      },
-    });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    try {
+      this.logger.debug(`Fetching URL: ${url}`);
+      const response = await fetch(url, {
+        headers: {
+          'User-Agent': 'ProCreche-PolicyCrawler/1.0 (policy-updates@procreche.ch)',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        },
+        signal: controller.signal,
+        redirect: 'follow', // Follow redirects but validate each step
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      this.logger.debug(`Successfully fetched ${url}, content length: ${response.headers.get('content-length') || 'unknown'}`);
+      return response.text();
+    } catch (error: any) {
+      if (error.name === 'AbortError') {
+        this.logger.error(`Request timeout for URL: ${url}`);
+        throw new Error(`Request timeout after 30 seconds for URL: ${url}`);
+      }
+      if (error.cause?.code === 'ETIMEDOUT' || error.cause?.code === 'ECONNREFUSED' || error.cause?.code === 'ENOTFOUND') {
+        this.logger.error(`Network error for URL ${url}: ${error.cause.code} - ${error.cause.message}`);
+        throw new Error(`Network error connecting to ${url}: ${error.cause.message} (${error.cause.code}). Please verify the URL is accessible and uses HTTPS.`);
+      }
+      this.logger.error(`Unexpected error fetching ${url}: ${error.message}`, error.stack);
+      throw error;
+    } finally {
+      clearTimeout(timeout);
     }
-
-    return response.text();
   }
 
   private async fetchBuffer(url: string): Promise<Buffer> {
     // SSRF prevention: validate URL before making request
     this.validateUrl(url);
 
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'ProCreche-PolicyCrawler/1.0 (policy-updates@procreche.ch)',
-      },
-    });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 60000); // 60 second timeout for file downloads
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    try {
+      const response = await fetch(url, {
+        headers: {
+          'User-Agent': 'ProCreche-PolicyCrawler/1.0 (policy-updates@procreche.ch)',
+        },
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      // Content-length validation to prevent memory exhaustion
+      const contentLength = response.headers.get('content-length');
+      if (contentLength && parseInt(contentLength, 10) > MAX_FILE_SIZE_BYTES) {
+        throw new Error(`File size (${contentLength} bytes) exceeds maximum allowed (${MAX_FILE_SIZE_BYTES} bytes)`);
+      }
+
+      const arrayBuffer = await response.arrayBuffer();
+      
+      // Double-check actual size (Content-Length can be missing or incorrect)
+      if (arrayBuffer.byteLength > MAX_FILE_SIZE_BYTES) {
+        throw new Error(`Downloaded file size (${arrayBuffer.byteLength} bytes) exceeds maximum allowed`);
+      }
+
+      return Buffer.from(arrayBuffer);
+    } catch (error: any) {
+      if (error.name === 'AbortError') {
+        throw new Error(`Request timeout after 60 seconds for URL: ${url}`);
+      }
+      if (error.cause?.code === 'ETIMEDOUT' || error.cause?.code === 'ECONNREFUSED') {
+        throw new Error(`Network error connecting to ${url}: ${error.cause.message}. Please verify the URL is accessible and uses HTTPS.`);
+      }
+      throw error;
+    } finally {
+      clearTimeout(timeout);
     }
-
-    // Content-length validation to prevent memory exhaustion
-    const contentLength = response.headers.get('content-length');
-    if (contentLength && parseInt(contentLength, 10) > MAX_FILE_SIZE_BYTES) {
-      throw new Error(`File size (${contentLength} bytes) exceeds maximum allowed (${MAX_FILE_SIZE_BYTES} bytes)`);
-    }
-
-    const arrayBuffer = await response.arrayBuffer();
-    
-    // Double-check actual size (Content-Length can be missing or incorrect)
-    if (arrayBuffer.byteLength > MAX_FILE_SIZE_BYTES) {
-      throw new Error(`Downloaded file size (${arrayBuffer.byteLength} bytes) exceeds maximum allowed`);
-    }
-
-    return Buffer.from(arrayBuffer);
   }
 
   private delay(ms: number): Promise<void> {

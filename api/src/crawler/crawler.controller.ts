@@ -25,8 +25,18 @@ export class CrawlerController {
       throw new BadRequestException(`Invalid sourceId: '${sourceId}'. Must be a positive integer.`);
     }
 
-    const results = await this.crawlerScheduler.triggerCrawl(id);
-    return { success: true, data: results };
+    try {
+      const results = await this.crawlerScheduler.triggerCrawl(id);
+      return { success: true, data: results };
+    } catch (error: any) {
+      // Provide user-friendly error messages
+      if (error.message?.includes('Network error') || error.message?.includes('ETIMEDOUT')) {
+        throw new BadRequestException(
+          `Failed to crawl source: ${error.message}. This may be due to network connectivity issues or the target URL being unreachable.`
+        );
+      }
+      throw error;
+    }
   }
 
   // Get all cantons with stats
@@ -96,11 +106,20 @@ export class CrawlerController {
       where.region = query.canton;
     }
 
-    return this.prisma.asset.findMany({
-      where,
-      orderBy: { lastCrawledAt: 'desc' },
-      take: query.limit || 50,
-    });
+    const [policies, total] = await Promise.all([
+      this.prisma.asset.findMany({
+        where,
+        orderBy: { lastCrawledAt: 'desc' },
+        take: query.limit || 100, // Increased default limit to show more documents
+      }),
+      this.prisma.asset.count({ where }),
+    ]);
+
+    return {
+      data: policies,
+      total,
+      limit: query.limit || 100,
+    };
   }
 
   // Crawler health stats
@@ -133,6 +152,61 @@ export class CrawlerController {
       pendingReviewCount: pendingDocs,
       recentCrawls,
     };
+  }
+
+  // Test URL connectivity (for debugging)
+  @Get('test-url')
+  async testUrl(@Query('url') url: string) {
+    if (!url) {
+      throw new BadRequestException('URL parameter is required');
+    }
+
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10000); // 10 second timeout for test
+
+      const startTime = Date.now();
+      const response = await fetch(url, {
+        method: 'HEAD',
+        signal: controller.signal,
+        headers: {
+          'User-Agent': 'ProCreche-PolicyCrawler/1.0 (policy-updates@procreche.ch)',
+        },
+      });
+      const duration = Date.now() - startTime;
+
+      clearTimeout(timeout);
+
+      return {
+        success: true,
+        url,
+        status: response.status,
+        statusText: response.statusText,
+        duration: `${duration}ms`,
+        headers: {
+          contentType: response.headers.get('content-type'),
+          contentLength: response.headers.get('content-length'),
+          lastModified: response.headers.get('last-modified'),
+          etag: response.headers.get('etag'),
+        },
+      };
+    } catch (error: any) {
+      if (error.name === 'AbortError') {
+        return {
+          success: false,
+          url,
+          error: 'Request timeout after 10 seconds',
+          errorCode: 'TIMEOUT',
+        };
+      }
+      return {
+        success: false,
+        url,
+        error: error.message || 'Unknown error',
+        errorCode: error.cause?.code || 'UNKNOWN',
+        errorDetails: error.cause?.message || error.stack,
+      };
+    }
   }
 }
 

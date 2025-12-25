@@ -4,7 +4,7 @@ import { useApiClient } from '../services/api';
 import { 
   CheckCircleIcon,
   XCircleIcon,
-  ExternalLinkIcon,
+  ArrowTopRightOnSquareIcon,
   ClockIcon,
   DocumentTextIcon,
 } from '@heroicons/react/24/outline';
@@ -46,7 +46,8 @@ const PolicyCard: React.FC<{
   policy: StatePolicyAsset;
   isSelected: boolean;
   onClick: () => void;
-}> = ({ policy, isSelected, onClick }) => {
+  t: (key: string) => string;
+}> = ({ policy, isSelected, onClick, t }) => {
   return (
     <div
       onClick={onClick}
@@ -70,7 +71,7 @@ const PolicyCard: React.FC<{
       )}
       <div className="flex items-center gap-2 text-xs text-gray-500">
         <ClockIcon className="h-3 w-3" />
-        <span>{policy.lastCrawledAt ? new Date(policy.lastCrawledAt).toLocaleDateString() : 'Unknown'}</span>
+        <span>{policy.lastCrawledAt ? new Date(policy.lastCrawledAt).toLocaleDateString() : t('admin:policyReview.policyCard.unknownDate')}</span>
       </div>
     </div>
   );
@@ -96,7 +97,7 @@ const PolicyReviewPanel: React.FC<{
   };
 
   const handleReject = () => {
-    const reason = prompt('Reason for rejection:');
+    const reason = prompt(t('admin:policyReview.panel.rejectPrompt'));
     if (reason) {
       onReject(policy.id, reason);
     }
@@ -105,20 +106,20 @@ const PolicyReviewPanel: React.FC<{
   return (
     <div className="bg-white rounded-lg shadow p-6 sticky top-6 max-h-[90vh] overflow-y-auto">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold">Review Policy</h2>
+        <h2 className="text-lg font-semibold">{t('admin:policyReview.panel.title')}</h2>
         <button onClick={onClose} className="text-gray-400 hover:text-gray-600">×</button>
       </div>
 
       {/* Official URL - prominent display */}
       <div className="mb-4 p-3 bg-blue-50 rounded">
-        <p className="text-sm text-blue-800 font-medium mb-1">Official Source:</p>
+        <p className="text-sm text-blue-800 font-medium mb-1">{t('admin:policyReview.panel.officialSource')}</p>
         <a 
           href={policy.officialUrl || policy.externalLink}
           target="_blank"
           rel="noopener noreferrer"
           className="text-blue-600 hover:underline break-all text-sm flex items-center gap-1"
         >
-          <ExternalLinkIcon className="h-4 w-4" />
+          <ArrowTopRightOnSquareIcon className="h-4 w-4" />
           {policy.officialUrl || policy.externalLink}
         </a>
       </div>
@@ -126,7 +127,7 @@ const PolicyReviewPanel: React.FC<{
       {/* Editable fields */}
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Title</label>
+          <label className="block text-sm font-medium mb-1">{t('admin:policyReview.panel.titleLabel')}</label>
           <input
             type="text"
             value={form.title}
@@ -136,7 +137,7 @@ const PolicyReviewPanel: React.FC<{
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Category</label>
+          <label className="block text-sm font-medium mb-1">{t('admin:policyReview.panel.categoryLabel')}</label>
           <select
             value={form.contentCategory}
             onChange={e => setForm({...form, contentCategory: e.target.value})}
@@ -149,7 +150,7 @@ const PolicyReviewPanel: React.FC<{
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Document Type</label>
+          <label className="block text-sm font-medium mb-1">{t('admin:policyReview.panel.documentTypeLabel')}</label>
           <select
             value={form.policyType}
             onChange={e => setForm({...form, policyType: e.target.value})}
@@ -162,13 +163,13 @@ const PolicyReviewPanel: React.FC<{
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Summary (for users)</label>
+          <label className="block text-sm font-medium mb-1">{t('admin:policyReview.panel.summaryLabel')}</label>
           <textarea
             value={form.contentPreview}
             onChange={e => setForm({...form, contentPreview: e.target.value})}
             rows={3}
             className="w-full border rounded px-3 py-2"
-            placeholder="Brief description of this document..."
+            placeholder={t('admin:policyReview.panel.summaryPlaceholder')}
           />
         </div>
       </div>
@@ -180,14 +181,14 @@ const PolicyReviewPanel: React.FC<{
           className="flex-1 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 flex items-center justify-center gap-2"
         >
           <CheckCircleIcon className="h-5 w-5" />
-          Approve & Publish
+          {t('admin:policyReview.panel.approveButton')}
         </button>
         <button
           onClick={handleReject}
           className="flex-1 px-4 py-2 bg-red-100 text-red-700 rounded hover:bg-red-200 flex items-center justify-center gap-2"
         >
           <XCircleIcon className="h-5 w-5" />
-          Reject
+          {t('admin:policyReview.panel.rejectButton')}
         </button>
       </div>
     </div>
@@ -195,6 +196,7 @@ const PolicyReviewPanel: React.FC<{
 };
 
 export default function PolicyReviewPage() {
+  const { t } = useTranslation(['admin', 'content']);
   const apiClient = useApiClient();
   const [policies, setPolicies] = useState<StatePolicyAsset[]>([]);
   const [filters, setFilters] = useState({
@@ -212,9 +214,16 @@ export default function PolicyReviewPage() {
     try {
       setLoading(true);
       const response = await apiClient.get('/admin/crawler/review-queue', {
-        params: filters,
+        params: {
+          ...filters,
+          limit: 200, // Request more documents to see all pending reviews
+        },
       });
-      setPolicies(response.data || []);
+      // Handle both old format (array) and new format (object with data property)
+      const policiesData = Array.isArray(response.data) 
+        ? response.data 
+        : response.data?.data || [];
+      setPolicies(policiesData);
     } catch (err) {
       console.error('Failed to fetch policies:', err);
     } finally {
@@ -229,11 +238,11 @@ export default function PolicyReviewPage() {
         status: 'Published',
         crawlStatus: 'approved',
       });
-      alert('Policy approved and published');
+      alert(t('admin:policyReview.panel.approveSuccess'));
       fetchPolicies();
       setSelectedPolicy(null);
     } catch (error: any) {
-      alert(`Failed to approve policy: ${error.response?.data?.message || error.message}`);
+      alert(`${t('admin:policyReview.panel.approveError')}: ${error.response?.data?.message || error.message}`);
     }
   };
 
@@ -243,11 +252,11 @@ export default function PolicyReviewPage() {
         crawlStatus: 'rejected',
         status: 'Archived',
       });
-      alert('Policy rejected');
+      alert(t('admin:policyReview.panel.rejectSuccess'));
       fetchPolicies();
       setSelectedPolicy(null);
     } catch (error: any) {
-      alert(`Failed to reject policy: ${error.response?.data?.message || error.message}`);
+      alert(`${t('admin:policyReview.panel.rejectError')}: ${error.response?.data?.message || error.message}`);
     }
   };
 
@@ -265,8 +274,8 @@ export default function PolicyReviewPage() {
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Policy Review Queue</h1>
-          <p className="text-gray-600 mt-1">Review and approve crawled policy documents</p>
+          <h1 className="text-2xl font-bold">{t('admin:policyReview.title')}</h1>
+          <p className="text-gray-600 mt-1">{t('admin:policyReview.subtitle')}</p>
         </div>
         <div className="flex space-x-4">
           <select 
@@ -274,7 +283,7 @@ export default function PolicyReviewPage() {
             onChange={e => setFilters({...filters, canton: e.target.value})}
             className="border rounded px-3 py-2"
           >
-            <option value="">All Cantons</option>
+            <option value="">{t('admin:policyReview.filters.allCantons')}</option>
             {Object.entries(CANTON_CODES).map(([code, name]) => (
               <option key={code} value={name}>{name} ({code})</option>
             ))}
@@ -286,7 +295,7 @@ export default function PolicyReviewPage() {
               onChange={e => setFilters({...filters, hasChanges: e.target.checked})}
               className="mr-2"
             />
-            Changed only
+            {t('admin:policyReview.filters.changedOnly')}
           </label>
         </div>
       </div>
@@ -297,7 +306,7 @@ export default function PolicyReviewPage() {
           {policies.length === 0 ? (
             <div className="text-center py-12 bg-gray-50 rounded-lg">
               <DocumentTextIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500">No policies pending review</p>
+              <p className="text-gray-500">{t('admin:policyReview.emptyState.noPolicies')}</p>
             </div>
           ) : (
             policies.map(policy => (
@@ -306,6 +315,7 @@ export default function PolicyReviewPage() {
                 policy={policy}
                 isSelected={selectedPolicy?.id === policy.id}
                 onClick={() => setSelectedPolicy(policy)}
+                t={t}
               />
             ))
           )}
