@@ -1853,7 +1853,12 @@
       "approveSuccess": "Politique approuvée et publiée",
       "rejectSuccess": "Politique rejetée",
       "approveError": "Échec de l'approbation de la politique",
-      "rejectError": "Échec du rejet de la politique"
+      "rejectError": "Échec du rejet de la politique",
+      "extractButton": "Extraire le texte (PDF)",
+      "extracting": "Extraction en cours...",
+      "extracted": "Texte extrait",
+      "extractSuccess": "Texte extrait avec succès pour révision",
+      "extractError": "Échec de l'extraction du texte"
     },
     "policyCard": {
       "unknownDate": "Inconnu"
@@ -1876,7 +1881,7 @@
       "title": "Sources de politiques cantonales",
       "code": "Code :",
       "defaultLanguage": "Langue par défaut :",
-      "addSourceButton": "+ Ajouter une source",
+      "addSourceButton": "Ajouter une source",
       "table": {
         "label": "ÉTIQUETTE",
         "url": "URL",
@@ -1902,7 +1907,10 @@
         "crawling": "Exploration en cours..."
       },
       "crawlSuccess": "Exploration déclenchée avec succès",
-      "crawlError": "Échec du déclenchement de l'exploration"
+      "crawlError": "Échec du déclenchement de l'exploration",
+      "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette source ? Cette action ne peut pas être annulée.",
+      "deleteSuccess": "Source supprimée avec succès",
+      "deleteError": "Échec de la suppression de la source"
     },
     "addSource": {
       "title": "Ajouter une source",

@@ -1,5 +1,6 @@
-import { Controller, Get, Post, Patch, Param, Body, Query, UseGuards, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Param, Body, Query, UseGuards, BadRequestException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { CrawlerScheduler } from './crawler.scheduler';
+import { CrawlerService } from './crawler.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -13,6 +14,7 @@ import { CreateSourceDto, UpdateSourceDto, ReviewQueueQueryDto } from './dto/cra
 export class CrawlerController {
   constructor(
     private crawlerScheduler: CrawlerScheduler,
+    private crawlerService: CrawlerService,
     private prisma: PrismaService,
   ) {}
 
@@ -92,6 +94,30 @@ export class CrawlerController {
       where: { id: parseInt(id) },
       data: dto,
     });
+  }
+
+  @Delete('sources/:id')
+  async deleteSource(@Param('id') id: string) {
+    const sourceId = parseInt(id, 10);
+    if (isNaN(sourceId) || sourceId <= 0) {
+      throw new BadRequestException(`Invalid sourceId: '${id}'. Must be a positive integer.`);
+    }
+
+    // Check if source exists
+    const source = await this.prisma.cantonSource.findUnique({
+      where: { id: sourceId },
+    });
+
+    if (!source) {
+      throw new NotFoundException(`Source with ID ${sourceId} not found`);
+    }
+
+    // Delete the source (cascade will handle related records if configured)
+    await this.prisma.cantonSource.delete({
+      where: { id: sourceId },
+    });
+
+    return { success: true, message: 'Source deleted successfully' };
   }
 
   // Get review queue
@@ -206,6 +232,42 @@ export class CrawlerController {
         errorCode: error.cause?.code || 'UNKNOWN',
         errorDetails: error.cause?.message || error.stack,
       };
+    }
+  }
+
+  // Extract text from PDF (admin-only)
+  @Post('extract-text/:assetId')
+  async extractText(@Param('assetId') assetId: string) {
+    if (!assetId || assetId.trim().length === 0) {
+      throw new BadRequestException('assetId parameter is required');
+    }
+
+    try {
+      const result = await this.crawlerService.extractTextFromPdf(assetId);
+      return {
+        success: true,
+        data: result,
+      };
+    } catch (error: any) {
+      // Return 404 if asset not found
+      if (error.message?.includes('not found')) {
+        throw new NotFoundException(error.message);
+      }
+      
+      // Return 400 for invalid state (not pdf / not crawled / not state policy)
+      if (
+        error.message?.includes('not a STATE_POLICY') ||
+        error.message?.includes('not a PDF') ||
+        error.message?.includes('crawlSourceId is null') ||
+        error.message?.includes('officialUrl')
+      ) {
+        throw new BadRequestException(error.message);
+      }
+      
+      // Return 500 with safe message for extraction failure
+      throw new InternalServerErrorException(
+        error.message || 'Failed to extract text from PDF'
+      );
     }
   }
 }

@@ -1989,6 +1989,11 @@
       "approveButton": "Approve & Publish",
       "rejectButton": "Reject",
       "rejectPrompt": "Reason for rejection:",
+      "extractButton": "Extract text (PDF)",
+      "extracting": "Extracting...",
+      "extracted": "Text extracted",
+      "extractSuccess": "Text extracted successfully for review",
+      "extractError": "Failed to extract text",
       "approveSuccess": "Policy approved and published",
       "rejectSuccess": "Policy rejected",
       "approveError": "Failed to approve policy",
@@ -2015,7 +2020,7 @@
       "title": "Canton Policy Sources",
       "code": "Code:",
       "defaultLanguage": "Default language:",
-      "addSourceButton": "+ Add Source",
+      "addSourceButton": "Add Source",
       "table": {
         "label": "LABEL",
         "url": "URL",
@@ -2041,7 +2046,10 @@
         "crawling": "Crawling..."
       },
       "crawlSuccess": "Crawl triggered successfully",
-      "crawlError": "Failed to trigger crawl"
+      "crawlError": "Failed to trigger crawl",
+      "deleteConfirm": "Are you sure you want to delete this source? This action cannot be undone.",
+      "deleteSuccess": "Source deleted successfully",
+      "deleteError": "Failed to delete source"
     },
     "addSource": {
       "title": "Add Source",

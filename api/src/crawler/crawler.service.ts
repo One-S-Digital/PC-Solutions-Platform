@@ -530,5 +530,106 @@ export class CrawlerService {
     const pathname = new URL(url).pathname;
     return pathname.split('/').pop() || 'document';
   }
+
+  /**
+   * Extract text from a PDF document for admin review.
+   * This is a manual operation triggered by admins, not part of the automatic crawl process.
+   * 
+   * @param assetId The asset ID to extract text for
+   * @returns The extracted text length and whether preview was updated
+   * @throws Error if asset is not valid for extraction
+   */
+  async extractTextFromPdf(assetId: string): Promise<{ extractedLength: number; previewUpdated: boolean }> {
+    // Validate asset exists and is STATE_POLICY
+    const asset = await this.prisma.asset.findUnique({
+      where: { id: assetId },
+    });
+
+    if (!asset) {
+      throw new Error(`Asset with ID ${assetId} not found`);
+    }
+
+    if (asset.category !== 'STATE_POLICY') {
+      throw new Error(`Asset is not a STATE_POLICY. Category: ${asset.category}`);
+    }
+
+    if (asset.mimeType !== 'application/pdf') {
+      throw new Error(`Asset is not a PDF. MIME type: ${asset.mimeType}`);
+    }
+
+    if (!asset.crawlSourceId) {
+      throw new Error('Asset was not created by crawler (crawlSourceId is null)');
+    }
+
+    if (!asset.officialUrl) {
+      throw new Error('Asset does not have an officialUrl to fetch from');
+    }
+
+    // Validate URL against SSRF whitelist
+    this.validateUrl(asset.officialUrl);
+
+    // Fetch PDF buffer
+    this.logger.log(`Fetching PDF from ${asset.officialUrl} for text extraction`);
+    const buffer = await this.fetchBuffer(asset.officialUrl);
+
+    // Extract text using PdfParserService
+    this.logger.log(`Extracting text from PDF (${buffer.length} bytes)`);
+    const extractedText = await this.pdfParser.extractText(buffer);
+
+    if (!extractedText || extractedText.trim().length === 0) {
+      throw new Error('No text could be extracted from the PDF');
+    }
+
+    // Generate preview (first 300 characters)
+    const preview = extractedText.slice(0, 300).trim();
+
+    // Find the latest crawl history entry for this asset, or create one if missing
+    let latestHistory = await this.prisma.policyCrawlHistory.findFirst({
+      where: { assetId },
+      orderBy: { fetchedAt: 'desc' },
+    });
+
+    if (!latestHistory) {
+      // Create a new crawl history entry if none exists
+      latestHistory = await this.prisma.policyCrawlHistory.create({
+        data: {
+          assetId,
+          sourceId: asset.crawlSourceId,
+          contentHash: '', // Empty hash since we're just extracting text
+          changeType: 'new',
+          contentText: extractedText.slice(0, 50000), // Limit to 50KB for database storage
+        },
+      });
+    } else {
+      // Update the latest history entry with extracted text
+      await this.prisma.policyCrawlHistory.update({
+        where: { id: latestHistory.id },
+        data: {
+          contentText: extractedText.slice(0, 50000), // Limit to 50KB for database storage
+        },
+      });
+    }
+
+    // Update asset.contentPreview only if it's empty
+    const wasPreviewEmpty = !asset.contentPreview || asset.contentPreview.trim().length === 0;
+    let previewUpdated = false;
+    
+    if (wasPreviewEmpty) {
+      await this.prisma.asset.update({
+        where: { id: assetId },
+        data: {
+          contentPreview: preview,
+        },
+      });
+      previewUpdated = true;
+    }
+
+    this.logger.log(`Text extraction completed: ${extractedText.length} characters extracted, preview updated: ${previewUpdated}`);
+
+    return {
+      extractedLength: extractedText.length,
+      previewUpdated,
+    };
+  }
 }
 

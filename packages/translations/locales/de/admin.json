@@ -1853,7 +1853,12 @@
       "approveSuccess": "Richtlinie genehmigt und veröffentlicht",
       "rejectSuccess": "Richtlinie abgelehnt",
       "approveError": "Richtlinie konnte nicht genehmigt werden",
-      "rejectError": "Richtlinie konnte nicht abgelehnt werden"
+      "rejectError": "Richtlinie konnte nicht abgelehnt werden",
+      "extractButton": "Text extrahieren (PDF)",
+      "extracting": "Wird extrahiert...",
+      "extracted": "Text extrahiert",
+      "extractSuccess": "Text erfolgreich zur Überprüfung extrahiert",
+      "extractError": "Text konnte nicht extrahiert werden"
     },
     "policyCard": {
       "unknownDate": "Unbekannt"
@@ -1876,7 +1881,7 @@
       "title": "Kantonale Richtlinienquellen",
       "code": "Code:",
       "defaultLanguage": "Standardsprache:",
-      "addSourceButton": "+ Quelle hinzufügen",
+      "addSourceButton": "Quelle hinzufügen",
       "table": {
         "label": "BEZEICHNUNG",
         "url": "URL",
@@ -1902,7 +1907,10 @@
         "crawling": "Wird gecrawlt..."
       },
       "crawlSuccess": "Crawl erfolgreich ausgelöst",
-      "crawlError": "Crawl konnte nicht ausgelöst werden"
+      "crawlError": "Crawl konnte nicht ausgelöst werden",
+      "deleteConfirm": "Möchten Sie diese Quelle wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "deleteSuccess": "Quelle erfolgreich gelöscht",
+      "deleteError": "Fehler beim Löschen der Quelle"
     },
     "addSource": {
       "title": "Quelle hinzufügen",

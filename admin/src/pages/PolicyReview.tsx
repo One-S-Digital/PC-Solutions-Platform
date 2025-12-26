@@ -24,6 +24,9 @@ interface StatePolicyAsset {
   language?: string;
   lastCrawledAt?: string;
   crawlStatus?: string;
+  mimeType?: string;
+  crawlSourceId?: number | null;
+  category?: string;
 }
 
 interface PolicyReviewFormData {
@@ -84,6 +87,7 @@ const PolicyReviewPanel: React.FC<{
   onClose: () => void;
 }> = ({ policy, onApprove, onReject, onClose }) => {
   const { t } = useTranslation(['content', 'admin']);
+  const apiClient = useApiClient();
   const [form, setForm] = useState<PolicyReviewFormData>({
     title: policy.title,
     contentCategory: policy.contentCategory || 'Other',
@@ -91,6 +95,15 @@ const PolicyReviewPanel: React.FC<{
     tags: policy.tags || [],
     contentPreview: policy.contentPreview || '',
   });
+  const [extracting, setExtracting] = useState(false);
+  const [extracted, setExtracted] = useState(false);
+
+  // Check if Extract text button should be shown
+  const canExtractText = 
+    policy.category === 'STATE_POLICY' &&
+    policy.mimeType === 'application/pdf' &&
+    policy.crawlSourceId !== null &&
+    policy.crawlSourceId !== undefined;
 
   const handleApprove = () => {
     onApprove(policy.id, form);
@@ -100,6 +113,24 @@ const PolicyReviewPanel: React.FC<{
     const reason = prompt(t('admin:policyReview.panel.rejectPrompt'));
     if (reason) {
       onReject(policy.id, reason);
+    }
+  };
+
+  const handleExtractText = async () => {
+    try {
+      setExtracting(true);
+      const response = await apiClient.post(`/admin/crawler/extract-text/${policy.id}`);
+      if (response.data?.success) {
+        setExtracted(true);
+        // Show success toast (using alert for now, can be replaced with toast library)
+        alert(t('admin:policyReview.panel.extractSuccess'));
+        // Refresh the policy data to show updated preview
+        window.location.reload();
+      }
+    } catch (error: any) {
+      alert(`${t('admin:policyReview.panel.extractError')}: ${error.response?.data?.message || error.message}`);
+    } finally {
+      setExtracting(false);
     }
   };
 
@@ -173,6 +204,34 @@ const PolicyReviewPanel: React.FC<{
           />
         </div>
       </div>
+
+      {/* Extract text button (only for PDFs from crawler) */}
+      {canExtractText && (
+        <div className="mt-4 pt-4 border-t">
+          <button
+            onClick={handleExtractText}
+            disabled={extracting || extracted}
+            className="w-full px-4 py-2 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          >
+            {extracting ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-700"></div>
+                {t('admin:policyReview.panel.extracting')}
+              </>
+            ) : extracted ? (
+              <>
+                <CheckCircleIcon className="h-5 w-5" />
+                {t('admin:policyReview.panel.extracted')}
+              </>
+            ) : (
+              <>
+                <DocumentTextIcon className="h-5 w-5" />
+                {t('admin:policyReview.panel.extractButton')}
+              </>
+            )}
+          </button>
+        </div>
+      )}
 
       {/* Action buttons */}
       <div className="flex space-x-3 mt-6 pt-6 border-t">

@@ -10,6 +10,7 @@ import {
   CheckCircleIcon,
   XCircleIcon,
   ClockIcon,
+  TrashIcon,
 } from '@heroicons/react/24/outline';
 
 interface Canton {
@@ -374,6 +375,7 @@ export default function CantonDetailPage() {
   const [showAddSource, setShowAddSource] = useState(false);
   const [editingSource, setEditingSource] = useState<CantonSource | null>(null);
   const [triggeringCrawl, setTriggeringCrawl] = useState<number | null>(null);
+  const [deletingSource, setDeletingSource] = useState<number | null>(null);
 
   useEffect(() => {
     if (code) {
@@ -404,13 +406,41 @@ export default function CantonDetailPage() {
     
     setTriggeringCrawl(sourceId);
     try {
-      await apiClient.post(`/admin/crawler/trigger/${sourceId}`);
-      alert(t('admin:cantons.detail.crawlSuccess'));
+      const response = await apiClient.post(`/admin/crawler/trigger/${sourceId}`);
+      const results = response.data?.data || response.data;
+      
+      // Show detailed results
+      const message = results 
+        ? `Crawl completed!\n\n` +
+          `Discovered: ${results.discovered || 0} links\n` +
+          `Created: ${results.created || 0} new documents\n` +
+          `Updated: ${results.updated || 0} changed documents\n` +
+          `Unchanged: ${results.unchanged || 0} documents\n` +
+          `Skipped: ${results.skipped || 0} documents\n` +
+          (results.errors?.length > 0 ? `\nErrors: ${results.errors.length}` : '')
+        : t('admin:cantons.detail.crawlSuccess');
+      
+      alert(message);
       fetchData();
     } catch (err: any) {
       alert(`${t('admin:cantons.detail.crawlError')}: ${err.response?.data?.message || err.message}`);
     } finally {
       setTriggeringCrawl(null);
+    }
+  };
+
+  const handleDeleteSource = async (sourceId: number) => {
+    if (!confirm(t('admin:cantons.detail.deleteConfirm'))) return;
+    
+    setDeletingSource(sourceId);
+    try {
+      await apiClient.delete(`/admin/crawler/sources/${sourceId}`);
+      alert(t('admin:cantons.detail.deleteSuccess'));
+      fetchData();
+    } catch (err: any) {
+      alert(`${t('admin:cantons.detail.deleteError')}: ${err.response?.data?.message || err.message}`);
+    } finally {
+      setDeletingSource(null);
     }
   };
 
@@ -502,6 +532,14 @@ export default function CantonDetailPage() {
                 <td className="px-4 py-3 text-sm">
                   <div className="flex space-x-2">
                     <button 
+                      onClick={() => handleTriggerCrawl(source.id)}
+                      disabled={triggeringCrawl === source.id}
+                      className="text-blue-600 hover:underline text-sm disabled:opacity-50 flex items-center gap-1"
+                    >
+                      <PlayIcon className="h-4 w-4" />
+                      {triggeringCrawl === source.id ? t('admin:cantons.detail.status.crawling') : t('admin:cantons.detail.actions.crawlNow')}
+                    </button>
+                    <button 
                       onClick={() => setEditingSource(source)}
                       className="text-gray-600 hover:text-gray-900 text-sm flex items-center gap-1"
                       title="Edit source"
@@ -509,12 +547,12 @@ export default function CantonDetailPage() {
                       <PencilIcon className="h-4 w-4" />
                     </button>
                     <button 
-                      onClick={() => handleTriggerCrawl(source.id)}
-                      disabled={triggeringCrawl === source.id}
-                      className="text-blue-600 hover:underline text-sm disabled:opacity-50 flex items-center gap-1"
+                      onClick={() => handleDeleteSource(source.id)}
+                      disabled={deletingSource === source.id}
+                      className="text-red-600 hover:text-red-900 text-sm disabled:opacity-50 flex items-center gap-1"
+                      title="Delete source"
                     >
-                      <PlayIcon className="h-4 w-4" />
-                      {triggeringCrawl === source.id ? t('admin:cantons.detail.status.crawling') : t('admin:cantons.detail.actions.crawlNow')}
+                      <TrashIcon className="h-4 w-4" />
                     </button>
                   </div>
                 </td>
