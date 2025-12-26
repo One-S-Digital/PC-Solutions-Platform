@@ -444,6 +444,12 @@ const LoginPage: React.FC = () => {
               {t('common:buttons.signup')}
             </Link>
           </p>
+          <p>
+            {t('common:loginPage.viewPlansPrompt')}{' '}
+            <Link to="/pricing" className="font-medium text-swiss-mint hover:underline">
+              {t('common:loginPage.viewPlans')}
+            </Link>
+          </p>
           <div className="border-t border-gray-200 pt-2 sm:pt-3 mt-2 sm:mt-3">
             <p className="text-xs text-gray-600 text-center mb-1.5 sm:mb-2">
               {t('common:loginPage.parentLookingForCreche')}
