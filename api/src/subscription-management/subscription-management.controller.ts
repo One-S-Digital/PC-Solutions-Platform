@@ -1016,7 +1016,8 @@ export class UserSubscriptionController {
     @Request() req: any,
   ) {
     const userContext = req.context;
-    const userId = userContext?.userId;
+    // Use profileUserId (database User.id) not userId (Clerk ID) for foreign key constraint
+    const userId = userContext?.profileUserId || req.user?.id;
     const organizationId = userContext?.organizationId;
 
     // Create the subscription request using the new service
