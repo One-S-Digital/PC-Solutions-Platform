@@ -1,3 +1,9 @@
+// Initialize Sentry as early as possible, before other imports
+import { initSentry } from './sentry.instrument';
+
+// Initialize Sentry
+initSentry();
+
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, BadRequestException } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
@@ -6,6 +12,7 @@ import * as express from 'express';
 import { AppModule } from './app.module';
 import { AppLoggerService } from './common/logger.service';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
+import { SentryExceptionFilter } from './common/filters/sentry-exception.filter';
 
 async function bootstrap() {
   // Trigger deployment to run database migrations
@@ -110,6 +117,11 @@ async function bootstrap() {
 
   // Global exception filter
   app.useGlobalFilters(new AllExceptionsFilter());
+  
+  // Add Sentry exception filter for error tracking (should be added after AllExceptionsFilter)
+  if (process.env.SENTRY_DSN) {
+    app.useGlobalFilters(new SentryExceptionFilter());
+  }
 
   // Set global prefix
   app.setGlobalPrefix('api');

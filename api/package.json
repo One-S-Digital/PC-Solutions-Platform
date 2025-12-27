@@ -57,7 +57,6 @@
     "create:test-users": "ts-node scripts/create-test-users.ts"
   },
   "dependencies": {
-    "@prisma/client": "^6.17.1",
     "@aws-sdk/client-s3": "^3.888.0",
     "@aws-sdk/s3-request-presigner": "^3.888.0",
     "@casl/ability": "^6.7.1",
@@ -78,7 +77,10 @@
     "@nestjs/terminus": "^10.2.3",
     "@nestjs/throttler": "^6.4.0",
     "@nestjs/websockets": "^11.0.1",
+    "@prisma/client": "^6.17.1",
     "@sendgrid/mail": "^8.1.5",
+    "@sentry/nestjs": "^10.32.1",
+    "@sentry/profiling-node": "^10.32.1",
     "@types/multer": "^2.0.0",
     "@workspace/types": "workspace:*",
     "bcryptjs": "^2.4.3",
