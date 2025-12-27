@@ -2337,3 +2337,16 @@ model Partner {
   @@index([displayOrder])
   @@map("partners")
 }
+
+// Seed Record - Tracks completed database seeds to prevent re-running
+model SeedRecord {
+  id          String   @id @default(uuid())
+  seedName    String   @unique @map("seed_name")
+  version     String?  // Optional version for tracking seed versions
+  executedAt  DateTime @default(now()) @map("executed_at")
+  executedBy  String?  @map("executed_by") // system, cli, etc.
+  metadata    Json?    // Additional data about the seed run
+  
+  @@index([seedName])
+  @@map("seed_records")
+}
