@@ -161,5 +161,18 @@
     "expiringSoon": "Läuft bald ab",
     "expired": "Abgelaufen",
     "pending": "Ausstehend"
-  }
+  },
+  "pricingTitle": "Wählen Sie Ihren Plan",
+  "pricingSubtitle": "Wählen Sie den perfekten Plan für Ihre Bedürfnisse. Alle Pläne beinhalten unsere Kernfunktionen und dedizierten Support.",
+  "daycareHeader": "Für Kindertagesstätten",
+  "daycareDescription": "Umfassende Lösungen für die Verwaltung Ihrer Kindertagesstätte",
+  "partnersHeader": "Für Lieferanten & Dienstleister",
+  "partnersDescription": "Flexible Preisgestaltung nach Ihren geschäftlichen Anforderungen",
+  "popular": "Am beliebtesten",
+  "monthly": "Monatlich",
+  "annually": "Jährlich",
+  "save10": "10% sparen",
+  "savePercentage": "{{percentage}} sparen",
+  "needHelp": "Brauchen Sie Hilfe bei der Auswahl?",
+  "contactMessage": "Unser Team hilft Ihnen gerne, den perfekten Plan für Ihre Bedürfnisse zu finden. Kontaktieren Sie uns für eine persönliche Beratung."
 }

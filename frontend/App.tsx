@@ -92,6 +92,7 @@ import OrganizationProfileViewPage from './pages/profile/OrganizationProfileView
 import EducatorProfileViewPage from './pages/profile/EducatorProfileViewPage';
 import LoginPageE2E from './pages/LoginPageE2E';
 import SignupPageE2E from './pages/SignupPageE2E';
+import PricingPage from './pages/PricingPage';
 
 
 const ProtectedRoute: React.FC<{ children: React.ReactElement; roles: UserRole[] }> = ({ children, roles }): React.ReactElement | null => {
@@ -567,6 +568,7 @@ const App: React.FC = () => {
               <Routes>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignupPage />} />
+                <Route path="/pricing" element={<PricingPage />} />
                 <Route path="/partners" element={<PublicPartnersPage />} />
                 <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
                 <Route path="/*" element={<ProtectedLayout />} />
