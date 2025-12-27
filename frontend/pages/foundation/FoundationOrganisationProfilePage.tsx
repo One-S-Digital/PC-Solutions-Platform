@@ -84,8 +84,21 @@ const InfoItem: React.FC<InfoItemProps> = ({ icon: Icon, label, value }) => (
   </div>
 );
 
+// Helper to get translation key for pedagogy values
+const PEDAGOGY_KEY_MAP: Record<string, string> = {
+  'Montessori': 'montessori',
+  'Reggio Emilia': 'reggioEmilia',
+  'Waldorf': 'waldorf',
+  'Play-based': 'playBased',
+  'Academic-focused': 'academicFocused',
+  'Bilingual': 'bilingual',
+  'Nature-based': 'natureBased',
+  'Inclusive': 'inclusive',
+  'Other': 'other',
+};
+
 const FoundationOrganisationProfilePage: React.FC = () => {
-  const { t, i18n } = useTranslation(['dashboard', 'common', 'profile']);
+  const { t, i18n } = useTranslation(['dashboard', 'common', 'profile', 'settings']);
   const { currentUser } = useAppContext();
   const { request } = useAuthenticatedApi();
   const { addNotification } = useNotifications();
@@ -114,7 +127,7 @@ const FoundationOrganisationProfilePage: React.FC = () => {
     }).format(parsed);
   };
 
-  const renderTagList = (items?: string[], emptyMessage?: string) => {
+  const renderTagList = (items?: string[], emptyMessage?: string, translationPrefix?: string) => {
     if (!items || items.length === 0) {
       return <p className="text-sm text-gray-500">{emptyMessage ?? notProvidedLabel}</p>;
     }
@@ -132,14 +145,24 @@ const FoundationOrganisationProfilePage: React.FC = () => {
 
     return (
       <div className="flex flex-wrap gap-2">
-        {uniqueItems.map(item => (
-          <span
-            key={item.toLowerCase()}
-            className="inline-flex items-center rounded-full bg-swiss-mint/10 px-2.5 py-1 text-xs font-medium text-swiss-mint"
-          >
-            {item}
-          </span>
-        ))}
+        {uniqueItems.map(item => {
+          // If a translation prefix is provided, try to translate the item
+          let displayText = item;
+          if (translationPrefix) {
+            const translationKey = PEDAGOGY_KEY_MAP[item];
+            if (translationKey) {
+              displayText = t(`${translationPrefix}.${translationKey}`, item);
+            }
+          }
+          return (
+            <span
+              key={item.toLowerCase()}
+              className="inline-flex items-center rounded-full bg-swiss-mint/10 px-2.5 py-1 text-xs font-medium text-swiss-mint"
+            >
+              {displayText}
+            </span>
+          );
+        })}
       </div>
     );
   };
@@ -473,6 +496,7 @@ const FoundationOrganisationProfilePage: React.FC = () => {
                   value={renderTagList(
                     pedagogy,
                     t('foundationOrganisationProfilePage.empty.pedagogy', 'No pedagogy styles recorded.'),
+                    'settings:companyProfile.pedagogyOptions',
                   )}
                 />
               </div>

@@ -106,6 +106,17 @@
     "capacityPlaceholder": "Enter number of children",
     "pedagogy": "Pedagogical Approaches",
     "pedagogyHint": "Select all that apply",
+    "pedagogyOptions": {
+      "montessori": "Montessori",
+      "reggioEmilia": "Reggio Emilia",
+      "waldorf": "Waldorf",
+      "playBased": "Play-based",
+      "academicFocused": "Academic-focused",
+      "bilingual": "Bilingual",
+      "natureBased": "Nature-based",
+      "inclusive": "Inclusive",
+      "other": "Other"
+    },
     "supplierInfo": "Supplier Information",
     "productCategories": "Product Categories",
     "productCategoriesPlaceholder": "Type or select categories...",

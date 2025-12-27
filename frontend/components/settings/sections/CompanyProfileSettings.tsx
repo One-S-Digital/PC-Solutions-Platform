@@ -35,16 +35,17 @@ const SUPPORTED_LANGUAGES_OPTIONS_BASE: { labelKey: string, value: SupportedLang
     { labelKey: 'common:languageSwitcher.de', value: 'DE'},
 ];
 
+// Pedagogy options with translation keys - values are stored in database
 const PEDAGOGY_OPTIONS = [
-  'Montessori',
-  'Reggio Emilia',
-  'Waldorf',
-  'Play-based',
-  'Academic-focused',
-  'Bilingual',
-  'Nature-based',
-  'Inclusive',
-  'Other'
+  { key: 'montessori', value: 'Montessori' },
+  { key: 'reggioEmilia', value: 'Reggio Emilia' },
+  { key: 'waldorf', value: 'Waldorf' },
+  { key: 'playBased', value: 'Play-based' },
+  { key: 'academicFocused', value: 'Academic-focused' },
+  { key: 'bilingual', value: 'Bilingual' },
+  { key: 'natureBased', value: 'Nature-based' },
+  { key: 'inclusive', value: 'Inclusive' },
+  { key: 'other', value: 'Other' },
 ];
 
 // Legacy enum options for backward compatibility
@@ -508,16 +509,16 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                   <div className="flex flex-wrap gap-2">
                     {PEDAGOGY_OPTIONS.map(option => (
                       <button
-                        key={option}
+                        key={option.value}
                         type="button"
-                        onClick={() => handleMultiSelectChange('pedagogy', option)}
+                        onClick={() => handleMultiSelectChange('pedagogy', option.value)}
                         className={`px-3 py-1.5 text-sm font-medium rounded-full border transition-colors duration-150 ${
-                          (settings.pedagogy || []).includes(option)
+                          (settings.pedagogy || []).includes(option.value)
                             ? 'bg-swiss-mint text-white border-swiss-mint'
                             : 'bg-white text-gray-700 border-gray-300 hover:border-swiss-teal'
                         }`}
                       >
-                        {option}
+                        {t(`settings:companyProfile.pedagogyOptions.${option.key}`, option.value)}
                       </button>
                     ))}
                   </div>
