@@ -161,5 +161,18 @@
     "expiringSoon": "Expiring Soon",
     "expired": "Expired",
     "pending": "Pending"
-  }
+  },
+  "pricingTitle": "Choose Your Plan",
+  "pricingSubtitle": "Select the perfect plan for your needs. All plans include our core features and dedicated support.",
+  "daycareHeader": "For Daycare Centers",
+  "daycareDescription": "Comprehensive solutions for managing your daycare operations",
+  "partnersHeader": "For Suppliers & Service Providers",
+  "partnersDescription": "Flexible pricing based on your business needs",
+  "popular": "Most Popular",
+  "monthly": "Monthly",
+  "annually": "Annually",
+  "save10": "Save 10%",
+  "savePercentage": "Save {{percentage}}",
+  "needHelp": "Need help choosing?",
+  "contactMessage": "Our team is here to help you find the perfect plan for your needs. Contact us for a personalized consultation."
 }

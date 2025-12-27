@@ -37,7 +37,7 @@ const SignupPage: React.FC = () => {
   // 1. OAuth users (Google) who signed in but haven't selected a role yet
   // 2. Email/password users whose webhook failed to create their AppUser record
   // Important: Also check !isAuthLoading to avoid false positive while user data is being fetched
-  const hasOAuthAccount = clerkUser?.externalAccounts && clerkUser.externalAccounts.length > 0;
+  const hasOAuthAccount = clerkUser && clerkUser.externalAccounts && clerkUser.externalAccounts.length > 0;
   
   // Check if user needs to complete profile (signed in to Clerk but no backend user)
   // This applies to BOTH OAuth users AND email/password users with failed webhooks
@@ -100,7 +100,9 @@ const SignupPage: React.FC = () => {
       setVerificationError(message);
     } finally {
       console.log('[Signup Debug] waitForWebhookProcessing: cleaning up polling');
-      stopPollingCleanup?.();
+      if (stopPollingCleanup) {
+        stopPollingCleanup();
+      }
     }
   };
 
@@ -173,7 +175,7 @@ const SignupPage: React.FC = () => {
     if (needsProfileCompletion && clerkUser) {
       setFormData(prev => ({
         ...prev,
-        email: clerkUser.primaryEmailAddress?.emailAddress || prev.email,
+        email: (clerkUser.primaryEmailAddress && clerkUser.primaryEmailAddress.emailAddress) || prev.email,
         contactPerson: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || prev.contactPerson,
       }));
     }
@@ -346,8 +348,9 @@ const SignupPage: React.FC = () => {
 
   const handleCaptchaError = (error: any) => {
     setCaptchaToken(null);
-    setCaptchaError(t('signup:errors.captchaError'));
-    console.error('CAPTCHA error');
+    const errorMessage = t('signup:errors.captchaError', 'CAPTCHA verification failed. Please refresh the page and try again.');
+    setCaptchaError(errorMessage);
+    console.error('CAPTCHA error:', error);
   };
 
   // Cooldown timer for resending verification code
@@ -379,7 +382,7 @@ const SignupPage: React.FC = () => {
 
        const payload = {
            role: SIGNUP_ROLE_TO_USER_ROLE[selectedRole!],
-           email: formData.email || clerkUser?.primaryEmailAddress?.emailAddress,  // Include email for pending users
+           email: formData.email || (clerkUser && clerkUser.primaryEmailAddress && clerkUser.primaryEmailAddress.emailAddress),  // Include email for pending users
            organisationName: formData.organisationName || undefined,
            contactPerson: formData.contactPerson || undefined,
            phone: formData.phone || undefined,
@@ -432,7 +435,14 @@ const SignupPage: React.FC = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!selectedRole) return;
+    e.stopPropagation(); // Prevent event bubbling in older browsers
+    
+    if (!selectedRole) {
+      // This shouldn't happen in normal flow since step 2 requires selectedRole
+      // Navigate back to role selection as a safeguard
+      setCurrentStep(1);
+      return;
+    }
     
     // If user is already authenticated but missing backend profile, complete their profile
     // This handles both:
@@ -504,7 +514,6 @@ const SignupPage: React.FC = () => {
       }
     } catch (err: any) {
       console.error('Signup error');
-      const errorCode = err.errors?.[0]?.code || 'unknown';
       let errorMessage = 'An error occurred during signup';
       
       if (err.errors && err.errors.length > 0) {
@@ -592,9 +601,9 @@ const SignupPage: React.FC = () => {
       console.error('Verification error');
       let errorMessage = t('signup:errors.invalidVerificationCode');
 
-      if (err?.errors && err.errors.length > 0) {
+      if (err && err.errors && err.errors.length > 0) {
         const firstError = err.errors[0];
-        const clerkCode = firstError?.code as string | undefined;
+        const clerkCode = (firstError && firstError.code) as string | undefined;
 
         if (
           clerkCode === 'form_code_expired' ||
@@ -606,7 +615,7 @@ const SignupPage: React.FC = () => {
             'This verification code has expired. Please request a new one.'
           );
         } else {
-          errorMessage = firstError?.message || errorMessage;
+          errorMessage = (firstError && firstError.message) || errorMessage;
         }
       } else if (err instanceof Error && err.message) {
         errorMessage = err.message;
@@ -634,7 +643,7 @@ const SignupPage: React.FC = () => {
       setResendCooldownSeconds(30);
     } catch (err: any) {
       let message = t('common:resendVerificationCodeFailed', 'Failed to resend the code. Please try again.');
-      if (err?.errors?.[0]?.message) {
+      if (err && err.errors && err.errors[0] && err.errors[0].message) {
         message = err.errors[0].message;
       } else if (err instanceof Error && err.message) {
         message = err.message;
@@ -673,7 +682,7 @@ const SignupPage: React.FC = () => {
             }
             id={name} 
             name={name} 
-            value={String(formData[name as keyof SignupFormData] ?? '')}
+            value={String(formData[name as keyof SignupFormData] != null ? formData[name as keyof SignupFormData] : '')}
             onChange={handleChange}
             className={`${STANDARD_INPUT_FIELD} ${errors[name as keyof SignupFormData] ? 'border-swiss-coral' : ''}`}
             placeholder={placeholderKey ? t(placeholderKey) : ''} 
@@ -737,7 +746,7 @@ const SignupPage: React.FC = () => {
         ) : (
           <>
             <div className="text-center mb-2">
-              {settings?.logoAsset?.publicUrl ? (
+              {(settings && settings.logoAsset && settings.logoAsset.publicUrl) ? (
                 <img 
                   src={settings.logoAsset.publicUrl} 
                   alt={settings.siteName || APP_NAME} 
@@ -921,6 +930,9 @@ const SignupPage: React.FC = () => {
 
                     {/* CAPTCHA Section */}
                     <div className="pt-4">
+                      <label className="block text-sm font-medium text-gray-700 mb-2 text-center">
+                        {t('signup:labels.verifyCaptcha', 'Please verify you are human')}
+                      </label>
                       <Captcha
                         siteKey={HCAPTCHA_SITE_KEY}
                         theme={HCAPTCHA_THEME}
@@ -930,7 +942,14 @@ const SignupPage: React.FC = () => {
                         onError={handleCaptchaError}
                         className="flex justify-center"
                       />
-                      {captchaError && <p className="text-xs text-swiss-coral mt-2 text-center">{captchaError}</p>}
+                      {captchaError && (
+                        <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded">
+                          <p className="text-xs text-red-700 text-center">{captchaError}</p>
+                          <p className="text-xs text-red-600 text-center mt-1">
+                            {t('signup:errors.captchaRefreshHint', 'Try refreshing the page or using a different browser.')}
+                          </p>
+                        </div>
+                      )}
                     </div>
                     
                     <div className="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-3 pt-3 sm:pt-4">

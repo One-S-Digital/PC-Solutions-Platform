@@ -161,5 +161,18 @@
     "expiringSoon": "Expire bientôt",
     "expired": "Expiré",
     "pending": "En attente"
-  }
+  },
+  "pricingTitle": "Choisissez votre forfait",
+  "pricingSubtitle": "Sélectionnez le forfait parfait pour vos besoins. Tous les forfaits incluent nos fonctionnalités de base et un support dédié.",
+  "daycareHeader": "Pour les crèches",
+  "daycareDescription": "Solutions complètes pour gérer vos opérations de crèche",
+  "partnersHeader": "Pour les fournisseurs et prestataires de services",
+  "partnersDescription": "Tarification flexible selon vos besoins professionnels",
+  "popular": "Le plus populaire",
+  "monthly": "Mensuel",
+  "annually": "Annuel",
+  "save10": "Économisez 10%",
+  "savePercentage": "Économisez {{percentage}}",
+  "needHelp": "Besoin d'aide pour choisir?",
+  "contactMessage": "Notre équipe est là pour vous aider à trouver le forfait parfait pour vos besoins. Contactez-nous pour une consultation personnalisée."
 }

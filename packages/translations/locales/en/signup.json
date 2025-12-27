@@ -51,6 +51,8 @@
       "phoneRequired": "Phone number is required",
       "termsRequired": "You must accept the terms and conditions",
       "captchaError": "CAPTCHA verification failed. Please try again",
+      "captchaRefreshHint": "Try refreshing the page or using a different browser.",
+      "roleRequired": "Please select a role first",
       "emailInvalid": "Please enter a valid email address"
     },
     "placeholders": {
@@ -269,7 +271,8 @@
     "password": "Password",
     "canton": "Canton",
     "email": "Email",
-    "phone": "Phone"
+    "phone": "Phone",
+    "verifyCaptcha": "Please verify you are human"
   },
   "submissionSuccessTitle": "Account Created Successfully",
   "buttons": {
