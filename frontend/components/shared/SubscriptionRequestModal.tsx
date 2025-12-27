@@ -29,7 +29,7 @@ export interface SubscriptionRequestFormData {
   contactPhone?: string;
   preferredContact: 'email' | 'phone';
   message?: string;
-  organizationId?: string;
+  // Note: organizationId is obtained from auth context on the backend
 }
 
 const SubscriptionRequestModal: React.FC<SubscriptionRequestModalProps> = ({
@@ -138,7 +138,7 @@ const SubscriptionRequestModal: React.FC<SubscriptionRequestModalProps> = ({
         contactPhone: contactPhone.trim() || undefined,
         preferredContact,
         message: composedMessage,
-        organizationId: currentUser?.orgId,
+        // Note: organizationId is obtained from auth context on the backend
       });
       setSubmitted(true);
     } catch (err) {

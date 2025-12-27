@@ -148,7 +148,7 @@ export interface SubscriptionRequestPayload {
   contactPhone?: string;
   preferredContact?: 'email' | 'phone';
   message?: string;
-  organizationId?: string;
+  // Note: organizationId is obtained from auth context on the backend, not sent by frontend
   notes?: string;
 }
 

@@ -84,7 +84,7 @@ const PricingPage: React.FC = () => {
         contactPhone: data.contactPhone,
         preferredContact: data.preferredContact,
         message: data.message,
-        organizationId: data.organizationId,
+        // Note: organizationId is obtained from auth context on the backend
       });
     } catch (error) {
       // Re-throw to let the modal handle and display the error
