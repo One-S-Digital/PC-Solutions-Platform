@@ -157,8 +157,9 @@ export interface SubscriptionRequestPayload {
  */
 export interface SubscriptionRequestResponse {
   message: string;
-  subscriptionId: string;
-  status: SubscriptionStatus;
+  requestId: string;
+  status: string;
+  estimatedResponseTime: string;
   /** Future: Stripe Checkout URL for payment */
   checkoutUrl: string | null;
 }
@@ -470,6 +471,13 @@ export const SubscriptionProvider: React.FC<{ children: ReactNode }> = ({ childr
    */
   const requestSubscription = useCallback(
     async (payload: SubscriptionRequestPayload): Promise<SubscriptionRequestResponse> => {
+      console.log('📋 Submitting subscription request:', {
+        planId: payload.planId,
+        tier: payload.tier,
+        billingPeriod: payload.billingPeriod,
+        contactEmail: payload.contactEmail,
+      });
+
       const response = await authenticatedRequest<SubscriptionRequestResponse>(
         '/subscriptions/request',
         {
@@ -479,8 +487,11 @@ export const SubscriptionProvider: React.FC<{ children: ReactNode }> = ({ childr
       );
 
       if (!response.success || !response.data) {
+        console.error('❌ Subscription request failed:', response);
         throw new Error(response.message || t('subscription:errors.requestFailed'));
       }
+
+      console.log('✅ Subscription request successful:', response.data);
 
       // Refresh subscription data after request
       await fetchSubscription();

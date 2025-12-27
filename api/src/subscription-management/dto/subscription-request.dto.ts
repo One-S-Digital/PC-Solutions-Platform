@@ -53,7 +53,7 @@ export class CreateSubscriptionRequestDto {
   contactPhone?: string;
 
   @IsOptional()
-  @IsEnum(['email', 'phone'])
+  @IsString()
   preferredContact?: 'email' | 'phone';
 
   @IsOptional()
