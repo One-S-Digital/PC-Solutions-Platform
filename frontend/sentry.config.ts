@@ -4,9 +4,18 @@ export function initSentry() {
   const dsn = import.meta.env.VITE_SENTRY_DSN;
   const environment = import.meta.env.MODE || 'development';
   
+  // Debug logging for Sentry initialization
+  console.info('[Sentry] Initialization check:', {
+    hasDsn: !!dsn,
+    dsnPrefix: dsn ? dsn.substring(0, 20) + '...' : 'not set',
+    environment,
+    mode: import.meta.env.MODE,
+  });
+  
   // Only initialize Sentry if DSN is provided
   if (!dsn) {
-    console.info('Sentry DSN not configured. Skipping Sentry initialization.');
+    console.warn('[Sentry] VITE_SENTRY_DSN not configured. Skipping Sentry initialization.');
+    console.warn('[Sentry] Make sure the environment variable is named VITE_SENTRY_DSN (not SENTRY_DSN)');
     return;
   }
 
@@ -89,6 +98,8 @@ export function initSentry() {
       'Clerk: ',
     ],
   });
+  
+  console.info('[Sentry] ✅ Successfully initialized for environment:', environment);
 }
 
 // Export Sentry for use in error boundaries

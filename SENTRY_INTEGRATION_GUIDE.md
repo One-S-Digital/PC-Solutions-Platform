@@ -45,10 +45,24 @@ To upload source maps for better error tracking in production:
 
 ### 4. Configure Environment Variables
 
-#### Frontend (`/workspace/frontend/.env`)
+> ⚠️ **IMPORTANT for Render/Production Deployments:**
+> - **Frontend & Admin** require the `VITE_` prefix: Use `VITE_SENTRY_DSN`
+> - **API** does NOT use the prefix: Use `SENTRY_DSN`
+>
+> This is because Vite only exposes environment variables prefixed with `VITE_` to the client-side code. If you use `SENTRY_DSN` for frontend/admin, Sentry will NOT initialize!
+
+#### Frontend (`/workspace/frontend/.env`) - Also in Render
+
+| Variable | Required | Example |
+|----------|----------|---------|
+| `VITE_SENTRY_DSN` | **Yes** | `https://abc123@o123.ingest.sentry.io/456` |
+| `VITE_SENTRY_RELEASE` | No | `frontend@1.0.0` |
+| `SENTRY_ORG` | No (source maps) | `your-org-slug` |
+| `SENTRY_PROJECT` | No (source maps) | `frontend` |
+| `SENTRY_AUTH_TOKEN` | No (source maps) | `sntrys_...` |
 
 ```env
-# Required for Sentry to work
+# Required for Sentry to work - MUST use VITE_ prefix!
 VITE_SENTRY_DSN=https://your-frontend-dsn@sentry.io/project-id
 
 # Optional but recommended
@@ -61,10 +75,18 @@ SENTRY_PROJECT=frontend
 SENTRY_AUTH_TOKEN=your-auth-token
 ```
 
-#### Admin (`/workspace/admin/.env`)
+#### Admin (`/workspace/admin/.env`) - Also in Render
+
+| Variable | Required | Example |
+|----------|----------|---------|
+| `VITE_SENTRY_DSN` | **Yes** | `https://abc123@o123.ingest.sentry.io/456` |
+| `VITE_SENTRY_RELEASE` | No | `admin@1.0.0` |
+| `SENTRY_ORG` | No (source maps) | `your-org-slug` |
+| `SENTRY_PROJECT` | No (source maps) | `admin` |
+| `SENTRY_AUTH_TOKEN` | No (source maps) | `sntrys_...` |
 
 ```env
-# Required for Sentry to work
+# Required for Sentry to work - MUST use VITE_ prefix!
 VITE_SENTRY_DSN=https://your-admin-dsn@sentry.io/project-id
 
 # Optional but recommended
@@ -77,10 +99,19 @@ SENTRY_PROJECT=admin
 SENTRY_AUTH_TOKEN=your-auth-token
 ```
 
-#### API (`/workspace/api/.env`)
+#### API (`/workspace/api/.env`) - Also in Render
+
+| Variable | Required | Example |
+|----------|----------|---------|
+| `SENTRY_DSN` | **Yes** | `https://abc123@o123.ingest.sentry.io/456` |
+| `SENTRY_RELEASE` | No | `api@1.0.0` |
+| `NODE_ENV` | Yes | `production` |
+| `SENTRY_ORG` | No (source maps) | `your-org-slug` |
+| `SENTRY_PROJECT` | No (source maps) | `api` |
+| `SENTRY_AUTH_TOKEN` | No (source maps) | `sntrys_...` |
 
 ```env
-# Required for Sentry to work
+# Required for Sentry to work - NO VITE_ prefix for API!
 SENTRY_DSN=https://your-api-dsn@sentry.io/project-id
 
 # Optional but recommended
@@ -225,9 +256,20 @@ With the current sampling configuration (10% in production), the free tier shoul
 
 ## Troubleshooting
 
+### Sentry Not Initializing / DSN Not Found
+
+**Most Common Issue:** Wrong environment variable name!
+
+1. **Frontend/Admin**: Check you're using `VITE_SENTRY_DSN` (with `VITE_` prefix)
+2. **API**: Check you're using `SENTRY_DSN` (without prefix)
+
+To verify, check the browser console (frontend/admin) or server logs (API) for:
+- `[Sentry] Initialization check: { hasDsn: false, ... }` → DSN not found
+- `[Sentry] ✅ Successfully initialized` → Working correctly
+
 ### Errors Not Appearing in Sentry
 
-1. Check that DSN is configured correctly
+1. Check that DSN is configured correctly (see above)
 2. Verify network connectivity to Sentry
 3. Check browser console for Sentry initialization errors
 4. Ensure `NODE_ENV` or `VITE_NODE_ENV` is set correctly

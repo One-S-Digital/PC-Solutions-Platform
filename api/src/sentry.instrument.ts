@@ -6,9 +6,17 @@ export function initSentry() {
   const dsn = process.env.SENTRY_DSN;
   const environment = process.env.NODE_ENV || 'development';
   
+  // Debug logging for Sentry initialization
+  console.info('[Sentry API] Initialization check:', {
+    hasDsn: !!dsn,
+    dsnPrefix: dsn ? dsn.substring(0, 20) + '...' : 'not set',
+    environment,
+    nodeEnv: process.env.NODE_ENV,
+  });
+  
   // Only initialize Sentry if DSN is provided
   if (!dsn) {
-    console.info('Sentry DSN not configured. Skipping Sentry initialization.');
+    console.warn('[Sentry API] SENTRY_DSN not configured. Skipping Sentry initialization.');
     return;
   }
 
@@ -73,4 +81,6 @@ export function initSentry() {
       'P2025', // Record not found
     ],
   });
+  
+  console.info('[Sentry API] ✅ Successfully initialized for environment:', environment);
 }
