@@ -327,3 +327,25 @@ export const SUGGESTED_PRODUCT_DELIVERY_METHODS = [
   'Installation Included',
 ] as const;
 
+// =============================================================================
+// PEDAGOGY OPTIONS
+// Centralized definition for pedagogy approaches used by foundations
+// Each option has a translation key and a database value
+// =============================================================================
+export const PEDAGOGY_OPTIONS = [
+  { key: 'montessori', value: 'Montessori' },
+  { key: 'reggioEmilia', value: 'Reggio Emilia' },
+  { key: 'waldorf', value: 'Waldorf' },
+  { key: 'playBased', value: 'Play-based' },
+  { key: 'academicFocused', value: 'Academic-focused' },
+  { key: 'bilingual', value: 'Bilingual' },
+  { key: 'natureBased', value: 'Nature-based' },
+  { key: 'inclusive', value: 'Inclusive' },
+  { key: 'other', value: 'Other' },
+] as const;
+
+// Map from database value to translation key (for displaying stored values)
+export const PEDAGOGY_KEY_MAP: Record<string, string> = Object.fromEntries(
+  PEDAGOGY_OPTIONS.map(opt => [opt.value, opt.key])
+);
+

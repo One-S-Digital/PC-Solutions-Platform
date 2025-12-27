@@ -51,6 +51,17 @@
     "organizationName": "Organisationsname",
     "pedagogy": "Pädagogische Ansätze",
     "pedagogyHint": "Wählen Sie alle zutreffenden",
+    "pedagogyOptions": {
+      "montessori": "Montessori",
+      "reggioEmilia": "Reggio Emilia",
+      "waldorf": "Waldorf",
+      "playBased": "Spielbasiert",
+      "academicFocused": "Akademisch orientiert",
+      "bilingual": "Zweisprachig",
+      "natureBased": "Naturbasiert",
+      "inclusive": "Inklusiv",
+      "other": "Andere"
+    },
     "phoneNumber": "Telefonnummer",
     "productCategories": "Produktkategorien",
     "productCategoriesHint": "Wählen Sie aus Vorschlägen oder fügen Sie eigene Kategorien hinzu. Drücken Sie Enter zum Hinzufügen.",

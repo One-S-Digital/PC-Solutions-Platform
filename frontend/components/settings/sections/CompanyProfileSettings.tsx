@@ -1,7 +1,7 @@
 
 import React, { useState, useRef } from 'react';
 import { SettingsFormData, UserRole, SwissCanton, SupportedLanguage } from '../../../types';
-import { STANDARD_INPUT_FIELD, SWISS_CANTONS, SUGGESTED_SERVICE_CATEGORIES, SUGGESTED_PRODUCT_CATEGORIES } from '../../../constants';
+import { STANDARD_INPUT_FIELD, SWISS_CANTONS, SUGGESTED_SERVICE_CATEGORIES, SUGGESTED_PRODUCT_CATEGORIES, PEDAGOGY_OPTIONS } from '../../../constants';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
 import ChipInput from '../../ui/ChipInput';
 import ImageCropperModal from '../../shared/ImageCropperModal';
@@ -33,18 +33,6 @@ const SUPPORTED_LANGUAGES_OPTIONS_BASE: { labelKey: string, value: SupportedLang
     { labelKey: 'common:languageSwitcher.en', value: 'EN'},
     { labelKey: 'common:languageSwitcher.fr', value: 'FR'},
     { labelKey: 'common:languageSwitcher.de', value: 'DE'},
-];
-
-const PEDAGOGY_OPTIONS = [
-  'Montessori',
-  'Reggio Emilia',
-  'Waldorf',
-  'Play-based',
-  'Academic-focused',
-  'Bilingual',
-  'Nature-based',
-  'Inclusive',
-  'Other'
 ];
 
 // Legacy enum options for backward compatibility
@@ -508,16 +496,16 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                   <div className="flex flex-wrap gap-2">
                     {PEDAGOGY_OPTIONS.map(option => (
                       <button
-                        key={option}
+                        key={option.value}
                         type="button"
-                        onClick={() => handleMultiSelectChange('pedagogy', option)}
+                        onClick={() => handleMultiSelectChange('pedagogy', option.value)}
                         className={`px-3 py-1.5 text-sm font-medium rounded-full border transition-colors duration-150 ${
-                          (settings.pedagogy || []).includes(option)
+                          (settings.pedagogy || []).includes(option.value)
                             ? 'bg-swiss-mint text-white border-swiss-mint'
                             : 'bg-white text-gray-700 border-gray-300 hover:border-swiss-teal'
                         }`}
                       >
-                        {option}
+                        {t(`settings:companyProfile.pedagogyOptions.${option.key}`, option.value)}
                       </button>
                     ))}
                   </div>
