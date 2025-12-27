@@ -38,6 +38,7 @@ import {
   ExclamationTriangleIcon,
   CreditCardIcon,
   SparklesIcon,
+  ArrowRightIcon,
   UserCircleIcon,
 } from '@heroicons/react/24/outline';
 import { useSubscription, SubscriptionStatus } from '../../contexts/SubscriptionContext';
@@ -72,6 +73,7 @@ export interface SubscriptionPaywallProps {
  * These allow users to manage their account/subscription even without active sub
  */
 const ALWAYS_ALLOWED_ROUTES = [
+  '/pricing',
   '/settings/profile',
   '/profile',
   '/settings',
@@ -82,6 +84,7 @@ const ALWAYS_ALLOWED_ROUTES = [
  * Route prefixes that are always allowed
  */
 const ALWAYS_ALLOWED_PREFIXES = [
+  '/pricing',
   '/settings',
   '/profile',
   '/support',
@@ -96,6 +99,7 @@ interface PaywallContentProps {
   inline?: boolean;
   title?: string;
   message?: string;
+  onNavigateToPricing: () => void;
   onNavigateToBilling: () => void;
   onNavigateToProfile: () => void;
   onContactSupport: () => void;
@@ -149,6 +153,7 @@ const PaywallContent: React.FC<PaywallContentProps> = ({
   inline = false,
   title,
   message,
+  onNavigateToPricing,
   onNavigateToBilling,
   onNavigateToProfile,
   onContactSupport,
@@ -222,7 +227,7 @@ const PaywallContent: React.FC<PaywallContentProps> = ({
   const displayMessage = message || getDefaultMessage();
 
   // Determine which buttons to show
-  const showRequestButton = !status || status === 'EXPIRED' || status === 'CANCELLED';
+  const showPricingButton = !status || status === 'EXPIRED' || status === 'CANCELLED';
   const showBillingButton = status === 'PAST_DUE' || status === 'GRACE_PERIOD' || status === 'PAUSED';
   const showContactButton = status === 'PENDING' || status === 'PAUSED';
 
@@ -247,15 +252,15 @@ const PaywallContent: React.FC<PaywallContentProps> = ({
 
       {/* Action Buttons */}
       <div className="space-y-3">
-        {showRequestButton && (
+        {showPricingButton && (
           <Button
             variant="primary"
             size="lg"
             className="w-full sm:w-auto min-w-[200px]"
-            onClick={onNavigateToBilling}
+            onClick={onNavigateToPricing}
             leftIcon={SparklesIcon}
           >
-            {t('subscription:paywall.requestSubscription', 'Request Subscription')}
+            {t('subscription:paywall.viewPlans', 'View Subscription Plans')}
           </Button>
         )}
 
@@ -375,6 +380,7 @@ export const SubscriptionPaywall: React.FC<SubscriptionPaywallProps> = ({
   } = useSubscription();
 
   // Navigation handlers
+  const handleNavigateToPricing = () => navigate('/pricing');
   const handleNavigateToBilling = () => navigate('/settings#billingSubscription');
   const handleNavigateToProfile = () => navigate('/profile');
   const handleContactSupport = () => {
@@ -418,6 +424,7 @@ export const SubscriptionPaywall: React.FC<SubscriptionPaywallProps> = ({
               feature: requiredFeature, 
               defaultValue: `This feature requires a higher tier plan. Upgrade to access ${requiredFeature}.` 
             })}
+            onNavigateToPricing={handleNavigateToPricing}
             onNavigateToBilling={handleNavigateToBilling}
             onNavigateToProfile={handleNavigateToProfile}
             onContactSupport={handleContactSupport}
@@ -437,6 +444,7 @@ export const SubscriptionPaywall: React.FC<SubscriptionPaywallProps> = ({
         inline={inline}
         title={title}
         message={message}
+        onNavigateToPricing={handleNavigateToPricing}
         onNavigateToBilling={handleNavigateToBilling}
         onNavigateToProfile={handleNavigateToProfile}
         onContactSupport={handleContactSupport}
@@ -508,7 +516,7 @@ export const FeatureGate: React.FC<FeatureGateProps> = ({
       <Button
         variant="secondary"
         size="sm"
-        onClick={() => navigate('/settings#billingSubscription')}
+        onClick={() => navigate('/pricing')}
       >
         {t('subscription:featureGate.upgrade', 'Upgrade Plan')}
       </Button>
