@@ -17,6 +17,7 @@ This is a monorepo containing three main applications:
 - **Backend**: NestJS + TypeScript + Prisma + PostgreSQL
 - **Authentication**: Clerk with JWT validation and RBAC
 - **Storage**: Cloudflare R2
+- **Monitoring**: Sentry (error tracking, performance monitoring, user feedback)
 - **Deployment**: Docker + Render
 
 ## Quick Start
@@ -121,6 +122,7 @@ See [Environment Setup Guide](./ENVIRONMENT_SETUP.md) for production deployment 
 
 - [Environment Setup Guide](./ENVIRONMENT_SETUP.md) - Complete guide for environment variables
 - [Authentication Setup Guide](./AUTHENTICATION_SETUP.md) - Clerk authentication setup
+- [Sentry Integration Guide](./SENTRY_INTEGRATION_GUIDE.md) - Error tracking and monitoring setup
 - [Rebuild Specification](./docs/rebuild-specification.md) - Technical requirements
 - [UI Guide](./docs/ui-guide.md) - User interface specifications
 - [i18n Specification](./docs/i18n-specification.md) - Internationalization guide

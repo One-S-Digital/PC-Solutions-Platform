@@ -3,6 +3,7 @@ import { fileURLToPath } from 'url';
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import legacy from '@vitejs/plugin-legacy';
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -62,6 +63,9 @@ const e2eMockApiPlugin = () => {
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
     const isE2E = process.env.VITE_E2E_TEST === 'true' || env.VITE_E2E_TEST === 'true';
+    const isProd = mode === 'production';
+    const sentryEnabled = isProd && env.VITE_SENTRY_DSN && env.SENTRY_AUTH_TOKEN;
+    
     if (mode === 'e2e') {
       // Helpful diagnostics for Playwright runs
       console.log('[vite] e2e mode diagnostics:', {
@@ -87,6 +91,20 @@ export default defineConfig(({ mode }) => {
           modernPolyfills: true,
           renderLegacyChunks: true,
         }) : undefined,
+        // Sentry plugin for source maps upload (only in production builds)
+        sentryEnabled ? sentryVitePlugin({
+          org: env.SENTRY_ORG,
+          project: env.SENTRY_PROJECT || 'frontend',
+          authToken: env.SENTRY_AUTH_TOKEN,
+          sourcemaps: {
+            assets: './dist/**',
+          },
+          release: {
+            name: env.VITE_SENTRY_RELEASE || `frontend@${Date.now()}`,
+          },
+          // Upload source maps but delete them after upload for security
+          telemetry: false,
+        }) : undefined,
       ].filter(Boolean),
       define: {
         'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
@@ -105,6 +123,8 @@ export default defineConfig(({ mode }) => {
         // Target ES2020 for modern browsers (Safari 13.1+, Edge 80+, iOS 13.4+)
         // Legacy plugin will transpile to ES5 for older browsers automatically
         target: 'es2020',
+        // Generate source maps for Sentry
+        sourcemap: isProd,
         // Ensure locales are included in build
         assetsDir: 'assets',
         rollupOptions: {

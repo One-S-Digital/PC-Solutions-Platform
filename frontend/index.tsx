@@ -6,6 +6,10 @@ import i18nInstance, { preloadCriticalNamespaces } from './i18n'; // Import the 
 import { I18nextProvider } from 'react-i18next'; // Import I18nextProvider
 import { AuthProvider } from './providers/AuthProvider'; // Import AuthProvider with Clerk
 import './src/index.css'; // Import Tailwind CSS
+import { initSentry } from './sentry.config'; // Import Sentry configuration
+
+// Initialize Sentry as early as possible
+initSentry();
 
 // Preload all language translations on app init for immediate switching
 // This runs in the background and doesn't block rendering
