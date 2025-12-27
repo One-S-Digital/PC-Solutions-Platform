@@ -51,6 +51,8 @@
       "phoneRequired": "Le numéro de téléphone est requis",
       "termsRequired": "Vous devez accepter les conditions générales",
       "captchaError": "La vérification CAPTCHA a échoué. Veuillez réessayer",
+      "captchaRefreshHint": "Essayez de rafraîchir la page ou d'utiliser un autre navigateur.",
+      "roleRequired": "Veuillez d'abord sélectionner un rôle",
       "emailInvalid": "Veuillez saisir une adresse électronique valide"
     },
     "placeholders": {
@@ -269,7 +271,8 @@
     "password": "Mot de passe",
     "canton": "Canton",
     "email": "Courriel",
-    "phone": "Téléphone"
+    "phone": "Téléphone",
+    "verifyCaptcha": "Veuillez vérifier que vous êtes humain"
   },
   "submissionSuccessTitle": "Compte créé avec succès",
   "buttons": {

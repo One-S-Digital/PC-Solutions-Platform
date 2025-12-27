@@ -1,0 +1,25 @@
+# Browsers that we support
+
+# Global usage statistics
+> 0.5%
+
+# Last 2 versions of each browser
+last 2 versions
+
+# Firefox Extended Support Release
+Firefox ESR
+
+# Exclude dead browsers
+not dead
+
+# Minimum iOS version
+iOS >= 12
+
+# Minimum Safari version
+Safari >= 12
+
+# Minimum Edge version (Chromium-based)
+Edge >= 79
+
+# Explicitly exclude IE 11
+not IE 11

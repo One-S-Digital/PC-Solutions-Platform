@@ -90,6 +90,8 @@ export default defineConfig(({ mode }) => {
       // Ensure static assets are properly copied
       publicDir: 'public',
       build: {
+        // Target ES2020 for better browser compatibility (supports Safari 13.1+, Edge 80+)
+        target: 'es2020',
         // Ensure locales are included in build
         assetsDir: 'assets',
         rollupOptions: {
