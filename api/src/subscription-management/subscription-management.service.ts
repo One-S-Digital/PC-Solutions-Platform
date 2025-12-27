@@ -169,9 +169,19 @@ export class SubscriptionManagementService {
 
   async getAllSubscriptionPlans(): Promise<SubscriptionPlan[]> {
     try {
-      const plans = await this.prisma.subscriptionPlan.findMany({
+      let plans = await this.prisma.subscriptionPlan.findMany({
         orderBy: { displayOrder: 'asc' },
       });
+
+      // Auto-seed default plans if no plans exist
+      if (plans.length === 0) {
+        this.logger.log('No subscription plans found (admin view), seeding default plans...');
+        await this.seedDefaultSubscriptionPlans();
+        plans = await this.prisma.subscriptionPlan.findMany({
+          orderBy: { displayOrder: 'asc' },
+        });
+      }
+
       return plans as unknown as SubscriptionPlan[];
     } catch (error) {
       this.logger.error(`Failed to get subscription plans: ${(error as Error).message}`);
@@ -181,14 +191,188 @@ export class SubscriptionManagementService {
 
   async getActiveSubscriptionPlans(): Promise<SubscriptionPlan[]> {
     try {
-      const plans = await this.prisma.subscriptionPlan.findMany({
+      let plans = await this.prisma.subscriptionPlan.findMany({
         where: { isActive: true },
         orderBy: { displayOrder: 'asc' },
       });
+
+      // Auto-seed default plans if no plans exist
+      if (plans.length === 0) {
+        this.logger.log('No subscription plans found, seeding default plans...');
+        await this.seedDefaultSubscriptionPlans();
+        plans = await this.prisma.subscriptionPlan.findMany({
+          where: { isActive: true },
+          orderBy: { displayOrder: 'asc' },
+        });
+      }
+
       return plans as unknown as SubscriptionPlan[];
     } catch (error) {
       this.logger.error(`Failed to get active subscription plans: ${(error as Error).message}`);
       throw error;
+    }
+  }
+
+  /**
+   * Seeds the default subscription plans if they don't exist.
+   * This ensures the 5 subscription plans (Basic, Essential, Professional, Suppliers, Service Providers)
+   * are always available for subscription requests.
+   */
+  private async seedDefaultSubscriptionPlans(): Promise<void> {
+    const defaultPlans = [
+      {
+        name: 'Basic',
+        code: 'BASIC',
+        description: 'Perfect for small daycares who want essential tools without complexity. Get immediate access to suppliers, compliance info, and support.',
+        price: 69.00,
+        currency: 'CHF',
+        billingPeriod: 'monthly',
+        features: [
+          'Supplier & service provider marketplace',
+          'State policy hub (by canton)',
+          'Multilingual interface (EN/FR/DE)',
+          'Email support',
+        ],
+        limits: {
+          parentEnquiries: 0,
+          marketplace: true,
+          policyHub: true,
+          multiLanguage: true,
+        },
+        allowedRoles: ['FOUNDATION'],
+        trialDays: 14,
+        isActive: true,
+        isPopular: false,
+        displayOrder: 1,
+      },
+      {
+        name: 'Essential',
+        code: 'ESSENTIAL',
+        description: 'Perfect for single-site daycares who want to save time with parent leads and compliant HR tools. Win parents faster, stay compliant, and manage enquiries with ease.',
+        price: 129.00,
+        currency: 'CHF',
+        billingPeriod: 'monthly',
+        features: [
+          'Everything in Basic',
+          'Parent leads inbox + auto-matching system',
+          'HR & compliance document library (Swiss-validated)',
+          'Parent enquiry tracker with quick replies',
+        ],
+        limits: {
+          parentEnquiries: 15,
+          marketplace: true,
+          policyHub: true,
+          multiLanguage: true,
+          hrLibrary: true,
+          parentLeads: true,
+        },
+        allowedRoles: ['FOUNDATION'],
+        trialDays: 14,
+        isActive: true,
+        isPopular: true,
+        displayOrder: 2,
+      },
+      {
+        name: 'Professional',
+        code: 'PROFESSIONAL',
+        description: 'Perfect for medium-sized daycares ready to grow and professionalize operations. Recruit and train staff, handle unlimited parent enquiries, and deliver excellence.',
+        price: 259.00,
+        currency: 'CHF',
+        billingPeriod: 'monthly',
+        features: [
+          'Everything in Essential',
+          'Recruitment module',
+          'Unlimited parent enquiries',
+          'E-learning for staff',
+          'Team management & tools',
+          'Priority support',
+        ],
+        limits: {
+          parentEnquiries: -1,
+          marketplace: true,
+          policyHub: true,
+          multiLanguage: true,
+          hrLibrary: true,
+          parentLeads: true,
+          recruitment: true,
+          eLearning: true,
+          teamManagement: true,
+        },
+        allowedRoles: ['FOUNDATION'],
+        trialDays: 14,
+        isActive: true,
+        isPopular: false,
+        displayOrder: 3,
+      },
+      {
+        name: 'Suppliers',
+        code: 'SUPPLIERS',
+        description: 'Perfect for suppliers focused on daycare market growth. Pricing based on enquiry.',
+        price: 0,
+        currency: 'CHF',
+        billingPeriod: 'enquiry',
+        features: [
+          'Product listings & marketplace access',
+          'Lead management system',
+          'Order tracking & fulfillment',
+          'Multi-language support',
+          'Sales analytics dashboard',
+          'Email support',
+        ],
+        limits: {
+          productListings: -1,
+          marketplace: true,
+          leadManagement: true,
+          orderTracking: true,
+          analytics: true,
+        },
+        allowedRoles: ['PRODUCT_SUPPLIER'],
+        trialDays: 0,
+        isActive: true,
+        isPopular: false,
+        displayOrder: 4,
+      },
+      {
+        name: 'Service Providers',
+        code: 'SERVICE_PROVIDERS',
+        description: 'Perfect for service providers targeting professional daycare partnerships. Pricing based on enquiry.',
+        price: 0,
+        currency: 'CHF',
+        billingPeriod: 'enquiry',
+        features: [
+          'Service listings & marketplace access',
+          'Appointment scheduling system',
+          'Client relationship management',
+          'Revenue tracking & reporting',
+          'Multi-language support',
+          'Priority support',
+        ],
+        limits: {
+          serviceListings: -1,
+          marketplace: true,
+          scheduling: true,
+          crm: true,
+          revenueTracking: true,
+        },
+        allowedRoles: ['SERVICE_PROVIDER'],
+        trialDays: 0,
+        isActive: true,
+        isPopular: false,
+        displayOrder: 5,
+      },
+    ];
+
+    for (const plan of defaultPlans) {
+      try {
+        await this.prisma.subscriptionPlan.upsert({
+          where: { code: plan.code },
+          update: plan,
+          create: plan,
+        });
+        this.logger.log(`Seeded subscription plan: ${plan.name}`);
+      } catch (error) {
+        this.logger.error(`Failed to seed plan ${plan.name}: ${(error as Error).message}`);
+      }
     }
   }
 
