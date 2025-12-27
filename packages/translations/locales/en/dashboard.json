@@ -835,7 +835,9 @@
       "languages": "Languages",
       "location": "Location",
       "name": "Name",
+      "noData": "No child profile information yet.",
       "specialNeeds": "Special Needs",
+      "submitEnquiry": "Submit an enquiry to add your child's information.",
       "title": "Child Profile"
     },
     "enquiry": {
@@ -852,6 +854,7 @@
       "title": "Favorites"
     },
     "quickActions": {
+      "browseFoundations": "Browse Daycares",
       "browseServices": "Browse Services",
       "enquiries": "My Enquiries",
       "findDaycare": "Find Daycare",
@@ -1251,6 +1254,7 @@
     "analytics": "Analytics",
     "applications": "Applications",
     "billingSubscription": "Billing & Subscription",
+    "browseFoundations": "Browse Daycares",
     "candidatePool": "Candidate Pool",
     "content": "Content",
     "currentPlan": "Current Plan",
