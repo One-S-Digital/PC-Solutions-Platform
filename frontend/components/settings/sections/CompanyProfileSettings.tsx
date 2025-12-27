@@ -1,7 +1,7 @@
 
 import React, { useState, useRef } from 'react';
 import { SettingsFormData, UserRole, SwissCanton, SupportedLanguage } from '../../../types';
-import { STANDARD_INPUT_FIELD, SWISS_CANTONS, SUGGESTED_SERVICE_CATEGORIES, SUGGESTED_PRODUCT_CATEGORIES } from '../../../constants';
+import { STANDARD_INPUT_FIELD, SWISS_CANTONS, SUGGESTED_SERVICE_CATEGORIES, SUGGESTED_PRODUCT_CATEGORIES, PEDAGOGY_OPTIONS } from '../../../constants';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
 import ChipInput from '../../ui/ChipInput';
 import ImageCropperModal from '../../shared/ImageCropperModal';
@@ -33,19 +33,6 @@ const SUPPORTED_LANGUAGES_OPTIONS_BASE: { labelKey: string, value: SupportedLang
     { labelKey: 'common:languageSwitcher.en', value: 'EN'},
     { labelKey: 'common:languageSwitcher.fr', value: 'FR'},
     { labelKey: 'common:languageSwitcher.de', value: 'DE'},
-];
-
-// Pedagogy options with translation keys - values are stored in database
-const PEDAGOGY_OPTIONS = [
-  { key: 'montessori', value: 'Montessori' },
-  { key: 'reggioEmilia', value: 'Reggio Emilia' },
-  { key: 'waldorf', value: 'Waldorf' },
-  { key: 'playBased', value: 'Play-based' },
-  { key: 'academicFocused', value: 'Academic-focused' },
-  { key: 'bilingual', value: 'Bilingual' },
-  { key: 'natureBased', value: 'Nature-based' },
-  { key: 'inclusive', value: 'Inclusive' },
-  { key: 'other', value: 'Other' },
 ];
 
 // Legacy enum options for backward compatibility

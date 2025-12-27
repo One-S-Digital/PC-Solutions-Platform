@@ -25,6 +25,7 @@ import { useAppContext } from '../../contexts/AppContext';
 import { useNotifications } from '../../contexts/NotificationContext';
 import OrganizationProfileForm from '../../components/settings/OrganizationProfileForm';
 import { UserRole } from '../../types';
+import { PEDAGOGY_KEY_MAP } from '../../constants';
 
 interface FoundationSettingsData {
   companyName?: string;
@@ -83,19 +84,6 @@ const InfoItem: React.FC<InfoItemProps> = ({ icon: Icon, label, value }) => (
     </div>
   </div>
 );
-
-// Helper to get translation key for pedagogy values
-const PEDAGOGY_KEY_MAP: Record<string, string> = {
-  'Montessori': 'montessori',
-  'Reggio Emilia': 'reggioEmilia',
-  'Waldorf': 'waldorf',
-  'Play-based': 'playBased',
-  'Academic-focused': 'academicFocused',
-  'Bilingual': 'bilingual',
-  'Nature-based': 'natureBased',
-  'Inclusive': 'inclusive',
-  'Other': 'other',
-};
 
 const FoundationOrganisationProfilePage: React.FC = () => {
   const { t, i18n } = useTranslation(['dashboard', 'common', 'profile', 'settings']);
