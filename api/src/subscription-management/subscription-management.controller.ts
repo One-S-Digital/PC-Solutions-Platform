@@ -1016,8 +1016,26 @@ export class UserSubscriptionController {
     @Request() req: any,
   ) {
     const userContext = req.context;
-    const userId = userContext?.userId;
+    
+    // Use profileUserId (database User.id) not userId (Clerk ID) for foreign key constraint
+    // The User table uses UUID, not Clerk ID strings
+    const userId = userContext?.profileUserId || req.user?.id;
     const organizationId = userContext?.organizationId;
+
+    // Debug logging
+    console.log('📋 Subscription Request Debug:', {
+      profileUserId: userContext?.profileUserId,
+      reqUserId: req.user?.id,
+      resolvedUserId: userId,
+      organizationId,
+      planId: body.planId,
+      contactEmail: body.contactEmail,
+    });
+
+    // Validate we have at least one identifier
+    if (!userId && !organizationId) {
+      throw new BadRequestException('Unable to identify user or organization for subscription request');
+    }
 
     // Create the subscription request using the new service
     const request = await this.subscriptionRequestService.createRequest(
