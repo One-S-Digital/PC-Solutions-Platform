@@ -76,6 +76,8 @@
         "name": "Basic"
       },
       "suppliersAndProvidersTitle": "For Suppliers & Service Providers",
+      "suppliersTitle": "For Suppliers",
+      "serviceProvidersTitle": "For Service Providers",
       "enquireButton": "Enquire",
       "comingSoon": "Coming Soon",
       "selectAndContinue": "Select and Continue",
@@ -205,6 +207,8 @@
       "name": "Basic"
     },
     "suppliersAndProvidersTitle": "For Suppliers & Service Providers",
+    "suppliersTitle": "For Suppliers",
+    "serviceProvidersTitle": "For Service Providers",
     "enquireButton": "Enquire",
     "comingSoon": "Coming Soon",
     "selectAndContinue": "Select And Continue",

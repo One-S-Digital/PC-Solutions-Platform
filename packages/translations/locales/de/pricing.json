@@ -76,6 +76,8 @@
         "name": "Grundlegend"
       },
       "suppliersAndProvidersTitle": "Für Lieferanten und Dienstleister",
+      "suppliersTitle": "Für Lieferanten",
+      "serviceProvidersTitle": "Für Dienstleister",
       "enquireButton": "Anfragen",
       "comingSoon": "Demnächst verfügbar",
       "selectAndContinue": "Auswählen und fortfahren",
@@ -206,6 +208,8 @@
       "name": "Grundlegend"
     },
     "suppliersAndProvidersTitle": "Für Lieferanten und Dienstleister",
+    "suppliersTitle": "Für Lieferanten",
+    "serviceProvidersTitle": "Für Dienstleister",
     "enquireButton": "Anfragen",
     "comingSoon": "Demnächst verfügbar",
     "selectAndContinue": "Auswählen und fortfahren",

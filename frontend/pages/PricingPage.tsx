@@ -187,9 +187,60 @@ const PricingPage: React.FC = () => {
     );
   };
 
-  const shouldShowDaycare = !fromSignup || userRoleFromSignup === UserRole.FOUNDATION;
-  const shouldShowSuppliersAndProviders = !fromSignup || userRoleFromSignup === UserRole.PRODUCT_SUPPLIER || userRoleFromSignup === UserRole.SERVICE_PROVIDER;
+  // Determine which plans to show based on user role
+  // For logged-in users, show only plans relevant to their role
+  // For signup flow, show plans based on the role they selected during signup
+  // For anonymous users, show all plans
+  const shouldShowDaycare = (() => {
+    if (currentUser) {
+      // Logged-in user: show foundation plans only if they are a foundation
+      return currentUser.role === UserRole.FOUNDATION;
+    }
+    if (fromSignup) {
+      // Signup flow: show foundation plans only if they selected foundation role
+      return userRoleFromSignup === UserRole.FOUNDATION;
+    }
+    // Anonymous user: show all plans
+    return true;
+  })();
 
+  const shouldShowSupplier = (() => {
+    if (currentUser) {
+      // Logged-in user: show supplier plan only if they are a supplier
+      return currentUser.role === UserRole.PRODUCT_SUPPLIER;
+    }
+    if (fromSignup) {
+      // Signup flow: show supplier plan only if they selected supplier role
+      return userRoleFromSignup === UserRole.PRODUCT_SUPPLIER;
+    }
+    // Anonymous user: show all plans
+    return true;
+  })();
+
+  const shouldShowServiceProvider = (() => {
+    if (currentUser) {
+      // Logged-in user: show service provider plan only if they are a service provider
+      return currentUser.role === UserRole.SERVICE_PROVIDER;
+    }
+    if (fromSignup) {
+      // Signup flow: show service provider plan only if they selected service provider role
+      return userRoleFromSignup === UserRole.SERVICE_PROVIDER;
+    }
+    // Anonymous user: show all plans
+    return true;
+  })();
+
+  const shouldShowSuppliersAndProviders = shouldShowSupplier || shouldShowServiceProvider;
+
+  // Helper function for determining the suppliers/providers section title
+  const getSuppliersAndProvidersTitle = (): string => {
+    if (shouldShowSupplier && shouldShowServiceProvider) {
+      return t('pricingPage.suppliersAndProvidersTitle');
+    }
+    return shouldShowSupplier 
+      ? t('pricingPage.suppliersTitle')
+      : t('pricingPage.serviceProvidersTitle');
+  };
 
   return (
     <div className="bg-page-bg min-h-screen py-12 px-4 sm:px-6 lg:px-8 relative text-swiss-charcoal">
@@ -216,14 +267,16 @@ const PricingPage: React.FC = () => {
           <p className="mt-3 text-lg text-gray-600">{fromSignup ? t('pricingPage.subtitleSignup') : t('pricingPage.subtitle')}</p>
         </div>
         
-        {/* Pricing Toggle */}
-        <div className="flex justify-center mt-8">
-          <PricingToggle 
-            isAnnual={isAnnual} 
-            onToggle={setIsAnnual} 
-            className="mx-4"
-          />
-        </div>
+        {/* Pricing Toggle - only shown for foundation plans (has monthly/yearly pricing) */}
+        {shouldShowDaycare && (
+          <div className="flex justify-center mt-8">
+            <PricingToggle 
+              isAnnual={isAnnual} 
+              onToggle={setIsAnnual} 
+              className="mx-4"
+            />
+          </div>
+        )}
         
         {shouldShowDaycare && (
             <div className="mt-12">
@@ -235,10 +288,12 @@ const PricingPage: React.FC = () => {
         
         {shouldShowSuppliersAndProviders && (
              <div className="mt-16">
-                <h2 className="text-3xl font-semibold text-center text-swiss-charcoal">{t('pricingPage.suppliersAndProvidersTitle')}</h2>
-                <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                {supplierPlan && <PlanCard plan={supplierPlan} />}
-                {serviceProviderPlan && <PlanCard plan={serviceProviderPlan} />}
+                <h2 className="text-3xl font-semibold text-center text-swiss-charcoal">
+                  {getSuppliersAndProvidersTitle()}
+                </h2>
+                <div className={`mt-8 grid grid-cols-1 ${shouldShowSupplier && shouldShowServiceProvider ? 'md:grid-cols-2' : ''} gap-8 max-w-4xl mx-auto`}>
+                {shouldShowSupplier && supplierPlan && <PlanCard plan={supplierPlan} />}
+                {shouldShowServiceProvider && serviceProviderPlan && <PlanCard plan={serviceProviderPlan} />}
                 </div>
             </div>
         )}
