@@ -4,6 +4,14 @@ const { PrismaClient } = require('@prisma/client');
 /**
  * Seed tracking utility - ensures each seed runs only once
  * Seeds are tracked in the `seed_records` table
+ * 
+ * This script only seeds ESSENTIAL configuration data:
+ * - Frontend settings (app configuration)
+ * - Super admin user (if SEED_CLERK_USER_ID provided)
+ * - Subscription plans (required for subscription system)
+ * - Email templates (required for email functionality)
+ * 
+ * NO demo/mock data is seeded.
  */
 
 const SEED_VERSION = '1.0.0';
@@ -81,7 +89,7 @@ async function main() {
     // Ensure seed_records table exists
     await ensureSeedRecordsTable(prisma);
 
-    // 1) Seed frontend_settings (one-time)
+    // 1) Seed frontend_settings (one-time) - ESSENTIAL CONFIG
     const frontendSettingsSeedName = 'frontend_settings_v1';
     if (await isSeedCompleted(prisma, frontendSettingsSeedName)) {
       console.log('ℹ️ Seed: frontend_settings already seeded (tracked)');
@@ -112,7 +120,7 @@ async function main() {
       await markSeedCompleted(prisma, frontendSettingsSeedName);
     }
 
-    // 2) Seed SUPER_ADMIN AppUser if SEED_CLERK_USER_ID provided (one-time per user)
+    // 2) Seed SUPER_ADMIN AppUser if SEED_CLERK_USER_ID provided (one-time per user) - ESSENTIAL CONFIG
     if (seedClerkUserId) {
       const appUserSeedName = `appuser_superadmin_${seedClerkUserId}`;
       if (await isSeedCompleted(prisma, appUserSeedName)) {
@@ -130,88 +138,8 @@ async function main() {
       console.log('ℹ️ Seed: SEED_CLERK_USER_ID not provided, skipping AppUser seeding');
     }
 
-    // 3) Seed sample catalog data (one-time)
-    const sampleDataSeedName = 'sample_catalog_data_v1';
-    if (await isSeedCompleted(prisma, sampleDataSeedName)) {
-      console.log('ℹ️ Seed: sample catalog data already seeded (tracked)');
-    } else {
-      const [productCount, serviceCount, jobCount, orgCount] = await Promise.all([
-        prisma.product.count().catch(() => 0),
-        prisma.service.count().catch(() => 0),
-        prisma.jobListing.count().catch(() => 0),
-        prisma.organization.count().catch(() => 0),
-      ]);
-
-      let orgId;
-      let seedActions = [];
-      
-      if (orgCount === 0) {
-        const org = await prisma.organization.create({
-          data: { name: 'Sample Organization', type: 'SERVICE_PROVIDER' },
-          select: { id: true },
-        });
-        orgId = org.id;
-        seedActions.push('organization');
-        console.log('🌱 Seed: organization created');
-      } else {
-        const first = await prisma.organization.findFirst({ select: { id: true } });
-        orgId = first?.id;
-      }
-
-      if (productCount === 0 && orgId) {
-        try {
-          await prisma.product.create({
-            data: {
-              title: 'Sample Product',
-              description: 'Demo product',
-              category: 'general',
-              supplierId: orgId,
-            },
-          });
-          seedActions.push('product');
-          console.log('🌱 Seed: product created');
-        } catch (err) {
-          console.log('⚠️ Seed: product creation skipped (schema mismatch)');
-        }
-      }
-
-      if (serviceCount === 0 && orgId) {
-        try {
-          await prisma.service.create({
-            data: {
-              title: 'Sample Service',
-              description: 'Demo service',
-              category: 'CLEANING',
-              providerId: orgId,
-            },
-          });
-          seedActions.push('service');
-          console.log('🌱 Seed: service created');
-        } catch (err) {
-          console.log('⚠️ Seed: service creation skipped (schema mismatch)');
-        }
-      }
-
-      if (jobCount === 0 && orgId) {
-        try {
-          await prisma.jobListing.create({
-            data: {
-              title: 'Sample Job',
-              description: 'Demo job listing',
-              foundationId: orgId,
-            },
-          });
-          seedActions.push('jobListing');
-          console.log('🌱 Seed: job listing created');
-        } catch (err) {
-          console.log('⚠️ Seed: job listing creation skipped (schema mismatch)');
-        }
-      }
-
-      await markSeedCompleted(prisma, sampleDataSeedName, { actions: seedActions });
-    }
-
-    // 4) Seed subscription plans - 5 plans matching pricing page (one-time)
+    // 3) Seed subscription plans - 5 plans matching pricing page (one-time) - ESSENTIAL CONFIG
+    // These are required for the subscription system to work properly
     const subscriptionPlansSeedName = 'subscription_plans_v1';
     if (await isSeedCompleted(prisma, subscriptionPlansSeedName)) {
       console.log('ℹ️ Seed: subscription plans already seeded (tracked)');
@@ -328,9 +256,15 @@ async function main() {
         ];
 
         for (const plan of subscriptionPlans) {
-          await prisma.subscriptionPlan.create({
-            data: plan,
-          });
+          try {
+            await prisma.subscriptionPlan.upsert({
+              where: { code: plan.code },
+              update: plan,
+              create: plan,
+            });
+          } catch (err) {
+            console.warn(`⚠️ Seed: Failed to seed plan ${plan.name}:`, err.message);
+          }
         }
         console.log('🌱 Seed: 5 subscription plans created (matching pricing page)');
       } else {
@@ -339,7 +273,7 @@ async function main() {
       await markSeedCompleted(prisma, subscriptionPlansSeedName, { planCount: 5 });
     }
 
-    // 5) Seed email templates (one-time)
+    // 4) Seed email templates (one-time) - ESSENTIAL CONFIG
     const emailTemplatesSeedName = 'email_templates_v1';
     if (await isSeedCompleted(prisma, emailTemplatesSeedName)) {
       console.log('ℹ️ Seed: email templates already seeded (tracked)');

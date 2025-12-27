@@ -10,8 +10,5 @@ CREATE TABLE IF NOT EXISTS "seed_records" (
     CONSTRAINT "seed_records_pkey" PRIMARY KEY ("id")
 );
 
--- CreateIndex
+-- CreateIndex (unique index on seed_name - no separate index needed as unique creates one)
 CREATE UNIQUE INDEX IF NOT EXISTS "seed_records_seed_name_key" ON "seed_records"("seed_name");
-
--- CreateIndex
-CREATE INDEX IF NOT EXISTS "seed_records_seed_name_idx" ON "seed_records"("seed_name");

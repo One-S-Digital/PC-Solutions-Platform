@@ -2347,6 +2347,5 @@ model SeedRecord {
   executedBy  String?  @map("executed_by") // system, cli, etc.
   metadata    Json?    // Additional data about the seed run
   
-  @@index([seedName])
   @@map("seed_records")
 }
