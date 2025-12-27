@@ -20,7 +20,7 @@ export interface SubscriptionRequest {
   id: string;
   userId?: string;
   organizationId?: string;
-  planId?: string | null;
+  planId: string;
   tier: SubscriptionTier;
   billingPeriod: string;
   contactName?: string;
@@ -107,39 +107,14 @@ export class SubscriptionRequestService {
         throw new BadRequestException('User or organization ID required');
       }
 
-      // Try to find the plan, or find/create a default one
-      let plan: { id: string; code: string | null; billingPeriod: string } | null = null;
-      
-      if (data.planId) {
-        plan = await this.prisma.subscriptionPlan.findUnique({
-          where: { id: data.planId },
-        });
-      }
+      // Check if plan exists
+      const plan = await this.prisma.subscriptionPlan.findUnique({
+        where: { id: data.planId },
+      });
 
-      // If no plan found, try to find one by tier or use a default
-      if (!plan && data.tier) {
-        plan = await this.prisma.subscriptionPlan.findFirst({
-          where: { 
-            code: data.tier,
-            isActive: true,
-          },
-        });
-      }
-
-      // If still no plan, find any active plan for foundations (default)
       if (!plan) {
-        plan = await this.prisma.subscriptionPlan.findFirst({
-          where: { 
-            isActive: true,
-            allowedRoles: { has: 'FOUNDATION' },
-          },
-          orderBy: { displayOrder: 'asc' },
-        });
+        throw new NotFoundException('Plan not found');
       }
-
-      // If absolutely no plan exists, create a pending request without a plan
-      // Admin can assign a plan later
-      const planId = plan?.id || null;
 
       // Check for existing pending request
       // Build owner conditions properly to avoid matching all requests when IDs are missing
@@ -166,16 +141,16 @@ export class SubscriptionRequestService {
       }
 
       // Determine tier from plan code if not provided
-      const tier = data.tier || (plan ? this.getTierFromPlanCode(plan.code) : SubscriptionTier.BASIC);
+      const tier = data.tier || this.getTierFromPlanCode(plan.code);
 
       // Create the request
       const request = await this.prisma.subscriptionRequest.create({
         data: {
           userId,
           organizationId,
-          planId: planId,
+          planId: data.planId,
           tier: tier as any,
-          billingPeriod: data.billingPeriod || (plan ? plan.billingPeriod : 'monthly'),
+          billingPeriod: data.billingPeriod || plan.billingPeriod || 'monthly',
           contactName: data.contactName,
           contactEmail: data.contactEmail,
           contactPhone: data.contactPhone,

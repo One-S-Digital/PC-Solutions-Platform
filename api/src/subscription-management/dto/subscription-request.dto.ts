@@ -30,9 +30,8 @@ export enum SubscriptionRequestStatus {
  * Create subscription request DTO (user-facing)
  */
 export class CreateSubscriptionRequestDto {
-  @IsOptional()
   @IsString()
-  planId?: string;
+  planId: string;
 
   @IsOptional()
   @IsEnum(SubscriptionTier)

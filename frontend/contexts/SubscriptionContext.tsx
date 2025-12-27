@@ -140,7 +140,7 @@ export interface UserSubscriptionData {
  * Subscription request payload (for manual subscription flow)
  */
 export interface SubscriptionRequestPayload {
-  planId?: string;
+  planId: string;
   tier?: string;
   billingPeriod?: string;
   contactName?: string;
@@ -150,8 +150,6 @@ export interface SubscriptionRequestPayload {
   message?: string;
   organizationId?: string;
   notes?: string;
-  /** Fallback plan name when planId is not available */
-  planName?: string;
 }
 
 /**

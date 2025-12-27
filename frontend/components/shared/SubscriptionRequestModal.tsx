@@ -21,7 +21,7 @@ interface SubscriptionRequestModalProps {
 }
 
 export interface SubscriptionRequestFormData {
-  planId?: string;
+  planId: string;
   tier?: SubscriptionTier;
   billingPeriod?: string;
   contactName: string;
@@ -30,8 +30,6 @@ export interface SubscriptionRequestFormData {
   preferredContact: 'email' | 'phone';
   message?: string;
   organizationId?: string;
-  /** Fallback plan name when planId is not available */
-  planName?: string;
 }
 
 const SubscriptionRequestModal: React.FC<SubscriptionRequestModalProps> = ({
@@ -91,6 +89,16 @@ const SubscriptionRequestModal: React.FC<SubscriptionRequestModalProps> = ({
       return;
     }
 
+    if (!subscriptionPlanId) {
+      setError(
+        t(
+          'subscription:requestForm.validation.planNotConfigured',
+          'This plan is not configured yet. Please contact support.'
+        )
+      );
+      return;
+    }
+
     if (isFoundation && (!tier || !billingPeriod)) {
       // This should not happen in normal usage (tier/billingPeriod are provided by the caller for foundation plans)
       // If it does, it indicates a wiring/config issue rather than missing user input.
@@ -120,14 +128,6 @@ const SubscriptionRequestModal: React.FC<SubscriptionRequestModalProps> = ({
       return parts.length ? parts.join('\n') : undefined;
     })();
 
-    // If subscriptionPlanId is missing, we still proceed with the request
-    // Include the plan name in the message so admin knows what the user wanted
-    let enrichedMessage = composedMessage;
-    if (!subscriptionPlanId && plan.name) {
-      const planInfo = `[Requested Plan: ${plan.name}${tier ? `, Tier: ${tier}` : ''}${billingPeriod ? `, Billing: ${billingPeriod}` : ''}]`;
-      enrichedMessage = enrichedMessage ? `${planInfo}\n${enrichedMessage}` : planInfo;
-    }
-
     try {
       await onSubmit({
         planId: subscriptionPlanId,
@@ -137,14 +137,12 @@ const SubscriptionRequestModal: React.FC<SubscriptionRequestModalProps> = ({
         contactEmail: contactEmail.trim(),
         contactPhone: contactPhone.trim() || undefined,
         preferredContact,
-        message: enrichedMessage,
+        message: composedMessage,
         organizationId: currentUser?.orgId,
-        planName: plan.name,
       });
       setSubmitted(true);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An error occurred';
-      setError(errorMessage);
+      setError(err instanceof Error ? err.message : 'An error occurred');
     }
   };
 
