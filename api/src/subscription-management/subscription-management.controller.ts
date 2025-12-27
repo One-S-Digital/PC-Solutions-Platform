@@ -22,6 +22,7 @@ import { SubscriptionTier, SubscriptionStatus, UserRole } from '@workspace/types
 
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { Public } from '../auth/decorators/public.decorator';
 import {
   CreateSubscriptionDto,
   UpdateSubscriptionDto,
@@ -808,6 +809,7 @@ export class SubscriptionManagementController {
 
 // =====================================
 // PUBLIC SUBSCRIPTION CONTROLLER
+// These endpoints are public (no auth required) for the pricing page
 // =====================================
 
 @Controller('subscriptions')
@@ -815,12 +817,14 @@ export class SubscriptionController {
   constructor(private readonly subscriptionService: SubscriptionManagementService) {}
 
   @Get('plans')
+  @Public()
   async getActivePlans() {
     const plans = await this.subscriptionService.getActiveSubscriptionPlans();
     return wrapResponse(plans);
   }
 
   @Get('plans/:id')
+  @Public()
   async getPlanById(@Param('id') id: string) {
     const plan = await this.subscriptionService.getSubscriptionPlanById(id);
     return wrapResponse(plan);
