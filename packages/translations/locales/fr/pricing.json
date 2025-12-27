@@ -76,6 +76,8 @@
         "name": "De base"
       },
       "suppliersAndProvidersTitle": "Pour les fournisseurs et prestataires de services",
+      "suppliersTitle": "Pour les fournisseurs",
+      "serviceProvidersTitle": "Pour les prestataires de services",
       "enquireButton": "Renseignez-vous",
       "comingSoon": "Bientôt disponible",
       "selectAndContinue": "Sélectionner et continuer",
@@ -206,6 +208,8 @@
       "name": "De base"
     },
     "suppliersAndProvidersTitle": "Pour les fournisseurs et prestataires de services",
+    "suppliersTitle": "Pour les fournisseurs",
+    "serviceProvidersTitle": "Pour les prestataires de services",
     "enquireButton": "Renseignez-vous",
     "comingSoon": "Bientôt disponible",
     "selectAndContinue": "Sélectionner et continuer",
