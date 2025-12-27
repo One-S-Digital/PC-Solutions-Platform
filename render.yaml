@@ -18,6 +18,17 @@ services:
         value: false
       - key: VITE_DEVELOPMENT_MODE
         value: false
+      # Sentry Error Tracking (Optional - set in Render dashboard)
+      - key: VITE_SENTRY_DSN
+        sync: false  # Must be set manually in Render dashboard
+      - key: VITE_SENTRY_RELEASE
+        value: frontend@1.0.0
+      - key: SENTRY_ORG
+        sync: false  # Optional - for source map upload
+      - key: SENTRY_PROJECT
+        value: frontend
+      - key: SENTRY_AUTH_TOKEN
+        sync: false  # Optional - for source map upload
 
   # API Backend Service
   - type: web
@@ -45,6 +56,17 @@ services:
       - key: APP_ORIGIN
         value: https://app.procrechesolutions.com
         # Note: Update APP_ORIGIN if your frontend uses a different domain (e.g., dash.procrechesolutions.com)
+      # Sentry Error Tracking (Optional - set in Render dashboard)
+      - key: SENTRY_DSN
+        sync: false  # Must be set manually in Render dashboard
+      - key: SENTRY_RELEASE
+        value: api@1.0.0
+      - key: SENTRY_ORG
+        sync: false  # Optional - for source map upload
+      - key: SENTRY_PROJECT
+        value: api
+      - key: SENTRY_AUTH_TOKEN
+        sync: false  # Optional - for source map upload
 
   # Admin Panel Service
   - type: web
@@ -65,6 +87,17 @@ services:
         # Note: Using pc-solutions-v2 as that appears to be the actual service name in Render
       - key: VITE_SKIP_AUTH
         value: false
+      # Sentry Error Tracking (Optional - set in Render dashboard)
+      - key: VITE_SENTRY_DSN
+        sync: false  # Must be set manually in Render dashboard
+      - key: VITE_SENTRY_RELEASE
+        value: admin@1.0.0
+      - key: SENTRY_ORG
+        sync: false  # Optional - for source map upload
+      - key: SENTRY_PROJECT
+        value: admin
+      - key: SENTRY_AUTH_TOKEN
+        sync: false  # Optional - for source map upload
 
 databases:
   # PostgreSQL Database
