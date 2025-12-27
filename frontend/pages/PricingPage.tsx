@@ -232,6 +232,15 @@ const PricingPage: React.FC = () => {
 
   const shouldShowSuppliersAndProviders = shouldShowSupplier || shouldShowServiceProvider;
 
+  // Helper function for determining the suppliers/providers section title
+  const getSuppliersAndProvidersTitle = (): string => {
+    if (shouldShowSupplier && shouldShowServiceProvider) {
+      return t('pricingPage.suppliersAndProvidersTitle');
+    }
+    return shouldShowSupplier 
+      ? t('pricingPage.suppliersTitle')
+      : t('pricingPage.serviceProvidersTitle');
+  };
 
   return (
     <div className="bg-page-bg min-h-screen py-12 px-4 sm:px-6 lg:px-8 relative text-swiss-charcoal">
@@ -280,11 +289,7 @@ const PricingPage: React.FC = () => {
         {shouldShowSuppliersAndProviders && (
              <div className="mt-16">
                 <h2 className="text-3xl font-semibold text-center text-swiss-charcoal">
-                  {shouldShowSupplier && shouldShowServiceProvider
-                    ? t('pricingPage.suppliersAndProvidersTitle')
-                    : shouldShowSupplier
-                      ? t('pricingPage.suppliersTitle')
-                      : t('pricingPage.serviceProvidersTitle')}
+                  {getSuppliersAndProvidersTitle()}
                 </h2>
                 <div className={`mt-8 grid grid-cols-1 ${shouldShowSupplier && shouldShowServiceProvider ? 'md:grid-cols-2' : ''} gap-8 max-w-4xl mx-auto`}>
                 {shouldShowSupplier && supplierPlan && <PlanCard plan={supplierPlan} />}
