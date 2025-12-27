@@ -26,7 +26,12 @@ export class LeadsSchedulerService implements OnModuleInit {
   onModuleInit() {
     // Validate required environment variable
     if (!process.env.FRONTEND_URL) {
-      this.logger.warn('FRONTEND_URL environment variable is not set - email links will not work correctly');
+      const message = 'FRONTEND_URL environment variable is not set - email links will not work correctly';
+      if (process.env.NODE_ENV === 'production') {
+        this.logger.error(message);
+        throw new Error('Missing required environment variable: FRONTEND_URL');
+      }
+      this.logger.warn(message);
     }
     this.logger.log('LeadsSchedulerService initialized - automated lead distribution enabled');
   }

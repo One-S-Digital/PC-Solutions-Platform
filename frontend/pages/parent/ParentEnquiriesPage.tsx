@@ -30,7 +30,7 @@ interface FoundationResponse {
   foundationName: string;
   status: string;
   message: string | null;
-  respondedAt: string;
+  respondedAt: string | null;
 }
 
 interface ParentLeadWithResponses {
