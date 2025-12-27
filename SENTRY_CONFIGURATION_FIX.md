@@ -21,6 +21,20 @@ The Sentry DSN (Data Source Name) environment variables are **not configured** i
 
 ## Solution
 
+### Step 0: Check Current Configuration (Optional)
+
+Before making changes, you can check what's currently configured in Render:
+
+```bash
+# Get your Render API key from: https://dashboard.render.com/ → Account Settings → API Keys
+node scripts/check-render-env.js --save-key your-render-api-key
+node scripts/check-render-env.js
+```
+
+This script will show you exactly which Sentry environment variables are set or missing in your Render deployment.
+
+**See:** [scripts/README-check-render-env.md](./scripts/README-check-render-env.md) for detailed instructions.
+
 ### Step 1: Create Sentry Projects
 
 1. Go to [https://sentry.io](https://sentry.io) and create an account (or log in)

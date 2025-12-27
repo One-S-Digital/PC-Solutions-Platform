@@ -5,6 +5,18 @@
 sentry.config.ts:9 Sentry DSN not configured. Skipping Sentry initialization.
 ```
 
+## Check Current Configuration
+
+First, see what's actually configured:
+
+```bash
+# Get your Render API key from: https://dashboard.render.com/ → Account Settings → API Keys
+node scripts/check-render-env.js --save-key your-render-api-key
+node scripts/check-render-env.js
+```
+
+See [scripts/README-check-render-env.md](./scripts/README-check-render-env.md) for details.
+
 ## The Solution (Quick Steps)
 
 ### 1. Create Sentry Projects (5 minutes)

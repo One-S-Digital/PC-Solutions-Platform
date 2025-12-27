@@ -1,0 +1,140 @@
+```
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                    SENTRY CONFIGURATION WORKFLOW                             │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+STEP 1: GET RENDER API KEY
+┌─────────────────────────────┐
+│  Render Dashboard           │
+│  → Account Settings         │
+│  → API Keys                 │
+│  → Create API Key           │
+│  → Copy Key                 │
+└─────────────┬───────────────┘
+              │
+              ▼
+STEP 2: CHECK CURRENT CONFIGURATION
+┌─────────────────────────────────────────────────────────────────┐
+│  $ node scripts/check-render-env.js --save-key YOUR_KEY         │
+│  $ node scripts/check-render-env.js                             │
+└─────────────┬───────────────────────────────────────────────────┘
+              │
+              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  Script Checks 3 Services:                                      │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │ ✓ pc-solutions-frontend → VITE_SENTRY_DSN              │   │
+│  │ ✓ pc-solutions-admin    → VITE_SENTRY_DSN              │   │
+│  │ ✓ pc-solutions-v2 (API) → SENTRY_DSN                   │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└─────────────┬───────────────────────────────────────────────────┘
+              │
+              ▼
+         ┌────┴────┐
+         │ Results?│
+         └────┬────┘
+              │
+    ┌─────────┴─────────┐
+    │                   │
+    ▼                   ▼
+┌───────┐          ┌───────┐
+│  ALL  │          │ SOME  │
+│  SET  │          │MISSING│
+└───┬───┘          └───┬───┘
+    │                  │
+    │                  ▼
+    │          STEP 3: CREATE SENTRY PROJECTS
+    │          ┌─────────────────────────────┐
+    │          │  sentry.io                  │
+    │          │  → New Projects:            │
+    │          │    • pc-solutions-frontend  │
+    │          │    • pc-solutions-admin     │
+    │          │    • pc-solutions-api       │
+    │          │  → Get DSN from each        │
+    │          └─────────────┬───────────────┘
+    │                        │
+    │                        ▼
+    │          STEP 4: ADD TO RENDER DASHBOARD
+    │          ┌──────────────────────────────────────┐
+    │          │  For each service:                   │
+    │          │  1. Open service in Render           │
+    │          │  2. Go to Environment tab            │
+    │          │  3. Add environment variable:        │
+    │          │     Key: VITE_SENTRY_DSN or          │
+    │          │          SENTRY_DSN                  │
+    │          │     Value: [DSN from Sentry]         │
+    │          │  4. Save Changes                     │
+    │          │  5. Redeploy service                 │
+    │          └─────────────┬────────────────────────┘
+    │                        │
+    │                        ▼
+    │          STEP 5: VERIFY CONFIGURATION
+    │          ┌─────────────────────────────────────┐
+    │          │  $ node scripts/check-render-env.js │
+    │          └─────────────┬───────────────────────┘
+    │                        │
+    └────────────────────────┘
+             │
+             ▼
+┌────────────────────────────────────────────────────────────────┐
+│  ✓ ALL VARIABLES SET                                           │
+│  ┌──────────────────────────────────────────────────────────┐ │
+│  │ ✓ Frontend: VITE_SENTRY_DSN SET                          │ │
+│  │ ✓ Admin:    VITE_SENTRY_DSN SET                          │ │
+│  │ ✓ API:      SENTRY_DSN SET                               │ │
+│  └──────────────────────────────────────────────────────────┘ │
+└────────────────────────────────┬───────────────────────────────┘
+                                 │
+                                 ▼
+             ┌───────────────────────────────┐
+             │  SENTRY IS NOW WORKING!       │
+             │                               │
+             │  • No "DSN not configured"    │
+             │  • Errors tracked in Sentry   │
+             │  • Performance monitored      │
+             │  • Feedback widget visible    │
+             └───────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                          TROUBLESHOOTING                                     │
+├──────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  Still seeing "Sentry DSN not configured"?                                   │
+│  → Verify variables are added in Render Dashboard                           │
+│  → Ensure you redeployed after adding variables                             │
+│  → Run check script to verify: node scripts/check-render-env.js             │
+│                                                                              │
+│  Errors not appearing in Sentry?                                             │
+│  → Check DSN is correct (copy from Sentry project)                          │
+│  → Verify service has restarted                                             │
+│  → Check Sentry project settings (is project active?)                       │
+│  → Trigger a test error to verify                                           │
+│                                                                              │
+│  Script shows "Service not found"?                                           │
+│  → Check service names in Render Dashboard                                  │
+│  → Service names might differ from render.yaml                              │
+│  → Update script if needed                                                  │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                        QUICK REFERENCE                                       │
+├──────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  Check Render env vars:                                                      │
+│  $ node scripts/check-render-env.js                                          │
+│                                                                              │
+│  Save API key:                                                               │
+│  $ node scripts/check-render-env.js --save-key YOUR_KEY                      │
+│                                                                              │
+│  Get help:                                                                   │
+│  $ cat scripts/README-check-render-env.md                                    │
+│                                                                              │
+│  Full guide:                                                                 │
+│  $ cat SENTRY_CONFIGURATION_FIX.md                                           │
+│                                                                              │
+│  Quick fix:                                                                  │
+│  $ cat SENTRY_QUICK_FIX.md                                                   │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+```
