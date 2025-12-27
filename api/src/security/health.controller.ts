@@ -1,5 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import * as Sentry from '@sentry/nestjs';
 import { ClamAVService } from './clamav.service';
 import { MimeValidationService } from './mime-validation.service';
 import { QuarantineStorageService } from './quarantine-storage.service';
@@ -123,6 +124,47 @@ export class HealthController {
           quarantineStorage: false,
         },
         details: 'Security system health check failed',
+        timestamp: new Date().toISOString(),
+      };
+    }
+  }
+
+  @Get('sentry')
+  @ApiOperation({ summary: 'Test Sentry error tracking integration' })
+  @ApiResponse({ status: 200, description: 'Sentry test completed - check your Sentry dashboard' })
+  async testSentry(): Promise<{
+    message: string;
+    sentryEnabled: boolean;
+    eventId?: string;
+    timestamp: string;
+  }> {
+    const sentryEnabled = !!process.env.SENTRY_DSN;
+    
+    if (!sentryEnabled) {
+      return {
+        message: 'Sentry is not configured. Set SENTRY_DSN environment variable.',
+        sentryEnabled: false,
+        timestamp: new Date().toISOString(),
+      };
+    }
+
+    try {
+      // Capture a test message
+      const eventId = Sentry.captureMessage('Sentry Health Check Test', 'info');
+      
+      // Also capture a test exception
+      Sentry.captureException(new Error('Sentry Test Exception - This is a test error to verify Sentry integration'));
+      
+      return {
+        message: 'Test error sent to Sentry successfully! Check your Sentry dashboard in a few seconds.',
+        sentryEnabled: true,
+        eventId,
+        timestamp: new Date().toISOString(),
+      };
+    } catch (error) {
+      return {
+        message: 'Failed to send test error to Sentry. Check your SENTRY_DSN configuration.',
+        sentryEnabled: true,
         timestamp: new Date().toISOString(),
       };
     }
