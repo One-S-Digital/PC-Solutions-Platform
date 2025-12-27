@@ -12,14 +12,18 @@ Firefox ESR
 # Exclude dead browsers
 not dead
 
-# Minimum iOS version
+# Minimum iOS version (supports optional chaining with transpilation)
 iOS >= 12
 
-# Minimum Safari version
+# Minimum Safari version (supports optional chaining with transpilation)
 Safari >= 12
 
-# Minimum Edge version (Chromium-based)
+# Minimum Edge version (Chromium-based, supports optional chaining with transpilation)
 Edge >= 79
 
-# Explicitly exclude IE 11
+# Explicitly exclude IE 11 (no longer supported)
 not IE 11
+
+# Note: ES2020 features (optional chaining, nullish coalescing) will be 
+# transpiled to ES5/ES6 by Vite's legacy plugin for browsers below the native support threshold.
+# Native support: Safari 13.1+, iOS 13.4+, Edge 80+

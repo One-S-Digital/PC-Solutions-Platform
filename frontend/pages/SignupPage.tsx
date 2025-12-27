@@ -351,12 +351,6 @@ const SignupPage: React.FC = () => {
     const errorMessage = t('signup:errors.captchaError', 'CAPTCHA verification failed. Please refresh the page and try again.');
     setCaptchaError(errorMessage);
     console.error('CAPTCHA error:', error);
-    
-    // Set error in form errors as well for visibility
-    setErrors(prev => ({
-      ...prev,
-      termsAccepted: errorMessage
-    }));
   };
 
   // Cooldown timer for resending verification code
@@ -444,7 +438,9 @@ const SignupPage: React.FC = () => {
     e.stopPropagation(); // Prevent event bubbling in older browsers
     
     if (!selectedRole) {
-      setErrors({ email: t('signup:errors.roleRequired', 'Please select a role first') });
+      // This shouldn't happen in normal flow since step 2 requires selectedRole
+      // Navigate back to role selection as a safeguard
+      setCurrentStep(1);
       return;
     }
     
@@ -518,7 +514,6 @@ const SignupPage: React.FC = () => {
       }
     } catch (err: any) {
       console.error('Signup error');
-      const errorCode = (err.errors && err.errors[0] && err.errors[0].code) || 'unknown';
       let errorMessage = 'An error occurred during signup';
       
       if (err.errors && err.errors.length > 0) {

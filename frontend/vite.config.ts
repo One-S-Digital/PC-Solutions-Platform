@@ -2,6 +2,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
+import legacy from '@vitejs/plugin-legacy';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -75,7 +76,18 @@ export default defineConfig(({ mode }) => {
         port: 3001,
         host: '0.0.0.0',
       },
-      plugins: [react(), isE2E ? e2eMockApiPlugin() : undefined].filter(Boolean),
+      plugins: [
+        react(), 
+        isE2E ? e2eMockApiPlugin() : undefined,
+        // Legacy plugin transpiles ES2020+ features (optional chaining, nullish coalescing, etc.)
+        // for older browsers (Safari 12-13.0, Edge 79, iOS 12-13.3) while keeping modern code
+        // for browsers that support it natively (Safari 13.1+, Edge 80+, iOS 13.4+)
+        !isE2E ? legacy({
+          targets: ['defaults', 'not IE 11'],
+          modernPolyfills: true,
+          renderLegacyChunks: true,
+        }) : undefined,
+      ].filter(Boolean),
       define: {
         'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
         'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
@@ -90,7 +102,8 @@ export default defineConfig(({ mode }) => {
       // Ensure static assets are properly copied
       publicDir: 'public',
       build: {
-        // Target ES2020 for better browser compatibility (supports Safari 13.1+, Edge 80+)
+        // Target ES2020 for modern browsers (Safari 13.1+, Edge 80+, iOS 13.4+)
+        // Legacy plugin will transpile to ES5 for older browsers automatically
         target: 'es2020',
         // Ensure locales are included in build
         assetsDir: 'assets',

@@ -38,7 +38,6 @@ import {
   ExclamationTriangleIcon,
   CreditCardIcon,
   SparklesIcon,
-  ArrowRightIcon,
   UserCircleIcon,
 } from '@heroicons/react/24/outline';
 import { useSubscription, SubscriptionStatus } from '../../contexts/SubscriptionContext';
