@@ -2,7 +2,7 @@ import * as Sentry from '@sentry/react';
 
 export function initSentry() {
   const dsn = import.meta.env.VITE_SENTRY_DSN;
-  const environment = import.meta.env.VITE_NODE_ENV || import.meta.env.MODE || 'development';
+  const environment = import.meta.env.MODE || 'development';
   
   // Only initialize Sentry if DSN is provided
   if (!dsn) {
@@ -46,15 +46,21 @@ export function initSentry() {
     beforeSend(event, hint) {
       // Remove sensitive data from event before sending
       if (event.request?.headers) {
-        delete event.request.headers['Authorization'];
-        delete event.request.headers['Cookie'];
+        // HTTP headers are case-insensitive; normalize keys
+        const headers = event.request.headers;
+        Object.keys(headers).forEach(key => {
+          const lowerKey = key.toLowerCase();
+          if (lowerKey === 'authorization' || lowerKey === 'cookie') {
+            delete headers[key];
+          }
+        });
       }
       
       // Remove PII from URL parameters
       if (event.request?.url) {
         try {
           const url = new URL(event.request.url);
-          const sensitiveParams = ['token', 'api_key', 'password', 'secret'];
+          const sensitiveParams = ['token', 'api_key', 'password', 'secret', 'email'];
           sensitiveParams.forEach(param => {
             if (url.searchParams.has(param)) {
               url.searchParams.set(param, '[REDACTED]');

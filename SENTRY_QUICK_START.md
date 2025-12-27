@@ -45,9 +45,13 @@ pnpm dev
 
 **Frontend/Admin**: Look for a floating feedback button (bottom right)
 
-**Test Error Capture**: Open browser console and run:
+**Test Error Capture**: 
 ```javascript
-throw new Error('Testing Sentry Integration!');
+// Use Sentry's API directly for console testing:
+Sentry.captureException(new Error('Testing Sentry Integration!'));
+
+// Or add this temporarily in a React component to test error boundary:
+// throw new Error('Testing Sentry Integration!');
 ```
 
 **Check Sentry**: Go to your Sentry dashboard → Issues. You should see the error!

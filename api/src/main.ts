@@ -1,5 +1,4 @@
-// Import Sentry instrumentation first, before any other imports
-import './sentry.instrument';
+// Initialize Sentry as early as possible, before other imports
 import { initSentry } from './sentry.instrument';
 
 // Initialize Sentry
