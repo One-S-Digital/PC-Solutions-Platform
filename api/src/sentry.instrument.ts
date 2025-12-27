@@ -6,10 +6,10 @@ export function initSentry() {
   const dsn = process.env.SENTRY_DSN;
   const environment = process.env.NODE_ENV || 'development';
   
-  // Debug logging for Sentry initialization
+  // Debug logging for Sentry initialization (only show protocol prefix for security)
   console.info('[Sentry API] Initialization check:', {
     hasDsn: !!dsn,
-    dsnPrefix: dsn ? dsn.substring(0, 20) + '...' : 'not set',
+    dsnPrefix: dsn ? dsn.substring(0, 8) + '...' : 'not set',
     environment,
     nodeEnv: process.env.NODE_ENV,
   });

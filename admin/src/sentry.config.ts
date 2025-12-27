@@ -4,10 +4,10 @@ export function initSentry() {
   const dsn = import.meta.env.VITE_SENTRY_DSN;
   const environment = import.meta.env.MODE || 'development';
   
-  // Debug logging for Sentry initialization
+  // Debug logging for Sentry initialization (only show protocol prefix for security)
   console.info('[Sentry Admin] Initialization check:', {
     hasDsn: !!dsn,
-    dsnPrefix: dsn ? dsn.substring(0, 20) + '...' : 'not set',
+    dsnPrefix: dsn ? dsn.substring(0, 8) + '...' : 'not set',
     environment,
     mode: import.meta.env.MODE,
   });
