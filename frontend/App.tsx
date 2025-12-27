@@ -22,7 +22,6 @@ import { SubscriptionPaywall } from './components/shared/SubscriptionPaywall';
 import { useAuthContext } from './providers/AuthProvider';
 import { UserRole } from './types';
 import { useFrontendSettings } from './hooks/useFrontendSettings';
-import * as Sentry from '@sentry/react';
 
 // Development-only logging helper
 const devLog = (...args: any[]) => {
@@ -30,20 +29,6 @@ const devLog = (...args: any[]) => {
     console.log(...args);
   }
 };
-
-// Add this button component to test Sentry's error tracking
-function ErrorButton() {
-  return (
-    <button
-      onClick={() => {
-        throw new Error('This is your first error!');
-      }}
-      className="fixed bottom-4 right-4 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded shadow-lg z-50 transition-colors"
-    >
-      Break the world
-    </button>
-  );
-}
 
 // New Pages
 // FIX: Corrected import casing to resolve filename conflict by consolidating into a single file with PascalCase naming.
@@ -296,7 +281,6 @@ const ProtectedLayout: React.FC = () => {
 
   return (
       <MainLayout>
-        <ErrorButton />
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<RoleBasedDashboardRedirect />} />
