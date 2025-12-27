@@ -270,7 +270,9 @@
       "languages": "Sprachen",
       "location": "Standort",
       "name": "Name",
+      "noData": "Noch keine Kinderprofilinformationen.",
       "specialNeeds": "Besondere Bedürfnisse",
+      "submitEnquiry": "Senden Sie eine Anfrage, um die Informationen Ihres Kindes hinzuzufügen.",
       "title": "Kinderprofil"
     },
     "enquiry": {
@@ -287,6 +289,7 @@
       "title": "Favoriten"
     },
     "quickActions": {
+      "browseFoundations": "Kindertagesstätten durchsuchen",
       "browseServices": "Dienste durchsuchen",
       "enquiries": "Meine Anfragen",
       "findDaycare": "Kindergarten finden",
@@ -303,23 +306,64 @@
       "title": "Zugriff verweigert"
     },
     "card": {
-      "awaitingMatch": "Warten auf Übereinstimmung",
+      "awaitingMatch": "Ihre Anfrage wird mit geeigneten Kindertagesstätten abgeglichen.",
+      "checkBack": "Schauen Sie bald nach Antworten.",
+      "child": "Kind",
+      "childAge": "Alter des Kindes",
       "childInfo": "Kinderinformationen: Alter {{age}}, Gewünschtes Startdatum {{date}}",
+      "childName": "Name des Kindes",
+      "clickToView": "Klicken für Details",
+      "contactDaycare": "Kindertagesstätte kontaktieren",
+      "desiredStart": "Gewünschter Start",
+      "enquiry": "Anfrage",
+      "enquiryDetails": "Anfragedetails",
+      "languages": "Sprachen",
+      "location": "Standort",
       "message": "Ihre Anfrage wurde an relevante Anbieter gesendet",
+      "noResponses": "Noch keine Antworten.",
       "notes": "Zusätzliche Notizen",
-      "responsesTitle": "Antworten",
-      "submitted": "Eingereicht am {{date}}",
+      "respondedOn": "Geantwortet am",
+      "responses": "Antwort(en)",
+      "responsesTitle": "Antworten der Kindertagesstätten",
+      "startDate": "Start",
+      "submitted": "Eingereicht",
       "title": "Anfragedetails: {{canton}}{{municipality}}",
-      "waitingForMoreResponses": "Warten auf weitere Antworten..."
+      "waitingForMoreResponses": "Warten auf Antworten von weiteren Kindertagesstätten..."
     },
     "emptyState": {
       "message": {
-        "0": "Sie haben noch keine Anfragen eingereicht. Beginnen Sie mit dem Ausfüllen des ",
-        "1": "Anfrageformulars"
+        "0": "Sie haben noch keine Anfragen eingereicht.",
+        "1": "Senden Sie Ihre erste Anfrage"
       },
       "title": "Noch keine Anfragen"
     },
+    "findDaycare": "Kindertagesstätte finden",
+    "newEnquiry": "Neue Anfrage",
+    "stats": {
+      "pending": "Ausstehend",
+      "totalEnquiries": "Gesamtanfragen",
+      "totalResponses": "Gesamtantworten"
+    },
     "title": "Meine Anfragen"
+  },
+  "parentFoundationsPage": {
+    "accessDenied": {
+      "message": "Diese Seite ist nur für Eltern zugänglich.",
+      "title": "Zugriff verweigert"
+    },
+    "allCantons": "Alle Kantone",
+    "capacity": "Kapazität",
+    "emptyState": {
+      "message": "Versuchen Sie, Ihre Suchfilter anzupassen oder senden Sie eine allgemeine Anfrage.",
+      "title": "Keine Kindertagesstätten gefunden"
+    },
+    "enquire": "Anfragen",
+    "resultsCount": "{{count}} Kindertagesstätten werden angezeigt",
+    "searchPlaceholder": "Nach Namen suchen...",
+    "sendEnquiry": "Eine Anfrage senden",
+    "subtitle": "Erkunden Sie Kindertagesstätten in Ihrer Nähe und finden Sie die perfekte Betreuung für Ihr Kind",
+    "title": "Kindertagesstätten durchsuchen",
+    "website": "Webseite"
   },
   "parentSupportPage": {
     "faq": {
