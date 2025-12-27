@@ -114,13 +114,11 @@ export class LeadsController {
       return wrapErrorResponse('User not found');
     }
 
-    // Get leads where the parent email matches or parentId matches
+    // Get leads where the parent email matches
+    // TODO: Add parentId field check when that becomes available
     const leads = await this.prisma.parentLead.findMany({
       where: {
-        OR: [
-          { parentEmail: user.email },
-          // Add a parentId field check when that becomes available
-        ],
+        parentEmail: user.email,
       },
       include: {
         foundationResponses: {
@@ -155,7 +153,7 @@ export class LeadsController {
         foundationName: r.foundation.name,
         status: r.status,
         message: r.message,
-        respondedAt: r.respondedAt.toISOString(),
+        respondedAt: r.respondedAt?.toISOString() ?? null,
       })),
     }));
 

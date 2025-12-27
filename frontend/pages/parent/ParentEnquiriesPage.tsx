@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAppContext } from '../../contexts/AppContext';
 import { UserRole, LeadMainStatus, FoundationLeadResponseStatus } from '../../types';
 import Card from '../../components/ui/Card';
@@ -259,9 +259,9 @@ const ParentEnquiriesPage: React.FC = () => {
           <h2 className="text-xl font-semibold text-swiss-charcoal mb-2">{t('parentEnquiriesPage.emptyState.title')}</h2>
           <p className="text-gray-500 mb-4">
             {t('parentEnquiriesPage.emptyState.message.0', 'You haven\'t submitted any enquiries yet.')}{' '}
-            <a href="/#/parent-lead-form" className="text-swiss-mint hover:underline">
+            <Link to="/parent-lead-form" className="text-swiss-mint hover:underline">
               {t('parentEnquiriesPage.emptyState.message.1', 'Send your first enquiry')}
-            </a>
+            </Link>
           </p>
           <Button variant="primary" onClick={() => navigate('/parent-lead-form')}>
             {t('parentEnquiriesPage.findDaycare', 'Find a Daycare')}

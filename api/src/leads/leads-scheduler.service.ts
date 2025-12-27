@@ -10,7 +10,7 @@ import { EmailNotificationService } from '../email-notification/email-notificati
  * Features:
  * - Automatically distributes new leads to matching foundations
  * - Sends notifications to foundations about new leads
- * - Runs on a configurable schedule (default: every 15 minutes)
+ * - Runs on a configurable schedule (default: every 10 minutes)
  */
 @Injectable()
 export class LeadsSchedulerService implements OnModuleInit {
@@ -24,11 +24,15 @@ export class LeadsSchedulerService implements OnModuleInit {
   ) {}
 
   onModuleInit() {
+    // Validate required environment variable
+    if (!process.env.FRONTEND_URL) {
+      this.logger.warn('FRONTEND_URL environment variable is not set - email links will not work correctly');
+    }
     this.logger.log('LeadsSchedulerService initialized - automated lead distribution enabled');
   }
 
   /**
-   * Distribute new leads to matching foundations every 15 minutes.
+   * Distribute new leads to matching foundations every 10 minutes.
    * This finds unassigned leads and matches them with appropriate foundations.
    */
   @Cron(CronExpression.EVERY_10_MINUTES)
@@ -112,7 +116,16 @@ export class LeadsSchedulerService implements OnModuleInit {
   /**
    * Send notification to a foundation about a new lead.
    */
-  private async notifyFoundationOfLead(foundationId: string, lead: any): Promise<void> {
+  private async notifyFoundationOfLead(
+    foundationId: string,
+    lead: {
+      id: string;
+      parentName: string | null;
+      childAge: number | null;
+      preferredLocation: string | null;
+      message: string | null;
+    },
+  ): Promise<void> {
     // Get foundation details
     const foundation = await this.prisma.organization.findUnique({
       where: { id: foundationId },
@@ -152,7 +165,7 @@ export class LeadsSchedulerService implements OnModuleInit {
             childAge: lead.childAge,
             location: lead.preferredLocation || 'Not specified',
             message: lead.message || 'No additional message',
-            leadUrl: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/foundation/leads`,
+            leadUrl: `${process.env.FRONTEND_URL}/foundation/leads`,
           },
         });
         this.logger.log(`Sent lead notification to ${email} for foundation ${foundationId}`);
@@ -164,6 +177,8 @@ export class LeadsSchedulerService implements OnModuleInit {
 
   /**
    * Clean up old leads that have been pending for too long.
+   * Includes both NEW leads that were never distributed and PROCESSING leads
+   * that were distributed but never received a response.
    * Runs daily at 3 AM.
    */
   @Cron('0 3 * * *')
@@ -172,10 +187,10 @@ export class LeadsSchedulerService implements OnModuleInit {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-      // Mark very old leads as closed if no activity
+      // Mark very old leads as closed if no activity (includes both NEW and PROCESSING)
       const result = await this.prisma.parentLead.updateMany({
         where: {
-          status: 'NEW',
+          status: { in: ['NEW', 'PROCESSING'] },
           createdAt: { lt: thirtyDaysAgo },
         },
         data: {
@@ -184,7 +199,7 @@ export class LeadsSchedulerService implements OnModuleInit {
       });
 
       if (result.count > 0) {
-        this.logger.log(`Marked ${result.count} old leads as closed due to no response`);
+        this.logger.log(`Marked ${result.count} stale leads (NEW/PROCESSING) as closed due to no response`);
       }
     } catch (error) {
       this.logger.error(`Lead cleanup failed: ${(error as Error).message}`);
@@ -211,21 +226,39 @@ export class LeadsSchedulerService implements OnModuleInit {
 
   /**
    * Manual trigger for lead distribution (for admin/testing purposes).
+   * Returns information about the distribution run.
    */
-  async triggerLeadDistribution(): Promise<{ processed: number; distributed: number }> {
-    await this.processNewLeads();
-    
-    const newLeadsCount = await this.prisma.parentLead.count({
-      where: { status: 'NEW' },
-    });
+  async triggerLeadDistribution(): Promise<{
+    remainingNew: number;
+    totalProcessing: number;
+    distributionRan: boolean;
+  }> {
+    // Check if already processing to avoid race condition
+    if (this.isProcessing) {
+      const [remainingNew, totalProcessing] = await Promise.all([
+        this.prisma.parentLead.count({ where: { status: 'NEW' } }),
+        this.prisma.parentLead.count({ where: { status: 'PROCESSING' } }),
+      ]);
 
-    const processingCount = await this.prisma.parentLead.count({
-      where: { status: 'PROCESSING' },
-    });
+      return {
+        remainingNew,
+        totalProcessing,
+        distributionRan: false,
+      };
+    }
+
+    await this.processNewLeads();
+
+    // Return counts after distribution
+    const [remainingNew, totalProcessing] = await Promise.all([
+      this.prisma.parentLead.count({ where: { status: 'NEW' } }),
+      this.prisma.parentLead.count({ where: { status: 'PROCESSING' } }),
+    ]);
 
     return {
-      processed: newLeadsCount,
-      distributed: processingCount,
+      remainingNew,
+      totalProcessing,
+      distributionRan: true,
     };
   }
 }

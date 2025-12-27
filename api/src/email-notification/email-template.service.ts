@@ -480,6 +480,55 @@ export class EmailTemplateService {
         `,
       },
 
+      // Lead Management
+      new_lead: {
+        subject: 'New Enquiry Received - {{foundationName}}',
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>New Parent Enquiry Received</h2>
+            <p>Hello,</p>
+            <p>A new parent enquiry has been matched with <strong>{{foundationName}}</strong>.</p>
+            <p><strong>Enquiry Details:</strong></p>
+            <ul>
+              <li><strong>Parent Name:</strong> {{parentName}}</li>
+              <li><strong>Child Age:</strong> {{childAge}} years</li>
+              <li><strong>Preferred Location:</strong> {{location}}</li>
+            </ul>
+            <p><strong>Message from Parent:</strong></p>
+            <p style="background-color: #f3f4f6; padding: 12px; border-radius: 6px; font-style: italic;">
+              "{{message}}"
+            </p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="{{leadUrl}}" style="background-color: #14B8A6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">View Lead Details</a>
+            </div>
+            <p>Please respond to this enquiry as soon as possible to maximize your chances of enrollment.</p>
+            <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+          </div>
+        `,
+        textContent: `
+          New Parent Enquiry Received
+          
+          Hello,
+          
+          A new parent enquiry has been matched with {{foundationName}}.
+          
+          Enquiry Details:
+          - Parent Name: {{parentName}}
+          - Child Age: {{childAge}} years
+          - Preferred Location: {{location}}
+          
+          Message from Parent:
+          "{{message}}"
+          
+          View lead details: {{leadUrl}}
+          
+          Please respond to this enquiry as soon as possible to maximize your chances of enrollment.
+          
+          Best regards,
+          The Pro Crèche Solutions Team
+        `,
+      },
+
       // Subscription & Billing
       subscription_activation: {
         subject: 'Subscription Activated - {{planName}}',
