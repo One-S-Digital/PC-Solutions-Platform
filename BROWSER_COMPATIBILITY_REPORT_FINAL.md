@@ -115,8 +115,8 @@ export default defineConfig({
 
 **Added**:
 ```json
-"@vitejs/plugin-legacy": "^6.0.0",
-"terser": "^5.36.0"
+"@vitejs/plugin-legacy": "^7.2.1",
+"terser": "^5.44.1"
 ```
 
 ---

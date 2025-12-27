@@ -46,11 +46,11 @@ Added required dependencies for browser compatibility.
 
 **New Dependencies**:
 ```json
-"@vitejs/plugin-legacy": "^6.0.0",
-"terser": "^5.36.0"
+"@vitejs/plugin-legacy": "^7.2.1",
+"terser": "^5.44.1"
 ```
 
-**Note**: Using same versions as frontend for consistency.
+**Note**: Using latest stable versions for improved features and security.
 
 ---
 
@@ -98,7 +98,7 @@ pnpm run build
 ```
 
 **Expected Output**:
-```
+```text
 vite v7.x building for production...
 ✓ 1234 modules transformed.
 ✓ building legacy bundle...
@@ -449,7 +449,7 @@ In `/workspace/admin/src/main.tsx`:
 
 ```typescript
 // Track bundle type loaded
-const isModer = typeof Symbol !== 'undefined';
+const isModern = typeof Symbol !== 'undefined';
 console.log(`Admin loaded: ${isModern ? 'modern' : 'legacy'} bundle`);
 
 // Track browser info

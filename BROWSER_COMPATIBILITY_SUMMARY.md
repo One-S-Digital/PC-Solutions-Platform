@@ -119,8 +119,8 @@ export default defineConfig({
 
 **Added**:
 ```json
-"@vitejs/plugin-legacy": "^6.0.0",
-"terser": "^5.36.0"
+"@vitejs/plugin-legacy": "^7.2.1",
+"terser": "^5.44.1"
 ```
 
 ---
@@ -226,7 +226,7 @@ pnpm run build
 ```
 
 **Expected Output**:
-```
+```text
 ✓ 1234 modules transformed.
 ✓ building legacy bundle...
 dist/assets/index-abc123.js       500 kB

@@ -45,7 +45,7 @@ pnpm run build
 **Expected**: Two bundles created (modern + legacy)
 
 **Look for**:
-```
+```text
 ✓ building legacy bundle...
 dist/assets/index-abc123.js       ~500 KB
 dist/assets/index-legacy-def456.js ~650 KB

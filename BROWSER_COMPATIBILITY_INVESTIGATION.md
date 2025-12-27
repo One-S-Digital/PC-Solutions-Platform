@@ -221,11 +221,11 @@ Modern CSS features found (minimal risk):
 - Any browser without ES2020 support
 
 **Error Users Will See**:
-```
+```javascript
 SyntaxError: Unexpected token '?'
 ```
 or
-```
+```javascript
 SyntaxError: Invalid or unexpected token
 ```
 
