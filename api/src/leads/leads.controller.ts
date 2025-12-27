@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { LeadsService } from './leads.service';
+import { LeadsSchedulerService } from './leads-scheduler.service';
 import { CreateParentLeadDto, UpdateParentLeadDto } from './dto/create-parent-lead.dto';
 import { CreateLeadResponseDto } from './dto/lead-response.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -28,6 +29,7 @@ import { wrapResponse, wrapErrorResponse } from '../common/utils/response.util';
 export class LeadsController {
   constructor(
     private readonly leadsService: LeadsService,
+    private readonly leadsSchedulerService: LeadsSchedulerService,
     private readonly prisma: PrismaService,
   ) {}
 
@@ -92,6 +94,73 @@ export class LeadsController {
   }
 
   // ============================================
+  // PARENT-SPECIFIC ENDPOINTS
+  // ============================================
+
+  @Get('parent/my-leads')
+  @Roles(UserRole.PARENT)
+  @ApiOperation({ summary: 'Get leads for the current parent user' })
+  @ApiResponse({ status: 200, description: 'Parent leads retrieved successfully' })
+  async getMyParentLeads(@Request() req) {
+    const userId = req.context.userId;
+
+    // Get the user to find their email
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, email: true },
+    });
+
+    if (!user) {
+      return wrapErrorResponse('User not found');
+    }
+
+    // Get leads where the parent email matches
+    // TODO: Add parentId field check when that becomes available
+    const leads = await this.prisma.parentLead.findMany({
+      where: {
+        parentEmail: user.email,
+      },
+      include: {
+        foundationResponses: {
+          include: {
+            foundation: {
+              select: { id: true, name: true },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    // Transform to include foundation names
+    const transformedLeads = leads.map((lead) => ({
+      id: lead.id,
+      parentName: lead.parentName,
+      parentEmail: lead.parentEmail,
+      parentPhone: lead.parentPhone,
+      childName: lead.childName,
+      childAge: lead.childAge,
+      message: lead.message,
+      preferredLocation: lead.preferredLocation,
+      preferredLanguages: lead.preferredLanguages,
+      specialRequirements: lead.specialRequirements,
+      status: lead.status,
+      createdAt: lead.createdAt.toISOString(),
+      updatedAt: lead.updatedAt.toISOString(),
+      foundationResponses: lead.foundationResponses.map((r) => ({
+        id: r.id,
+        foundationId: r.foundationId,
+        foundationName: r.foundation.name,
+        status: r.status,
+        message: r.message,
+        respondedAt: r.respondedAt?.toISOString() ?? null,
+      })),
+    }));
+
+    return wrapResponse(transformedLeads);
+  }
+
+  // ============================================
   // MATCHING AND ASSIGNMENT
   // ============================================
 
@@ -135,6 +204,15 @@ export class LeadsController {
   @ApiOperation({ summary: 'Distribute leads to matching foundations' })
   distributeLeadsToFoundations() {
     return this.leadsService.distributeLeadsToFoundations();
+  }
+
+  @Post('trigger-distribution')
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @ApiOperation({ summary: 'Manually trigger automated lead distribution' })
+  @ApiResponse({ status: 200, description: 'Lead distribution triggered successfully' })
+  async triggerLeadDistribution() {
+    const result = await this.leadsSchedulerService.triggerLeadDistribution();
+    return wrapResponse(result, 'Lead distribution triggered successfully');
   }
 
   // ============================================

@@ -105,6 +105,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
     { path: '/messages', nameKey: 'sidebar.messages', icon: ChatBubbleLeftEllipsisIcon, roles: [UserRole.EDUCATOR]},
     { path: '/educator/support', nameKey: 'sidebar.support', icon: QuestionMarkCircleIcon, roles: [UserRole.EDUCATOR] },
     { path: '/parent/dashboard', nameKey: 'sidebar.dashboardHome', icon: HomeIcon, roles: [UserRole.PARENT], exact: true },
+    { path: '/parent/foundations', nameKey: 'sidebar.browseFoundations', icon: BuildingOfficeIcon, roles: [UserRole.PARENT] },
     { path: '/parent-lead-form', nameKey: 'sidebar.homeFindCreche', icon: PuzzlePieceIcon, roles: [UserRole.PARENT] },
     { path: '/parent/enquiries', nameKey: 'sidebar.myRequests', icon: ClipboardDocumentListIcon, roles: [UserRole.PARENT] },
     { path: '/messages', nameKey: 'sidebar.messages', icon: ChatBubbleLeftEllipsisIcon, roles: [UserRole.PARENT]},

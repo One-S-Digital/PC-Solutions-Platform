@@ -86,6 +86,7 @@ import EducatorSupportPage from './pages/educator/EducatorSupportPage';
 // Parent Pages
 import ParentDashboardPage from './pages/parent/ParentDashboardPage';
 import ParentSupportPage from './pages/parent/ParentSupportPage';
+import ParentFoundationsPage from './pages/parent/ParentFoundationsPage';
 import PublicPartnersPage from './pages/PublicPartnersPage';
 import ProfilePage from './pages/ProfilePage';
 import OrganizationProfileViewPage from './pages/profile/OrganizationProfileViewPage';
@@ -484,8 +485,11 @@ const ProtectedLayout: React.FC = () => {
         <Route path="/parent/dashboard" element={
           <ProtectedRoute roles={[UserRole.PARENT]}><ParentDashboardPage /></ProtectedRoute>
         } />
-         <Route path="/parent/enquiries" element={
+        <Route path="/parent/enquiries" element={
           <ProtectedRoute roles={[UserRole.PARENT]}><ParentEnquiriesPage /></ProtectedRoute>
+        } />
+        <Route path="/parent/foundations" element={
+          <ProtectedRoute roles={[UserRole.PARENT]}><ParentFoundationsPage /></ProtectedRoute>
         } />
         <Route path="/parent/support" element={
           <ProtectedRoute roles={[UserRole.PARENT]}><ParentSupportPage /></ProtectedRoute>

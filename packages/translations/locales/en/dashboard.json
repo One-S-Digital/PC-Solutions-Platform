@@ -835,7 +835,9 @@
       "languages": "Languages",
       "location": "Location",
       "name": "Name",
+      "noData": "No child profile information yet.",
       "specialNeeds": "Special Needs",
+      "submitEnquiry": "Submit an enquiry to add your child's information.",
       "title": "Child Profile"
     },
     "enquiry": {
@@ -852,6 +854,7 @@
       "title": "Favorites"
     },
     "quickActions": {
+      "browseFoundations": "Browse Daycares",
       "browseServices": "Browse Services",
       "enquiries": "My Enquiries",
       "findDaycare": "Find Daycare",
@@ -874,23 +877,64 @@
       "title": "Access Denied"
     },
     "card": {
-      "awaitingMatch": "Awaiting Match",
+      "awaitingMatch": "Your enquiry is being matched with suitable daycares.",
+      "checkBack": "Check back soon for responses.",
+      "child": "Child",
+      "childAge": "Child Age",
       "childInfo": "Child Information: Age {{age}}, Desired Start Date {{date}}",
+      "childName": "Child Name",
+      "clickToView": "Click to view details",
+      "contactDaycare": "Contact Daycare",
+      "desiredStart": "Desired Start",
+      "enquiry": "Enquiry",
+      "enquiryDetails": "Enquiry Details",
+      "languages": "Languages",
+      "location": "Location",
       "message": "Your enquiry has been sent to relevant providers",
+      "noResponses": "No responses yet.",
       "notes": "Additional Notes",
-      "responsesTitle": "Responses",
-      "submitted": "Submitted on {{date}}",
+      "respondedOn": "Responded on",
+      "responses": "response(s)",
+      "responsesTitle": "Daycare Responses",
+      "startDate": "Start",
+      "submitted": "Submitted",
       "title": "Enquiry Details: {{canton}}{{municipality}}",
-      "waitingForMoreResponses": "Waiting for more responses..."
+      "waitingForMoreResponses": "Waiting for more daycares to respond..."
     },
     "emptyState": {
       "message": {
-        "0": "You haven't submitted any enquiries yet. Start by filling out the ",
-        "1": "enquiry form"
+        "0": "You haven't submitted any enquiries yet.",
+        "1": "Send your first enquiry"
       },
       "title": "No enquiries yet"
     },
+    "findDaycare": "Find a Daycare",
+    "newEnquiry": "New Enquiry",
+    "stats": {
+      "pending": "Pending",
+      "totalEnquiries": "Total Enquiries",
+      "totalResponses": "Total Responses"
+    },
     "title": "My Enquiries"
+  },
+  "parentFoundationsPage": {
+    "accessDenied": {
+      "message": "This page is only accessible to parents.",
+      "title": "Access Denied"
+    },
+    "allCantons": "All Cantons",
+    "capacity": "Capacity",
+    "emptyState": {
+      "message": "Try adjusting your search filters or send a general enquiry.",
+      "title": "No Daycares Found"
+    },
+    "enquire": "Enquire",
+    "resultsCount": "Showing {{count}} daycares",
+    "searchPlaceholder": "Search by name...",
+    "sendEnquiry": "Send an Enquiry",
+    "subtitle": "Explore daycares in your area and find the perfect fit for your child",
+    "title": "Browse Daycares",
+    "website": "Website"
   },
   "parentLeadFormPage": {
     "authenticatedSuccessMessage": "Your enquiry has been submitted and saved to your dashboard.",
@@ -1251,6 +1295,7 @@
     "analytics": "Analytics",
     "applications": "Applications",
     "billingSubscription": "Billing & Subscription",
+    "browseFoundations": "Browse Daycares",
     "candidatePool": "Candidate Pool",
     "content": "Content",
     "currentPlan": "Current Plan",

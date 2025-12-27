@@ -269,7 +269,9 @@
       "languages": "Langues",
       "location": "Localisation",
       "name": "Nom",
+      "noData": "Aucune information de profil d'enfant pour l'instant.",
       "specialNeeds": "Besoins particuliers",
+      "submitEnquiry": "Soumettez une demande pour ajouter les informations de votre enfant.",
       "title": "Profil de l'enfant"
     },
     "enquiry": {
@@ -286,6 +288,7 @@
       "title": "Favoris"
     },
     "quickActions": {
+      "browseFoundations": "Parcourir les crèches",
       "browseServices": "Parcourir les services",
       "enquiries": "Mes demandes",
       "findDaycare": "Trouver une garderie",
@@ -302,23 +305,64 @@
       "title": "Accès refusé"
     },
     "card": {
-      "awaitingMatch": "En attente de correspondance",
+      "awaitingMatch": "Votre demande est en cours de correspondance avec des crèches adaptées.",
+      "checkBack": "Revenez bientôt pour les réponses.",
+      "child": "Enfant",
+      "childAge": "Âge de l'enfant",
       "childInfo": "Informations sur l'enfant : Âge {{age}}, Date de début souhaitée {{date}}",
+      "childName": "Nom de l'enfant",
+      "clickToView": "Cliquez pour voir les détails",
+      "contactDaycare": "Contacter la crèche",
+      "desiredStart": "Début souhaité",
+      "enquiry": "Demande",
+      "enquiryDetails": "Détails de la demande",
+      "languages": "Langues",
+      "location": "Localisation",
       "message": "Votre demande a été envoyée aux fournisseurs concernés",
+      "noResponses": "Pas encore de réponses.",
       "notes": "Notes supplémentaires",
-      "responsesTitle": "Réponses",
-      "submitted": "Soumis le {{date}}",
+      "respondedOn": "Répondu le",
+      "responses": "réponse(s)",
+      "responsesTitle": "Réponses des crèches",
+      "startDate": "Début",
+      "submitted": "Soumis",
       "title": "Détails de la demande : {{canton}}{{municipality}}",
-      "waitingForMoreResponses": "En attente de plus de réponses..."
+      "waitingForMoreResponses": "En attente de réponses de plus de crèches..."
     },
     "emptyState": {
       "message": {
-        "0": "Vous n'avez pas encore soumis de demandes. Commencez par remplir le ",
-        "1": "formulaire de demande"
+        "0": "Vous n'avez pas encore soumis de demandes.",
+        "1": "Envoyez votre première demande"
       },
       "title": "Aucune demande pour le moment"
     },
+    "findDaycare": "Trouver une crèche",
+    "newEnquiry": "Nouvelle demande",
+    "stats": {
+      "pending": "En attente",
+      "totalEnquiries": "Total des demandes",
+      "totalResponses": "Total des réponses"
+    },
     "title": "Mes demandes"
+  },
+  "parentFoundationsPage": {
+    "accessDenied": {
+      "message": "Cette page est accessible uniquement aux parents.",
+      "title": "Accès refusé"
+    },
+    "allCantons": "Tous les cantons",
+    "capacity": "Capacité",
+    "emptyState": {
+      "message": "Essayez d'ajuster vos filtres de recherche ou envoyez une demande générale.",
+      "title": "Aucune crèche trouvée"
+    },
+    "enquire": "Demander",
+    "resultsCount": "Affichage de {{count}} crèches",
+    "searchPlaceholder": "Rechercher par nom...",
+    "sendEnquiry": "Envoyer une demande",
+    "subtitle": "Explorez les crèches de votre région et trouvez celle qui convient parfaitement à votre enfant",
+    "title": "Parcourir les crèches",
+    "website": "Site web"
   },
   "parentSupportPage": {
     "faq": {
@@ -425,6 +469,7 @@
     "analytics": "Analytiques",
     "applications": "Candidatures",
     "billingSubscription": "Facturation et abonnement",
+    "browseFoundations": "Parcourir les crèches",
     "candidatePool": "Réserve de candidats",
     "content": "Contenu",
     "currentPlan": "Plan actuel",
