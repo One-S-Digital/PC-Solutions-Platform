@@ -6,7 +6,7 @@ interface ClassificationResult {
   confidence: number;
   category: string;      // Maps to Asset.contentCategory
   docType: string;       // Maps to Asset.policyType
-  language: 'fr' | 'de' | 'it' | 'en';
+  language: 'fr' | 'de' | 'en';
   topics: string[];
 }
 
@@ -45,14 +45,20 @@ export class ClassifierService {
       }
     }
 
-    // Score from URL path (very reliable signal)
+    // Score from URL path (very reliable signal) - multi-language: FR, DE, EN
     const urlLower = metadata.url.toLowerCase();
     const urlKeywords: Record<string, number> = {
+      // French
       'creche': 3, 'garderie': 3, 'accueil-de-jour': 4, 'accueil-prescolaire': 4,
+      // German
       'kita': 3, 'kinderbetreuung': 3, 'kindertagesstaette': 4, 'tagesstruktur': 3,
-      'nido': 3, 'asilo': 3,
-      'enfan': 2, 'kind': 2, 'bambin': 2,
-      'laje': 4, 'oaje': 4, 'laac': 4, // Swiss daycare law acronyms
+      // English
+      'daycare': 3, 'day-care': 3, 'childcare': 3, 'child-care': 3, 'nursery': 3, 'preschool': 3,
+      'early-childhood': 4, 'early-childhood-care': 4,
+      // Common terms (all languages)
+      'enfan': 2, 'kind': 2, 'child': 2, 'children': 2,
+      // Swiss daycare law acronyms
+      'laje': 4, 'oaje': 4, 'laac': 4,
     };
     
     for (const [kw, weight] of Object.entries(urlKeywords)) {
@@ -74,11 +80,37 @@ export class ClassifierService {
       }
     }
 
-    // Negative signals from URL/anchor
-    const negativePatterns = ['adoption', 'steuer', 'impot', 'divorce', 'mariage', 'succession'];
+    // Negative signals from URL/anchor (strong penalty for non-policy content)
+    // Multi-language patterns: FR, DE, EN
+    const negativePatterns = [
+      // Legal/Financial (not daycare policies)
+      'adoption', 'steuer', 'impot', 'divorce', 'mariage', 'succession', 'tax', 'taxation',
+      // Organizational charts
+      'organigramme', 'organigramm', 'organigram', 'org-chart', 'organizational-chart',
+      'autorites', 'autorités', 'behoerden', 'authorities', 'authority',
+      // Legal notices (not policies)
+      'mentions-legales', 'impressum', 'legal-notice', 'legal notice', 'privacy-policy', 'disclaimer',
+      // Navigation
+      'plan-du-site', 'sitemap', 'site-map', 'contact', 'kontakt', 'home', 'accueil',
+      // Job listings
+      'offres-emploi', 'offres-d-emploi', 'stellenangebote', 'job-offers', 'jobs', 'careers',
+      // Site navigation
+      'login', 'anmelden', 'se-connecter', 'sign-in', 'search', 'recherche', 'suche',
+      'about', 'about-us', 'help', 'aide', 'hilfe', 'support',
+    ];
+    
+    let negativePatternFound: string | null = null;
     for (const neg of negativePatterns) {
       if (urlLower.includes(neg) || combinedText.includes(neg)) {
-        score *= 0.3;
+        negativePatternFound = neg;
+        score *= 0.2; // Strong penalty (80% reduction)
+        // Only completely reject if score is below threshold after penalty
+        // This prevents edge cases where a document might have strong daycare keywords
+        // but also contains a negative pattern (e.g., "accueil-de-jour" + "contact")
+        if (score < CLASSIFIER_CONFIG.threshold) {
+          score = 0; // Reject if below threshold after negative penalty
+        }
+        break; // Only apply penalty once for the first negative pattern found
       }
     }
 
@@ -92,7 +124,7 @@ export class ClassifierService {
     // - Threshold of 3 (from config) means at least one strong signal or multiple weak signals
     // - Expected accuracy: ~85-90% for metadata-only classification
     // - Tune threshold based on pilot testing false positive/negative rates
-    return {
+    const result: ClassificationResult & { _debug?: any } = {
       isDaycareRelated: score >= CLASSIFIER_CONFIG.threshold,
       confidence: Math.min(score / 10, 1),
       category,
@@ -100,6 +132,16 @@ export class ClassifierService {
       language: lang,
       topics: foundTopics,
     };
+    
+    // Add debug info for detailed logging
+    result._debug = {
+      rawScore: score,
+      threshold: CLASSIFIER_CONFIG.threshold,
+      negativePattern: negativePatternFound,
+      topicsFound: foundTopics,
+    };
+    
+    return result as ClassificationResult;
   }
 
   /**
@@ -165,21 +207,21 @@ export class ClassifierService {
    * Detects language from text using common word frequency.
    * Returns defaultLang if text is too short (< 50 chars) or inconclusive.
    */
-  private detectLanguageFromText(text: string, defaultLang: string): 'fr' | 'de' | 'it' | 'en' {
+  private detectLanguageFromText(text: string, defaultLang: string): 'fr' | 'de' | 'en' {
     // Minimum 50 characters for reliable detection (raised from 20 per review feedback)
     if (!text || text.length < 50) return defaultLang as any;
     
     const frCount = (text.match(/\b(le|la|les|de|des|du|un|une|et|est|pour|avec|sur)\b/gi) || []).length;
     const deCount = (text.match(/\b(der|die|das|und|ist|für|mit|von|zu|den|dem|ein)\b/gi) || []).length;
-    const itCount = (text.match(/\b(il|la|le|di|del|della|e|è|per|con|nel|un|una)\b/gi) || []).length;
+    const enCount = (text.match(/\b(the|and|is|for|with|on|in|to|of|a|an|this|that)\b/gi) || []).length;
     
-    const max = Math.max(frCount, deCount, itCount);
+    const max = Math.max(frCount, deCount, enCount);
     // Require at least 5 matches for reliable detection (raised from 3 per review feedback)
     if (max < 5) return defaultLang as any;
     
     if (frCount === max) return 'fr';
     if (deCount === max) return 'de';
-    if (itCount === max) return 'it';
+    if (enCount === max) return 'en';
     return defaultLang as any;
   }
 

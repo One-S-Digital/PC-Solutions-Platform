@@ -948,6 +948,22 @@ export const apiService = {
     >('/static-translations/admin/fix-english-placeholders', {}, {
       timeout: 300000, // 5 minutes timeout for cleanup operations
     }),
+
+  // Crawler health
+  getCrawlerHealth: (apiClient: AxiosInstance) =>
+    apiClient.get<ApiResponse<{
+      totalSources: number;
+      activeSources: number;
+      failedSources: number;
+      pendingReviewCount: number;
+      recentCrawls: Array<{
+        id: number;
+        label: string;
+        lastCrawlAt: string | null;
+        lastCrawlStatus: string | null;
+        lastCrawlError: string | null;
+      }>;
+    }>>('/admin/crawler/health'),
 }
 
 // Export individual content functions for easier imports

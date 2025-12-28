@@ -2366,7 +2366,7 @@ model Canton {
   nameDe      String?            // German name
   nameIt      String?            // Italian name
   nameFr      String?            // French name
-  defaultLang String   @default("de")  // 'fr', 'de', 'it'
+  defaultLang String   @default("de")  // 'fr', 'de', 'en'
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

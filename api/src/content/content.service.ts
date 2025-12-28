@@ -1343,6 +1343,127 @@ export class ContentService {
   }
 
   /**
+   * Get single state policy by ID with optional translation
+   */
+  async getStatePolicyById(id: string, lang?: string) {
+    try {
+      const asset = await this.prisma.asset.findFirst({
+        where: { 
+          id, 
+          category: 'STATE_POLICY' 
+        },
+        include: {
+          uploader: {
+            select: {
+              id: true,
+              clerkId: true,
+              email: true,
+              role: true,
+            },
+          },
+        },
+      });
+
+      if (!asset) {
+        throw new NotFoundException('State policy not found');
+      }
+
+      // Transform to standard format
+      let transformed = this.transformStatePolicyAsset(asset);
+
+      // Apply translations if lang parameter provided
+      if (lang && lang !== 'en') {
+        const translatableFields = FIELDS_BY_ENTITY.state_policy || ['title', 'description', 'content_preview'];
+        const translatedFields = await this.translationService.resolveEntity(
+          'state_policy',
+          id,
+          translatableFields,
+          lang,
+        );
+
+        // Use translated fields if available, fallback to source
+        transformed = {
+          ...transformed,
+          title: (translatedFields.title && translatedFields.title.trim()) || transformed.title,
+          description: (translatedFields.description && translatedFields.description.trim()) 
+            ? translatedFields.description.trim()
+            : (transformed.description || ''),
+          contentPreview: (translatedFields.content_preview && translatedFields.content_preview.trim())
+            ? translatedFields.content_preview.trim()
+            : (transformed.contentPreview || ''),
+        };
+      }
+
+      return {
+        success: true,
+        data: transformed,
+      };
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      this.logger.error('Failed to get state policy by ID:', error);
+      throw new BadRequestException(
+        `Failed to get state policy: ${error.message}`,
+      );
+    }
+  }
+
+  /**
+   * Get available filter options for state policies
+   */
+  async getStatePolicyFilters() {
+    try {
+      const [categories, regions, policyTypes] = await Promise.all([
+        this.prisma.asset.findMany({
+          where: { 
+            category: 'STATE_POLICY',
+            status: 'Published',
+          },
+          distinct: ['contentCategory'],
+          select: { contentCategory: true },
+        }),
+        this.prisma.asset.findMany({
+          where: { 
+            category: 'STATE_POLICY',
+            status: 'Published',
+          },
+          distinct: ['region'],
+          select: { region: true },
+        }),
+        this.prisma.asset.findMany({
+          where: { 
+            category: 'STATE_POLICY',
+            status: 'Published',
+          },
+          distinct: ['policyType'],
+          select: { policyType: true },
+        }),
+      ]);
+
+      return {
+        success: true,
+        data: {
+          categories: categories
+            .map(c => c.contentCategory)
+            .filter((cat): cat is string => !!cat),
+          regions: regions
+            .map(r => r.region)
+            .filter((reg): reg is string => !!reg),
+          policyTypes: policyTypes
+            .map(t => t.policyType)
+            .filter((type): type is string => !!type),
+        },
+      };
+    } catch (error) {
+      this.logger.error('Failed to get state policy filters:', error);
+      throw new BadRequestException(
+        `Failed to get state policy filters: ${error.message}`,
+      );
+    }
+  }
+
+  /**
    * Get canton overview with document counts
    */
   async getCantonOverview() {

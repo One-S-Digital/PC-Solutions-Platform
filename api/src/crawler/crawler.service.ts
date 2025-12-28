@@ -4,6 +4,7 @@ import { HtmlParserService, CandidateDocument } from './parsers/html-parser.serv
 import { PdfParserService } from './parsers/pdf-parser.service';
 import { PlaywrightRendererService } from './parsers/playwright-renderer.service';
 import { ClassifierService } from './classifier/classifier.service';
+import { CLASSIFIER_CONFIG } from './classifier/classifier.config';
 import { createHash } from 'crypto';
 import { AssetKind } from '@prisma/client';
 
@@ -151,10 +152,22 @@ export class CrawlerService {
 
       this.logger.debug(`Attempting to fetch page: ${source.url} (renderType: ${source.renderType})`);
       const html = await this.fetchPage(source.url, source.renderType === 'dynamic');
-      const candidates = this.htmlParser.extractLinks(html, source.url, source.cssSelector);
-      results.discovered = candidates.length;
+      const allCandidates = this.htmlParser.extractLinks(html, source.url, source.cssSelector);
+      results.discovered = allCandidates.length;
 
-      this.logger.log(`Source ${source.label}: Found ${candidates.length} candidate links`);
+      // Filter out candidates with non-whitelisted domains before processing
+      const candidates = allCandidates.filter(candidate => {
+        try {
+          this.validateUrl(candidate.url);
+          return true;
+        } catch (error: any) {
+          // Silently skip non-whitelisted domains (social media, external sites, etc.)
+          this.logger.debug(`Skipping non-whitelisted URL: ${candidate.url} (${error.message})`);
+          return false;
+        }
+      });
+
+      this.logger.log(`Source ${source.label}: Found ${allCandidates.length} candidate links, ${candidates.length} whitelisted`);
 
       // Step 2: Process each candidate with rate limiting
       for (const candidate of candidates) {
@@ -183,6 +196,22 @@ export class CrawlerService {
           nextCrawlAt: new Date(Date.now() + source.crawlFrequencyDays * 24 * 60 * 60 * 1000),
         },
       });
+
+      // Log summary statistics
+      const totalProcessed = results.created + results.updated + results.unchanged + results.skipped;
+      const successRate = totalProcessed > 0 
+        ? ((results.created + results.updated + results.unchanged) / totalProcessed * 100).toFixed(1)
+        : '0';
+      this.logger.log(
+        `Crawl summary for ${source.label}: ` +
+        `Discovered: ${results.discovered}, ` +
+        `Created: ${results.created}, ` +
+        `Updated: ${results.updated}, ` +
+        `Unchanged: ${results.unchanged}, ` +
+        `Skipped: ${results.skipped}, ` +
+        `Errors: ${results.errors.length}, ` +
+        `Success rate: ${successRate}%`
+      );
 
       return results;
     } catch (error: any) {
@@ -217,9 +246,18 @@ export class CrawlerService {
       defaultLang: source.canton.defaultLang,
     });
 
-    // High confidence it's NOT daycare-related → skip entirely
-    if (!classification.isDaycareRelated && classification.confidence > 0.7) {
-      this.logger.debug(`Skipping ${candidate.url} - not daycare-related (confidence: ${classification.confidence})`);
+    // Skip if NOT daycare-related (regardless of confidence - if score is below threshold, skip)
+    if (!classification.isDaycareRelated) {
+      const debug = (classification as any)._debug || {};
+      const reason = debug.negativePattern 
+        ? `negative pattern: "${debug.negativePattern}"`
+        : `score ${debug.rawScore?.toFixed(1) || '0'} < threshold ${debug.threshold || CLASSIFIER_CONFIG.threshold}`;
+      const topicsInfo = debug.topicsFound && debug.topicsFound.length > 0 
+        ? ` (topics: ${debug.topicsFound.join(', ')})`
+        : '';
+      this.logger.debug(
+        `Skipping ${candidate.url} - not daycare-related (${reason}, confidence: ${classification.confidence.toFixed(2)}${topicsInfo}, anchor: "${candidate.anchorText}")`
+      );
       return 'skipped';
     }
 

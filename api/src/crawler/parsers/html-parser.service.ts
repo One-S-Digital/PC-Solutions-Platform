@@ -53,10 +53,85 @@ export class HtmlParserService {
             return;
           }
 
+          // Skip URLs with navigation hash fragments (e.g., #nav-primary, #menu, #top)
+          const urlHash = new URL(absoluteUrl).hash.toLowerCase();
+          if (urlHash && (urlHash.includes('#nav') || urlHash.includes('#menu') || urlHash.includes('#top') || 
+              urlHash.includes('#header') || urlHash.includes('#footer') || urlHash.includes('#skip'))) {
+            return; // Skip navigation anchor links
+          }
+
+          // Filter out common navigation/footer links (not policy content)
+          const anchorText = $link.text().trim() || $link.attr('title') || '';
+          const anchorLower = anchorText.toLowerCase();
+          
+          // Common navigation/footer link patterns to skip (multi-language: FR, DE, EN)
+          const navigationPatterns = [
+            // Legal/Privacy pages
+            'mentions légales', 'legal notice', 'legal notices', 'impressum', 'datenschutz', 'privacy', 'privacy policy',
+            'disclaimer', 'terms of service', 'terms and conditions',
+            // Sitemap
+            'plan du site', 'sitemap', 'site map', 'seitenverzeichnis',
+            // Contact
+            'contact', 'kontakt', 'contact us', 'get in touch',
+            // Navigation
+            'retour', 'back', 'zurück', 'back to', 'return to',
+            'accueil', 'home', 'startseite', 'homepage', 'home page',
+            'haut', 'top', 'nach oben', 'go to top', 'scroll to top',
+            'menu', 'navigation', 'nav', 'menü',
+            // Organizational charts (not policies)
+            'autorités', 'autorites', 'authorities', 'behörden', 'authority',
+            'organigramme', 'organigram', 'organigramm', 'organizational chart', 'org chart',
+            'structure', 'organizational structure', 'organigramme détaillé', 'organigramme simplifié',
+            // Job listings
+            'offres d\'emploi', 'offres emploi', 'job offers', 'job offer', 'stellenangebote', 'stellenangebot',
+            'careers', 'recruitment', 'recrutement', 'rekrutierung',
+            'jobs', 'poste', 'stelle', 'position', 'vacancy', 'vacancies',
+            // Login/Search
+            'se connecter', 'connecter', 'login', 'anmelden', 'sign in', 'sign up', 'register',
+            'recherche', 'search', 'suche', 'find', 'suche nach',
+            // Other common navigation
+            'about', 'about us', 'über uns', 'à propos', 'propos',
+            'news', 'newsletter', 'actualités', 'aktuelles',
+            'help', 'aide', 'hilfe', 'support',
+          ];
+          
+          if (navigationPatterns.some(pattern => anchorLower.includes(pattern))) {
+            return; // Skip navigation/footer links
+          }
+
+          // Filter out common administrative URL paths (multi-language: FR, DE, EN)
+          const urlPath = new URL(absoluteUrl).pathname.toLowerCase();
+          const excludedPaths = [
+            // Contact pages
+            '/contact', '/kontakt', '/contact-us', '/get-in-touch',
+            // Legal/Privacy
+            '/mentions-legales', '/legal', '/impressum', '/privacy', '/privacy-policy',
+            '/disclaimer', '/terms', '/terms-of-service',
+            // Sitemap
+            '/plan-du-site', '/sitemap', '/site-map', '/seitenverzeichnis',
+            // Organizational pages (not policies)
+            '/autorites', '/authorities', '/behoerden', '/authority',
+            '/organigramme', '/organigram', '/organigramm', '/org-chart',
+            '/organizational-chart', '/structure', '/organizational-structure',
+            // Job listings
+            '/offres-emploi', '/offres-d-emploi', '/jobs', '/stellenangebote', '/careers',
+            '/recruitment', '/recrutement', '/rekrutierung',
+            // Login/Search
+            '/login', '/anmelden', '/se-connecter', '/sign-in', '/sign-up',
+            '/recherche', '/search', '/suche',
+            // Other navigation
+            '/about', '/about-us', '/uber-uns', '/a-propos',
+            '/news', '/newsletter', '/actualites', '/aktuelles',
+            '/help', '/aide', '/hilfe', '/support',
+            '/themes', '/themes/', '/topics', '/topics/', // Theme navigation
+          ];
+          
+          if (excludedPaths.some(path => urlPath === path || urlPath.startsWith(path + '/'))) {
+            return; // Skip administrative/navigation pages
+          }
+
           const isPdf = urlLower.endsWith('.pdf') || urlLower.includes('.pdf?');
           
-          // Get anchor text (prefer text content, fall back to title attribute)
-          const anchorText = $link.text().trim() || $link.attr('title') || '';
           if (!anchorText && !isPdf) {
             // Skip links without text unless they're PDFs (PDFs might not have descriptive text)
             return;

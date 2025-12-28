@@ -30,7 +30,7 @@ import {
   Shield,
   Settings
 } from 'lucide-react'
-import { publicApi } from '../services/api'
+import { publicApi, useApiClient, apiService } from '../services/api'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import { LucideIcon } from 'lucide-react'
 import { toast } from 'sonner'
@@ -41,6 +41,7 @@ const SystemMonitor: React.FC = () => {
   const [logFilter, setLogFilter] = useState<'all' | 'error' | 'warning' | 'info'>('all')
   const queryClient = useQueryClient()
   const { t } = useTranslation(['common', 'admin']);
+  const apiClient = useApiClient();
 
   const { data: healthData, isLoading, error } = useQuery({
     queryKey: ['system-health'],
@@ -84,6 +85,13 @@ const SystemMonitor: React.FC = () => {
     queryKey: ['security-metrics'],
     queryFn: () => publicApi.get('/api/system-monitoring/security'),
     refetchInterval: 120000, // Refresh every 2 minutes
+  })
+
+  // Crawler health query
+  const { data: crawlerHealth, isLoading: crawlerHealthLoading } = useQuery({
+    queryKey: ['crawler-health'],
+    queryFn: () => apiService.getCrawlerHealth(apiClient),
+    refetchInterval: 60000, // Refresh every minute
   })
 
   // Mutations
@@ -206,6 +214,7 @@ const SystemMonitor: React.FC = () => {
     queryClient.invalidateQueries({ queryKey: ['system-metrics'] })
     queryClient.invalidateQueries({ queryKey: ['system-alerts'] })
     queryClient.invalidateQueries({ queryKey: ['error-logs'] })
+    queryClient.invalidateQueries({ queryKey: ['crawler-health'] })
     toast.success('Data refreshed')
   }
 
@@ -362,6 +371,125 @@ const SystemMonitor: React.FC = () => {
               icon={TrendingUp}
               color="yellow"
             />
+          </div>
+
+          {/* Crawler Health Section */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+                <Globe className="h-5 w-5 mr-2 text-swiss-teal" />
+                {t('admin:systemMonitor.crawler.title', 'Policy Crawler Health')}
+              </h2>
+              {crawlerHealthLoading && (
+                <div className="flex items-center text-sm text-gray-500">
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                  {t('common:loading', 'Loading...')}
+                </div>
+              )}
+            </div>
+
+            {crawlerHealth?.data?.data ? (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                  <MetricCard
+                    title={t('admin:systemMonitor.crawler.totalSources', 'Total Sources')}
+                    value={crawlerHealth.data.data.totalSources}
+                    icon={Globe}
+                    color="blue"
+                  />
+                  <MetricCard
+                    title={t('admin:systemMonitor.crawler.activeSources', 'Active Sources')}
+                    value={crawlerHealth.data.data.activeSources}
+                    icon={CheckCircle}
+                    color="green"
+                  />
+                  <MetricCard
+                    title={t('admin:systemMonitor.crawler.failedSources', 'Failed Sources')}
+                    value={crawlerHealth.data.data.failedSources}
+                    icon={AlertTriangle}
+                    color={crawlerHealth.data.data.failedSources > 0 ? 'red' : 'green'}
+                  />
+                  <MetricCard
+                    title={t('admin:systemMonitor.crawler.pendingReview', 'Pending Review')}
+                    value={crawlerHealth.data.data.pendingReviewCount}
+                    icon={Clock}
+                    color={crawlerHealth.data.data.pendingReviewCount > 0 ? 'yellow' : 'green'}
+                  />
+                </div>
+
+                {crawlerHealth.data.data.recentCrawls && crawlerHealth.data.data.recentCrawls.length > 0 && (
+                  <div>
+                    <h3 className="text-md font-medium text-gray-700 mb-3">
+                      {t('admin:systemMonitor.crawler.recentCrawls', 'Recent Crawls')}
+                    </h3>
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              {t('admin:systemMonitor.crawler.source', 'Source')}
+                            </th>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              {t('admin:systemMonitor.crawler.lastCrawl', 'Last Crawl')}
+                            </th>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              {t('admin:systemMonitor.crawler.status', 'Status')}
+                            </th>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              {t('admin:systemMonitor.crawler.error', 'Error')}
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {crawlerHealth.data.data.recentCrawls.map((crawl: any) => (
+                            <tr key={crawl.id}>
+                              <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
+                                {crawl.label}
+                              </td>
+                              <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                {crawl.lastCrawlAt
+                                  ? new Date(crawl.lastCrawlAt).toLocaleString()
+                                  : t('admin:systemMonitor.crawler.never', 'Never')}
+                              </td>
+                              <td className="px-4 py-3 whitespace-nowrap">
+                                <span
+                                  className={`px-2 py-1 text-xs font-medium rounded-full ${
+                                    crawl.lastCrawlStatus === 'success'
+                                      ? 'bg-green-100 text-green-800'
+                                      : crawl.lastCrawlStatus === 'failed'
+                                      ? 'bg-red-100 text-red-800'
+                                      : 'bg-gray-100 text-gray-800'
+                                  }`}
+                                >
+                                  {crawl.lastCrawlStatus || t('admin:systemMonitor.crawler.unknown', 'Unknown')}
+                                </span>
+                              </td>
+                              <td className="px-4 py-3 text-sm text-gray-500">
+                                {crawl.lastCrawlError ? (
+                                  <span className="text-red-600 truncate block max-w-xs" title={crawl.lastCrawlError}>
+                                    {crawl.lastCrawlError}
+                                  </span>
+                                ) : (
+                                  <span className="text-gray-400">-</span>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : crawlerHealthLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <LoadingSpinner />
+              </div>
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                {t('admin:systemMonitor.crawler.noData', 'No crawler health data available')}
+              </div>
+            )}
           </div>
         </>
       )}

@@ -215,6 +215,23 @@ export class ContentController {
     return this.contentService.getStatePolicies(query);
   }
 
+  // Get single state policy by ID with optional translation
+  @Get('state-policies/:id')
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.EDUCATOR, UserRole.FOUNDATION, UserRole.PARENT, UserRole.PRODUCT_SUPPLIER)
+  async getStatePolicyById(
+    @Param('id') id: string,
+    @Query('lang') lang?: string,
+  ) {
+    return this.contentService.getStatePolicyById(id, lang);
+  }
+
+  // Get available filter options for state policies
+  @Get('state-policies/filters')
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.EDUCATOR, UserRole.FOUNDATION, UserRole.PARENT, UserRole.PRODUCT_SUPPLIER)
+  async getStatePolicyFilters() {
+    return this.contentService.getStatePolicyFilters();
+  }
+
   // Get canton overview with document counts
   @Get('state-policies/cantons')
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.EDUCATOR, UserRole.FOUNDATION, UserRole.PARENT, UserRole.PRODUCT_SUPPLIER)

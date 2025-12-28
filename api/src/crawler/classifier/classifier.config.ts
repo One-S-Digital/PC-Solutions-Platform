@@ -61,15 +61,15 @@ export const CLASSIFIER_CONFIG = {
       },
       sectionBoosts: ['Weisungen', 'Rechtsgrundlagen', 'Gesetz', 'Verordnung', 'Reglement', 'Kinderbetreuung'],
     },
-    it: {
+    en: {
       topics: {
-        ratios: ['rapporto di custodia', 'rapporto numerico', 'bambini per educatore'],
-        authorisation: ['autorizzazione', 'riconoscimento', 'permesso'],
-        staff: ['personale educativo', 'qualifica', 'formazione'],
-        structure: ['asilo nido', 'nido', 'servizi di accoglienza', 'custodia diurna'],
-        safety: ['sicurezza', 'igiene', 'locali', 'norme'],
-        parents: ['contratto', 'tariffa', 'iscrizione'],
-        funding: ['sovvenzione', 'finanziamento', 'contributo'],
+        ratios: ['staff-to-child ratio', 'child-to-staff ratio', 'supervision ratio', 'caregiver ratio'],
+        authorisation: ['license', 'licensing', 'authorization', 'permit', 'approval', 'accreditation'],
+        staff: ['staff qualifications', 'caregiver qualifications', 'training', 'certification', 'diploma'],
+        structure: ['daycare', 'day care', 'childcare', 'child care', 'nursery', 'preschool', 'early childhood'],
+        safety: ['safety', 'health', 'hygiene', 'premises', 'standards', 'regulations'],
+        parents: ['contract', 'fee', 'enrollment', 'registration', 'placement'],
+        funding: ['subsidy', 'funding', 'grant', 'voucher', 'childcare voucher'],
       },
       weights: {
         ratios: 3,
@@ -80,14 +80,32 @@ export const CLASSIFIER_CONFIG = {
         parents: 1,
         funding: 2,
       },
-      sectionBoosts: ['direttive', 'basi legali', 'legge', 'ordinanza', 'regolamento'],
+      sectionBoosts: ['directive', 'legal basis', 'law', 'ordinance', 'regulation', 'childcare'],
     },
   },
   
   negativeKeywords: {
-    fr: ['adoption', 'fiscalité', 'impôts', 'succession', 'mariage', 'divorce', 'naturalisation'],
-    de: ['Adoption', 'Steuern', 'Erbschaft', 'Heirat', 'Scheidung', 'Einbürgerung'],
-    it: ['adozione', 'fiscale', 'imposte', 'successione', 'matrimonio', 'divorzio'],
+    fr: [
+      'adoption', 'fiscalité', 'impôts', 'succession', 'mariage', 'divorce', 'naturalisation',
+      'organigramme', 'autorités', 'autorites', 'organigram', // Organizational charts
+      'mentions légales', 'plan du site', 'contact', 'accueil', 'retour', // Navigation
+      'offres d\'emploi', 'emploi', 'recrutement', 'poste', // Job listings
+      'se connecter', 'login', 'connexion', 'recherche', // Site navigation
+    ],
+    de: [
+      'Adoption', 'Steuern', 'Erbschaft', 'Heirat', 'Scheidung', 'Einbürgerung',
+      'Organigramm', 'Behörden', 'Autoritäten', // Organizational charts
+      'Impressum', 'Sitemap', 'Kontakt', 'Startseite', 'Zurück', // Navigation
+      'Stellenangebote', 'Jobs', 'Rekrutierung', 'Stelle', // Job listings
+      'Anmelden', 'Login', 'Suche', // Site navigation
+    ],
+    en: [
+      'adoption', 'tax', 'taxation', 'inheritance', 'marriage', 'divorce', 'naturalization',
+      'organizational chart', 'org chart', 'organigram', 'authorities', 'authority', // Organizational charts
+      'legal notice', 'privacy policy', 'sitemap', 'contact', 'home', 'back', // Navigation
+      'job offers', 'jobs', 'careers', 'recruitment', 'position', 'vacancy', // Job listings
+      'sign in', 'login', 'search', 'about', 'help', 'support', // Site navigation
+    ],
   },
   
   docTypePatterns: {
@@ -105,12 +123,12 @@ export const CLASSIFIER_CONFIG = {
       'Guideline': [/\bLeitfaden\b/i, /\bHandbuch\b/i, /\bMerkblatt\b/i],
       'Standard': [/\bNormen?\b/i, /\bStandards?\b/i],
     },
-    it: {
-      'Law': [/\bLegge\s+(?:federale\s+)?su[l]?/i],
-      'Regulation': [/\bOrdinanza\s+su[l]?/i, /\bRegolamento\s+su[l]?/i],
-      'Directive': [/\bDirettive?\s+(?:su|concernente)/i],
-      'Guideline': [/\bGuida\b/i, /\bManuale\b/i],
-      'Standard': [/\bNorme?\b/i, /\bStandard\b/i],
+    en: {
+      'Law': [/\b(?:Federal\s+)?Act\s+(?:on|concerning|regarding)/i, /\bLaw\s+(?:on|concerning|regarding)/i],
+      'Regulation': [/\bRegulation\s+(?:on|concerning|regarding)/i, /\bOrdinance\s+(?:on|concerning|regarding)/i],
+      'Directive': [/\bDirective\s+(?:on|concerning|regarding)/i, /\bGuidance\s+(?:on|concerning|regarding)/i],
+      'Guideline': [/\bGuideline\b/i, /\bGuide\b/i, /\bManual\b/i, /\bHandbook\b/i],
+      'Standard': [/\bStandard\b/i, /\bStandards\b/i, /\bNorm\b/i, /\bNorms\b/i],
     },
   },
 };
