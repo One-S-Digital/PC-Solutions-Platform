@@ -34,6 +34,10 @@ export class UpdateFoundationSettingsDto {
   @IsOptional()
   canton?: string;
 
+  @IsString()
+  @IsOptional()
+  city?: string;
+
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
