@@ -441,6 +441,16 @@ export interface AnalyticsOverview {
   lastUpdated: string;
 }
 
+export interface AdminDashboardCounts {
+  totalUsers: number;
+  totalFoundations: number;
+  totalProducts: number;
+  totalParentLeads: number;
+  totalJobs: number;
+  totalApplications: number;
+  lastUpdated: string;
+}
+
 export interface LegacyUploadResult {
   id: string;
   url: string;

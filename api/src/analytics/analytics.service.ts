@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { OrganizationType, Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -318,6 +319,45 @@ export class AnalyticsService {
       jobs: jobMetrics,
       revenue: revenueMetrics,
       system: systemMetrics,
+      lastUpdated: new Date().toISOString(),
+    };
+  }
+
+  async getAdminDashboardCounts() {
+    const safeCount = async (query: Promise<number>): Promise<number> => {
+      try {
+        return await query;
+      } catch (error: unknown) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2021') {
+          return 0;
+        }
+        throw error;
+      }
+    };
+
+    const [
+      totalUsers,
+      totalFoundations,
+      totalProducts,
+      totalParentLeads,
+      totalJobs,
+      totalApplications,
+    ] = await Promise.all([
+      this.prisma.user.count(),
+      this.prisma.organization.count({ where: { type: OrganizationType.FOUNDATION } }),
+      this.prisma.product.count(),
+      safeCount(this.prisma.parentLead.count()),
+      this.prisma.jobListing.count(),
+      safeCount(this.prisma.jobApplication.count()),
+    ]);
+
+    return {
+      totalUsers,
+      totalFoundations,
+      totalProducts,
+      totalParentLeads,
+      totalJobs,
+      totalApplications,
       lastUpdated: new Date().toISOString(),
     };
   }
