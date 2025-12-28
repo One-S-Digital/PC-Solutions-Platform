@@ -18,8 +18,8 @@ RUN pnpm install --frozen-lockfile
 # Copy source code
 COPY . .
 
-# Build the application
-RUN pnpm --filter frontend build
+# Build the application (avoid relying on workspace package name / pnpm filters)
+RUN pnpm -C frontend build
 
 # Production stage
 FROM nginx:alpine
