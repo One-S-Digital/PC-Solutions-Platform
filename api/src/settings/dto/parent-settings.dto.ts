@@ -10,39 +10,47 @@ import {
 } from 'class-validator';
 
 export class UpdateParentSettingsDto {
+  @IsOptional()
   @IsString()
-  firstName: string;
+  firstName?: string;
 
+  @IsOptional()
   @IsString()
-  lastName: string;
+  lastName?: string;
 
+  @IsOptional()
   @IsEmail()
-  email: string;
+  email?: string;
 
   // Separate from authentication email: used for "contact info" on the profile.
   @IsOptional()
   @IsEmail()
   contactEmail?: string;
 
+  @IsOptional()
   @IsString()
-  phoneNumber: string;
+  phoneNumber?: string;
 
+  @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(0)
-  childAge: number;
+  childAge?: number;
 
+  @IsOptional()
   @IsString()
-  preferredLocation: string;
+  preferredLocation?: string;
 
+  @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  preferredLanguages: string[];
+  preferredLanguages?: string[];
 
-  @IsString()
-  specialRequirements: string;
-
-  @IsUUID()
   @IsOptional()
+  @IsString()
+  specialRequirements?: string;
+
+  @IsOptional()
+  @IsUUID()
   avatarAssetId?: string;
 }

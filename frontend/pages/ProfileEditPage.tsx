@@ -315,8 +315,8 @@ const ProfileEditPage: React.FC = () => {
     } catch (error) {
       console.error('Failed to save profile', error);
       addNotification({
-        title: t('common:errors.genericErrorTitle'),
-        message: t('common:errors.genericErrorMessage'),
+        title: t('common:errors.genericErrorTitle', 'Error'),
+        message: error instanceof Error ? error.message : t('common:errors.genericErrorMessage', 'An error occurred while saving'),
         type: 'error',
       });
     } finally {

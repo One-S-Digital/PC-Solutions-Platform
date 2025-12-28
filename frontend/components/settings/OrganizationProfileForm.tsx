@@ -154,15 +154,15 @@ const OrganizationProfileForm: React.FC = () => {
 
       setIsSaved(true);
       addNotification({
-        title: t('notifications.successTitle'),
-        message: t('notifications.settingsUpdated'),
+        title: t('notifications.successTitle', 'Success'),
+        message: t('notifications.settingsUpdated', 'Settings updated successfully'),
         type: 'success',
       });
     } catch (error) {
       console.error('Failed to update foundation settings', error);
       addNotification({
-        title: t('common:errors.genericErrorTitle'),
-        message: t('common:errors.genericErrorMessage'),
+        title: t('common:errors.genericErrorTitle', 'Error'),
+        message: error instanceof Error ? error.message : t('common:errors.genericErrorMessage', 'An error occurred'),
         type: 'error',
       });
     } finally {

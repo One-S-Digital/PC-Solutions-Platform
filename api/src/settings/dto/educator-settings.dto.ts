@@ -10,36 +10,44 @@ import { Type } from 'class-transformer';
 import { EducatorAvailabilitySettingsDto } from './educator-availability.dto';
 
 export class UpdateEducatorSettingsDto {
+  @IsOptional()
   @IsString()
-  firstName: string;
+  firstName?: string;
 
+  @IsOptional()
   @IsString()
-  lastName: string;
+  lastName?: string;
 
+  @IsOptional()
   @IsEmail()
-  email: string;
+  email?: string;
 
   // Separate from authentication email: used for "contact info" on the profile.
   @IsOptional()
   @IsEmail()
   contactEmail?: string;
 
+  @IsOptional()
   @IsString()
-  phoneNumber: string;
+  phoneNumber?: string;
 
+  @IsOptional()
   @IsString()
-  workExperience: string;
+  workExperience?: string;
 
+  @IsOptional()
   @IsString()
-  education: string;
+  education?: string;
 
+  @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  certifications: string[];
+  certifications?: string[];
 
+  @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  skills: string[];
+  skills?: string[];
 
   @IsOptional()
   @IsString()
@@ -51,8 +59,9 @@ export class UpdateEducatorSettingsDto {
   @Type(() => EducatorAvailabilitySettingsDto)
   availabilitySettings?: EducatorAvailabilitySettingsDto; // New: structured availability schedule
 
+  @IsOptional()
   @IsString()
-  cvUrl: string;
+  cvUrl?: string;
 
   @IsOptional()
   @IsString()
