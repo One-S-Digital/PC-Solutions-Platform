@@ -171,12 +171,6 @@ importers:
       '@repo/ui':
         specifier: workspace:*
         version: link:../packages/ui
-      '@sentry/react':
-        specifier: ^10.32.1
-        version: 10.32.1(react@19.1.1)
-      '@sentry/vite-plugin':
-        specifier: ^4.6.1
-        version: 4.6.1
       '@tanstack/react-query':
         specifier: ^5.89.0
         version: 5.89.0(react@19.1.1)
