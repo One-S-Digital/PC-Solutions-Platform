@@ -305,6 +305,7 @@ model Organization {
   contactPerson        String?
   phoneNumber          String?
   canton               String? // Legacy single canton field
+  city                 String? // City where the organization is located
   regionsServed        String[] // Multiple cantons/regions served
   languages            String[] // Languages spoken/offered
   capacity             Int? // For foundations - number of children
@@ -889,6 +890,7 @@ model ParentLead {
 
   // Additional fields from onboarding guide
   preferredLocation   String? // Preferred canton/location
+  preferredCities     String[] // Preferred cities within the canton (multiple allowed)
   preferredLanguages  String[] // Preferred languages
   specialRequirements String? // Special needs or requirements
 
