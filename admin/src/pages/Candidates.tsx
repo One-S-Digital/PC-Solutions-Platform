@@ -13,25 +13,41 @@ import {
   FileText
 } from 'lucide-react'
 import { useApiClient, apiService } from '../services/api'
-import { Candidate } from '../types/api'
+import { Candidate, User } from '../types/api'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
 import AddCandidateModal, { CandidateFormData } from '../components/AddCandidateModal'
+import EditUserModal from '../components/EditUserModal'
 
 const Candidates: React.FC = () => {
   const { t } = useTranslation(['admin', 'common'])
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('')
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
   const apiClient = useApiClient()
   const queryClient = useQueryClient()
+
+  const { data: currentUserResponse } = useQuery({
+    queryKey: ['current-user'],
+    queryFn: () => apiService.getCurrentUser(apiClient),
+    enabled: !!apiClient,
+    staleTime: 5 * 60 * 1000,
+  })
 
   const { data: candidatesResponse, isLoading } = useQuery({
     queryKey: ['candidates'],
     queryFn: () => apiService.getCandidates(apiClient),
     enabled: !!apiClient,
+  })
+
+  const { data: selectedUserResponse, isLoading: isSelectedUserLoading } = useQuery({
+    queryKey: ['user', selectedUserId],
+    queryFn: () => apiService.getUserById(apiClient, selectedUserId as string),
+    enabled: !!apiClient && !!selectedUserId,
   })
 
   const createCandidateMutation = useMutation({
@@ -46,8 +62,34 @@ const Candidates: React.FC = () => {
     },
   })
 
+  const updateUserMutation = useMutation({
+    mutationFn: (updatedUser: User) => apiService.updateUser(apiClient, updatedUser.id, updatedUser),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['candidates'] })
+      if (selectedUserId) {
+        queryClient.invalidateQueries({ queryKey: ['user', selectedUserId] })
+      }
+      setIsEditModalOpen(false)
+      setSelectedUserId(null)
+    },
+  })
+
   const handleCreateCandidate = async (data: CandidateFormData) => {
     await createCandidateMutation.mutateAsync(data)
+  }
+
+  const handleEditUser = (candidate: Candidate) => {
+    setSelectedUserId(candidate.id)
+    setIsEditModalOpen(true)
+  }
+
+  const handleUpdateUser = async (updatedUser: User) => {
+    await updateUserMutation.mutateAsync(updatedUser)
+  }
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false)
+    setSelectedUserId(null)
   }
 
   const candidates: Candidate[] = useMemo(
@@ -91,6 +133,9 @@ const Candidates: React.FC = () => {
     return <LoadingSpinner />
   }
 
+  const selectedUser = selectedUserResponse?.data?.data || null
+  const currentUser = currentUserResponse?.data?.data
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -119,6 +164,15 @@ const Candidates: React.FC = () => {
         onClose={() => setIsAddModalOpen(false)}
         onSubmit={handleCreateCandidate}
         isSubmitting={createCandidateMutation.isPending}
+      />
+
+      <EditUserModal
+        isOpen={isEditModalOpen && !isSelectedUserLoading}
+        onClose={handleCloseEditModal}
+        user={selectedUser}
+        onSave={handleUpdateUser}
+        isLoading={updateUserMutation.isPending}
+        currentUserRole={currentUser?.role}
       />
 
       {/* Filters */}
@@ -259,9 +313,10 @@ const Candidates: React.FC = () => {
                                 {({ active }) => (
                                   <button
                                     className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
+                                    onClick={() => handleEditUser(candidate)}
                                   >
                                     <Edit className="h-4 w-4 mr-2" />
-                                    Edit Status
+                                    Edit User
                                   </button>
                                 )}
                               </Menu.Item>
