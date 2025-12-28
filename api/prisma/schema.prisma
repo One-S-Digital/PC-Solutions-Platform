@@ -390,6 +390,7 @@ model UserOrganization {
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@id([userId, organizationId])
+  @@index([userId, createdAt]) // Optimize primary organization lookup in auth guard
   @@map("user_organizations")
 }
 

@@ -9,6 +9,7 @@ declare global {
         userId: string;
         appUserId: string;
         profileUserId?: string | null;
+        organizationId?: string | null;
         clerkUserId?: string;
         role?: string;
         isPending?: boolean;
