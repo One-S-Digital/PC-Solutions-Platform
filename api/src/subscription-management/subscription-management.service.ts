@@ -1613,13 +1613,27 @@ export class SubscriptionManagementService {
     try {
       let subscription: Subscription | null = null;
 
+      this.logger.log(`🔍 getActiveSubscriptionForUser called with userId: ${userId}, organizationId: ${organizationId}`);
+
       // If we have organizationId, check organization subscription FIRST
       // (business subscriptions are organization-based)
       if (organizationId) {
         subscription = await this.getOrganizationSubscription(organizationId);
         if (subscription) {
-          this.logger.debug(`Found active subscription via organizationId: ${organizationId}`);
+          this.logger.log(`✅ Found active subscription via organizationId: ${organizationId}, status: ${subscription.status}`);
           return subscription;
+        } else {
+          // Debug: Check if ANY subscription exists for this org (regardless of status)
+          const anyOrgSub = await this.prisma.subscription.findFirst({
+            where: { organizationId },
+            include: { plan: true },
+            orderBy: { createdAt: 'desc' },
+          });
+          if (anyOrgSub) {
+            this.logger.warn(`⚠️ Found subscription for org ${organizationId} but status is ${anyOrgSub.status} (not ACTIVE/TRIAL)`);
+          } else {
+            this.logger.warn(`❌ No subscription found for organizationId: ${organizationId}`);
+          }
         }
       }
 
@@ -1627,8 +1641,20 @@ export class SubscriptionManagementService {
       if (userId) {
         subscription = await this.getUserSubscription(userId);
         if (subscription) {
-          this.logger.debug(`Found active subscription via userId: ${userId}`);
+          this.logger.log(`✅ Found active subscription via userId: ${userId}, status: ${subscription.status}`);
           return subscription;
+        } else {
+          // Debug: Check if ANY subscription exists for this user (regardless of status)
+          const anyUserSub = await this.prisma.subscription.findFirst({
+            where: { userId },
+            include: { plan: true },
+            orderBy: { createdAt: 'desc' },
+          });
+          if (anyUserSub) {
+            this.logger.warn(`⚠️ Found subscription for user ${userId} but status is ${anyUserSub.status} (not ACTIVE/TRIAL)`);
+          } else {
+            this.logger.warn(`❌ No subscription found for userId: ${userId}`);
+          }
         }
 
         // If no organizationId was provided, look up user's organization and check
@@ -1641,16 +1667,17 @@ export class SubscriptionManagementService {
           });
 
           if (userOrg?.organizationId) {
+            this.logger.log(`🔍 Fallback: Looking up subscription for user's org: ${userOrg.organizationId}`);
             subscription = await this.getOrganizationSubscription(userOrg.organizationId);
             if (subscription) {
-              this.logger.debug(`Found active subscription via user's organization: ${userOrg.organizationId}`);
+              this.logger.log(`✅ Found active subscription via user's organization: ${userOrg.organizationId}`);
               return subscription;
             }
           }
         }
       }
 
-      this.logger.debug(`No active subscription found for userId: ${userId}, organizationId: ${organizationId}`);
+      this.logger.warn(`❌ No active subscription found for userId: ${userId}, organizationId: ${organizationId}`);
       return null;
     } catch (error) {
       this.logger.error(`Failed to get active subscription: ${(error as Error).message}`);

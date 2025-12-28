@@ -958,6 +958,8 @@ export class UserSubscriptionController {
 
     // Use UNIFIED subscription lookup - single source of truth
     // This checks: organizationId first, then userId, then user's organization
+    console.log(`📋 /subscriptions/me called for userId: ${userId}, organizationId: ${organizationId}, role: ${userRole}`);
+    
     const subscription = await this.subscriptionService.getActiveSubscriptionForUser(
       userId,
       organizationId,
@@ -966,6 +968,8 @@ export class UserSubscriptionController {
     // Calculate derived fields
     const now = new Date();
     const isActive = subscription?.status === 'ACTIVE' || subscription?.status === 'TRIAL';
+    
+    console.log(`📋 /subscriptions/me result: hasActiveSubscription=${isActive}, status=${subscription?.status || 'null'}, subscriptionId=${subscription?.id || 'null'}`);
     const isTrialing = subscription?.status === 'TRIAL';
     
     let trialDaysRemaining: number | null = null;
