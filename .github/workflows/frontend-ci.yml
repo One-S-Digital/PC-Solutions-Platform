@@ -36,6 +36,9 @@ jobs:
       - name: Build frontend
         working-directory: frontend
         run: pnpm run build
+
+      - name: Guard: verify built index.html is production output
+        run: node scripts/verify-spa-build-output.mjs frontend
       
       - name: Run unit tests
         working-directory: frontend
