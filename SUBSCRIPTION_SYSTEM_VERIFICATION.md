@@ -222,6 +222,46 @@ All billing endpoints use the same roles:
 
 ---
 
+---
+
+## 9. Dashboard Gating
+
+The entire dashboard is now gated. Users without an active subscription can ONLY access:
+
+### Always Allowed Routes (no subscription required):
+| Route | Description |
+|-------|-------------|
+| `/profile` | View/edit personal profile |
+| `/settings/*` | All settings pages including billing |
+| `/pricing` | View subscription plans |
+| `/foundation/organisation-profile` | Foundation org profile |
+| `/foundation/support` | Foundation support |
+| `/supplier/organisation-profile` | Supplier org profile |
+| `/supplier/support` | Supplier support |
+| `/supplier/company-profile` | Supplier company profile → settings |
+| `/service-provider/organisation-profile` | Service Provider org profile |
+| `/service-provider/support` | Service Provider support |
+| `/service-provider/company-profile` | Service Provider settings |
+
+### Subscription-Gated Routes (require active subscription):
+| Route Category | Foundation | Product Supplier | Service Provider |
+|---------------|------------|------------------|------------------|
+| Dashboard | ✅ | ✅ | ✅ |
+| Orders/Requests | ✅ | ✅ | ✅ |
+| Product/Service Listings | - | ✅ | ✅ |
+| Leads | ✅ | - | - |
+| Analytics | ✅ | ✅ | ✅ |
+| Marketplace | ✅ | - | - |
+| Recruitment | ✅ | - | - |
+| HR Procedures | ✅ | - | - |
+| State Policies | ✅ | - | - |
+| E-Learning | ✅ | - | - |
+| Partners Directory | ✅ | ✅ | ✅ |
+| Messages | ✅ | ✅ | ✅ |
+| Notifications | ✅ | ✅ | ✅ |
+
+---
+
 ## Conclusion
 
 The subscription system is now **fully unified** across all three business roles. There is:
@@ -231,7 +271,9 @@ The subscription system is now **fully unified** across all three business roles
 - **SAME subscription lookup method** for all roles
 - **SAME admin creation flow** for all roles
 - **SAME frontend paywall behavior** for all roles
+- **CONSISTENT route gating** - only profile, settings, and support are allowed without subscription
 
 The only role-specific elements are:
 1. Plan availability (each role has its own plans)
 2. Foundation-specific "tier" selector in admin UI (cosmetic, for Foundation pricing tiers)
+3. Role-specific feature routes (e.g., Foundation has recruitment, suppliers have product listings)
