@@ -11,13 +11,16 @@ import { EducatorAvailabilitySettingsDto } from './educator-availability.dto';
 
 export class UpdateEducatorSettingsDto {
   @IsString()
-  firstName: string;
+  @IsOptional()
+  firstName?: string;
 
   @IsString()
-  lastName: string;
+  @IsOptional()
+  lastName?: string;
 
   @IsEmail()
-  email: string;
+  @IsOptional()
+  email?: string;
 
   // Separate from authentication email: used for "contact info" on the profile.
   @IsOptional()
@@ -25,21 +28,26 @@ export class UpdateEducatorSettingsDto {
   contactEmail?: string;
 
   @IsString()
-  phoneNumber: string;
+  @IsOptional()
+  phoneNumber?: string;
 
   @IsString()
-  workExperience: string;
+  @IsOptional()
+  workExperience?: string;
 
   @IsString()
-  education: string;
+  @IsOptional()
+  education?: string;
 
   @IsArray()
   @IsString({ each: true })
-  certifications: string[];
+  @IsOptional()
+  certifications?: string[];
 
   @IsArray()
   @IsString({ each: true })
-  skills: string[];
+  @IsOptional()
+  skills?: string[];
 
   @IsOptional()
   @IsString()
@@ -52,7 +60,8 @@ export class UpdateEducatorSettingsDto {
   availabilitySettings?: EducatorAvailabilitySettingsDto; // New: structured availability schedule
 
   @IsString()
-  cvUrl: string;
+  @IsOptional()
+  cvUrl?: string;
 
   @IsOptional()
   @IsString()

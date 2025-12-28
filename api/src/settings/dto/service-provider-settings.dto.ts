@@ -8,10 +8,12 @@ import {
 
 export class UpdateServiceProviderSettingsDto {
   @IsString()
-  companyName: string;
+  @IsOptional()
+  companyName?: string;
 
   @IsEmail()
-  contactEmail: string;
+  @IsOptional()
+  contactEmail?: string;
 
   @IsString()
   @IsOptional()

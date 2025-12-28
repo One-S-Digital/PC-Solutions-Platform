@@ -11,13 +11,16 @@ import {
 
 export class UpdateParentSettingsDto {
   @IsString()
-  firstName: string;
+  @IsOptional()
+  firstName?: string;
 
   @IsString()
-  lastName: string;
+  @IsOptional()
+  lastName?: string;
 
   @IsEmail()
-  email: string;
+  @IsOptional()
+  email?: string;
 
   // Separate from authentication email: used for "contact info" on the profile.
   @IsOptional()
@@ -25,22 +28,27 @@ export class UpdateParentSettingsDto {
   contactEmail?: string;
 
   @IsString()
-  phoneNumber: string;
+  @IsOptional()
+  phoneNumber?: string;
 
   @Type(() => Number)
   @IsInt()
   @Min(0)
-  childAge: number;
+  @IsOptional()
+  childAge?: number;
 
   @IsString()
-  preferredLocation: string;
+  @IsOptional()
+  preferredLocation?: string;
 
   @IsArray()
   @IsString({ each: true })
-  preferredLanguages: string[];
+  @IsOptional()
+  preferredLanguages?: string[];
 
   @IsString()
-  specialRequirements: string;
+  @IsOptional()
+  specialRequirements?: string;
 
   @IsUUID()
   @IsOptional()
