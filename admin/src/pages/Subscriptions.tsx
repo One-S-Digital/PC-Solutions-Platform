@@ -265,25 +265,47 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
           </button>
         </div>
 
-        {/* User Info */}
+        {/* User Info with Subscription Status */}
         <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-          <div className="flex items-center gap-3">
-            <div className="h-12 w-12 rounded-full bg-swiss-teal flex items-center justify-center">
-              <span className="text-white font-medium text-lg">
-                {(user.firstName || user.email || '?').charAt(0).toUpperCase()}
-              </span>
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-full bg-swiss-teal flex items-center justify-center">
+                <span className="text-white font-medium text-lg">
+                  {(user.firstName || user.email || '?').charAt(0).toUpperCase()}
+                </span>
+              </div>
+              <div>
+                <p className="font-medium text-gray-900">
+                  {user.firstName && user.lastName
+                    ? `${user.firstName} ${user.lastName}`
+                    : user.name || user.email || t('common:unknown', 'Unknown')}
+                </p>
+                <p className="text-sm text-gray-500">{user.email}</p>
+                <span className="inline-flex px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 text-gray-700 mt-1">
+                  {user.role}
+                </span>
+              </div>
             </div>
-            <div>
-              <p className="font-medium text-gray-900">
-                {user.firstName && user.lastName
-                  ? `${user.firstName} ${user.lastName}`
-                  : user.name || user.email || t('common:unknown', 'Unknown')}
-              </p>
-              <p className="text-sm text-gray-500">{user.email}</p>
-              <span className="inline-flex px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 text-gray-700 mt-1">
-                {user.role}
+            {subscription ? (
+              <div className="flex flex-col items-end gap-1">
+                <span className={`px-3 py-1 text-xs font-medium rounded-full ${
+                  subscription.status === 'ACTIVE' ? 'bg-green-100 text-green-800' :
+                  subscription.status === 'TRIAL' ? 'bg-blue-100 text-blue-800' :
+                  subscription.status === 'PAUSED' ? 'bg-yellow-100 text-yellow-800' :
+                  subscription.status === 'CANCELLED' ? 'bg-red-100 text-red-800' :
+                  'bg-gray-100 text-gray-800'
+                }`}>
+                  {subscription.status}
+                </span>
+                <span className="text-xs text-gray-500">
+                  {subscription.plan?.name || t('common:notAvailable', 'N/A')}
+                </span>
+              </div>
+            ) : (
+              <span className="px-3 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-600">
+                {t('admin:subscriptions.noSubscription', 'No Subscription')}
               </span>
-            </div>
+            )}
           </div>
         </div>
 
@@ -412,43 +434,91 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
             </div>
           )}
 
-          {/* Actions */}
-          <div className="flex justify-between items-center gap-3 pt-4 border-t">
-            <div>
-              {subscription && onDelete && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (confirm(t('admin:subscriptions.confirmDeleteModal', 'Are you sure you want to permanently delete this subscription? This action cannot be undone.'))) {
-                      onDelete();
-                      onClose();
-                    }
-                  }}
-                  disabled={isLoading}
-                  className="flex items-center gap-2 px-4 py-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  {t('admin:subscriptions.deleteSubscription', 'Delete Subscription')}
-                </button>
+          {/* Quick Action Buttons - Cancel or Delete (if subscription exists) */}
+          {subscription && (
+            <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg space-y-3">
+              <p className="text-sm font-medium text-amber-900">
+                {t('admin:subscriptions.quickActions', 'Quick Actions')}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {/* Cancel Button - Only for ACTIVE or TRIAL subscriptions */}
+                {(subscription.status === 'ACTIVE' || subscription.status === 'TRIAL') && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (confirm(t('admin:subscriptions.confirmCancelInModal', 'Cancel this subscription immediately? The user will lose access right away.'))) {
+                        onSave({
+                          status: SubscriptionStatus.CANCELLED,
+                        });
+                      }
+                    }}
+                    disabled={isLoading}
+                    className="flex items-center gap-2 px-4 py-2 bg-orange-50 text-orange-700 rounded-lg hover:bg-orange-100 transition-colors disabled:opacity-50 border border-orange-200"
+                  >
+                    <X className="w-4 h-4" />
+                    {t('admin:subscriptions.cancelSubscription', 'Cancel Subscription')}
+                  </button>
+                )}
+                {/* Delete Button - Always show for existing subscriptions */}
+                {onDelete && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (confirm(t('admin:subscriptions.confirmDeleteModal', 'Are you sure you want to permanently delete this subscription? This action cannot be undone.'))) {
+                        onDelete();
+                        onClose();
+                      }
+                    }}
+                    disabled={isLoading}
+                    className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50 border border-red-200"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    {t('admin:subscriptions.deleteSubscription', 'Delete Subscription')}
+                  </button>
+                )}
+              </div>
+              <p className="text-xs text-amber-700">
+                {t('admin:subscriptions.quickActionsHelp', 'Use these for quick cancellation or deletion. Or modify the fields above and click Save.')}
+              </p>
+            </div>
+          )}
+
+          {/* Main Actions */}
+          <div className="flex justify-end items-center gap-3 pt-4 border-t">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={isLoading}
+              className="px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              {t('common:cancel', 'Cancel')}
+            </button>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+            >
+              {isLoading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  {t('admin:subscriptions.editSubscription.saving', 'Saving...')}
+                </>
+              ) : (
+                <>
+                  {subscription ? (
+                    <>
+                      <Edit className="w-4 h-4" />
+                      {t('admin:subscriptions.editSubscription.save', 'Save Changes')}
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="w-4 h-4" />
+                      {t('admin:subscriptions.createSubscription.create', 'Create Subscription')}
+                    </>
+                  )}
+                </>
               )}
-            </div>
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={onClose}
-                disabled={isLoading}
-                className="px-4 py-2 text-gray-600 hover:text-gray-900"
-              >
-                {t('common:cancel', 'Cancel')}
-              </button>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
-              >
-                {isLoading ? t('admin:subscriptions.editSubscription.saving', 'Saving...') : t('admin:subscriptions.editSubscription.save', 'Save Changes')}
-              </button>
-            </div>
+            </button>
           </div>
         </form>
       </div>
@@ -3094,71 +3164,29 @@ const Subscriptions: React.FC = () => {
                             {subscription?.plan?.name || '-'}
                           </td>
                           <td className="px-4 py-4">
-                            <div className="flex items-center gap-2">
-                              {!subscription ? (
-                                // No subscription - show "Add Subscription" button
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleEditUser(user);
-                                  }}
-                                  className="flex items-center gap-1 px-3 py-1.5 text-sm bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors"
-                                >
-                                  <Plus className="w-4 h-4" />
-                                  {t('admin:subscriptions.addSubscription', 'Add Subscription')}
-                                </button>
-                              ) : (
-                                // Has subscription - show Edit and Cancel/Delete buttons
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditUser(user);
+                              }}
+                              className={`flex items-center gap-1 px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                                subscription
+                                  ? 'bg-blue-50 text-blue-600 hover:bg-blue-100'
+                                  : 'bg-green-50 text-green-600 hover:bg-green-100'
+                              }`}
+                            >
+                              {subscription ? (
                                 <>
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleEditUser(user);
-                                    }}
-                                    className="flex items-center gap-1 px-3 py-1.5 text-sm bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
-                                  >
-                                    <Edit className="w-4 h-4" />
-                                    {t('admin:subscriptions.editSubscription.edit', 'Edit')}
-                                  </button>
-                                  {subscription.status === SubscriptionStatus.ACTIVE || subscription.status === SubscriptionStatus.TRIAL ? (
-                                    // Active/Trial subscription - show Cancel button
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        if (confirm(t('admin:subscriptions.confirmCancel', 'Are you sure you want to cancel this subscription? It will be cancelled immediately.'))) {
-                                          updateSubscriptionMutation.mutate({
-                                            userId: user.id,
-                                            data: {
-                                              status: SubscriptionStatus.CANCELLED,
-                                            },
-                                          });
-                                        }
-                                      }}
-                                      disabled={updateSubscriptionMutation.isPending}
-                                      className="flex items-center gap-1 px-3 py-1.5 text-sm bg-orange-50 text-orange-600 rounded-lg hover:bg-orange-100 transition-colors disabled:opacity-50"
-                                    >
-                                      <X className="w-4 h-4" />
-                                      {t('admin:subscriptions.cancel', 'Cancel')}
-                                    </button>
-                                  ) : (
-                                    // Cancelled/Inactive subscription - show Delete button
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        if (confirm(t('admin:subscriptions.confirmDelete', 'Are you sure you want to permanently delete this subscription? This action cannot be undone.'))) {
-                                          deleteSubscriptionMutation.mutate(subscription.id);
-                                        }
-                                      }}
-                                      disabled={deleteSubscriptionMutation.isPending}
-                                      className="flex items-center gap-1 px-3 py-1.5 text-sm bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50"
-                                    >
-                                      <Trash2 className="w-4 h-4" />
-                                      {t('admin:subscriptions.delete', 'Delete')}
-                                    </button>
-                                  )}
+                                  <Edit className="w-4 h-4" />
+                                  {t('admin:subscriptions.manageSubscription', 'Manage')}
+                                </>
+                              ) : (
+                                <>
+                                  <Plus className="w-4 h-4" />
+                                  {t('admin:subscriptions.addSubscription', 'Add')}
                                 </>
                               )}
-                            </div>
+                            </button>
                           </td>
                         </tr>
                       );
