@@ -1550,7 +1550,10 @@ export class SubscriptionManagementService {
   async getUserSubscription(userId: string): Promise<Subscription | null> {
     try {
       const subscription = await this.prisma.subscription.findFirst({
-        where: { userId },
+        where: { 
+          userId,
+          status: { in: ['ACTIVE', 'TRIAL'] } // Only return active or trial subscriptions
+        },
         include: {
           user: true,
           organization: true,
@@ -1569,7 +1572,10 @@ export class SubscriptionManagementService {
   async getOrganizationSubscription(organizationId: string): Promise<Subscription | null> {
     try {
       const subscription = await this.prisma.subscription.findFirst({
-        where: { organizationId },
+        where: { 
+          organizationId,
+          status: { in: ['ACTIVE', 'TRIAL'] } // Only return active or trial subscriptions
+        },
         include: {
           user: true,
           organization: true,
