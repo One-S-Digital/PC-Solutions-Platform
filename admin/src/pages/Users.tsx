@@ -441,9 +441,9 @@ const Users: React.FC = () => {
   }, [searchQuery, selectedRole, pageSize])
 
   const { data: usersResponse, isLoading, error } = useQuery({
-    queryKey: ['users', page, pageSize, searchQuery, selectedRole],
+    queryKey: ['admin-users', page, pageSize, searchQuery, selectedRole],
     queryFn: () =>
-      apiService.getUsers(apiClient, {
+      apiService.getAdminUsers(apiClient, {
         page,
         limit: pageSize,
         search: searchQuery.trim() ? searchQuery.trim() : undefined,
@@ -460,7 +460,7 @@ const Users: React.FC = () => {
   const updateUserMutation = useMutation({
     mutationFn: (updatedUser: User) => apiService.updateUser(apiClient, updatedUser.id, updatedUser),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] })
       setIsEditModalOpen(false)
       setSelectedUser(null)
       logger.log('User updated successfully')
@@ -475,7 +475,7 @@ const Users: React.FC = () => {
   const deleteUserMutation = useMutation({
     mutationFn: (userId: string) => apiService.deleteUser(apiClient, userId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] })
       setIsDeleteModalOpen(false)
       setSelectedUser(null)
       logger.log('User deleted successfully')
@@ -491,7 +491,7 @@ const Users: React.FC = () => {
     mutationFn: ({ userId, targetRole, reason }: { userId: string; targetRole: 'ADMIN' | 'SUPER_ADMIN'; reason: string }) => 
       apiService.elevateUserToAdmin(apiClient, userId, targetRole, reason),
     onSuccess: (response) => {
-      queryClient.invalidateQueries({ queryKey: ['users'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] })
       setIsElevateModalOpen(false)
       setSelectedUser(null)
       logger.log('User elevated to admin successfully:', response.data)
@@ -521,25 +521,51 @@ const Users: React.FC = () => {
   })
 
   const { users, meta } = React.useMemo(() => {
-    const raw = usersResponse?.data?.data as any
+    // /admin/users returns DB users directly (not wrapped like many other endpoints).
+    const raw = (usersResponse as any)?.data?.data ?? (usersResponse as any)?.data
 
-    // Expected API shape (enveloped): { data: User[], meta: { total, page, limit, totalPages } }
-    if (raw && typeof raw === 'object' && Array.isArray(raw.data)) {
-      return { users: raw.data as User[], meta: raw.meta as any }
+    const payload = raw && typeof raw === 'object' ? raw : undefined
+    const list = Array.isArray(payload?.users) ? payload.users : []
+
+    const normalizeDbUser = (u: any): User => {
+      const orgMemberships = Array.isArray(u?.organizations) ? u.organizations : []
+      const primaryOrg = orgMemberships[0]?.organization
+      const primaryOrgId = orgMemberships[0]?.organizationId
+
+      const firstName = (u?.firstName ?? undefined) as string | undefined
+      const lastName = (u?.lastName ?? undefined) as string | undefined
+      const email = (u?.email ?? undefined) as string | undefined
+      const displayName = `${firstName || ''} ${lastName || ''}`.trim() || email || u?.name || ''
+
+      return {
+        id: u.id,
+        profileId: u.id,
+        clerkId: u.clerkId,
+        name: displayName,
+        email: email || '',
+        firstName,
+        lastName,
+        role: u.role,
+        orgId: primaryOrgId,
+        orgIds: orgMemberships.map((m: any) => m.organizationId).filter(Boolean),
+        orgName: primaryOrg?.name,
+        status: u.isActive ? UserStatus.ACTIVE : UserStatus.INACTIVE,
+        createdAt: u.createdAt ? new Date(u.createdAt) : new Date(),
+        updatedAt: u.updatedAt ? new Date(u.updatedAt) : new Date(),
+        lastLogin: u.lastActiveAt ? new Date(u.lastActiveAt) : undefined,
+      } as User
     }
 
-    // Legacy / fallback: the endpoint returns a bare array
-    if (Array.isArray(raw)) {
-      return { users: raw as User[], meta: undefined }
+    return {
+      users: list.map(normalizeDbUser),
+      meta: {
+        total: payload?.total ?? list.length,
+        page: payload?.page ?? 1,
+        limit: payload?.limit ?? pageSize,
+        totalPages: payload?.totalPages ?? 1,
+      },
     }
-
-    // Legacy / fallback: other backend shapes
-    if (raw && typeof raw === 'object' && Array.isArray(raw.users)) {
-      return { users: raw.users as User[], meta: raw.meta || raw.pagination }
-    }
-
-    return { users: [] as User[], meta: undefined }
-  }, [usersResponse])
+  }, [usersResponse, pageSize])
 
   const roleColors: Record<UserRole, string> = {
     [UserRole.SUPER_ADMIN]: 'bg-red-100 text-red-800',

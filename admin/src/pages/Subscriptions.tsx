@@ -1954,33 +1954,34 @@ const Subscriptions: React.FC = () => {
   const { t } = useTranslation(['common', 'admin']);
   const queryClient = useQueryClient();
 
-  const fetchAllAdminUsers = React.useCallback(async () => {
-    // The `/users` endpoint is paginated and will only return the first page by default.
-    // For subscription management we need the full set of users so role cards + lists are complete.
-    const limit = 200;
-    let page = 1;
-    let totalPages = 1;
-    const allUsers: User[] = [];
-
-    while (page <= totalPages) {
-      const res = await apiService.getAdminUsers(apiClient, { page, limit });
-      const payload = res.data?.data;
-      const batch = payload?.users || [];
-      allUsers.push(...batch);
-      totalPages = payload?.totalPages || 1;
-      page += 1;
-    }
-
-    return { users: allUsers };
-  }, [apiClient]);
-
   const selectedRoleFilter = selectedRole && Object.values(UserRole).includes(selectedRole as any) ? selectedRole : undefined;
 
-  // Fetch all users (admin view, all pages)
-  const { data: usersResponse, isLoading: usersLoading } = useQuery({
-    queryKey: ['admin-users-all'],
-    queryFn: () => fetchAllAdminUsers(),
+  // Pagination for the user list (Subscriptions mode)
+  const [userListPage, setUserListPage] = useState(1);
+  const [userListPageSize, setUserListPageSize] = useState<25 | 50 | 100>(25);
+
+  React.useEffect(() => {
+    setUserListPage(1);
+  }, [selectedRoleFilter, searchQuery, userListPageSize]);
+
+  // User stats (DB) - used for role card totals
+  const { data: userStatsResponse } = useQuery({
+    queryKey: ['admin-user-stats'],
+    queryFn: () => apiService.getAdminUserStats(apiClient),
     enabled: !!apiClient,
+  });
+
+  // Role-scoped user list (DB) - paginated
+  const { data: roleUsersResponse, isLoading: roleUsersLoading } = useQuery({
+    queryKey: ['admin-users', selectedRoleFilter, userListPage, userListPageSize, searchQuery],
+    queryFn: () =>
+      apiService.getAdminUsers(apiClient, {
+        page: userListPage,
+        limit: userListPageSize,
+        role: selectedRoleFilter,
+        search: searchQuery.trim() ? searchQuery.trim() : undefined,
+      }),
+    enabled: !!apiClient && viewMode === 'subscriptions' && !!selectedRoleFilter,
   });
 
   // Fetch subscription plans
@@ -2053,7 +2054,7 @@ const Subscriptions: React.FC = () => {
     enabled: !!apiClient,
   });
 
-  const users: User[] = (usersResponse as any)?.users || [];
+  const userStats = (userStatsResponse as any)?.data?.data ?? (userStatsResponse as any)?.data ?? null;
   const plans: SubscriptionPlan[] = plansResponse?.data?.data || [];
   const analytics: SubscriptionAnalytics | null = analyticsResponse?.data?.data || null;
   const subscriptions: Subscription[] = subscriptionsResponse?.data?.data?.subscriptions || [];
@@ -2109,32 +2110,74 @@ const Subscriptions: React.FC = () => {
     return userSubscriptionMap.get(user.id);
   }, [userSubscriptionMap]);
 
-  // Group users by role and count
-  const usersByRole = React.useMemo(() => {
-    const roleGroups: Record<string, User[]> = {};
-    const subscribableRoles = [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.PARENT];
-    
-    subscribableRoles.forEach((role) => {
-      roleGroups[role] = users.filter((user) => user.role === role);
-    });
-    
-    return roleGroups;
-  }, [users]);
+  // DB-backed role totals (for role cards)
+  const roleUserCountsByRole = React.useMemo(() => {
+    const map: Record<string, number> = {};
+    const rows = userStats?.usersByRole || [];
+    for (const r of rows) {
+      if (r?.role) map[String(r.role)] = Number(r.count || 0);
+    }
+    return map;
+  }, [userStats]);
 
-  // Get filtered users for selected role
-  const filteredUsers = React.useMemo(() => {
-    if (!selectedRole) return [];
-    
-    const roleUsers = usersByRole[selectedRole] || [];
-    if (!searchQuery) return roleUsers;
-    
-    const query = searchQuery.toLowerCase();
-    return roleUsers.filter((user) => {
-      const name = (user.firstName || '') + ' ' + (user.lastName || '');
-      return name.toLowerCase().includes(query) || 
-             (user.email || '').toLowerCase().includes(query);
-    });
-  }, [selectedRole, usersByRole, searchQuery]);
+  // Subscription counts by role (derived from subscription plan allowedRoles)
+  const subscriptionCountsByRole = React.useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const sub of subscriptions) {
+      const role = sub?.plan?.allowedRoles?.[0];
+      if (!role) continue;
+      map[role] = (map[role] || 0) + 1;
+    }
+    return map;
+  }, [subscriptions]);
+
+  // DB-backed paginated users for the selected role
+  const roleUsersResult = React.useMemo(() => {
+    const raw = (roleUsersResponse as any)?.data?.data ?? (roleUsersResponse as any)?.data;
+    const payload = raw && typeof raw === 'object' ? raw : undefined;
+    const list = Array.isArray(payload?.users) ? payload.users : [];
+
+    const normalizeDbUser = (u: any): User => {
+      const memberships = Array.isArray(u?.organizations) ? u.organizations : [];
+      const primaryMembership = memberships[0];
+      const primaryOrg = primaryMembership?.organization;
+
+      const firstName = (u?.firstName ?? undefined) as string | undefined;
+      const lastName = (u?.lastName ?? undefined) as string | undefined;
+      const email = (u?.email ?? undefined) as string | undefined;
+
+      const displayName = `${firstName || ''} ${lastName || ''}`.trim() || email || u?.name || '';
+
+      return {
+        id: u.id,
+        // IMPORTANT: this page expects `profileId` for subscription linkage.
+        // When pulling directly from the DB (`User` table), `id` *is* the profile UUID.
+        profileId: u.id,
+        clerkId: u.clerkId,
+        name: displayName,
+        email: email || '',
+        firstName,
+        lastName,
+        role: u.role,
+        orgId: primaryMembership?.organizationId,
+        orgIds: memberships.map((m: any) => m.organizationId).filter(Boolean),
+        orgName: primaryOrg?.name,
+        status: u.isActive ? 'ACTIVE' : 'INACTIVE',
+        createdAt: u.createdAt ? new Date(u.createdAt) : new Date(),
+        updatedAt: u.updatedAt ? new Date(u.updatedAt) : new Date(),
+        lastLogin: u.lastActiveAt ? new Date(u.lastActiveAt) : undefined,
+      } as User;
+    };
+
+    const users = list.map(normalizeDbUser);
+    return {
+      users,
+      total: Number(payload?.total ?? users.length),
+      page: Number(payload?.page ?? userListPage),
+      limit: Number(payload?.limit ?? userListPageSize),
+      totalPages: Number(payload?.totalPages ?? 1),
+    };
+  }, [roleUsersResponse, userListPage, userListPageSize]);
 
   // Mutations for subscription management
   const updateSubscriptionMutation = useMutation({
@@ -2411,22 +2454,11 @@ const Subscriptions: React.FC = () => {
         const role = (activatedRequest?.user?.role || roleFromPlan || '').toString();
         if (role) setSelectedRole(role);
         setViewMode('subscriptions');
-
-        const requestUserProfileId = activatedRequest?.user?.id;
-        const requestOrgId = activatedRequest?.organizationId;
-
-        const owner =
-          (requestUserProfileId
-            ? users.find((u) => u.profileId === requestUserProfileId)
-            : undefined) ||
-          (requestOrgId ? users.find((u) => u.orgId === requestOrgId) : undefined);
-
-        if (owner) {
-          setSelectedUser(owner);
-          const sub = getSubscriptionForUser(owner) || null;
-          setSelectedUserSubscription(sub);
-          setIsEditModalOpen(true);
+        // Narrow the user list to the activated request for quick access
+        if (activatedRequest?.contactEmail) {
+          setSearchQuery(activatedRequest.contactEmail);
         }
+        setUserListPage(1);
       } catch (e) {
         // Non-blocking: activation succeeded even if we can't deep-link.
         console.warn('[Subscriptions] Unable to deep-link after activation', e);
@@ -3019,8 +3051,8 @@ const Subscriptions: React.FC = () => {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
             {Object.entries(roleConfig).map(([role, config]) => {
-              const userCount = usersByRole[role]?.length || 0;
-              const subscribedCount = usersByRole[role]?.filter((u) => getSubscriptionForUser(u) !== undefined)?.length || 0;
+              const userCount = roleUserCountsByRole[role] || 0;
+              const subscribedCount = subscriptionCountsByRole[role] || 0;
               
               return (
                 <div
@@ -3052,6 +3084,7 @@ const Subscriptions: React.FC = () => {
               onClick={() => {
                 setSelectedRole(null);
                 setSearchQuery('');
+                setUserListPage(1);
               }}
               className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
             >
@@ -3071,7 +3104,7 @@ const Subscriptions: React.FC = () => {
                   {t(roleConfig[selectedRole].labelKey)} {t('admin:subscriptions.subscriptions', 'Subscriptions')}
                 </h2>
                 <p className="text-gray-600">
-                  {t('admin:subscriptions.managingUsers', 'Managing {{count}} users', { count: usersByRole[selectedRole]?.length || 0 })}
+                  {t('admin:subscriptions.managingUsers', 'Managing {{count}} users', { count: roleUserCountsByRole[selectedRole] || 0 })}
                 </p>
               </div>
             </div>
@@ -3188,25 +3221,38 @@ const Subscriptions: React.FC = () => {
 
           {/* Search */}
           <div className="bg-white p-4 rounded-lg border">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder={t('admin:subscriptions.searchUsers', 'Search users by name or email...')}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
+            <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input
+                  type="text"
+                  placeholder={t('admin:subscriptions.searchUsers', 'Search users by name or email...')}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div className="sm:w-56">
+                <select
+                  value={userListPageSize}
+                  onChange={(e) => setUserListPageSize(Number(e.target.value) as 25 | 50 | 100)}
+                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value={25}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 25</option>
+                  <option value={50}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 50</option>
+                  <option value={100}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 100</option>
+                </select>
+              </div>
             </div>
           </div>
 
           {/* User List */}
           <div className="bg-white rounded-lg border overflow-hidden">
-            {usersLoading ? (
+            {roleUsersLoading ? (
               <div className="flex justify-center py-12">
                 <LoadingSpinner />
               </div>
-            ) : filteredUsers.length === 0 ? (
+            ) : roleUsersResult.users.length === 0 ? (
               <div className="text-center py-12 text-gray-500">
                 <Users className="w-12 h-12 mx-auto mb-3 text-gray-300" />
                 <p>{t('admin:subscriptions.noUsersFound', 'No users found')}</p>
@@ -3237,7 +3283,7 @@ const Subscriptions: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y">
-                    {filteredUsers.map((user) => {
+                    {roleUsersResult.users.map((user) => {
                       const subscription = getSubscriptionForUser(user);
                       return (
                         <tr
@@ -3305,6 +3351,45 @@ const Subscriptions: React.FC = () => {
                 </table>
               </div>
             )}
+          </div>
+
+          {/* Pagination */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="text-sm text-gray-600">
+              {t(
+                'admin:users.pagination.showing',
+                'Showing {{from}}-{{to}} of {{total}}',
+                {
+                  from: roleUsersResult.total === 0 ? 0 : (userListPage - 1) * userListPageSize + 1,
+                  to: roleUsersResult.total === 0 ? 0 : Math.min(userListPage * userListPageSize, roleUsersResult.total),
+                  total: roleUsersResult.total,
+                },
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                className="px-3 py-2 text-sm rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={userListPage <= 1}
+                onClick={() => setUserListPage((p) => Math.max(1, p - 1))}
+              >
+                {t('admin:users.pagination.previous', 'Previous')}
+              </button>
+              <span className="text-sm text-gray-600 px-2">
+                {t('admin:users.pagination.pageOf', 'Page {{page}} of {{totalPages}}', {
+                  page: userListPage,
+                  totalPages: roleUsersResult.totalPages,
+                })}
+              </span>
+              <button
+                type="button"
+                className="px-3 py-2 text-sm rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={userListPage >= roleUsersResult.totalPages}
+                onClick={() => setUserListPage((p) => Math.min(roleUsersResult.totalPages, p + 1))}
+              >
+                {t('admin:users.pagination.next', 'Next')}
+              </button>
+            </div>
           </div>
         </div>
       ) : null}
