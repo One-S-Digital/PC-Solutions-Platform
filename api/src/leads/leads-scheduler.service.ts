@@ -16,6 +16,7 @@ import { EmailNotificationService } from '../email-notification/email-notificati
 export class LeadsSchedulerService implements OnModuleInit {
   private readonly logger = new Logger(LeadsSchedulerService.name);
   private isProcessing = false;
+  private isEnabled = true;
 
   constructor(
     private readonly leadsService: LeadsService,
@@ -27,11 +28,12 @@ export class LeadsSchedulerService implements OnModuleInit {
     // Validate required environment variable
     if (!process.env.FRONTEND_URL) {
       const message = 'FRONTEND_URL environment variable is not set - email links will not work correctly';
-      if (process.env.NODE_ENV === 'production') {
-        this.logger.error(message);
-        throw new Error('Missing required environment variable: FRONTEND_URL');
-      }
-      this.logger.warn(message);
+      this.logger.error(message);
+      // Disable the service but don't crash the application
+      // The FRONTEND_URL should be configured in the deployment environment
+      this.isEnabled = false;
+      this.logger.warn('LeadsSchedulerService is disabled due to missing FRONTEND_URL configuration');
+      return;
     }
     this.logger.log('LeadsSchedulerService initialized - automated lead distribution enabled');
   }
@@ -42,6 +44,10 @@ export class LeadsSchedulerService implements OnModuleInit {
    */
   @Cron(CronExpression.EVERY_10_MINUTES)
   async processNewLeads(): Promise<void> {
+    if (!this.isEnabled) {
+      return;
+    }
+
     if (this.isProcessing) {
       this.logger.warn('Lead distribution already in progress, skipping');
       return;
@@ -188,6 +194,10 @@ export class LeadsSchedulerService implements OnModuleInit {
    */
   @Cron('0 3 * * *')
   async cleanupOldLeads(): Promise<void> {
+    if (!this.isEnabled) {
+      return;
+    }
+
     try {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -217,6 +227,10 @@ export class LeadsSchedulerService implements OnModuleInit {
    */
   @Cron('0 6 * * *')
   async generateDailyStats(): Promise<void> {
+    if (!this.isEnabled) {
+      return;
+    }
+
     try {
       const stats = await this.leadsService.getLeadsStats();
       this.logger.log(
@@ -238,6 +252,20 @@ export class LeadsSchedulerService implements OnModuleInit {
     totalProcessing: number;
     distributionRan: boolean;
   }> {
+    // Check if service is enabled
+    if (!this.isEnabled) {
+      this.logger.warn('Lead distribution is disabled due to missing configuration');
+      const [remainingNew, totalProcessing] = await Promise.all([
+        this.prisma.parentLead.count({ where: { status: 'NEW' } }),
+        this.prisma.parentLead.count({ where: { status: 'PROCESSING' } }),
+      ]);
+      return {
+        remainingNew,
+        totalProcessing,
+        distributionRan: false,
+      };
+    }
+
     // Check if already processing to avoid race condition
     if (this.isProcessing) {
       const [remainingNew, totalProcessing] = await Promise.all([
