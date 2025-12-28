@@ -9,6 +9,7 @@ import { useAppContext } from '../contexts/AppContext';
 import { getHomePath } from '../utils/navigation';
 import Button from '../components/ui/Button';
 import LanguageSwitcher from '../components/ui/LanguageSwitcher';
+import LogoLink from '../components/shared/LogoLink';
 import {
   BuildingStorefrontIcon,
   ArrowTopRightOnSquareIcon,
@@ -327,24 +328,24 @@ const PublicPartnersPage: React.FC = () => {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <Link to={homePath} className="flex items-center space-x-3 group" aria-label={t('common:buttons.goHome', 'Go to home')}>
-              {logoUrl ? (
-                <img
-                  src={logoUrl}
-                  alt={settings?.siteName || APP_NAME}
-                  className="h-10 w-auto"
-                />
-              ) : showLogoFallback ? (
+            <LogoLink
+              to={homePath}
+              ariaLabel={t('common:buttons.goHome', 'Go to home')}
+              logoUrl={logoUrl}
+              altText={settings?.siteName || APP_NAME}
+              showFallback={showLogoFallback}
+              imageClassName="h-10 w-auto"
+              placeholderClassName="h-10 w-10"
+              className="flex items-center space-x-3 group"
+              fallback={
                 <div className="flex items-center gap-2">
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-swiss-mint to-swiss-teal flex items-center justify-center">
                     <SwissFlagIcon className="w-6 h-6 text-white" />
                   </div>
                   <span className="text-xl font-bold text-swiss-charcoal">{APP_NAME}</span>
                 </div>
-              ) : (
-                <span className="h-10 w-10" aria-hidden="true" />
-              )}
-            </Link>
+              }
+            />
 
             <div className="flex items-center gap-4">
               <LanguageSwitcher />
@@ -610,24 +611,24 @@ const PublicPartnersPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-3">
-              <Link to={homePath} className="flex items-center gap-3" aria-label={t('common:buttons.goHome', 'Go to home')}>
-                {logoUrl ? (
-                  <img
-                    src={logoUrl}
-                    alt={settings?.siteName || APP_NAME}
-                    className="h-8 w-auto brightness-0 invert"
-                  />
-                ) : showLogoFallback ? (
+              <LogoLink
+                to={homePath}
+                ariaLabel={t('common:buttons.goHome', 'Go to home')}
+                logoUrl={logoUrl}
+                altText={settings?.siteName || APP_NAME}
+                showFallback={showLogoFallback}
+                imageClassName="h-8 w-auto brightness-0 invert"
+                placeholderClassName="h-8 w-8"
+                className="flex items-center gap-3"
+                fallback={
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-lg bg-swiss-mint flex items-center justify-center">
                       <SwissFlagIcon className="w-5 h-5 text-white" />
                     </div>
                     <span className="text-lg font-bold">{APP_NAME}</span>
                   </div>
-                ) : (
-                  <span className="h-8 w-8" aria-hidden="true" />
-                )}
-              </Link>
+                }
+              />
             </div>
             
             <div className="flex items-center gap-8 text-sm text-gray-400">

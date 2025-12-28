@@ -11,6 +11,7 @@ import { useAppContext } from '../contexts/AppContext';
 import { useAuthContext } from '../providers/AuthProvider';
 import { useFrontendSettings } from '../hooks/useFrontendSettings';
 import { getHomePath } from '../utils/navigation';
+import LogoLink from '../components/shared/LogoLink';
 
 // Social icons
 const GoogleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
@@ -34,26 +35,6 @@ const LoginPage: React.FC = () => {
   const homePath = getHomePath(currentUser);
   const logoUrl = settings?.logoAsset?.publicUrl;
   const showLogoFallback = !settingsLoading && !logoUrl;
-
-  const renderLogo = (imageClassName: string, iconClassName: string) => {
-    if (logoUrl) {
-      return (
-        <Link to={homePath} aria-label={t('common:buttons.goHome', 'Go to home')}>
-          <img src={logoUrl} alt={settings?.siteName || APP_NAME} className={imageClassName} />
-        </Link>
-      );
-    }
-
-    if (showLogoFallback) {
-      return (
-        <Link to={homePath} aria-label={t('common:buttons.goHome', 'Go to home')}>
-          <SquaresPlusIcon className={iconClassName} />
-        </Link>
-      );
-    }
-
-    return <span className={imageClassName} aria-hidden="true" />;
-  };
   
   useEffect(() => {
     if (settingsError) {
@@ -214,10 +195,16 @@ const LoginPage: React.FC = () => {
       <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-2 sm:p-3 md:p-4 lg:p-6">
         <Card className="w-full max-w-md p-3 sm:p-4 md:p-6 shadow-xl">
           <div className="text-center mb-3 sm:mb-4 md:mb-5">
-            {renderLogo(
-              'h-12 sm:h-14 md:h-[72px] w-auto mx-auto mb-1.5 sm:mb-2',
-              'h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-swiss-mint mx-auto mb-1.5 sm:mb-2'
-            )}
+            <LogoLink
+              to={homePath}
+              ariaLabel={t('common:buttons.goHome', 'Go to home')}
+              logoUrl={logoUrl}
+              altText={settings?.siteName || APP_NAME}
+              showFallback={showLogoFallback}
+              imageClassName="h-12 sm:h-14 md:h-[72px] w-auto mx-auto mb-1.5 sm:mb-2"
+              iconClassName="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-swiss-mint mx-auto mb-1.5 sm:mb-2"
+              fallbackIcon={SquaresPlusIcon}
+            />
             <h1 className="text-base sm:text-lg md:text-xl font-bold text-swiss-charcoal">
               {t('common:loginPage.title', { appName: settings?.siteName || APP_NAME })}
             </h1>
@@ -297,10 +284,16 @@ const LoginPage: React.FC = () => {
       <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-2 sm:p-3 md:p-4 lg:p-6">
         <Card className="w-full max-w-md p-3 sm:p-4 md:p-6 shadow-xl">
           <div className="text-center mb-3 sm:mb-4 md:mb-5">
-            {renderLogo(
-              'h-12 sm:h-14 md:h-[72px] w-auto mx-auto mb-1.5 sm:mb-2',
-              'h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-swiss-mint mx-auto mb-1.5 sm:mb-2'
-            )}
+            <LogoLink
+              to={homePath}
+              ariaLabel={t('common:buttons.goHome', 'Go to home')}
+              logoUrl={logoUrl}
+              altText={settings?.siteName || APP_NAME}
+              showFallback={showLogoFallback}
+              imageClassName="h-12 sm:h-14 md:h-[72px] w-auto mx-auto mb-1.5 sm:mb-2"
+              iconClassName="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-swiss-mint mx-auto mb-1.5 sm:mb-2"
+              fallbackIcon={SquaresPlusIcon}
+            />
             <h1 className="text-base sm:text-lg md:text-xl font-bold text-swiss-charcoal">
               {t('common:loginPage.completeRegistration', 'Complete Your Registration')}
             </h1>
@@ -351,10 +344,16 @@ const LoginPage: React.FC = () => {
     <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-2 sm:p-3 md:p-4 lg:p-6">
       <Card className="w-full max-w-md p-3 sm:p-4 md:p-6 shadow-xl">
         <div className="text-center mb-3 sm:mb-4 md:mb-5">
-          {renderLogo(
-            'h-12 sm:h-14 md:h-[72px] w-auto mx-auto mb-1.5 sm:mb-2',
-            'h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-swiss-mint mx-auto mb-1.5 sm:mb-2'
-          )}
+          <LogoLink
+            to={homePath}
+            ariaLabel={t('common:buttons.goHome', 'Go to home')}
+            logoUrl={logoUrl}
+            altText={settings?.siteName || APP_NAME}
+            showFallback={showLogoFallback}
+            imageClassName="h-12 sm:h-14 md:h-[72px] w-auto mx-auto mb-1.5 sm:mb-2"
+            iconClassName="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-swiss-mint mx-auto mb-1.5 sm:mb-2"
+            fallbackIcon={SquaresPlusIcon}
+          />
           <h1 className="text-base sm:text-lg md:text-xl font-bold text-swiss-charcoal">
             {t('common:loginPage.title', { appName: settings?.siteName || APP_NAME })}
           </h1>
