@@ -180,15 +180,15 @@ const SupplierOrganisationProfilePage: React.FC = () => {
           request<ProfileResponse>('/profiles/me'),
         ]);
 
-        if (!supplierRes.success || !supplierRes.data) {
-          throw new Error(supplierRes.message || 'Failed to load supplier settings');
-        }
-
         if (isCancelled) {
           return;
         }
 
-        const data = supplierRes.data;
+        // Handle case where organization doesn't exist yet - use defaults instead of erroring
+        const data = supplierRes.success && supplierRes.data 
+          ? supplierRes.data 
+          : {} as SupplierSettingsData;
+        
         setSupplierSettings({
           companyName: data.companyName || currentUser.orgName || '',
           contactEmail: data.contactEmail || currentUser.email || '',
