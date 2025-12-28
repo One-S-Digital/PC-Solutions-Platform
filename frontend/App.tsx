@@ -285,44 +285,85 @@ const ProtectedLayout: React.FC = () => {
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<RoleBasedDashboardRedirect />} />
-          <Route path="/dashboard/details/:detailType" element={<DashboardDetailPage />} />
+          {/* Dashboard details - Gated for subscription-required roles */}
+          <Route path="/dashboard/details/:detailType" element={
+            <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.EDUCATOR, UserRole.PARENT, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
+              <DashboardDetailPage />
+            </SubscriptionGatedRoute>
+          } />
         
+        {/* Marketplace - Gated for Foundation users */}
         <Route path="/marketplace" element={<Navigate to="/marketplace/products" replace />} />
-        <Route path="/marketplace/products" element={<MarketplacePage />} />
-        <Route path="/marketplace/services" element={<MarketplacePage />} />
-        
-        <Route path="/recruitment" element={<Navigate to="/recruitment/job-listings" replace />} />
-        <Route path="/recruitment/job-listings" element={<RecruitmentPage />} />
-        <Route path="/recruitment/candidate-pool" element={<RecruitmentPage />} />
-        <Route path="/candidate/:candidateId" element={
-          <ProtectedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
-            <CandidateProfilePage />
-          </ProtectedRoute>
+        <Route path="/marketplace/products" element={
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
+            <MarketplacePage />
+          </SubscriptionGatedRoute>
+        } />
+        <Route path="/marketplace/services" element={
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
+            <MarketplacePage />
+          </SubscriptionGatedRoute>
         } />
         
+        {/* Recruitment - Gated for Foundation users */}
+        <Route path="/recruitment" element={<Navigate to="/recruitment/job-listings" replace />} />
+        <Route path="/recruitment/job-listings" element={
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
+            <RecruitmentPage />
+          </SubscriptionGatedRoute>
+        } />
+        <Route path="/recruitment/candidate-pool" element={
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
+            <RecruitmentPage />
+          </SubscriptionGatedRoute>
+        } />
+        <Route path="/candidate/:candidateId" element={
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
+            <CandidateProfilePage />
+          </SubscriptionGatedRoute>
+        } />
+        
+        {/* Messages - Gated for subscription-required roles */}
         <Route path="/messages" element={
-          <ProtectedRoute roles={[UserRole.FOUNDATION, UserRole.EDUCATOR, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.PARENT, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.EDUCATOR, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.PARENT, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
             <MessagesPage />
-          </ProtectedRoute>
+          </SubscriptionGatedRoute>
         } />
         <Route path="/messages/:conversationId" element={
-            <ProtectedRoute roles={[UserRole.FOUNDATION, UserRole.EDUCATOR, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.PARENT, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.EDUCATOR, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.PARENT, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
             <MessagesPage />
-          </ProtectedRoute>
+          </SubscriptionGatedRoute>
         } />
 
-        <Route path="/hr-procedures" element={<ProtectedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}><HRProceduresPage /></ProtectedRoute>} />
-        <Route path="/state-policies" element={<ProtectedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}><StatePoliciesPage /></ProtectedRoute>} />
-        <Route path="/e-learning" element={<ProtectedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}><ELearningPage /></ProtectedRoute>} />
-          <Route path="/partners-directory" element={<PartnersPage />} />
-          <Route
-            path="/partner/:partnerId"
-            element={
-              <ProtectedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER]}>
-                <PartnerDetailPage />
-              </ProtectedRoute>
-            }
-          />
+        {/* HR Procedures - Gated for Foundation users */}
+        <Route path="/hr-procedures" element={
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
+            <HRProceduresPage />
+          </SubscriptionGatedRoute>
+        } />
+        {/* State Policies - Gated for Foundation users */}
+        <Route path="/state-policies" element={
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
+            <StatePoliciesPage />
+          </SubscriptionGatedRoute>
+        } />
+        {/* E-Learning - Gated for Foundation users */}
+        <Route path="/e-learning" element={
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
+            <ELearningPage />
+          </SubscriptionGatedRoute>
+        } />
+        {/* Partners directory - Gated for subscription-required roles */}
+        <Route path="/partners-directory" element={
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
+            <PartnersPage />
+          </SubscriptionGatedRoute>
+        } />
+        <Route path="/partner/:partnerId" element={
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER]}>
+            <PartnerDetailPage />
+          </SubscriptionGatedRoute>
+        } />
           <Route path="/users/*" element={<ProtectedRoute roles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}><UsersPage /></ProtectedRoute>} />
           <Route
             path="/profile"
@@ -497,7 +538,12 @@ const ProtectedLayout: React.FC = () => {
         
         {/* Misc Protected Routes */}
         <Route path="/file-gallery" element={<ProtectedRoute roles={[UserRole.EDUCATOR]}><FileGalleryPage /></ProtectedRoute>} />
-        <Route path="/notifications" element={<ProtectedRoute roles={[UserRole.FOUNDATION, UserRole.EDUCATOR, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.PARENT, UserRole.ADMIN, UserRole.SUPER_ADMIN]}><NotificationsPage /></ProtectedRoute>} />
+        {/* Notifications - Gated for subscription-required roles */}
+        <Route path="/notifications" element={
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.EDUCATOR, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.PARENT, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
+            <NotificationsPage />
+          </SubscriptionGatedRoute>
+        } />
 
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>

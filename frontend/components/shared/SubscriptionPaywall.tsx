@@ -70,6 +70,12 @@ export interface SubscriptionPaywallProps {
 /**
  * Routes that are always accessible without subscription
  * These allow users to manage their account/subscription even without active sub
+ * 
+ * Users should always be able to:
+ * - View/edit their profile and organisation profile
+ * - Access settings
+ * - Access support
+ * - View pricing
  */
 const ALWAYS_ALLOWED_ROUTES = [
   '/pricing',
@@ -77,6 +83,15 @@ const ALWAYS_ALLOWED_ROUTES = [
   '/profile',
   '/settings',
   '/support',
+  // Role-specific profile/support routes
+  '/foundation/organisation-profile',
+  '/foundation/support',
+  '/supplier/organisation-profile',
+  '/supplier/support',
+  '/supplier/company-profile',
+  '/service-provider/organisation-profile',
+  '/service-provider/support',
+  '/service-provider/company-profile',
 ];
 
 /**
@@ -86,7 +101,6 @@ const ALWAYS_ALLOWED_PREFIXES = [
   '/pricing',
   '/settings',
   '/profile',
-  '/support',
 ];
 
 // =====================================
