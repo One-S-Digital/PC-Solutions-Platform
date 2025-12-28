@@ -19,7 +19,6 @@ import {
   ArrowDownCircle,
   DollarSign,
   ChevronLeft,
-  GraduationCap,
   Package,
   Wrench,
   Heart,
@@ -75,12 +74,6 @@ const roleConfig: Record<string, { icon: React.ReactNode; color: string; bgColor
     color: 'text-purple-600',
     bgColor: 'bg-purple-50 border-purple-200 hover:bg-purple-100',
     labelKey: 'admin:subscriptions.roles.serviceProviders',
-  },
-  [UserRole.EDUCATOR]: {
-    icon: <GraduationCap className="w-8 h-8" />,
-    color: 'text-indigo-600',
-    bgColor: 'bg-indigo-50 border-indigo-200 hover:bg-indigo-100',
-    labelKey: 'admin:subscriptions.roles.educators',
   },
   [UserRole.PARENT]: {
     icon: <Heart className="w-8 h-8" />,
@@ -2086,7 +2079,7 @@ const Subscriptions: React.FC = () => {
   // Group users by role and count
   const usersByRole = React.useMemo(() => {
     const roleGroups: Record<string, User[]> = {};
-    const subscribableRoles = [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.EDUCATOR, UserRole.PARENT];
+    const subscribableRoles = [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.PARENT];
     
     subscribableRoles.forEach((role) => {
       roleGroups[role] = users.filter((user) => user.role === role);
