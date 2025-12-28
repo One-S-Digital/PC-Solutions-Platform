@@ -398,8 +398,12 @@ export class SubscriptionManagementController {
   // =====================================
 
   @Get('feature-access/:userId/:feature')
-  async checkAdminFeatureAccess(@Param('userId') userId: string, @Param('feature') feature: string) {
-    const hasAccess = await this.subscriptionService.checkFeatureAccess(userId, feature);
+  async checkAdminFeatureAccess(
+    @Param('userId') userId: string,
+    @Param('feature') feature: string,
+    @Query('organizationId') organizationId?: string,
+  ) {
+    const hasAccess = await this.subscriptionService.checkFeatureAccess(userId, feature, organizationId);
     return wrapResponse({ hasAccess });
   }
 

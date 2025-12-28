@@ -1632,6 +1632,8 @@ export class SubscriptionManagementService {
         }
 
         // If no organizationId was provided, look up user's organization and check
+        // Note: This fallback exists for direct service calls (e.g., background jobs, admin operations)
+        // where organizationId may not be available from request context
         if (!organizationId) {
           const userOrg = await this.prisma.userOrganization.findFirst({
             where: { userId },
