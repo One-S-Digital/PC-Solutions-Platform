@@ -3,6 +3,7 @@
     "placeholders": {
       "specialRequirements": "Veuillez décrire toute exigence particulière, tout régime alimentaire, toute condition médicale ou toute autre information importante concernant votre enfant...",
       "municipality": "Sélectionner la municipalité",
+      "city": "Entrez le nom de la ville",
       "phoneNumber": "+41 XX XXX XX XX",
       "startDate": "Sélectionner la date",
       "childAge": "Saisir l'âge en mois",
@@ -12,10 +13,15 @@
     },
     "buttons": {
       "viewMyEnquiries": "Voir mes demandes de renseignements",
-      "submitEnquiry": "Soumettre une demande"
+      "submitEnquiry": "Soumettre une demande",
+      "addCity": "Ajouter une autre ville",
+      "removeCity": "Supprimer"
     },
     "labels": {
       "municipality": "Municipalité",
+      "city": "Ville",
+      "cities": "Villes préférées",
+      "citiesHelpText": "Ajoutez les villes où vous recherchez une garde d'enfants. Ajouter plus de villes augmente vos chances de trouver une correspondance.",
       "specialNeeds": "Exigences particulières",
       "phoneNumber": "Numéro de téléphone",
       "childNeeds": "Besoins particuliers de l'enfant",
@@ -36,6 +42,7 @@
   "placeholders": {
     "specialRequirements": "Veuillez décrire toute exigence particulière, tout régime alimentaire, toute condition médicale ou toute autre information importante concernant votre enfant...",
     "municipality": "Sélectionner la municipalité",
+    "city": "Entrez le nom de la ville",
     "phoneNumber": "+41 XX XXX XX XX",
     "startDate": "Sélectionner la date",
     "childAge": "Saisir l'âge en mois",
@@ -47,10 +54,15 @@
     "backToDashboard": "Retour au tableau de bord",
     "viewMyEnquiries": "Voir mes demandes de renseignements",
     "submitEnquiry": "Soumettre une demande",
-    "backToHome": "Retour à l'accueil"
+    "backToHome": "Retour à l'accueil",
+    "addCity": "Ajouter une autre ville",
+    "removeCity": "Supprimer"
   },
   "labels": {
     "municipality": "Municipalité",
+    "city": "Ville",
+    "cities": "Villes préférées",
+    "citiesHelpText": "Ajoutez les villes où vous recherchez une garde d'enfants. Ajouter plus de villes augmente vos chances de trouver une correspondance.",
     "specialNeeds": "Exigences particulières",
     "phoneNumber": "Numéro de téléphone",
     "childNeeds": "Besoins particuliers de l'enfant",

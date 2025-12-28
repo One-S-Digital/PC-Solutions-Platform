@@ -32,6 +32,11 @@ export class UpdateParentLeadDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
+  preferredCities?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   preferredLanguages?: string[];
 
   @IsOptional()

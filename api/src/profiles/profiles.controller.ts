@@ -77,6 +77,10 @@ export class UpdateProfileDto {
   canton?: string;
 
   @IsOptional()
+  @IsString()
+  city?: string;
+
+  @IsOptional()
   @IsArray()
   @IsString({ each: true })
   languages?: string[];
@@ -163,6 +167,10 @@ export class CreateOrganizationDto {
   @IsOptional()
   @IsString()
   canton?: string;
+
+  @IsOptional()
+  @IsString()
+  city?: string;
 
   @IsOptional()
   @IsArray()
@@ -340,6 +348,7 @@ export class ProfileController {
             contactPerson: updateData.contactPerson ?? organization.contactPerson,
             phoneNumber: updateData.phoneNumber ?? organization.phoneNumber,
             canton: updateData.canton ?? organization.canton,
+            city: updateData.city ?? organization.city,
             languages: updateData.languages ?? organization.languages,
             capacity: updateData.capacity ?? organization.capacity,
             pedagogy: updateData.pedagogy ?? organization.pedagogy,
@@ -433,6 +442,7 @@ export class ProfileController {
         contactPerson: organizationData.contactPerson,
         phoneNumber: organizationData.phoneNumber,
         canton: organizationData.canton,
+        city: organizationData.city,
         languages: organizationData.languages || [],
         capacity: organizationData.capacity,
         pedagogy: organizationData.pedagogy || [],

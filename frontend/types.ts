@@ -577,6 +577,7 @@ export interface ParentLead {
     parentId: string; // Link to a parent user if they are registered
     canton: string;
     municipality: string;
+    preferredCities?: string[]; // Array of cities where parent is looking for childcare
     childAge: number;
     desiredStartDate: string; // ISO date string
     specialNeeds?: string;
@@ -866,6 +867,7 @@ interface BaseSettings {
     contactEmail?: string;
     address?: string;
     canton?: string;
+    city?: string;
     regionsServed?: SwissCanton[];
     languagesSpoken?: SupportedLanguage[];
     preferredContactMethod?: SettingsPreferredContactMethod;

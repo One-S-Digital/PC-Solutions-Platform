@@ -3,6 +3,7 @@
     "placeholders": {
       "specialRequirements": "Bitte beschreiben Sie besondere Anforderungen, Ernährungsbedürfnisse, medizinische Bedingungen oder andere wichtige Informationen über Ihr Kind...",
       "municipality": "Gemeinde auswählen",
+      "city": "Stadtname eingeben",
       "phoneNumber": "+41 XX XXX XX XX",
       "startDate": "Datum auswählen",
       "childAge": "Alter in Monaten eingeben",
@@ -12,10 +13,15 @@
     },
     "buttons": {
       "viewMyEnquiries": "Meine Anfragen anzeigen",
-      "submitEnquiry": "Anfrage senden"
+      "submitEnquiry": "Anfrage senden",
+      "addCity": "Weitere Stadt hinzufügen",
+      "removeCity": "Entfernen"
     },
     "labels": {
       "municipality": "Gemeinde",
+      "city": "Stadt",
+      "cities": "Bevorzugte Städte",
+      "citiesHelpText": "Fügen Sie Städte hinzu, in denen Sie Kinderbetreuung suchen. Mehr Städte erhöhen Ihre Chancen, eine passende Einrichtung zu finden.",
       "specialNeeds": "Besondere Anforderungen",
       "phoneNumber": "Telefonnummer",
       "childNeeds": "Besondere Bedürfnisse des Kindes",
@@ -36,6 +42,7 @@
   "placeholders": {
     "specialRequirements": "Bitte beschreiben Sie besondere Anforderungen, Ernährungsbedürfnisse, medizinische Bedingungen oder andere wichtige Informationen über Ihr Kind...",
     "municipality": "Gemeinde auswählen",
+    "city": "Stadtname eingeben",
     "phoneNumber": "+41 XX XXX XX XX",
     "startDate": "Datum auswählen",
     "childAge": "Alter in Monaten eingeben",
@@ -47,10 +54,15 @@
     "backToDashboard": "Zurück zum Dashboard",
     "viewMyEnquiries": "Meine Anfragen anzeigen",
     "submitEnquiry": "Anfrage senden",
-    "backToHome": "Zurück zur Startseite"
+    "backToHome": "Zurück zur Startseite",
+    "addCity": "Weitere Stadt hinzufügen",
+    "removeCity": "Entfernen"
   },
   "labels": {
     "municipality": "Gemeinde",
+    "city": "Stadt",
+    "cities": "Bevorzugte Städte",
+    "citiesHelpText": "Fügen Sie Städte hinzu, in denen Sie Kinderbetreuung suchen. Mehr Städte erhöhen Ihre Chancen, eine passende Einrichtung zu finden.",
     "specialNeeds": "Besondere Anforderungen",
     "phoneNumber": "Telefonnummer",
     "childNeeds": "Besondere Bedürfnisse des Kindes",

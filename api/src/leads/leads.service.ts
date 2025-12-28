@@ -122,9 +122,13 @@ export class LeadsService {
       type: 'FOUNDATION',
     };
 
-    // Location matching
+    // Canton/Location matching - match against canton or regionsServed
     if (lead.preferredLocation) {
-      where.region = { contains: lead.preferredLocation, mode: 'insensitive' };
+      where.OR = [
+        { canton: { equals: lead.preferredLocation, mode: 'insensitive' } },
+        { regionsServed: { has: lead.preferredLocation } },
+        { region: { contains: lead.preferredLocation, mode: 'insensitive' } },
+      ];
     }
 
     // Language matching
@@ -153,29 +157,47 @@ export class LeadsService {
     const scoredFoundations = foundations.map(foundation => {
       let score = 0;
 
-      // Location match (40 points)
-      if (lead.preferredLocation && foundation.region) {
-        if (foundation.region.toLowerCase().includes(lead.preferredLocation.toLowerCase())) {
+      // Canton/Location match (30 points)
+      if (lead.preferredLocation) {
+        const cantonMatch = foundation.canton?.toLowerCase() === lead.preferredLocation.toLowerCase();
+        const regionsMatch = foundation.regionsServed?.some(
+          r => r.toLowerCase() === lead.preferredLocation!.toLowerCase()
+        );
+        const regionMatch = foundation.region?.toLowerCase().includes(lead.preferredLocation.toLowerCase());
+        
+        if (cantonMatch || regionsMatch || regionMatch) {
+          score += 30;
+        }
+      }
+
+      // City match (40 points) - case-insensitive matching
+      // If parent specified preferred cities, check if foundation's city matches any of them
+      if (lead.preferredCities && lead.preferredCities.length > 0 && foundation.city) {
+        const foundationCityLower = foundation.city.toLowerCase().trim();
+        const cityMatch = lead.preferredCities.some(
+          city => city.toLowerCase().trim() === foundationCityLower
+        );
+        if (cityMatch) {
           score += 40;
         }
       }
 
-      // Language match (30 points)
-      if (lead.preferredLanguages && foundation.languages) {
+      // Language match (20 points)
+      if (lead.preferredLanguages && lead.preferredLanguages.length > 0 && foundation.languages) {
         const matchingLanguages = lead.preferredLanguages.filter(lang =>
-          foundation.languages.includes(lang),
+          foundation.languages.some(fLang => fLang.toLowerCase() === lang.toLowerCase()),
         );
-        score += (matchingLanguages.length / lead.preferredLanguages.length) * 30;
+        score += (matchingLanguages.length / lead.preferredLanguages.length) * 20;
       }
 
-      // Capacity availability (20 points)
+      // Capacity availability (5 points)
       if (foundation.capacity && foundation.capacity > 0) {
-        score += 20;
+        score += 5;
       }
 
-      // Pedagogy match (10 points)
+      // Pedagogy match (5 points)
       if (foundation.pedagogy && foundation.pedagogy.length > 0) {
-        score += 10;
+        score += 5;
       }
 
       return {
@@ -184,8 +206,26 @@ export class LeadsService {
       };
     });
 
+    // Filter out foundations with no city match if cities were specified
+    // This ensures we only return relevant daycares based on location
+    let filteredFoundations = scoredFoundations;
+    if (lead.preferredCities && lead.preferredCities.length > 0) {
+      filteredFoundations = scoredFoundations.filter(foundation => {
+        if (!foundation.city) return false;
+        const foundationCityLower = foundation.city.toLowerCase().trim();
+        return lead.preferredCities!.some(
+          city => city.toLowerCase().trim() === foundationCityLower
+        );
+      });
+      
+      // If no city matches found, fall back to canton-level matches
+      if (filteredFoundations.length === 0) {
+        filteredFoundations = scoredFoundations;
+      }
+    }
+
     // Sort by match score descending
-    return scoredFoundations.sort((a, b) => b.matchScore - a.matchScore);
+    return filteredFoundations.sort((a, b) => b.matchScore - a.matchScore);
   }
 
   // Lead Assignment
