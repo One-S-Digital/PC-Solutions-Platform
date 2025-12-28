@@ -687,6 +687,9 @@ export class UsersService {
 
       return {
         id: appUser.id,
+        // IMPORTANT: profileUserId is the User.id from the User table
+        // This is what should be used for subscription lookups, NOT appUser.id
+        profileUserId: profile?.id || null,
         clerkId: appUser.clerkId,
         email: appUser.email || profile?.email || null,
         firstName,

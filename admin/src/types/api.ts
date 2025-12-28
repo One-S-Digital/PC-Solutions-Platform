@@ -190,6 +190,9 @@ export interface Organization {
 
 export interface User {
   id: string;
+  // IMPORTANT: profileUserId is the User.id from the User table
+  // This is what should be used for subscription lookups, NOT id (which is AppUser.id)
+  profileUserId?: string;
   auth0Id?: string;
   clerkId: string;
   name: string;

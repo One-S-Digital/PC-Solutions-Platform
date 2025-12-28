@@ -1948,16 +1948,39 @@ const Subscriptions: React.FC = () => {
     return tiers.length > 0 ? tiers : order;
   }, [pricingTiers]);
 
-  // Create a map of userId to subscription
-  const userSubscriptionMap = React.useMemo(() => {
-    const map = new Map<string, Subscription>();
+  // Create maps for subscription lookup by userId and organizationId
+  // Subscriptions can be linked to either a user (via userId) or an organization (via organizationId)
+  const { userSubscriptionMap, orgSubscriptionMap } = React.useMemo(() => {
+    const userMap = new Map<string, Subscription>();
+    const orgMap = new Map<string, Subscription>();
     subscriptions.forEach((sub) => {
       if (sub.userId) {
-        map.set(sub.userId, sub);
+        userMap.set(sub.userId, sub);
+      }
+      if (sub.organizationId) {
+        orgMap.set(sub.organizationId, sub);
       }
     });
-    return map;
+    return { userSubscriptionMap: userMap, orgSubscriptionMap: orgMap };
   }, [subscriptions]);
+  
+  // Helper function to find subscription for a user (checks both userId and organizationId)
+  const getSubscriptionForUser = React.useCallback((user: User): Subscription | undefined => {
+    // First check by user's profileUserId
+    if (user.profileUserId) {
+      const sub = userSubscriptionMap.get(user.profileUserId);
+      if (sub) return sub;
+    }
+    // Then check by user's id (AppUser.id) for backwards compatibility
+    const subById = userSubscriptionMap.get(user.id);
+    if (subById) return subById;
+    // Finally check by organization
+    if (user.orgId) {
+      const orgSub = orgSubscriptionMap.get(user.orgId);
+      if (orgSub) return orgSub;
+    }
+    return undefined;
+  }, [userSubscriptionMap, orgSubscriptionMap]);
 
   // Group users by role and count
   const usersByRole = React.useMemo(() => {
@@ -1990,12 +2013,17 @@ const Subscriptions: React.FC = () => {
   const updateSubscriptionMutation = useMutation({
     mutationFn: async ({
       userId,
+      user,
       data,
     }: {
       userId: string;
+      user?: User;
       data: { status: SubscriptionStatus; planId?: string; tier?: SubscriptionTier; durationMonths?: number; notes?: string };
     }) => {
-      const existingSubscription = userSubscriptionMap.get(userId);
+      // Find existing subscription - check by user if provided, otherwise by userId
+      const existingSubscription = user 
+        ? getSubscriptionForUser(user) 
+        : userSubscriptionMap.get(userId);
       const isMonthlyRecurring = data.durationMonths === 0;
       
       if (existingSubscription) {
@@ -2041,8 +2069,26 @@ const Subscriptions: React.FC = () => {
         }
         // For monthly recurring (0), set durationMonths to 1
         const duration = isMonthlyRecurring ? 1 : data.durationMonths;
+        
+        // Find the user to get their profileUserId and orgId
+        // IMPORTANT: Subscriptions should use User.id (profileUserId), not AppUser.id
+        // For organization-based roles (Foundation, Supplier, Service Provider), prefer orgId
+        const user = users.find(u => u.id === userId);
+        const subscriptionUserId = user?.profileUserId || userId;
+        const subscriptionOrgId = user?.orgId || undefined;
+        
+        console.log('📋 Creating subscription with:', {
+          originalUserId: userId,
+          profileUserId: subscriptionUserId,
+          orgId: subscriptionOrgId,
+          planId: data.planId || plans[0]?.id,
+        });
+        
         const subscription = await subscriptionService.createSubscription(apiClient, {
-          userId,
+          // Use profileUserId for the subscription, not AppUser.id
+          userId: subscriptionUserId,
+          // For organization-based roles, also include organizationId
+          organizationId: subscriptionOrgId,
           planId: data.planId || plans[0]?.id,
           tier: data.tier || SubscriptionTier.BASIC,
           durationMonths: duration,
@@ -2291,13 +2337,13 @@ const Subscriptions: React.FC = () => {
 
   const handleEditUser = (user: User) => {
     setSelectedUser(user);
-    setSelectedUserSubscription(userSubscriptionMap.get(user.id) || null);
+    setSelectedUserSubscription(getSubscriptionForUser(user) || null);
     setIsEditModalOpen(true);
   };
 
   const handleSaveSubscription = async (data: { status: SubscriptionStatus; planId?: string; tier?: SubscriptionTier; durationMonths?: number; notes?: string }) => {
     if (selectedUser) {
-      await updateSubscriptionMutation.mutateAsync({ userId: selectedUser.id, data });
+      await updateSubscriptionMutation.mutateAsync({ userId: selectedUser.id, user: selectedUser, data });
     }
   };
 
@@ -2308,8 +2354,8 @@ const Subscriptions: React.FC = () => {
     }).format(amount);
   };
 
-  const getSubscriptionStatusBadge = (userId: string) => {
-    const subscription = userSubscriptionMap.get(userId);
+  const getSubscriptionStatusBadge = (user: User) => {
+    const subscription = getSubscriptionForUser(user);
     if (!subscription) {
       return (
         <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-600">
@@ -2800,7 +2846,7 @@ const Subscriptions: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
             {Object.entries(roleConfig).map(([role, config]) => {
               const userCount = usersByRole[role]?.length || 0;
-              const subscribedCount = usersByRole[role]?.filter((u) => userSubscriptionMap.has(u.id))?.length || 0;
+              const subscribedCount = usersByRole[role]?.filter((u) => getSubscriptionForUser(u) !== undefined)?.length || 0;
               
               return (
                 <div
@@ -3018,7 +3064,7 @@ const Subscriptions: React.FC = () => {
                   </thead>
                   <tbody className="divide-y">
                     {filteredUsers.map((user) => {
-                      const subscription = userSubscriptionMap.get(user.id);
+                      const subscription = getSubscriptionForUser(user);
                       return (
                         <tr
                           key={user.id}
@@ -3048,7 +3094,7 @@ const Subscriptions: React.FC = () => {
                             {user.orgName || '-'}
                           </td>
                           <td className="px-4 py-4">
-                            {getSubscriptionStatusBadge(user.id)}
+                            {getSubscriptionStatusBadge(user)}
                           </td>
                           <td className="px-4 py-4 text-sm text-gray-600">
                             {subscription?.plan?.name || '-'}
