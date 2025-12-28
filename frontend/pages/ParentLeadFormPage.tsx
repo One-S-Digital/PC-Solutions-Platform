@@ -9,13 +9,37 @@ import { useNavigate, Link } from 'react-router-dom'; // Import Link
 import { UserRole } from '../types'; 
 import { useTranslation } from 'react-i18next';
 import { useFrontendSettings } from '../hooks/useFrontendSettings';
+import { getHomePath } from '../utils/navigation';
 
 const ParentLeadFormPage: React.FC = () => {
   const { t } = useTranslation(['parentLeadForm', 'common']);
   const { submitParentLead, currentUser } = useAppContext(); 
   const navigate = useNavigate();
-  const { settings } = useFrontendSettings();
+  const { settings, loading: settingsLoading } = useFrontendSettings();
   const isParentUser = currentUser?.role === UserRole.PARENT;
+  const homePath = getHomePath(currentUser);
+  const logoUrl = settings?.logoAsset?.publicUrl;
+  const showLogoFallback = !settingsLoading && !logoUrl;
+
+  const renderLogo = (imageClassName: string, iconClassName: string) => {
+    if (logoUrl) {
+      return (
+        <Link to={homePath} aria-label={t('common:buttons.goHome', 'Go to home')}>
+          <img src={logoUrl} alt={settings?.siteName || APP_NAME} className={imageClassName} />
+        </Link>
+      );
+    }
+
+    if (showLogoFallback) {
+      return (
+        <Link to={homePath} aria-label={t('common:buttons.goHome', 'Go to home')}>
+          <SquaresPlusIcon className={iconClassName} />
+        </Link>
+      );
+    }
+
+    return <span className={imageClassName} aria-hidden="true" />;
+  };
   const [formData, setFormData] = useState({
     canton: '',
     municipality: '',
@@ -128,15 +152,7 @@ const ParentLeadFormPage: React.FC = () => {
       <div className="min-h-screen bg-swiss-light-gray flex flex-col items-center justify-center p-4">
         <BackButton maxWidthClass="max-w-lg" />
         <Card className="w-full max-w-lg p-8 text-center">
-            {settings?.logoAsset?.publicUrl ? (
-              <img 
-                src={settings.logoAsset.publicUrl} 
-                alt={settings.siteName || APP_NAME} 
-                className="h-16 w-auto mx-auto mb-4" 
-              />
-            ) : (
-              <SquaresPlusIcon className="h-16 w-16 text-swiss-mint mx-auto mb-4" />
-            )}
+            {renderLogo('h-16 w-auto mx-auto mb-4', 'h-16 w-16 text-swiss-mint mx-auto mb-4')}
           <h1 className="text-2xl font-bold text-swiss-charcoal mb-4">{t('parentLeadForm:messages.success')}</h1>
           {unauthenticatedSuccess ? (
             <>
@@ -162,15 +178,7 @@ const ParentLeadFormPage: React.FC = () => {
     <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-6">
       <BackButton maxWidthClass="max-w-2xl" />
       <div className="text-center mb-8">
-        {settings?.logoAsset?.publicUrl ? (
-          <img 
-            src={settings.logoAsset.publicUrl} 
-            alt={settings.siteName || APP_NAME} 
-            className="h-16 w-auto mx-auto mb-2" 
-          />
-        ) : (
-          <SquaresPlusIcon className="h-12 w-12 text-swiss-mint mx-auto mb-2" />
-        )}
+        {renderLogo('h-16 w-auto mx-auto mb-2', 'h-12 w-12 text-swiss-mint mx-auto mb-2')}
         <h1 className="text-3xl font-bold text-swiss-charcoal">{t('parentLeadForm:title')}</h1>
         <p className="text-gray-600">{t('parentLeadForm:subtitle')}</p>
       </div>
