@@ -1,7 +1,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { PricingPlan, UserRole, SubscriptionTier } from '../types';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
@@ -18,6 +18,7 @@ import { useSubscription } from '../contexts/SubscriptionContext';
 import { apiService } from '../services/api';
 import type { SubscriptionPlan } from '../contexts/SubscriptionContext';
 import { getHomePath } from '../utils/navigation';
+import LogoLink from '../components/shared/LogoLink';
 
 const PricingPage: React.FC = () => {
   const { t } = useTranslation(['pricing', 'common']);
@@ -249,19 +250,18 @@ const PricingPage: React.FC = () => {
   return (
     <div className="bg-page-bg min-h-screen py-12 px-4 sm:px-6 lg:px-8 relative text-swiss-charcoal">
        <div className="absolute top-0 left-0 w-full p-4 sm:p-6 lg:p-8 flex justify-between items-center z-10">
-        <Link to={homePath} className="flex items-center space-x-2 text-swiss-charcoal hover:text-swiss-teal transition-colors" aria-label={t('common:buttons.goHome', 'Go to home')}>
-            {logoUrl ? (
-              <img 
-                src={logoUrl} 
-                alt={settings?.siteName || APP_NAME} 
-                className="h-10 w-auto" 
-              />
-            ) : showLogoFallback ? (
-              <SquaresPlusIcon className="h-8 w-8 text-swiss-mint" />
-            ) : (
-              <span className="h-10 w-10" aria-hidden="true" />
-            )}
-        </Link>
+        <LogoLink
+          to={homePath}
+          ariaLabel={t('common:buttons.goHome', 'Go to home')}
+          logoUrl={logoUrl}
+          altText={settings?.siteName || APP_NAME}
+          showFallback={showLogoFallback}
+          imageClassName="h-10 w-auto"
+          iconClassName="h-8 w-8 text-swiss-mint"
+          placeholderClassName="h-10 w-10"
+          fallbackIcon={SquaresPlusIcon}
+          className="flex items-center space-x-2 text-swiss-charcoal hover:text-swiss-teal transition-colors"
+        />
         <Button variant="light" onClick={() => navigate(-1)} leftIcon={ArrowLeftIcon}>
             {t('common:buttons.goBack')}
         </Button>
