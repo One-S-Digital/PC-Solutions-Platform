@@ -11,6 +11,7 @@ import {
   Query,
   Request,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { RecruitmentService } from './recruitment.service';
 import { CreateJobListingDto } from './dto/create-job-listing.dto';
@@ -20,9 +21,11 @@ import { CreateJobApplicationDto, UpdateJobApplicationDto } from './dto/create-j
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '@prisma/client';
+import { ResponseEnvelopeInterceptor } from '../common/interceptors/response-envelope.interceptor';
 
 @Controller('recruitment')
 @UseGuards(RolesGuard)
+@UseInterceptors(ResponseEnvelopeInterceptor)
 export class RecruitmentController {
   constructor(private readonly recruitmentService: RecruitmentService) {}
 

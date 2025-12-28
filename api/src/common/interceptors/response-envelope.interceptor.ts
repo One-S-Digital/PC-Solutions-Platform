@@ -45,8 +45,9 @@ export class ResponseEnvelopeInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       map((data) => {
-        // If data is already an ApiEnvelope, return as-is
-        if (data && typeof data === 'object' && 'success' in data && 'version' in data) {
+        // If data is already an ApiEnvelope (has success property), return as-is
+        // This handles both full envelopes (with version) and simple wrappers (success + data)
+        if (data && typeof data === 'object' && 'success' in data && ('version' in data || 'data' in data || 'timestamp' in data)) {
           return data;
         }
 

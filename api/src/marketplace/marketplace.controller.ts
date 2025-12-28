@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   UseGuards,
+  UseInterceptors,
   Request,
   ForbiddenException,
 } from '@nestjs/common';
@@ -22,9 +23,11 @@ import { CreateInquiryDto, UpdateInquiryDto, UpdateInquiryStatusDto } from './dt
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole, InquiryStatus } from '@prisma/client';
+import { ResponseEnvelopeInterceptor, SkipEnvelope } from '../common/interceptors/response-envelope.interceptor';
 
 @Controller('marketplace')
 @UseGuards(RolesGuard)
+@UseInterceptors(ResponseEnvelopeInterceptor)
 export class MarketplaceController {
   constructor(
     private readonly marketplaceService: MarketplaceService,
