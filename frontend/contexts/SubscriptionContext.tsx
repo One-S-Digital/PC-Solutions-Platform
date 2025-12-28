@@ -337,11 +337,27 @@ export const SubscriptionProvider: React.FC<{ children: ReactNode }> = ({ childr
     setError(null);
 
     try {
+      console.log('📋 [Frontend] Fetching subscription for user:', {
+        userId: currentUser?.id,
+        role: currentUser?.role,
+        requiresSubscription,
+      });
+
       const response = await authenticatedRequest<UserSubscriptionData>('/subscriptions/me');
+
+      console.log('📋 [Frontend] Subscription response:', {
+        success: response.success,
+        hasActiveSubscription: response.data?.hasActiveSubscription,
+        status: response.data?.status,
+        subscriptionId: response.data?.subscription?.id,
+        planName: response.data?.plan?.name,
+        features: response.data?.features,
+      });
 
       if (response.success && response.data) {
         setSubscriptionData(response.data);
       } else {
+        console.log('📋 [Frontend] No subscription found - setting defaults');
         // No subscription found - user needs to subscribe
         setSubscriptionData({
           hasActiveSubscription: false,
@@ -365,7 +381,7 @@ export const SubscriptionProvider: React.FC<{ children: ReactNode }> = ({ childr
         });
       }
     } catch (err) {
-      console.error('Failed to fetch subscription:', err);
+      console.error('❌ [Frontend] Failed to fetch subscription:', err);
       setError(err instanceof Error ? err.message : t('subscription:errors.fetchFailed'));
       
       // Set default state on error

@@ -929,6 +929,15 @@ export class UserSubscriptionController {
     const organizationId = userContext?.organizationId;
     const userRole = userContext?.role as UserRole;
 
+    console.log('📋 /subscriptions/me called:', {
+      clerkUserId: userContext?.userId,
+      profileUserId: userId,
+      organizationId,
+      userRole,
+      hasContext: !!userContext,
+      contextKeys: userContext ? Object.keys(userContext) : [],
+    });
+
     // Check if role requires subscription
     const requiresSubscription = SUBSCRIPTION_REQUIRED_ROLES.includes(userRole);
 
@@ -962,6 +971,15 @@ export class UserSubscriptionController {
       userId,
       organizationId,
     );
+
+    console.log('📋 /subscriptions/me result:', {
+      found: !!subscription,
+      subscriptionId: subscription?.id,
+      status: subscription?.status,
+      userId: subscription?.userId,
+      organizationId: subscription?.organizationId,
+      planName: subscription?.plan?.name,
+    });
 
     // Calculate derived fields
     const now = new Date();
