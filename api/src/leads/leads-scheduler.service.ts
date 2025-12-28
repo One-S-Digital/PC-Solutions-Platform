@@ -86,10 +86,8 @@ export class LeadsSchedulerService implements OnModuleInit {
             continue;
           }
 
-          // Notify top matching foundations (up to 5)
-          const topMatches = matchingFoundations.slice(0, 5);
-          
-          for (const foundation of topMatches) {
+          // Notify all matching foundations based on location
+          for (const foundation of matchingFoundations) {
             try {
               // Notify foundation of new lead
               await this.notifyFoundationOfLead(foundation.id, lead);
@@ -109,7 +107,7 @@ export class LeadsSchedulerService implements OnModuleInit {
           });
 
           distributed++;
-          this.logger.log(`Distributed lead ${lead.id} to ${topMatches.length} foundations`);
+          this.logger.log(`Distributed lead ${lead.id} to ${matchingFoundations.length} foundations`);
         } catch (error) {
           failed++;
           this.logger.error(`Failed to distribute lead ${lead.id}: ${(error as Error).message}`);
