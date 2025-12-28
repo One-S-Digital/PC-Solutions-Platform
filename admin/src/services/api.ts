@@ -12,6 +12,7 @@ import {
   ApiResponse,
   InviteUserResponse,
   AnalyticsOverview,
+  AdminDashboardCounts,
   UserAnalytics,
   OrgAnalytics,
   ProductAnalytics,
@@ -664,6 +665,8 @@ export const apiService = {
   // Admin Analytics - Real-time dashboard statistics
   getAnalyticsOverview: (apiClient: AxiosInstance) => 
     apiClient.get<ApiResponse<AnalyticsOverview>>('/admin/analytics/overview'),
+  getDashboardCounts: (apiClient: AxiosInstance) =>
+    apiClient.get<ApiResponse<AdminDashboardCounts>>('/admin/analytics/counts'),
   getUserAnalytics: (apiClient: AxiosInstance, timeRange: '7d' | '30d' | '90d' | '1y' = '30d') => 
     apiClient.get<ApiResponse<UserAnalytics>>('/admin/analytics/users', { params: { timeRange } }),
   getOrganizationAnalytics: (apiClient: AxiosInstance, timeRange: '7d' | '30d' | '90d' | '1y' = '30d') => 

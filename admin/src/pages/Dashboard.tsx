@@ -29,9 +29,6 @@ const Dashboard: React.FC = () => {
   const navigate = useNavigate()
   const apiClient = useApiClient()
   const { t } = useTranslation(['dashboard', 'common', 'admin'])
-  const user = {
-    fullName: 'Development User'
-  }
 
   // System health check
   const { data: healthData } = useQuery({
@@ -40,50 +37,10 @@ const Dashboard: React.FC = () => {
     refetchInterval: 120000, // Refresh every 2 minutes instead of 30 seconds
   })
 
-  // Fetch users count directly from users endpoint
-  const { data: usersResponse, isLoading: usersLoading } = useQuery({
-    queryKey: ['dashboard-users-count'],
-    queryFn: () => apiService.getUsers(apiClient, { page: 1, limit: 1 }),
-    enabled: !!apiClient,
-    staleTime: 60000, // Cache for 1 minute
-  })
-
-  // Fetch organizations count directly from organizations endpoint
-  const { data: orgsResponse, isLoading: orgsLoading } = useQuery({
-    queryKey: ['dashboard-orgs-count'],
-    queryFn: () => apiService.getOrganizations(apiClient),
-    enabled: !!apiClient,
-    staleTime: 60000,
-  })
-
-  // Fetch products count directly from products endpoint
-  const { data: productsResponse, isLoading: productsLoading } = useQuery({
-    queryKey: ['dashboard-products-count'],
-    queryFn: () => apiService.getProducts(apiClient),
-    enabled: !!apiClient,
-    staleTime: 60000,
-  })
-
-  // Fetch parent leads count directly from parent-leads endpoint
-  const { data: parentLeadsResponse, isLoading: parentLeadsLoading } = useQuery({
-    queryKey: ['dashboard-parent-leads-count'],
-    queryFn: () => apiService.getParentLeads(apiClient),
-    enabled: !!apiClient,
-    staleTime: 60000,
-  })
-
-  // Fetch job listings count directly from job-listings endpoint
-  const { data: jobListingsResponse, isLoading: jobListingsLoading } = useQuery({
-    queryKey: ['dashboard-job-listings-count'],
-    queryFn: () => apiService.getJobListings(apiClient),
-    enabled: !!apiClient,
-    staleTime: 60000,
-  })
-
-  // Fetch candidates/applications count directly from candidates endpoint
-  const { data: candidatesResponse, isLoading: candidatesLoading } = useQuery({
-    queryKey: ['dashboard-candidates-count'],
-    queryFn: () => apiService.getCandidates(apiClient),
+  // Fetch dashboard counts from analytics endpoint (accurate DB counts)
+  const { data: dashboardCountsResponse, isLoading: countsLoading } = useQuery({
+    queryKey: ['dashboard-counts'],
+    queryFn: () => apiService.getDashboardCounts(apiClient),
     enabled: !!apiClient,
     staleTime: 60000,
   })
@@ -96,46 +53,20 @@ const Dashboard: React.FC = () => {
   const [policiesCount, setPoliciesCount] = useState(0)
   const [contentLoading, setContentLoading] = useState(true)
 
-  const organizations = (() => {
-    const data = orgsResponse?.data?.data as any
-    if (!data) return []
-    if (Array.isArray(data)) return data
-    if (Array.isArray(data.organizations)) return data.organizations
-    return []
-  })()
-
-  // Extract counts directly from API responses - much simpler and more reliable
-  const usersData = (() => {
-    const raw: any = usersResponse?.data?.data
-    // Expected shape: { data: [...], meta: { total } }
-    if (raw && typeof raw === 'object' && raw.meta && typeof raw.meta.total === 'number') {
-      return raw.meta.total
-    }
-    // Fallbacks
-    if (raw && typeof raw === 'object' && typeof raw.total === 'number') {
-      return raw.total
-    }
-    if (Array.isArray(raw)) {
-      return raw.length
-    }
-    if (raw && typeof raw === 'object' && Array.isArray(raw.data)) {
-      return raw.data.length
-    }
-    return 0
-  })()
-  // Dashboard card is specifically "Foundations" (org.type === 'FOUNDATION')
-  const orgsData = organizations.filter((o: any) => o?.type === 'FOUNDATION').length
-  const productsData = productsResponse?.data?.data?.length ?? 0
-  const leadsData = parentLeadsResponse?.data?.data?.length ?? 0
-  const totalJobs = jobListingsResponse?.data?.data?.length ?? 0
-  const totalApplications = candidatesResponse?.data?.data?.length ?? 0
+  const dashboardCounts = dashboardCountsResponse?.data?.data
+  const usersData = dashboardCounts?.totalUsers ?? 0
+  const orgsData = dashboardCounts?.totalFoundations ?? 0
+  const productsData = dashboardCounts?.totalProducts ?? 0
+  const leadsData = dashboardCounts?.totalParentLeads ?? 0
+  const totalJobs = dashboardCounts?.totalJobs ?? 0
+  const totalApplications = dashboardCounts?.totalApplications ?? 0
 
   const stats = [
     {
       name: t('dashboard:sidebar.allUsersTitle', 'Total Users'),
       value: usersData,
       icon: Users,
-      loading: usersLoading,
+      loading: countsLoading,
       color: 'text-swiss-mint',
       bgColor: 'bg-swiss-mint/10',
       link: '/users',
@@ -144,7 +75,7 @@ const Dashboard: React.FC = () => {
       name: t('dashboard:sidebar.foundations', 'Foundations'),
       value: orgsData,
       icon: Building2,
-      loading: orgsLoading,
+      loading: countsLoading,
       color: 'text-swiss-sand',
       bgColor: 'bg-swiss-sand/20',
       link: '/organizations',
@@ -153,7 +84,7 @@ const Dashboard: React.FC = () => {
       name: t('dashboard:sidebar.products', 'Products'),
       value: productsData,
       icon: Package,
-      loading: productsLoading,
+      loading: countsLoading,
       color: 'text-swiss-teal',
       bgColor: 'bg-swiss-teal/10',
       link: '/products',
@@ -162,7 +93,7 @@ const Dashboard: React.FC = () => {
       name: t('dashboard:sidebar.parentLeads', 'Parent Leads'),
       value: leadsData,
       icon: Heart,
-      loading: parentLeadsLoading,
+      loading: countsLoading,
       color: 'text-swiss-coral',
       bgColor: 'bg-swiss-coral/10',
       link: '/parent-leads',
@@ -175,7 +106,7 @@ const Dashboard: React.FC = () => {
       name: t('dashboard:sidebar.jobListings', 'Job Listings'),
       value: totalJobs,
       icon: Briefcase,
-      loading: jobListingsLoading,
+      loading: countsLoading,
       color: 'text-indigo-600',
       bgColor: 'bg-indigo-100',
       link: '/job-listings',
@@ -184,7 +115,7 @@ const Dashboard: React.FC = () => {
       name: t('dashboard:sidebar.applications', 'Applications'),
       value: totalApplications,
       icon: FileText,
-      loading: candidatesLoading,
+      loading: countsLoading,
       color: 'text-purple-600',
       bgColor: 'bg-purple-100',
       link: '/candidates',
@@ -200,7 +131,7 @@ const Dashboard: React.FC = () => {
   })()
 
   // Overall loading state for summary section
-  const statsLoading = usersLoading || orgsLoading || productsLoading || jobListingsLoading
+  const statsLoading = countsLoading
 
   // Fetch content counts
   useEffect(() => {
@@ -485,25 +416,41 @@ const Dashboard: React.FC = () => {
       <Card className="p-6">
         <h2 className="text-lg font-semibold text-swiss-charcoal mb-4">{t('admin:dashboard.quickActions.title', 'Quick Actions')}</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card className="p-4 text-left hover:bg-gray-50 transition-colors cursor-pointer" hoverEffect>
+          <Card
+            className="p-4 text-left hover:bg-gray-50 transition-colors cursor-pointer"
+            hoverEffect
+            onClick={() => navigate('/users')}
+          >
             <Users className="h-6 w-6 text-swiss-teal mb-2" />
             <h3 className="font-medium text-swiss-charcoal">{t('admin:dashboard.quickActions.manageUsers.title', 'Manage Users')}</h3>
             <p className="text-sm text-gray-600">{t('admin:dashboard.quickActions.manageUsers.description', 'Add, edit, or remove users')}</p>
           </Card>
 
-          <Card className="p-4 text-left hover:bg-gray-50 transition-colors cursor-pointer" hoverEffect>
+          <Card
+            className="p-4 text-left hover:bg-gray-50 transition-colors cursor-pointer"
+            hoverEffect
+            onClick={() => navigate('/organizations')}
+          >
             <Building2 className="h-6 w-6 text-swiss-mint mb-2" />
             <h3 className="font-medium text-swiss-charcoal">{t('admin:dashboard.quickActions.organizations.title', 'Organizations')}</h3>
             <p className="text-sm text-gray-600">{t('admin:dashboard.quickActions.organizations.description', 'Manage daycare centers')}</p>
           </Card>
 
-          <Card className="p-4 text-left hover:bg-gray-50 transition-colors cursor-pointer" hoverEffect>
+          <Card
+            className="p-4 text-left hover:bg-gray-50 transition-colors cursor-pointer"
+            hoverEffect
+            onClick={() => navigate('/orders')}
+          >
             <ShoppingCart className="h-6 w-6 text-swiss-coral mb-2" />
             <h3 className="font-medium text-swiss-charcoal">{t('admin:dashboard.quickActions.orders.title', 'Orders')}</h3>
             <p className="text-sm text-gray-600">{t('admin:dashboard.quickActions.orders.description', 'View recent orders')}</p>
           </Card>
 
-          <Card className="p-4 text-left hover:bg-gray-50 transition-colors cursor-pointer" hoverEffect>
+          <Card
+            className="p-4 text-left hover:bg-gray-50 transition-colors cursor-pointer"
+            hoverEffect
+            onClick={() => navigate('/system')}
+          >
             <TrendingUp className="h-6 w-6 text-swiss-sand mb-2" />
             <h3 className="font-medium text-swiss-charcoal">{t('admin:dashboard.quickActions.analytics.title', 'Analytics')}</h3>
             <p className="text-sm text-gray-600">{t('admin:dashboard.quickActions.analytics.description', 'View platform metrics')}</p>
@@ -522,28 +469,28 @@ const Dashboard: React.FC = () => {
               <span className="text-gray-400">• {t('dashboard:live', 'Live')}</span>
             </div>
           )}
-          {!usersLoading && usersData > 0 && (
+          {!countsLoading && usersData > 0 && (
             <div className="flex items-center space-x-3 text-sm">
               <div className="w-2 h-2 bg-swiss-mint rounded-full"></div>
               <span className="text-gray-600">{usersData} {t('dashboard:registeredUsers', 'registered users in the platform')}</span>
               <span className="text-gray-400">• {t('dashboard:total', 'Total')}</span>
             </div>
           )}
-          {!orgsLoading && orgsData > 0 && (
+          {!countsLoading && orgsData > 0 && (
             <div className="flex items-center space-x-3 text-sm">
               <div className="w-2 h-2 bg-swiss-sand rounded-full"></div>
               <span className="text-gray-600">{orgsData} {t('dashboard:activeOrganizations', 'active organizations')}</span>
               <span className="text-gray-400">• {t('dashboard:total', 'Total')}</span>
             </div>
           )}
-          {!jobListingsLoading && totalJobs > 0 && (
+          {!countsLoading && totalJobs > 0 && (
             <div className="flex items-center space-x-3 text-sm">
               <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
               <span className="text-gray-600">{totalJobs} {t('dashboard:jobsPosted', 'job listings posted')}</span>
               <span className="text-gray-400">• {totalApplications} {t('dashboard:sidebar.applications', 'applications')}</span>
             </div>
           )}
-          {!productsLoading && productsData > 0 && (
+          {!countsLoading && productsData > 0 && (
             <div className="flex items-center space-x-3 text-sm">
               <div className="w-2 h-2 bg-swiss-teal rounded-full"></div>
               <span className="text-gray-600">{productsData} {t('dashboard:productsAvailable', 'products in catalog')}</span>

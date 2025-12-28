@@ -18,6 +18,12 @@ export class AnalyticsController {
     return wrapResponse(data);
   }
 
+  @Get('counts')
+  async getDashboardCounts() {
+    const data = await this.analyticsService.getAdminDashboardCounts();
+    return wrapResponse(data);
+  }
+
   @Get('users')
   async getUserGrowthMetrics(@Query('timeRange') timeRange: '7d' | '30d' | '90d' | '1y' = '30d') {
     const data = await this.analyticsService.getUserGrowthMetrics(timeRange);
