@@ -1,13 +1,14 @@
 
 
 import React, { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { HomeIcon, ShoppingBagIcon, BriefcaseIcon, DocumentTextIcon, AcademicCapIcon, UsersIcon, CogIcon, BookOpenIcon, BuildingStorefrontIcon, UserGroupIcon, NewspaperIcon, PresentationChartLineIcon, BuildingOfficeIcon, TruckIcon, UserCircleIcon, ChevronDownIcon, ChevronUpIcon, PuzzlePieceIcon, InboxArrowDownIcon, ClipboardDocumentListIcon, SquaresPlusIcon, QuestionMarkCircleIcon, TagIcon, ListBulletIcon, ChatBubbleLeftEllipsisIcon, ChartBarIcon, WrenchScrewdriverIcon, IdentificationIcon, CalendarDaysIcon, XMarkIcon, PaperClipIcon, AdjustmentsHorizontalIcon, SwatchIcon, WalletIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../../contexts/AppContext';
 import { useFrontendSettings } from '../../hooks/useFrontendSettings';
 import { UserRole } from '../../types';
 import { useTranslation } from 'react-i18next'; // Import useTranslation
 import { TFunction } from 'i18next'; // Import TFunction for typing
+import { getHomePath } from '../../utils/navigation';
 
 interface NavItem {
   path: string;
@@ -38,6 +39,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
   
   // Compute sidebar logo URL once - prefer sidebar logo, fall back to main logo
   const sidebarLogoUrl = settings?.sidebarLogoAsset?.publicUrl || settings?.logoAsset?.publicUrl;
+  const homePath = getHomePath(currentUser);
   
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({
     'sidebar.content': true, // Corrected key
@@ -169,28 +171,42 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
   const isFoundationUser = currentUser?.role === UserRole.FOUNDATION;
   const hasSubscription = currentUser && [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER].includes(currentUser.role);
 
+  const renderLogo = (imageClassName: string, placeholderClassName: string) => {
+    if (sidebarLogoUrl) {
+      return (
+        <img
+          src={sidebarLogoUrl}
+          alt={settings?.siteName || t('appName')}
+          className={imageClassName}
+        />
+      );
+    }
+
+    if (loading) {
+      return <span className={placeholderClassName} aria-hidden="true" />;
+    }
+
+    return <SquaresPlusIcon className={placeholderClassName} />;
+  };
+
 
   return (
     <div className="w-full md:w-56 lg:w-64 bg-white border-r border-gray-200/80 flex flex-col shadow-sm h-full"> {/* Responsive width for desktop sidebar */}
       {isMobileView && (
         <div className="flex justify-between items-center h-16 sm:h-20 px-3 sm:px-4 border-b border-gray-200/80">
             <div className="flex items-center">
-                {sidebarLogoUrl ? (
-                  <img src={sidebarLogoUrl} alt={settings?.siteName || t('appName')} className="h-12 sm:h-[63px] w-auto mr-2" />
-                ) : (
-                  <SquaresPlusIcon className="h-12 w-12 sm:h-[63px] sm:w-[63px] text-swiss-mint mr-2" />
-                )}
+                <Link to={homePath} aria-label={t('common:buttons.goHome', 'Go to home')}>
+                  {renderLogo('h-12 sm:h-[63px] w-auto mr-2', 'h-12 w-12 sm:h-[63px] sm:w-[63px] text-swiss-mint mr-2')}
+                </Link>
             </div>
           {/* Close button for mobile view - managed by MainLayout now */}
         </div>
       )}
       {!isMobileView && (
         <div className="h-16 lg:h-20 flex items-center justify-center px-3 lg:px-6 border-b border-gray-200/80"> 
-            {sidebarLogoUrl ? (
-              <img src={sidebarLogoUrl} alt={settings?.siteName || t('appName')} className="h-12 lg:h-[69px] w-auto mr-2 lg:mr-2.5" />
-            ) : (
-              <SquaresPlusIcon className="h-12 w-12 lg:h-[69px] lg:w-[69px] text-swiss-mint mr-2 lg:mr-2.5" />
-            )}
+            <Link to={homePath} aria-label={t('common:buttons.goHome', 'Go to home')}>
+              {renderLogo('h-12 lg:h-[69px] w-auto mr-2 lg:mr-2.5', 'h-12 w-12 lg:h-[69px] lg:w-[69px] text-swiss-mint mr-2 lg:mr-2.5')}
+            </Link>
         </div>
       )}
       <nav className="flex-1 p-2 md:p-3 lg:p-4 space-y-1 lg:space-y-1.5 overflow-y-auto"> 

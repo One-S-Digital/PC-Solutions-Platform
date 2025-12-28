@@ -14,6 +14,7 @@ import { useFrontendSettings } from '../hooks/useFrontendSettings';
 import { useAuthContext } from '../providers/AuthProvider';
 import { apiService } from '../services/api';
 import { API_ENDPOINTS } from '../services/api-endpoints';
+import { getHomePath } from '../utils/navigation';
 
 const SIGNUP_ROLE_TO_USER_ROLE: Record<SignupRole, UserRole> = {
   [SignupRole.FOUNDATION]: UserRole.FOUNDATION,
@@ -31,6 +32,29 @@ const SignupPage: React.FC = () => {
   const { user: clerkUser } = useUser();
   const { currentUser, refreshCurrentUser, logout, isLoading: isAuthLoading } = useAuthContext();
   const { settings, loading: settingsLoading, error: settingsError } = useFrontendSettings();
+  const homePath = getHomePath(currentUser);
+  const logoUrl = settings?.logoAsset?.publicUrl;
+  const showLogoFallback = !settingsLoading && !logoUrl;
+
+  const renderLogo = (imageClassName: string, iconClassName: string) => {
+    if (logoUrl) {
+      return (
+        <Link to={homePath} aria-label={t('common:buttons.goHome', 'Go to home')}>
+          <img src={logoUrl} alt={settings?.siteName || APP_NAME} className={imageClassName} />
+        </Link>
+      );
+    }
+
+    if (showLogoFallback) {
+      return (
+        <Link to={homePath} aria-label={t('common:buttons.goHome', 'Go to home')}>
+          <SquaresPlusIcon className={iconClassName} />
+        </Link>
+      );
+    }
+
+    return <span className={imageClassName} aria-hidden="true" />;
+  };
 
   // Detect if this is a user who needs to complete their profile (signed in but no backend user)
   // This can happen for:
@@ -746,14 +770,9 @@ const SignupPage: React.FC = () => {
         ) : (
           <>
             <div className="text-center mb-2">
-              {(settings && settings.logoAsset && settings.logoAsset.publicUrl) ? (
-                <img 
-                  src={settings.logoAsset.publicUrl} 
-                  alt={settings.siteName || APP_NAME} 
-                  className="h-14 sm:h-16 md:h-20 w-auto mx-auto mb-2" 
-                />
-              ) : (
-                <SquaresPlusIcon className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 text-swiss-mint mx-auto mb-2" />
+              {renderLogo(
+                'h-14 sm:h-16 md:h-20 w-auto mx-auto mb-2',
+                'w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 text-swiss-mint mx-auto mb-2'
               )}
               <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-swiss-charcoal">{formTitle}</h1>
               <p className="text-xs sm:text-sm text-gray-500 mt-1">{progressText}</p>

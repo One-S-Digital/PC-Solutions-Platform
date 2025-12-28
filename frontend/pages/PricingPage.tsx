@@ -17,6 +17,7 @@ import SubscriptionRequestModal, { SubscriptionRequestFormData } from '../compon
 import { useSubscription } from '../contexts/SubscriptionContext';
 import { apiService } from '../services/api';
 import type { SubscriptionPlan } from '../contexts/SubscriptionContext';
+import { getHomePath } from '../utils/navigation';
 
 const PricingPage: React.FC = () => {
   const { t } = useTranslation(['pricing', 'common']);
@@ -25,7 +26,10 @@ const PricingPage: React.FC = () => {
   const { currentUser } = useAppContext();
   const { requestSubscription } = useSubscription();
   const { translatePlan } = usePricingTranslations();
-  const { settings } = useFrontendSettings();
+  const { settings, loading: settingsLoading } = useFrontendSettings();
+  const homePath = getHomePath(currentUser);
+  const logoUrl = settings?.logoAsset?.publicUrl;
+  const showLogoFallback = !settingsLoading && !logoUrl;
   const [isAnnual, setIsAnnual] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<PricingPlan | null>(null);
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
@@ -245,15 +249,17 @@ const PricingPage: React.FC = () => {
   return (
     <div className="bg-page-bg min-h-screen py-12 px-4 sm:px-6 lg:px-8 relative text-swiss-charcoal">
        <div className="absolute top-0 left-0 w-full p-4 sm:p-6 lg:p-8 flex justify-between items-center z-10">
-        <Link to="/login" className="flex items-center space-x-2 text-swiss-charcoal hover:text-swiss-teal transition-colors">
-            {(settings && settings.logoAsset && settings.logoAsset.publicUrl) ? (
+        <Link to={homePath} className="flex items-center space-x-2 text-swiss-charcoal hover:text-swiss-teal transition-colors" aria-label={t('common:buttons.goHome', 'Go to home')}>
+            {logoUrl ? (
               <img 
-                src={settings.logoAsset.publicUrl} 
-                alt={settings.siteName || APP_NAME} 
+                src={logoUrl} 
+                alt={settings?.siteName || APP_NAME} 
                 className="h-10 w-auto" 
               />
-            ) : (
+            ) : showLogoFallback ? (
               <SquaresPlusIcon className="h-8 w-8 text-swiss-mint" />
+            ) : (
+              <span className="h-10 w-10" aria-hidden="true" />
             )}
         </Link>
         <Button variant="light" onClick={() => navigate(-1)} leftIcon={ArrowLeftIcon}>
