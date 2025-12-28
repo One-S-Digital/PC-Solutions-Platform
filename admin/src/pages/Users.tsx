@@ -591,6 +591,8 @@ const Users: React.FC = () => {
   const { t } = useTranslation(['common', 'admin']);
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedRole, setSelectedRole] = useState('')
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState<25 | 50 | 100>(25)
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
@@ -613,9 +615,20 @@ const Users: React.FC = () => {
   const isSuperAdmin = currentUser?.role === UserRole.SUPER_ADMIN
   const canInviteSuperAdmin = isSuperAdmin
 
+  // Reset to first page when filters/page-size change
+  useEffect(() => {
+    setPage(1)
+  }, [searchQuery, selectedRole, pageSize])
+
   const { data: usersResponse, isLoading, error } = useQuery({
-    queryKey: ['users'],
-    queryFn: () => apiService.getUsers(apiClient),
+    queryKey: ['users', page, pageSize, searchQuery, selectedRole],
+    queryFn: () =>
+      apiService.getUsers(apiClient, {
+        page,
+        limit: pageSize,
+        search: searchQuery.trim() ? searchQuery.trim() : undefined,
+        role: selectedRole || undefined,
+      }),
     enabled: !!apiClient,
     retry: false,
     refetchOnWindowFocus: false,
@@ -687,7 +700,26 @@ const Users: React.FC = () => {
     },
   })
 
-  const users: User[] = usersResponse?.data?.data || []
+  const { users, meta } = React.useMemo(() => {
+    const raw = usersResponse?.data?.data as any
+
+    // Expected API shape (enveloped): { data: User[], meta: { total, page, limit, totalPages } }
+    if (raw && typeof raw === 'object' && Array.isArray(raw.data)) {
+      return { users: raw.data as User[], meta: raw.meta as any }
+    }
+
+    // Legacy / fallback: the endpoint returns a bare array
+    if (Array.isArray(raw)) {
+      return { users: raw as User[], meta: undefined }
+    }
+
+    // Legacy / fallback: other backend shapes
+    if (raw && typeof raw === 'object' && Array.isArray(raw.users)) {
+      return { users: raw.users as User[], meta: raw.meta || raw.pagination }
+    }
+
+    return { users: [] as User[], meta: undefined }
+  }, [usersResponse])
 
   const roleColors: Record<UserRole, string> = {
     [UserRole.SUPER_ADMIN]: 'bg-red-100 text-red-800',
@@ -699,14 +731,12 @@ const Users: React.FC = () => {
     [UserRole.PARENT]: 'bg-swiss-coral/10 text-swiss-coral',
   }
 
-  const filteredUsers = users.filter((user) => {
-    const userName = user.name || ''
-    const userEmail = user.email || ''
-    const matchesSearch = userName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         userEmail.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesRole = !selectedRole || user.role === selectedRole
-    return matchesSearch && matchesRole
-  })
+  const totalUsers = typeof meta?.total === 'number' ? meta.total : users.length
+  const totalPages = typeof meta?.totalPages === 'number' ? meta.totalPages : 1
+  const showingFrom = totalUsers === 0 ? 0 : (page - 1) * pageSize + 1
+  const showingTo = totalUsers === 0 ? 0 : Math.min(page * pageSize, totalUsers)
+  const canGoPrev = page > 1
+  const canGoNext = page < totalPages
 
   // Handle opening edit modal
   const handleEditUser = (user: User) => {
@@ -864,7 +894,7 @@ const Users: React.FC = () => {
             {t('admin:users.title', 'Users Management')}
           </h1>
           <p className="mt-2 text-gray-600">
-            {t('admin:users.subtitle', 'Manage all users across the platform')} ({users.length} {t('common:total', 'total')})
+            {t('admin:users.subtitle', 'Manage all users across the platform')} ({totalUsers} {t('common:total', 'total')})
           </p>
         </div>
         <Button variant="primary" leftIcon={Plus} onClick={() => setIsAddUserModalOpen(true)}>
@@ -903,6 +933,17 @@ const Users: React.FC = () => {
               <option value={UserRole.PARENT}>{t('common:parent')}</option>
             </select>
           </div>
+          <div className="sm:w-48">
+            <select
+              className={STANDARD_INPUT_FIELD}
+              value={pageSize}
+              onChange={(e) => setPageSize(Number(e.target.value) as 25 | 50 | 100)}
+            >
+              <option value={25}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 25</option>
+              <option value={50}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 50</option>
+              <option value={100}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 100</option>
+            </select>
+          </div>
         </div>
       </Card>
 
@@ -933,7 +974,7 @@ const Users: React.FC = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredUsers.map((user) => (
+              {users.map((user) => (
                 <tr key={user.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
@@ -1062,7 +1103,7 @@ const Users: React.FC = () => {
           </table>
         </div>
         
-        {filteredUsers.length === 0 && (
+        {users.length === 0 && (
           <div className="text-center py-12">
             <UsersIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">{t('admin:users.emptyState.title', 'No users found')}</h3>
@@ -1070,6 +1111,38 @@ const Users: React.FC = () => {
           </div>
         )}
       </Card>
+
+      {/* Pagination */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="text-sm text-gray-600">
+          {t(
+            'admin:users.pagination.showing',
+            'Showing {{from}}-{{to}} of {{total}}',
+            { from: showingFrom, to: showingTo, total: totalUsers },
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            className="px-3 py-2 text-sm rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!canGoPrev}
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+          >
+            {t('admin:users.pagination.previous', 'Previous')}
+          </button>
+          <span className="text-sm text-gray-600 px-2">
+            {t('admin:users.pagination.pageOf', 'Page {{page}} of {{totalPages}}', { page, totalPages })}
+          </span>
+          <button
+            type="button"
+            className="px-3 py-2 text-sm rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!canGoNext}
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+          >
+            {t('admin:users.pagination.next', 'Next')}
+          </button>
+        </div>
+      </div>
 
       {/* Edit User Modal */}
       <EditUserModal
