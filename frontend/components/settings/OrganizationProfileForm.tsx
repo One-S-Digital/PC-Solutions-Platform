@@ -126,7 +126,10 @@ const OrganizationProfileForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('📋 OrganizationProfileForm handleSubmit called', { profile: !!profile, currentUser: !!currentUser });
+    
     if (!profile || !currentUser) {
+      console.warn('📋 handleSubmit early return - missing profile or currentUser');
       return;
     }
 
@@ -143,26 +146,30 @@ const OrganizationProfileForm: React.FC = () => {
         pedagogy: profile.pedagogy,
       };
 
+      console.log('📋 Saving organization profile with payload:', payload);
       const response = await request('/settings/foundation', {
         method: 'PATCH',
         body: JSON.stringify(payload),
       });
+      console.log('📋 Organization profile save response:', response);
 
       if (!response.success) {
+        console.error('📋 Save failed:', response);
         throw new Error(response.message || 'Update failed');
       }
 
+      console.log('📋 Organization profile saved successfully');
       setIsSaved(true);
       addNotification({
-        title: t('notifications.successTitle'),
-        message: t('notifications.settingsUpdated'),
+        title: t('notifications.successTitle', 'Success'),
+        message: t('notifications.settingsUpdated', 'Settings updated successfully'),
         type: 'success',
       });
     } catch (error) {
-      console.error('Failed to update foundation settings', error);
+      console.error('📋 Failed to update foundation settings:', error);
       addNotification({
-        title: t('common:errors.genericErrorTitle'),
-        message: t('common:errors.genericErrorMessage'),
+        title: t('common:errors.genericErrorTitle', 'Error'),
+        message: error instanceof Error ? error.message : t('common:errors.genericErrorMessage', 'An error occurred'),
         type: 'error',
       });
     } finally {
