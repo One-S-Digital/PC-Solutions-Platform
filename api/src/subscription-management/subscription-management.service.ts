@@ -1645,6 +1645,21 @@ export class SubscriptionManagementService {
 
   async getUserSubscription(userId: string): Promise<Subscription | null> {
     try {
+      // First, let's check ALL subscriptions for this user to see what exists
+      const allUserSubscriptions = await this.prisma.subscription.findMany({
+        where: { userId },
+        select: {
+          id: true,
+          status: true,
+          userId: true,
+          organizationId: true,
+          createdAt: true,
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+
+      this.logger.log(`🔍 All subscriptions for userId ${userId}:`, JSON.stringify(allUserSubscriptions, null, 2));
+
       const subscription = await this.prisma.subscription.findFirst({
         where: { 
           userId,
@@ -1667,6 +1682,21 @@ export class SubscriptionManagementService {
 
   async getOrganizationSubscription(organizationId: string): Promise<Subscription | null> {
     try {
+      // First, let's check ALL subscriptions for this organization to see what exists
+      const allOrgSubscriptions = await this.prisma.subscription.findMany({
+        where: { organizationId },
+        select: {
+          id: true,
+          status: true,
+          userId: true,
+          organizationId: true,
+          createdAt: true,
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+
+      this.logger.log(`🔍 All subscriptions for organizationId ${organizationId}:`, JSON.stringify(allOrgSubscriptions, null, 2));
+
       const subscription = await this.prisma.subscription.findFirst({
         where: { 
           organizationId,
@@ -1709,44 +1739,58 @@ export class SubscriptionManagementService {
     try {
       let subscription: Subscription | null = null;
 
+      this.logger.log(`🔍 Looking up subscription - userId: ${userId}, organizationId: ${organizationId}`);
+
       // If we have organizationId, check organization subscription FIRST
       // (business subscriptions are organization-based)
       if (organizationId) {
+        this.logger.log(`🔍 Checking organization subscription for organizationId: ${organizationId}`);
         subscription = await this.getOrganizationSubscription(organizationId);
         if (subscription) {
-          this.logger.debug(`Found active subscription via organizationId: ${organizationId}`);
+          this.logger.log(`✅ Found active subscription via organizationId: ${organizationId} - subscriptionId: ${subscription.id}, status: ${subscription.status}`);
           return subscription;
+        } else {
+          this.logger.log(`❌ No active subscription found for organizationId: ${organizationId}`);
         }
       }
 
       // Check user-based subscription
       if (userId) {
+        this.logger.log(`🔍 Checking user subscription for userId: ${userId}`);
         subscription = await this.getUserSubscription(userId);
         if (subscription) {
-          this.logger.debug(`Found active subscription via userId: ${userId}`);
+          this.logger.log(`✅ Found active subscription via userId: ${userId} - subscriptionId: ${subscription.id}, status: ${subscription.status}`);
           return subscription;
+        } else {
+          this.logger.log(`❌ No active subscription found for userId: ${userId}`);
         }
 
         // If no organizationId was provided, look up user's organization and check
         // Note: This fallback exists for direct service calls (e.g., background jobs, admin operations)
         // where organizationId may not be available from request context
         if (!organizationId) {
+          this.logger.log(`🔍 No organizationId provided, looking up user's organization...`);
           const userOrg = await this.prisma.userOrganization.findFirst({
             where: { userId },
             orderBy: { createdAt: 'asc' },
           });
 
           if (userOrg?.organizationId) {
+            this.logger.log(`🔍 Found user's organization: ${userOrg.organizationId}, checking for subscription...`);
             subscription = await this.getOrganizationSubscription(userOrg.organizationId);
             if (subscription) {
-              this.logger.debug(`Found active subscription via user's organization: ${userOrg.organizationId}`);
+              this.logger.log(`✅ Found active subscription via user's organization: ${userOrg.organizationId} - subscriptionId: ${subscription.id}, status: ${subscription.status}`);
               return subscription;
+            } else {
+              this.logger.log(`❌ No active subscription found for user's organization: ${userOrg.organizationId}`);
             }
+          } else {
+            this.logger.log(`❌ No organization found for userId: ${userId}`);
           }
         }
       }
 
-      this.logger.debug(`No active subscription found for userId: ${userId}, organizationId: ${organizationId}`);
+      this.logger.log(`❌ No active subscription found for userId: ${userId}, organizationId: ${organizationId}`);
       return null;
     } catch (error) {
       this.logger.error(`Failed to get active subscription: ${(error as Error).message}`);
