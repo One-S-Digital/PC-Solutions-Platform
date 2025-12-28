@@ -579,45 +579,6 @@ const FoundationOrganisationProfilePage: React.FC = () => {
             )}
           </Card>
 
-          <div className="space-y-3">
-            <Card className="p-6 space-y-4">
-              <div>
-                <h3 className="text-lg font-semibold text-swiss-charcoal">
-                  {t('foundationOrganisationProfilePage.sections.summary.title', 'Organization profile summary')}
-                </h3>
-                <p className="text-sm text-gray-500">
-                  {t(
-                    'foundationOrganisationProfilePage.sections.summary.subtitle',
-                    'This overview reflects the latest saved capacity, pedagogy, and language details.',
-                  )}
-                </p>
-              </div>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <InfoItem
-                  icon={UserGroupIcon}
-                  label={t('common:organizationProfileForm.labels.capacity', 'Capacity')}
-                  value={capacityValue}
-                />
-                <InfoItem
-                  icon={GlobeAltIcon}
-                  label={t('foundationOrganisationProfilePage.labels.languages', 'Languages')}
-                  value={renderTagList(
-                    languages,
-                    t('foundationOrganisationProfilePage.empty.languages', 'No languages added yet.'),
-                  )}
-                />
-                <InfoItem
-                  icon={AcademicCapIcon}
-                  label={t('foundationOrganisationProfilePage.labels.pedagogy', 'Pedagogy')}
-                  value={renderTagList(
-                    pedagogy,
-                    t('foundationOrganisationProfilePage.empty.pedagogy', 'No pedagogy styles recorded.'),
-                    'settings:companyProfile.pedagogyOptions',
-                  )}
-                />
-              </div>
-            </Card>
-          </div>
         </>
       )}
     </div>
