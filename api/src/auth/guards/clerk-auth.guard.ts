@@ -139,6 +139,16 @@ export class ClerkAuthGuard implements CanActivate {
         // Also fetch the User profile record
         const userProfile = await this.prisma.user.findUnique({ where: { clerkId: payload.sub } });
         
+        // Fetch user's primary organization (for subscription and organization-based features)
+        let primaryOrganizationId: string | null = null;
+        if (userProfile?.id) {
+          const userOrg = await this.prisma.userOrganization.findFirst({
+            where: { userId: userProfile.id },
+            orderBy: { createdAt: 'asc' }, // Get the first/oldest organization as primary
+          });
+          primaryOrganizationId = userOrg?.organizationId || null;
+        }
+        
         if (!appUser) {
           if (this.authDebug) {
             console.log('🔐 Auth Debug: AppUser missing, user may be pending webhook processing', { userId: payload.sub });
@@ -150,6 +160,7 @@ export class ClerkAuthGuard implements CanActivate {
             role: 'PENDING',
             appUserId: null,
             profileUserId: userProfile?.id || null,
+            organizationId: primaryOrganizationId,
             clerkUserId: payload.sub,
             isPending: true,
           };
@@ -169,6 +180,7 @@ export class ClerkAuthGuard implements CanActivate {
             role: appUser.role,
             appUserId: appUser.id,
             profileUserId: userProfile?.id || null,
+            organizationId: primaryOrganizationId,
             clerkUserId: payload.sub,
           };
           // FIX: Also set request.user for backward compatibility with UsersController
