@@ -180,11 +180,26 @@ const FoundationOrganisationProfilePage: React.FC = () => {
           request<ProfileResponse>('/profiles/me'),
         ]);
 
-        if (!foundationRes.success || !foundationRes.data) {
-          throw new Error(foundationRes.message || 'Failed to load foundation settings');
+        if (isCancelled) {
+          return;
         }
 
-        if (isCancelled) {
+        // Handle case where organization doesn't exist yet - show empty form
+        // This allows users to create their organization profile
+        if (!foundationRes.success || !foundationRes.data) {
+          // Set default empty values so the form is usable
+          setFoundationSettings({
+            companyName: currentUser.orgName || '',
+            contactEmail: currentUser.email || '',
+            phoneNumber: '',
+            address: '',
+            canton: '',
+            languages: [],
+            capacity: undefined,
+            pedagogy: [],
+          });
+          setOrganizationDetails(null);
+          setIsLoading(false);
           return;
         }
 
