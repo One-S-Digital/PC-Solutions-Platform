@@ -87,6 +87,7 @@ export interface Organization {
   contactPerson?: string;
   phoneNumber?: string;
   canton?: string; // Legacy single canton field
+  city?: string; // City where the organization is located
   regionsServed?: string[]; // Multiple cantons/regions
   languages?: string[];
   capacity?: number;
@@ -577,6 +578,7 @@ export interface ParentLead {
     parentId: string; // Link to a parent user if they are registered
     canton: string;
     municipality: string;
+    preferredCities?: string[]; // Array of cities where parent is looking for childcare
     childAge: number;
     desiredStartDate: string; // ISO date string
     specialNeeds?: string;
@@ -866,6 +868,7 @@ interface BaseSettings {
     contactEmail?: string;
     address?: string;
     canton?: string;
+    city?: string;
     regionsServed?: SwissCanton[];
     languagesSpoken?: SupportedLanguage[];
     preferredContactMethod?: SettingsPreferredContactMethod;

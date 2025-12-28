@@ -28,6 +28,11 @@ export class CreateParentLeadDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
+  preferredCities?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   preferredLanguages?: string[];
 
   @IsOptional()
@@ -71,6 +76,11 @@ export class UpdateParentLeadDto {
   @IsOptional()
   @IsString()
   preferredLocation?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  preferredCities?: string[];
 
   @IsOptional()
   @IsArray()

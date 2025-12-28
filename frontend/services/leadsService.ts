@@ -4,6 +4,7 @@ import { ParentLead, LeadMainStatus, FoundationLeadResponseStatus } from '../typ
 export interface ParentLeadCreateData {
   canton: string;
   municipality: string;
+  preferredCities?: string[];
   childAge: number;
   desiredStartDate: string;
   specialNeeds?: string;

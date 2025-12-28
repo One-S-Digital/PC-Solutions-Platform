@@ -192,6 +192,21 @@ const FoundationProfileForm: React.FC<FoundationProfileFormProps> = ({ formData,
           </div>
 
           <div>
+            <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
+              {t('common:settingsCompanyProfile.city', 'City')}
+            </label>
+            <p className="text-xs text-gray-500 mb-2">{t('common:settingsCompanyProfile.cityHelpText', 'Enter the city where your organization is located')}</p>
+            <input
+              type="text"
+              id="city"
+              value={formData.city || ''}
+              onChange={(e) => onChange('city', e.target.value)}
+              className={STANDARD_INPUT_FIELD}
+              placeholder={t('common:settingsCompanyProfile.cityPlaceholder', 'Enter city name')}
+            />
+          </div>
+
+          <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               {t('common:settingsCompanyProfile.languagesSpoken', 'Languages Spoken')}
             </label>

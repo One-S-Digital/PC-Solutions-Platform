@@ -3,6 +3,7 @@
     "placeholders": {
       "specialRequirements": "Please describe any special requirements, dietary needs, medical conditions, or other important information about your child...",
       "municipality": "Select municipality",
+      "city": "Enter city name",
       "phoneNumber": "+41 XX XXX XX XX",
       "startDate": "Select date",
       "childAge": "Enter age in months",
@@ -12,10 +13,15 @@
     },
     "buttons": {
       "viewMyEnquiries": "View My Enquiries",
-      "submitEnquiry": "Submit Enquiry"
+      "submitEnquiry": "Submit Enquiry",
+      "addCity": "Add Another City",
+      "removeCity": "Remove"
     },
     "labels": {
       "municipality": "Municipality",
+      "city": "City",
+      "cities": "Preferred Cities",
+      "citiesHelpText": "Add cities where you are looking for childcare. Adding more cities increases your chances of finding a match.",
       "specialNeeds": "Special Requirements",
       "phoneNumber": "Phone Number",
       "childNeeds": "Child's Special Needs",
@@ -36,6 +42,7 @@
   "placeholders": {
     "specialRequirements": "Please describe any special requirements, dietary needs, medical conditions, or other important information about your child...",
     "municipality": "Select municipality",
+    "city": "Enter city name",
     "phoneNumber": "+41 XX XXX XX XX",
     "startDate": "Select date",
     "childAge": "Enter age in months",
@@ -47,10 +54,15 @@
     "backToDashboard": "Back To Dashboard",
     "viewMyEnquiries": "View My Enquiries",
     "submitEnquiry": "Submit Enquiry",
-    "backToHome": "Back To Home"
+    "backToHome": "Back To Home",
+    "addCity": "Add Another City",
+    "removeCity": "Remove"
   },
   "labels": {
     "municipality": "Municipality",
+    "city": "City",
+    "cities": "Preferred Cities",
+    "citiesHelpText": "Add cities where you are looking for childcare. Adding more cities increases your chances of finding a match.",
     "specialNeeds": "Special Requirements",
     "phoneNumber": "Phone Number",
     "childNeeds": "Child's Special Needs",
