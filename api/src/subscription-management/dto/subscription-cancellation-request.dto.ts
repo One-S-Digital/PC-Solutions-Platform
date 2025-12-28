@@ -1,4 +1,5 @@
 import { IsBoolean, IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import { UserRole } from '@workspace/types';
 
 export enum SubscriptionCancellationRequestStatus {
   PENDING = 'PENDING',
@@ -40,6 +41,20 @@ export class CancellationRequestFiltersDto {
   @IsOptional()
   @IsString()
   dateTo?: string;
+
+  /**
+   * Filter by subscription id (to link cancellations from the subscription view).
+   */
+  @IsOptional()
+  @IsString()
+  subscriptionId?: string;
+
+  /**
+   * Filter by role (derived from SubscriptionPlan.allowedRoles of the linked subscription).
+   */
+  @IsOptional()
+  @IsEnum(UserRole)
+  role?: UserRole;
 }
 
 export class ProcessCancellationRequestDto {

@@ -685,6 +685,16 @@ export class SubscriptionManagementService {
         ];
       }
 
+      // Filter by role using the plan's allowedRoles
+      // (Foundation plans: ['FOUNDATION']; Supplier: ['PRODUCT_SUPPLIER']; Service Provider: ['SERVICE_PROVIDER'])
+      if (filters.role) {
+        where.plan = {
+          allowedRoles: {
+            has: filters.role,
+          },
+        };
+      }
+
       const [subscriptions, total] = await Promise.all([
         this.prisma.subscription.findMany({
           where,

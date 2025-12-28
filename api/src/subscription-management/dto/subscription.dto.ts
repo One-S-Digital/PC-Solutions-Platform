@@ -11,7 +11,7 @@ import {
   Max,
   ValidateIf,
 } from 'class-validator';
-import { SubscriptionTier, SubscriptionStatus } from '@workspace/types';
+import { SubscriptionTier, SubscriptionStatus, UserRole } from '@workspace/types';
 
 /**
  * Create subscription DTO
@@ -318,6 +318,14 @@ export class SubscriptionFiltersDto {
   @IsOptional()
   @IsDateString()
   createdBefore?: string;
+
+  /**
+   * Filter subscriptions by role (derived from SubscriptionPlan.allowedRoles).
+   * This is the primary way to segment subscriptions for Foundations vs Suppliers vs Service Providers.
+   */
+  @IsOptional()
+  @IsEnum(UserRole)
+  role?: UserRole;
 }
 
 /**

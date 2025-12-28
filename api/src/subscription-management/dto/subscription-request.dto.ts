@@ -10,7 +10,7 @@ import {
   Max,
   MaxLength,
 } from 'class-validator';
-import { SubscriptionTier } from '@workspace/types';
+import { SubscriptionTier, UserRole } from '@workspace/types';
 
 /**
  * Subscription Request Status Enum (matches Prisma enum)
@@ -92,6 +92,14 @@ export class SubscriptionRequestFiltersDto {
   @IsOptional()
   @IsDateString()
   dateTo?: string;
+
+  /**
+   * Filter requests by role (derived from SubscriptionPlan.allowedRoles).
+   * This is how admin should segment Foundation vs Supplier vs Service Provider applications.
+   */
+  @IsOptional()
+  @IsEnum(UserRole)
+  role?: UserRole;
 }
 
 /**

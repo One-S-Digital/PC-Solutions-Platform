@@ -264,6 +264,7 @@ export interface SubscriptionFilters {
   expiringBefore?: string;
   createdAfter?: string;
   createdBefore?: string;
+  role?: string;
 }
 
 export interface PaginatedSubscriptions {

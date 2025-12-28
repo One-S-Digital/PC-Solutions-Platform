@@ -1181,7 +1181,14 @@ const SendInvoiceModal: React.FC<SendInvoiceModalProps> = ({
               {t('admin:subscriptions.requests.invoiceModal.sendingTo', 'Sending invoice to')}:
             </p>
             <p className="font-medium">{request.contactName || request.contactEmail}</p>
-            <p className="text-gray-500">{request.plan?.name} - {request.tier}</p>
+            <p className="text-gray-500">
+              {request.plan?.name}
+              {(() => {
+                const roleFromPlan = request.plan?.allowedRoles?.[0];
+                const role = (request.user?.role || roleFromPlan || '').toString();
+                return role === UserRole.FOUNDATION ? ` - ${request.tier}` : '';
+              })()}
+            </p>
           </div>
 
           <div>
@@ -1884,6 +1891,8 @@ interface SubscriptionRequest {
   plan?: {
     id: string;
     name: string;
+    code?: string | null;
+    allowedRoles?: string[];
   };
 }
 
@@ -1945,10 +1954,32 @@ const Subscriptions: React.FC = () => {
   const { t } = useTranslation(['common', 'admin']);
   const queryClient = useQueryClient();
 
-  // Fetch all users
+  const fetchAllAdminUsers = React.useCallback(async () => {
+    // The `/users` endpoint is paginated and will only return the first page by default.
+    // For subscription management we need the full set of users so role cards + lists are complete.
+    const limit = 200;
+    let page = 1;
+    let totalPages = 1;
+    const allUsers: User[] = [];
+
+    while (page <= totalPages) {
+      const res = await apiService.getAdminUsers(apiClient, { page, limit });
+      const payload = res.data?.data;
+      const batch = payload?.users || [];
+      allUsers.push(...batch);
+      totalPages = payload?.totalPages || 1;
+      page += 1;
+    }
+
+    return { users: allUsers };
+  }, [apiClient]);
+
+  const selectedRoleFilter = selectedRole && Object.values(UserRole).includes(selectedRole as any) ? selectedRole : undefined;
+
+  // Fetch all users (admin view, all pages)
   const { data: usersResponse, isLoading: usersLoading } = useQuery({
-    queryKey: ['users'],
-    queryFn: () => apiService.getUsers(apiClient),
+    queryKey: ['admin-users-all'],
+    queryFn: () => fetchAllAdminUsers(),
     enabled: !!apiClient,
   });
 
@@ -1986,10 +2017,11 @@ const Subscriptions: React.FC = () => {
 
   // Fetch subscription requests
   const { data: requestsResponse, isLoading: requestsLoading } = useQuery({
-    queryKey: ['subscription-requests', requestStatusFilter],
+    queryKey: ['subscription-requests', requestStatusFilter, selectedRoleFilter],
     queryFn: () =>
       subscriptionService.getSubscriptionRequests(apiClient, {
         status: requestStatusFilter || undefined,
+        role: selectedRoleFilter || undefined,
         limit: 100,
       }),
     enabled: !!apiClient && viewMode === 'requests',
@@ -1997,10 +2029,11 @@ const Subscriptions: React.FC = () => {
 
   // Fetch subscription cancellation requests
   const { data: cancellationRequestsResponse, isLoading: cancellationRequestsLoading } = useQuery({
-    queryKey: ['subscription-cancellation-requests', cancellationStatusFilter],
+    queryKey: ['subscription-cancellation-requests', cancellationStatusFilter, selectedRoleFilter],
     queryFn: () =>
       subscriptionService.getCancellationRequests(apiClient, {
         status: cancellationStatusFilter || undefined,
+        role: selectedRoleFilter || undefined,
         limit: 100,
       }),
     enabled: !!apiClient && viewMode === 'cancellations',
@@ -2020,7 +2053,7 @@ const Subscriptions: React.FC = () => {
     enabled: !!apiClient,
   });
 
-  const users: User[] = usersResponse?.data?.data || [];
+  const users: User[] = (usersResponse as any)?.users || [];
   const plans: SubscriptionPlan[] = plansResponse?.data?.data || [];
   const analytics: SubscriptionAnalytics | null = analyticsResponse?.data?.data || null;
   const subscriptions: Subscription[] = subscriptionsResponse?.data?.data?.subscriptions || [];
@@ -2362,13 +2395,42 @@ const Subscriptions: React.FC = () => {
       id: string;
       data: { startDate?: string; periodMonths?: number; includeTrial?: boolean; sendEmail?: boolean; notes?: string };
     }) => subscriptionService.activateSubscriptionRequest(apiClient, id, data),
-    onSuccess: () => {
+    onSuccess: (res: any) => {
       queryClient.invalidateQueries({ queryKey: ['subscription-requests'] });
       queryClient.invalidateQueries({ queryKey: ['subscription-request-analytics'] });
       queryClient.invalidateQueries({ queryKey: ['subscriptions'] });
       queryClient.invalidateQueries({ queryKey: ['subscription-analytics'] });
       setIsRequestDetailOpen(false);
       toast.success(t('admin:subscriptions.requests.activatedSuccess', 'Subscription activated successfully'));
+
+      // Link workflow: jump straight to the created subscription in the Subscriptions view.
+      // This removes the "requests vs subscriptions are separate" feeling for admins.
+      try {
+        const activatedRequest: SubscriptionRequest | undefined = res?.data?.data;
+        const roleFromPlan = activatedRequest?.plan?.allowedRoles?.[0];
+        const role = (activatedRequest?.user?.role || roleFromPlan || '').toString();
+        if (role) setSelectedRole(role);
+        setViewMode('subscriptions');
+
+        const requestUserProfileId = activatedRequest?.user?.id;
+        const requestOrgId = activatedRequest?.organizationId;
+
+        const owner =
+          (requestUserProfileId
+            ? users.find((u) => u.profileId === requestUserProfileId)
+            : undefined) ||
+          (requestOrgId ? users.find((u) => u.orgId === requestOrgId) : undefined);
+
+        if (owner) {
+          setSelectedUser(owner);
+          const sub = getSubscriptionForUser(owner) || null;
+          setSelectedUserSubscription(sub);
+          setIsEditModalOpen(true);
+        }
+      } catch (e) {
+        // Non-blocking: activation succeeded even if we can't deep-link.
+        console.warn('[Subscriptions] Unable to deep-link after activation', e);
+      }
     },
     onError: (error: Error) => {
       toast.error(t('admin:subscriptions.requests.activatedError', 'Failed to activate subscription: ') + error.message);
@@ -2572,7 +2634,6 @@ const Subscriptions: React.FC = () => {
         <button
           onClick={() => {
             setViewMode('subscriptions');
-            setSelectedRole(null);
           }}
           className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
             viewMode === 'subscriptions'
@@ -2606,7 +2667,6 @@ const Subscriptions: React.FC = () => {
         <button
           onClick={() => {
             setViewMode('cancellations');
-            setSelectedRole(null);
           }}
           className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
             viewMode === 'cancellations'
@@ -2787,7 +2847,12 @@ const Subscriptions: React.FC = () => {
                           {request.plan?.name || '-'}
                         </td>
                         <td className="px-4 py-4 text-sm text-gray-600">
-                          {t(`admin:subscriptions.tier.${request.tier.toLowerCase()}` as any, request.tier)}
+                          {(() => {
+                            const roleFromPlan = request.plan?.allowedRoles?.[0];
+                            const role = (request.user?.role || roleFromPlan || '').toString();
+                            if (role !== UserRole.FOUNDATION) return '—';
+                            return t(`admin:subscriptions.tier.${request.tier.toLowerCase()}` as any, request.tier);
+                          })()}
                         </td>
                         <td className="px-4 py-4">
                           {getRequestStatusBadge(request.status)}
@@ -3319,7 +3384,12 @@ const Subscriptions: React.FC = () => {
                   <div>
                     <p className="text-gray-500">{t('admin:subscriptions.requests.detail.tier', 'Tier')}</p>
                     <p className="font-medium">
-                      {t(`admin:subscriptions.tier.${selectedRequest.tier.toLowerCase()}` as any, selectedRequest.tier)}
+                      {(() => {
+                        const roleFromPlan = selectedRequest.plan?.allowedRoles?.[0];
+                        const role = (selectedRequest.user?.role || roleFromPlan || '').toString();
+                        if (role !== UserRole.FOUNDATION) return '—';
+                        return t(`admin:subscriptions.tier.${selectedRequest.tier.toLowerCase()}` as any, selectedRequest.tier);
+                      })()}
                     </p>
                   </div>
                   <div>
