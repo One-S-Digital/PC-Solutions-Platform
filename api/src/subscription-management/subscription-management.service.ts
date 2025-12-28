@@ -1591,9 +1591,87 @@ export class SubscriptionManagementService {
     }
   }
 
-  async checkFeatureAccess(userId: string, feature: string): Promise<boolean> {
+  /**
+   * UNIFIED SUBSCRIPTION LOOKUP - Single source of truth for all subscription checks
+   * 
+   * This method handles ALL subscription lookup scenarios consistently:
+   * 1. Checks user-based subscription (by userId)
+   * 2. Checks organization-based subscription (by organizationId)
+   * 3. If userId provided but no organizationId, looks up user's organization
+   * 
+   * For business roles (Foundation, Supplier, Service Provider), the subscription
+   * is typically linked to the organization, not the individual user.
+   * 
+   * @param userId - The User.id (profile UUID, not Clerk ID)
+   * @param organizationId - Optional organization ID (will be looked up if not provided)
+   * @returns The active subscription or null
+   */
+  async getActiveSubscriptionForUser(
+    userId?: string,
+    organizationId?: string,
+  ): Promise<Subscription | null> {
     try {
-      const subscription = await this.getUserSubscription(userId);
+      let subscription: Subscription | null = null;
+
+      // If we have organizationId, check organization subscription FIRST
+      // (business subscriptions are organization-based)
+      if (organizationId) {
+        subscription = await this.getOrganizationSubscription(organizationId);
+        if (subscription) {
+          this.logger.debug(`Found active subscription via organizationId: ${organizationId}`);
+          return subscription;
+        }
+      }
+
+      // Check user-based subscription
+      if (userId) {
+        subscription = await this.getUserSubscription(userId);
+        if (subscription) {
+          this.logger.debug(`Found active subscription via userId: ${userId}`);
+          return subscription;
+        }
+
+        // If no organizationId was provided, look up user's organization and check
+        if (!organizationId) {
+          const userOrg = await this.prisma.userOrganization.findFirst({
+            where: { userId },
+            orderBy: { createdAt: 'asc' },
+          });
+
+          if (userOrg?.organizationId) {
+            subscription = await this.getOrganizationSubscription(userOrg.organizationId);
+            if (subscription) {
+              this.logger.debug(`Found active subscription via user's organization: ${userOrg.organizationId}`);
+              return subscription;
+            }
+          }
+        }
+      }
+
+      this.logger.debug(`No active subscription found for userId: ${userId}, organizationId: ${organizationId}`);
+      return null;
+    } catch (error) {
+      this.logger.error(`Failed to get active subscription: ${(error as Error).message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Check if user has access to a specific feature
+   * Uses the UNIFIED subscription lookup for consistency
+   */
+  async checkFeatureAccess(
+    userId?: string,
+    feature?: string,
+    organizationId?: string,
+  ): Promise<boolean> {
+    try {
+      if (!feature) {
+        return false;
+      }
+
+      // Use unified lookup
+      const subscription = await this.getActiveSubscriptionForUser(userId, organizationId);
 
       if (!subscription) {
         return false;
@@ -1604,7 +1682,7 @@ export class SubscriptionManagementService {
       }
 
       const plan = subscription.plan;
-      return plan.features.includes(feature);
+      return plan.features.includes(feature) || plan.features.includes('*');
     } catch (error) {
       this.logger.error(`Failed to check feature access: ${(error as Error).message}`);
       return false;

@@ -398,7 +398,7 @@ export class SubscriptionManagementController {
   // =====================================
 
   @Get('feature-access/:userId/:feature')
-  async checkFeatureAccess(@Param('userId') userId: string, @Param('feature') feature: string) {
+  async checkAdminFeatureAccess(@Param('userId') userId: string, @Param('feature') feature: string) {
     const hasAccess = await this.subscriptionService.checkFeatureAccess(userId, feature);
     return wrapResponse({ hasAccess });
   }
@@ -899,6 +899,11 @@ export class UserSubscriptionController {
    * Get current user's subscription status
    * This is the primary endpoint for the frontend to check subscription status
    * 
+   * Uses the UNIFIED subscription lookup that checks:
+   * 1. Organization-based subscription (for business roles)
+   * 2. User-based subscription
+   * 3. User's organization subscription (if organizationId not in context)
+   * 
    * @returns UserSubscriptionResponse with subscription status and features
    */
   @Get('me')
@@ -917,6 +922,7 @@ export class UserSubscriptionController {
     // - req.context.userId is the Clerk user id (e.g. "user_...") used for auth.
     // - our subscription tables (`subscriptions`) use the internal profile UUID (User.id).
     const userId = userContext?.profileUserId || req.user?.id;
+    const organizationId = userContext?.organizationId;
     const userRole = userContext?.role as UserRole;
 
     // Check if role requires subscription
@@ -946,18 +952,12 @@ export class UserSubscriptionController {
       } as UserSubscriptionResponse);
     }
 
-    // For subscription-required roles, check subscription
-    let subscription: Subscription | null = null;
-
-    // First try user-based subscription
-    if (userId) {
-      subscription = await this.subscriptionService.getUserSubscription(userId);
-    }
-
-    // If no user subscription, try organization-based subscription
-    if (!subscription && userContext?.organizationId) {
-      subscription = await this.subscriptionService.getOrganizationSubscription(userContext.organizationId);
-    }
+    // Use UNIFIED subscription lookup - single source of truth
+    // This checks: organizationId first, then userId, then user's organization
+    const subscription = await this.subscriptionService.getActiveSubscriptionForUser(
+      userId,
+      organizationId,
+    );
 
     // Calculate derived fields
     const now = new Date();
@@ -1061,6 +1061,8 @@ export class UserSubscriptionController {
   /**
    * Request cancellation of the current subscription (manual cancellation request workflow)
    * Creates a cancellation request for admins to process in the admin dashboard.
+   * 
+   * Uses the UNIFIED subscription lookup for consistency.
    */
   @Post('cancel-request')
   @Roles(
@@ -1082,14 +1084,11 @@ export class UserSubscriptionController {
       throw new BadRequestException('Cancellation not applicable for this role');
     }
 
-    // Find the user's active (or most recent) subscription (user first, then org)
-    let subscription: Subscription | null = null;
-    if (profileUserId) {
-      subscription = await this.subscriptionService.getUserSubscription(profileUserId);
-    }
-    if (!subscription && organizationId) {
-      subscription = await this.subscriptionService.getOrganizationSubscription(organizationId);
-    }
+    // Use UNIFIED subscription lookup - single source of truth
+    const subscription = await this.subscriptionService.getActiveSubscriptionForUser(
+      profileUserId,
+      organizationId,
+    );
 
     if (!subscription) {
       throw new NotFoundException('No subscription found to cancel');
@@ -1154,6 +1153,8 @@ export class UserSubscriptionController {
   /**
    * Check if user has access to a specific feature
    * Used for granular feature gating within the application
+   * 
+   * Uses the UNIFIED subscription lookup for consistency.
    */
   @Get('feature/:featureKey')
   @Roles(
@@ -1170,7 +1171,8 @@ export class UserSubscriptionController {
     @Request() req: any,
   ) {
     const userContext = req.context;
-    const userId = userContext?.userId;
+    const profileUserId = userContext?.profileUserId || req.user?.id;
+    const organizationId = userContext?.organizationId;
     const userRole = userContext?.role as UserRole;
 
     // Free roles have access to all features
@@ -1178,16 +1180,12 @@ export class UserSubscriptionController {
       return wrapResponse({ hasAccess: true, reason: 'free_role' });
     }
 
-    // Check feature access - first via user subscription
-    let hasAccess = await this.subscriptionService.checkFeatureAccess(userId, featureKey);
-
-    // If no access via user subscription, check organization subscription
-    if (!hasAccess && userContext?.organizationId) {
-      hasAccess = await this.subscriptionService.checkFeatureAccess(
-        userContext.organizationId, 
-        featureKey
-      );
-    }
+    // Use UNIFIED feature access check - single source of truth
+    const hasAccess = await this.subscriptionService.checkFeatureAccess(
+      profileUserId,
+      featureKey,
+      organizationId,
+    );
 
     return wrapResponse({
       hasAccess,
