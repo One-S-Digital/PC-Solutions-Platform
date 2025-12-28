@@ -601,6 +601,7 @@
     },
     "labels": {
       "address": "Location",
+      "regionsServed": "Regions served",
       "contactEmail": "Primary email",
       "contactPerson": "Contact person",
       "createdAt": "Created",
@@ -631,6 +632,10 @@
       "edit": {
         "subtitle": "Use the form below to adjust capacity, pedagogy and languages. Changes are saved directly to the database.",
         "title": "Update core organization profile information"
+      },
+      "summary": {
+        "subtitle": "This overview reflects the latest saved capacity, pedagogy, and language details.",
+        "title": "Organization profile summary"
       },
       "metadata": {
         "title": "Organization metadata"

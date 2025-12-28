@@ -891,6 +891,7 @@
     },
     "labels": {
       "address": "Localisation",
+      "regionsServed": "Regions served",
       "contactEmail": "Email principal",
       "contactPerson": "Personne de contact",
       "createdAt": "Créé",
@@ -911,6 +912,10 @@
       "edit": {
         "subtitle": "Utilisez le formulaire ci-dessous pour ajuster la capacité, la pédagogie et les langues. Les modifications sont enregistrées directement dans la base de données.",
         "title": "Mettre à jour les informations principales du profil de l'organisation"
+      },
+      "summary": {
+        "subtitle": "This overview reflects the latest saved capacity, pedagogy, and language details.",
+        "title": "Organization profile summary"
       },
       "metadata": {
         "title": "Métadonnées de l'organisation"

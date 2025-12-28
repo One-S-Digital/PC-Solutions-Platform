@@ -23,7 +23,6 @@ import LoadingSpinner from '../../components/shared/LoadingSpinner';
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
 import { useAppContext } from '../../contexts/AppContext';
 import { useNotifications } from '../../contexts/NotificationContext';
-import OrganizationProfileForm from '../../components/settings/OrganizationProfileForm';
 import { UserRole } from '../../types';
 import { PEDAGOGY_KEY_MAP } from '../../constants';
 
@@ -33,6 +32,8 @@ interface FoundationSettingsData {
   phoneNumber?: string;
   address?: string;
   canton?: string;
+  city?: string;
+  regionsServed?: string[];
   languages?: string[];
   capacity?: number;
   pedagogy?: string[];
@@ -48,6 +49,8 @@ interface OrganizationDetails {
   contactPerson?: string | null;
   phoneNumber?: string | null;
   canton?: string | null;
+  city?: string | null;
+  regionsServed?: string[];
   languages?: string[];
   capacity?: number | null;
   pedagogy?: string[];
@@ -194,6 +197,8 @@ const FoundationOrganisationProfilePage: React.FC = () => {
             phoneNumber: '',
             address: '',
             canton: '',
+            city: '',
+            regionsServed: [],
             languages: [],
             capacity: undefined,
             pedagogy: [],
@@ -210,6 +215,8 @@ const FoundationOrganisationProfilePage: React.FC = () => {
           phoneNumber: data.phoneNumber || '',
           address: data.address || '',
           canton: data.canton || '',
+          city: data.city || '',
+          regionsServed: Array.isArray(data.regionsServed) ? data.regionsServed.filter(Boolean) : [],
           languages: Array.isArray(data.languages) ? data.languages.filter(Boolean) : [],
           capacity: typeof data.capacity === 'number' ? data.capacity : undefined,
           pedagogy: Array.isArray(data.pedagogy) ? data.pedagogy.filter(Boolean) : [],
@@ -290,8 +297,10 @@ const FoundationOrganisationProfilePage: React.FC = () => {
   const contactEmail = foundationSettings?.contactEmail || currentUser?.email || notProvidedLabel;
   const phoneNumber = foundationSettings?.phoneNumber || organizationDetails?.phoneNumber || notProvidedLabel;
   const contactPerson = organizationDetails?.contactPerson || notProvidedLabel;
-  const addressLine = foundationSettings?.address || organizationDetails?.region || '';
-  const cantonValue = foundationSettings?.canton || organizationDetails?.canton || '';
+  const cityValue = foundationSettings?.city || organizationDetails?.city || '';
+  const regionsServed = foundationSettings?.regionsServed?.length
+    ? foundationSettings.regionsServed
+    : organizationDetails?.regionsServed ?? [];
   const languages = foundationSettings?.languages?.length
     ? foundationSettings.languages
     : organizationDetails?.languages ?? [];
@@ -320,10 +329,14 @@ const FoundationOrganisationProfilePage: React.FC = () => {
   );
 
   const locationValue =
-    addressLine || cantonValue ? (
+    cityValue || regionsServed.length ? (
       <div className="space-y-1">
-        <span>{addressLine || notProvidedLabel}</span>
-        {cantonValue && <span className="block text-xs text-gray-500">{cantonValue}</span>}
+        {cityValue && <span>{cityValue}</span>}
+        {regionsServed.length > 0 && (
+          <span className="block text-xs text-gray-500">
+            {t('foundationOrganisationProfilePage.labels.regionsServed', 'Regions served')}: {regionsServed.join(', ')}
+          </span>
+        )}
       </div>
     ) : (
       notProvidedLabel
@@ -567,19 +580,43 @@ const FoundationOrganisationProfilePage: React.FC = () => {
           </Card>
 
           <div className="space-y-3">
-            <h3 className="text-lg font-semibold text-swiss-charcoal">
-              {t(
-                'foundationOrganisationProfilePage.sections.edit.title',
-                'Update core organization profile information',
-              )}
-            </h3>
-            <p className="text-sm text-gray-500">
-              {t(
-                'foundationOrganisationProfilePage.sections.edit.subtitle',
-                'Use the form below to adjust capacity, pedagogy and languages. Changes are saved directly to the database.',
-              )}
-            </p>
-            <OrganizationProfileForm />
+            <Card className="p-6 space-y-4">
+              <div>
+                <h3 className="text-lg font-semibold text-swiss-charcoal">
+                  {t('foundationOrganisationProfilePage.sections.summary.title', 'Organization profile summary')}
+                </h3>
+                <p className="text-sm text-gray-500">
+                  {t(
+                    'foundationOrganisationProfilePage.sections.summary.subtitle',
+                    'This overview reflects the latest saved capacity, pedagogy, and language details.',
+                  )}
+                </p>
+              </div>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <InfoItem
+                  icon={UserGroupIcon}
+                  label={t('common:organizationProfileForm.labels.capacity', 'Capacity')}
+                  value={capacityValue}
+                />
+                <InfoItem
+                  icon={GlobeAltIcon}
+                  label={t('foundationOrganisationProfilePage.labels.languages', 'Languages')}
+                  value={renderTagList(
+                    languages,
+                    t('foundationOrganisationProfilePage.empty.languages', 'No languages added yet.'),
+                  )}
+                />
+                <InfoItem
+                  icon={AcademicCapIcon}
+                  label={t('foundationOrganisationProfilePage.labels.pedagogy', 'Pedagogy')}
+                  value={renderTagList(
+                    pedagogy,
+                    t('foundationOrganisationProfilePage.empty.pedagogy', 'No pedagogy styles recorded.'),
+                    'settings:companyProfile.pedagogyOptions',
+                  )}
+                />
+              </div>
+            </Card>
           </div>
         </>
       )}
