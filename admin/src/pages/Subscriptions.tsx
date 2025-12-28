@@ -2052,15 +2052,36 @@ const Subscriptions: React.FC = () => {
   }, [pricingTiers]);
 
   // Create a map of userId to subscription
+  // Note: subscription.userId can be either User.id (profileId) or AppUser.id (legacy)
+  // We maintain both mappings to support existing subscriptions and new ones
   const userSubscriptionMap = React.useMemo(() => {
     const map = new Map<string, Subscription>();
     subscriptions.forEach((sub) => {
       if (sub.userId) {
         map.set(sub.userId, sub);
       }
+      // Also map by organizationId for organization-based subscriptions
+      if (sub.organizationId) {
+        map.set(`org:${sub.organizationId}`, sub);
+      }
     });
     return map;
   }, [subscriptions]);
+
+  // Helper function to find subscription for a user
+  // Checks: profileId, id (AppUser.id), and organizationId
+  const getSubscriptionForUser = React.useCallback((user: User): Subscription | undefined => {
+    // First, try profileId (correct approach for new subscriptions)
+    if (user.profileId && userSubscriptionMap.has(user.profileId)) {
+      return userSubscriptionMap.get(user.profileId);
+    }
+    // Then, try organizationId (for organization-based subscriptions like foundations)
+    if (user.orgId && userSubscriptionMap.has(`org:${user.orgId}`)) {
+      return userSubscriptionMap.get(`org:${user.orgId}`);
+    }
+    // Finally, try id (AppUser.id) for backwards compatibility with old subscriptions
+    return userSubscriptionMap.get(user.id);
+  }, [userSubscriptionMap]);
 
   // Group users by role and count
   const usersByRole = React.useMemo(() => {
@@ -2092,13 +2113,16 @@ const Subscriptions: React.FC = () => {
   // Mutations for subscription management
   const updateSubscriptionMutation = useMutation({
     mutationFn: async ({
-      userId,
+      user,
       data,
     }: {
-      userId: string;
+      user: User;
       data: { status: SubscriptionStatus; planId?: string; tier?: SubscriptionTier; durationMonths?: number; notes?: string };
     }) => {
-      const existingSubscription = userSubscriptionMap.get(userId);
+      // IMPORTANT: Use profileId (User.id) for subscriptions, not id (AppUser.id)
+      // The subscription table references User.id, not AppUser.id
+      // Use the helper function that checks profileId, organizationId, and id
+      const existingSubscription = getSubscriptionForUser(user);
       const isMonthlyRecurring = data.durationMonths === 0;
       
       if (existingSubscription) {
@@ -2142,10 +2166,22 @@ const Subscriptions: React.FC = () => {
         if (!data.planId && !plans[0]?.id) {
           throw new Error('No plan selected and no plans available');
         }
+        
+        // CRITICAL FIX: Use profileId (User.id) instead of id (AppUser.id)
+        // The subscription table's userId column references User.id, not AppUser.id
+        // Also include organizationId for organization-based subscriptions (foundations, suppliers, etc.)
+        const subscriptionUserId = user.profileId || user.id;
+        const organizationId = user.orgId;
+        
+        if (!user.profileId) {
+          console.warn(`[Subscription] Warning: User ${user.id} has no profileId. Using id as fallback.`);
+        }
+        
         // For monthly recurring (0), set durationMonths to 1
         const duration = isMonthlyRecurring ? 1 : data.durationMonths;
         const subscription = await subscriptionService.createSubscription(apiClient, {
-          userId,
+          userId: subscriptionUserId,
+          organizationId: organizationId || undefined,
           planId: data.planId || plans[0]?.id,
           tier: data.tier || SubscriptionTier.BASIC,
           durationMonths: duration,
@@ -2416,13 +2452,14 @@ const Subscriptions: React.FC = () => {
 
   const handleEditUser = (user: User) => {
     setSelectedUser(user);
-    setSelectedUserSubscription(userSubscriptionMap.get(user.id) || null);
+    setSelectedUserSubscription(getSubscriptionForUser(user) || null);
     setIsEditModalOpen(true);
   };
 
   const handleSaveSubscription = async (data: { status: SubscriptionStatus; planId?: string; tier?: SubscriptionTier; durationMonths?: number; notes?: string }) => {
     if (selectedUser) {
-      await updateSubscriptionMutation.mutateAsync({ userId: selectedUser.id, data });
+      // Pass the full user object so the mutation can access profileId and orgId
+      await updateSubscriptionMutation.mutateAsync({ user: selectedUser, data });
     }
   };
 
@@ -2433,8 +2470,8 @@ const Subscriptions: React.FC = () => {
     }).format(amount);
   };
 
-  const getSubscriptionStatusBadge = (userId: string) => {
-    const subscription = userSubscriptionMap.get(userId);
+  const getSubscriptionStatusBadge = (user: User) => {
+    const subscription = getSubscriptionForUser(user);
     if (!subscription) {
       return (
         <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-600">
@@ -2925,7 +2962,7 @@ const Subscriptions: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
             {Object.entries(roleConfig).map(([role, config]) => {
               const userCount = usersByRole[role]?.length || 0;
-              const subscribedCount = usersByRole[role]?.filter((u) => userSubscriptionMap.has(u.id))?.length || 0;
+              const subscribedCount = usersByRole[role]?.filter((u) => getSubscriptionForUser(u) !== undefined)?.length || 0;
               
               return (
                 <div
@@ -3143,7 +3180,7 @@ const Subscriptions: React.FC = () => {
                   </thead>
                   <tbody className="divide-y">
                     {filteredUsers.map((user) => {
-                      const subscription = userSubscriptionMap.get(user.id);
+                      const subscription = getSubscriptionForUser(user);
                       return (
                         <tr
                           key={user.id}
@@ -3173,7 +3210,7 @@ const Subscriptions: React.FC = () => {
                             {user.orgName || '-'}
                           </td>
                           <td className="px-4 py-4">
-                            {getSubscriptionStatusBadge(user.id)}
+                            {getSubscriptionStatusBadge(user)}
                           </td>
                           <td className="px-4 py-4 text-sm text-gray-600">
                             {subscription?.plan?.name || '-'}
