@@ -31,6 +31,7 @@ export interface MarketplaceFilters {
   page?: number;
   limit?: number;
   isActive?: boolean;
+  token?: string; // Optional auth token for authenticated requests
 }
 
 class MarketplaceService {
@@ -48,7 +49,8 @@ class MarketplaceService {
     if (filters.search) params.append('search', filters.search);
     
     const response = await apiService.get<{ organizations: Organization[]; pagination: any }>(
-      `/compat/organizations?${params.toString()}`
+      `/compat/organizations?${params.toString()}`,
+      filters.token ? { token: filters.token } : undefined
     );
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to fetch product suppliers');
@@ -73,7 +75,8 @@ class MarketplaceService {
     if (filters.search) params.append('search', filters.search);
     
     const response = await apiService.get<{ organizations: Organization[]; pagination: any }>(
-      `/compat/organizations?${params.toString()}`
+      `/compat/organizations?${params.toString()}`,
+      filters.token ? { token: filters.token } : undefined
     );
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to fetch service providers');

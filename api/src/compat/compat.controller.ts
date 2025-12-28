@@ -340,10 +340,14 @@ export class CompatController {
     @Query('isActive') isActive?: string,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
-    @Query('requireSubscription') requireSubscription?: string,
+    @Request() req?: RequestWithUser,
   ) {
     try {
       const where: any = {};
+      
+      // Check if user is admin (can bypass subscription gate)
+      const userRole = req?.user?.role;
+      const isAdmin = userRole === UserRole.ADMIN || userRole === UserRole.SUPER_ADMIN;
       
       // Filter by organization type
       if (type) {
@@ -351,13 +355,10 @@ export class CompatController {
         where.type = orgType;
 
         // Marketplace visibility gate:
-        // Only apply subscription requirement if explicitly requested.
-        // This allows marketplace to show all active suppliers/providers by default,
-        // with the option to filter by subscription status if needed.
-        // NOTE: Subscription gating was too strict and blocked visibility of organizations
-        // that don't have subscriptions yet, causing empty marketplace pages.
+        // if requesting suppliers or service providers, only return orgs with an active subscription.
+        // EXCEPTION: Admins and super admins can see all organizations regardless of subscription status.
         if (
-          requireSubscription === 'true' &&
+          !isAdmin &&
           (orgType === OrganizationType.PRODUCT_SUPPLIER ||
             orgType === OrganizationType.SERVICE_PROVIDER)
         ) {
@@ -527,11 +528,18 @@ export class CompatController {
         return { success: false, message: 'Organization not found', timestamp: new Date().toISOString() };
       }
 
-      // NOTE: Subscription gating for individual organization profiles has been removed.
-      // Previously, vendors without an active subscription would return "not found",
-      // which caused issues when viewing organization profiles. Now all active
-      // organizations can be viewed regardless of subscription status.
-      // The subscription status is still included in the response for informational purposes.
+      // Marketplace visibility gate for vendor profiles (supplier/service provider).
+      // Vendors without an active subscription should not appear as marketplace profiles.
+      // Allow bypass for admins and members of the organization.
+      if (
+        (org.type === OrganizationType.PRODUCT_SUPPLIER ||
+          org.type === OrganizationType.SERVICE_PROVIDER) &&
+        !this.canBypassMarketplaceSubscriptionGate(req?.user, org.id)
+      ) {
+        if (!org.subscriptions || org.subscriptions.length === 0) {
+          return { success: false, message: 'Organization not found', timestamp: new Date().toISOString() };
+        }
+      }
       
       // Transform to include legacy fields
       const transformedOrg = {

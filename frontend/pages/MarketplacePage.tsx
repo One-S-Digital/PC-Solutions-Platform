@@ -13,6 +13,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { formatServiceCategory, formatServiceDeliveryType } from '../utils/serviceFormatting';
 import { marketplaceService } from '../services/marketplaceService';
+import { useAuth } from '@clerk/clerk-react';
 
 // Loading skeleton component
 const CardSkeleton: React.FC = () => (
@@ -123,6 +124,7 @@ const getActiveTabFromPath = (path: string) => {
 const MarketplacePage: React.FC = () => {
   const { t } = useTranslation(['marketplace', 'common', 'dashboard']);
   const { currentUser, submitServiceRequest } = useAppContext();
+  const { getToken } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -159,16 +161,21 @@ const MarketplacePage: React.FC = () => {
     setError(null);
     
     try {
+      // Get auth token for authenticated request (allows admin bypass of subscription gate)
+      const token = await getToken() || undefined;
+      
       const [suppliersResult, providersResult] = await Promise.all([
         marketplaceService.getProductSuppliers({
           region: regionFilter !== 'All' ? regionFilter : undefined,
           search: debouncedSearchTerm || undefined,
           limit: 100,
+          token,
         }),
         marketplaceService.getServiceProviders({
           region: regionFilter !== 'All' ? regionFilter : undefined,
           search: debouncedSearchTerm || undefined,
           limit: 100,
+          token,
         }),
       ]);
       
@@ -180,7 +187,7 @@ const MarketplacePage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [regionFilter, debouncedSearchTerm]);
+  }, [regionFilter, debouncedSearchTerm, getToken]);
 
   // Initial data fetch
   useEffect(() => {

@@ -72,11 +72,15 @@ export class ClerkAuthGuard implements CanActivate {
       context.getClass(),
     ]);
     
-    if (isPublic) {
+    const authHeader = request.headers['authorization'];
+    
+    // For public endpoints without auth header, allow access without user context
+    if (isPublic && (!authHeader || !authHeader.startsWith('Bearer '))) {
       return true;
     }
     
-    const authHeader = request.headers['authorization'];
+    // For public endpoints WITH auth header, we still want to extract user info
+    // so that authenticated users can get enhanced access (e.g., admin bypass)
     
     if (!authHeader?.startsWith('Bearer ')) {
       throw new UnauthorizedException('No token provided');
@@ -209,6 +213,16 @@ export class ClerkAuthGuard implements CanActivate {
          
         console.error('Clerk JWK fetch failed. Set CLERK_JWT_KEY env with your instance JWT public key to enable offline verification.');
       }
+      
+      // For public endpoints, allow access even if token verification fails
+      // The user just won't have enhanced access (e.g., admin bypass)
+      if (isPublic) {
+        if (this.authDebug) {
+          console.log('🔐 Auth Debug: Token verification failed for public endpoint, allowing access without user context');
+        }
+        return true;
+      }
+      
       throw new UnauthorizedException('Invalid token');
     }
   }
