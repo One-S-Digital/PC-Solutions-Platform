@@ -687,6 +687,9 @@ export class UsersService {
 
       return {
         id: appUser.id,
+        // IMPORTANT: profileId is the User.id used for subscriptions
+        // This is different from id (AppUser.id) - subscriptions must use profileId
+        profileId: profile?.id || null,
         clerkId: appUser.clerkId,
         email: appUser.email || profile?.email || null,
         firstName,

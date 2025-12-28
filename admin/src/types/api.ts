@@ -190,6 +190,10 @@ export interface Organization {
 
 export interface User {
   id: string;
+  // IMPORTANT: profileId is the User.id from the User table (profile UUID)
+  // This is different from id (which is AppUser.id)
+  // Subscriptions MUST use profileId, not id
+  profileId?: string | null;
   auth0Id?: string;
   clerkId: string;
   name: string;
