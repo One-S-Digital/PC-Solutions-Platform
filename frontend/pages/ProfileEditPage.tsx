@@ -183,10 +183,7 @@ const ProfileEditPage: React.FC = () => {
   };
 
   const handleSave = async () => {
-    console.log('📋 handleSave called', { formData: !!formData, currentUser: !!currentUser, role: currentUser?.role });
-    
     if (!formData || !currentUser) {
-      console.warn('📋 handleSave early return - missing formData or currentUser');
       return;
     }
 
@@ -194,7 +191,6 @@ const ProfileEditPage: React.FC = () => {
     setSaveSuccess(false);
     
     try {
-      console.log('📋 Saving profile for role:', currentUser.role);
       const payload = formData as Record<string, any>;
       let saveRequest: Promise<any>;
 
@@ -298,12 +294,9 @@ const ProfileEditPage: React.FC = () => {
         throw new Error('Unsupported role');
       }
 
-      console.log('📋 Making save request...');
       const response = await saveRequest;
-      console.log('📋 Save response:', response);
       
       if (response && response.success !== false) {
-        console.log('📋 Save successful!');
         setSaveSuccess(true);
         addNotification({
           title: t('notifications.successTitle', 'Success'),
@@ -317,11 +310,10 @@ const ProfileEditPage: React.FC = () => {
         // Hide success message after 3 seconds
         setTimeout(() => setSaveSuccess(false), 3000);
       } else {
-        console.error('📋 Save failed with response:', response);
         throw new Error(response?.message || 'Failed to save profile');
       }
     } catch (error) {
-      console.error('📋 Failed to save profile:', error);
+      console.error('Failed to save profile', error);
       addNotification({
         title: t('common:errors.genericErrorTitle', 'Error'),
         message: error instanceof Error ? error.message : t('common:errors.genericErrorMessage', 'An error occurred while saving'),
