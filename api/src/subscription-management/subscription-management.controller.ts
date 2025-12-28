@@ -135,6 +135,7 @@ export class SubscriptionManagementController {
     @Query('expiringBefore') expiringBefore?: string,
     @Query('createdAfter') createdAfter?: string,
     @Query('createdBefore') createdBefore?: string,
+    @Query('role') role?: string,
   ) {
     const filters: SubscriptionFiltersDto = {
       page: page ? parseInt(page, 10) : 1,
@@ -150,6 +151,7 @@ export class SubscriptionManagementController {
       expiringBefore,
       createdAfter,
       createdBefore,
+      role: role && Object.values(UserRole).includes(role as UserRole) ? (role as UserRole) : undefined,
     };
     const result = await this.subscriptionService.getAllSubscriptions(filters);
     return wrapResponse(result);
@@ -645,6 +647,7 @@ export class SubscriptionManagementController {
     @Query('search') search?: string,
     @Query('dateFrom') dateFrom?: string,
     @Query('dateTo') dateTo?: string,
+    @Query('role') role?: string,
   ) {
     const filters: SubscriptionRequestFiltersDto = {
       page: page ? parseInt(page, 10) : 1,
@@ -655,6 +658,7 @@ export class SubscriptionManagementController {
       search,
       dateFrom,
       dateTo,
+      role: role && Object.values(UserRole).includes(role as UserRole) ? (role as UserRole) : undefined,
     };
     const result = await this.subscriptionRequestService.getAllRequests(filters);
     return wrapResponse(result);
@@ -756,6 +760,8 @@ export class SubscriptionManagementController {
     @Query('search') search?: string,
     @Query('dateFrom') dateFrom?: string,
     @Query('dateTo') dateTo?: string,
+    @Query('subscriptionId') subscriptionId?: string,
+    @Query('role') role?: string,
   ) {
     const filters: CancellationRequestFiltersDto = {
       page: page ? parseInt(page, 10) : 1,
@@ -767,6 +773,8 @@ export class SubscriptionManagementController {
       search,
       dateFrom,
       dateTo,
+      subscriptionId,
+      role: role && Object.values(UserRole).includes(role as UserRole) ? (role as UserRole) : undefined,
     };
     const result = await this.cancellationRequestService.getAllCancellationRequests(filters);
     return wrapResponse(result);
@@ -929,15 +937,6 @@ export class UserSubscriptionController {
     const organizationId = userContext?.organizationId;
     const userRole = userContext?.role as UserRole;
 
-    console.log('📋 /subscriptions/me called:', {
-      clerkUserId: userContext?.userId,
-      profileUserId: userId,
-      organizationId,
-      userRole,
-      hasContext: !!userContext,
-      contextKeys: userContext ? Object.keys(userContext) : [],
-    });
-
     // Check if role requires subscription
     const requiresSubscription = SUBSCRIPTION_REQUIRED_ROLES.includes(userRole);
 
@@ -971,15 +970,6 @@ export class UserSubscriptionController {
       userId,
       organizationId,
     );
-
-    console.log('📋 /subscriptions/me result:', {
-      found: !!subscription,
-      subscriptionId: subscription?.id,
-      status: subscription?.status,
-      userId: subscription?.userId,
-      organizationId: subscription?.organizationId,
-      planName: subscription?.plan?.name,
-    });
 
     // Calculate derived fields
     const now = new Date();
@@ -1043,16 +1033,6 @@ export class UserSubscriptionController {
     // The User table uses UUID, not Clerk ID strings
     const userId = userContext?.profileUserId || req.user?.id;
     const organizationId = userContext?.organizationId;
-
-    // Debug logging
-    console.log('📋 Subscription Request Debug:', {
-      profileUserId: userContext?.profileUserId,
-      reqUserId: req.user?.id,
-      resolvedUserId: userId,
-      organizationId,
-      planId: body.planId,
-      contactEmail: body.contactEmail,
-    });
 
     // Validate we have at least one identifier
     if (!userId && !organizationId) {

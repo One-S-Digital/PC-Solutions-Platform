@@ -276,6 +276,7 @@ export const subscriptionService = {
     search?: string;
     dateFrom?: string;
     dateTo?: string;
+    role?: string;
   }) =>
     apiClient.get<ApiResponse<any>>('/admin/subscription-management/requests', { params }),
 
@@ -372,6 +373,8 @@ export const subscriptionService = {
     search?: string;
     dateFrom?: string;
     dateTo?: string;
+    subscriptionId?: string;
+    role?: string;
   }) =>
     apiClient.get<ApiResponse<any>>('/admin/subscription-management/cancellation-requests', { params }),
 

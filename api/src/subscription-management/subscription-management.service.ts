@@ -685,6 +685,16 @@ export class SubscriptionManagementService {
         ];
       }
 
+      // Filter by role using the plan's allowedRoles
+      // (Foundation plans: ['FOUNDATION']; Supplier: ['PRODUCT_SUPPLIER']; Service Provider: ['SERVICE_PROVIDER'])
+      if (filters.role) {
+        where.plan = {
+          allowedRoles: {
+            has: filters.role,
+          },
+        };
+      }
+
       const [subscriptions, total] = await Promise.all([
         this.prisma.subscription.findMany({
           where,
@@ -767,32 +777,47 @@ export class SubscriptionManagementService {
     try {
       const subscription = await this.prisma.subscription.findUnique({
         where: { id },
+        include: {
+          subscriptionRequest: true,
+        },
       });
 
       if (!subscription) {
         throw new NotFoundException('Subscription not found');
       }
 
-      // Soft delete by setting status to CANCELLED
-      await this.prisma.subscription.update({
-        where: { id },
-        data: {
-          status: 'CANCELLED',
-          canceledAt: new Date(),
-          cancellationReason: 'Deleted by admin',
-        },
+      // HARD DELETE:
+      // Admin explicitly requested full removal so the user has no subscription record.
+      //
+      // We preserve request history by detaching the linked SubscriptionRequest (if any),
+      // then delete the subscription and its dependent records.
+      await this.prisma.$transaction(async (tx) => {
+        // Detach request link to avoid FK restriction (SubscriptionRequest.subscriptionId -> Subscription.id).
+        if (subscription.subscriptionRequest?.id) {
+          await tx.subscriptionRequest.update({
+            where: { id: subscription.subscriptionRequest.id },
+            data: {
+              subscriptionId: null,
+              status: 'CANCELLED',
+              notes: subscription.subscriptionRequest.notes
+                ? `${subscription.subscriptionRequest.notes}\n[${new Date().toISOString()}] ${performedBy}: Subscription deleted by admin (hard delete).`
+                : `[${new Date().toISOString()}] ${performedBy}: Subscription deleted by admin (hard delete).`,
+            },
+          });
+        }
+
+        // Delete dependents that are NOT guaranteed to be cascaded by the DB/schema.
+        await tx.billingTransaction.deleteMany({ where: { subscriptionId: id } });
+        await tx.subscriptionAction.deleteMany({ where: { subscriptionId: id } });
+        await tx.subscriptionSchedule.deleteMany({ where: { subscriptionId: id } });
+        await tx.subscriptionNote.deleteMany({ where: { subscriptionId: id } });
+        await tx.subscriptionCancellationRequest.deleteMany({ where: { subscriptionId: id } });
+
+        // Finally delete the subscription itself.
+        await tx.subscription.delete({ where: { id } });
       });
 
-      await this.logAction(
-        id,
-        'DELETE',
-        subscription.status as string,
-        'CANCELLED',
-        performedBy,
-        'Subscription deleted',
-      );
-
-      this.logger.log(`Deleted subscription ${id}`);
+      this.logger.log(`Hard-deleted subscription ${id}`);
     } catch (error) {
       this.logger.error(`Failed to delete subscription: ${(error as Error).message}`);
       throw error;
@@ -1645,21 +1670,6 @@ export class SubscriptionManagementService {
 
   async getUserSubscription(userId: string): Promise<Subscription | null> {
     try {
-      // First, let's check ALL subscriptions for this user to see what exists
-      const allUserSubscriptions = await this.prisma.subscription.findMany({
-        where: { userId },
-        select: {
-          id: true,
-          status: true,
-          userId: true,
-          organizationId: true,
-          createdAt: true,
-        },
-        orderBy: { createdAt: 'desc' },
-      });
-
-      this.logger.log(`🔍 All subscriptions for userId ${userId}:`, JSON.stringify(allUserSubscriptions, null, 2));
-
       const subscription = await this.prisma.subscription.findFirst({
         where: { 
           userId,
@@ -1682,21 +1692,6 @@ export class SubscriptionManagementService {
 
   async getOrganizationSubscription(organizationId: string): Promise<Subscription | null> {
     try {
-      // First, let's check ALL subscriptions for this organization to see what exists
-      const allOrgSubscriptions = await this.prisma.subscription.findMany({
-        where: { organizationId },
-        select: {
-          id: true,
-          status: true,
-          userId: true,
-          organizationId: true,
-          createdAt: true,
-        },
-        orderBy: { createdAt: 'desc' },
-      });
-
-      this.logger.log(`🔍 All subscriptions for organizationId ${organizationId}:`, JSON.stringify(allOrgSubscriptions, null, 2));
-
       const subscription = await this.prisma.subscription.findFirst({
         where: { 
           organizationId,
@@ -1739,58 +1734,40 @@ export class SubscriptionManagementService {
     try {
       let subscription: Subscription | null = null;
 
-      this.logger.log(`🔍 Looking up subscription - userId: ${userId}, organizationId: ${organizationId}`);
-
       // If we have organizationId, check organization subscription FIRST
       // (business subscriptions are organization-based)
       if (organizationId) {
-        this.logger.log(`🔍 Checking organization subscription for organizationId: ${organizationId}`);
         subscription = await this.getOrganizationSubscription(organizationId);
         if (subscription) {
-          this.logger.log(`✅ Found active subscription via organizationId: ${organizationId} - subscriptionId: ${subscription.id}, status: ${subscription.status}`);
           return subscription;
-        } else {
-          this.logger.log(`❌ No active subscription found for organizationId: ${organizationId}`);
         }
       }
 
       // Check user-based subscription
       if (userId) {
-        this.logger.log(`🔍 Checking user subscription for userId: ${userId}`);
         subscription = await this.getUserSubscription(userId);
         if (subscription) {
-          this.logger.log(`✅ Found active subscription via userId: ${userId} - subscriptionId: ${subscription.id}, status: ${subscription.status}`);
           return subscription;
-        } else {
-          this.logger.log(`❌ No active subscription found for userId: ${userId}`);
         }
 
         // If no organizationId was provided, look up user's organization and check
         // Note: This fallback exists for direct service calls (e.g., background jobs, admin operations)
         // where organizationId may not be available from request context
         if (!organizationId) {
-          this.logger.log(`🔍 No organizationId provided, looking up user's organization...`);
           const userOrg = await this.prisma.userOrganization.findFirst({
             where: { userId },
             orderBy: { createdAt: 'asc' },
           });
 
           if (userOrg?.organizationId) {
-            this.logger.log(`🔍 Found user's organization: ${userOrg.organizationId}, checking for subscription...`);
             subscription = await this.getOrganizationSubscription(userOrg.organizationId);
             if (subscription) {
-              this.logger.log(`✅ Found active subscription via user's organization: ${userOrg.organizationId} - subscriptionId: ${subscription.id}, status: ${subscription.status}`);
               return subscription;
-            } else {
-              this.logger.log(`❌ No active subscription found for user's organization: ${userOrg.organizationId}`);
             }
-          } else {
-            this.logger.log(`❌ No organization found for userId: ${userId}`);
           }
         }
       }
 
-      this.logger.log(`❌ No active subscription found for userId: ${userId}, organizationId: ${organizationId}`);
       return null;
     } catch (error) {
       this.logger.error(`Failed to get active subscription: ${(error as Error).message}`);

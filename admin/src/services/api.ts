@@ -306,6 +306,8 @@ export const apiService = {
   ) => apiClient.get<ApiResponse<any>>('/users', { params }),
   getAdminUsers: (apiClient: AxiosInstance, params?: { page?: number; limit?: number; search?: string; role?: string }) => 
     apiClient.get<ApiResponse<{ users: User[]; total: number; page: number; limit: number; totalPages: number }>>('/admin/users', { params }),
+  getAdminUserStats: (apiClient: AxiosInstance) =>
+    apiClient.get<any>('/admin/users/stats'),
   getUserById: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<User>>(`/users/${id}`),
   createUser: (apiClient: AxiosInstance, userData: Partial<User>) => apiClient.post<ApiResponse<User>>('/users', userData),
   inviteUser: (

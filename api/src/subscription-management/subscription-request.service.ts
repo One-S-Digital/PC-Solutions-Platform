@@ -140,8 +140,20 @@ export class SubscriptionRequestService {
         }
       }
 
-      // Determine tier from plan code if not provided
-      const tier = data.tier || this.getTierFromPlanCode(plan.code);
+      // Determine requested role from the plan.
+      // All system plans are seeded with exactly one allowed role.
+      const requestedRole = (plan.allowedRoles?.[0] || '').toString().toUpperCase();
+
+      // Determine tier:
+      // - Foundation requests use SubscriptionTier (BASIC/ESSENTIAL/PROFESSIONAL/ENTERPRISE)
+      // - Supplier / Service Provider requests do NOT have tiers in the business flow
+      //
+      // NOTE: The DB schema currently requires a tier value, so we store BASIC for non-foundation roles,
+      // but the UI should treat it as "no tier" (role-only subscription).
+      const isFoundationRequest = requestedRole === 'FOUNDATION';
+      const tier = isFoundationRequest
+        ? (data.tier || this.getTierFromPlanCode(plan.code))
+        : SubscriptionTier.BASIC;
 
       // Create the request
       const request = await this.prisma.subscriptionRequest.create({
@@ -286,6 +298,15 @@ export class SubscriptionRequestService {
           { user: { lastName: { contains: filters.search, mode: 'insensitive' } } },
           { organization: { name: { contains: filters.search, mode: 'insensitive' } } },
         ];
+      }
+
+      // Filter by role using the plan's allowedRoles
+      if (filters.role) {
+        where.plan = {
+          allowedRoles: {
+            has: filters.role,
+          },
+        };
       }
 
       const [requests, total] = await Promise.all([

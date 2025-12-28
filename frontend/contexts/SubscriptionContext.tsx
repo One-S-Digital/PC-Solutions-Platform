@@ -337,27 +337,11 @@ export const SubscriptionProvider: React.FC<{ children: ReactNode }> = ({ childr
     setError(null);
 
     try {
-      console.log('📋 [Frontend] Fetching subscription for user:', {
-        userId: currentUser?.id,
-        role: currentUser?.role,
-        requiresSubscription,
-      });
-
       const response = await authenticatedRequest<UserSubscriptionData>('/subscriptions/me');
-
-      console.log('📋 [Frontend] Subscription response:', {
-        success: response.success,
-        hasActiveSubscription: response.data?.hasActiveSubscription,
-        status: response.data?.status,
-        subscriptionId: response.data?.subscription?.id,
-        planName: response.data?.plan?.name,
-        features: response.data?.features,
-      });
 
       if (response.success && response.data) {
         setSubscriptionData(response.data);
       } else {
-        console.log('📋 [Frontend] No subscription found - setting defaults');
         // No subscription found - user needs to subscribe
         setSubscriptionData({
           hasActiveSubscription: false,
@@ -487,13 +471,6 @@ export const SubscriptionProvider: React.FC<{ children: ReactNode }> = ({ childr
    */
   const requestSubscription = useCallback(
     async (payload: SubscriptionRequestPayload): Promise<SubscriptionRequestResponse> => {
-      console.log('📋 Submitting subscription request:', {
-        planId: payload.planId,
-        tier: payload.tier,
-        billingPeriod: payload.billingPeriod,
-        contactEmail: payload.contactEmail,
-      });
-
       const response = await authenticatedRequest<SubscriptionRequestResponse>(
         '/subscriptions/request',
         {
@@ -506,8 +483,6 @@ export const SubscriptionProvider: React.FC<{ children: ReactNode }> = ({ childr
         console.error('❌ Subscription request failed:', response);
         throw new Error(response.message || t('subscription:errors.requestFailed'));
       }
-
-      console.log('✅ Subscription request successful:', response.data);
 
       // Refresh subscription data after request
       await fetchSubscription();

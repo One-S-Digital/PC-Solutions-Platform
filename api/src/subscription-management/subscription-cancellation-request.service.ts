@@ -114,6 +114,9 @@ export class SubscriptionCancellationRequestService {
     if (filters.status) {
       where.status = filters.status;
     }
+    if (filters.subscriptionId) {
+      where.subscriptionId = filters.subscriptionId;
+    }
     if (filters.dateFrom || filters.dateTo) {
       where.requestedAt = {};
       if (filters.dateFrom) {
@@ -131,6 +134,17 @@ export class SubscriptionCancellationRequestService {
         { organization: { name: { contains: filters.search, mode: 'insensitive' } } },
         { subscriptionId: { contains: filters.search, mode: 'insensitive' } },
       ];
+    }
+
+    // Filter by role (derived from the subscription's plan.allowedRoles)
+    if (filters.role) {
+      where.subscription = {
+        plan: {
+          allowedRoles: {
+            has: filters.role,
+          },
+        },
+      };
     }
 
     const [requests, total] = await Promise.all([
