@@ -1820,6 +1820,136 @@
       "creating": "Wird erstellt...",
       "createButton": "Abonnement erstellen"
     },
+    "tabs": {
+      "subscriptions": "Abonnements",
+      "requests": "Abonnementanfragen",
+      "cancellations": "Kündigungsanfragen"
+    },
+    "requestStatus": {
+      "pending": "Ausstehend",
+      "under_review": "In Prüfung",
+      "invoice_sent": "Rechnung gesendet",
+      "payment_pending": "Zahlung ausstehend",
+      "payment_received": "Zahlung erhalten",
+      "activated": "Aktiviert",
+      "declined": "Abgelehnt",
+      "cancelled": "Storniert"
+    },
+    "requests": {
+      "noRequests": "Keine Abonnementanfragen gefunden",
+      "filter": {
+        "allStatuses": "Alle Status"
+      },
+      "stats": {
+        "pending": "Ausstehend",
+        "underReview": "In Prüfung",
+        "invoiceSent": "Rechnung gesendet",
+        "paymentReceived": "Zahlung erhalten",
+        "activated": "Aktiviert"
+      },
+      "table": {
+        "contact": "Kontakt",
+        "plan": "Plan",
+        "tier": "Stufe",
+        "status": "Status",
+        "date": "Datum",
+        "actions": "Aktionen"
+      },
+      "detail": {
+        "title": "Abonnementanfrage",
+        "submitted": "Eingereicht am {{date}}",
+        "status": "Status",
+        "contactInfo": "Kontaktinformationen",
+        "name": "Name",
+        "email": "E-Mail",
+        "phone": "Telefon",
+        "preferredContact": "Bevorzugter Kontakt",
+        "planDetails": "Plandetails",
+        "plan": "Plan",
+        "tier": "Stufe",
+        "billingPeriod": "Abrechnungszeitraum",
+        "message": "Nachricht",
+        "invoiceInfo": "Rechnungsinformationen",
+        "invoiceNumber": "Rechnungsnummer",
+        "amount": "Betrag",
+        "sentAt": "Gesendet am",
+        "paymentInfo": "Zahlungsinformationen",
+        "paymentReference": "Referenz",
+        "receivedAt": "Erhalten am",
+        "notes": "Admin-Notizen",
+        "declineReason": "Ablehnungsgrund"
+      },
+      "actions": {
+        "review": "Als in Prüfung markieren",
+        "sendInvoice": "Rechnung senden",
+        "confirmPayment": "Zahlung als erhalten markieren",
+        "markPaymentReceived": "Zahlung als erhalten markieren",
+        "activate": "Abonnement aktivieren",
+        "decline": "Ablehnen"
+      },
+      "reviewSuccess": "Anfrage als in Prüfung markiert",
+      "reviewError": "Fehler beim Markieren als in Prüfung: ",
+      "invoiceSentSuccess": "Rechnung erfolgreich gesendet",
+      "invoiceSentError": "Fehler beim Senden der Rechnung: ",
+      "paymentConfirmedSuccess": "Zahlung erfolgreich bestätigt",
+      "paymentConfirmedError": "Fehler beim Bestätigen der Zahlung: ",
+      "activatedSuccess": "Abonnement erfolgreich aktiviert",
+      "activatedError": "Fehler beim Aktivieren des Abonnements: ",
+      "declinedSuccess": "Anfrage abgelehnt",
+      "declinedError": "Fehler beim Ablehnen: ",
+      "invoiceModal": {
+        "title": "Rechnung senden",
+        "sendingTo": "Rechnung wird gesendet an",
+        "invoiceNumber": "Rechnungsnummer",
+        "amount": "Betrag",
+        "currency": "Währung",
+        "notes": "Notizen (optional)",
+        "sendEmailNotification": "E-Mail-Benachrichtigung an den Kunden senden",
+        "send": "Rechnung senden"
+      },
+      "paymentModal": {
+        "title": "Zahlung als erhalten markieren",
+        "forInvoice": "Für Rechnung",
+        "manualPaymentHelp": "Manuelle/off-platform Zahlung: erfassen Sie die erhaltenen Zahlungsdetails unten.",
+        "reference": "Zahlungsreferenz (optional)",
+        "date": "Zahlungsdatum",
+        "notes": "Notizen (optional)",
+        "autoActivate": "Abonnement automatisch aktivieren",
+        "confirm": "Als erhalten markieren"
+      },
+      "declineModal": {
+        "title": "Anfrage ablehnen",
+        "warning": "Sie sind dabei, die Abonnementanfrage abzulehnen von",
+        "reason": "Ablehnungsgrund",
+        "notes": "Interne Notizen (optional)",
+        "sendEmailNotification": "E-Mail-Benachrichtigung an den Kunden senden",
+        "decline": "Anfrage ablehnen"
+      }
+    },
+    "cancellations": {
+      "noRequests": "Keine Kündigungsanfragen gefunden",
+      "filter": {
+        "allStatuses": "Alle Status"
+      },
+      "table": {
+        "subscriber": "Abonnent",
+        "plan": "Plan",
+        "status": "Status",
+        "requestedAt": "Angefragt",
+        "reason": "Grund",
+        "actions": "Aktionen"
+      },
+      "actions": {
+        "approve": "Genehmigen",
+        "decline": "Ablehnen"
+      },
+      "status": {
+        "pending": "Ausstehend",
+        "approved": "Genehmigt",
+        "declined": "Abgelehnt",
+        "cancelled": "Storniert"
+      }
+    },
     "pagination": {
       "showing": "Zeige {{from}} bis {{to}} von {{total}}",
       "previous": "Zurück",
