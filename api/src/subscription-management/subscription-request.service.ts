@@ -455,8 +455,11 @@ export class SubscriptionRequestService {
         throw new NotFoundException('Request not found');
       }
 
-      if (request.status !== 'INVOICE_SENT') {
-        throw new BadRequestException('Payment can only be confirmed for invoiced requests');
+      // Manual/off-platform invoicing: allow recording payment even if no invoice was sent via platform.
+      // This keeps the request workflow usable when billing is handled externally.
+      const allowedStatuses = ['INVOICE_SENT', 'PAYMENT_PENDING', 'PENDING', 'UNDER_REVIEW'];
+      if (!allowedStatuses.includes(request.status)) {
+        throw new BadRequestException('Payment cannot be confirmed from current status');
       }
 
       const updated = await this.prisma.subscriptionRequest.update({
