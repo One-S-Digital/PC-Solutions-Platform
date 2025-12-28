@@ -43,7 +43,7 @@ const Dashboard: React.FC = () => {
   // Fetch users count directly from users endpoint
   const { data: usersResponse, isLoading: usersLoading } = useQuery({
     queryKey: ['dashboard-users-count'],
-    queryFn: () => apiService.getUsers(apiClient),
+    queryFn: () => apiService.getUsers(apiClient, { page: 1, limit: 1 }),
     enabled: !!apiClient,
     staleTime: 60000, // Cache for 1 minute
   })
@@ -105,7 +105,24 @@ const Dashboard: React.FC = () => {
   })()
 
   // Extract counts directly from API responses - much simpler and more reliable
-  const usersData = usersResponse?.data?.data?.length ?? 0
+  const usersData = (() => {
+    const raw: any = usersResponse?.data?.data
+    // Expected shape: { data: [...], meta: { total } }
+    if (raw && typeof raw === 'object' && raw.meta && typeof raw.meta.total === 'number') {
+      return raw.meta.total
+    }
+    // Fallbacks
+    if (raw && typeof raw === 'object' && typeof raw.total === 'number') {
+      return raw.total
+    }
+    if (Array.isArray(raw)) {
+      return raw.length
+    }
+    if (raw && typeof raw === 'object' && Array.isArray(raw.data)) {
+      return raw.data.length
+    }
+    return 0
+  })()
   // Dashboard card is specifically "Foundations" (org.type === 'FOUNDATION')
   const orgsData = organizations.filter((o: any) => o?.type === 'FOUNDATION').length
   const productsData = productsResponse?.data?.data?.length ?? 0

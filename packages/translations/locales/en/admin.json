@@ -1044,6 +1044,13 @@
     "title": "Users Management",
     "subtitle": "Manage all users across the platform",
     "addUser": "Add User",
+    "pagination": {
+      "rowsPerPage": "Rows per page",
+      "showing": "Showing {{from}}-{{to}} of {{total}}",
+      "previous": "Previous",
+      "next": "Next",
+      "pageOf": "Page {{page}} of {{totalPages}}"
+    },
     "editUser": {
       "title": "Edit User",
       "firstName": "First Name",
@@ -1880,7 +1887,8 @@
       "actions": {
         "review": "Mark Under Review",
         "sendInvoice": "Send Invoice",
-        "confirmPayment": "Confirm Payment",
+        "confirmPayment": "Mark Payment Received",
+        "markPaymentReceived": "Mark Payment Received",
         "activate": "Activate Subscription",
         "decline": "Decline"
       },
@@ -1905,13 +1913,14 @@
         "send": "Send Invoice"
       },
       "paymentModal": {
-        "title": "Confirm Payment",
+        "title": "Mark Payment Received",
         "forInvoice": "For Invoice",
+        "manualPaymentHelp": "Manual/off-platform payment: record the received payment details below.",
         "reference": "Payment Reference (optional)",
         "date": "Payment Date",
         "notes": "Notes (optional)",
         "autoActivate": "Automatically activate subscription",
-        "confirm": "Confirm Payment"
+        "confirm": "Mark Received"
       },
       "declineModal": {
         "title": "Decline Request",

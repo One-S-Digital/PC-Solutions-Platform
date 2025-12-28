@@ -19,7 +19,7 @@ import {
   CreatePlanDto,
   UpdatePlanDto,
 } from './dto';
-import { Prisma } from '@prisma/client';
+import { Prisma, SubscriptionRequestStatus } from '@prisma/client';
 import { resolveBillingPeriod } from './billing-period.util';
 
 export interface SubscriptionPlan {
@@ -132,6 +132,89 @@ export class SubscriptionManagementService {
     private prisma: PrismaService,
     private readonly logger: AppLoggerService,
   ) {}
+
+  /**
+   * Keep SubscriptionRequest in sync when a Subscription is activated.
+   *
+   * Why: admins can activate subscriptions from the subscription editor, but the request
+   * status only flips to ACTIVATED when using the request workflow. This makes requests
+   * appear stuck in UNDER_REVIEW even though the subscription is active.
+   */
+  private async syncSubscriptionRequestOnActivation(
+    subscription: { id: string; userId?: string | null; organizationId?: string | null; planId: string; tier: SubscriptionTier },
+    performedBy: string,
+  ): Promise<void> {
+    const now = new Date();
+
+    try {
+      // 1) If the request is already linked, just ensure status is ACTIVATED.
+      const linked = await this.prisma.subscriptionRequest.findUnique({
+        where: { subscriptionId: subscription.id },
+        select: { id: true, status: true },
+      });
+
+      if (linked) {
+        if (linked.status !== SubscriptionRequestStatus.ACTIVATED) {
+          await this.prisma.subscriptionRequest.update({
+            where: { id: linked.id },
+            data: {
+              status: SubscriptionRequestStatus.ACTIVATED,
+              processedAt: now,
+              processedBy: performedBy,
+            },
+          });
+        }
+        return;
+      }
+
+      // 2) If not linked, try to find the most recent "open" matching request for this owner + plan + tier.
+      // This covers the common admin flow where a subscription is created/activated manually from the subscription UI.
+      const ownerWhere = subscription.userId
+        ? { userId: subscription.userId }
+        : subscription.organizationId
+          ? { organizationId: subscription.organizationId }
+          : null;
+
+      if (!ownerWhere) return;
+
+      const candidate = await this.prisma.subscriptionRequest.findFirst({
+        where: {
+          ...ownerWhere,
+          planId: subscription.planId,
+          tier: subscription.tier as any,
+          subscriptionId: null,
+          status: {
+            in: [
+              SubscriptionRequestStatus.PENDING,
+              SubscriptionRequestStatus.UNDER_REVIEW,
+              SubscriptionRequestStatus.INVOICE_SENT,
+              SubscriptionRequestStatus.PAYMENT_PENDING,
+              SubscriptionRequestStatus.PAYMENT_RECEIVED,
+            ],
+          },
+        },
+        orderBy: { createdAt: 'desc' },
+        select: { id: true },
+      });
+
+      if (!candidate) return;
+
+      await this.prisma.subscriptionRequest.update({
+        where: { id: candidate.id },
+        data: {
+          status: SubscriptionRequestStatus.ACTIVATED,
+          subscriptionId: subscription.id,
+          processedAt: now,
+          processedBy: performedBy,
+        },
+      });
+    } catch (error: any) {
+      // Best-effort sync: do not block subscription activation if request update fails.
+      this.logger.warn(
+        `Failed to sync subscription request for activated subscription ${subscription.id}: ${error?.message || error}`,
+      );
+    }
+  }
 
   // =====================================
   // SUBSCRIPTION PLAN MANAGEMENT
@@ -778,7 +861,20 @@ export class SubscriptionManagementService {
         data.notes,
       );
 
-      this.logger.log(`✅ Activated subscription ${id} - userId: ${updated.userId}, organizationId: ${updated.organizationId}, status: ${updated.status}`);
+      // Best-effort: if this subscription came from a request (or matches an open request),
+      // mark that request as ACTIVATED so it doesn't remain stuck in UNDER_REVIEW.
+      await this.syncSubscriptionRequestOnActivation(
+        {
+          id: updated.id,
+          userId: updated.userId,
+          organizationId: updated.organizationId,
+          planId: updated.planId,
+          tier: updated.tier as unknown as SubscriptionTier,
+        },
+        performedBy,
+      );
+
+      this.logger.log(`Activated subscription ${id}`);
       return updated as unknown as Subscription;
     } catch (error) {
       this.logger.error(`Failed to activate subscription: ${(error as Error).message}`);
@@ -1771,6 +1867,20 @@ export class SubscriptionManagementService {
         performedBy,
         'Status updated directly',
       );
+
+      // If status is set to ACTIVE/TRIAL via direct status update, keep any related request in sync.
+      if (status === 'ACTIVE' || status === 'TRIAL') {
+        await this.syncSubscriptionRequestOnActivation(
+          {
+            id: subscription.id,
+            userId: subscription.userId,
+            organizationId: subscription.organizationId,
+            planId: subscription.planId,
+            tier: subscription.tier as unknown as SubscriptionTier,
+          },
+          performedBy,
+        );
+      }
 
       this.logger.log(`Updated subscription ${subscriptionId} status to ${status}`);
       return subscription as unknown as Subscription;

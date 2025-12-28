@@ -1070,6 +1070,13 @@
     "title": "Gestion des utilisateurs",
     "subtitle": "Gérer tous les utilisateurs de la plateforme",
     "addUser": "Ajouter un utilisateur",
+    "pagination": {
+      "rowsPerPage": "Lignes par page",
+      "showing": "Affichage de {{from}} à {{to}} sur {{total}}",
+      "previous": "Précédent",
+      "next": "Suivant",
+      "pageOf": "Page {{page}} sur {{totalPages}}"
+    },
     "editUser": {
       "title": "Modifier l'utilisateur",
       "firstName": "Prénom",
@@ -1819,6 +1826,136 @@
       "notesPlaceholder": "Ajouter des notes...",
       "creating": "Création...",
       "createButton": "Créer l'abonnement"
+    },
+    "tabs": {
+      "subscriptions": "Abonnements",
+      "requests": "Demandes d'abonnement",
+      "cancellations": "Demandes d'annulation"
+    },
+    "requestStatus": {
+      "pending": "En attente",
+      "under_review": "En cours d'examen",
+      "invoice_sent": "Facture envoyée",
+      "payment_pending": "Paiement en attente",
+      "payment_received": "Paiement reçu",
+      "activated": "Activé",
+      "declined": "Refusé",
+      "cancelled": "Annulé"
+    },
+    "requests": {
+      "noRequests": "Aucune demande d'abonnement trouvée",
+      "filter": {
+        "allStatuses": "Tous les statuts"
+      },
+      "stats": {
+        "pending": "En attente",
+        "underReview": "En cours d'examen",
+        "invoiceSent": "Facture envoyée",
+        "paymentReceived": "Paiement reçu",
+        "activated": "Activé"
+      },
+      "table": {
+        "contact": "Contact",
+        "plan": "Forfait",
+        "tier": "Niveau",
+        "status": "Statut",
+        "date": "Date",
+        "actions": "Actions"
+      },
+      "detail": {
+        "title": "Demande d'abonnement",
+        "submitted": "Soumise le {{date}}",
+        "status": "Statut",
+        "contactInfo": "Informations de contact",
+        "name": "Nom",
+        "email": "Email",
+        "phone": "Téléphone",
+        "preferredContact": "Contact préféré",
+        "planDetails": "Détails du forfait",
+        "plan": "Forfait",
+        "tier": "Niveau",
+        "billingPeriod": "Période de facturation",
+        "message": "Message",
+        "invoiceInfo": "Informations de facturation",
+        "invoiceNumber": "Numéro de facture",
+        "amount": "Montant",
+        "sentAt": "Envoyée le",
+        "paymentInfo": "Informations de paiement",
+        "paymentReference": "Référence",
+        "receivedAt": "Reçu le",
+        "notes": "Notes admin",
+        "declineReason": "Motif du refus"
+      },
+      "actions": {
+        "review": "Marquer en cours d'examen",
+        "sendInvoice": "Envoyer la facture",
+        "confirmPayment": "Marquer le paiement reçu",
+        "markPaymentReceived": "Marquer le paiement reçu",
+        "activate": "Activer l'abonnement",
+        "decline": "Refuser"
+      },
+      "reviewSuccess": "Demande marquée en cours d'examen",
+      "reviewError": "Échec de la mise en examen : ",
+      "invoiceSentSuccess": "Facture envoyée avec succès",
+      "invoiceSentError": "Échec de l'envoi de la facture : ",
+      "paymentConfirmedSuccess": "Paiement confirmé avec succès",
+      "paymentConfirmedError": "Échec de la confirmation du paiement : ",
+      "activatedSuccess": "Abonnement activé avec succès",
+      "activatedError": "Échec de l'activation de l'abonnement : ",
+      "declinedSuccess": "Demande refusée",
+      "declinedError": "Échec du refus : ",
+      "invoiceModal": {
+        "title": "Envoyer la facture",
+        "sendingTo": "Envoi de la facture à",
+        "invoiceNumber": "Numéro de facture",
+        "amount": "Montant",
+        "currency": "Devise",
+        "notes": "Notes (optionnel)",
+        "sendEmailNotification": "Envoyer une notification par email au client",
+        "send": "Envoyer la facture"
+      },
+      "paymentModal": {
+        "title": "Marquer le paiement reçu",
+        "forInvoice": "Pour la facture",
+        "manualPaymentHelp": "Paiement manuel/hors plateforme : enregistrez les détails du paiement reçu ci-dessous.",
+        "reference": "Référence de paiement (optionnel)",
+        "date": "Date de paiement",
+        "notes": "Notes (optionnel)",
+        "autoActivate": "Activer automatiquement l'abonnement",
+        "confirm": "Marquer reçu"
+      },
+      "declineModal": {
+        "title": "Refuser la demande",
+        "warning": "Vous êtes sur le point de refuser la demande d'abonnement de",
+        "reason": "Motif du refus",
+        "notes": "Notes internes (optionnel)",
+        "sendEmailNotification": "Envoyer une notification par email au client",
+        "decline": "Refuser la demande"
+      }
+    },
+    "cancellations": {
+      "noRequests": "Aucune demande d'annulation trouvée",
+      "filter": {
+        "allStatuses": "Tous les statuts"
+      },
+      "table": {
+        "subscriber": "Abonné",
+        "plan": "Forfait",
+        "status": "Statut",
+        "requestedAt": "Demandée",
+        "reason": "Motif",
+        "actions": "Actions"
+      },
+      "actions": {
+        "approve": "Approuver",
+        "decline": "Refuser"
+      },
+      "status": {
+        "pending": "En attente",
+        "approved": "Approuvée",
+        "declined": "Refusée",
+        "cancelled": "Annulée"
+      }
     },
     "pagination": {
       "showing": "Affichage de {{from}} à {{to}} sur {{total}}",

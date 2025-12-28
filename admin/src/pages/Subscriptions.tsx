@@ -1339,7 +1339,7 @@ const ConfirmPaymentModal: React.FC<ConfirmPaymentModalProps> = ({
       <div className="bg-white rounded-lg p-6 w-full max-w-md">
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-lg font-semibold">
-            {t('admin:subscriptions.requests.paymentModal.title', 'Confirm Payment')}
+            {t('admin:subscriptions.requests.paymentModal.title', 'Mark Payment Received')}
           </h3>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <X className="w-5 h-5" />
@@ -1348,18 +1348,29 @@ const ConfirmPaymentModal: React.FC<ConfirmPaymentModalProps> = ({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="p-3 bg-teal-50 rounded-lg text-sm">
-            <p className="text-teal-600">
-              {t('admin:subscriptions.requests.paymentModal.forInvoice', 'For Invoice')}:
-            </p>
-            <p className="font-medium text-teal-900">{request.invoiceNumber}</p>
-            <p className="text-teal-700">
-              {request.invoiceAmount
-                ? new Intl.NumberFormat('de-CH', {
-                    style: 'currency',
-                    currency: request.invoiceCurrency || 'CHF',
-                  }).format(request.invoiceAmount)
-                : '-'}
-            </p>
+            {request.invoiceNumber ? (
+              <>
+                <p className="text-teal-600">
+                  {t('admin:subscriptions.requests.paymentModal.forInvoice', 'For Invoice')}:
+                </p>
+                <p className="font-medium text-teal-900">{request.invoiceNumber}</p>
+                <p className="text-teal-700">
+                  {request.invoiceAmount
+                    ? new Intl.NumberFormat('de-CH', {
+                        style: 'currency',
+                        currency: request.invoiceCurrency || 'CHF',
+                      }).format(request.invoiceAmount)
+                    : '-'}
+                </p>
+              </>
+            ) : (
+              <p className="text-teal-700">
+                {t(
+                  'admin:subscriptions.requests.paymentModal.manualPaymentHelp',
+                  'Manual/off-platform payment: record the received payment details below.',
+                )}
+              </p>
+            )}
           </div>
 
           <div>
@@ -1421,7 +1432,7 @@ const ConfirmPaymentModal: React.FC<ConfirmPaymentModalProps> = ({
               className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:opacity-50"
             >
               <CheckCircle className="w-4 h-4" />
-              {isLoading ? t('common:confirming', 'Confirming...') : t('admin:subscriptions.requests.paymentModal.confirm', 'Confirm Payment')}
+              {isLoading ? t('common:saving', 'Saving...') : t('admin:subscriptions.requests.paymentModal.confirm', 'Mark Received')}
             </button>
           </div>
         </form>
@@ -2157,6 +2168,10 @@ const Subscriptions: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subscriptions'] });
       queryClient.invalidateQueries({ queryKey: ['subscription-analytics'] });
+      // If an admin activated a subscription, the backend now auto-updates the related request status.
+      // Refresh request lists so requests don't appear stuck in UNDER_REVIEW.
+      queryClient.invalidateQueries({ queryKey: ['subscription-requests'] });
+      queryClient.invalidateQueries({ queryKey: ['subscription-request-analytics'] });
       setIsEditModalOpen(false);
       setSelectedUser(null);
       setSelectedUserSubscription(null);
@@ -3414,11 +3429,25 @@ const Subscriptions: React.FC = () => {
                     className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
                   >
                     <DollarSign className="w-4 h-4" />
-                    {t('admin:subscriptions.requests.actions.confirmPayment', 'Confirm Payment')}
+                    {t('admin:subscriptions.requests.actions.confirmPayment', 'Mark Payment Received')}
                   </button>
                 )}
 
-                {selectedRequest.status === SubscriptionRequestStatus.PAYMENT_RECEIVED && (
+                {(selectedRequest.status === SubscriptionRequestStatus.PENDING ||
+                  selectedRequest.status === SubscriptionRequestStatus.UNDER_REVIEW) && (
+                  <button
+                    onClick={() => setIsPaymentModalOpen(true)}
+                    className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
+                  >
+                    <DollarSign className="w-4 h-4" />
+                    {t('admin:subscriptions.requests.actions.markPaymentReceived', 'Mark Payment Received')}
+                  </button>
+                )}
+
+                {(selectedRequest.status === SubscriptionRequestStatus.PAYMENT_RECEIVED ||
+                  selectedRequest.status === SubscriptionRequestStatus.PENDING ||
+                  selectedRequest.status === SubscriptionRequestStatus.UNDER_REVIEW ||
+                  selectedRequest.status === SubscriptionRequestStatus.INVOICE_SENT) && (
                   <button
                     onClick={() => {
                       activateRequestMutation.mutate({
