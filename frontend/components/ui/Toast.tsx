@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { CheckCircleIcon, XCircleIcon, ExclamationTriangleIcon, InformationCircleIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
@@ -56,12 +56,19 @@ export const Toast: React.FC<ToastProps> = ({
   const Icon = iconMap[type];
   const colors = colorMap[type];
 
+  const handleDismiss = useCallback(() => {
+    setIsLeaving(true);
+    setTimeout(() => {
+      onDismiss(id);
+    }, 300); // Match animation duration
+  }, [id, onDismiss]);
+
   useEffect(() => {
     // Trigger enter animation
     const enterTimer = setTimeout(() => setIsVisible(true), 10);
 
     // Auto-dismiss after duration
-    let dismissTimer: NodeJS.Timeout;
+    let dismissTimer: ReturnType<typeof setTimeout> | undefined;
     if (duration > 0) {
       dismissTimer = setTimeout(() => {
         handleDismiss();
@@ -72,14 +79,7 @@ export const Toast: React.FC<ToastProps> = ({
       clearTimeout(enterTimer);
       if (dismissTimer) clearTimeout(dismissTimer);
     };
-  }, [duration]);
-
-  const handleDismiss = () => {
-    setIsLeaving(true);
-    setTimeout(() => {
-      onDismiss(id);
-    }, 300); // Match animation duration
-  };
+  }, [duration, handleDismiss]);
 
   return (
     <div

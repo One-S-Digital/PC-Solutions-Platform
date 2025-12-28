@@ -10,16 +10,16 @@ import {
 } from 'class-validator';
 
 export class UpdateParentSettingsDto {
-  @IsString()
   @IsOptional()
+  @IsString()
   firstName?: string;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   lastName?: string;
 
-  @IsEmail()
   @IsOptional()
+  @IsEmail()
   email?: string;
 
   // Separate from authentication email: used for "contact info" on the profile.
@@ -27,30 +27,30 @@ export class UpdateParentSettingsDto {
   @IsEmail()
   contactEmail?: string;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   phoneNumber?: string;
 
+  @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(0)
-  @IsOptional()
   childAge?: number;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   preferredLocation?: string;
 
+  @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  @IsOptional()
   preferredLanguages?: string[];
 
-  @IsString()
   @IsOptional()
+  @IsString()
   specialRequirements?: string;
 
-  @IsUUID()
   @IsOptional()
+  @IsUUID()
   avatarAssetId?: string;
 }

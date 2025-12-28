@@ -10,68 +10,68 @@ import {
 } from 'class-validator';
 
 export class UpdateFoundationSettingsDto {
-  @IsString()
   @IsOptional()
+  @IsString()
   companyName?: string;
 
-  @IsEmail()
   @IsOptional()
+  @IsEmail()
   contactEmail?: string;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   phoneNumber?: string;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   contactPerson?: string;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   address?: string;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   canton?: string;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   city?: string;
 
+  @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  @IsOptional()
   regionsServed?: string[];
 
-  @IsString()
   @IsOptional()
+  @IsString()
   description?: string;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   vatNumber?: string;
 
+  @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  @IsOptional()
   languages?: string[];
 
+  @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(0)
-  @IsOptional()
   capacity?: number;
 
+  @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  @IsOptional()
   pedagogy?: string[];
 
-  @IsUUID()
   @IsOptional()
+  @IsUUID()
   logoAssetId?: string;
 
-  @IsUUID()
   @IsOptional()
+  @IsUUID()
   coverAssetId?: string;
 }
