@@ -1070,6 +1070,13 @@
     "title": "Benutzerverwaltung",
     "subtitle": "Alle Benutzer auf der Plattform verwalten",
     "addUser": "Benutzer hinzufügen",
+    "pagination": {
+      "rowsPerPage": "Zeilen pro Seite",
+      "showing": "Zeige {{from}} bis {{to}} von {{total}}",
+      "previous": "Zurück",
+      "next": "Weiter",
+      "pageOf": "Seite {{page}} von {{totalPages}}"
+    },
     "editUser": {
       "title": "Benutzer bearbeiten",
       "firstName": "Vorname",

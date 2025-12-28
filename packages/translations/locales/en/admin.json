@@ -1044,6 +1044,13 @@
     "title": "Users Management",
     "subtitle": "Manage all users across the platform",
     "addUser": "Add User",
+    "pagination": {
+      "rowsPerPage": "Rows per page",
+      "showing": "Showing {{from}}-{{to}} of {{total}}",
+      "previous": "Previous",
+      "next": "Next",
+      "pageOf": "Page {{page}} of {{totalPages}}"
+    },
     "editUser": {
       "title": "Edit User",
       "firstName": "First Name",

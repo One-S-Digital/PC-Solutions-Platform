@@ -1070,6 +1070,13 @@
     "title": "Gestion des utilisateurs",
     "subtitle": "Gérer tous les utilisateurs de la plateforme",
     "addUser": "Ajouter un utilisateur",
+    "pagination": {
+      "rowsPerPage": "Lignes par page",
+      "showing": "Affichage de {{from}} à {{to}} sur {{total}}",
+      "previous": "Précédent",
+      "next": "Suivant",
+      "pageOf": "Page {{page}} sur {{totalPages}}"
+    },
     "editUser": {
       "title": "Modifier l'utilisateur",
       "firstName": "Prénom",
