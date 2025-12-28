@@ -764,6 +764,7 @@
     },
     "labels": {
       "address": "Localisation",
+      "regionsServed": "Regions served",
       "contactEmail": "Courriel de contact",
       "contactPerson": "Personne de contact",
       "createdAt": "Créé",
@@ -778,6 +779,10 @@
     "sections": {
       "contact": {
         "title": "Informations de contact"
+      },
+      "summary": {
+        "subtitle": "This overview reflects the latest saved capacity, pedagogy, and language details.",
+        "title": "Organization profile summary"
       },
       "metadata": {
         "title": "Métadonnées de l'organisation"

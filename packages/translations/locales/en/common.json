@@ -803,6 +803,7 @@
     },
     "labels": {
       "address": "Location",
+      "regionsServed": "Regions served",
       "contactEmail": "Contact Email",
       "contactPerson": "Contact Person",
       "createdAt": "Created",
@@ -817,6 +818,10 @@
     "sections": {
       "contact": {
         "title": "Contact Information"
+      },
+      "summary": {
+        "subtitle": "This overview reflects the latest saved capacity, pedagogy, and language details.",
+        "title": "Organization profile summary"
       },
       "metadata": {
         "title": "Organization Metadata"
