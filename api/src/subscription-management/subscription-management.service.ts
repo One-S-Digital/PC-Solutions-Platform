@@ -128,8 +128,6 @@ export interface SubscriptionAnalytics {
 
 @Injectable()
 export class SubscriptionManagementService {
-  private readonly subscriptionsDebugEnabled =
-    process.env.SUBSCRIPTIONS_DEBUG === 'true' && process.env.NODE_ENV !== 'production';
   constructor(
     private prisma: PrismaService,
     private readonly logger: AppLoggerService,
@@ -1672,12 +1670,6 @@ export class SubscriptionManagementService {
 
   async getUserSubscription(userId: string): Promise<Subscription | null> {
     try {
-      // Optional debug visibility (avoid logging full rows / identifiers in production).
-      if (this.subscriptionsDebugEnabled) {
-        const count = await this.prisma.subscription.count({ where: { userId } });
-        this.logger.debug(`[SUBSCRIPTIONS_DEBUG] userId=${userId} subscriptionCount=${count}`);
-      }
-
       const subscription = await this.prisma.subscription.findFirst({
         where: { 
           userId,
@@ -1700,13 +1692,6 @@ export class SubscriptionManagementService {
 
   async getOrganizationSubscription(organizationId: string): Promise<Subscription | null> {
     try {
-      if (this.subscriptionsDebugEnabled) {
-        const count = await this.prisma.subscription.count({ where: { organizationId } });
-        this.logger.debug(
-          `[SUBSCRIPTIONS_DEBUG] organizationId=${organizationId} subscriptionCount=${count}`,
-        );
-      }
-
       const subscription = await this.prisma.subscription.findFirst({
         where: { 
           organizationId,
@@ -1748,12 +1733,6 @@ export class SubscriptionManagementService {
   ): Promise<Subscription | null> {
     try {
       let subscription: Subscription | null = null;
-
-      if (this.subscriptionsDebugEnabled) {
-        this.logger.debug(
-          `[SUBSCRIPTIONS_DEBUG] lookup userId=${userId ?? 'n/a'} organizationId=${organizationId ?? 'n/a'}`,
-        );
-      }
 
       // If we have organizationId, check organization subscription FIRST
       // (business subscriptions are organization-based)

@@ -337,34 +337,11 @@ export const SubscriptionProvider: React.FC<{ children: ReactNode }> = ({ childr
     setError(null);
 
     try {
-      // Avoid verbose logging in production (PII/IDs).
-      if (import.meta.env.DEV && import.meta.env.VITE_SUBSCRIPTIONS_DEBUG === 'true') {
-        // eslint-disable-next-line no-console
-        console.log('[SUBSCRIPTIONS_DEBUG] Fetching subscription', {
-          role: currentUser?.role,
-          requiresSubscription,
-        });
-      }
-
       const response = await authenticatedRequest<UserSubscriptionData>('/subscriptions/me');
-
-      if (import.meta.env.DEV && import.meta.env.VITE_SUBSCRIPTIONS_DEBUG === 'true') {
-        // eslint-disable-next-line no-console
-        console.log('[SUBSCRIPTIONS_DEBUG] Subscription response', {
-          success: response.success,
-          hasActiveSubscription: response.data?.hasActiveSubscription,
-          status: response.data?.status,
-          planName: response.data?.plan?.name,
-        });
-      }
 
       if (response.success && response.data) {
         setSubscriptionData(response.data);
       } else {
-        if (import.meta.env.DEV && import.meta.env.VITE_SUBSCRIPTIONS_DEBUG === 'true') {
-          // eslint-disable-next-line no-console
-          console.log('[SUBSCRIPTIONS_DEBUG] No subscription found - defaults');
-        }
         // No subscription found - user needs to subscribe
         setSubscriptionData({
           hasActiveSubscription: false,
@@ -494,15 +471,6 @@ export const SubscriptionProvider: React.FC<{ children: ReactNode }> = ({ childr
    */
   const requestSubscription = useCallback(
     async (payload: SubscriptionRequestPayload): Promise<SubscriptionRequestResponse> => {
-      if (import.meta.env.DEV && import.meta.env.VITE_SUBSCRIPTIONS_DEBUG === 'true') {
-        // eslint-disable-next-line no-console
-        console.log('[SUBSCRIPTIONS_DEBUG] Submitting subscription request', {
-          planId: payload.planId,
-          tier: payload.tier,
-          billingPeriod: payload.billingPeriod,
-        });
-      }
-
       const response = await authenticatedRequest<SubscriptionRequestResponse>(
         '/subscriptions/request',
         {
@@ -514,11 +482,6 @@ export const SubscriptionProvider: React.FC<{ children: ReactNode }> = ({ childr
       if (!response.success || !response.data) {
         console.error('❌ Subscription request failed:', response);
         throw new Error(response.message || t('subscription:errors.requestFailed'));
-      }
-
-      if (import.meta.env.DEV && import.meta.env.VITE_SUBSCRIPTIONS_DEBUG === 'true') {
-        // eslint-disable-next-line no-console
-        console.log('[SUBSCRIPTIONS_DEBUG] Subscription request successful');
       }
 
       // Refresh subscription data after request
