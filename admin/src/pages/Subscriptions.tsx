@@ -2065,6 +2065,10 @@ const Subscriptions: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subscriptions'] });
       queryClient.invalidateQueries({ queryKey: ['subscription-analytics'] });
+      // If an admin activated a subscription, the backend now auto-updates the related request status.
+      // Refresh request lists so requests don't appear stuck in UNDER_REVIEW.
+      queryClient.invalidateQueries({ queryKey: ['subscription-requests'] });
+      queryClient.invalidateQueries({ queryKey: ['subscription-request-analytics'] });
       setIsEditModalOpen(false);
       setSelectedUser(null);
       setSelectedUserSubscription(null);
@@ -3295,7 +3299,10 @@ const Subscriptions: React.FC = () => {
                   </button>
                 )}
 
-                {selectedRequest.status === SubscriptionRequestStatus.PAYMENT_RECEIVED && (
+                {(selectedRequest.status === SubscriptionRequestStatus.PAYMENT_RECEIVED ||
+                  selectedRequest.status === SubscriptionRequestStatus.PENDING ||
+                  selectedRequest.status === SubscriptionRequestStatus.UNDER_REVIEW ||
+                  selectedRequest.status === SubscriptionRequestStatus.INVOICE_SENT) && (
                   <button
                     onClick={() => {
                       activateRequestMutation.mutate({
