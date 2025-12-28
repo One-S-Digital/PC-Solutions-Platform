@@ -113,6 +113,7 @@ interface EditSubscriptionModalProps {
   plans: SubscriptionPlan[];
   availableTiers?: SubscriptionTier[];
   onSave: (data: { status: SubscriptionStatus; planId?: string; tier?: SubscriptionTier; durationMonths?: number; notes?: string }) => Promise<void>;
+  onDelete?: () => void;
   isLoading: boolean;
 }
 
@@ -124,6 +125,7 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
   plans,
   availableTiers,
   onSave,
+  onDelete,
   isLoading,
 }) => {
   const { t } = useTranslation(['admin', 'common']);
@@ -411,22 +413,42 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
           )}
 
           {/* Actions */}
-          <div className="flex justify-end gap-3 pt-4 border-t">
-            <button
-              type="button"
-              onClick={onClose}
-              disabled={isLoading}
-              className="px-4 py-2 text-gray-600 hover:text-gray-900"
-            >
-              {t('common:cancel', 'Cancel')}
-            </button>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
-            >
-              {isLoading ? t('admin:subscriptions.editSubscription.saving', 'Saving...') : t('admin:subscriptions.editSubscription.save', 'Save Changes')}
-            </button>
+          <div className="flex justify-between items-center gap-3 pt-4 border-t">
+            <div>
+              {subscription && onDelete && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (confirm(t('admin:subscriptions.confirmDeleteModal', 'Are you sure you want to permanently delete this subscription? This action cannot be undone.'))) {
+                      onDelete();
+                      onClose();
+                    }
+                  }}
+                  disabled={isLoading}
+                  className="flex items-center gap-2 px-4 py-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  {t('admin:subscriptions.deleteSubscription', 'Delete Subscription')}
+                </button>
+              )}
+            </div>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={onClose}
+                disabled={isLoading}
+                className="px-4 py-2 text-gray-600 hover:text-gray-900"
+              >
+                {t('common:cancel', 'Cancel')}
+              </button>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              >
+                {isLoading ? t('admin:subscriptions.editSubscription.saving', 'Saving...') : t('admin:subscriptions.editSubscription.save', 'Save Changes')}
+              </button>
+            </div>
           </div>
         </form>
       </div>
@@ -2076,6 +2098,24 @@ const Subscriptions: React.FC = () => {
     },
   });
 
+  const deleteSubscriptionMutation = useMutation({
+    mutationFn: async (subscriptionId: string) => {
+      return subscriptionService.deleteSubscription(apiClient, subscriptionId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['subscriptions'] });
+      queryClient.invalidateQueries({ queryKey: ['subscription-analytics'] });
+      toast.success(t('admin:subscriptions.deleteSuccess', 'Subscription deleted successfully'));
+      setIsEditModalOpen(false);
+      setSelectedUser(null);
+      setSelectedUserSubscription(null);
+    },
+    onError: (error: Error) => {
+      console.error('Failed to delete subscription:', error);
+      toast.error(t('admin:subscriptions.deleteError', 'Failed to delete subscription: ') + error.message);
+    },
+  });
+
   const updatePlanMutation = useMutation({
     mutationFn: async ({ planId, billingPeriod }: { planId: string; billingPeriod: string }) => {
       return subscriptionService.updatePlan(apiClient, planId, { billingPeriod });
@@ -3054,16 +3094,71 @@ const Subscriptions: React.FC = () => {
                             {subscription?.plan?.name || '-'}
                           </td>
                           <td className="px-4 py-4">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleEditUser(user);
-                              }}
-                              className="flex items-center gap-1 px-3 py-1.5 text-sm bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
-                            >
-                              <Edit className="w-4 h-4" />
-                              {t('admin:subscriptions.editSubscription.edit', 'Edit')}
-                            </button>
+                            <div className="flex items-center gap-2">
+                              {!subscription ? (
+                                // No subscription - show "Add Subscription" button
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleEditUser(user);
+                                  }}
+                                  className="flex items-center gap-1 px-3 py-1.5 text-sm bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors"
+                                >
+                                  <Plus className="w-4 h-4" />
+                                  {t('admin:subscriptions.addSubscription', 'Add Subscription')}
+                                </button>
+                              ) : (
+                                // Has subscription - show Edit and Cancel/Delete buttons
+                                <>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleEditUser(user);
+                                    }}
+                                    className="flex items-center gap-1 px-3 py-1.5 text-sm bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
+                                  >
+                                    <Edit className="w-4 h-4" />
+                                    {t('admin:subscriptions.editSubscription.edit', 'Edit')}
+                                  </button>
+                                  {subscription.status === SubscriptionStatus.ACTIVE || subscription.status === SubscriptionStatus.TRIAL ? (
+                                    // Active/Trial subscription - show Cancel button
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        if (confirm(t('admin:subscriptions.confirmCancel', 'Are you sure you want to cancel this subscription? It will be cancelled immediately.'))) {
+                                          updateSubscriptionMutation.mutate({
+                                            userId: user.id,
+                                            data: {
+                                              status: SubscriptionStatus.CANCELLED,
+                                            },
+                                          });
+                                        }
+                                      }}
+                                      disabled={updateSubscriptionMutation.isPending}
+                                      className="flex items-center gap-1 px-3 py-1.5 text-sm bg-orange-50 text-orange-600 rounded-lg hover:bg-orange-100 transition-colors disabled:opacity-50"
+                                    >
+                                      <X className="w-4 h-4" />
+                                      {t('admin:subscriptions.cancel', 'Cancel')}
+                                    </button>
+                                  ) : (
+                                    // Cancelled/Inactive subscription - show Delete button
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        if (confirm(t('admin:subscriptions.confirmDelete', 'Are you sure you want to permanently delete this subscription? This action cannot be undone.'))) {
+                                          deleteSubscriptionMutation.mutate(subscription.id);
+                                        }
+                                      }}
+                                      disabled={deleteSubscriptionMutation.isPending}
+                                      className="flex items-center gap-1 px-3 py-1.5 text-sm bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50"
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                      {t('admin:subscriptions.delete', 'Delete')}
+                                    </button>
+                                  )}
+                                </>
+                              )}
+                            </div>
                           </td>
                         </tr>
                       );
@@ -3397,7 +3492,8 @@ const Subscriptions: React.FC = () => {
         plans={plans}
         availableTiers={selectedRole === UserRole.FOUNDATION ? foundationAvailableTiers : undefined}
         onSave={handleSaveSubscription}
-        isLoading={updateSubscriptionMutation.isPending}
+        onDelete={selectedUserSubscription ? () => deleteSubscriptionMutation.mutate(selectedUserSubscription.id) : undefined}
+        isLoading={updateSubscriptionMutation.isPending || deleteSubscriptionMutation.isPending}
       />
 
       {/* Subscription Plan Editor Modal */}
