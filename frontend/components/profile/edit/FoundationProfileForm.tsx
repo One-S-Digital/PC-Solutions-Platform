@@ -1,6 +1,6 @@
 import React from 'react';
 import { SettingsFormData, SwissCanton, SupportedLanguage } from '../../../types';
-import { STANDARD_INPUT_FIELD, SWISS_CANTONS } from '../../../constants';
+import { PEDAGOGY_OPTIONS, STANDARD_INPUT_FIELD, SWISS_CANTONS } from '../../../constants';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
 import CoverImageSection from './shared/CoverImageSection';
@@ -16,18 +16,6 @@ const SUPPORTED_LANGUAGES_OPTIONS_BASE: { labelKey: string, value: SupportedLang
   { labelKey: 'common:languageSwitcher.en', value: 'EN'},
   { labelKey: 'common:languageSwitcher.fr', value: 'FR'},
   { labelKey: 'common:languageSwitcher.de', value: 'DE'},
-];
-
-const PEDAGOGY_OPTIONS = [
-  'Montessori',
-  'Reggio Emilia',
-  'Waldorf',
-  'Play-based',
-  'Academic-focused',
-  'Bilingual',
-  'Nature-based',
-  'Inclusive',
-  'Other'
 ];
 
 interface FoundationProfileFormProps {
@@ -261,16 +249,16 @@ const FoundationProfileForm: React.FC<FoundationProfileFormProps> = ({ formData,
             <div className="flex flex-wrap gap-2">
               {PEDAGOGY_OPTIONS.map(option => (
                 <button
-                  key={option}
+                  key={option.value}
                   type="button"
-                  onClick={() => handleMultiSelectChange('pedagogy', option)}
+                  onClick={() => handleMultiSelectChange('pedagogy', option.value)}
                   className={`px-3 py-1.5 text-sm font-medium rounded-full border transition-colors duration-150 ${
-                    (formData.pedagogy || []).includes(option)
+                    (formData.pedagogy || []).includes(option.value)
                       ? 'bg-swiss-mint text-white border-swiss-mint'
                       : 'bg-white text-gray-700 border-gray-300 hover:border-swiss-teal'
                   }`}
                 >
-                  {option}
+                  {t(`settings:companyProfile.pedagogyOptions.${option.key}`)}
                 </button>
               ))}
             </div>
