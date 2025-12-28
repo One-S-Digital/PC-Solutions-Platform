@@ -538,7 +538,10 @@ const Users: React.FC = () => {
       const displayName = `${firstName || ''} ${lastName || ''}`.trim() || email || u?.name || ''
 
       return {
-        id: u.id,
+        // IMPORTANT:
+        // - `id` is used by Users page mutations (/users/:id) which expect AppUser.id
+        // - `profileId` is the DB User.id (profile UUID) used by subscriptions and profile linkage
+        id: u.appUserId || u.id,
         profileId: u.id,
         clerkId: u.clerkId,
         name: displayName,

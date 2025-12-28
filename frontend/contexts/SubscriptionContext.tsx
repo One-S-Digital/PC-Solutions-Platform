@@ -337,27 +337,34 @@ export const SubscriptionProvider: React.FC<{ children: ReactNode }> = ({ childr
     setError(null);
 
     try {
-      console.log('📋 [Frontend] Fetching subscription for user:', {
-        userId: currentUser?.id,
-        role: currentUser?.role,
-        requiresSubscription,
-      });
+      // Avoid verbose logging in production (PII/IDs).
+      if (import.meta.env.DEV && import.meta.env.VITE_SUBSCRIPTIONS_DEBUG === 'true') {
+        // eslint-disable-next-line no-console
+        console.log('[SUBSCRIPTIONS_DEBUG] Fetching subscription', {
+          role: currentUser?.role,
+          requiresSubscription,
+        });
+      }
 
       const response = await authenticatedRequest<UserSubscriptionData>('/subscriptions/me');
 
-      console.log('📋 [Frontend] Subscription response:', {
-        success: response.success,
-        hasActiveSubscription: response.data?.hasActiveSubscription,
-        status: response.data?.status,
-        subscriptionId: response.data?.subscription?.id,
-        planName: response.data?.plan?.name,
-        features: response.data?.features,
-      });
+      if (import.meta.env.DEV && import.meta.env.VITE_SUBSCRIPTIONS_DEBUG === 'true') {
+        // eslint-disable-next-line no-console
+        console.log('[SUBSCRIPTIONS_DEBUG] Subscription response', {
+          success: response.success,
+          hasActiveSubscription: response.data?.hasActiveSubscription,
+          status: response.data?.status,
+          planName: response.data?.plan?.name,
+        });
+      }
 
       if (response.success && response.data) {
         setSubscriptionData(response.data);
       } else {
-        console.log('📋 [Frontend] No subscription found - setting defaults');
+        if (import.meta.env.DEV && import.meta.env.VITE_SUBSCRIPTIONS_DEBUG === 'true') {
+          // eslint-disable-next-line no-console
+          console.log('[SUBSCRIPTIONS_DEBUG] No subscription found - defaults');
+        }
         // No subscription found - user needs to subscribe
         setSubscriptionData({
           hasActiveSubscription: false,
@@ -487,12 +494,14 @@ export const SubscriptionProvider: React.FC<{ children: ReactNode }> = ({ childr
    */
   const requestSubscription = useCallback(
     async (payload: SubscriptionRequestPayload): Promise<SubscriptionRequestResponse> => {
-      console.log('📋 Submitting subscription request:', {
-        planId: payload.planId,
-        tier: payload.tier,
-        billingPeriod: payload.billingPeriod,
-        contactEmail: payload.contactEmail,
-      });
+      if (import.meta.env.DEV && import.meta.env.VITE_SUBSCRIPTIONS_DEBUG === 'true') {
+        // eslint-disable-next-line no-console
+        console.log('[SUBSCRIPTIONS_DEBUG] Submitting subscription request', {
+          planId: payload.planId,
+          tier: payload.tier,
+          billingPeriod: payload.billingPeriod,
+        });
+      }
 
       const response = await authenticatedRequest<SubscriptionRequestResponse>(
         '/subscriptions/request',
@@ -507,7 +516,10 @@ export const SubscriptionProvider: React.FC<{ children: ReactNode }> = ({ childr
         throw new Error(response.message || t('subscription:errors.requestFailed'));
       }
 
-      console.log('✅ Subscription request successful:', response.data);
+      if (import.meta.env.DEV && import.meta.env.VITE_SUBSCRIPTIONS_DEBUG === 'true') {
+        // eslint-disable-next-line no-console
+        console.log('[SUBSCRIPTIONS_DEBUG] Subscription request successful');
+      }
 
       // Refresh subscription data after request
       await fetchSubscription();

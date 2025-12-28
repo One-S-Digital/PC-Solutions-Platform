@@ -100,8 +100,21 @@ export class UserManagementService {
       this.prisma.user.count({ where }),
     ]);
 
+    // Enrich DB users with their AppUser id for admin UI mutations (/users/:id expects AppUser.id)
+    const clerkIds = users.map((u) => u.clerkId).filter(Boolean);
+    const appUsers = await this.prisma.appUser.findMany({
+      where: { clerkId: { in: clerkIds } },
+      select: { id: true, clerkId: true },
+    });
+    const appUserIdByClerkId = new Map(appUsers.map((u) => [u.clerkId, u.id]));
+
+    const enrichedUsers = users.map((u) => ({
+      ...u,
+      appUserId: appUserIdByClerkId.get(u.clerkId) || null,
+    }));
+
     return {
-      users,
+      users: enrichedUsers,
       total,
       page,
       limit,
