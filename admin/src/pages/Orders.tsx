@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import {
   ShoppingCart,
@@ -23,6 +23,8 @@ import { useTranslation } from 'react-i18next';
 const Orders: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('')
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState<25 | 50 | 100>(25)
   const apiClient = useApiClient()
   const { t } = useTranslation(['common', 'admin']);
 
@@ -44,16 +46,38 @@ const Orders: React.FC = () => {
     return { ...order, itemCount, itemsPreview }
   })
 
-  const filteredOrders = orders.filter((order: Order) => {
-    const search = searchQuery.toLowerCase()
-    const matchesSearch =
-      order.id?.toLowerCase()?.includes(search) ||
-      order.supplierName?.toLowerCase()?.includes(search) ||
-      order.foundation?.name?.toLowerCase()?.includes(search) ||
-      order.foundationOrg?.name?.toLowerCase()?.includes(search)
-    const matchesStatus = !selectedStatus || order.status === selectedStatus
-    return matchesSearch && matchesStatus
-  })
+  const filteredOrders = useMemo(() => {
+    return orders.filter((order: Order) => {
+      const search = searchQuery.toLowerCase()
+      const matchesSearch =
+        order.id?.toLowerCase()?.includes(search) ||
+        order.supplierName?.toLowerCase()?.includes(search) ||
+        order.foundation?.name?.toLowerCase()?.includes(search) ||
+        order.foundationOrg?.name?.toLowerCase()?.includes(search)
+      const matchesStatus = !selectedStatus || order.status === selectedStatus
+      return matchesSearch && matchesStatus
+    })
+  }, [orders, searchQuery, selectedStatus])
+
+  const totalOrders = filteredOrders.length
+  const totalPages = Math.max(1, Math.ceil(totalOrders / pageSize))
+  const showingFrom = totalOrders === 0 ? 0 : (page - 1) * pageSize + 1
+  const showingTo = totalOrders === 0 ? 0 : Math.min(page * pageSize, totalOrders)
+  const canGoPrev = page > 1
+  const canGoNext = page < totalPages
+
+  const paginatedOrders = useMemo(() => {
+    const start = (page - 1) * pageSize
+    return filteredOrders.slice(start, start + pageSize)
+  }, [filteredOrders, page, pageSize])
+
+  useEffect(() => {
+    setPage(1)
+  }, [searchQuery, selectedStatus, pageSize])
+
+  useEffect(() => {
+    setPage((prev) => Math.min(prev, totalPages))
+  }, [totalPages])
 
   const statusColors: Record<string, string> = {
     Submitted: 'bg-swiss-coral/20 text-swiss-coral',
@@ -134,6 +158,17 @@ const Orders: React.FC = () => {
               <option value="Declined">{t('common:declined')}</option>
             </select>
           </div>
+          <div className="sm:w-48">
+            <select
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-mint focus:border-transparent"
+              value={pageSize}
+              onChange={(e) => setPageSize(Number(e.target.value) as 25 | 50 | 100)}
+            >
+              <option value={25}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 25</option>
+              <option value={50}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 50</option>
+              <option value={100}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 100</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -167,7 +202,7 @@ const Orders: React.FC = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredOrders.map((order) => (
+              {paginatedOrders.map((order) => (
                 <tr key={order.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
@@ -267,6 +302,37 @@ const Orders: React.FC = () => {
             <p className="text-gray-600">{t('admin:orders.emptyState.description', 'Try adjusting your search criteria or create a new order.')}</p>
           </div>
         )}
+      </div>
+
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="text-sm text-gray-600">
+          {t(
+            'admin:users.pagination.showing',
+            'Showing {{from}}-{{to}} of {{total}}',
+            { from: showingFrom, to: showingTo, total: totalOrders },
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            className="px-3 py-2 text-sm rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!canGoPrev}
+            onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+          >
+            {t('admin:users.pagination.previous', 'Previous')}
+          </button>
+          <span className="text-sm text-gray-600 px-2">
+            {t('admin:users.pagination.pageOf', 'Page {{page}} of {{totalPages}}', { page, totalPages })}
+          </span>
+          <button
+            type="button"
+            className="px-3 py-2 text-sm rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!canGoNext}
+            onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+          >
+            {t('admin:users.pagination.next', 'Next')}
+          </button>
+        </div>
       </div>
     </div>
   )

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment, useRef } from 'react'
+import React, { useState, useEffect, Fragment, useMemo, useRef } from 'react'
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import { 
   Building2, 
@@ -693,6 +693,8 @@ const Organizations: React.FC = () => {
   const { t } = useTranslation(['admin', 'common'])
   const [searchQuery, setSearchQuery] = useState('')
   const [activeTab, setActiveTab] = useState<TabType>('foundations')
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState<25 | 50 | 100>(25)
   
   // Modal states
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
@@ -769,18 +771,40 @@ const Organizations: React.FC = () => {
   })
 
   // Filter organizations by type and search
-  const filteredOrgs = (Array.isArray(organizations) ? organizations : []).filter((org) => {
-    const matchesSearch = 
-      org.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (org.address && org.address.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (org.region && org.region.toLowerCase().includes(searchQuery.toLowerCase()))
-    
-    if (activeTab === 'foundations') {
-      return matchesSearch && org.type === 'FOUNDATION'
-    } else {
-      return matchesSearch && (org.type === 'SERVICE_PROVIDER' || org.type === 'PRODUCT_SUPPLIER')
-    }
-  })
+  const filteredOrgs = useMemo(() => {
+    return (Array.isArray(organizations) ? organizations : []).filter((org) => {
+      const matchesSearch = 
+        org.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (org.address && org.address.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (org.region && org.region.toLowerCase().includes(searchQuery.toLowerCase()))
+      
+      if (activeTab === 'foundations') {
+        return matchesSearch && org.type === 'FOUNDATION'
+      } else {
+        return matchesSearch && (org.type === 'SERVICE_PROVIDER' || org.type === 'PRODUCT_SUPPLIER')
+      }
+    })
+  }, [organizations, searchQuery, activeTab])
+
+  const totalOrgs = filteredOrgs.length
+  const totalPages = Math.max(1, Math.ceil(totalOrgs / pageSize))
+  const showingFrom = totalOrgs === 0 ? 0 : (page - 1) * pageSize + 1
+  const showingTo = totalOrgs === 0 ? 0 : Math.min(page * pageSize, totalOrgs)
+  const canGoPrev = page > 1
+  const canGoNext = page < totalPages
+
+  const paginatedOrgs = useMemo(() => {
+    const start = (page - 1) * pageSize
+    return filteredOrgs.slice(start, start + pageSize)
+  }, [filteredOrgs, page, pageSize])
+
+  useEffect(() => {
+    setPage(1)
+  }, [searchQuery, activeTab, pageSize])
+
+  useEffect(() => {
+    setPage((prev) => Math.min(prev, totalPages))
+  }, [totalPages])
 
   const foundationsCount = (Array.isArray(organizations) ? organizations : []).filter(o => o.type === 'FOUNDATION').length
   const organisationsCount = (Array.isArray(organizations) ? organizations : []).filter(o => o.type === 'SERVICE_PROVIDER' || o.type === 'PRODUCT_SUPPLIER').length
@@ -925,21 +949,34 @@ const Organizations: React.FC = () => {
 
       {/* Search */}
       <Card className="p-4">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder={t('admin:organizations.searchPlaceholder', `Search ${activeTab === 'foundations' ? 'foundations' : 'organisations'} by name, address, or region...`)}
-            className={`${STANDARD_INPUT_FIELD} pl-10`}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder={t('admin:organizations.searchPlaceholder', `Search ${activeTab === 'foundations' ? 'foundations' : 'organisations'} by name, address, or region...`)}
+              className={`${STANDARD_INPUT_FIELD} pl-10`}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <div className="sm:w-48">
+            <select
+              className={STANDARD_INPUT_FIELD}
+              value={pageSize}
+              onChange={(e) => setPageSize(Number(e.target.value) as 25 | 50 | 100)}
+            >
+              <option value={25}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 25</option>
+              <option value={50}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 50</option>
+              <option value={100}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 100</option>
+            </select>
+          </div>
         </div>
       </Card>
 
       {/* Organizations Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredOrgs.map((org) => (
+        {paginatedOrgs.map((org) => (
           <OrganizationCard
             key={org.id}
             org={org}
@@ -970,6 +1007,37 @@ const Organizations: React.FC = () => {
           )}
         </div>
       )}
+
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="text-sm text-gray-600">
+          {t(
+            'admin:users.pagination.showing',
+            'Showing {{from}}-{{to}} of {{total}}',
+            { from: showingFrom, to: showingTo, total: totalOrgs },
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            className="px-3 py-2 text-sm rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!canGoPrev}
+            onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+          >
+            {t('admin:users.pagination.previous', 'Previous')}
+          </button>
+          <span className="text-sm text-gray-600 px-2">
+            {t('admin:users.pagination.pageOf', 'Page {{page}} of {{totalPages}}', { page, totalPages })}
+          </span>
+          <button
+            type="button"
+            className="px-3 py-2 text-sm rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!canGoNext}
+            onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+          >
+            {t('admin:users.pagination.next', 'Next')}
+          </button>
+        </div>
+      </div>
 
       {/* Add Modal */}
       <OrganizationModal
