@@ -105,7 +105,6 @@ export class HealthController {
   }
 
   @Get('snapshot')
-  @Public()
   @ApiOperation({ summary: 'Database snapshot (sanitized)' })
   @ApiResponse({ status: 200, description: 'Returns counts and sample data' })
   async snapshot() {
@@ -197,7 +196,6 @@ export class HealthController {
   }
 
   @Get('users')
-  @Public()
   @ApiOperation({ summary: 'List users (sanitized, queryable)' })
   @ApiResponse({ status: 200, description: 'Returns users' })
   async listUsers(
@@ -221,7 +219,6 @@ export class HealthController {
   }
 
   @Get('app-users')
-  @Public()
   @ApiOperation({ summary: 'List AppUsers (sanitized, queryable)' })
   @ApiResponse({ status: 200, description: 'Returns app users' })
   async listAppUsers(

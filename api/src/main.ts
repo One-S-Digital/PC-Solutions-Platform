@@ -13,6 +13,8 @@ import { AppModule } from './app.module';
 import { AppLoggerService } from './common/logger.service';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 import { SentryExceptionFilter } from './common/filters/sentry-exception.filter';
+import { ClerkAuthGuard } from './auth/guards/clerk-auth.guard';
+import { RolesGuard } from './auth/guards/roles.guard';
 
 async function bootstrap() {
   // Trigger deployment to run database migrations
@@ -117,6 +119,12 @@ async function bootstrap() {
 
   // Global exception filter
   app.useGlobalFilters(new AllExceptionsFilter());
+
+  // Apply Clerk Auth and Roles guards globally to all routes
+  // Endpoints can be made public using the @Public() decorator
+  const clerkAuthGuard = app.get(ClerkAuthGuard);
+  const rolesGuard = app.get(RolesGuard);
+  app.useGlobalGuards(clerkAuthGuard, rolesGuard);
   
   // Add Sentry exception filter for error tracking (should be added after AllExceptionsFilter)
   if (process.env.SENTRY_DSN) {
