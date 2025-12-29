@@ -1084,6 +1084,9 @@
       "email": "E-Mail",
       "role": "Rolle",
       "status": "Status",
+      "candidatePool": "Kandidatenpool",
+      "candidatePoolIn": "Im Pool",
+      "candidatePoolOut": "Nicht im Pool",
       "emailRequired": "E-Mail ist erforderlich",
       "updateFailed": "Fehler beim Aktualisieren des Benutzers",
       "saveChanges": "Änderungen speichern",
@@ -1159,7 +1162,12 @@
       "experience": "ERFAHRUNG",
       "candidate": "KANDIDAT",
       "position": "POSITION",
-      "status": "STATUS"
+      "status": "STATUS",
+      "pool": "POOL"
+    },
+    "poolStatus": {
+      "inPool": "Im Pool",
+      "outOfPool": "Nicht im Pool"
     },
     "statusFilter": {
       "all": "Alle Status"

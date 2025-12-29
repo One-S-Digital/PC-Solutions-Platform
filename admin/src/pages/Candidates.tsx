@@ -82,14 +82,6 @@ const Candidates: React.FC = () => {
     },
   })
 
-  const toggleCandidatePoolVisibilityMutation = useMutation({
-    mutationFn: ({ appUserId, candidatePoolVisible }: { appUserId: string; candidatePoolVisible: boolean }) =>
-      apiService.updateUser(apiClient, appUserId, { candidatePoolVisible } as any),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['candidates'] })
-    },
-  })
-
   const handleCreateCandidate = async (data: CandidateFormData) => {
     await createCandidateMutation.mutateAsync(data)
   }
@@ -189,6 +181,7 @@ const Candidates: React.FC = () => {
         onSave={handleUpdateUser}
         isLoading={updateUserMutation.isPending}
         currentUserRole={currentUser?.role}
+        showCandidatePoolControls
       />
 
       {/* Filters */}
@@ -239,6 +232,9 @@ const Candidates: React.FC = () => {
                   {t('admin:candidates.table.status')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t('admin:candidates.table.pool', 'POOL')}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   {t('admin:candidates.table.appliedDate')}
                 </th>
                 <th className="relative px-6 py-3">
@@ -254,6 +250,7 @@ const Candidates: React.FC = () => {
                 const position = candidate.currentRoleOrTitle || candidate.role
                 const status = candidate.availabilityStatus || ''
                 const appliedDate = candidate.createdAt
+                const isInPool = Boolean(candidate.candidatePoolVisible)
                 return (
                   <tr key={candidate.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -287,6 +284,17 @@ const Candidates: React.FC = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          isInPool ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-700'
+                        }`}
+                      >
+                        {isInPool
+                          ? t('admin:candidates.poolStatus.inPool', 'In pool')
+                          : t('admin:candidates.poolStatus.outOfPool', 'Not in pool')}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900 flex items-center">
                         <Calendar className="h-4 w-4 mr-1" />
                         {appliedDate ? new Date(appliedDate).toLocaleDateString() : ''}
@@ -316,25 +324,6 @@ const Candidates: React.FC = () => {
                                   >
                                     <FileText className="h-4 w-4 mr-2" />
                                     {t('admin:candidates.actions.viewProfile', 'View Profile')}
-                                  </button>
-                                )}
-                              </Menu.Item>
-                              <Menu.Item>
-                                {({ active }) => (
-                                  <button
-                                    className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
-                                    onClick={() =>
-                                      toggleCandidatePoolVisibilityMutation.mutate({
-                                        appUserId: candidate.id,
-                                        candidatePoolVisible: !(candidate as any).candidatePoolVisible,
-                                      })
-                                    }
-                                    disabled={toggleCandidatePoolVisibilityMutation.isPending}
-                                  >
-                                    <UserCheck className="h-4 w-4 mr-2" />
-                                    {(candidate as any).candidatePoolVisible
-                                      ? t('admin:candidates.actions.removeFromPool', 'Remove from pool')
-                                      : t('admin:candidates.actions.addToPool', 'Add to pool')}
                                   </button>
                                 )}
                               </Menu.Item>
