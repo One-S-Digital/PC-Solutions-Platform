@@ -1,10 +1,10 @@
 {
-  "timestamp": "2025-12-29T16:44:29.411Z",
-  "totalKeys": 2006,
+  "timestamp": "2025-12-29T18:22:12.032Z",
+  "totalKeys": 2011,
   "byNamespace": {
     "common": 2858,
     "settings": 534,
-    "content": 38,
+    "content": 54,
     "signup": 120,
     "recruitment": 216,
     "dashboard": 368,
@@ -11190,6 +11190,276 @@
       "context": "{t('common:buttons.sendMessage', 'Send Message')}"
     },
     {
+      "key": "stockStatus.instock",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 57,
+      "context": "if (status === 'ACTIVE' || !status) return t('stockStatus.instock', 'In Stock');"
+    },
+    {
+      "key": "partnerDetailPage.productOutOfStock",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 64,
+      "context": "alert(t('partnerDetailPage.productOutOfStock', { productName: product.title }));"
+    },
+    {
+      "key": "partnerDetailPage.productAddedToOrder",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 68,
+      "context": "alert(t('partnerDetailPage.productAddedToOrder', { quantity, productName: product.title }));"
+    },
+    {
+      "key": "partnerDetailPage.addToOrderButton",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 110,
+      "context": "{t('partnerDetailPage.addToOrderButton')}"
+    },
+    {
+      "key": "partnerDetailPage.promoCodeValid",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 170,
+      "context": "message: t('partnerDetailPage.promoCodeValid', 'Promo code applied!'),"
+    },
+    {
+      "key": "partnerDetailPage.promoCodeInvalid",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 176,
+      "context": "message: t('partnerDetailPage.promoCodeInvalid', 'Invalid or expired promo code'),"
+    },
+    {
+      "key": "partnerDetailPage.promoCodeError",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 183,
+      "context": "message: t('partnerDetailPage.promoCodeError', 'Failed to validate promo code'),"
+    },
+    {
+      "key": "partnerDetailPage.promoCodeTitle",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 194,
+      "context": "{t('partnerDetailPage.promoCodeTitle')}"
+    },
+    {
+      "key": "partnerDetailPage.promoCodePlaceholder",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 204,
+      "context": "placeholder={t('partnerDetailPage.promoCodePlaceholder')}"
+    },
+    {
+      "key": "partnerDetailPage.applyPromoButton",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 214,
+      "context": "{isValidating ? '...' : t('partnerDetailPage.applyPromoButton')}"
+    },
+    {
+      "key": "partnerDetailPage.onlyFoundationsRequestService",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 317,
+      "context": "alert(t('partnerDetailPage.onlyFoundationsRequestService'));"
+    },
+    {
+      "key": "partnerDetailPage.requestSubmittedAlert",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 339,
+      "context": "alert(t('partnerDetailPage.requestSubmittedAlert', { serviceName: newRequest.serviceName }));"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 347,
+      "context": "{t('common:buttons.goBack')}"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 347,
+      "context": "{t('common:buttons.goBack')}"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 393,
+      "context": "{t('common:buttons.goBack')}"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 393,
+      "context": "{t('common:buttons.goBack')}"
+    },
+    {
+      "key": "partnerDetailPage.invalidPartnerIdMessage",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 398,
+      "context": "<p className=\"mt-4 text-gray-600\">{error || t('partnerDetailPage.invalidPartnerIdMessage')}</p>"
+    },
+    {
+      "key": "common:buttons.retry",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 405,
+      "context": "{t('common:buttons.retry', 'Retry')}"
+    },
+    {
+      "key": "common:buttons.retry",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 405,
+      "context": "{t('common:buttons.retry', 'Retry')}"
+    },
+    {
+      "key": "common:userRoles.Product Supplier",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 413,
+      "context": "? t('common:userRoles.Product Supplier')"
+    },
+    {
+      "key": "common:userRoles.Product Supplier",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 413,
+      "context": "? t('common:userRoles.Product Supplier')"
+    },
+    {
+      "key": "common:userRoles.Service Provider",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 415,
+      "context": "? t('common:userRoles.Service Provider')"
+    },
+    {
+      "key": "common:userRoles.Service Provider",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 415,
+      "context": "? t('common:userRoles.Service Provider')"
+    },
+    {
+      "key": "common:userRoles.Foundation",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 416,
+      "context": ": t('common:userRoles.Foundation');"
+    },
+    {
+      "key": "common:userRoles.Foundation",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 416,
+      "context": ": t('common:userRoles.Foundation');"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 424,
+      "context": "{t('common:buttons.goBack')}"
+    },
+    {
+      "key": "common:buttons.goBack",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 424,
+      "context": "{t('common:buttons.goBack')}"
+    },
+    {
+      "key": "common:buttons.sendMessage",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 466,
+      "context": "{t('common:buttons.sendMessage')}"
+    },
+    {
+      "key": "common:buttons.sendMessage",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 466,
+      "context": "{t('common:buttons.sendMessage')}"
+    },
+    {
+      "key": "partnerDetailPage.contactInfoTitle",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 481,
+      "context": "{t('partnerDetailPage.contactInfoTitle')}"
+    },
+    {
+      "key": "partnerDetailPage.directOrderButton",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 525,
+      "context": "{t('partnerDetailPage.directOrderButton')}"
+    },
+    {
+      "key": "partnerDetailPage.aboutTitle",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 533,
+      "context": "{t('partnerDetailPage.aboutTitle', { partnerName: partner.name })}"
+    },
+    {
+      "key": "partnerDetailPage.ratingsReviewsTitle",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 541,
+      "context": "{t('partnerDetailPage.ratingsReviewsTitle')}"
+    },
+    {
+      "key": "partnerDetailPage.ratingText",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 552,
+      "context": "{t('partnerDetailPage.ratingText', { rating: partner.rating.toFixed(1) })}"
+    },
+    {
+      "key": "dashboard:partnerDetailPage.reviewsPlaceholder",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 556,
+      "context": "<p className=\"text-sm text-gray-500\">{t('dashboard:partnerDetailPage.reviewsPlaceholder', 'No reviews yet')}</p>"
+    },
+    {
+      "key": "dashboard:partnerDetailPage.reviewsPlaceholder",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 556,
+      "context": "<p className=\"text-sm text-gray-500\">{t('dashboard:partnerDetailPage.reviewsPlaceholder', 'No reviews yet')}</p>"
+    },
+    {
+      "key": "dashboard:sidebar.products",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 568,
+      "context": "{isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}"
+    },
+    {
+      "key": "dashboard:sidebar.services",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 568,
+      "context": "{isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}"
+    },
+    {
+      "key": "dashboard:sidebar.products",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 568,
+      "context": "{isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}"
+    },
+    {
+      "key": "dashboard:sidebar.services",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 568,
+      "context": "{isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}"
+    },
+    {
+      "key": "dashboard:partnerDetailPage.noProductsListed",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 587,
+      "context": "<p className=\"text-gray-500\">{t('dashboard:partnerDetailPage.noProductsListed', 'No products listed')}</p>"
+    },
+    {
+      "key": "dashboard:partnerDetailPage.noProductsListed",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 587,
+      "context": "<p className=\"text-gray-500\">{t('dashboard:partnerDetailPage.noProductsListed', 'No products listed')}</p>"
+    },
+    {
+      "key": "partnerDetailPage.requestServiceButton",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 629,
+      "context": "{t('partnerDetailPage.requestServiceButton')}"
+    },
+    {
+      "key": "dashboard:partnerDetailPage.noServicesListed",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 638,
+      "context": "<p className=\"text-gray-500\">{t('dashboard:partnerDetailPage.noServicesListed', 'No services listed')}</p>"
+    },
+    {
+      "key": "dashboard:partnerDetailPage.noServicesListed",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 638,
+      "context": "<p className=\"text-gray-500\">{t('dashboard:partnerDetailPage.noServicesListed', 'No services listed')}</p>"
+    },
+    {
       "key": "common:errors.fetchFailed",
       "file": "pages/parent/ParentSupportPage.tsx",
       "line": 66,
@@ -12148,276 +12418,6 @@
       "file": "pages/parent/ParentDashboardPage.tsx",
       "line": 202,
       "context": "<Button variant=\"secondary\" className=\"bg-amber-600 hover:bg-amber-700 text-white\" onClick={() => navigate('/parent/foundations')}>{t('parentDashboard.favorites.button')}</Button>"
-    },
-    {
-      "key": "stockStatus.instock",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 57,
-      "context": "if (status === 'ACTIVE' || !status) return t('stockStatus.instock', 'In Stock');"
-    },
-    {
-      "key": "partnerDetailPage.productOutOfStock",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 64,
-      "context": "alert(t('partnerDetailPage.productOutOfStock', { productName: product.title }));"
-    },
-    {
-      "key": "partnerDetailPage.productAddedToOrder",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 68,
-      "context": "alert(t('partnerDetailPage.productAddedToOrder', { quantity, productName: product.title }));"
-    },
-    {
-      "key": "partnerDetailPage.addToOrderButton",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 110,
-      "context": "{t('partnerDetailPage.addToOrderButton')}"
-    },
-    {
-      "key": "partnerDetailPage.promoCodeValid",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 170,
-      "context": "message: t('partnerDetailPage.promoCodeValid', 'Promo code applied!'),"
-    },
-    {
-      "key": "partnerDetailPage.promoCodeInvalid",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 176,
-      "context": "message: t('partnerDetailPage.promoCodeInvalid', 'Invalid or expired promo code'),"
-    },
-    {
-      "key": "partnerDetailPage.promoCodeError",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 183,
-      "context": "message: t('partnerDetailPage.promoCodeError', 'Failed to validate promo code'),"
-    },
-    {
-      "key": "partnerDetailPage.promoCodeTitle",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 194,
-      "context": "{t('partnerDetailPage.promoCodeTitle')}"
-    },
-    {
-      "key": "partnerDetailPage.promoCodePlaceholder",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 204,
-      "context": "placeholder={t('partnerDetailPage.promoCodePlaceholder')}"
-    },
-    {
-      "key": "partnerDetailPage.applyPromoButton",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 214,
-      "context": "{isValidating ? '...' : t('partnerDetailPage.applyPromoButton')}"
-    },
-    {
-      "key": "partnerDetailPage.onlyFoundationsRequestService",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 317,
-      "context": "alert(t('partnerDetailPage.onlyFoundationsRequestService'));"
-    },
-    {
-      "key": "partnerDetailPage.requestSubmittedAlert",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 339,
-      "context": "alert(t('partnerDetailPage.requestSubmittedAlert', { serviceName: newRequest.serviceName }));"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 347,
-      "context": "{t('common:buttons.goBack')}"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 347,
-      "context": "{t('common:buttons.goBack')}"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 393,
-      "context": "{t('common:buttons.goBack')}"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 393,
-      "context": "{t('common:buttons.goBack')}"
-    },
-    {
-      "key": "partnerDetailPage.invalidPartnerIdMessage",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 398,
-      "context": "<p className=\"mt-4 text-gray-600\">{error || t('partnerDetailPage.invalidPartnerIdMessage')}</p>"
-    },
-    {
-      "key": "common:buttons.retry",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 405,
-      "context": "{t('common:buttons.retry', 'Retry')}"
-    },
-    {
-      "key": "common:buttons.retry",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 405,
-      "context": "{t('common:buttons.retry', 'Retry')}"
-    },
-    {
-      "key": "common:userRoles.Product Supplier",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 413,
-      "context": "? t('common:userRoles.Product Supplier')"
-    },
-    {
-      "key": "common:userRoles.Product Supplier",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 413,
-      "context": "? t('common:userRoles.Product Supplier')"
-    },
-    {
-      "key": "common:userRoles.Service Provider",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 415,
-      "context": "? t('common:userRoles.Service Provider')"
-    },
-    {
-      "key": "common:userRoles.Service Provider",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 415,
-      "context": "? t('common:userRoles.Service Provider')"
-    },
-    {
-      "key": "common:userRoles.Foundation",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 416,
-      "context": ": t('common:userRoles.Foundation');"
-    },
-    {
-      "key": "common:userRoles.Foundation",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 416,
-      "context": ": t('common:userRoles.Foundation');"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 424,
-      "context": "{t('common:buttons.goBack')}"
-    },
-    {
-      "key": "common:buttons.goBack",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 424,
-      "context": "{t('common:buttons.goBack')}"
-    },
-    {
-      "key": "common:buttons.sendMessage",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 466,
-      "context": "{t('common:buttons.sendMessage')}"
-    },
-    {
-      "key": "common:buttons.sendMessage",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 466,
-      "context": "{t('common:buttons.sendMessage')}"
-    },
-    {
-      "key": "partnerDetailPage.contactInfoTitle",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 481,
-      "context": "{t('partnerDetailPage.contactInfoTitle')}"
-    },
-    {
-      "key": "partnerDetailPage.directOrderButton",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 525,
-      "context": "{t('partnerDetailPage.directOrderButton')}"
-    },
-    {
-      "key": "partnerDetailPage.aboutTitle",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 533,
-      "context": "{t('partnerDetailPage.aboutTitle', { partnerName: partner.name })}"
-    },
-    {
-      "key": "partnerDetailPage.ratingsReviewsTitle",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 541,
-      "context": "{t('partnerDetailPage.ratingsReviewsTitle')}"
-    },
-    {
-      "key": "partnerDetailPage.ratingText",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 552,
-      "context": "{t('partnerDetailPage.ratingText', { rating: partner.rating.toFixed(1) })}"
-    },
-    {
-      "key": "dashboard:partnerDetailPage.reviewsPlaceholder",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 556,
-      "context": "<p className=\"text-sm text-gray-500\">{t('dashboard:partnerDetailPage.reviewsPlaceholder', 'No reviews yet')}</p>"
-    },
-    {
-      "key": "dashboard:partnerDetailPage.reviewsPlaceholder",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 556,
-      "context": "<p className=\"text-sm text-gray-500\">{t('dashboard:partnerDetailPage.reviewsPlaceholder', 'No reviews yet')}</p>"
-    },
-    {
-      "key": "dashboard:sidebar.products",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 568,
-      "context": "{isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}"
-    },
-    {
-      "key": "dashboard:sidebar.services",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 568,
-      "context": "{isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}"
-    },
-    {
-      "key": "dashboard:sidebar.products",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 568,
-      "context": "{isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}"
-    },
-    {
-      "key": "dashboard:sidebar.services",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 568,
-      "context": "{isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}"
-    },
-    {
-      "key": "dashboard:partnerDetailPage.noProductsListed",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 587,
-      "context": "<p className=\"text-gray-500\">{t('dashboard:partnerDetailPage.noProductsListed', 'No products listed')}</p>"
-    },
-    {
-      "key": "dashboard:partnerDetailPage.noProductsListed",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 587,
-      "context": "<p className=\"text-gray-500\">{t('dashboard:partnerDetailPage.noProductsListed', 'No products listed')}</p>"
-    },
-    {
-      "key": "partnerDetailPage.requestServiceButton",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 629,
-      "context": "{t('partnerDetailPage.requestServiceButton')}"
-    },
-    {
-      "key": "dashboard:partnerDetailPage.noServicesListed",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 638,
-      "context": "<p className=\"text-gray-500\">{t('dashboard:partnerDetailPage.noServicesListed', 'No services listed')}</p>"
-    },
-    {
-      "key": "dashboard:partnerDetailPage.noServicesListed",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 638,
-      "context": "<p className=\"text-gray-500\">{t('dashboard:partnerDetailPage.noServicesListed', 'No services listed')}</p>"
     },
     {
       "key": "common:errors.fetchFailed",
@@ -18072,6 +18072,66 @@
       "context": "<Button type=\"submit\" variant=\"primary\">{t('common:buttons.save')}</Button>"
     },
     {
+      "key": "content:statePolicies.disclaimer",
+      "file": "components/shared/PolicyDisclaimer.tsx",
+      "line": 13,
+      "context": "const disclaimerText = t('content:statePolicies.disclaimer',"
+    },
+    {
+      "key": "content:statePolicies.disclaimer",
+      "file": "components/shared/PolicyDisclaimer.tsx",
+      "line": 13,
+      "context": "const disclaimerText = t('content:statePolicies.disclaimer',"
+    },
+    {
+      "key": "content:statePolicies.legalNotice",
+      "file": "components/shared/PolicyDisclaimer.tsx",
+      "line": 26,
+      "context": "aria-label={t('content:statePolicies.legalNotice', 'Legal Notice')}"
+    },
+    {
+      "key": "content:statePolicies.legalNotice",
+      "file": "components/shared/PolicyDisclaimer.tsx",
+      "line": 26,
+      "context": "aria-label={t('content:statePolicies.legalNotice', 'Legal Notice')}"
+    },
+    {
+      "key": "content:statePolicies.legalNotice",
+      "file": "components/shared/PolicyDisclaimer.tsx",
+      "line": 35,
+      "context": "{t('content:statePolicies.legalNotice', 'Legal Notice')}"
+    },
+    {
+      "key": "content:statePolicies.legalNotice",
+      "file": "components/shared/PolicyDisclaimer.tsx",
+      "line": 35,
+      "context": "{t('content:statePolicies.legalNotice', 'Legal Notice')}"
+    },
+    {
+      "key": "content:statePolicies.legalNotice",
+      "file": "components/shared/PolicyDisclaimer.tsx",
+      "line": 54,
+      "context": "aria-label={t('content:statePolicies.legalNotice', 'Legal Notice')}"
+    },
+    {
+      "key": "content:statePolicies.legalNotice",
+      "file": "components/shared/PolicyDisclaimer.tsx",
+      "line": 54,
+      "context": "aria-label={t('content:statePolicies.legalNotice', 'Legal Notice')}"
+    },
+    {
+      "key": "content:statePolicies.legalNotice",
+      "file": "components/shared/PolicyDisclaimer.tsx",
+      "line": 60,
+      "context": "{t('content:statePolicies.legalNotice', 'Legal Notice')}"
+    },
+    {
+      "key": "content:statePolicies.legalNotice",
+      "file": "components/shared/PolicyDisclaimer.tsx",
+      "line": 60,
+      "context": "{t('content:statePolicies.legalNotice', 'Legal Notice')}"
+    },
+    {
       "key": "settings:imageCropper.title",
       "file": "components/shared/ImageCropperModal.tsx",
       "line": 430,
@@ -18274,6 +18334,42 @@
       "file": "components/shared/ErrorBoundary.tsx",
       "line": 84,
       "context": "{t(\"errorBoundary.reloadPage\")}"
+    },
+    {
+      "key": "content:statePolicies.documentSingular",
+      "file": "components/shared/CantonCard.tsx",
+      "line": 54,
+      "context": "? t('content:statePolicies.documentSingular', 'document')"
+    },
+    {
+      "key": "content:statePolicies.documentSingular",
+      "file": "components/shared/CantonCard.tsx",
+      "line": 54,
+      "context": "? t('content:statePolicies.documentSingular', 'document')"
+    },
+    {
+      "key": "content:statePolicies.documentPlural",
+      "file": "components/shared/CantonCard.tsx",
+      "line": 55,
+      "context": ": t('content:statePolicies.documentPlural', 'documents')}"
+    },
+    {
+      "key": "content:statePolicies.documentPlural",
+      "file": "components/shared/CantonCard.tsx",
+      "line": 55,
+      "context": ": t('content:statePolicies.documentPlural', 'documents')}"
+    },
+    {
+      "key": "content:statePolicies.updatedShort",
+      "file": "components/shared/CantonCard.tsx",
+      "line": 61,
+      "context": "{t('content:statePolicies.updatedShort', 'Updated')} {format(new Date(lastUpdated), 'MMM d')}"
+    },
+    {
+      "key": "content:statePolicies.updatedShort",
+      "file": "components/shared/CantonCard.tsx",
+      "line": 61,
+      "context": "{t('content:statePolicies.updatedShort', 'Updated')} {format(new Date(lastUpdated), 'MMM d')}"
     },
     {
       "key": "activeClientToggle.confirmSave",
