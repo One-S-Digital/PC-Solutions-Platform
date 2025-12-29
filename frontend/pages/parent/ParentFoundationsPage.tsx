@@ -27,6 +27,7 @@ interface Foundation {
   description?: string;
   region?: string;
   canton?: string;
+  city?: string;
   languages?: string[];
   capacity?: number;
   pedagogy?: string[];
@@ -228,10 +229,12 @@ const ParentFoundationsPage: React.FC = () => {
                 <h3 className="text-lg font-semibold text-swiss-charcoal truncate">
                   {foundation.name}
                 </h3>
-                {(foundation.canton || foundation.region) && (
+                {(foundation.city || foundation.canton || foundation.region) && (
                   <p className="text-sm text-gray-500 flex items-center">
                     <MapPinIcon className="w-4 h-4 mr-1" />
-                    {foundation.canton || foundation.region}
+                    {foundation.city && foundation.canton
+                      ? `${foundation.city}, ${foundation.canton}`
+                      : foundation.city || foundation.canton || foundation.region}
                   </p>
                 )}
               </div>
