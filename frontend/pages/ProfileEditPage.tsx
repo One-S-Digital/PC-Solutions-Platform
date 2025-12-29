@@ -304,8 +304,8 @@ const ProfileEditPage: React.FC = () => {
           type: 'success',
         });
         
-        // Reload profile data to reflect changes
-        await loadProfileData();
+        // Reload profile data to reflect changes without blocking UI state
+        void loadProfileData();
         
         // Hide success message after 3 seconds
         setTimeout(() => setSaveSuccess(false), 3000);
