@@ -139,7 +139,7 @@ export class ClerkAuthGuard implements CanActivate {
         // Also fetch the User profile record
         const userProfile = await this.prisma.user.findUnique({
           where: { clerkId: payload.sub },
-          select: { isActive: true, deactivatedReasonText: true },
+          select: { id: true, isActive: true, deactivatedReasonText: true },
         });
         if (userProfile && userProfile.isActive === false) {
           const message =
