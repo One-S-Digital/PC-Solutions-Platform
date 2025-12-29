@@ -8,6 +8,7 @@ import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Tabs from '../components/ui/Tabs';
 import Pagination from '../components/ui/Pagination';
+import { isDateTimeAvailable } from '../types/availability';
 import { BriefcaseIcon, UserGroupIcon, MapPinIcon, CalendarDaysIcon, EyeIcon, PencilIcon, TrashIcon, PlusCircleIcon, MagnifyingGlassIcon, FunnelIcon, StarIcon, LockClosedIcon, LockOpenIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
@@ -377,7 +378,20 @@ const RecruitmentPage: React.FC = () => {
             ? (candidate.availabilityPreferences?.contractType ?? '').toUpperCase().includes(candidateContractTypeFilter)
             : true;
 
-          const matchesAvailabilityDate = candidateAvailabilityDateFilter ? true : true;
+          const matchesAvailabilityDate = candidateAvailabilityDateFilter
+            ? (() => {
+                const date = new Date(candidateAvailabilityDateFilter);
+                if (Number.isNaN(date.getTime())) return true;
+
+                // If the educator configured structured availability, use it.
+                if (candidate.availabilitySettings) {
+                  return isDateTimeAvailable(candidate.availabilitySettings, date);
+                }
+
+                // Fallback: for legacy profiles without structured settings, we can't reliably filter.
+                return true;
+              })()
+            : true;
 
           return matchesSearch && matchesRole && matchesRegion && matchesContract && matchesAvailabilityDate;
         },
@@ -563,11 +577,35 @@ const RecruitmentPage: React.FC = () => {
               }}
             >
               <option value="">{t('recruitment:labels.allContractTypes')}</option>
-              {contractTypeOptions.map((ct) => (
-                <option key={ct} value={ct}>
-                  {ct}
-                </option>
-              ))}
+              {contractTypeOptions.map((ct) => {
+                const label = (() => {
+                  switch (ct) {
+                    case 'FULL_TIME':
+                      return t('recruitment:contractTypes.fullTime', 'Full-time');
+                    case 'PART_TIME':
+                      return t('recruitment:contractTypes.partTime', 'Part-time');
+                    case 'CDI':
+                      return t('recruitment:contractTypes.cdi', 'CDI');
+                    case 'CDD':
+                      return t('recruitment:contractTypes.cdd', 'CDD');
+                    case 'INTERNSHIP':
+                      return t('recruitment:contractTypes.internship', 'Internship');
+                    case 'FREELANCE':
+                      return t('recruitment:contractTypes.freelance', 'Freelance');
+                    case 'REPLACEMENT':
+                      return t('recruitment:contractTypes.replacement', 'Replacement');
+                    case 'TEMPORARY':
+                      return t('recruitment:contractTypes.temporary', 'Temporary');
+                    default:
+                      return ct;
+                  }
+                })();
+                return (
+                  <option key={ct} value={ct}>
+                    {label}
+                  </option>
+                );
+              })}
             </select>
             <select
               className={STANDARD_INPUT_FIELD}
@@ -579,11 +617,26 @@ const RecruitmentPage: React.FC = () => {
               }}
             >
               <option value="">{t('recruitment:labels.allStatuses')}</option>
-              {(['DRAFT', 'PUBLISHED', 'CLOSED', 'FILLED'] as JobStatus[]).map((st) => (
-                <option key={st} value={st}>
-                  {st}
-                </option>
-              ))}
+              {(['DRAFT', 'PUBLISHED', 'CLOSED', 'FILLED'] as JobStatus[]).map((st) => {
+                const label = (() => {
+                  switch (st) {
+                    case 'PUBLISHED':
+                      return t('recruitment:jobStatus.published', 'Published');
+                    case 'DRAFT':
+                      return t('recruitment:jobStatus.draft', 'Draft');
+                    case 'FILLED':
+                      return t('recruitment:jobStatus.filled', 'Filled');
+                    case 'CLOSED':
+                    default:
+                      return t('recruitment:jobStatus.closed', 'Closed');
+                  }
+                })();
+                return (
+                  <option key={st} value={st}>
+                    {label}
+                  </option>
+                );
+              })}
             </select>
           </div>
           <div className="mt-3 flex justify-end">
@@ -716,11 +769,35 @@ const RecruitmentPage: React.FC = () => {
               }}
             >
               <option value="">{t('recruitment:labels.allContractTypes')}</option>
-              {contractTypeOptions.map((ct) => (
-                <option key={ct} value={ct}>
-                  {ct}
-                </option>
-              ))}
+              {contractTypeOptions.map((ct) => {
+                const label = (() => {
+                  switch (ct) {
+                    case 'FULL_TIME':
+                      return t('recruitment:contractTypes.fullTime', 'Full-time');
+                    case 'PART_TIME':
+                      return t('recruitment:contractTypes.partTime', 'Part-time');
+                    case 'CDI':
+                      return t('recruitment:contractTypes.cdi', 'CDI');
+                    case 'CDD':
+                      return t('recruitment:contractTypes.cdd', 'CDD');
+                    case 'INTERNSHIP':
+                      return t('recruitment:contractTypes.internship', 'Internship');
+                    case 'FREELANCE':
+                      return t('recruitment:contractTypes.freelance', 'Freelance');
+                    case 'REPLACEMENT':
+                      return t('recruitment:contractTypes.replacement', 'Replacement');
+                    case 'TEMPORARY':
+                      return t('recruitment:contractTypes.temporary', 'Temporary');
+                    default:
+                      return ct;
+                  }
+                })();
+                return (
+                  <option key={ct} value={ct}>
+                    {label}
+                  </option>
+                );
+              })}
             </select>
           </div>
           <div className="mt-3 flex justify-end">

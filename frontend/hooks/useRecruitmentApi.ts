@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useAuthenticatedApi } from './useAuthenticatedApi';
 import { Application, ApplicationStatus, JobContractType, JobListing, JobStatus, CandidateProfile, JobEmploymentType, JobWorkSchedule } from '../types';
+import type { EducatorAvailabilitySettings } from '../types/availability';
 
 interface ListJobListingsParams {
   foundationId?: string;
@@ -102,6 +103,7 @@ const transformCandidate = (data: any): CandidateProfile => {
     education: safeParseJSON(data.education),
     certifications: data.certifications ?? [],
     availabilityPreferences: data.availabilityPreferences ?? undefined,
+    availabilitySettings: (data.availabilitySettings as EducatorAvailabilitySettings | undefined) ?? undefined,
     documents: data.documents ?? [],
     role: data.role,
     jobRole: data.jobRole ?? undefined,

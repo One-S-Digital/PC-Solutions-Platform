@@ -318,6 +318,7 @@ export interface CandidateProfile {
         contractType?: 'Full-time' | 'Part-time' | 'Internship' | 'Temporary';
         preferredAgeGroups?: ('Infants' | 'Toddlers' | 'Preschool')[];
     };
+    availabilitySettings?: EducatorAvailabilitySettings;
     documents?: DocumentItem[];
     
     // Legacy fields for simpler list view
