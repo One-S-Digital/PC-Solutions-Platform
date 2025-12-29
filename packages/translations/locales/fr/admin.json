@@ -1070,6 +1070,44 @@
     "title": "Gestion des utilisateurs",
     "subtitle": "Gérer tous les utilisateurs de la plateforme",
     "addUser": "Ajouter un utilisateur",
+    "actions": {
+      "suspend": "Suspendre",
+      "reactivate": "Réactiver",
+      "removeFromPool": "Retirer du pool de candidats",
+      "addToPool": "Ajouter au pool de candidats"
+    },
+    "suspend": {
+      "title": "Suspendre le compte",
+      "userLabel": "Utilisateur",
+      "reason": "Raison",
+      "reasonRequired": "Veuillez fournir une raison",
+      "customReason": "Message personnalisé",
+      "customReasonPlaceholder": "Écrivez le message que l'utilisateur verra lors de la connexion...",
+      "preview": "Aperçu du message utilisateur",
+      "suspending": "Suspension...",
+      "confirm": "Suspendre",
+      "reasons": {
+        "termsViolation": {
+          "label": "Violation des conditions",
+          "message": "Votre compte a été suspendu en raison d'une violation de nos conditions d'utilisation."
+        },
+        "suspiciousActivity": {
+          "label": "Activité suspecte",
+          "message": "Votre compte a été suspendu en raison d'une activité suspecte. Veuillez contacter le support pour rétablir l'accès."
+        },
+        "paymentIssue": {
+          "label": "Problème de paiement ou de facturation",
+          "message": "Votre compte a été suspendu en raison d'un problème de facturation. Veuillez contacter le support pour obtenir de l'aide."
+        },
+        "requestedByUser": {
+          "label": "À la demande de l'utilisateur",
+          "message": "Votre compte a été désactivé à votre demande."
+        },
+        "other": {
+          "label": "Autre"
+        }
+      }
+    },
     "pagination": {
       "rowsPerPage": "Lignes par page",
       "showing": "Affichage de {{from}} à {{to}} sur {{total}}",
@@ -1131,6 +1169,8 @@
     },
     "statusFilter": {
       "active": "Actif",
+      "published": "Publié",
+      "draft": "Brouillon",
       "closed": "Fermé",
       "paused": "En pause",
       "all": "Tous les statuts"
@@ -1142,7 +1182,10 @@
     "searchPlaceholder": "Rechercher des emplois...",
     "actions": {
       "delete": "Supprimer",
-      "edit": "Modifier"
+      "edit": "Modifier",
+      "publish": "Publier",
+      "draft": "Enregistrer comme brouillon",
+      "close": "Fermer"
     },
     "addButton": "Publier une offre",
     "subtitle": "Gérer les offres d'emploi et le recrutement ({{count}} au total)",
@@ -1163,6 +1206,11 @@
     },
     "statusFilter": {
       "all": "Tous les statuts"
+    },
+    "actions": {
+      "viewProfile": "Voir le profil",
+      "removeFromPool": "Retirer du pool",
+      "addToPool": "Ajouter au pool"
     },
     "addButton": "Ajouter un candidat",
     "subtitle": "Gérer les candidats et postulants ({{count}} au total)",

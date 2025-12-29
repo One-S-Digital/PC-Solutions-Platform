@@ -178,6 +178,12 @@
     "skills": {
       "empty": "Keine Fähigkeiten hinterlegt.",
       "title": "Fähigkeiten"
+    },
+    "visibility": {
+      "title": "Sichtbarkeit im Kandidatenpool",
+      "description": "Steuern Sie, ob Kitas Ihr Profil im Kandidatenpool finden können.",
+      "toggleLabel": "Mein Profil sichtbar machen",
+      "toggleHint": "Wenn aktiviert, können Stiftungen Ihr Profil im Kandidatenpool ansehen."
     }
   },
   "educatorSupportPage": {

@@ -1070,6 +1070,44 @@
     "title": "Benutzerverwaltung",
     "subtitle": "Alle Benutzer auf der Plattform verwalten",
     "addUser": "Benutzer hinzufügen",
+    "actions": {
+      "suspend": "Sperren",
+      "reactivate": "Reaktivieren",
+      "removeFromPool": "Aus Kandidatenpool entfernen",
+      "addToPool": "Zum Kandidatenpool hinzufügen"
+    },
+    "suspend": {
+      "title": "Konto sperren",
+      "userLabel": "Benutzer",
+      "reason": "Grund",
+      "reasonRequired": "Bitte geben Sie einen Grund an",
+      "customReason": "Benutzerdefinierte Nachricht",
+      "customReasonPlaceholder": "Schreiben Sie die Nachricht, die der Benutzer beim Login sieht...",
+      "preview": "Vorschau der Nachricht",
+      "suspending": "Sperren...",
+      "confirm": "Sperren",
+      "reasons": {
+        "termsViolation": {
+          "label": "Verstoß gegen die Nutzungsbedingungen",
+          "message": "Ihr Konto wurde wegen eines Verstoßes gegen unsere Nutzungsbedingungen gesperrt."
+        },
+        "suspiciousActivity": {
+          "label": "Verdächtige Aktivität",
+          "message": "Ihr Konto wurde wegen verdächtiger Aktivitäten gesperrt. Bitte kontaktieren Sie den Support, um den Zugriff wiederherzustellen."
+        },
+        "paymentIssue": {
+          "label": "Zahlungs- oder Abrechnungsproblem",
+          "message": "Ihr Konto wurde wegen eines Abrechnungsproblems gesperrt. Bitte kontaktieren Sie den Support für Hilfe."
+        },
+        "requestedByUser": {
+          "label": "Auf Wunsch des Benutzers",
+          "message": "Ihr Konto wurde auf Ihren Wunsch deaktiviert."
+        },
+        "other": {
+          "label": "Andere"
+        }
+      }
+    },
     "pagination": {
       "rowsPerPage": "Zeilen pro Seite",
       "showing": "Zeige {{from}} bis {{to}} von {{total}}",
@@ -1131,6 +1169,8 @@
     },
     "statusFilter": {
       "active": "Aktiv",
+      "published": "Veröffentlicht",
+      "draft": "Entwurf",
       "closed": "Geschlossen",
       "paused": "Pausiert",
       "all": "Alle Status"
@@ -1142,7 +1182,10 @@
     "searchPlaceholder": "Stellen suchen...",
     "actions": {
       "delete": "Löschen",
-      "edit": "Bearbeiten"
+      "edit": "Bearbeiten",
+      "publish": "Veröffentlichen",
+      "draft": "Als Entwurf speichern",
+      "close": "Schließen"
     },
     "addButton": "Stelle veröffentlichen",
     "subtitle": "Stellenangebote und Rekrutierung verwalten ({{count}} insgesamt)",
@@ -1163,6 +1206,11 @@
     },
     "statusFilter": {
       "all": "Alle Status"
+    },
+    "actions": {
+      "viewProfile": "Profil anzeigen",
+      "removeFromPool": "Aus Pool entfernen",
+      "addToPool": "Zum Pool hinzufügen"
     },
     "addButton": "Kandidat hinzufügen",
     "subtitle": "Bewerber und Kandidaten verwalten ({{count}} insgesamt)",

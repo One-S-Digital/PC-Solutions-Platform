@@ -422,6 +422,12 @@
     "skills": {
       "empty": "No skills listed yet.",
       "title": "Skills"
+    },
+    "visibility": {
+      "title": "Candidate Pool Visibility",
+      "description": "Control whether daycares can find your profile in the candidate pool.",
+      "toggleLabel": "Make my profile visible",
+      "toggleHint": "When enabled, foundations can view your profile in the candidate pool."
     }
   },
   "educatorSupportPage": {

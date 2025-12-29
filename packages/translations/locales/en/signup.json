@@ -176,6 +176,7 @@
     "phoneRequired": "Phone Required",
     "termsRequired": "Terms Required",
     "captchaError": "Captcha Error",
+    "captchaRefreshHint": "Try refreshing the page or using a different browser.",
     "emailInvalid": "Email Invalid",
     "passwordWeak": "Password is not strong enough"
   },

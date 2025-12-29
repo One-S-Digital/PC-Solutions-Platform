@@ -177,6 +177,12 @@
     "skills": {
       "empty": "Aucune compétence renseignée.",
       "title": "Compétences"
+    },
+    "visibility": {
+      "title": "Visibilité dans le pool de candidats",
+      "description": "Contrôlez si les garderies peuvent trouver votre profil dans le pool de candidats.",
+      "toggleLabel": "Rendre mon profil visible",
+      "toggleHint": "Lorsque cette option est activée, les fondations peuvent consulter votre profil dans le pool de candidats."
     }
   },
   "educatorSupportPage": {

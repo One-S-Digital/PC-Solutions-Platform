@@ -9,7 +9,10 @@
     "filters": "Filter",
     "inviteToApply": "Zur Bewerbung einladen",
     "inviteToInterview": "Zum Interview einladen",
+    "markOpen": "Als offen markieren",
+    "markClosed": "Als geschlossen markieren",
     "postNewJob": "Neue Stelle ausschreiben",
+    "saveAsDraft": "Als Entwurf speichern",
     "viewApplicants": "Bewerber anzeigen"
   },
   "candidateCard": {
@@ -116,6 +119,7 @@
     "responsibilityPlaceholder": "Verantwortlichkeit hinzufügen",
     "salaryRange": "Gehaltsbereich",
     "salaryRangePlaceholder": "z.B. CHF 60'000 - 80'000",
+    "status": "Status",
     "startDate": "Startdatum",
     "workSchedule": {
       "title": "Arbeitszeitpräferenzen",

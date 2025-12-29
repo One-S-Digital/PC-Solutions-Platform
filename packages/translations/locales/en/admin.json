@@ -1044,6 +1044,44 @@
     "title": "Users Management",
     "subtitle": "Manage all users across the platform",
     "addUser": "Add User",
+    "actions": {
+      "suspend": "Suspend",
+      "reactivate": "Reactivate",
+      "removeFromPool": "Remove from candidate pool",
+      "addToPool": "Add to candidate pool"
+    },
+    "suspend": {
+      "title": "Suspend account",
+      "userLabel": "User",
+      "reason": "Reason",
+      "reasonRequired": "Please provide a reason",
+      "customReason": "Custom message",
+      "customReasonPlaceholder": "Write the message the user will see on login...",
+      "preview": "User message preview",
+      "suspending": "Suspending...",
+      "confirm": "Suspend",
+      "reasons": {
+        "termsViolation": {
+          "label": "Violation of terms",
+          "message": "Your account has been suspended due to a violation of our terms of service."
+        },
+        "suspiciousActivity": {
+          "label": "Suspicious activity",
+          "message": "Your account has been suspended due to suspicious activity. Please contact support to restore access."
+        },
+        "paymentIssue": {
+          "label": "Payment or billing issue",
+          "message": "Your account has been suspended due to a billing issue. Please contact support for help."
+        },
+        "requestedByUser": {
+          "label": "Requested by user",
+          "message": "Your account has been deactivated at your request."
+        },
+        "other": {
+          "label": "Other"
+        }
+      }
+    },
     "pagination": {
       "rowsPerPage": "Rows per page",
       "showing": "Showing {{from}}-{{to}} of {{total}}",
@@ -1123,6 +1161,8 @@
     },
     "statusFilter": {
       "active": "Active",
+      "published": "Published",
+      "draft": "Draft",
       "closed": "Closed",
       "paused": "Paused",
       "all": "All Status"
@@ -1134,7 +1174,10 @@
     "searchPlaceholder": "Search jobs...",
     "actions": {
       "delete": "Delete",
-      "edit": "Edit"
+      "edit": "Edit",
+      "publish": "Publish",
+      "draft": "Save as Draft",
+      "close": "Close"
     },
     "addButton": "Post Job",
     "subtitle": "Manage job postings and recruitment ({{count}} total)",
@@ -1155,6 +1198,11 @@
     },
     "statusFilter": {
       "all": "All Status"
+    },
+    "actions": {
+      "viewProfile": "View Profile",
+      "removeFromPool": "Remove from pool",
+      "addToPool": "Add to pool"
     },
     "addButton": "Add Candidate",
     "subtitle": "Manage job applicants and candidates ({{count}} total)",

@@ -104,6 +104,7 @@
     "editProfile": "Profil bearbeiten",
     "filter": "Filtern",
     "goBack": "Zurück",
+    "goHome": "Zur Startseite",
     "goToLogin": "Zur Anmeldung",
     "login": "Log In",
     "profileUpdated": "Profile updated!",
@@ -116,6 +117,7 @@
     "save": "Speichern",
     "saveChanges": "Änderungen speichern",
     "saving": "Speichern...",
+    "search": "Suchen",
     "sendMessage": "Nachricht senden",
     "signup": "Registrieren",
     "submitEnquiry": "Anfrage absenden",
@@ -1124,6 +1126,7 @@
   "none": "Keine",
   "notAvailable": "Nicht verfügbar",
   "notProvided": "Nicht angegeben",
+  "notSpecified": "Nicht angegeben",
   "notificationContext": {
     "useNotificationsError": "Fehler bei der Verwendung der Benachrichtigungen"
   },
@@ -1236,7 +1239,9 @@
       "languages": "Sprachen",
       "location": "Standort",
       "name": "Name",
+      "noData": "Noch keine Informationen zum Kind.",
       "specialNeeds": "Besondere Bedürfnisse",
+      "submitEnquiry": "Senden Sie eine Anfrage, um Informationen zu Ihrem Kind hinzuzufügen.",
       "title": "Titel"
     },
     "enquiry": {
@@ -1257,6 +1262,25 @@
     "title": "Titel",
     "welcomeMessage": "Willkommensnachricht"
   },
+  "parentFoundationsPage": {
+    "accessDenied": {
+      "title": "Zugriff verweigert",
+      "message": "Diese Seite ist nur für Eltern zugänglich."
+    },
+    "title": "Kitas durchsuchen",
+    "subtitle": "Entdecken Sie Kitas in Ihrer Nähe und finden Sie die perfekte Betreuung für Ihr Kind",
+    "sendEnquiry": "Anfrage senden",
+    "searchPlaceholder": "Nach Name suchen...",
+    "allCantons": "Alle Kantone",
+    "emptyState": {
+      "title": "Keine Kitas gefunden",
+      "message": "Versuchen Sie, Ihre Suchfilter anzupassen oder eine allgemeine Anfrage zu senden."
+    },
+    "capacity": "Kapazität",
+    "enquire": "Anfragen",
+    "website": "Webseite",
+    "resultsCount": "Zeige {{count}} Kitas"
+  },
   "parentEnquiriesPage": {
     "accessDenied": {
       "message": "Sie müssen als Elternteil angemeldet sein, um Anfragen anzuzeigen",
@@ -1264,10 +1288,25 @@
     },
     "card": {
       "awaitingMatch": "Warten auf Übereinstimmung",
+      "checkBack": "Schauen Sie bald wieder vorbei, um Antworten zu sehen.",
+      "child": "Kind",
+      "childAge": "Alter des Kindes",
       "childInfo": "Kinderinformationen",
+      "childName": "Name des Kindes",
+      "clickToView": "Klicken, um Details anzusehen",
+      "contactDaycare": "Kita kontaktieren",
+      "desiredStart": "Gewünschter Start",
+      "enquiry": "Anfrage",
+      "enquiryDetails": "Anfragedetails",
+      "languages": "Sprachen",
+      "location": "Ort",
       "message": "Ihre Anfrage wurde an relevante Anbieter gesendet",
+      "noResponses": "Noch keine Antworten.",
       "notes": "Zusätzliche Notizen",
+      "respondedOn": "Geantwortet am",
+      "responses": "Antwort(en)",
       "responsesTitle": "Antworten",
+      "startDate": "Start",
       "submitted": "Eingereicht am {{date}}",
       "title": "Anfragedetails",
       "waitingForMoreResponses": "Warten auf weitere Antworten..."
@@ -1278,6 +1317,13 @@
         "1": "Anfrageformular"
       },
       "title": "Noch keine Anfragen"
+    },
+    "findDaycare": "Kita finden",
+    "newEnquiry": "Neue Anfrage",
+    "stats": {
+      "totalEnquiries": "Anfragen insgesamt",
+      "totalResponses": "Antworten insgesamt",
+      "pending": "Ausstehend"
     },
     "title": "Meine Anfragen"
   },
@@ -1442,7 +1488,9 @@
     "selectAndContinue": "select And Continue",
     "subtitle": "subtitle",
     "subtitleSignup": "Subtitle Registrieren",
+    "suppliersTitle": "Lieferanten",
     "suppliersAndProvidersTitle": "Suppliers and providers Titel",
+    "serviceProvidersTitle": "Dienstleister",
     "title": "Titel",
     "titleSignup": "Titel Registrieren",
     "whatYouGet": "what You Get"
