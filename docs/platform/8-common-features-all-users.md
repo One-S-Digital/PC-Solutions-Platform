@@ -31,12 +31,6 @@ Navigate to `/messages` or click **Messages** in the main menu.
 4. Start typing message
 5. Send
 
-**API Endpoint:**
-- `POST /messaging/conversations`
-
-**File Reference:**
-- `api/src/messaging/messaging.controller.ts`
-
 ### Conversation Types
 
 - **Direct** - 1-on-1 conversation
@@ -56,9 +50,6 @@ Navigate to `/messages` or click **Messages** in the main menu.
 - IMAGE - Image attachment
 - SYSTEM - System message
 
-**API Endpoint:**
-- `POST /messaging/messages`
-
 ### File Attachments
 
 - Upload files in messages
@@ -66,26 +57,16 @@ Navigate to `/messages` or click **Messages** in the main menu.
 - File size limits enforced
 - Malware scanning (if enabled)
 
-**API Endpoint:**
-- `POST /upload` (for message attachments)
-
-**File Reference:**
-- `api/src/upload/upload.controller.ts`
-
 ### Real-time Updates
 
 Messages are delivered in real-time via WebSocket.
 
 **File Reference:**
-- `api/src/messaging/messaging.gateway.ts`
 - `frontend/contexts/MessagingContext.tsx`
 
 ### Unread Count
 
 View unread message count in navigation.
-
-**API Endpoint:**
-- `GET /messaging/unread-count`
 
 ---
 
@@ -130,12 +111,6 @@ Navigate to `/profile` or click profile icon → **Profile**.
 3. Upload/update avatar
 4. Save
 
-**API Endpoint:**
-- `PATCH /users/me`
-
-**File Reference:**
-- `api/src/users/users.controller.ts`
-
 ### Viewing Public Profiles
 
 - **Organization Profiles:** `/profile/organization/:id`
@@ -164,13 +139,6 @@ Navigate to `/settings` or click profile icon → **Settings**.
 - Billing & Subscription (if applicable)
 - Security settings
 
-**API Endpoint:**
-- `GET /settings`
-- `PATCH /settings`
-
-**File Reference:**
-- `api/src/settings/settings.controller.ts`
-
 ---
 
 ## Support Tickets
@@ -187,23 +155,12 @@ Navigate to `/settings` or click profile icon → **Settings**.
    - Attachments (optional)
 4. Submit
 
-**API Endpoint:**
-- `POST /support/tickets`
-
-**File Reference:**
-- `api/src/support/support.controller.ts`
-
 ### Managing Tickets
 
 1. View all your tickets
 2. Click ticket to view details
 3. Add responses
 4. Track status
-
-**API Endpoints:**
-- `GET /support/tickets`
-- `GET /support/tickets/:id`
-- `POST /support/tickets/:id/respond`
 
 ### Ticket Status
 
@@ -215,23 +172,7 @@ Navigate to `/settings` or click profile icon → **Settings**.
 ---
 
 ## Under the Hood
-
-### API Endpoints
-
-**Messaging:**
-- `POST /messaging/conversations`
-- `GET /messaging/conversations`
-- `POST /messaging/messages`
-- `GET /messaging/conversations/:id/messages`
-
-**Support:**
-- `POST /support/tickets`
-- `GET /support/tickets`
-- `POST /support/tickets/:id/respond`
-
-**Files:**
-- `api/src/messaging/messaging.controller.ts`
-- `api/src/support/support.controller.ts`
+_API documentation intentionally omitted._
 
 ---
 

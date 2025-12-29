@@ -40,12 +40,6 @@ Navigate to `/educator/dashboard`.
 - Profile completion status
 - Skills and certifications
 
-**API Endpoint:**
-- `GET /dashboard/educator/stats`
-
-**File Reference:**
-- `api/src/dashboard/dashboard.controller.ts`
-
 ---
 
 ## Job Board
@@ -66,12 +60,6 @@ Navigate to `/educator/job-board` or click **Job Board** in the menu.
    - Contract type
    - Search term
 4. Click job to view details
-
-**API Endpoint:**
-- `GET /recruitment/job-listings` (published only)
-
-**File Reference:**
-- `api/src/recruitment/recruitment.controller.ts`
 
 ### Job Details
 
@@ -119,9 +107,6 @@ Navigate to `/educator/applications` or click **Applications** in the menu.
    - Upload CV (optional, or use existing CV)
 5. Submit application
 
-**API Endpoint:**
-- `POST /recruitment/job-applications`
-
 ### Application Status
 
 - **PENDING** - Application submitted, awaiting review
@@ -136,9 +121,6 @@ Navigate to `/educator/applications` or click **Applications** in the menu.
 3. See status for each
 4. View application details
 5. Withdraw application (if needed)
-
-**API Endpoint:**
-- `GET /recruitment/job-applications` (your applications)
 
 ---
 
@@ -169,9 +151,6 @@ Navigate to `/educator/profile` or go to **Settings** → **Profile**.
    - Cover image
 4. Save
 
-**API Endpoint:**
-- `PATCH /profiles/educator/:id`
-
 ### Public Profile
 
 Your profile is visible to:
@@ -195,23 +174,6 @@ Navigate to `/educator/support`.
 ---
 
 ## Under the Hood
-
-### API Endpoints
-
-**Job Listings:**
-- `GET /recruitment/job-listings` (published only)
-
-**Applications:**
-- `POST /recruitment/job-applications`
-- `GET /recruitment/job-applications`
-
-**Profile:**
-- `GET /profiles/educator/:id`
-- `PATCH /profiles/educator/:id`
-
-**Files:**
-- `api/src/recruitment/recruitment.controller.ts`
-- `api/src/profiles/profiles.controller.ts`
 
 ### Database Models
 

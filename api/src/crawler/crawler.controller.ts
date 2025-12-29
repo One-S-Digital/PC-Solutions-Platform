@@ -112,8 +112,12 @@ export class CrawlerController {
     if (!this.isCrawlerEnabled()) {
       throw new BadRequestException('Crawler is disabled');
     }
+    const sourceId = parseInt(id, 10);
+    if (isNaN(sourceId) || sourceId <= 0) {
+      throw new BadRequestException(`Invalid sourceId: '${id}'. Must be a positive integer.`);
+    }
     return this.prisma.cantonSource.update({
-      where: { id: parseInt(id) },
+      where: { id: sourceId },
       data: dto,
     });
   }
@@ -235,6 +239,13 @@ export class CrawlerController {
 
     if (!url) {
       throw new BadRequestException('URL parameter is required');
+    }
+
+    // SSRF prevention: validate URL against the same whitelist as the crawler
+    try {
+      this.crawlerService.validateUrl(url);
+    } catch (error: any) {
+      throw new BadRequestException(`URL validation failed: ${error.message}`);
     }
 
     try {

@@ -100,12 +100,6 @@ Certain user roles require an active subscription to access platform features.
 6. Add message (optional)
 7. Submit request
 
-**API Endpoint:**
-- `POST /subscriptions/request`
-
-**File Reference:**
-- `api/src/subscription-management/subscription-management.controller.ts`
-
 ### Request Status
 
 Your subscription request goes through these stages:
@@ -125,9 +119,6 @@ Your subscription request goes through these stages:
 3. See estimated response time
 4. Check for admin notes
 
-**API Endpoint:**
-- `GET /subscriptions/requests`
-
 ---
 
 ## Managing Your Subscription
@@ -143,9 +134,6 @@ Your subscription request goes through these stages:
    - Trial status (if applicable)
    - Features included
    - Usage limits
-
-**API Endpoint:**
-- `GET /subscriptions/me`
 
 **File Reference:**
 - `frontend/components/settings/sections/BillingSubscriptionSettings.tsx`
@@ -170,9 +158,6 @@ The platform checks your subscription to determine feature access:
 - Usage limits are enforced
 - Paywall shown if subscription inactive
 
-**API Endpoint:**
-- `GET /subscriptions/feature/:featureKey`
-
 ---
 
 ## Cancellation
@@ -183,9 +168,6 @@ The platform checks your subscription to determine feature access:
 2. Click **Request Cancellation**
 3. Provide reason (optional)
 4. Submit cancellation request
-
-**API Endpoint:**
-- `POST /subscriptions/cancel-request`
 
 ### Cancellation Status
 
@@ -223,9 +205,6 @@ Currently, subscriptions use **manual billing**:
 - Invoices sent via email
 - Invoice number provided
 - Payment reference for tracking
-
-**API Endpoint:**
-- `GET /admin/subscription-management/requests/:id` (admin view)
 
 ---
 
@@ -267,7 +246,6 @@ Features are gated via:
 **Files:**
 - `frontend/components/shared/SubscriptionPaywall.tsx`
 - `frontend/App.tsx` (SubscriptionGatedRoute)
-- `api/src/subscription-management/subscription-management.controller.ts`
 
 ---
 

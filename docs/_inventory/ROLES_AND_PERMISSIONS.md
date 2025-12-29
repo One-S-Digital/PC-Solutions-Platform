@@ -51,10 +51,6 @@ enum UserRole {
 **Routes (Admin Dashboard):**
 - All admin routes
 
-**API Endpoints:**
-- All admin endpoints
-- All system configuration endpoints
-
 **Files:**
 - `api/src/auth/guards/roles.guard.ts`
 - `api/src/admin/admin.controller.ts`
@@ -83,9 +79,6 @@ enum UserRole {
 
 **Routes (Admin Dashboard):**
 - Most admin routes (some restricted)
-
-**API Endpoints:**
-- Admin endpoints (some SUPER_ADMIN-only features restricted)
 
 **Files:**
 - `api/src/auth/guards/roles.guard.ts`
@@ -126,16 +119,6 @@ enum UserRole {
 - `/state-policies`
 - `/e-learning` (subscription-gated)
 - `/settings`
-
-**API Endpoints:**
-- `GET /dashboard/foundation/*`
-- `POST /recruitment/job-listings`
-- `GET /leads/parent-leads`
-- `POST /leads/parent-leads/:id/respond`
-- `GET /marketplace/*`
-- `GET /elearning/*` (subscription-gated)
-- `GET /messaging/*`
-- `POST /support/tickets`
 
 **Subscription Features:**
 - **BASIC:** Marketplace, State Policies, Orders
@@ -179,17 +162,6 @@ enum UserRole {
 - `/messages`
 - `/settings`
 
-**API Endpoints:**
-- `POST /marketplace/products`
-- `GET /marketplace/products`
-- `PATCH /marketplace/products/:id`
-- `DELETE /marketplace/products/:id`
-- `GET /marketplace/inquiries` (received inquiries)
-- `POST /marketplace/inquiries/:id/respond`
-- `GET /dashboard/supplier/*`
-- `GET /messaging/*`
-- `POST /support/tickets`
-
 **Files:**
 - `api/src/marketplace/marketplace.controller.ts`
 - `api/src/dashboard/dashboard.controller.ts`
@@ -221,17 +193,6 @@ enum UserRole {
 - `/settings/service-provider`
 - `/messages`
 - `/settings`
-
-**API Endpoints:**
-- `POST /marketplace/services`
-- `GET /marketplace/services`
-- `PATCH /marketplace/services/:id`
-- `DELETE /marketplace/services/:id`
-- `GET /marketplace/service-requests`
-- `PATCH /marketplace/service-requests/:id`
-- `GET /dashboard/service-provider/*`
-- `GET /messaging/*`
-- `POST /support/tickets`
 
 **Files:**
 - `api/src/marketplace/marketplace.controller.ts`
@@ -265,14 +226,6 @@ enum UserRole {
 - `/messages`
 - `/settings`
 
-**API Endpoints:**
-- `GET /recruitment/job-listings` (published only)
-- `POST /recruitment/job-applications`
-- `GET /recruitment/job-applications`
-- `GET /messaging/*`
-- `POST /support/tickets`
-- `GET /profiles/educator/:id`
-
 **Files:**
 - `api/src/recruitment/recruitment.controller.ts`
 - `frontend/pages/educator/`
@@ -286,7 +239,7 @@ enum UserRole {
 
 **Access:**
 - Parent dashboard
-- Lead submission (parent lead form)
+- Lead submission (requires authenticated parent)
 - Enquiry tracking
 - Messaging
 - Support tickets
@@ -296,16 +249,9 @@ enum UserRole {
 - `/parent/dashboard`
 - `/parent/enquiries`
 - `/parent/support`
-- `/parent-lead-form` (public)
+- `/parent-lead-form`
 - `/messages`
 - `/settings`
-
-**API Endpoints:**
-- `POST /leads/parent-leads`
-- `GET /leads/parent-leads` (own leads)
-- `GET /messaging/*`
-- `POST /support/tickets`
-- `GET /profiles/organization/:id`
 
 **Files:**
 - `api/src/leads/leads.controller.ts`

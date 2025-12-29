@@ -406,7 +406,7 @@ export class CrawlerService {
    * Only allows requests to official cantonal and federal domains.
    * @throws Error if domain is not whitelisted
    */
-  private validateUrl(url: string): void {
+  public validateUrl(url: string): void {
     const parsedUrl = new URL(url);
     const hostname = parsedUrl.hostname.toLowerCase();
 

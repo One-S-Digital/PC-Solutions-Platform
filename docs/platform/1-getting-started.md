@@ -118,11 +118,7 @@ The information you need to provide depends on your role:
 4. Your role will be assigned
 5. You'll be redirected to your role-specific dashboard
 
-**API Endpoint:**
-- `POST /users/complete-profile`
-
 **File Reference:**
-- `api/src/users/users.controller.ts`
 - `frontend/pages/SignupPage.tsx`
 
 ---
@@ -152,12 +148,7 @@ Your dashboard shows:
 - **Calendar Events** - Upcoming events (Foundations)
 - **Notifications** - Important alerts
 
-**API Endpoints:**
-- `GET /dashboard/{role}/quick-stats`
-- `GET /dashboard/{role}/activities`
-
 **File Reference:**
-- `api/src/dashboard/dashboard.controller.ts`
 - `frontend/pages/*/DashboardPage.tsx`
 
 ---

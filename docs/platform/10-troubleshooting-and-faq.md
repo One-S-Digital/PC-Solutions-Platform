@@ -63,9 +63,6 @@ Common issues and solutions for the ProCrèche Solutions platform.
 3. Ensure your subscription is active
 4. Contact support if role appears incorrect
 
-**File Reference:**
-- `api/src/auth/guards/roles.guard.ts`
-
 ---
 
 ## Profile Issues
@@ -80,9 +77,6 @@ Common issues and solutions for the ProCrèche Solutions platform.
 3. Verify file uploads are within size limits
 4. Try refreshing the page
 5. Contact support if issue persists
-
-**API Endpoint:**
-- `PATCH /users/me` or `PATCH /profiles/organization/:id`
 
 ---
 
@@ -100,12 +94,6 @@ Common issues and solutions for the ProCrèche Solutions platform.
 **File Upload Limits:**
 - Images: Typically 5MB max
 - Documents: Typically 10MB max
-
-**API Endpoint:**
-- `POST /upload`
-
-**File Reference:**
-- `api/src/upload/upload.controller.ts`
 
 ---
 
@@ -136,9 +124,6 @@ Common issues and solutions for the ProCrèche Solutions platform.
 3. Contact support to follow up
 4. Ensure payment was sent if invoice was received
 
-**API Endpoint:**
-- `GET /subscriptions/requests`
-
 ---
 
 ### Cannot Access Feature Despite Subscription
@@ -151,9 +136,6 @@ Common issues and solutions for the ProCrèche Solutions platform.
 3. Refresh the page
 4. Clear browser cache
 5. Contact support with subscription details
-
-**API Endpoint:**
-- `GET /subscriptions/feature/:featureKey`
 
 ---
 
@@ -205,12 +187,6 @@ Common issues and solutions for the ProCrèche Solutions platform.
 - Documents: PDF, DOCX, XLSX
 - Other: Check allowed types for specific feature
 
-**API Endpoint:**
-- `POST /upload`
-
-**File Reference:**
-- `api/src/upload/upload.controller.ts`
-
 ---
 
 ### "Malware Detected" Error
@@ -222,9 +198,6 @@ Common issues and solutions for the ProCrèche Solutions platform.
 2. Ensure file is from a trusted source
 3. Try a different file
 4. Contact support if you believe this is a false positive
-
-**File Reference:**
-- `api/src/security/antivirus-upload.controller.ts`
 
 ---
 
@@ -241,9 +214,6 @@ Common issues and solutions for the ProCrèche Solutions platform.
 4. Check if conversation exists
 5. Contact support if issue persists
 
-**API Endpoint:**
-- `POST /messaging/messages`
-
 ---
 
 ### Real-time Updates Not Working
@@ -256,9 +226,6 @@ Common issues and solutions for the ProCrèche Solutions platform.
 3. Verify you're not behind a restrictive firewall
 4. Try a different browser
 5. Contact support if issue persists
-
-**File Reference:**
-- `api/src/messaging/messaging.gateway.ts`
 
 ---
 
@@ -298,9 +265,6 @@ Team member invitation features vary by subscription plan. Check your plan's fea
 1. Navigate to **Support** in the menu
 2. Create a support ticket
 3. Or use contact information in Support section
-
-**API Endpoint:**
-- `POST /support/tickets`
 
 ---
 
@@ -355,9 +319,6 @@ The platform uses standard HTTP status codes:
 - `403` - Forbidden (insufficient permissions)
 - `404` - Not Found
 - `500` - Internal Server Error
-
-**File Reference:**
-- `api/src/common/filters/` - Exception filters
 
 ### Logging
 

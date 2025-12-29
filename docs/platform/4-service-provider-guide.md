@@ -58,12 +58,6 @@ Navigate to `/service-provider/dashboard`.
 - Request trends
 - Performance metrics
 
-**API Endpoint:**
-- `GET /dashboard/service-provider/stats`
-
-**File Reference:**
-- `api/src/dashboard/dashboard.controller.ts`
-
 ---
 
 ## Service Management
@@ -91,14 +85,6 @@ Navigate to `/service-provider/service-listings`.
    - Image
 4. Set active status
 5. Save
-
-**API Endpoints:**
-- `POST /marketplace/services`
-- `PATCH /marketplace/services/:id`
-- `DELETE /marketplace/services/:id`
-
-**File Reference:**
-- `api/src/marketplace/marketplace.controller.ts`
 
 ### Service Categories
 
@@ -128,9 +114,6 @@ Navigate to `/service-provider/requests`.
 3. Filter by status
 4. Click request to view details
 
-**API Endpoint:**
-- `GET /marketplace/service-requests`
-
 ### Managing Requests
 
 1. Open service request
@@ -144,9 +127,6 @@ Navigate to `/service-provider/requests`.
 4. Add notes
 5. Schedule appointments (if applicable)
 6. Save
-
-**API Endpoint:**
-- `PATCH /marketplace/service-requests/:id`
 
 ### Booking Links
 
@@ -175,9 +155,6 @@ Navigate to `/service-provider/organisation-profile`.
 5. Upload logo and cover image
 6. Save
 
-**API Endpoint:**
-- `PATCH /profiles/organization/:id`
-
 ---
 
 ## Analytics
@@ -196,9 +173,6 @@ Navigate to `/service-provider/analytics`.
 - Performance metrics
 - Customer insights
 
-**API Endpoint:**
-- `GET /dashboard/service-provider/stats`
-
 ---
 
 ## Support
@@ -213,20 +187,6 @@ Navigate to `/service-provider/support`.
 ---
 
 ## Under the Hood
-
-### API Endpoints
-
-**Services:**
-- `POST /marketplace/services`
-- `GET /marketplace/services`
-- `PATCH /marketplace/services/:id`
-
-**Service Requests:**
-- `GET /marketplace/service-requests`
-- `PATCH /marketplace/service-requests/:id`
-
-**Files:**
-- `api/src/marketplace/marketplace.controller.ts`
 
 ### Database Models
 

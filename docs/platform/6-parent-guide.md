@@ -37,19 +37,13 @@ Navigate to `/parent/dashboard`.
 - Lead submission history
 - Recent activity
 
-**API Endpoint:**
-- `GET /dashboard/parent/stats`
-
-**File Reference:**
-- `api/src/dashboard/dashboard.controller.ts`
-
 ---
 
 ## Submitting a Lead
 
-### Public Lead Form
+### Lead Form
 
-1. Navigate to `/parent-lead-form` (public, no login required)
+1. Navigate to `/parent-lead-form`
 2. Fill in form:
    - Parent name
    - Parent email
@@ -72,11 +66,8 @@ Navigate to `/parent/dashboard`.
 3. Fill in lead form
 4. Submit
 
-**API Endpoint:**
-- `POST /leads/parent-leads`
-
 **File Reference:**
-- `api/src/leads/leads.controller.ts`
+_API implementation references intentionally omitted._
 
 ---
 
@@ -100,9 +91,6 @@ Navigate to `/parent/enquiries` or click **Enquiries** in the menu.
    - **ENROLLED** - Child enrolled
 4. View foundation responses
 
-**API Endpoint:**
-- `GET /leads/parent-leads` (your leads)
-
 ### Foundation Responses
 
 When foundations respond to your lead, you'll see:
@@ -125,15 +113,7 @@ Navigate to `/parent/support`.
 
 ## Under the Hood
 
-### API Endpoints
-
-**Leads:**
-- `POST /leads/parent-leads`
-- `GET /leads/parent-leads` (your leads)
-- `GET /leads/parent-leads/:id`
-
-**Files:**
-- `api/src/leads/leads.controller.ts`
+_API documentation intentionally omitted._
 
 ### Database Models
 

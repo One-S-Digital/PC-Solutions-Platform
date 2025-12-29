@@ -52,9 +52,6 @@ Product suppliers require an active subscription to access:
 1. Navigate to **Settings** → **Billing & Subscription**
 2. View current plan and status
 
-**API Endpoint:**
-- `GET /subscriptions/me`
-
 ---
 
 ## Dashboard
@@ -76,35 +73,20 @@ Navigate to `/supplier/dashboard` or click **Dashboard** in the menu.
 - Total inquiries
 - Pending inquiries
 
-**API Endpoint:**
-- `GET /dashboard/supplier/stats`
-
 #### Product Statistics
 - Products by category
 - Best-selling products
 - Product views
-
-**API Endpoint:**
-- `GET /dashboard/supplier/products`
 
 #### Order Statistics
 - Orders by status
 - Revenue metrics
 - Order trends
 
-**API Endpoint:**
-- `GET /dashboard/supplier/orders`
-
 #### Inquiry Statistics
 - Total inquiries
 - Inquiries by status
 - Response rate
-
-**API Endpoint:**
-- `GET /dashboard/supplier/inquiries`
-
-**File Reference:**
-- `api/src/dashboard/dashboard.controller.ts`
 
 ---
 
@@ -143,13 +125,7 @@ Navigate to `/supplier/product-listings` or click **Product Listings** in the su
    - **OUT_OF_STOCK** - Temporarily unavailable
 5. Click **Save**
 
-**API Endpoints:**
-- `POST /marketplace/products` - Create product
-- `PATCH /marketplace/products/:id` - Update product
-- `DELETE /marketplace/products/:id` - Delete product
-
-**File Reference:**
-- `api/src/marketplace/marketplace.controller.ts`
+_API details intentionally omitted._
 
 ### Managing Products
 
@@ -161,9 +137,6 @@ Navigate to `/supplier/product-listings` or click **Product Listings** in the su
 3. Edit product details
 4. Update product status
 5. Delete products
-
-**API Endpoint:**
-- `GET /marketplace/products?supplierId=YOUR_ID`
 
 ### Product Status
 
@@ -200,9 +173,6 @@ Navigate to `/supplier/orders` or click **Orders** in the supplier menu.
    - Search term
 4. Click order to view details
 
-**API Endpoint:**
-- `GET /marketplace/orders` - List orders
-
 ### Order Details
 
 View order information:
@@ -225,9 +195,6 @@ View order information:
 3. Add notes (optional)
 4. Save
 
-**API Endpoint:**
-- `PATCH /marketplace/orders/:id` - Update order
-
 ---
 
 ## Inquiry Management
@@ -237,7 +204,7 @@ View order information:
 Inquiries are received from foundations who want to learn more about your products.
 
 **File Reference:**
-- `api/src/marketplace/inquiry.service.ts`
+_API details intentionally omitted._
 
 ### Viewing Inquiries
 
@@ -252,9 +219,6 @@ Inquiries are received from foundations who want to learn more about your produc
    - Budget
    - Urgency
    - Contact preferences
-
-**API Endpoint:**
-- `GET /marketplace/inquiries` - List received inquiries
 
 ### Inquiry Status
 
@@ -282,10 +246,6 @@ Inquiries are received from foundations who want to learn more about your produc
    - **DECLINED** - Not interested
 6. Submit response
 
-**API Endpoints:**
-- `PATCH /marketplace/inquiries/:id` - Update inquiry
-- `POST /marketplace/inquiries/:id/respond` - Respond to inquiry
-
 ---
 
 ## Catalog Management
@@ -300,14 +260,6 @@ Inquiries are received from foundations who want to learn more about your produc
 4. Upload file
 5. Add title and description
 6. Save
-
-**API Endpoints:**
-- `POST /marketplace/catalogs` - Upload catalog
-- `GET /marketplace/catalogs` - List catalogs
-- `DELETE /marketplace/catalogs/:id` - Delete catalog
-
-**File Reference:**
-- `api/src/marketplace/marketplace.controller.ts`
 
 ### Catalog Types
 
@@ -330,15 +282,6 @@ Inquiries are received from foundations who want to learn more about your produc
    - Max Usage (optional)
    - Description
 4. Save
-
-**API Endpoints:**
-- `POST /promo-codes` - Create promo code
-- `GET /promo-codes` - List promo codes
-- `PATCH /promo-codes/:id` - Update promo code
-- `DELETE /promo-codes/:id` - Delete promo code
-
-**File Reference:**
-- `api/src/promo-codes/promo-codes.controller.ts`
 
 ### Promo Code Types
 
@@ -378,9 +321,6 @@ Navigate to `/supplier/organisation-profile` or go to **Settings** → **Profile
    - Cover image
 4. Save
 
-**API Endpoint:**
-- `PATCH /profiles/organization/:id`
-
 ### Public Profile
 
 Your organization profile is visible to foundations browsing the marketplace.
@@ -404,12 +344,6 @@ Navigate to `/supplier/analytics` or click **Analytics** in the supplier menu.
 - Revenue trends
 - Customer insights
 
-**API Endpoints:**
-- `GET /dashboard/supplier/stats`
-- `GET /dashboard/supplier/products`
-- `GET /dashboard/supplier/orders`
-- `GET /dashboard/supplier/inquiries`
-
 ---
 
 ## Support
@@ -420,36 +354,12 @@ Navigate to `/supplier/analytics` or click **Analytics** in the supplier menu.
 2. Click **Create Ticket**
 3. Fill in form and submit
 
-**API Endpoint:**
-- `POST /support/tickets`
-
 **File Reference:**
 - `frontend/pages/supplier/SupplierSupportPage.tsx`
 
 ---
 
 ## Under the Hood
-
-### API Endpoints
-
-**Products:**
-- `POST /marketplace/products`
-- `GET /marketplace/products`
-- `PATCH /marketplace/products/:id`
-- `DELETE /marketplace/products/:id`
-
-**Orders:**
-- `GET /marketplace/orders`
-- `PATCH /marketplace/orders/:id`
-
-**Inquiries:**
-- `GET /marketplace/inquiries`
-- `PATCH /marketplace/inquiries/:id`
-- `POST /marketplace/inquiries/:id/respond`
-
-**Files:**
-- `api/src/marketplace/marketplace.controller.ts`
-- `api/src/dashboard/dashboard.controller.ts`
 
 ### Database Models
 
