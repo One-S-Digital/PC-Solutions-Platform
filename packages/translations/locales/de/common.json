@@ -562,7 +562,9 @@
       "hint": "hint",
       "placeholder": "placeholder"
     },
+    "locationNotProvided": "Standort nicht angegeben",
     "loadError": "load Error",
+    "roleNotProvided": "Rolle nicht angegeben",
     "saveError": "Speichern error",
     "saveSuccess": "Speichern success",
     "skills": {

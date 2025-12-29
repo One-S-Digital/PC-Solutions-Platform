@@ -8,7 +8,7 @@ import { STANDARD_INPUT_FIELD } from '../../constants';
 import {
     UserCircleIcon, IdentificationIcon, CalendarDaysIcon,
     BriefcaseIcon, AcademicCapIcon, PaperClipIcon, StarIcon, PencilSquareIcon, XMarkIcon,
-    PlusIcon, TrashIcon, DocumentTextIcon
+    PlusIcon, TrashIcon, DocumentTextIcon, MapPinIcon
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../contexts/AppContext';
@@ -32,6 +32,10 @@ interface EducatorProfileData {
   avatarAssetId: string;
   avatarUrl?: string;
   candidatePoolVisible: boolean;
+  region: string;
+  jobRole: string;
+  jobRoles: string[];
+  cities: string[];
 }
 
 const SectionCard: React.FC<{ 
@@ -115,6 +119,10 @@ const EducatorProfilePage: React.FC = () => {
           lastName: data.lastName || '',
           email: data.email || currentUser.email || '',
           phoneNumber: data.phoneNumber || '',
+          region: data.region || '',
+          jobRole: data.jobRole || '',
+          jobRoles: Array.isArray(data.jobRoles) ? data.jobRoles : (data.jobRole ? [data.jobRole] : []),
+          cities: Array.isArray(data.cities) ? data.cities : [],
           workExperience: data.workExperience || '',
           education: data.education || '',
           certifications: Array.isArray(data.certifications) ? data.certifications : [],
@@ -133,6 +141,10 @@ const EducatorProfilePage: React.FC = () => {
           lastName: currentUser.lastName || '',
           email: currentUser.email || '',
           phoneNumber: '',
+          region: '',
+          jobRole: '',
+          jobRoles: [],
+          cities: [],
           workExperience: '',
           education: '',
           certifications: [],
@@ -355,6 +367,13 @@ const EducatorProfilePage: React.FC = () => {
 
   const fullName = `${profile.firstName} ${profile.lastName}`.trim() || t('educatorProfilePage.unnamed', 'Unnamed Educator');
   const avatarUrl = profile.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=48CFAE&color=fff&size=128`;
+  const roleDisplay = profile.jobRoles.length > 0
+    ? profile.jobRoles.join(', ')
+    : profile.jobRole || t('educatorProfilePage.roleNotProvided', 'Role not provided');
+  const locationDisplay = [
+    ...(profile.cities.length > 0 ? [profile.cities.join(', ')] : []),
+    ...(profile.region ? [profile.region] : []),
+  ].join(' • ') || t('educatorProfilePage.locationNotProvided', 'Location not provided');
   
   return (
     <div className="space-y-6">
@@ -389,6 +408,16 @@ const EducatorProfilePage: React.FC = () => {
             {profile.phoneNumber && (
               <p className="text-sm text-gray-500">{profile.phoneNumber}</p>
             )}
+            <div className="mt-3 space-y-1 text-sm text-gray-600">
+              <p className="flex items-center justify-center">
+                <BriefcaseIcon className="w-4 h-4 mr-2 text-gray-400" />
+                {roleDisplay}
+              </p>
+              <p className="flex items-center justify-center">
+                <MapPinIcon className="w-4 h-4 mr-2 text-gray-400" />
+                {locationDisplay}
+              </p>
+            </div>
           </Card>
 
           {/* Candidate Pool Visibility */}

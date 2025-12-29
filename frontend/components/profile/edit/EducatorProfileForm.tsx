@@ -66,6 +66,10 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
     'https://images.unsplash.com/photo-1503676260728-4c8c0c7832a6?auto=format&fit=crop&w=1600&q=80';
 
   const fullName = `${formData.firstName || ''} ${formData.lastName || ''}`.trim() || t('settings:educatorProfile.educator', 'Educator');
+  const jobRoles = Array.isArray((formData as any).jobRoles)
+    ? (formData as any).jobRoles
+    : ((formData as any).jobRole ? [(formData as any).jobRole] : []);
+  const cities = Array.isArray((formData as any).cities) ? (formData as any).cities : [];
 
   return (
     <div className="space-y-6">
@@ -146,15 +150,18 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
             <label htmlFor="jobRole" className="block text-sm font-medium text-gray-700 mb-1">
               {t('settings:educatorProfile.role', 'Role')} <span className="text-swiss-coral">*</span>
             </label>
-            <input
-              type="text"
-              id="jobRole"
-              value={(formData as any).jobRole || ''}
-              onChange={(e) => onChange('jobRole', e.target.value)}
-              className={STANDARD_INPUT_FIELD}
-              required
+            <ChipInput
+              selectedChips={jobRoles}
+              onChange={(roles) => {
+                onChange('jobRoles', roles);
+                onChange('jobRole', roles[0] || '');
+              }}
               placeholder={t('settings:educatorProfile.rolePlaceholder', 'e.g., Educator, Assistant')}
+              allowCustomValues={true}
             />
+            <p className="mt-1 text-xs text-gray-500">
+              {t('settings:educatorProfile.roleHint', 'Add one or more roles to improve matching.')}
+            </p>
           </div>
 
           <div>
@@ -175,6 +182,20 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
                 </option>
               ))}
             </select>
+            <div className="mt-3">
+              <label htmlFor="cities" className="block text-sm font-medium text-gray-700 mb-1">
+                {t('settings:educatorProfile.cities', 'Cities')}
+              </label>
+              <ChipInput
+                selectedChips={cities}
+                onChange={(nextCities) => onChange('cities', nextCities)}
+                placeholder={t('settings:educatorProfile.citiesPlaceholder', 'Add one or more cities')}
+                allowCustomValues={true}
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                {t('settings:educatorProfile.citiesHint', 'Add multiple cities to increase your visibility.')}
+              </p>
+            </div>
           </div>
         </div>
         <p className="mt-2 text-xs text-gray-500">

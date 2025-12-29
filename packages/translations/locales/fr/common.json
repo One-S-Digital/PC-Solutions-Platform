@@ -556,7 +556,9 @@
       "hint": "hint",
       "placeholder": "placeholder"
     },
+    "locationNotProvided": "Localisation non renseignée",
     "loadError": "load Error",
+    "roleNotProvided": "Rôle non renseigné",
     "saveError": "Enregistrer error",
     "saveSuccess": "Enregistrer success",
     "skills": {
