@@ -20,6 +20,7 @@ import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
 import AddCandidateModal, { CandidateFormData } from '../components/AddCandidateModal'
 import EditUserModal from '../components/EditUserModal'
+import { getFrontendBaseUrl } from '../utils/frontendUrl'
 
 const Candidates: React.FC = () => {
   const { t } = useTranslation(['admin', 'common'])
@@ -33,7 +34,8 @@ const Candidates: React.FC = () => {
 
   const openCandidateProfile = (candidateProfileId: string) => {
     // Open the main app's candidate profile view (same view foundations use)
-    const url = `${window.location.origin}/candidate/${candidateProfileId}`
+    const baseUrl = getFrontendBaseUrl()
+    const url = new URL(`/candidate/${candidateProfileId}`, `${baseUrl}/`).toString()
     window.open(url, '_blank', 'noopener,noreferrer')
   }
 

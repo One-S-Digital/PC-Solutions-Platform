@@ -205,6 +205,11 @@ export class ClerkAuthGuard implements CanActivate {
           }
         }
       } catch (e) {
+        // Important: do NOT swallow suspension exceptions (or other intentional HttpExceptions).
+        // If we do, the request continues without context and may crash later (or bypass some endpoints).
+        if (e instanceof HttpException) {
+          throw e;
+        }
         if (this.authDebug) {
           console.error('🔐 Auth Debug: failed to load AppUser', e);
         }
