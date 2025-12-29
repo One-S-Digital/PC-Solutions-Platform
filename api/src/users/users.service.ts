@@ -1102,12 +1102,33 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto, changedBy?: string, callerRole?: UserRole) {
-    const appUser = await this.prisma.appUser.findUnique({
-      where: { id },
-    });
+    // Admin UIs may pass either AppUser.id (account id) OR User.id (profile id).
+    // Support both to keep edit flows (e.g. candidate pool) reliable.
+    let appUser = await this.prisma.appUser.findUnique({ where: { id } });
+    let appUserId = id;
 
     if (!appUser) {
-      throw new NotFoundException('User not found');
+      const profile = await this.prisma.user.findUnique({ where: { id } });
+      if (!profile) {
+        throw new NotFoundException('User not found');
+      }
+
+      // Ensure an AppUser exists for the profile's clerkId so updates can proceed.
+      const existingAppUser = await this.prisma.appUser.findUnique({
+        where: { clerkId: profile.clerkId },
+      });
+
+      appUser =
+        existingAppUser ??
+        (await this.prisma.appUser.create({
+          data: {
+            clerkId: profile.clerkId,
+            email: profile.email,
+            role: profile.role,
+          },
+        }));
+
+      appUserId = appUser.id;
     }
 
     // Check if role is changing - if so, validate and use RoleSyncService for proper Clerk sync
@@ -1131,7 +1152,7 @@ export class UsersService {
       // Handle role change through RoleSyncService (includes Clerk sync)
       if (isRoleChanging && targetRole) {
         await this.roleSyncService.changeRole({
-          appUserId: id,
+          appUserId: appUserId,
           newRole: targetRole,
           changedBy: changedBy || 'system',
           reason: isElevatingToAdmin ? `Role elevation from ${previousRole} to ${targetRole}` : 'Admin user update',
@@ -1141,7 +1162,7 @@ export class UsersService {
 
       // Update AppUser table (non-role fields)
       const updatedAppUser = await tx.appUser.update({
-        where: { id },
+        where: { id: appUserId },
         data: {
           email: updateUserDto.email || appUser.email,
           // Role is already handled by RoleSyncService above
@@ -1236,12 +1257,12 @@ export class UsersService {
     // This ensures the user can log in with their new email
     const isEmailChanging = updateUserDto.email && updateUserDto.email !== appUser.email;
     if (isEmailChanging && updateUserDto.email) {
-      this.logger.log(`📧 [UPDATE] Email changed for user ${id}, syncing to Clerk...`);
+      this.logger.log(`📧 [UPDATE] Email changed for user ${appUserId}, syncing to Clerk...`);
       await this.syncEmailToClerkWithFallback(appUser.clerkId, updateUserDto.email);
     }
 
     // Fetch the latest role (in case it was updated by RoleSyncService)
-    const latestAppUser = await this.prisma.appUser.findUnique({ where: { id } });
+    const latestAppUser = await this.prisma.appUser.findUnique({ where: { id: appUserId } });
 
     // Return the fully refreshed user profile (ensures status/isActive/candidatePoolVisible are correct)
     return this.findByClerkId(updatedAppUser.clerkId);
