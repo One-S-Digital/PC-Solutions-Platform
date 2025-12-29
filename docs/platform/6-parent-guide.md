@@ -43,7 +43,7 @@ Navigate to `/parent/dashboard`.
 
 ### Lead Form
 
-1. Navigate to `/parent-lead-form`
+1. Navigate to `/parent-lead-form` (public, no login required)
 2. Fill in form:
    - Parent name
    - Parent email

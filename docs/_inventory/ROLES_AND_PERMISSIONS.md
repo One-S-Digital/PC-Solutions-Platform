@@ -239,7 +239,7 @@ enum UserRole {
 
 **Access:**
 - Parent dashboard
-- Lead submission (requires authenticated parent)
+- Lead submission (public form, no login required)
 - Enquiry tracking
 - Messaging
 - Support tickets
@@ -249,7 +249,7 @@ enum UserRole {
 - `/parent/dashboard`
 - `/parent/enquiries`
 - `/parent/support`
-- `/parent-lead-form`
+- `/parent-lead-form` (public)
 - `/messages`
 - `/settings`
 
