@@ -113,6 +113,7 @@ const CandidateProfilePage: React.FC = () => {
     name,
     avatarUrl,
     currentRoleOrTitle,
+    jobRole,
     location,
     availabilityStatus,
     shortBio,
@@ -157,7 +158,7 @@ const CandidateProfilePage: React.FC = () => {
           />
           <div className="flex-grow text-center sm:text-left">
             <h1 className="text-3xl font-bold text-swiss-charcoal">{name}</h1>
-            <p className="text-xl text-swiss-teal mt-1">{currentRoleOrTitle ?? t('candidateProfile.roleNotSpecified')}</p>
+            <p className="text-xl text-swiss-teal mt-1">{currentRoleOrTitle ?? jobRole ?? t('candidateProfile.roleNotSpecified')}</p>
             <div className="mt-2 space-y-1 text-sm text-gray-600">
               <p className="flex items-center justify-center sm:justify-start">
                 <MapPinIcon className="w-5 h-5 mr-2 text-gray-400" /> {location ?? t('candidateProfile.locationNotProvided')}

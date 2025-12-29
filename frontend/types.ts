@@ -318,10 +318,12 @@ export interface CandidateProfile {
         contractType?: 'Full-time' | 'Part-time' | 'Internship' | 'Temporary';
         preferredAgeGroups?: ('Infants' | 'Toddlers' | 'Preschool')[];
     };
+    availabilitySettings?: EducatorAvailabilitySettings;
     documents?: DocumentItem[];
     
     // Legacy fields for simpler list view
     role?: string;
+    jobRole?: string;
     availability?: string;
     preferredRegion?: string;
     experience?: string;
@@ -910,6 +912,8 @@ interface BaseSettings {
     firstName?: string;
     lastName?: string;
     email?: string; // User's personal email (for Educator/Parent)
+    region?: SwissCanton | string; // Candidate location (e.g., canton/city)
+    jobRole?: string; // Candidate role/title (e.g., "Educator", "Assistant")
     workExperience?: string;
     education?: string;
     certifications?: string[];

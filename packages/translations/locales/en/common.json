@@ -153,6 +153,13 @@
     "viewProfile": "View Profile",
     "yes": "Yes"
   },
+  "pagination": {
+    "rowsPerPage": "Rows per page",
+    "range": "{{from}}-{{to}} of {{total}}",
+    "pageOf": "Page {{page}} of {{totalPages}}",
+    "previous": "Previous",
+    "next": "Next"
+  },
   "candidateCard": {
     "viewProfile": "view Profile"
   },

@@ -315,6 +315,8 @@ export class SettingsController {
         cvUrl: user.cvUrl ?? '',
         shortBio: user.shortBio ?? '',
         candidatePoolVisible: !!(user as any).candidatePoolVisible,
+        region: (user as any).region ?? '',
+        jobRole: (user as any).jobRole ?? '',
         avatarAssetId: user.avatarAssetId ?? '',
         avatarUrl: (user as any).avatarAsset?.publicUrl ?? '', // Compute from asset relation
         coverAssetId: (user as any).coverAssetId ?? '',
@@ -362,6 +364,8 @@ export class SettingsController {
         availability: settings.availability,
         cvUrl: settings.cvUrl,
         shortBio: settings.shortBio,
+        region: settings.region,
+        jobRole: settings.jobRole,
         ...(settings.candidatePoolVisible !== undefined && { candidatePoolVisible: settings.candidatePoolVisible }),
         ...(settings.avatarAssetId !== undefined && { avatarAssetId: settings.avatarAssetId || null }),
         ...(settings.coverAssetId !== undefined && { coverAssetId: settings.coverAssetId || null }),

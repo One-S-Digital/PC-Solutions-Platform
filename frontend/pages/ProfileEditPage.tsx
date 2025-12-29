@@ -154,6 +154,8 @@ const ProfileEditPage: React.FC = () => {
           email: data.email || currentUser.email || '',
           contactEmail: data.contactEmail || currentUser.email || '',
           phoneNumber: data.phoneNumber || '',
+          region: data.region || '',
+          jobRole: data.jobRole || '',
           workExperience: data.workExperience || '',
           education: data.education || '',
           certifications: Array.isArray(data.certifications) ? data.certifications : [],
@@ -185,6 +187,22 @@ const ProfileEditPage: React.FC = () => {
   const handleSave = async () => {
     if (!formData || !currentUser) {
       return;
+    }
+
+    if (currentUser.role === UserRole.EDUCATOR) {
+      const region = String((formData as any).region || '').trim();
+      const jobRole = String((formData as any).jobRole || '').trim();
+      if (!region || !jobRole) {
+        addNotification({
+          title: t('common:errors.genericErrorTitle', 'Error'),
+          message: t(
+            'settings:educatorProfile.missingRequiredFields',
+            'Please provide both Location and Role before saving your profile.',
+          ),
+          type: 'error',
+        });
+        return;
+      }
     }
 
     setIsSaving(true);
@@ -269,6 +287,8 @@ const ProfileEditPage: React.FC = () => {
           email: payload.email || currentUser.email,
           contactEmail: payload.contactEmail || currentUser.email,
           phoneNumber: payload.phoneNumber || '',
+          region: payload.region || '',
+          jobRole: payload.jobRole || '',
           workExperience: payload.workExperience || '',
           education: payload.education || '',
           certifications: Array.isArray(payload.certifications) ? payload.certifications : [],

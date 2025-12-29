@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useAuthenticatedApi } from './useAuthenticatedApi';
 import { Application, ApplicationStatus, JobContractType, JobListing, JobStatus, CandidateProfile, JobEmploymentType, JobWorkSchedule } from '../types';
+import type { EducatorAvailabilitySettings } from '../types/availability';
 
 interface ListJobListingsParams {
   foundationId?: string;
@@ -93,8 +94,8 @@ const transformCandidate = (data: any): CandidateProfile => {
     email: data.email ?? '',
     phone: data.phoneNumber ?? undefined,
     avatarUrl: data.avatarAsset?.publicUrl ?? data.avatarUrl ?? undefined,
-    currentRoleOrTitle: safeParseJSON<any[]>(data.workExperience)?.[0]?.jobTitle ?? data.role,
-    location: data.region ?? undefined,
+    currentRoleOrTitle: safeParseJSON<any[]>(data.workExperience)?.[0]?.jobTitle ?? data.jobRole ?? data.role,
+    location: data.region ?? data.location ?? undefined,
     availabilityStatus: data.availability ?? undefined,
     shortBio: data.bio ?? data.shortBio ?? undefined,
     skills: data.skills ?? [],
@@ -102,8 +103,10 @@ const transformCandidate = (data: any): CandidateProfile => {
     education: safeParseJSON(data.education),
     certifications: data.certifications ?? [],
     availabilityPreferences: data.availabilityPreferences ?? undefined,
+    availabilitySettings: (data.availabilitySettings as EducatorAvailabilitySettings | undefined) ?? undefined,
     documents: data.documents ?? [],
     role: data.role,
+    jobRole: data.jobRole ?? undefined,
     availability: data.availability ?? undefined,
     preferredRegion: data.region ?? undefined,
     experience: data.experience ?? undefined,
