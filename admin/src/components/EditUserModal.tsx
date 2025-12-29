@@ -66,7 +66,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
       // Only send fields that are allowed by the UpdateUserDto
       // The DTO whitelist allows: email, firstName, lastName, role, orgId, phoneNumber, address, avatarUrl, status
       const updatePayload = {
-        id: user!.id,
+        id: user.id,
         email: formData.email,
         firstName: formData.firstName,
         lastName: formData.lastName,
