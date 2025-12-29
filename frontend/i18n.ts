@@ -167,10 +167,26 @@ i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    lng: 'fr', // Default to French for Swiss market
+    // Language detection is handled by LanguageDetector
+    // Detection order: localStorage → browser language → default (English)
+    // This ensures existing user preferences are preserved, new users get their browser language,
+    // and unsupported languages fall back to English
+    detection: {
+      // Detection order: check localStorage first (user's saved preference),
+      // then browser language, then fallback to default
+      order: ['localStorage', 'navigator', 'htmlTag'],
+      // localStorage key where language preference is stored
+      lookupLocalStorage: 'i18nextLng',
+      // Cache the detected language in localStorage
+      caches: ['localStorage'],
+      // Only use languages from supportedLngs
+      checkWhitelist: true,
+    },
     fallbackLng: {
       'fr-CH': ['fr', 'en'],
       'de-CH': ['de', 'en'],
+      'fr': ['en'],
+      'de': ['en'],
       default: ['en'],
     },
     supportedLngs: ['en', 'fr', 'de'],

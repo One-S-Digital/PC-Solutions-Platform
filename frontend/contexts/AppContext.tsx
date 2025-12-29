@@ -160,10 +160,13 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
   
   const { createApplication, listMyApplications } = useRecruitmentApi();
   const [language, setLanguage] = useState<SupportedLanguage>(() => {
+    // Get detected language from i18n (from localStorage or browser detection)
+    // If i18n is initialized, use its language; otherwise default to EN (will be updated on init)
     const detectedLng = i18n.language?.toUpperCase().split('-')[0];
-    if (detectedLng === 'FR' || detectedLng === 'DE') {
+    if (detectedLng === 'FR' || detectedLng === 'DE' || detectedLng === 'EN') {
       return detectedLng as SupportedLanguage;
     }
+    // Default fallback - will be updated when i18n initializes
     return 'EN';
   });
   const [favoriteCandidateIds, setFavoriteCandidateIds] = useState<string[]>(() => {
