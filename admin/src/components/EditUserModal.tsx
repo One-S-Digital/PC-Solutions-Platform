@@ -12,9 +12,18 @@ export interface EditUserModalProps {
   onSave: (user: User) => Promise<void>
   isLoading: boolean
   currentUserRole?: UserRole
+  showCandidatePoolControls?: boolean
 }
 
-const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, onSave, isLoading, currentUserRole }) => {
+const EditUserModal: React.FC<EditUserModalProps> = ({
+  isOpen,
+  onClose,
+  user,
+  onSave,
+  isLoading,
+  currentUserRole,
+  showCandidatePoolControls,
+}) => {
   const [formData, setFormData] = useState<Partial<User>>({})
   const { t } = useTranslation(['common', 'admin'])
   const [error, setError] = useState<string | null>(null)
@@ -29,10 +38,11 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
         lastName: user.lastName || '',
         role: user.role,
         status: user.status,
+        candidatePoolVisible: showCandidatePoolControls ? Boolean(user.candidatePoolVisible) : undefined,
       })
       setError(null)
     }
-  }, [user, isOpen])
+  }, [user, isOpen, showCandidatePoolControls])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -53,6 +63,9 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
         lastName: formData.lastName,
         role: formData.role,
         status: formData.status,
+        ...(showCandidatePoolControls
+          ? { candidatePoolVisible: Boolean(formData.candidatePoolVisible) }
+          : {}),
       } as User
       await onSave(updatePayload)
     } catch (err) {
@@ -162,6 +175,28 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
                 <option value={UserStatus.INACTIVE}>{t('common:inactive')}</option>
               </select>
             </div>
+
+            {showCandidatePoolControls && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('admin:users.editUser.candidatePool', 'Candidate pool')}
+                </label>
+                <select
+                  className={STANDARD_INPUT_FIELD}
+                  value={formData.candidatePoolVisible ? 'true' : 'false'}
+                  onChange={(e) =>
+                    setFormData({ ...formData, candidatePoolVisible: e.target.value === 'true' })
+                  }
+                >
+                  <option value="true">
+                    {t('admin:users.editUser.candidatePoolIn', 'In pool')}
+                  </option>
+                  <option value="false">
+                    {t('admin:users.editUser.candidatePoolOut', 'Not in pool')}
+                  </option>
+                </select>
+              </div>
+            )}
           </div>
 
           <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">

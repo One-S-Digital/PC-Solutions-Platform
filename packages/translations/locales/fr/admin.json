@@ -1122,6 +1122,9 @@
       "email": "E-mail",
       "role": "Rôle",
       "status": "Statut",
+      "candidatePool": "Groupe de candidats",
+      "candidatePoolIn": "Dans le groupe",
+      "candidatePoolOut": "Hors du groupe",
       "emailRequired": "L'e-mail est requis",
       "updateFailed": "Échec de la mise à jour de l'utilisateur",
       "saveChanges": "Enregistrer les modifications",
@@ -1202,7 +1205,12 @@
       "experience": "EXPÉRIENCE",
       "candidate": "CANDIDAT",
       "position": "POSTE",
-      "status": "STATUT"
+      "status": "STATUT",
+      "pool": "GROUPE"
+    },
+    "poolStatus": {
+      "inPool": "Dans le groupe",
+      "outOfPool": "Hors du groupe"
     },
     "statusFilter": {
       "all": "Tous les statuts"
