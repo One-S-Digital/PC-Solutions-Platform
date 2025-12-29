@@ -46,13 +46,19 @@ export class RecruitmentController {
     @Request() req?,
   ) {
     const normalizedContractType = contractType ? contractType.toUpperCase() : undefined;
-    const isPublicRole = !req?.user || [
-      UserRole.EDUCATOR,
-      UserRole.PARENT,
-      UserRole.SERVICE_PROVIDER,
-      UserRole.PRODUCT_SUPPLIER,
-    ].includes(req.user.role);
-    const publishedOnly = isPublicRole;
+    // Recruitment endpoints are authenticated (controller-level auth guard).
+    // Some roles should only see published listings.
+    const viewerRole = req?.context?.role ?? req?.user?.role;
+    const publishedOnly = !viewerRole
+      ? true
+      : [
+          UserRole.EDUCATOR,
+          UserRole.PARENT,
+          UserRole.SERVICE_PROVIDER,
+          UserRole.PRODUCT_SUPPLIER,
+          // Defensive: treat pending users as public viewers
+          'PENDING',
+        ].includes(viewerRole);
 
     return this.recruitmentService.findAllJobListings({
       foundationId,

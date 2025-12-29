@@ -775,36 +775,46 @@ export class UsersService {
   }
 
   async findOne(id: string) {
-    const appUser = await this.prisma.appUser.findUnique({
-      where: { id },
-    });
+    // Historically, various admin UIs have passed either:
+    // - AppUser.id (account id) OR
+    // - User.id (profile id)
+    //
+    // For admin candidate editing, we need an enriched response and we need to
+    // gracefully handle profiles that exist without a corresponding AppUser row
+    // (e.g., admin-created candidate records).
 
-    if (!appUser) {
+    const appUser = await this.prisma.appUser.findUnique({ where: { id } });
+    if (appUser) {
+      const enriched = await this.findByClerkId(appUser.clerkId);
+      if (!enriched) {
+        throw new NotFoundException('User not found');
+      }
+      return enriched;
+    }
+
+    const profile = await this.prisma.user.findUnique({ where: { id } });
+    if (!profile) {
       throw new NotFoundException('User not found');
     }
 
-    // Return in User format for compatibility
-    return {
-      id: appUser.id,
-      clerkId: appUser.clerkId,
-      email: appUser.email,
-      firstName: null,
-      lastName: null,
-      role: appUser.role,
-      phoneNumber: null,
-      workExperience: null,
-      education: null,
-      certifications: [],
-      skills: [],
-      availability: null,
-      cvUrl: null,
-      stripeCustomerId: null,
-      lastActiveAt: null,
-      isActive: true,
-      createdAt: appUser.createdAt,
-      updatedAt: appUser.updatedAt,
-      organizations: [],
-    };
+    // Ensure an AppUser exists so downstream admin operations (/users/:id PATCH)
+    // can function consistently.
+    const existingAppUser = await this.prisma.appUser.findUnique({ where: { clerkId: profile.clerkId } });
+    if (!existingAppUser) {
+      await this.prisma.appUser.create({
+        data: {
+          clerkId: profile.clerkId,
+          email: profile.email,
+          role: profile.role,
+        },
+      });
+    }
+
+    const enriched = await this.findByClerkId(profile.clerkId);
+    if (!enriched) {
+      throw new NotFoundException('User not found');
+    }
+    return enriched;
   }
 
   async findByEmail(email: string) {
