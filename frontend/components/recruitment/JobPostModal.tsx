@@ -13,7 +13,7 @@ import WorkScheduleSelector from './WorkScheduleSelector';
 interface JobPostModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: JobListingInput) => void;
+  onSubmit: (data: JobListingInput) => Promise<void> | void;
   existingJob?: JobListing | null;
 }
 
@@ -45,6 +45,8 @@ const JobPostModal: React.FC<JobPostModalProps> = ({ isOpen, onClose, onSubmit, 
   };
 
   const [formData, setFormData] = useState<JobFormData>(initialFormState);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -96,6 +98,7 @@ const JobPostModal: React.FC<JobPostModalProps> = ({ isOpen, onClose, onSubmit, 
         alert("Cannot post job. Foundation details are missing.");
         return;
     }
+    setSubmitError(null);
     const sanitizedData: JobListingInput = {
       ...formData,
       requirements: formData.requirements.filter((item) => item.trim().length > 0),
@@ -111,8 +114,13 @@ const JobPostModal: React.FC<JobPostModalProps> = ({ isOpen, onClose, onSubmit, 
         : undefined,
       status: formData.status ?? JobStatus.PUBLISHED,
     };
-    onSubmit(sanitizedData);
-    onClose();
+    setSubmitting(true);
+    Promise.resolve(onSubmit(sanitizedData))
+      .catch((err: unknown) => {
+        const message = err instanceof Error ? err.message : t('recruitment:errors.saveJobFailed', 'Unable to save job listing');
+        setSubmitError(message);
+      })
+      .finally(() => setSubmitting(false));
   };
 
   if (!isOpen) return null;
@@ -156,6 +164,11 @@ const JobPostModal: React.FC<JobPostModalProps> = ({ isOpen, onClose, onSubmit, 
         
         <form onSubmit={handleSubmit}>
           <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+            {submitError && (
+              <div className="p-3 rounded-md bg-red-50 text-red-700 text-sm border border-red-100">
+                {submitError}
+              </div>
+            )}
             {/* Basic Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -182,6 +195,23 @@ const JobPostModal: React.FC<JobPostModalProps> = ({ isOpen, onClose, onSubmit, 
               <div>
                 <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-1">{t('recruitment:jobPostModal.startDate')} *</label>
                 <input type="date" name="startDate" id="startDate" value={formData.startDate} onChange={handleChange} required className={STANDARD_INPUT_FIELD} />
+              </div>
+              <div>
+                <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('recruitment:jobPostModal.status', 'Status')} *
+                </label>
+                <select
+                  name="status"
+                  id="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                  required
+                  className={STANDARD_INPUT_FIELD}
+                >
+                  <option value={JobStatus.DRAFT}>{t('recruitment:jobStatus.draft', 'Draft')}</option>
+                  <option value={JobStatus.PUBLISHED}>{t('recruitment:jobStatus.published', 'Published')}</option>
+                  <option value={JobStatus.CLOSED}>{t('recruitment:jobStatus.closed', 'Closed')}</option>
+                </select>
               </div>
             </div>
 
@@ -219,8 +249,10 @@ const JobPostModal: React.FC<JobPostModalProps> = ({ isOpen, onClose, onSubmit, 
 
           </div>
           <div className="px-6 py-4 bg-gray-50 border-t flex justify-end space-x-3">
-            <Button type="button" variant="light" onClick={onClose}>{t('common:buttons.cancel')}</Button>
-            <Button type="submit" variant="primary">{existingJob ? t('common:buttons.saveChanges') : t('recruitment:jobPostModal.postJob')}</Button>
+            <Button type="button" variant="light" onClick={onClose} disabled={submitting}>{t('common:buttons.cancel')}</Button>
+            <Button type="submit" variant="primary" disabled={submitting}>
+              {existingJob ? t('common:buttons.saveChanges') : t('recruitment:jobPostModal.postJob')}
+            </Button>
           </div>
         </form>
       </div>

@@ -169,6 +169,7 @@ export class ClerkAuthGuard implements CanActivate {
             clerkId: payload.sub,
             role: 'PENDING',
             id: userProfile?.id || null,
+            organizationId: primaryOrganizationId,
             isPending: true,
           };
           if (this.authDebug) {
@@ -188,6 +189,7 @@ export class ClerkAuthGuard implements CanActivate {
             clerkId: payload.sub,
             role: appUser.role,
             id: userProfile?.id || null,
+            organizationId: primaryOrganizationId,
           };
           if (this.authDebug) {
             console.log('🔐 Auth Debug: request.context and request.user populated', { context: request.context, user: request.user });

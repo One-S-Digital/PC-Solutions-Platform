@@ -531,6 +531,7 @@ export class RecruitmentService {
     skills?: string[];
     location?: string;
     search?: string;
+    visibleOnly?: boolean;
   }) {
     const where: any = {};
 
@@ -549,6 +550,10 @@ export class RecruitmentService {
         { skills: { has: filters.search } },
         { certifications: { has: filters.search } },
       ];
+    }
+
+    if (filters?.visibleOnly) {
+      where.candidatePoolVisible = true;
     }
 
     return this.prisma.user.findMany({

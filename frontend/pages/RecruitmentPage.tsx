@@ -7,7 +7,7 @@ import { STANDARD_INPUT_FIELD, ICON_INPUT_FIELD } from '../constants';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Tabs from '../components/ui/Tabs';
-import { BriefcaseIcon, UserGroupIcon, MapPinIcon, CalendarDaysIcon, EyeIcon, PencilIcon, TrashIcon, PlusCircleIcon, MagnifyingGlassIcon, FunnelIcon, StarIcon } from '@heroicons/react/24/outline';
+import { BriefcaseIcon, UserGroupIcon, MapPinIcon, CalendarDaysIcon, EyeIcon, PencilIcon, TrashIcon, PlusCircleIcon, MagnifyingGlassIcon, FunnelIcon, StarIcon, LockClosedIcon, LockOpenIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
 import JobPostModal from '../components/recruitment/JobPostModal';
@@ -18,9 +18,10 @@ interface FoundationJobListingCardProps {
   job: JobListing;
   onEdit: (job: JobListing) => void;
   onViewApplicants: (job: JobListing) => void;
+  onChangeStatus: (job: JobListing, status: JobStatus) => void;
 }
 
-const FoundationJobListingCard: React.FC<FoundationJobListingCardProps> = ({ job, onEdit, onViewApplicants }) => {
+const FoundationJobListingCard: React.FC<FoundationJobListingCardProps> = ({ job, onEdit, onViewApplicants, onChangeStatus }) => {
   const { t, i18n } = useTranslation(['recruitment', 'common']);
 
   const statusMeta = useMemo(() => {
@@ -75,6 +76,38 @@ const FoundationJobListingCard: React.FC<FoundationJobListingCardProps> = ({ job
         </div>
       </div>
       <div className="bg-gray-50 px-5 py-3 flex justify-end space-x-2">
+        {job.status !== 'PUBLISHED' && (
+          <Button
+            variant="ghost"
+            size="sm"
+            leftIcon={LockOpenIcon}
+            className="text-green-700 hover:text-green-800"
+            onClick={() => onChangeStatus(job, 'PUBLISHED')}
+          >
+            {t('recruitment:buttons.markOpen', 'Mark Open')}
+          </Button>
+        )}
+        {job.status === 'PUBLISHED' && (
+          <Button
+            variant="ghost"
+            size="sm"
+            leftIcon={LockClosedIcon}
+            className="text-red-600 hover:text-red-700"
+            onClick={() => onChangeStatus(job, 'CLOSED')}
+          >
+            {t('recruitment:buttons.markClosed', 'Mark Closed')}
+          </Button>
+        )}
+        {job.status !== 'DRAFT' && (
+          <Button
+            variant="ghost"
+            size="sm"
+            leftIcon={DocumentTextIcon}
+            onClick={() => onChangeStatus(job, 'DRAFT')}
+          >
+            {t('recruitment:buttons.saveAsDraft', 'Save as Draft')}
+          </Button>
+        )}
         <Button variant="ghost" size="sm" leftIcon={EyeIcon} onClick={() => onViewApplicants(job)}>{t('recruitment:buttons.viewApplicants')}</Button>
         <Button variant="ghost" size="sm" leftIcon={PencilIcon} className="text-blue-600 hover:text-blue-700" onClick={() => onEdit(job)}>{t('common:buttons.edit')}</Button>
       </div>
@@ -276,11 +309,24 @@ const RecruitmentPage: React.FC = () => {
       setEditingJob(null);
     } catch (error) {
       console.error(error);
-      alert(
-        error instanceof Error ? error.message : t('recruitment:errors.saveJobFailed', 'Unable to save job listing'),
-      );
+      throw (error instanceof Error
+        ? error
+        : new Error(t('recruitment:errors.saveJobFailed', 'Unable to save job listing')));
     }
   };
+
+  const handleChangeJobStatus = useCallback(
+    async (job: JobListing, status: JobStatus) => {
+      try {
+        const updated = await updateJobListing(job.id, { status });
+        setJobListings((prev) => prev.map((j) => (j.id === job.id ? updated : j)));
+      } catch (error) {
+        console.error(error);
+        alert(error instanceof Error ? error.message : t('recruitment:errors.saveJobFailed', 'Unable to save job listing'));
+      }
+    },
+    [updateJobListing, t],
+  );
 
   const handleDeleteJob = async (job: JobListing) => {
     if (!window.confirm(t('recruitment:confirmations.deleteJob', 'Are you sure you want to delete this job listing?'))) {
@@ -376,7 +422,12 @@ const RecruitmentPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
           {filteredJobs.map((job) => (
             <div key={job.id} className="relative">
-              <FoundationJobListingCard job={job} onEdit={handleOpenJobModal} onViewApplicants={handleViewApplicants} />
+              <FoundationJobListingCard
+                job={job}
+                onEdit={handleOpenJobModal}
+                onViewApplicants={handleViewApplicants}
+                onChangeStatus={handleChangeJobStatus}
+              />
               {canPostJob && (
                 <Button
                   variant="ghost"

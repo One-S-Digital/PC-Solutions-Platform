@@ -203,6 +203,7 @@ model User {
   availabilitySettings Json?   // New: structured Calendly-style availability schedule
   cvUrl                String? // URL to CV document
   shortBio             String? // Short bio/description for profile
+  candidatePoolVisible Boolean  @default(true) // Educator-controlled visibility in candidate pool
 
   // Avatar asset relation
   avatarAssetId String?

@@ -481,6 +481,7 @@ ${'='.repeat(100)}`);
       data.unsafe_metadata?.role ||
       data.unsafe_metadata?.pendingRole ||  // Also check pendingRole from signup
       data.unsafe_metadata?.signupType ||   // Also check signupType from signup
+      data.public_metadata?.role ||         // Common frontend pattern
       null;
     
     console.log(`👤 [E2E DEBUG] ROLE RESOLUTION ANALYSIS:`, {

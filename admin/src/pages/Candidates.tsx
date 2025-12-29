@@ -31,6 +31,12 @@ const Candidates: React.FC = () => {
   const apiClient = useApiClient()
   const queryClient = useQueryClient()
 
+  const openCandidateProfile = (candidateId: string) => {
+    // Open the main app's candidate profile view (same view foundations use)
+    const url = `${window.location.origin}/candidate/${candidateId}`
+    window.open(url, '_blank', 'noopener,noreferrer')
+  }
+
   const { data: currentUserResponse } = useQuery({
     queryKey: ['current-user'],
     queryFn: () => apiService.getCurrentUser(apiClient),
@@ -220,9 +226,6 @@ const Candidates: React.FC = () => {
                   {t('admin:candidates.table.position')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {t('admin:candidates.table.experience')}
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   {t('admin:candidates.table.status')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -239,7 +242,6 @@ const Candidates: React.FC = () => {
                 const email = candidate.email || candidate.user?.email || ''
                 const phone = candidate.phone || ''
                 const position = candidate.currentRoleOrTitle || candidate.role
-                const experience = candidate.experience || ''
                 const status = candidate.availabilityStatus || ''
                 const appliedDate = candidate.createdAt
                 return (
@@ -268,9 +270,6 @@ const Candidates: React.FC = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">{position}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{experience}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${statusColors[status] || 'bg-gray-100 text-gray-800'}`}>
@@ -303,9 +302,10 @@ const Candidates: React.FC = () => {
                                 {({ active }) => (
                                   <button
                                     className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
+                                    onClick={() => openCandidateProfile(candidate.id)}
                                   >
                                     <FileText className="h-4 w-4 mr-2" />
-                                    View Resume
+                                    {t('admin:candidates.actions.viewProfile', 'View Profile')}
                                   </button>
                                 )}
                               </Menu.Item>

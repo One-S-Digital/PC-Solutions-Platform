@@ -31,6 +31,7 @@ interface EducatorProfileData {
   shortBio: string;
   avatarAssetId: string;
   avatarUrl?: string;
+  candidatePoolVisible: boolean;
 }
 
 const SectionCard: React.FC<{ 
@@ -95,6 +96,7 @@ const EducatorProfilePage: React.FC = () => {
   const [tempExperience, setTempExperience] = useState('');
   const [tempEducation, setTempEducation] = useState('');
   const [tempCertifications, setTempCertifications] = useState<string[]>([]);
+  const [tempCandidatePoolVisible, setTempCandidatePoolVisible] = useState<boolean | null>(null);
 
   const fetchProfile = useCallback(async () => {
     if (!currentUser) {
@@ -122,6 +124,7 @@ const EducatorProfilePage: React.FC = () => {
           shortBio: data.shortBio || '',
           avatarAssetId: data.avatarAssetId || '',
           avatarUrl: data.avatarUrl || currentUser.avatarUrl, // Use backend avatarUrl, fallback to currentUser
+          candidatePoolVisible: !!data.candidatePoolVisible,
         });
       } else {
         // Initialize with defaults if no data
@@ -139,6 +142,7 @@ const EducatorProfilePage: React.FC = () => {
           shortBio: '',
           avatarAssetId: '',
           avatarUrl: currentUser.avatarUrl || '', // Fallback to currentUser
+          candidatePoolVisible: false,
         });
       }
     } catch (err) {
@@ -172,6 +176,7 @@ const EducatorProfilePage: React.FC = () => {
         cvUrl: updates.cvUrl ?? profile.cvUrl,
         shortBio: updates.shortBio ?? profile.shortBio,
         avatarAssetId: updates.avatarAssetId ?? profile.avatarAssetId,
+        candidatePoolVisible: updates.candidatePoolVisible ?? profile.candidatePoolVisible,
       };
 
       const response = await request<{ success: boolean; message?: string }>('/settings/educator', {
@@ -287,6 +292,14 @@ const EducatorProfilePage: React.FC = () => {
     setTempCertifications([]);
   };
 
+  const handleSaveCandidatePoolVisibility = async () => {
+    const nextValue = tempCandidatePoolVisible ?? profile?.candidatePoolVisible ?? false;
+    const success = await saveProfile({ candidatePoolVisible: nextValue });
+    if (success) {
+      setTempCandidatePoolVisible(null);
+    }
+  };
+
   // CV upload handler
   const handleCvUpload = async (asset: { url: string; id: string }) => {
     await saveProfile({ cvUrl: asset.url });
@@ -381,6 +394,49 @@ const EducatorProfilePage: React.FC = () => {
             {profile.phoneNumber && (
               <p className="text-sm text-gray-500">{profile.phoneNumber}</p>
             )}
+          </Card>
+
+          {/* Candidate Pool Visibility */}
+          <Card className="p-6">
+            <h3 className="text-lg font-semibold text-swiss-charcoal mb-2">
+              {t('educatorProfilePage.visibility.title', 'Candidate Pool Visibility')}
+            </h3>
+            <p className="text-sm text-gray-600 mb-4">
+              {t(
+                'educatorProfilePage.visibility.description',
+                'Control whether daycares can find your profile in the candidate pool.',
+              )}
+            </p>
+            <div className="flex items-start justify-between gap-4">
+              <label className="text-sm text-gray-700 leading-snug">
+                <span className="font-medium">
+                  {t('educatorProfilePage.visibility.toggleLabel', 'Make my profile visible')}
+                </span>
+                <div className="text-xs text-gray-500 mt-1">
+                  {t(
+                    'educatorProfilePage.visibility.toggleHint',
+                    'When enabled, foundations can view your profile in the candidate pool.',
+                  )}
+                </div>
+              </label>
+              <input
+                type="checkbox"
+                className="h-5 w-5 mt-0.5 accent-swiss-mint"
+                checked={tempCandidatePoolVisible ?? profile.candidatePoolVisible}
+                onChange={(e) => setTempCandidatePoolVisible(e.target.checked)}
+                aria-label={t('educatorProfilePage.visibility.toggleLabel', 'Make my profile visible')}
+              />
+            </div>
+            <div className="flex justify-end mt-4">
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={handleSaveCandidatePoolVisibility}
+                disabled={saving || tempCandidatePoolVisible === null}
+              >
+                {saving ? t('common:buttons.saving', 'Saving...') : t('common:buttons.save')}
+              </Button>
+            </div>
           </Card>
 
           {/* Skills Section */}

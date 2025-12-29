@@ -171,13 +171,17 @@ export class RecruitmentController {
     @Query('skills') skills?: string,
     @Query('location') location?: string,
     @Query('search') search?: string,
+    @Request() req?,
   ) {
     const skillsArray = skills ? skills.split(',') : undefined;
+    const viewerRole = req?.context?.role ?? req?.user?.role;
+    const visibleOnly = viewerRole === UserRole.FOUNDATION;
     return this.recruitmentService.findAllCandidates({
       role,
       skills: skillsArray,
       location,
       search,
+      visibleOnly,
     });
   }
 
