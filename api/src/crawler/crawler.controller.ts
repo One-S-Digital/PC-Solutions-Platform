@@ -180,8 +180,13 @@ export class CrawlerController {
   // Crawler health stats
   @Get('health')
   async getCrawlerHealth() {
-    if (!this.isCrawlerEnabled()) {
+    const enabled = this.isCrawlerEnabled();
+    const schedulerEnabled = process.env.CRAWLER_SCHEDULER_ENABLED === 'true';
+
+    if (!enabled) {
       return {
+        enabled,
+        schedulerEnabled,
         totalSources: 0,
         activeSources: 0,
         failedSources: 0,
@@ -211,6 +216,8 @@ export class CrawlerController {
     });
 
     return {
+      enabled,
+      schedulerEnabled,
       totalSources,
       activeSources,
       failedSources,

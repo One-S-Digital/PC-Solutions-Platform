@@ -82,7 +82,7 @@ export default function CantonsPage() {
         {cantons.map(canton => (
           <Link 
             key={canton.code}
-            to={`/cantons/${canton.code}`}
+            to={`/policy-crawler/cantons/${canton.code}`}
             className="p-4 bg-white rounded-lg shadow hover:shadow-md transition border border-gray-200"
           >
             <div className="flex items-center justify-between mb-3">

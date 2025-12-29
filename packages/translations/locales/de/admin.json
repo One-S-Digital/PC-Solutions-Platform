@@ -625,12 +625,32 @@
     "support": "Support",
     "discountTerminations": "Rabattkündigungen",
     "subscriptions": "Abonnements",
-    "cantons": "Kantone",
-    "policyReview": "Richtlinienprüfung",
+    "policyCrawler": "Richtlinien-Crawler",
     "systemMonitoring": "Systemüberwachung",
     "translations": "Übersetzungen",
     "designSystem": "Design-System",
     "settings": "Einstellungen"
+  },
+  "policyCrawler": {
+    "title": "Richtlinien-Crawler",
+    "subtitle": "Kantonale Quellen verwalten und gecrawlte Richtlinien prüfen",
+    "disabledNotice": "Der Richtlinien-Crawler ist derzeit auf der API deaktiviert. Die Admin-Seiten bleiben sichtbar, aber Crawling und Prüfwarteschlange bleiben leer, bis er aktiviert ist.",
+    "tabs": {
+      "cantons": "Kantone",
+      "review": "Richtlinienprüfung"
+    },
+    "status": {
+      "enabled": "Aktiv",
+      "disabled": "Deaktiviert"
+    }
+  },
+  "dashboard": {
+    "policyCrawler": {
+      "label": "Richtlinien-Crawler",
+      "enabled": "Aktiv",
+      "disabled": "Deaktiviert",
+      "manage": "Verwalten"
+    }
   },
   "cantons": {
     "title": "Kantonale Richtlinienquellen",

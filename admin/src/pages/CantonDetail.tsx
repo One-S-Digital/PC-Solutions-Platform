@@ -458,7 +458,7 @@ export default function CantonDetailPage() {
     return (
       <div className="p-6">
         <p className="text-red-600">Canton not found</p>
-        <button onClick={() => navigate('/cantons')} className="mt-4 px-4 py-2 bg-blue-600 text-white rounded">
+        <button onClick={() => navigate('/policy-crawler/cantons')} className="mt-4 px-4 py-2 bg-blue-600 text-white rounded">
           Back to Cantons
         </button>
       </div>
@@ -470,7 +470,7 @@ export default function CantonDetailPage() {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
           <button
-            onClick={() => navigate('/cantons')}
+            onClick={() => navigate('/policy-crawler/cantons')}
             className="p-2 hover:bg-gray-100 rounded"
           >
             <ArrowLeft className="h-5 w-5" />

@@ -24,7 +24,6 @@ import {
   LifeBuoy,
   CreditCard,
   Tag,
-  Map,
   FileSearch,
 } from 'lucide-react'
 import { clsx } from 'clsx'
@@ -35,8 +34,6 @@ interface SidebarProps {
   sidebarOpen: boolean
   setSidebarOpen: (open: boolean) => void
 }
-
-const isCrawlerEnabled = import.meta.env.VITE_CRAWLER_ENABLED === 'true'
 
 const navigation = [
   { key: 'dashboard', href: '/dashboard', icon: BarChart3 },
@@ -54,12 +51,7 @@ const navigation = [
   { key: 'support', href: '/support', icon: LifeBuoy },
   { key: 'discountTerminations', href: '/discount-terminations', icon: Tag },
   { key: 'subscriptions', href: '/subscriptions', icon: CreditCard },
-  ...(isCrawlerEnabled
-    ? [
-        { key: 'cantons', href: '/cantons', icon: Map },
-        { key: 'policyReview', href: '/policy-review', icon: FileSearch },
-      ]
-    : []),
+  { key: 'policyCrawler', href: '/policy-crawler', icon: FileSearch },
   { key: 'systemMonitoring', href: '/system', icon: Monitor },
   { key: 'translations', href: '/translations', icon: Globe },
   { key: 'designSystem', href: '/design-system', icon: Palette },

@@ -612,12 +612,32 @@
     "support": "Support",
     "discountTerminations": "Discount Terminations",
     "subscriptions": "Subscription Management",
-    "cantons": "Cantons",
-    "policyReview": "Policy Review",
+    "policyCrawler": "Policy Crawler",
     "systemMonitoring": "System Monitoring",
     "translations": "Translations",
     "designSystem": "Design System",
     "settings": "Settings"
+  },
+  "policyCrawler": {
+    "title": "Policy Crawler",
+    "subtitle": "Manage canton sources and review crawled policies",
+    "disabledNotice": "The policy crawler is currently disabled on the API. Admin pages remain visible, but crawling and review queues will be empty until it is enabled.",
+    "tabs": {
+      "cantons": "Cantons",
+      "review": "Policy Review"
+    },
+    "status": {
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    }
+  },
+  "dashboard": {
+    "policyCrawler": {
+      "label": "Policy Crawler",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "manage": "Manage"
+    }
   },
   "cantons": {
     "title": "Canton Policy Sources",

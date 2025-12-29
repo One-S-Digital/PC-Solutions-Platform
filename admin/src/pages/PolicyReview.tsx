@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useApiClient } from '../services/api';
 import { CheckCircle, XCircle, ExternalLink, Clock, FileText } from 'lucide-react';
-import * as WorkspaceTypes from '@workspace/types';
+import { CANTON_CODES } from '@workspace/types/src/cantons';
 
 interface StatePolicyAsset {
   id: string;
@@ -337,7 +337,7 @@ export default function PolicyReviewPage() {
             className="border rounded px-3 py-2"
           >
             <option value="">{t('admin:policyReview.filters.allCantons')}</option>
-            {Object.entries(WorkspaceTypes.CANTON_CODES).map(([code, name]) => (
+            {Object.entries(CANTON_CODES).map(([code, name]) => (
               <option key={code} value={name}>{name} ({code})</option>
             ))}
           </select>
