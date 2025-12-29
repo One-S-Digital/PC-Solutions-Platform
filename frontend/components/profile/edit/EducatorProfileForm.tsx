@@ -1,6 +1,6 @@
 import React from 'react';
 import { SettingsFormData } from '../../../types';
-import { STANDARD_INPUT_FIELD } from '../../../constants';
+import { STANDARD_INPUT_FIELD, SWISS_CANTONS } from '../../../constants';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
 import CoverImageSection from './shared/CoverImageSection';
@@ -12,6 +12,7 @@ import {
   UserCircleIcon,
   BriefcaseIcon,
   AcademicCapIcon,
+  MapPinIcon,
   StarIcon,
   PaperClipIcon,
   DocumentTextIcon,
@@ -132,6 +133,56 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
             />
           </div>
         </div>
+      </div>
+
+      {/* Professional Details */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+          <MapPinIcon className="w-5 h-5 mr-2 text-swiss-mint" />
+          {t('settings:educatorProfile.professionalDetails', 'Professional Details')}
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="jobRole" className="block text-sm font-medium text-gray-700 mb-1">
+              {t('settings:educatorProfile.role', 'Role')} <span className="text-swiss-coral">*</span>
+            </label>
+            <input
+              type="text"
+              id="jobRole"
+              value={(formData as any).jobRole || ''}
+              onChange={(e) => onChange('jobRole', e.target.value)}
+              className={STANDARD_INPUT_FIELD}
+              required
+              placeholder={t('settings:educatorProfile.rolePlaceholder', 'e.g., Educator, Assistant')}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="region" className="block text-sm font-medium text-gray-700 mb-1">
+              {t('settings:educatorProfile.location', 'Location')} <span className="text-swiss-coral">*</span>
+            </label>
+            <select
+              id="region"
+              value={(formData as any).region || ''}
+              onChange={(e) => onChange('region', e.target.value)}
+              className={STANDARD_INPUT_FIELD}
+              required
+            >
+              <option value="">{t('settings:educatorProfile.locationPlaceholder', 'Select a canton')}</option>
+              {SWISS_CANTONS.map((canton) => (
+                <option key={canton} value={canton}>
+                  {canton}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <p className="mt-2 text-xs text-gray-500">
+          {t(
+            'settings:educatorProfile.professionalDetailsHint',
+            'These fields help foundations find you in the candidate pool.',
+          )}
+        </p>
       </div>
 
       {/* Contact Information - Using Shared Component */}

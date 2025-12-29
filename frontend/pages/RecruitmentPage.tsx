@@ -2,11 +2,12 @@
 
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { JobListing, CandidateProfile, UserRole, JobStatus, JobContractType, Application } from '../types';
+import { JobListing, CandidateProfile, UserRole, JobStatus, JobContractType, JobContractTypeValue, Application } from '../types';
 import { STANDARD_INPUT_FIELD, ICON_INPUT_FIELD } from '../constants';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Tabs from '../components/ui/Tabs';
+import Pagination from '../components/ui/Pagination';
 import { BriefcaseIcon, UserGroupIcon, MapPinIcon, CalendarDaysIcon, EyeIcon, PencilIcon, TrashIcon, PlusCircleIcon, MagnifyingGlassIcon, FunnelIcon, StarIcon, LockClosedIcon, LockOpenIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
@@ -19,9 +20,18 @@ interface FoundationJobListingCardProps {
   onEdit: (job: JobListing) => void;
   onViewApplicants: (job: JobListing) => void;
   onChangeStatus: (job: JobListing, status: JobStatus) => void;
+  onDelete?: (job: JobListing) => void;
+  canDelete?: boolean;
 }
 
-const FoundationJobListingCard: React.FC<FoundationJobListingCardProps> = ({ job, onEdit, onViewApplicants, onChangeStatus }) => {
+const FoundationJobListingCard: React.FC<FoundationJobListingCardProps> = ({
+  job,
+  onEdit,
+  onViewApplicants,
+  onChangeStatus,
+  onDelete,
+  canDelete,
+}) => {
   const { t, i18n } = useTranslation(['recruitment', 'common']);
 
   const statusMeta = useMemo(() => {
@@ -57,29 +67,54 @@ const FoundationJobListingCard: React.FC<FoundationJobListingCardProps> = ({ job
   const formattedStartDate = job.startDate ? new Date(job.startDate).toLocaleDateString(i18n.language) : t('recruitment:labels.startDateTbd', 'To be determined');
 
   return (
-    <Card className="mb-4" hoverEffect>
-      <div className="p-5">
-        <div className="flex justify-between items-start">
-          <div>
-            <h3 className="text-xl font-semibold text-swiss-teal">{job.title}</h3>
-            <p className="text-sm text-gray-500 mb-1">{job.foundationName}</p>
+    <Card className="mb-4 flex flex-col" hoverEffect>
+      <div className="p-4 flex-grow">
+        <div className="flex justify-between items-start gap-3">
+          <div className="min-w-0">
+            <h3 className="text-lg font-semibold text-swiss-teal truncate">{job.title}</h3>
+            <p className="text-xs text-gray-500 truncate">{job.foundationName}</p>
           </div>
-          <span className={`px-3 py-1 text-xs font-semibold rounded-full ${statusMeta.className}`}>
+          <span className={`px-2.5 py-1 text-xs font-semibold rounded-full whitespace-nowrap ${statusMeta.className}`}>
             {statusMeta.label}
           </span>
         </div>
-        <div className="mt-3 space-y-1 text-sm text-gray-600">
-          <p><MapPinIcon className="w-4 h-4 inline mr-2 text-gray-400" />{job.location ?? t('recruitment:labels.locationUnknown', 'Location TBD')}</p>
-          <p><BriefcaseIcon className="w-4 h-4 inline mr-2 text-gray-400" />{contractLabel}</p>
-          <p><CalendarDaysIcon className="w-4 h-4 inline mr-2 text-gray-400" />{t('recruitment:labels.startDate')}: {formattedStartDate}</p>
-          <p><UserGroupIcon className="w-4 h-4 inline mr-2 text-gray-400" />{t('recruitment:labels.applications')}: {job.applicationsCount}</p>
+
+        <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-sm text-gray-600">
+          <p className="truncate">
+            <MapPinIcon className="w-4 h-4 inline mr-2 text-gray-400" />
+            {job.location ?? t('recruitment:labels.locationUnknown', 'Location TBD')}
+          </p>
+          <p className="truncate">
+            <BriefcaseIcon className="w-4 h-4 inline mr-2 text-gray-400" />
+            {contractLabel}
+          </p>
+          <p className="truncate">
+            <CalendarDaysIcon className="w-4 h-4 inline mr-2 text-gray-400" />
+            {t('recruitment:labels.startDate')}: {formattedStartDate}
+          </p>
+          <p className="truncate">
+            <UserGroupIcon className="w-4 h-4 inline mr-2 text-gray-400" />
+            {t('recruitment:labels.applications')}: {job.applicationsCount}
+          </p>
         </div>
       </div>
-      <div className="bg-gray-50 px-5 py-3 flex justify-end space-x-2">
+
+      <div className="bg-gray-50 px-4 py-3 flex flex-wrap justify-end items-center gap-2">
+        {canDelete && onDelete && (
+          <Button
+            variant="ghost"
+            size="xs"
+            leftIcon={TrashIcon}
+            className="text-red-600 hover:text-red-700 mr-auto"
+            onClick={() => onDelete(job)}
+          >
+            {t('common:buttons.delete')}
+          </Button>
+        )}
         {job.status !== 'PUBLISHED' && (
           <Button
             variant="ghost"
-            size="sm"
+            size="xs"
             leftIcon={LockOpenIcon}
             className="text-green-700 hover:text-green-800"
             onClick={() => onChangeStatus(job, 'PUBLISHED')}
@@ -90,7 +125,7 @@ const FoundationJobListingCard: React.FC<FoundationJobListingCardProps> = ({ job
         {job.status === 'PUBLISHED' && (
           <Button
             variant="ghost"
-            size="sm"
+            size="xs"
             leftIcon={LockClosedIcon}
             className="text-red-600 hover:text-red-700"
             onClick={() => onChangeStatus(job, 'CLOSED')}
@@ -101,15 +136,25 @@ const FoundationJobListingCard: React.FC<FoundationJobListingCardProps> = ({ job
         {job.status !== 'DRAFT' && (
           <Button
             variant="ghost"
-            size="sm"
+            size="xs"
             leftIcon={DocumentTextIcon}
             onClick={() => onChangeStatus(job, 'DRAFT')}
           >
             {t('recruitment:buttons.saveAsDraft', 'Save as Draft')}
           </Button>
         )}
-        <Button variant="ghost" size="sm" leftIcon={EyeIcon} onClick={() => onViewApplicants(job)}>{t('recruitment:buttons.viewApplicants')}</Button>
-        <Button variant="ghost" size="sm" leftIcon={PencilIcon} className="text-blue-600 hover:text-blue-700" onClick={() => onEdit(job)}>{t('common:buttons.edit')}</Button>
+        <Button variant="outline" size="xs" leftIcon={EyeIcon} onClick={() => onViewApplicants(job)}>
+          {t('recruitment:buttons.viewApplicants')}
+        </Button>
+        <Button
+          variant="outline"
+          size="xs"
+          leftIcon={PencilIcon}
+          className="text-blue-600 hover:text-blue-700"
+          onClick={() => onEdit(job)}
+        >
+          {t('common:buttons.edit')}
+        </Button>
       </div>
     </Card>
   );
@@ -131,7 +176,7 @@ const CandidateCard: React.FC<CandidateCardProps> = ({ candidate, onViewProfile,
           <img src={candidate.avatarUrl || 'https://picsum.photos/100/100'} alt={candidate.name} className="w-16 h-16 rounded-full mr-4" />
           <div>
             <h3 className="text-xl font-semibold text-swiss-mint">{candidate.name}</h3>
-            <p className="text-sm text-gray-500">{candidate.currentRoleOrTitle ?? candidate.role ?? t('recruitment:candidateCard.roleUnknown', 'Role not specified')}</p>
+            <p className="text-sm text-gray-500">{candidate.currentRoleOrTitle ?? candidate.jobRole ?? candidate.role ?? t('recruitment:candidateCard.roleUnknown', 'Role not specified')}</p>
           </div>
           <StarIcon
             className={`w-5 h-5 ml-auto cursor-pointer ${isFavorite ? 'text-yellow-400' : 'text-gray-300 hover:text-yellow-400'}`}
@@ -177,6 +222,28 @@ const RecruitmentPage: React.FC = () => {
   const [searchTermJobs, setSearchTermJobs] = useState('');
   const [searchTermCandidates, setSearchTermCandidates] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+
+  // Job listing filters
+  const [jobLocationFilter, setJobLocationFilter] = useState('');
+  const [jobContractTypeFilter, setJobContractTypeFilter] = useState<JobContractType | ''>('');
+  const [jobStatusFilter, setJobStatusFilter] = useState<JobStatus | ''>('');
+
+  // Candidate pool filters
+  const [candidateRoleFilter, setCandidateRoleFilter] = useState('');
+  const [candidateRegionFilter, setCandidateRegionFilter] = useState('');
+  const [candidateContractTypeFilter, setCandidateContractTypeFilter] = useState<JobContractType | ''>('');
+  const [candidateAvailabilityDateFilter, setCandidateAvailabilityDateFilter] = useState('');
+
+  // Pagination
+  const [jobsPage, setJobsPage] = useState(1);
+  const [jobsPerPage, setJobsPerPage] = useState(25);
+  const [candidatesPage, setCandidatesPage] = useState(1);
+  const [candidatesPerPage, setCandidatesPerPage] = useState(25);
+
+  const contractTypeOptions = useMemo(
+    () => Object.values(JobContractTypeValue) as JobContractType[],
+    [],
+  );
 
   const [jobListings, setJobListings] = useState<JobListing[]>([]);
   const [jobsLoading, setJobsLoading] = useState(false);
@@ -271,24 +338,94 @@ const RecruitmentPage: React.FC = () => {
   const filteredJobs = useMemo(
     () =>
       jobListings.filter(
-        (job) =>
-          job.title.toLowerCase().includes(searchTermJobs.toLowerCase()) ||
-          (job.foundationName ?? '').toLowerCase().includes(searchTermJobs.toLowerCase()),
+        (job) => {
+          const matchesSearch =
+            job.title.toLowerCase().includes(searchTermJobs.toLowerCase()) ||
+            (job.foundationName ?? '').toLowerCase().includes(searchTermJobs.toLowerCase());
+
+          const matchesLocation = jobLocationFilter
+            ? (job.location ?? '').toLowerCase().includes(jobLocationFilter.toLowerCase())
+            : true;
+
+          const matchesContract = jobContractTypeFilter ? job.contractType === jobContractTypeFilter : true;
+          const matchesStatus = jobStatusFilter ? job.status === jobStatusFilter : true;
+
+          return matchesSearch && matchesLocation && matchesContract && matchesStatus;
+        },
       ),
-    [searchTermJobs, jobListings],
+    [searchTermJobs, jobListings, jobLocationFilter, jobContractTypeFilter, jobStatusFilter],
   );
 
   const filteredCandidates = useMemo(
     () =>
       candidateProfiles.filter(
-        (candidate) =>
-          candidate.name.toLowerCase().includes(searchTermCandidates.toLowerCase()) ||
-          (candidate.currentRoleOrTitle ?? candidate.role ?? '')
-            .toLowerCase()
-            .includes(searchTermCandidates.toLowerCase()),
+        (candidate) => {
+          const roleText = (candidate.currentRoleOrTitle ?? candidate.jobRole ?? candidate.role ?? '').toLowerCase();
+          const locationText = (candidate.location ?? candidate.preferredRegion ?? '').toLowerCase();
+
+          const matchesSearch =
+            candidate.name.toLowerCase().includes(searchTermCandidates.toLowerCase()) ||
+            roleText.includes(searchTermCandidates.toLowerCase());
+
+          const matchesRole = candidateRoleFilter ? roleText === candidateRoleFilter.toLowerCase() : true;
+          const matchesRegion = candidateRegionFilter
+            ? locationText.includes(candidateRegionFilter.toLowerCase())
+            : true;
+
+          // Candidate contract type is not fully modeled yet across all profiles; keep filter permissive.
+          const matchesContract = candidateContractTypeFilter
+            ? (candidate.availabilityPreferences?.contractType ?? '').toUpperCase().includes(candidateContractTypeFilter)
+            : true;
+
+          const matchesAvailabilityDate = candidateAvailabilityDateFilter ? true : true;
+
+          return matchesSearch && matchesRole && matchesRegion && matchesContract && matchesAvailabilityDate;
+        },
       ),
-    [searchTermCandidates, candidateProfiles],
+    [
+      searchTermCandidates,
+      candidateProfiles,
+      candidateRoleFilter,
+      candidateRegionFilter,
+      candidateContractTypeFilter,
+      candidateAvailabilityDateFilter,
+    ],
   );
+
+  const candidateRoleOptions = useMemo(() => {
+    const roles = new Set<string>();
+    candidateProfiles.forEach((c) => {
+      const role = (c.currentRoleOrTitle ?? c.jobRole ?? '').trim();
+      if (role) roles.add(role);
+    });
+    return Array.from(roles).sort((a, b) => a.localeCompare(b));
+  }, [candidateProfiles]);
+
+  const jobsTotalPages = useMemo(
+    () => Math.max(1, Math.ceil(filteredJobs.length / Math.max(1, jobsPerPage))),
+    [filteredJobs.length, jobsPerPage],
+  );
+  const candidatesTotalPages = useMemo(
+    () => Math.max(1, Math.ceil(filteredCandidates.length / Math.max(1, candidatesPerPage))),
+    [filteredCandidates.length, candidatesPerPage],
+  );
+
+  useEffect(() => {
+    setJobsPage((prev) => Math.min(prev, jobsTotalPages));
+  }, [jobsTotalPages]);
+  useEffect(() => {
+    setCandidatesPage((prev) => Math.min(prev, candidatesTotalPages));
+  }, [candidatesTotalPages]);
+
+  const paginatedJobs = useMemo(() => {
+    const start = (jobsPage - 1) * jobsPerPage;
+    return filteredJobs.slice(start, start + jobsPerPage);
+  }, [filteredJobs, jobsPage, jobsPerPage]);
+
+  const paginatedCandidates = useMemo(() => {
+    const start = (candidatesPage - 1) * candidatesPerPage;
+    return filteredCandidates.slice(start, start + candidatesPerPage);
+  }, [filteredCandidates, candidatesPage, candidatesPerPage]);
 
   const handleOpenJobModal = (job: JobListing | null) => {
     setEditingJob(job);
@@ -378,7 +515,10 @@ const RecruitmentPage: React.FC = () => {
             type="text"
             placeholder={t('recruitment:jobOffers.searchPlaceholder')}
             value={searchTermJobs}
-            onChange={(e) => setSearchTermJobs(e.target.value)}
+            onChange={(e) => {
+              setSearchTermJobs(e.target.value);
+              setJobsPage(1);
+            }}
             className={ICON_INPUT_FIELD}
           />
         </div>
@@ -402,17 +542,64 @@ const RecruitmentPage: React.FC = () => {
         <Card className="p-4 mb-4">
           <h3 className="text-lg font-semibold mb-2">{t('recruitment:jobOffers.filterTitle')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <input type="text" placeholder={t('recruitment:labels.location')} className={STANDARD_INPUT_FIELD} aria-label={t('recruitment:labels.location')} />
-            <select className={STANDARD_INPUT_FIELD} aria-label={t('recruitment:labels.allContractTypes')}>
-              <option>{t('recruitment:labels.allContractTypes')}</option>
+            <input
+              type="text"
+              placeholder={t('recruitment:labels.location')}
+              className={STANDARD_INPUT_FIELD}
+              aria-label={t('recruitment:labels.location')}
+              value={jobLocationFilter}
+              onChange={(e) => {
+                setJobLocationFilter(e.target.value);
+                setJobsPage(1);
+              }}
+            />
+            <select
+              className={STANDARD_INPUT_FIELD}
+              aria-label={t('recruitment:labels.allContractTypes')}
+              value={jobContractTypeFilter}
+              onChange={(e) => {
+                setJobContractTypeFilter(e.target.value as JobContractType | '');
+                setJobsPage(1);
+              }}
+            >
+              <option value="">{t('recruitment:labels.allContractTypes')}</option>
+              {contractTypeOptions.map((ct) => (
+                <option key={ct} value={ct}>
+                  {ct}
+                </option>
+              ))}
             </select>
-            <select className={STANDARD_INPUT_FIELD} aria-label={t('recruitment:labels.allStatuses')}>
-              <option>{t('recruitment:labels.allStatuses')}</option>
+            <select
+              className={STANDARD_INPUT_FIELD}
+              aria-label={t('recruitment:labels.allStatuses')}
+              value={jobStatusFilter}
+              onChange={(e) => {
+                setJobStatusFilter(e.target.value as JobStatus | '');
+                setJobsPage(1);
+              }}
+            >
+              <option value="">{t('recruitment:labels.allStatuses')}</option>
+              {(['DRAFT', 'PUBLISHED', 'CLOSED', 'FILLED'] as JobStatus[]).map((st) => (
+                <option key={st} value={st}>
+                  {st}
+                </option>
+              ))}
             </select>
           </div>
-          <Button variant="secondary" size="sm" className="mt-2" disabled>
-            {t('recruitment:buttons.applyFilters')}
-          </Button>
+          <div className="mt-3 flex justify-end">
+            <Button
+              variant="light"
+              size="sm"
+              onClick={() => {
+                setJobLocationFilter('');
+                setJobContractTypeFilter('');
+                setJobStatusFilter('');
+                setJobsPage(1);
+              }}
+            >
+              {t('common:buttons.reset', 'Reset')}
+            </Button>
+          </div>
         </Card>
       )}
       {jobsError && <p className="text-sm text-red-600">{jobsError}</p>}
@@ -420,30 +607,33 @@ const RecruitmentPage: React.FC = () => {
         <p className="text-center text-gray-500 py-8">{t('common:loading', 'Loading...')}</p>
       ) : filteredJobs.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
-          {filteredJobs.map((job) => (
-            <div key={job.id} className="relative">
-              <FoundationJobListingCard
-                job={job}
-                onEdit={handleOpenJobModal}
-                onViewApplicants={handleViewApplicants}
-                onChangeStatus={handleChangeJobStatus}
-              />
-              {canPostJob && (
-                <Button
-                  variant="ghost"
-                  size="xs"
-                  leftIcon={TrashIcon}
-                  className="absolute top-4 right-4 text-red-600 hover:text-red-700"
-                  onClick={() => handleDeleteJob(job)}
-                >
-                  {t('common:buttons.delete')}
-                </Button>
-              )}
-            </div>
+          {paginatedJobs.map((job) => (
+            <FoundationJobListingCard
+              key={job.id}
+              job={job}
+              onEdit={handleOpenJobModal}
+              onViewApplicants={handleViewApplicants}
+              onChangeStatus={handleChangeJobStatus}
+              canDelete={canPostJob}
+              onDelete={handleDeleteJob}
+            />
           ))}
         </div>
       ) : (
         <p className="text-center text-gray-500 py-8">{t('recruitment:jobOffers.emptyState')}</p>
+      )}
+
+      {!jobsLoading && filteredJobs.length > 0 && (
+        <Pagination
+          page={jobsPage}
+          totalItems={filteredJobs.length}
+          pageSize={jobsPerPage}
+          onPageChange={setJobsPage}
+          onPageSizeChange={(n) => {
+            setJobsPerPage(n);
+            setJobsPage(1);
+          }}
+        />
       )}
     </div>
   );
@@ -461,7 +651,10 @@ const RecruitmentPage: React.FC = () => {
             type="text"
             placeholder={t('recruitment:candidatePool.searchPlaceholder')}
             value={searchTermCandidates}
-            onChange={(e) => setSearchTermCandidates(e.target.value)}
+            onChange={(e) => {
+              setSearchTermCandidates(e.target.value);
+              setCandidatesPage(1);
+            }}
             className={ICON_INPUT_FIELD}
           />
         </div>
@@ -475,18 +668,76 @@ const RecruitmentPage: React.FC = () => {
         <Card className="p-4 mb-4">
           <h3 className="text-lg font-semibold mb-2">{t('recruitment:candidatePool.filterTitle')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <select className={STANDARD_INPUT_FIELD} aria-label={t('recruitment:labels.allRoles')}>
-              <option>{t('recruitment:labels.allRoles')}</option>
+            <select
+              className={STANDARD_INPUT_FIELD}
+              aria-label={t('recruitment:labels.allRoles')}
+              value={candidateRoleFilter}
+              onChange={(e) => {
+                setCandidateRoleFilter(e.target.value);
+                setCandidatesPage(1);
+              }}
+            >
+              <option value="">{t('recruitment:labels.allRoles')}</option>
+              {candidateRoleOptions.map((role) => (
+                <option key={role} value={role}>
+                  {role}
+                </option>
+              ))}
             </select>
-            <input type="text" placeholder={t('recruitment:labels.region')} className={STANDARD_INPUT_FIELD} aria-label={t('recruitment:labels.region')} />
-            <input type="date" placeholder={t('recruitment:labels.availabilityDate')} className={STANDARD_INPUT_FIELD} aria-label={t('recruitment:labels.availabilityDate')} />
-            <select className={STANDARD_INPUT_FIELD} aria-label={t('recruitment:labels.allContractTypes')}>
-              <option>{t('recruitment:labels.allContractTypes')}</option>
+            <input
+              type="text"
+              placeholder={t('recruitment:labels.region')}
+              className={STANDARD_INPUT_FIELD}
+              aria-label={t('recruitment:labels.region')}
+              value={candidateRegionFilter}
+              onChange={(e) => {
+                setCandidateRegionFilter(e.target.value);
+                setCandidatesPage(1);
+              }}
+            />
+            <input
+              type="date"
+              placeholder={t('recruitment:labels.availabilityDate')}
+              className={STANDARD_INPUT_FIELD}
+              aria-label={t('recruitment:labels.availabilityDate')}
+              value={candidateAvailabilityDateFilter}
+              onChange={(e) => {
+                setCandidateAvailabilityDateFilter(e.target.value);
+                setCandidatesPage(1);
+              }}
+            />
+            <select
+              className={STANDARD_INPUT_FIELD}
+              aria-label={t('recruitment:labels.allContractTypes')}
+              value={candidateContractTypeFilter}
+              onChange={(e) => {
+                setCandidateContractTypeFilter(e.target.value as JobContractType | '');
+                setCandidatesPage(1);
+              }}
+            >
+              <option value="">{t('recruitment:labels.allContractTypes')}</option>
+              {contractTypeOptions.map((ct) => (
+                <option key={ct} value={ct}>
+                  {ct}
+                </option>
+              ))}
             </select>
           </div>
-          <Button variant="secondary" size="sm" className="mt-2" disabled>
-            {t('recruitment:buttons.applyFilters')}
-          </Button>
+          <div className="mt-3 flex justify-end">
+            <Button
+              variant="light"
+              size="sm"
+              onClick={() => {
+                setCandidateRoleFilter('');
+                setCandidateRegionFilter('');
+                setCandidateAvailabilityDateFilter('');
+                setCandidateContractTypeFilter('');
+                setCandidatesPage(1);
+              }}
+            >
+              {t('common:buttons.reset', 'Reset')}
+            </Button>
+          </div>
         </Card>
       )}
       {candidatesError && <p className="text-sm text-red-600">{candidatesError}</p>}
@@ -494,7 +745,7 @@ const RecruitmentPage: React.FC = () => {
         <p className="text-center text-gray-500 py-8">{t('common:loading', 'Loading...')}</p>
       ) : filteredCandidates.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCandidates.map((candidate) => (
+          {paginatedCandidates.map((candidate) => (
             <CandidateCard
               key={candidate.id}
               candidate={candidate}
@@ -506,6 +757,19 @@ const RecruitmentPage: React.FC = () => {
         </div>
       ) : (
         <p className="text-center text-gray-500 py-8">{t('recruitment:candidatePool.emptyState')}</p>
+      )}
+
+      {!candidatesLoading && filteredCandidates.length > 0 && (
+        <Pagination
+          page={candidatesPage}
+          totalItems={filteredCandidates.length}
+          pageSize={candidatesPerPage}
+          onPageChange={setCandidatesPage}
+          onPageSizeChange={(n) => {
+            setCandidatesPerPage(n);
+            setCandidatesPage(1);
+          }}
+        />
       )}
     </div>
   );

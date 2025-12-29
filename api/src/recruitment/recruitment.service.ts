@@ -536,17 +536,25 @@ export class RecruitmentService {
     const where: any = {};
 
     if (filters?.role) {
-      where.role = filters.role;
+      // "role" in candidate pool context refers to the candidate's job role/title,
+      // not the platform access role (which is always EDUCATOR for candidates).
+      where.jobRole = { equals: filters.role, mode: 'insensitive' };
     }
 
     if (filters?.skills && filters.skills.length > 0) {
       where.skills = { hasSome: filters.skills };
     }
 
+    if (filters?.location) {
+      where.region = { contains: filters.location, mode: 'insensitive' };
+    }
+
     if (filters?.search) {
       where.OR = [
         { firstName: { contains: filters.search, mode: 'insensitive' } },
         { lastName: { contains: filters.search, mode: 'insensitive' } },
+        { jobRole: { contains: filters.search, mode: 'insensitive' } },
+        { region: { contains: filters.search, mode: 'insensitive' } },
         { skills: { has: filters.search } },
         { certifications: { has: filters.search } },
       ];

@@ -204,6 +204,8 @@ model User {
   cvUrl                String? // URL to CV document
   shortBio             String? // Short bio/description for profile
   candidatePoolVisible Boolean  @default(true) // Educator-controlled visibility in candidate pool
+  region               String? // Candidate location (e.g., canton/city)
+  jobRole              String? // Candidate role/title (e.g., "Educator", "Assistant")
 
   // Avatar asset relation
   avatarAssetId String?
