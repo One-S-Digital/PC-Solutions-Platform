@@ -421,30 +421,39 @@ interface SuspendUserModalProps {
   isLoading: boolean
 }
 
-const SUSPEND_REASON_PRESETS: Array<{ code: string; label: string; message: string }> = [
+const getSuspendReasonPresets = (t: (key: string, defaultValue?: string) => string) => [
   {
     code: 'TERMS_VIOLATION',
-    label: 'Violation of terms',
-    message: 'Your account has been suspended due to a violation of our terms of service.',
+    label: t('admin:users.suspend.reasons.termsViolation.label', 'Violation of terms'),
+    message: t(
+      'admin:users.suspend.reasons.termsViolation.message',
+      'Your account has been suspended due to a violation of our terms of service.',
+    ),
   },
   {
     code: 'SUSPICIOUS_ACTIVITY',
-    label: 'Suspicious activity',
-    message: 'Your account has been suspended due to suspicious activity. Please contact support to restore access.',
+    label: t('admin:users.suspend.reasons.suspiciousActivity.label', 'Suspicious activity'),
+    message: t(
+      'admin:users.suspend.reasons.suspiciousActivity.message',
+      'Your account has been suspended due to suspicious activity. Please contact support to restore access.',
+    ),
   },
   {
     code: 'PAYMENT_ISSUE',
-    label: 'Payment or billing issue',
-    message: 'Your account has been suspended due to a billing issue. Please contact support for help.',
+    label: t('admin:users.suspend.reasons.paymentIssue.label', 'Payment or billing issue'),
+    message: t(
+      'admin:users.suspend.reasons.paymentIssue.message',
+      'Your account has been suspended due to a billing issue. Please contact support for help.',
+    ),
   },
   {
     code: 'REQUESTED_BY_USER',
-    label: 'Requested by user',
-    message: 'Your account has been deactivated at your request.',
+    label: t('admin:users.suspend.reasons.requestedByUser.label', 'Requested by user'),
+    message: t('admin:users.suspend.reasons.requestedByUser.message', 'Your account has been deactivated at your request.'),
   },
   {
     code: 'OTHER',
-    label: 'Other',
+    label: t('admin:users.suspend.reasons.other.label', 'Other'),
     message: '',
   },
 ]
@@ -465,7 +474,8 @@ const SuspendUserModal: React.FC<SuspendUserModalProps> = ({ isOpen, onClose, us
 
   if (!isOpen || !user) return null
 
-  const preset = SUSPEND_REASON_PRESETS.find((p) => p.code === selectedCode) || SUSPEND_REASON_PRESETS[0]
+  const presets = getSuspendReasonPresets(t)
+  const preset = presets.find((p) => p.code === selectedCode) || presets[0]
   const reasonText = selectedCode === 'OTHER' ? customReason.trim() : preset.message
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -511,7 +521,7 @@ const SuspendUserModal: React.FC<SuspendUserModalProps> = ({ isOpen, onClose, us
                 value={selectedCode}
                 onChange={(e) => setSelectedCode(e.target.value)}
               >
-                {SUSPEND_REASON_PRESETS.map((r) => (
+                {presets.map((r) => (
                   <option key={r.code} value={r.code}>
                     {r.label}
                   </option>

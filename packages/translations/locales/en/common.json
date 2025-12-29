@@ -106,6 +106,7 @@
     "favorited": "Favorited",
     "filter": "Filter",
     "goBack": "Go Back",
+    "goHome": "Go Home",
     "goToLogin": "Go to Login",
     "hidePassword": "Hide Password",
     "inviteToApply": "Invite to Apply",
@@ -1142,6 +1143,7 @@
   "none": "None",
   "notAvailable": "Not available",
   "notProvided": "Not provided",
+  "notSpecified": "Not specified",
   "notificationContext": {
     "useNotificationsError": "Use Notifications Error"
   },
@@ -1253,7 +1255,9 @@
       "languages": "Languages",
       "location": "Location",
       "name": "Name",
+      "noData": "No child profile information yet.",
       "specialNeeds": "Special Needs",
+      "submitEnquiry": "Submit an enquiry to add your child's information.",
       "title": "Title"
     },
     "enquiry": {
@@ -1274,6 +1278,25 @@
     "title": "Title",
     "welcomeMessage": "Welcome Message"
   },
+  "parentFoundationsPage": {
+    "accessDenied": {
+      "title": "Access Denied",
+      "message": "This page is only accessible to parents."
+    },
+    "title": "Browse Daycares",
+    "subtitle": "Explore daycares in your area and find the perfect fit for your child",
+    "sendEnquiry": "Send an Enquiry",
+    "searchPlaceholder": "Search by name...",
+    "allCantons": "All Cantons",
+    "emptyState": {
+      "title": "No Daycares Found",
+      "message": "Try adjusting your search filters or send a general enquiry."
+    },
+    "capacity": "Capacity",
+    "enquire": "Enquire",
+    "website": "Website",
+    "resultsCount": "Showing {{count}} daycares"
+  },
   "parentEnquiriesPage": {
     "accessDenied": {
       "message": "message",
@@ -1281,10 +1304,25 @@
     },
     "card": {
       "awaitingMatch": "awaiting Match",
+      "checkBack": "Check back soon for responses.",
+      "child": "Child",
+      "childAge": "Child Age",
       "childInfo": "child Info",
+      "childName": "Child Name",
+      "clickToView": "Click to view details",
+      "contactDaycare": "Contact Daycare",
+      "desiredStart": "Desired Start",
+      "enquiry": "Enquiry",
+      "enquiryDetails": "Enquiry Details",
+      "languages": "Languages",
+      "location": "Location",
       "message": "message",
+      "noResponses": "No responses yet.",
       "notes": "notes",
+      "respondedOn": "Responded on",
+      "responses": "response(s)",
       "responsesTitle": "responses Title",
+      "startDate": "Start",
       "submitted": "submitted",
       "title": "title",
       "waitingForMoreResponses": "waiting For More Responses"
@@ -1295,6 +1333,13 @@
         "1": "1"
       },
       "title": "title"
+    },
+    "findDaycare": "Find a Daycare",
+    "newEnquiry": "New Enquiry",
+    "stats": {
+      "totalEnquiries": "Total Enquiries",
+      "totalResponses": "Total Responses",
+      "pending": "Pending"
     },
     "title": "Title"
   },
@@ -1456,7 +1501,9 @@
     "selectAndContinue": "select And Continue",
     "subtitle": "subtitle",
     "subtitleSignup": "subtitle Signup",
+    "suppliersTitle": "Suppliers",
     "suppliersAndProvidersTitle": "suppliers And Providers Title",
+    "serviceProvidersTitle": "Service Providers",
     "title": "title",
     "titleSignup": "title Signup",
     "whatYouGet": "what You Get"

@@ -176,6 +176,7 @@
     "phoneRequired": "Telefonnummer ist erforderlich",
     "termsRequired": "Sie müssen die Geschäftsbedingungen akzeptieren",
     "captchaError": "CAPTCHA-Verifizierung fehlgeschlagen. Bitte versuchen Sie es erneut",
+    "captchaRefreshHint": "Versuchen Sie, die Seite zu aktualisieren oder einen anderen Browser zu verwenden.",
     "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
     "passwordWeak": "Das Passwort ist nicht stark genug"
   },

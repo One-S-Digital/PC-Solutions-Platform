@@ -9,7 +9,10 @@
     "filters": "Filtres",
     "inviteToApply": "Invitation à postuler",
     "inviteToInterview": "Invitation à un entretien",
+    "markOpen": "Marquer comme ouvert",
+    "markClosed": "Marquer comme fermé",
     "postNewJob": "Publier un nouvel emploi",
+    "saveAsDraft": "Enregistrer comme brouillon",
     "viewApplicants": "Voir les candidats"
   },
   "candidateCard": {
@@ -116,6 +119,7 @@
     "responsibilityPlaceholder": "Ajouter une responsabilité",
     "salaryRange": "Fourchette des salaires",
     "salaryRangePlaceholder": "par exemple, 60 000 - 80 000 CHF",
+    "status": "Statut",
     "startDate": "Date de début",
     "workSchedule": {
       "title": "Préférences d'horaires de travail",

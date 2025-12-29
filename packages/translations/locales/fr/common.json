@@ -100,6 +100,7 @@
     "editProfile": "Modifier le profil",
     "filter": "Filtrer",
     "goBack": "Retour",
+    "goHome": "Retour à l'accueil",
     "goToLogin": "Aller à la connexion",
     "login": "Log In",
     "profileUpdated": "Profile updated!",
@@ -112,6 +113,7 @@
     "save": "Enregistrer",
     "saveChanges": "Enregistrer les modifications",
     "saving": "Enregistrement...",
+    "search": "Rechercher",
     "sendMessage": "Envoyer un message",
     "signup": "Créer un compte",
     "submitEnquiry": "Soumettre une demande",
@@ -1108,6 +1110,7 @@
   "none": "Aucun",
   "notAvailable": "Non disponible",
   "notProvided": "Non fourni",
+  "notSpecified": "Non spécifié",
   "notificationContext": {
     "useNotificationsError": "Erreur d'utilisation des notifications"
   },
@@ -1219,7 +1222,9 @@
       "languages": "Langues",
       "location": "Emplacement",
       "name": "Nom",
+      "noData": "Aucune information sur le profil de l'enfant pour le moment.",
       "specialNeeds": "Besoins spéciaux",
+      "submitEnquiry": "Envoyez une demande pour ajouter les informations de votre enfant.",
       "title": "Titre"
     },
     "enquiry": {
@@ -1240,6 +1245,25 @@
     "title": "Titre",
     "welcomeMessage": "Message de bienvenue"
   },
+  "parentFoundationsPage": {
+    "accessDenied": {
+      "title": "Accès refusé",
+      "message": "Cette page est uniquement accessible aux parents."
+    },
+    "title": "Parcourir les garderies",
+    "subtitle": "Explorez les garderies près de chez vous et trouvez la solution idéale pour votre enfant",
+    "sendEnquiry": "Envoyer une demande",
+    "searchPlaceholder": "Rechercher par nom...",
+    "allCantons": "Tous les cantons",
+    "emptyState": {
+      "title": "Aucune garderie trouvée",
+      "message": "Essayez d'ajuster vos filtres de recherche ou envoyez une demande générale."
+    },
+    "capacity": "Capacité",
+    "enquire": "Demander",
+    "website": "Site web",
+    "resultsCount": "Affichage de {{count}} garderies"
+  },
   "parentEnquiriesPage": {
     "accessDenied": {
       "message": "Vous devez être connecté en tant que parent pour voir les demandes",
@@ -1247,10 +1271,25 @@
     },
     "card": {
       "awaitingMatch": "En attente de correspondance",
+      "checkBack": "Revenez bientôt pour voir les réponses.",
+      "child": "Enfant",
+      "childAge": "Âge de l'enfant",
       "childInfo": "Informations sur l'enfant",
+      "childName": "Nom de l'enfant",
+      "clickToView": "Cliquez pour voir les détails",
+      "contactDaycare": "Contacter la garderie",
+      "desiredStart": "Début souhaité",
+      "enquiry": "Demande",
+      "enquiryDetails": "Détails de la demande",
+      "languages": "Langues",
+      "location": "Localisation",
       "message": "Votre demande a été envoyée aux fournisseurs concernés",
+      "noResponses": "Pas encore de réponses.",
       "notes": "Notes supplémentaires",
+      "respondedOn": "Réponse le",
+      "responses": "réponse(s)",
       "responsesTitle": "Réponses",
+      "startDate": "Début",
       "submitted": "Soumis le {{date}}",
       "title": "Détails de la demande",
       "waitingForMoreResponses": "En attente de plus de réponses..."
@@ -1261,6 +1300,13 @@
         "1": "formulaire de demande"
       },
       "title": "Aucune demande pour le moment"
+    },
+    "findDaycare": "Trouver une garderie",
+    "newEnquiry": "Nouvelle demande",
+    "stats": {
+      "totalEnquiries": "Demandes totales",
+      "totalResponses": "Réponses totales",
+      "pending": "En attente"
     },
     "title": "Mes demandes"
   },
@@ -1425,7 +1471,9 @@
     "selectAndContinue": "select And Continue",
     "subtitle": "subtitle",
     "subtitleSignup": "subtitle Créer un compte",
+    "suppliersTitle": "Fournisseurs",
     "suppliersAndProvidersTitle": "suppliers and providers Titre",
+    "serviceProvidersTitle": "Prestataires de services",
     "title": "Titre",
     "titleSignup": "Titre Créer un compte",
     "whatYouGet": "what You Get"

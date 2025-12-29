@@ -9,7 +9,10 @@
     "filters": "Filters",
     "inviteToApply": "Invite To Apply",
     "inviteToInterview": "Invite To Interview",
+    "markOpen": "Mark Open",
+    "markClosed": "Mark Closed",
     "postNewJob": "Post New Job",
+    "saveAsDraft": "Save as Draft",
     "viewApplicants": "View Applicants"
   },
   "candidateCard": {
@@ -116,6 +119,7 @@
     "responsibilityPlaceholder": "Add a responsibility",
     "salaryRange": "Salary Range",
     "salaryRangePlaceholder": "e.g. CHF 60,000 - 80,000",
+    "status": "Status",
     "startDate": "Start Date",
     "workSchedule": {
       "title": "Work Schedule Preferences",

@@ -394,7 +394,7 @@ const EducatorProfilePage: React.FC = () => {
           {/* Candidate Pool Visibility */}
           <Card className="p-6">
             <h3 className="text-lg font-semibold text-swiss-charcoal mb-2">
-              {t('educatorProfilePage.visibility.title', 'Candidate Pool Visibility')}
+              {t('dashboard:educatorProfilePage.visibility.title', 'Candidate Pool Visibility')}
             </h3>
             <p className="text-sm text-gray-600 mb-4">
               {t(
@@ -405,7 +405,7 @@ const EducatorProfilePage: React.FC = () => {
             <div className="flex items-start justify-between gap-4">
               <label className="text-sm text-gray-700 leading-snug">
                 <span className="font-medium">
-                  {t('educatorProfilePage.visibility.toggleLabel', 'Make my profile visible')}
+                  {t('dashboard:educatorProfilePage.visibility.toggleLabel', 'Make my profile visible')}
                 </span>
                 <div className="text-xs text-gray-500 mt-1">
                   {t(
@@ -419,7 +419,7 @@ const EducatorProfilePage: React.FC = () => {
                 className="h-5 w-5 mt-0.5 accent-swiss-mint"
                 checked={tempCandidatePoolVisible ?? profile.candidatePoolVisible}
                 onChange={(e) => setTempCandidatePoolVisible(e.target.checked)}
-                aria-label={t('educatorProfilePage.visibility.toggleLabel', 'Make my profile visible')}
+                aria-label={t('dashboard:educatorProfilePage.visibility.toggleLabel', 'Make my profile visible')}
               />
             </div>
             <div className="flex justify-end mt-4">

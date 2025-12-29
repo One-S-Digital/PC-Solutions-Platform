@@ -176,6 +176,7 @@
     "phoneRequired": "Téléphone requis",
     "termsRequired": "Conditions requises",
     "captchaError": "Erreur Captcha",
+    "captchaRefreshHint": "Essayez d’actualiser la page ou d’utiliser un autre navigateur.",
     "emailInvalid": "E-mail invalide",
     "passwordWeak": "Le mot de passe n'est pas assez fort"
   },
