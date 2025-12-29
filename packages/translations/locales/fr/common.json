@@ -557,7 +557,11 @@
       "hint": "hint",
       "placeholder": "placeholder"
     },
-    "unnamed": "unnamed"
+    "unnamed": "unnamed",
+    "visibility": {
+      "title": "Visibilité",
+      "toggleLabel": "Afficher mon profil dans le bassin de candidats"
+    }
   },
   "emptyStates": {
     "noProductSuppliers": "no Product Suppliers",

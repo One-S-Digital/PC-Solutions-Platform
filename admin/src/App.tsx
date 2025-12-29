@@ -24,6 +24,9 @@ import AccessDeniedPage from './pages/AccessDenied';
 import SupportPage from './pages/Support';
 import SubscriptionsPage from './pages/Subscriptions';
 import DiscountTerminationsPage from './pages/DiscountTerminations';
+import CantonsPage from './pages/Cantons';
+import CantonDetailPage from './pages/CantonDetail';
+import PolicyReviewPage from './pages/PolicyReview';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -62,6 +65,8 @@ const FrontendSettingsManager: React.FC = () => {
 };
 
 function App() {
+  const isCrawlerEnabled = import.meta.env.VITE_CRAWLER_ENABLED === 'true';
+
   return (
     <QueryClientProvider client={queryClient}>
       <FrontendSettingsManager />
@@ -92,6 +97,16 @@ function App() {
           <Route path="support" element={<SupportPage />} />
           <Route path="discount-terminations" element={<DiscountTerminationsPage />} />
           <Route path="subscriptions" element={<SubscriptionsPage />} />
+
+          {/* Canton policy crawler (feature-flagged; disabled by default) */}
+          {isCrawlerEnabled ? (
+            <>
+              <Route path="cantons" element={<CantonsPage />} />
+              <Route path="cantons/:code" element={<CantonDetailPage />} />
+              <Route path="policy-review" element={<PolicyReviewPage />} />
+            </>
+          ) : null}
+
           <Route path="system" element={<SystemMonitorPage />} />
           <Route path="translations" element={<TranslationsPage />} />
           <Route path="settings" element={<SettingsPage />} />

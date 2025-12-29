@@ -590,7 +590,11 @@
       "hint": "hint",
       "placeholder": "placeholder"
     },
-    "unnamed": "unnamed"
+    "unnamed": "unnamed",
+    "visibility": {
+      "title": "Visibility",
+      "toggleLabel": "Show my profile in the candidate pool"
+    }
   },
   "emptyStates": {
     "noProductSuppliers": "no Product Suppliers",

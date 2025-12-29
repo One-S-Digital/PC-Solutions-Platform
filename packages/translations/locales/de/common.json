@@ -563,7 +563,11 @@
       "hint": "hint",
       "placeholder": "placeholder"
     },
-    "unnamed": "unnamed"
+    "unnamed": "unnamed",
+    "visibility": {
+      "title": "Sichtbarkeit",
+      "toggleLabel": "Mein Profil im Kandidatenpool anzeigen"
+    }
   },
   "emptyStates": {
     "noProductSuppliers": "no Product Suppliers",

@@ -515,6 +515,13 @@ model Asset {
   expirationDate DateTime? // Policy expiration date
   externalLink   String? // Link to official policy document
 
+  // Canton policy crawler integration fields (null = manually uploaded)
+  crawlSourceId     Int?
+  officialUrl       String?   // Canonical URL on official site (separate from publicUrl)
+  contentHash       String?   // Content hash for change detection
+  lastCrawledAt     DateTime?
+  crawlStatus       String?   // pending_review, approved, rejected, manual, etc.
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -547,6 +554,9 @@ model Asset {
   adminFavicons    FrontendSettings[] @relation("AdminFavicon")
   sidebarLogos     FrontendSettings[] @relation("SidebarLogo")
 
+  // Crawler relations
+  crawlSource CantonSource? @relation(fields: [crawlSourceId], references: [id], onDelete: SetNull)
+
   @@index([storageKey])
   @@index([etag])
   @@index([category])
@@ -557,7 +567,79 @@ model Asset {
   @@index([country])
   @@index([region])
   @@index([isCritical])
+  @@index([crawlSourceId])
+  @@index([crawlStatus])
   @@map("assets")
+}
+
+// =====================================
+// Canton Policy Crawler
+// =====================================
+
+model Canton {
+  id          Int      @id @default(autoincrement())
+  code        String   @unique // 'VD', 'FR', 'ZH'
+  name        String
+  nameDe      String?
+  nameIt      String?
+  nameFr      String?
+  defaultLang String   @default("de")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  sources     CantonSource[]
+
+  @@map("cantons")
+}
+
+model CantonSource {
+  id                 Int      @id @default(autoincrement())
+  cantonId           Int
+  canton             Canton   @relation(fields: [cantonId], references: [id])
+
+  label              String
+  url                String
+  sourceType         String   @default("landing") // landing, directives, laws, federal, etc.
+  renderType         String   @default("static")  // static, dynamic
+  cssSelector        String?
+
+  isActive           Boolean  @default(true)
+  crawlFrequencyDays Int      @default(7)
+
+  lastCrawlAt        DateTime?
+  lastCrawlStatus    String?  // success, failed, partial
+  lastCrawlError     String?
+  nextCrawlAt        DateTime?
+
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  crawlHistory       PolicyCrawlHistory[]
+  crawledAssets      Asset[]
+
+  @@index([cantonId])
+  @@index([isActive, nextCrawlAt])
+  @@map("canton_sources")
+}
+
+model PolicyCrawlHistory {
+  id          Int          @id @default(autoincrement())
+  assetId     String
+  sourceId    Int
+  source      CantonSource @relation(fields: [sourceId], references: [id])
+
+  contentHash String
+  fetchedAt   DateTime  @default(now())
+  changeType  String?   // new, updated, unchanged
+  diffSummary String?
+
+  // Internal indexing (optional - can be large)
+  contentText String?   @db.Text
+
+  @@index([assetId])
+  @@index([sourceId, fetchedAt])
+  @@map("policy_crawl_history")
 }
 
 model Product {

@@ -50,6 +50,7 @@ import { PartnersModule } from './partners/partners.module';
 import { OrganizationDocumentsModule } from './organization-documents/organization-documents.module';
 import { PromoCodesModule } from './promo-codes/promo-codes.module';
 import { VendorClientsModule } from './vendor-clients/vendor-clients.module';
+import { CrawlerModule } from './crawler/crawler.module';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
 import { MaintenanceModeMiddleware } from './common/middleware/maintenance-mode.middleware';
@@ -147,6 +148,7 @@ import {
     PromoCodesModule,
     VendorClientsModule,
     MaintenanceModule,
+    CrawlerModule,
   ],
   controllers: [AppController],
   providers: [

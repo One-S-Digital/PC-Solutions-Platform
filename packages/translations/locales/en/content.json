@@ -263,6 +263,11 @@
     "title": "E-Learning"
   },
   "statePolicies": {
-    "title": "State Policies"
+    "title": "State Policies",
+    "legalNotice": "Legal Notice",
+    "documentSingular": "document",
+    "documentPlural": "documents",
+    "updatedShort": "Updated",
+    "disclaimer": "All policies and documents listed here are sourced directly from official cantonal and federal websites. ProCrèche does not create, modify or guarantee the legal validity of these documents and cannot be held liable for their content or for any changes made by the issuing authorities. Always refer to the official source for the latest version."
   }
 }
