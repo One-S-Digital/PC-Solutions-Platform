@@ -87,7 +87,8 @@ const Candidates: React.FC = () => {
   }
 
   const handleEditUser = (candidate: Candidate) => {
-    setSelectedUserId(candidate.id)
+    // Prefer profileId when available; backend supports either profileId or appUserId.
+    setSelectedUserId(candidate.profileId || candidate.id)
     setIsEditModalOpen(true)
   }
 
@@ -175,11 +176,12 @@ const Candidates: React.FC = () => {
       />
 
       <EditUserModal
-        isOpen={isEditModalOpen && !isSelectedUserLoading}
+        isOpen={isEditModalOpen}
         onClose={handleCloseEditModal}
         user={selectedUser}
         onSave={handleUpdateUser}
         isLoading={updateUserMutation.isPending}
+        isFetchingUser={isSelectedUserLoading}
         currentUserRole={currentUser?.role}
         showCandidatePoolControls
       />

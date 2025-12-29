@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { User } from '../types/api'
 import { UserRole, UserStatus } from '../types'
 import { STANDARD_INPUT_FIELD } from '../constants/design-system'
+import LoadingSpinner from '../components/ui/LoadingSpinner'
 
 export interface EditUserModalProps {
   isOpen: boolean
@@ -11,6 +12,8 @@ export interface EditUserModalProps {
   user: User | null
   onSave: (user: User) => Promise<void>
   isLoading: boolean
+  /** When true, show a loading state even if `user` is null */
+  isFetchingUser?: boolean
   currentUserRole?: UserRole
   showCandidatePoolControls?: boolean
 }
@@ -21,6 +24,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
   user,
   onSave,
   isLoading,
+  isFetchingUser,
   currentUserRole,
   showCandidatePoolControls,
 }) => {
@@ -48,6 +52,11 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
     e.preventDefault()
     setError(null)
 
+    if (!user) {
+      setError(t('admin:users.editUser.loadFailed', 'Failed to load user'))
+      return
+    }
+
     if (!formData.email) {
       setError(t('admin:users.editUser.emailRequired', 'Email is required'))
       return
@@ -57,7 +66,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
       // Only send fields that are allowed by the UpdateUserDto
       // The DTO whitelist allows: email, firstName, lastName, role, orgId, phoneNumber, address, avatarUrl, status
       const updatePayload = {
-        id: user!.id,
+        id: user.id,
         email: formData.email,
         firstName: formData.firstName,
         lastName: formData.lastName,
@@ -73,7 +82,51 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
     }
   }
 
-  if (!isOpen || !user) return null
+  if (!isOpen) return null
+
+  // Show a visible modal immediately, even while user data is loading.
+  if (!user) {
+    return (
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="w-full max-w-lg bg-white shadow-xl rounded-lg overflow-hidden">
+          <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+            <h2 className="text-xl font-semibold text-gray-900">{t('admin:users.editUser.title', 'Edit User')}</h2>
+            <button
+              onClick={onClose}
+              className="p-1 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+              disabled={isLoading}
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+
+          <div className="p-8">
+            {isFetchingUser ? (
+              <div className="flex items-center justify-center gap-3 text-gray-600">
+                <LoadingSpinner />
+                <span>{t('admin:users.editUser.loading', 'Loading user...')}</span>
+              </div>
+            ) : (
+              <div className="text-sm text-red-600">
+                {t('admin:users.editUser.loadFailed', 'Failed to load user')}
+              </div>
+            )}
+          </div>
+
+          <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={isLoading}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 disabled:opacity-50"
+            >
+              {t('common:close', 'Close')}
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   const canAssignSuperAdmin = currentUserRole === UserRole.SUPER_ADMIN
   const isEditingSuperAdmin = user.role === UserRole.SUPER_ADMIN

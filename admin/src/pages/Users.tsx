@@ -1251,6 +1251,7 @@ const Users: React.FC = () => {
         user={selectedUser}
         onSave={handleUpdateUser}
         isLoading={updateUserMutation.isPending}
+        isFetchingUser={false}
         currentUserRole={currentUser?.role}
       />
 
