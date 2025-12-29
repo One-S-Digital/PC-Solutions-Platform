@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import Button from './Button';
 
 interface PaginationProps {
@@ -22,6 +23,7 @@ const Pagination: React.FC<PaginationProps> = ({
   onPageSizeChange,
   className,
 }) => {
+  const { t } = useTranslation('common');
   const safePageSize = Math.max(1, pageSize);
   const totalPages = Math.max(1, Math.ceil(Math.max(0, totalItems) / safePageSize));
   const safePage = clamp(page, 1, totalPages);
@@ -34,7 +36,7 @@ const Pagination: React.FC<PaginationProps> = ({
       <div className="flex items-center gap-3">
         {onPageSizeChange && (
           <label className="text-sm text-gray-600 flex items-center gap-2">
-            <span>Rows per page</span>
+            <span>{t('pagination.rowsPerPage', 'Rows per page')}</span>
             <select
               className="border border-gray-300 rounded-md px-2 py-1 text-sm bg-white"
               value={safePageSize}
@@ -49,7 +51,7 @@ const Pagination: React.FC<PaginationProps> = ({
           </label>
         )}
         <span className="text-sm text-gray-600">
-          {from}-{to} of {totalItems}
+          {t('pagination.range', '{{from}}-{{to}} of {{total}}', { from, to, total: totalItems })}
         </span>
       </div>
 
@@ -60,10 +62,10 @@ const Pagination: React.FC<PaginationProps> = ({
           onClick={() => onPageChange(safePage - 1)}
           disabled={safePage <= 1}
         >
-          Previous
+          {t('pagination.previous', 'Previous')}
         </Button>
         <span className="text-sm text-gray-600 px-2">
-          Page {safePage} of {totalPages}
+          {t('pagination.pageOf', 'Page {{page}} of {{totalPages}}', { page: safePage, totalPages })}
         </span>
         <Button
           variant="outline"
@@ -71,7 +73,7 @@ const Pagination: React.FC<PaginationProps> = ({
           onClick={() => onPageChange(safePage + 1)}
           disabled={safePage >= totalPages}
         >
-          Next
+          {t('pagination.next', 'Next')}
         </Button>
       </div>
     </div>

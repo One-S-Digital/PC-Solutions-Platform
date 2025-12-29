@@ -597,7 +597,7 @@ const RecruitmentPage: React.FC = () => {
                 setJobsPage(1);
               }}
             >
-              {t('common:buttons.reset', 'Reset')}
+              {t('common:buttons.resetFilters')}
             </Button>
           </div>
         </Card>
@@ -735,7 +735,7 @@ const RecruitmentPage: React.FC = () => {
                 setCandidatesPage(1);
               }}
             >
-              {t('common:buttons.reset', 'Reset')}
+              {t('common:buttons.resetFilters')}
             </Button>
           </div>
         </Card>

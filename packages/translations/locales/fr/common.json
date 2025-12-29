@@ -109,6 +109,7 @@
     "remove": "Retirer",
     "reply": "Répondre",
     "sending": "Envoi en cours...",
+    "resetFilters": "Réinitialiser les filtres",
     "retry": "Réessayer",
     "save": "Enregistrer",
     "saveChanges": "Enregistrer les modifications",
@@ -123,6 +124,13 @@
     "verifyEmail": "Vérifier l'e-mail",
     "view": "Voir",
     "viewDetails": "Voir les détails"
+  },
+  "pagination": {
+    "rowsPerPage": "Lignes par page",
+    "range": "{{from}}-{{to}} sur {{total}}",
+    "pageOf": "Page {{page}} sur {{totalPages}}",
+    "previous": "Précédent",
+    "next": "Suivant"
   },
   "candidateCard": {
     "viewProfile": "Voir le profil"
