@@ -41,6 +41,18 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   status?: 'ACTIVE' | 'INACTIVE' | 'PENDING';
 
   /**
+   * Admin-selected reason shown to the user when their account is deactivated.
+   * Stored on the User profile record (not AppUser).
+   */
+  @IsOptional()
+  @IsString()
+  deactivatedReasonCode?: string;
+
+  @IsOptional()
+  @IsString()
+  deactivatedReasonText?: string;
+
+  /**
    * Educator-controlled visibility in the candidate pool (admin override).
    * Only applicable to EDUCATOR profiles; ignored for other roles.
    */

@@ -84,7 +84,7 @@ export class RolesGuard implements CanActivate {
 
     // 6. Handle suspended users
     if (userContext.role === 'SUSPENDED' || userContext.isSuspended) {
-      throw new ForbiddenException('Account is suspended');
+      throw new ForbiddenException(userContext.suspensionMessage || 'Account is suspended');
     }
 
     const hasRole = requiredRoles.includes(userContext.role as UserRole);

@@ -1186,6 +1186,20 @@ export class UsersService {
           if (isRoleChanging && targetRole) userUpdateData.role = targetRole;
           if (updateUserDto.status !== undefined) {
             userUpdateData.isActive = updateUserDto.status === 'ACTIVE';
+            if (updateUserDto.status === 'INACTIVE') {
+              userUpdateData.deactivatedAt = new Date();
+              if (updateUserDto.deactivatedReasonCode !== undefined) {
+                userUpdateData.deactivatedReasonCode = updateUserDto.deactivatedReasonCode;
+              }
+              if (updateUserDto.deactivatedReasonText !== undefined) {
+                userUpdateData.deactivatedReasonText = updateUserDto.deactivatedReasonText;
+              }
+            }
+            if (updateUserDto.status === 'ACTIVE') {
+              userUpdateData.deactivatedAt = null;
+              userUpdateData.deactivatedReasonCode = null;
+              userUpdateData.deactivatedReasonText = null;
+            }
           }
           if (updateUserDto.candidatePoolVisible !== undefined) {
             // Only applies to educator/candidate profiles; safe to set anyway since field exists

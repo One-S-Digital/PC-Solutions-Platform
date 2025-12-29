@@ -49,6 +49,18 @@ const LoginPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
 
+  useEffect(() => {
+    try {
+      const msg = sessionStorage.getItem('auth_block_message');
+      if (msg) {
+        sessionStorage.removeItem('auth_block_message');
+        setError(msg);
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
   // No auto-redirects or side effects needed.
   // Rendering is purely driven by isLoaded and isSignedIn state.
 

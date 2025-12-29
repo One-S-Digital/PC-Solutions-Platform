@@ -520,28 +520,37 @@ const SignupPage: React.FC = () => {
     } catch (err: any) {
       console.error('Signup error');
       let errorMessage = 'An error occurred during signup';
+      let errorField: keyof SignupFormData = 'email';
       
       if (err.errors && err.errors.length > 0) {
         const clerkError = err.errors[0];
         switch (clerkError.code) {
           case 'form_identifier_exists':
             errorMessage = t('signup:errors.accountExists', 'An account with this email already exists');
+            errorField = 'email';
             break;
           case 'form_password_pwned':
             errorMessage = t('signup:errors.passwordPwned', 'This password has been found in a data breach. Please choose a different password');
+            errorField = 'password';
             break;
           case 'form_password_not_strong_enough':
             errorMessage = t('signup:errors.passwordWeak', 'Password is not strong enough');
+            errorField = 'password';
             break;
           case 'form_identifier_invalid':
             errorMessage = t('signup:errors.emailInvalid', 'Please enter a valid email address');
+            errorField = 'email';
             break;
           default:
             errorMessage = clerkError.message || 'Invalid email or password';
+            // Best-effort mapping when Clerk provides parameter name
+            const paramName = (clerkError as any)?.meta?.paramName || (clerkError as any)?.meta?.parameterName;
+            if (paramName === 'password') errorField = 'password';
+            if (paramName === 'emailAddress' || paramName === 'identifier') errorField = 'email';
         }
       }
       
-      setErrors({ email: errorMessage });
+      setErrors({ [errorField]: errorMessage });
     } finally {
       setIsLoading(false);
     }

@@ -350,6 +350,23 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         }
 
         console.error('Failed to sync user with backend', error);
+
+        // If the backend explicitly blocked the account (e.g., suspended),
+        // sign out and show the backend-provided message on the login page.
+        if (error instanceof ApiError && error.status === 403) {
+          const message = error.message || 'Your account is suspended.';
+          try {
+            sessionStorage.setItem('auth_block_message', message);
+          } catch {
+            // ignore storage failures
+          }
+          try {
+            await clerkSignOut();
+          } catch {
+            // ignore sign-out failures; UI will still show an error state
+          }
+        }
+
         const errorKey = determineAuthErrorKey(error);
         setCurrentUser(null);
         setAuthError(errorKey);

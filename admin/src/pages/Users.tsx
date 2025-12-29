@@ -412,6 +412,158 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
   )
 }
 
+// Suspend user modal (with preset reasons)
+interface SuspendUserModalProps {
+  isOpen: boolean
+  onClose: () => void
+  user: User | null
+  onConfirm: (payload: { reasonCode: string; reasonText: string }) => Promise<void>
+  isLoading: boolean
+}
+
+const SUSPEND_REASON_PRESETS: Array<{ code: string; label: string; message: string }> = [
+  {
+    code: 'TERMS_VIOLATION',
+    label: 'Violation of terms',
+    message: 'Your account has been suspended due to a violation of our terms of service.',
+  },
+  {
+    code: 'SUSPICIOUS_ACTIVITY',
+    label: 'Suspicious activity',
+    message: 'Your account has been suspended due to suspicious activity. Please contact support to restore access.',
+  },
+  {
+    code: 'PAYMENT_ISSUE',
+    label: 'Payment or billing issue',
+    message: 'Your account has been suspended due to a billing issue. Please contact support for help.',
+  },
+  {
+    code: 'REQUESTED_BY_USER',
+    label: 'Requested by user',
+    message: 'Your account has been deactivated at your request.',
+  },
+  {
+    code: 'OTHER',
+    label: 'Other',
+    message: '',
+  },
+]
+
+const SuspendUserModal: React.FC<SuspendUserModalProps> = ({ isOpen, onClose, user, onConfirm, isLoading }) => {
+  const { t } = useTranslation(['common', 'admin'])
+  const [selectedCode, setSelectedCode] = useState<string>('TERMS_VIOLATION')
+  const [customReason, setCustomReason] = useState<string>('')
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (isOpen) {
+      setSelectedCode('TERMS_VIOLATION')
+      setCustomReason('')
+      setError(null)
+    }
+  }, [isOpen])
+
+  if (!isOpen || !user) return null
+
+  const preset = SUSPEND_REASON_PRESETS.find((p) => p.code === selectedCode) || SUSPEND_REASON_PRESETS[0]
+  const reasonText = selectedCode === 'OTHER' ? customReason.trim() : preset.message
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError(null)
+    if (!reasonText) {
+      setError(t('admin:users.suspend.reasonRequired', 'Please provide a reason'))
+      return
+    }
+    await onConfirm({ reasonCode: selectedCode, reasonText })
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="w-full max-w-md bg-white shadow-xl rounded-lg overflow-hidden">
+        <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-900">
+            {t('admin:users.suspend.title', 'Suspend account')}
+          </h2>
+          <button onClick={onClose} disabled={isLoading} className="p-1 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600">
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div className="p-6 space-y-4">
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
+                {error}
+              </div>
+            )}
+
+            <div className="text-sm text-gray-700">
+              {t('admin:users.suspend.userLabel', 'User')}: <span className="font-medium">{user.name || user.email}</span>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t('admin:users.suspend.reason', 'Reason')}
+              </label>
+              <select
+                className={STANDARD_INPUT_FIELD}
+                value={selectedCode}
+                onChange={(e) => setSelectedCode(e.target.value)}
+              >
+                {SUSPEND_REASON_PRESETS.map((r) => (
+                  <option key={r.code} value={r.code}>
+                    {r.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {selectedCode === 'OTHER' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('admin:users.suspend.customReason', 'Custom message')}
+                </label>
+                <textarea
+                  className={STANDARD_INPUT_FIELD}
+                  rows={3}
+                  value={customReason}
+                  onChange={(e) => setCustomReason(e.target.value)}
+                  placeholder={t('admin:users.suspend.customReasonPlaceholder', 'Write the message the user will see on login...')}
+                />
+              </div>
+            )}
+
+            {selectedCode !== 'OTHER' && (
+              <div className="text-xs text-gray-500">
+                {t('admin:users.suspend.preview', 'User message preview')}: {preset.message}
+              </div>
+            )}
+          </div>
+
+          <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={isLoading}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 disabled:opacity-50"
+            >
+              {t('common:cancel', 'Cancel')}
+            </button>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 disabled:opacity-50"
+            >
+              {isLoading ? t('admin:users.suspend.suspending', 'Suspending...') : t('admin:users.suspend.confirm', 'Suspend')}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
 const Users: React.FC = () => {
   const { t } = useTranslation(['common', 'admin']);
   const [searchQuery, setSearchQuery] = useState('')
@@ -424,6 +576,7 @@ const Users: React.FC = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [isElevateModalOpen, setIsElevateModalOpen] = useState(false)
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false)
+  const [isSuspendModalOpen, setIsSuspendModalOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
 
   const apiClient = useApiClient()
@@ -578,8 +731,8 @@ const Users: React.FC = () => {
   }, [usersResponse, pageSize])
 
   const updateUserStatusMutation = useMutation({
-    mutationFn: ({ userId, status }: { userId: string; status: 'ACTIVE' | 'INACTIVE' }) =>
-      apiService.updateUser(apiClient, userId, { status } as any),
+    mutationFn: ({ userId, payload }: { userId: string; payload: any }) =>
+      apiService.updateUser(apiClient, userId, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-users'] })
     },
@@ -614,6 +767,11 @@ const Users: React.FC = () => {
   const handleEditUser = (user: User) => {
     setSelectedUser(user)
     setIsEditModalOpen(true)
+  }
+
+  const handleSuspendClick = (user: User) => {
+    setSelectedUser(user)
+    setIsSuspendModalOpen(true)
   }
 
   // Handle opening delete modal
@@ -733,6 +891,11 @@ const Users: React.FC = () => {
 
   const handleCloseAddUserModal = () => {
     setIsAddUserModalOpen(false)
+  }
+
+  const handleCloseSuspendModal = () => {
+    setIsSuspendModalOpen(false)
+    setSelectedUser(null)
   }
 
   const handleInviteUser = async (payload: { email: string; role: UserRole }) => {
@@ -916,10 +1079,9 @@ const Users: React.FC = () => {
                               {({ active }) => (
                                 <button
                                   onClick={() =>
-                                    updateUserStatusMutation.mutate({
-                                      userId: user.id,
-                                      status: user.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE',
-                                    })
+                                    user.status === 'ACTIVE'
+                                      ? handleSuspendClick(user)
+                                      : updateUserStatusMutation.mutate({ userId: user.id, payload: { status: 'ACTIVE' } })
                                   }
                                   className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
                                   disabled={updateUserStatusMutation.isPending}
@@ -1109,6 +1271,27 @@ const Users: React.FC = () => {
         onInvite={handleInviteUser}
         isLoading={inviteUserMutation.isPending}
         canInviteSuperAdmin={canInviteSuperAdmin}
+      />
+
+      {/* Suspend Modal */}
+      <SuspendUserModal
+        isOpen={isSuspendModalOpen}
+        onClose={handleCloseSuspendModal}
+        user={selectedUser}
+        isLoading={updateUserStatusMutation.isPending}
+        onConfirm={async ({ reasonCode, reasonText }) => {
+          if (!selectedUser) return
+          await updateUserStatusMutation.mutateAsync({
+            userId: selectedUser.id,
+            payload: {
+              status: 'INACTIVE',
+              deactivatedReasonCode: reasonCode,
+              deactivatedReasonText: reasonText,
+            },
+          })
+          setIsSuspendModalOpen(false)
+          setSelectedUser(null)
+        }}
       />
     </div>
   )
