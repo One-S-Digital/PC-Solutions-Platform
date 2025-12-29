@@ -378,6 +378,19 @@ export const apiService = {
     benefits?: string[];
     status?: string;
   }) => apiClient.post<ApiResponse<JobListing>>('/compat/job-listings', jobData),
+  updateJobListing: (apiClient: AxiosInstance, id: string, jobData: Partial<{
+    title: string;
+    description?: string;
+    location?: string;
+    salary?: string;
+    contractType?: string;
+    requirements?: string[];
+    responsibilities?: string[];
+    qualifications?: string[];
+    benefits?: string[];
+    status?: string;
+  }>) => apiClient.patch<ApiResponse<JobListing>>(`/compat/job-listings/${id}`, jobData),
+  deleteJobListing: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/compat/job-listings/${id}`),
 
   // Candidates
   getCandidates: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Candidate[]>>('/compat/candidates'),

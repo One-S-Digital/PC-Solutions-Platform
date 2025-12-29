@@ -1,5 +1,6 @@
 import {
   IsArray,
+  IsBoolean,
   IsEmail,
   IsObject,
   IsOptional,
@@ -74,4 +75,12 @@ export class UpdateEducatorSettingsDto {
   @IsOptional()
   @IsString()
   coverAssetId?: string;
+
+  /**
+   * When true, the educator will appear in the Foundation/Admin candidate pool.
+   * Default is false (hidden).
+   */
+  @IsOptional()
+  @IsBoolean()
+  candidatePoolVisible?: boolean;
 }

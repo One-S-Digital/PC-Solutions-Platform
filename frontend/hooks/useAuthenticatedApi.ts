@@ -43,10 +43,16 @@ export function useAuthenticatedApi() {
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
+          const resolvedMessage =
+            typeof (errorData as any)?.message === 'string'
+              ? (errorData as any).message
+              : typeof (errorData as any)?.error === 'string'
+                ? (errorData as any).error
+                : `HTTP ${response.status}: ${response.statusText}`;
           throw new ApiError(
-            errorData.message || `HTTP ${response.status}: ${response.statusText}`,
+            resolvedMessage,
             response.status,
-            errorData.code
+            (errorData as any)?.code
           );
         }
 

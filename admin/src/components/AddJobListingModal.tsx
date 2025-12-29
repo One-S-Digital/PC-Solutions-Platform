@@ -29,15 +29,17 @@ export interface JobListingFormData {
 const CONTRACT_TYPES = [
   { value: 'FULL_TIME', label: 'Full-Time' },
   { value: 'PART_TIME', label: 'Part-Time' },
-  { value: 'CONTRACT', label: 'Contract' },
+  { value: 'CDI', label: 'CDI' },
+  { value: 'CDD', label: 'CDD' },
   { value: 'TEMPORARY', label: 'Temporary' },
   { value: 'INTERNSHIP', label: 'Internship' },
+  { value: 'REPLACEMENT', label: 'Replacement' },
+  { value: 'FREELANCE', label: 'Freelance' },
 ];
 
 const JOB_STATUS_OPTIONS = [
   { value: 'DRAFT', label: 'Draft' },
   { value: 'PUBLISHED', label: 'Published' },
-  { value: 'PAUSED', label: 'Paused' },
   { value: 'CLOSED', label: 'Closed' },
 ];
 

@@ -212,6 +212,8 @@ export interface User {
   orgIds: string[];
   orgName?: string;
   status: UserStatus;
+  /** Educator visibility in candidate pool (when profile exists) */
+  candidatePoolVisible?: boolean;
   lastLogin?: Date;
   region?: string;
   createdAt: Date;
@@ -228,7 +230,7 @@ export interface JobListing {
   id: string;
   title: string;
   organizationName: string;
-  status: 'ACTIVE' | 'PAUSED' | 'CLOSED';
+  status: 'DRAFT' | 'PUBLISHED' | 'CLOSED' | 'FILLED' | string;
   description: string;
   location: string;
   type: string;
@@ -238,6 +240,7 @@ export interface JobListing {
 
 export interface Candidate {
   id: string;
+  profileId?: string;
   name?: string;
   email?: string;
   phone?: string;
@@ -245,6 +248,7 @@ export interface Candidate {
   role?: string;
   experience?: string;
   availabilityStatus?: string;
+  candidatePoolVisible?: boolean;
   createdAt?: string;
   user?: {
     name?: string;

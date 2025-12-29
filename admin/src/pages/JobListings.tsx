@@ -45,6 +45,20 @@ const JobListings: React.FC = () => {
     },
   })
 
+  const updateJobListingMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) => apiService.updateJobListing(apiClient, id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['job-listings'] })
+    },
+  })
+
+  const deleteJobListingMutation = useMutation({
+    mutationFn: (id: string) => apiService.deleteJobListing(apiClient, id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['job-listings'] })
+    },
+  })
+
   const handleCreateJobListing = async (data: JobListingFormData) => {
     await createJobListingMutation.mutateAsync(data)
   }
@@ -126,8 +140,8 @@ const JobListings: React.FC = () => {
               onChange={(e) => setSelectedStatus(e.target.value)}
             >
               <option value="">{t('admin:jobListings.statusFilter.all')}</option>
-              <option value="ACTIVE">{t('admin:jobListings.statusFilter.active')}</option>
-              <option value="PAUSED">{t('admin:jobListings.statusFilter.paused')}</option>
+                <option value="PUBLISHED">{t('admin:jobListings.statusFilter.published', 'Published')}</option>
+                <option value="DRAFT">{t('admin:jobListings.statusFilter.draft', 'Draft')}</option>
               <option value="CLOSED">{t('admin:jobListings.statusFilter.closed')}</option>
             </select>
           </div>
@@ -150,10 +164,10 @@ const JobListings: React.FC = () => {
               </div>
               <div className="flex items-center space-x-4">
                 <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                  job.status === 'ACTIVE' 
+                  job.status === 'PUBLISHED' 
                     ? 'bg-green-100 text-green-800'
-                    : job.status === 'PAUSED'
-                    ? 'bg-yellow-100 text-yellow-800'
+                    : job.status === 'DRAFT'
+                    ? 'bg-gray-100 text-gray-800'
                     : 'bg-gray-100 text-gray-800'
                 }`}>
                   {job.status}
@@ -177,9 +191,32 @@ const JobListings: React.FC = () => {
                           {({ active }) => (
                             <button
                               className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
+                              onClick={() => updateJobListingMutation.mutate({ id: job.id, data: { status: 'PUBLISHED' } })}
                             >
                               <Edit className="h-4 w-4 mr-2" />
-                              {t('admin:jobListings.actions.edit')}
+                              {t('admin:jobListings.actions.publish', 'Publish')}
+                            </button>
+                          )}
+                        </Menu.Item>
+                        <Menu.Item>
+                          {({ active }) => (
+                            <button
+                              className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
+                              onClick={() => updateJobListingMutation.mutate({ id: job.id, data: { status: 'DRAFT' } })}
+                            >
+                              <Edit className="h-4 w-4 mr-2" />
+                              {t('admin:jobListings.actions.draft', 'Save as Draft')}
+                            </button>
+                          )}
+                        </Menu.Item>
+                        <Menu.Item>
+                          {({ active }) => (
+                            <button
+                              className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
+                              onClick={() => updateJobListingMutation.mutate({ id: job.id, data: { status: 'CLOSED' } })}
+                            >
+                              <Edit className="h-4 w-4 mr-2" />
+                              {t('admin:jobListings.actions.close', 'Close')}
                             </button>
                           )}
                         </Menu.Item>
@@ -187,6 +224,7 @@ const JobListings: React.FC = () => {
                           {({ active }) => (
                             <button
                               className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-red-600`}
+                              onClick={() => deleteJobListingMutation.mutate(job.id)}
                             >
                               <Trash2 className="h-4 w-4 mr-2" />
                               {t('admin:jobListings.actions.delete')}

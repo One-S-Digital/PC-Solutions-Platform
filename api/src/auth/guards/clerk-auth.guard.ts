@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException, HttpException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { verifyToken } from '@clerk/backend';
 import { ConfigService } from '@nestjs/config';
@@ -137,7 +137,16 @@ export class ClerkAuthGuard implements CanActivate {
         const appUser = await this.prisma.appUser.findUnique({ where: { clerkId: payload.sub } });
         
         // Also fetch the User profile record
-        const userProfile = await this.prisma.user.findUnique({ where: { clerkId: payload.sub } });
+        const userProfile = await this.prisma.user.findUnique({
+          where: { clerkId: payload.sub },
+          select: { isActive: true, deactivatedReasonText: true },
+        });
+        if (userProfile && userProfile.isActive === false) {
+          const message =
+            userProfile.deactivatedReasonText?.trim() ||
+            'Your account has been suspended. Please contact support if you believe this is a mistake.';
+          throw new HttpException({ message, code: 'account_suspended' }, 403);
+        }
         
         // Fetch user's primary organization (for subscription and organization-based features)
         let primaryOrganizationId: string | null = null;
@@ -169,6 +178,7 @@ export class ClerkAuthGuard implements CanActivate {
             clerkId: payload.sub,
             role: 'PENDING',
             id: userProfile?.id || null,
+            organizationId: primaryOrganizationId,
             isPending: true,
           };
           if (this.authDebug) {
@@ -188,12 +198,18 @@ export class ClerkAuthGuard implements CanActivate {
             clerkId: payload.sub,
             role: appUser.role,
             id: userProfile?.id || null,
+            organizationId: primaryOrganizationId,
           };
           if (this.authDebug) {
             console.log('🔐 Auth Debug: request.context and request.user populated', { context: request.context, user: request.user });
           }
         }
       } catch (e) {
+        // Important: do NOT swallow suspension exceptions (or other intentional HttpExceptions).
+        // If we do, the request continues without context and may crash later (or bypass some endpoints).
+        if (e instanceof HttpException) {
+          throw e;
+        }
         if (this.authDebug) {
           console.error('🔐 Auth Debug: failed to load AppUser', e);
         }
