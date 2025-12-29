@@ -163,21 +163,16 @@ const EducatorProfilePage: React.FC = () => {
     
     setSaving(true);
     try {
-      const payload = {
-        firstName: updates.firstName ?? profile.firstName,
-        lastName: updates.lastName ?? profile.lastName,
-        email: updates.email ?? profile.email,
-        phoneNumber: updates.phoneNumber ?? profile.phoneNumber,
-        workExperience: updates.workExperience ?? profile.workExperience,
-        education: updates.education ?? profile.education,
-        certifications: updates.certifications ?? profile.certifications,
-        skills: updates.skills ?? profile.skills,
-        availability: updates.availability ?? profile.availability,
-        cvUrl: updates.cvUrl ?? profile.cvUrl,
-        shortBio: updates.shortBio ?? profile.shortBio,
-        avatarAssetId: updates.avatarAssetId ?? profile.avatarAssetId,
-        candidatePoolVisible: updates.candidatePoolVisible ?? profile.candidatePoolVisible,
-      };
+      // PATCH semantics: only send changed fields (prevents validation failures
+      // for users with missing/empty optional fields like email).
+      const payload: Record<string, any> = {};
+      for (const [key, value] of Object.entries(updates)) {
+        if (value === undefined) continue;
+        if (key === 'email' && typeof value === 'string' && value.trim().length === 0) {
+          continue;
+        }
+        payload[key] = value;
+      }
 
       const response = await request<{ success: boolean; message?: string }>('/settings/educator', {
         method: 'PATCH',
@@ -199,7 +194,7 @@ const EducatorProfilePage: React.FC = () => {
       console.error(err);
       addNotification({
         title: t('common:errors.genericErrorTitle', 'Error'),
-        message: t('educatorProfilePage.saveError', 'Failed to save profile changes.'),
+        message: err instanceof Error ? err.message : t('educatorProfilePage.saveError', 'Failed to save profile changes.'),
         type: 'error',
       });
       return false;

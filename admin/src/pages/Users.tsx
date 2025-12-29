@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import { 
   Users as UsersIcon, 
@@ -13,7 +13,11 @@ import {
   X,
   AlertTriangle,
   UserCog,
-  ExternalLink
+  ExternalLink,
+  Ban,
+  CheckCircle,
+  UserX,
+  UserCheck as UserCheckIcon
 } from 'lucide-react'
 import { useApiClient, apiService } from '../services/api'
 import { useTranslation } from 'react-i18next';
@@ -30,6 +34,7 @@ import { STANDARD_INPUT_FIELD } from '../constants/design-system'
 import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 import EditUserModal from '../components/EditUserModal'
+import { useDebouncedValue } from '../hooks/useDebouncedValue'
 
 // Delete Confirmation Modal Component
 interface DeleteConfirmModalProps {
@@ -413,6 +418,7 @@ const Users: React.FC = () => {
   const [selectedRole, setSelectedRole] = useState('')
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState<25 | 50 | 100>(25)
+  const debouncedSearch = useDebouncedValue(searchQuery, 300)
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
@@ -438,15 +444,15 @@ const Users: React.FC = () => {
   // Reset to first page when filters/page-size change
   useEffect(() => {
     setPage(1)
-  }, [searchQuery, selectedRole, pageSize])
+  }, [debouncedSearch, selectedRole, pageSize])
 
   const { data: usersResponse, isLoading, error } = useQuery({
-    queryKey: ['admin-users', page, pageSize, searchQuery, selectedRole],
+    queryKey: ['admin-users', page, pageSize, debouncedSearch, selectedRole],
     queryFn: () =>
       apiService.getAdminUsers(apiClient, {
         page,
         limit: pageSize,
-        search: searchQuery.trim() ? searchQuery.trim() : undefined,
+        search: debouncedSearch.trim() ? debouncedSearch.trim() : undefined,
         role: selectedRole || undefined,
       }),
     enabled: !!apiClient,
@@ -553,6 +559,7 @@ const Users: React.FC = () => {
         orgIds: orgMemberships.map((m: any) => m.organizationId).filter(Boolean),
         orgName: primaryOrg?.name,
         status: u.isActive ? UserStatus.ACTIVE : UserStatus.INACTIVE,
+        candidatePoolVisible: u.candidatePoolVisible,
         createdAt: u.createdAt ? new Date(u.createdAt) : new Date(),
         updatedAt: u.updatedAt ? new Date(u.updatedAt) : new Date(),
         lastLogin: u.lastActiveAt ? new Date(u.lastActiveAt) : undefined,
@@ -569,6 +576,22 @@ const Users: React.FC = () => {
       },
     }
   }, [usersResponse, pageSize])
+
+  const updateUserStatusMutation = useMutation({
+    mutationFn: ({ userId, status }: { userId: string; status: 'ACTIVE' | 'INACTIVE' }) =>
+      apiService.updateUser(apiClient, userId, { status } as any),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] })
+    },
+  })
+
+  const updateCandidatePoolVisibilityMutation = useMutation({
+    mutationFn: ({ userId, candidatePoolVisible }: { userId: string; candidatePoolVisible: boolean }) =>
+      apiService.updateUser(apiClient, userId, { candidatePoolVisible } as any),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] })
+    },
+  })
 
   const roleColors: Record<UserRole, string> = {
     [UserRole.SUPER_ADMIN]: 'bg-red-100 text-red-800',
@@ -716,14 +739,6 @@ const Users: React.FC = () => {
     await inviteUserMutation.mutateAsync(payload)
   }
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <LoadingSpinner size="large" />
-      </div>
-    )
-  }
-
   if (error) {
     return (
       <div className="text-center py-12">
@@ -823,7 +838,15 @@ const Users: React.FC = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {users.map((user) => (
+              {isLoading && users.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-10">
+                    <div className="flex items-center justify-center">
+                      <LoadingSpinner size="large" />
+                    </div>
+                  </td>
+                </tr>
+              ) : users.map((user) => (
                 <tr key={user.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
@@ -889,6 +912,62 @@ const Users: React.FC = () => {
                       >
                         <Menu.Items className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
                           <div className="py-1">
+                            <Menu.Item>
+                              {({ active }) => (
+                                <button
+                                  onClick={() =>
+                                    updateUserStatusMutation.mutate({
+                                      userId: user.id,
+                                      status: user.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE',
+                                    })
+                                  }
+                                  className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
+                                  disabled={updateUserStatusMutation.isPending}
+                                >
+                                  {user.status === 'ACTIVE' ? (
+                                    <>
+                                      <Ban className="h-4 w-4 mr-2" />
+                                      {t('admin:users.actions.suspend', 'Suspend')}
+                                    </>
+                                  ) : (
+                                    <>
+                                      <CheckCircle className="h-4 w-4 mr-2" />
+                                      {t('admin:users.actions.reactivate', 'Reactivate')}
+                                    </>
+                                  )}
+                                </button>
+                              )}
+                            </Menu.Item>
+
+                            {user.role === UserRole.EDUCATOR && (
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <button
+                                    onClick={() =>
+                                      updateCandidatePoolVisibilityMutation.mutate({
+                                        userId: user.id,
+                                        candidatePoolVisible: !user.candidatePoolVisible,
+                                      })
+                                    }
+                                    className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
+                                    disabled={updateCandidatePoolVisibilityMutation.isPending}
+                                  >
+                                    {user.candidatePoolVisible ? (
+                                      <>
+                                        <UserX className="h-4 w-4 mr-2" />
+                                        {t('admin:users.actions.removeFromPool', 'Remove from candidate pool')}
+                                      </>
+                                    ) : (
+                                      <>
+                                        <UserCheckIcon className="h-4 w-4 mr-2" />
+                                        {t('admin:users.actions.addToPool', 'Add to candidate pool')}
+                                      </>
+                                    )}
+                                  </button>
+                                )}
+                              </Menu.Item>
+                            )}
+
                             {/* View Profile - Only for users with organizations (suppliers/service providers) */}
                             {user.orgId && (user.role === UserRole.PRODUCT_SUPPLIER || user.role === UserRole.SERVICE_PROVIDER) && (
                               <Menu.Item>

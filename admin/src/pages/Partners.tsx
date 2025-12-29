@@ -34,6 +34,7 @@ import Card from '../components/design-system/Card'
 import Button from '../components/design-system/Button'
 import { STANDARD_INPUT_FIELD } from '../constants/design-system'
 import logger from '../utils/logger'
+import { useDebouncedValue } from '../hooks/useDebouncedValue'
 
 // Partner type options
 const PARTNER_TYPES: { value: PartnerType; label: string }[] = [
@@ -733,6 +734,7 @@ const StatsCard: React.FC<StatsCardProps> = ({ title, value, icon, color }) => (
 const Partners: React.FC = () => {
   const { t } = useTranslation(['admin', 'common'])
   const [searchQuery, setSearchQuery] = useState('')
+  const debouncedSearch = useDebouncedValue(searchQuery, 300)
   const [filterType, setFilterType] = useState<PartnerType | ''>('')
   const [filterActive, setFilterActive] = useState<string>('')
   
@@ -747,11 +749,11 @@ const Partners: React.FC = () => {
 
   // Fetch partners
   const { data: partnersResponse, isLoading, error } = useQuery({
-    queryKey: ['partners', filterType, filterActive, searchQuery],
+    queryKey: ['partners', filterType, filterActive, debouncedSearch],
     queryFn: () => apiService.getPartners(apiClient, {
       type: filterType || undefined,
       isActive: filterActive ? filterActive === 'true' : undefined,
-      search: searchQuery || undefined,
+      search: debouncedSearch || undefined,
     }),
   })
 
@@ -874,14 +876,6 @@ const Partners: React.FC = () => {
     toggleFeaturedMutation.mutate(partner.id)
   }
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <LoadingSpinner size="large" />
-      </div>
-    )
-  }
-
   if (error) {
     return (
       <div className="text-center py-12">
@@ -986,16 +980,22 @@ const Partners: React.FC = () => {
 
       {/* Partners Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {partners.map((partner) => (
-          <PartnerCard
-            key={partner.id}
-            partner={partner}
-            onEdit={handleEditPartner}
-            onDelete={handleDeleteClick}
-            onToggleActive={handleToggleActive}
-            onToggleFeatured={handleToggleFeatured}
-          />
-        ))}
+        {isLoading && partners.length === 0 ? (
+          <div className="col-span-full flex items-center justify-center py-16">
+            <LoadingSpinner size="large" />
+          </div>
+        ) : (
+          partners.map((partner) => (
+            <PartnerCard
+              key={partner.id}
+              partner={partner}
+              onEdit={handleEditPartner}
+              onDelete={handleDeleteClick}
+              onToggleActive={handleToggleActive}
+              onToggleFeatured={handleToggleFeatured}
+            />
+          ))
+        )}
       </div>
 
       {/* Empty State */}

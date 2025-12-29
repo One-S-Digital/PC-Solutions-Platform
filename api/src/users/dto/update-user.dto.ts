@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateUserDto } from './create-user.dto';
-import { IsOptional, IsString, IsUUID, IsEnum, IsEmail } from 'class-validator';
+import { IsOptional, IsString, IsUUID, IsEnum, IsEmail, IsBoolean } from 'class-validator';
 import { UserRole } from '@prisma/client';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
@@ -39,4 +39,12 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsOptional()
   @IsEnum(['ACTIVE', 'INACTIVE', 'PENDING'])
   status?: 'ACTIVE' | 'INACTIVE' | 'PENDING';
+
+  /**
+   * Educator-controlled visibility in the candidate pool (admin override).
+   * Only applicable to EDUCATOR profiles; ignored for other roles.
+   */
+  @IsOptional()
+  @IsBoolean()
+  candidatePoolVisible?: boolean;
 }

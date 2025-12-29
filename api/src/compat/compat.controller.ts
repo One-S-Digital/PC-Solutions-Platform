@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Put, Patch, Delete, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
 import { Public } from '../auth/decorators/public.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -21,6 +21,18 @@ type RequestWithUser = {
 @UseGuards(RolesGuard)
 export class CompatController {
   constructor(private prisma: PrismaService) {}
+
+  private mapCompatJobStatusToDb(status?: string | null): JobStatus | undefined {
+    if (!status) return undefined;
+    const normalized = status.toUpperCase();
+    // Compat/admin UI historically used ACTIVE/PAUSED/CLOSED.
+    if (normalized === 'ACTIVE') return JobStatus.PUBLISHED;
+    if (normalized === 'PAUSED') return JobStatus.DRAFT;
+    if (normalized === 'CLOSED') return JobStatus.CLOSED;
+    // Newer UI may send DB statuses directly.
+    if (normalized in JobStatus) return (JobStatus as any)[normalized] as JobStatus;
+    return undefined;
+  }
 
   private marketplaceActiveSubscriptionWhere(now: Date): Prisma.SubscriptionWhereInput {
     return {
@@ -128,8 +140,8 @@ export class CompatController {
           responsibilities: createJobListingDto.responsibilities || [],
           qualifications: createJobListingDto.qualifications || [],
           benefits: createJobListingDto.benefits || [],
-          status: createJobListingDto.status || JobStatus.DRAFT,
-          publishedAt: createJobListingDto.status === JobStatus.PUBLISHED ? new Date() : null,
+          status: this.mapCompatJobStatusToDb(createJobListingDto.status as any) || JobStatus.DRAFT,
+          publishedAt: this.mapCompatJobStatusToDb(createJobListingDto.status as any) === JobStatus.PUBLISHED ? new Date() : null,
         },
         include: {
           foundation: true,
@@ -153,6 +165,66 @@ export class CompatController {
       return { success: true, message: 'Job listing created successfully', data: formattedJob, timestamp: new Date().toISOString() };
     } catch (error) {
       return { success: false, message: 'Failed to create job listing', error: String((error as Error).message || error), timestamp: new Date().toISOString() };
+    }
+  }
+
+  @Patch('job-listings/:id')
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.FOUNDATION)
+  async updateJobListing(@Param('id') id: string, @Body() updateData: any) {
+    try {
+      const mappedStatus = this.mapCompatJobStatusToDb(updateData?.status);
+      const job = await this.prisma.jobListing.update({
+        where: { id },
+        data: {
+          ...(updateData?.title !== undefined && { title: updateData.title }),
+          ...(updateData?.description !== undefined && { description: updateData.description }),
+          ...(updateData?.location !== undefined && { location: updateData.location }),
+          ...(updateData?.salary !== undefined && { salary: updateData.salary }),
+          ...(updateData?.contractType !== undefined && { contractType: updateData.contractType }),
+          ...(Array.isArray(updateData?.requirements) && { requirements: updateData.requirements }),
+          ...(Array.isArray(updateData?.responsibilities) && { responsibilities: updateData.responsibilities }),
+          ...(Array.isArray(updateData?.qualifications) && { qualifications: updateData.qualifications }),
+          ...(Array.isArray(updateData?.benefits) && { benefits: updateData.benefits }),
+          ...(mappedStatus
+            ? {
+                status: mappedStatus,
+                publishedAt: mappedStatus === JobStatus.PUBLISHED ? new Date() : null,
+              }
+            : {}),
+        },
+        include: { foundation: true },
+      });
+
+      return {
+        success: true,
+        message: 'Job listing updated successfully',
+        data: {
+          id: job.id,
+          title: job.title,
+          description: job.description,
+          location: job.location,
+          salary: job.salary,
+          type: job.contractType,
+          status: job.status,
+          organizationName: job.foundation?.name || 'Unknown Organization',
+          foundationId: job.foundationId,
+          createdAt: job.createdAt.toISOString(),
+        },
+        timestamp: new Date().toISOString(),
+      };
+    } catch (error) {
+      return { success: false, message: 'Failed to update job listing', error: String((error as Error).message || error), timestamp: new Date().toISOString() };
+    }
+  }
+
+  @Delete('job-listings/:id')
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.FOUNDATION)
+  async deleteJobListing(@Param('id') id: string) {
+    try {
+      await this.prisma.jobListing.delete({ where: { id } });
+      return { success: true, message: 'Job listing deleted successfully', timestamp: new Date().toISOString() };
+    } catch (error) {
+      return { success: false, message: 'Failed to delete job listing', error: String((error as Error).message || error), timestamp: new Date().toISOString() };
     }
   }
 
@@ -224,10 +296,20 @@ export class CompatController {
           avatarAsset: true,
         },
       });
+
+      const clerkIds = candidates.map((u) => u.clerkId).filter(Boolean);
+      const appUsers = clerkIds.length
+        ? await this.prisma.appUser.findMany({
+            where: { clerkId: { in: clerkIds } },
+            select: { id: true, clerkId: true },
+          })
+        : [];
+      const appUserByClerkId = new Map(appUsers.map((u) => [u.clerkId, u]));
       
       // Transform to candidate format
       const formattedCandidates = candidates.map(user => ({
-        id: user.id,
+        id: appUserByClerkId.get(user.clerkId)?.id ?? user.id,
+        profileId: user.id,
         name: [user.firstName, user.lastName].filter(Boolean).join(' ') || user.email,
         email: user.email,
         phone: user.phoneNumber,
@@ -238,6 +320,7 @@ export class CompatController {
         skills: user.skills,
         certifications: user.certifications,
         shortBio: user.shortBio,
+        candidatePoolVisible: user.candidatePoolVisible,
         createdAt: user.createdAt.toISOString(),
         user: {
           name: [user.firstName, user.lastName].filter(Boolean).join(' ') || user.email,

@@ -31,9 +31,9 @@ const Candidates: React.FC = () => {
   const apiClient = useApiClient()
   const queryClient = useQueryClient()
 
-  const openCandidateProfile = (candidateId: string) => {
+  const openCandidateProfile = (candidateProfileId: string) => {
     // Open the main app's candidate profile view (same view foundations use)
-    const url = `${window.location.origin}/candidate/${candidateId}`
+    const url = `${window.location.origin}/candidate/${candidateProfileId}`
     window.open(url, '_blank', 'noopener,noreferrer')
   }
 
@@ -77,6 +77,14 @@ const Candidates: React.FC = () => {
       }
       setIsEditModalOpen(false)
       setSelectedUserId(null)
+    },
+  })
+
+  const toggleCandidatePoolVisibilityMutation = useMutation({
+    mutationFn: ({ appUserId, candidatePoolVisible }: { appUserId: string; candidatePoolVisible: boolean }) =>
+      apiService.updateUser(apiClient, appUserId, { candidatePoolVisible } as any),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['candidates'] })
     },
   })
 
@@ -302,10 +310,29 @@ const Candidates: React.FC = () => {
                                 {({ active }) => (
                                   <button
                                     className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
-                                    onClick={() => openCandidateProfile(candidate.id)}
+                                    onClick={() => openCandidateProfile((candidate as any).profileId || candidate.id)}
                                   >
                                     <FileText className="h-4 w-4 mr-2" />
                                     {t('admin:candidates.actions.viewProfile', 'View Profile')}
+                                  </button>
+                                )}
+                              </Menu.Item>
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <button
+                                    className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
+                                    onClick={() =>
+                                      toggleCandidatePoolVisibilityMutation.mutate({
+                                        appUserId: candidate.id,
+                                        candidatePoolVisible: !(candidate as any).candidatePoolVisible,
+                                      })
+                                    }
+                                    disabled={toggleCandidatePoolVisibilityMutation.isPending}
+                                  >
+                                    <UserCheck className="h-4 w-4 mr-2" />
+                                    {(candidate as any).candidatePoolVisible
+                                      ? t('admin:candidates.actions.removeFromPool', 'Remove from pool')
+                                      : t('admin:candidates.actions.addToPool', 'Add to pool')}
                                   </button>
                                 )}
                               </Menu.Item>

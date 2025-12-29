@@ -16,6 +16,7 @@ declare global {
         userId: string;
         role: string;
         appUserId: string;
+        isSuspended?: boolean;
       };
     }
   }
@@ -100,11 +101,19 @@ export class RoleContextMiddleware implements NestMiddleware {
         });
       }
 
+      // Check if the profile is suspended/inactive (User.isActive = false)
+      const profile = await this.prisma.user.findUnique({
+        where: { clerkId: clerkUserId },
+        select: { isActive: true },
+      });
+      const isSuspended = profile ? profile.isActive === false : false;
+
       // Attach context to request
       req.context = {
         userId: clerkUserId,
-        role: appUser.role,
+        role: isSuspended ? 'SUSPENDED' : appUser.role,
         appUserId: appUser.id,
+        isSuspended,
       };
 
       next();

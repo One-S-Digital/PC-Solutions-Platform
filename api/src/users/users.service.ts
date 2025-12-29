@@ -1184,6 +1184,13 @@ export class UsersService {
           if (updateUserDto.lastName !== undefined) userUpdateData.lastName = updateUserDto.lastName;
           if (updateUserDto.phoneNumber !== undefined) userUpdateData.phoneNumber = updateUserDto.phoneNumber;
           if (isRoleChanging && targetRole) userUpdateData.role = targetRole;
+          if (updateUserDto.status !== undefined) {
+            userUpdateData.isActive = updateUserDto.status === 'ACTIVE';
+          }
+          if (updateUserDto.candidatePoolVisible !== undefined) {
+            // Only applies to educator/candidate profiles; safe to set anyway since field exists
+            userUpdateData.candidatePoolVisible = updateUserDto.candidatePoolVisible;
+          }
 
           if (Object.keys(userUpdateData).length > 0) {
             userProfile = await tx.user.update({
@@ -1212,28 +1219,8 @@ export class UsersService {
     // Fetch the latest role (in case it was updated by RoleSyncService)
     const latestAppUser = await this.prisma.appUser.findUnique({ where: { id } });
 
-    // Return in User format for compatibility
-    return {
-      id: updatedAppUser.id,
-      clerkId: updatedAppUser.clerkId,
-      email: updatedAppUser.email,
-      firstName: userProfile?.firstName || null,
-      lastName: userProfile?.lastName || null,
-      role: latestAppUser?.role || updatedAppUser.role,
-      phoneNumber: userProfile?.phoneNumber || null,
-      workExperience: null,
-      education: null,
-      certifications: [],
-      skills: [],
-      availability: null,
-      cvUrl: null,
-      stripeCustomerId: null,
-      lastActiveAt: null,
-      isActive: true,
-      createdAt: updatedAppUser.createdAt,
-      updatedAt: updatedAppUser.updatedAt,
-      organizations: [],
-    };
+    // Return the fully refreshed user profile (ensures status/isActive/candidatePoolVisible are correct)
+    return this.findByClerkId(updatedAppUser.clerkId);
   }
 
   async assignRole(userId: string, role: UserRole, changedBy?: string) {

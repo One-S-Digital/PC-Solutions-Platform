@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { verifyToken } from '@clerk/backend';
 import { ConfigService } from '@nestjs/config';
@@ -138,6 +138,9 @@ export class ClerkAuthGuard implements CanActivate {
         
         // Also fetch the User profile record
         const userProfile = await this.prisma.user.findUnique({ where: { clerkId: payload.sub } });
+        if (userProfile && userProfile.isActive === false) {
+          throw new ForbiddenException('Account is suspended');
+        }
         
         // Fetch user's primary organization (for subscription and organization-based features)
         let primaryOrganizationId: string | null = null;
