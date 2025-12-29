@@ -142,7 +142,10 @@ const Candidates: React.FC = () => {
     return <LoadingSpinner />
   }
 
-  const selectedUser = selectedUserResponse?.data?.data || null
+  const selectedUser =
+    (selectedUserResponse?.data?.data as User | undefined) ??
+    (selectedUserResponse?.data as unknown as User | undefined) ??
+    null
   const currentUser = currentUserResponse?.data?.data
 
   return (
