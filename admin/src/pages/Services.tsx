@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import React, { useEffect, useMemo, useState } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   Wrench,
   Plus,
@@ -26,12 +26,15 @@ import { formatServiceCategory } from '../utils/serviceFormatting'
 const Services: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState<25 | 50 | 100>(25)
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [selectedService, setSelectedService] = useState<Service | null>(null)
 
   const apiClient = useApiClient()
   const { t } = useTranslation(['admin', 'common'])
+  const queryClient = useQueryClient()
 
   const { data: servicesResponse, isLoading, error } = useQuery({
     queryKey: ['services'],
@@ -40,13 +43,35 @@ const Services: React.FC = () => {
 
   const services: Service[] = servicesResponse?.data?.data || []
 
-  const filteredServices = services.filter((service) => {
-    const matchesSearch = (service.title ?? '')
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase())
-    const matchesCategory = !selectedCategory || service.category === selectedCategory
-    return matchesSearch && matchesCategory
-  })
+  const filteredServices = useMemo(() => {
+    return services.filter((service) => {
+      const matchesSearch = (service.title ?? '')
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase())
+      const matchesCategory = !selectedCategory || service.category === selectedCategory
+      return matchesSearch && matchesCategory
+    })
+  }, [services, searchQuery, selectedCategory])
+
+  const totalServices = filteredServices.length
+  const totalPages = Math.max(1, Math.ceil(totalServices / pageSize))
+  const showingFrom = totalServices === 0 ? 0 : (page - 1) * pageSize + 1
+  const showingTo = totalServices === 0 ? 0 : Math.min(page * pageSize, totalServices)
+  const canGoPrev = page > 1
+  const canGoNext = page < totalPages
+
+  const paginatedServices = useMemo(() => {
+    const start = (page - 1) * pageSize
+    return filteredServices.slice(start, start + pageSize)
+  }, [filteredServices, page, pageSize])
+
+  useEffect(() => {
+    setPage(1)
+  }, [searchQuery, selectedCategory, pageSize])
+
+  useEffect(() => {
+    setPage((prev) => Math.min(prev, totalPages))
+  }, [totalPages])
 
 
   const handleUpdateService = async (updatedService: Service) => {
@@ -126,13 +151,24 @@ const Services: React.FC = () => {
               <option value="Special Needs">{t('common:specialneeds')}</option>
             </select>
           </div>
+          <div className="sm:w-48">
+            <select
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-mint focus:border-transparent"
+              value={pageSize}
+              onChange={(e) => setPageSize(Number(e.target.value) as 25 | 50 | 100)}
+            >
+              <option value={25}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 25</option>
+              <option value={50}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 50</option>
+              <option value={100}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 100</option>
+            </select>
+          </div>
         </div>
       </div>
 
       {/* Services List */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="divide-y divide-gray-200">
-          {filteredServices.map((service) => (
+          {paginatedServices.map((service) => (
             <div key={service.id} className="p-6 hover:bg-gray-50">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
@@ -221,6 +257,37 @@ const Services: React.FC = () => {
           <p className="text-gray-600">{t('admin:servicesPage.emptyState.suggestion')}</p>
         </div>
       )}
+
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="text-sm text-gray-600">
+          {t(
+            'admin:users.pagination.showing',
+            'Showing {{from}}-{{to}} of {{total}}',
+            { from: showingFrom, to: showingTo, total: totalServices },
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            className="px-3 py-2 text-sm rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!canGoPrev}
+            onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+          >
+            {t('admin:users.pagination.previous', 'Previous')}
+          </button>
+          <span className="text-sm text-gray-600 px-2">
+            {t('admin:users.pagination.pageOf', 'Page {{page}} of {{totalPages}}', { page, totalPages })}
+          </span>
+          <button
+            type="button"
+            className="px-3 py-2 text-sm rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!canGoNext}
+            onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+          >
+            {t('admin:users.pagination.next', 'Next')}
+          </button>
+        </div>
+      </div>
     </div>
   )
 }

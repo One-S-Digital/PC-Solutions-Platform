@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   UserCheck,
@@ -26,6 +26,8 @@ const Candidates: React.FC = () => {
   const { t } = useTranslation(['admin', 'common'])
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('')
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState<25 | 50 | 100>(25)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
@@ -113,16 +115,38 @@ const Candidates: React.FC = () => {
     return Array.from(new Set(statuses))
   }, [candidates])
 
-  const filteredCandidates = candidates.filter((candidate: Candidate) => {
-    const name = (candidate.name || candidate.user?.name || '').toLowerCase()
-    const email = (candidate.email || candidate.user?.email || '').toLowerCase()
-    const matchesSearch =
-      name.includes(searchQuery.toLowerCase()) ||
-      email.includes(searchQuery.toLowerCase())
-    const status = candidate.availabilityStatus || ''
-    const matchesStatus = !selectedStatus || status === selectedStatus
-    return matchesSearch && matchesStatus
-  })
+  const filteredCandidates = useMemo(() => {
+    return candidates.filter((candidate: Candidate) => {
+      const name = (candidate.name || candidate.user?.name || '').toLowerCase()
+      const email = (candidate.email || candidate.user?.email || '').toLowerCase()
+      const matchesSearch =
+        name.includes(searchQuery.toLowerCase()) ||
+        email.includes(searchQuery.toLowerCase())
+      const status = candidate.availabilityStatus || ''
+      const matchesStatus = !selectedStatus || status === selectedStatus
+      return matchesSearch && matchesStatus
+    })
+  }, [candidates, searchQuery, selectedStatus])
+
+  const totalCandidates = filteredCandidates.length
+  const totalPages = Math.max(1, Math.ceil(totalCandidates / pageSize))
+  const showingFrom = totalCandidates === 0 ? 0 : (page - 1) * pageSize + 1
+  const showingTo = totalCandidates === 0 ? 0 : Math.min(page * pageSize, totalCandidates)
+  const canGoPrev = page > 1
+  const canGoNext = page < totalPages
+
+  const paginatedCandidates = useMemo(() => {
+    const start = (page - 1) * pageSize
+    return filteredCandidates.slice(start, start + pageSize)
+  }, [filteredCandidates, page, pageSize])
+
+  useEffect(() => {
+    setPage(1)
+  }, [searchQuery, selectedStatus, pageSize])
+
+  useEffect(() => {
+    setPage((prev) => Math.min(prev, totalPages))
+  }, [totalPages])
 
   const statusColors = useMemo(() => {
     const palette = [
@@ -215,6 +239,17 @@ const Candidates: React.FC = () => {
               ))}
             </select>
           </div>
+          <div className="sm:w-48">
+            <select
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-mint focus:border-transparent"
+              value={pageSize}
+              onChange={(e) => setPageSize(Number(e.target.value) as 25 | 50 | 100)}
+            >
+              <option value={25}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 25</option>
+              <option value={50}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 50</option>
+              <option value={100}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 100</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -245,7 +280,7 @@ const Candidates: React.FC = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredCandidates.map((candidate: Candidate) => {
+              {paginatedCandidates.map((candidate: Candidate) => {
                 const name = candidate.name || candidate.user?.name || ''
                 const email = candidate.email || candidate.user?.email || ''
                 const phone = candidate.phone || ''
@@ -369,6 +404,37 @@ const Candidates: React.FC = () => {
             <p className="text-gray-600">{t('admin:candidates.emptyState.description')}</p>
           </div>
         )}
+      </div>
+
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="text-sm text-gray-600">
+          {t(
+            'admin:users.pagination.showing',
+            'Showing {{from}}-{{to}} of {{total}}',
+            { from: showingFrom, to: showingTo, total: totalCandidates },
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            className="px-3 py-2 text-sm rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!canGoPrev}
+            onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+          >
+            {t('admin:users.pagination.previous', 'Previous')}
+          </button>
+          <span className="text-sm text-gray-600 px-2">
+            {t('admin:users.pagination.pageOf', 'Page {{page}} of {{totalPages}}', { page, totalPages })}
+          </span>
+          <button
+            type="button"
+            className="px-3 py-2 text-sm rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!canGoNext}
+            onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+          >
+            {t('admin:users.pagination.next', 'Next')}
+          </button>
+        </div>
       </div>
     </div>
   )
