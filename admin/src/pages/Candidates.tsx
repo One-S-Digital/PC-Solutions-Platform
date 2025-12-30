@@ -154,6 +154,7 @@ const Candidates: React.FC = () => {
       'success' in responseData &&
       'data' in responseData
     ) {
+      // TODO: Remove legacy fallback once all endpoints return wrapped payloads.
       const wrappedData = responseData as { data?: User | null }
       return wrappedData.data ?? null
     }
