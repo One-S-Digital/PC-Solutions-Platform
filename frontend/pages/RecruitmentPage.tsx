@@ -385,7 +385,9 @@ const RecruitmentPage: React.FC = () => {
             roleText.includes(searchTermCandidates.toLowerCase());
 
           const matchesRole = candidateRoleFilter
-            ? (candidate.jobRoles ?? [candidate.currentRoleOrTitle ?? candidate.jobRole ?? ''])
+            ? (candidate.jobRoles && candidate.jobRoles.length > 0
+                ? candidate.jobRoles
+                : [candidate.currentRoleOrTitle ?? candidate.jobRole ?? ''])
                 .filter(Boolean)
                 .some(role => role.toLowerCase() === candidateRoleFilter.toLowerCase())
             : true;
@@ -429,9 +431,9 @@ const RecruitmentPage: React.FC = () => {
   const candidateRoleOptions = useMemo(() => {
     const roles = new Set<string>();
     candidateProfiles.forEach((c) => {
-      const roleEntries = c.jobRoles?.length
+      const roleEntries = c.jobRoles && c.jobRoles.length > 0
         ? c.jobRoles
-        : [(c.currentRoleOrTitle ?? c.jobRole ?? '').trim()].filter(Boolean);
+        : [c.currentRoleOrTitle ?? c.jobRole ?? ''].map(r => r.trim()).filter(Boolean);
       roleEntries.forEach((role) => {
         if (role) roles.add(role);
       });

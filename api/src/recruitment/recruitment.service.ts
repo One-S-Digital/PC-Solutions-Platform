@@ -534,14 +534,21 @@ export class RecruitmentService {
     visibleOnly?: boolean;
   }) {
     const where: any = {};
+    const andConditions: any[] = [];
 
     if (filters?.role) {
       // "role" in candidate pool context refers to the candidate's job role/title,
       // not the platform access role (which is always EDUCATOR for candidates).
-      where.OR = [
-        { jobRole: { equals: filters.role, mode: 'insensitive' } },
-        { jobRoles: { has: filters.role } },
-      ];
+      // Use case-insensitive matching for both legacy jobRole and new jobRoles array.
+      const roleLower = filters.role.toLowerCase();
+      const roleUpper = filters.role.toUpperCase();
+      const roleCapitalized = filters.role.charAt(0).toUpperCase() + filters.role.slice(1).toLowerCase();
+      andConditions.push({
+        OR: [
+          { jobRole: { equals: filters.role, mode: 'insensitive' } },
+          { jobRoles: { hasSome: [filters.role, roleLower, roleUpper, roleCapitalized] } },
+        ],
+      });
     }
 
     if (filters?.skills && filters.skills.length > 0) {
@@ -549,28 +556,44 @@ export class RecruitmentService {
     }
 
     if (filters?.location) {
-      where.OR = [
-        ...(where.OR ?? []),
-        { region: { contains: filters.location, mode: 'insensitive' } },
-        { cities: { has: filters.location } },
-      ];
+      // Use case-insensitive matching for both legacy region and new cities array.
+      const locLower = filters.location.toLowerCase();
+      const locUpper = filters.location.toUpperCase();
+      const locCapitalized = filters.location.charAt(0).toUpperCase() + filters.location.slice(1).toLowerCase();
+      andConditions.push({
+        OR: [
+          { region: { contains: filters.location, mode: 'insensitive' } },
+          { cities: { hasSome: [filters.location, locLower, locUpper, locCapitalized] } },
+        ],
+      });
     }
 
     if (filters?.search) {
-      where.OR = [
-        { firstName: { contains: filters.search, mode: 'insensitive' } },
-        { lastName: { contains: filters.search, mode: 'insensitive' } },
-        { jobRole: { contains: filters.search, mode: 'insensitive' } },
-        { jobRoles: { has: filters.search } },
-        { region: { contains: filters.search, mode: 'insensitive' } },
-        { cities: { has: filters.search } },
-        { skills: { has: filters.search } },
-        { certifications: { has: filters.search } },
-      ];
+      // Search across multiple fields with case-insensitive matching.
+      const searchLower = filters.search.toLowerCase();
+      const searchUpper = filters.search.toUpperCase();
+      const searchCapitalized = filters.search.charAt(0).toUpperCase() + filters.search.slice(1).toLowerCase();
+      andConditions.push({
+        OR: [
+          { firstName: { contains: filters.search, mode: 'insensitive' } },
+          { lastName: { contains: filters.search, mode: 'insensitive' } },
+          { jobRole: { contains: filters.search, mode: 'insensitive' } },
+          { jobRoles: { hasSome: [filters.search, searchLower, searchUpper, searchCapitalized] } },
+          { region: { contains: filters.search, mode: 'insensitive' } },
+          { cities: { hasSome: [filters.search, searchLower, searchUpper, searchCapitalized] } },
+          { skills: { hasSome: [filters.search, searchLower, searchUpper, searchCapitalized] } },
+          { certifications: { hasSome: [filters.search, searchLower, searchUpper, searchCapitalized] } },
+        ],
+      });
     }
 
     if (filters?.visibleOnly) {
       where.candidatePoolVisible = true;
+    }
+
+    // Combine all filter conditions with AND semantics
+    if (andConditions.length > 0) {
+      where.AND = andConditions;
     }
 
     return this.prisma.user.findMany({

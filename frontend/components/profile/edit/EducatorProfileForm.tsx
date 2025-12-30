@@ -66,10 +66,13 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
     'https://images.unsplash.com/photo-1503676260728-4c8c0c7832a6?auto=format&fit=crop&w=1600&q=80';
 
   const fullName = `${formData.firstName || ''} ${formData.lastName || ''}`.trim() || t('settings:educatorProfile.educator', 'Educator');
-  const jobRoles = Array.isArray((formData as any).jobRoles)
-    ? (formData as any).jobRoles
-    : ((formData as any).jobRole ? [(formData as any).jobRole] : []);
-  const cities = Array.isArray((formData as any).cities) ? (formData as any).cities : [];
+  const jobRoles =
+    Array.isArray(formData.jobRoles) && formData.jobRoles.length > 0
+      ? formData.jobRoles
+      : formData.jobRole
+        ? [formData.jobRole]
+        : [];
+  const cities = Array.isArray(formData.cities) ? formData.cities : [];
 
   return (
     <div className="space-y-6">
@@ -170,7 +173,7 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
             </label>
             <select
               id="region"
-              value={(formData as any).region || ''}
+              value={formData.region || ''}
               onChange={(e) => onChange('region', e.target.value)}
               className={STANDARD_INPUT_FIELD}
               required
