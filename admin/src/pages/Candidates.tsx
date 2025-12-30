@@ -166,7 +166,25 @@ const Candidates: React.FC = () => {
     return <LoadingSpinner />
   }
 
-  const selectedUser = selectedUserResponse?.data?.data || null
+  const selectedUser = (() => {
+    const responseData = selectedUserResponse?.data
+    if (!responseData) {
+      return null
+    }
+
+    if (
+      typeof responseData === 'object' &&
+      responseData !== null &&
+      'success' in responseData &&
+      'data' in responseData
+    ) {
+      // TODO: Remove legacy fallback once all endpoints return wrapped payloads.
+      const wrappedData = responseData as { data?: User | null }
+      return wrappedData.data ?? null
+    }
+
+    return responseData as User
+  })()
   const currentUser = currentUserResponse?.data?.data
 
   return (
