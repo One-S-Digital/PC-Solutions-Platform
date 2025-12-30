@@ -5,7 +5,7 @@ import { UpdateJobListingDto } from './dto/update-job-listing.dto';
 import { CreateJobApplicationDto } from './dto/create-job-application.dto';
 import { UpdateJobApplicationDto } from './dto/update-job-application.dto';
 import { JobContractType, JobStatus } from '@workspace/types';
-import { Prisma } from '@prisma/client';
+import { JobEmploymentType, Prisma } from '@prisma/client';
 import { TranslationService } from '../translation/translation.service';
 import { FIELDS_BY_ENTITY } from '../translation/translation.config';
 
@@ -25,9 +25,25 @@ export class RecruitmentService {
       benefits,
       status,
       contractType,
+      employmentType,
+      workSchedule,
       startDate,
       ...rest
     } = createJobListingDto;
+
+    const effectiveContractType = contractType ?? JobContractType.FULL_TIME;
+    const resolvedEmploymentType =
+      employmentType ??
+      (effectiveContractType === JobContractType.PART_TIME
+        ? JobEmploymentType.PART_TIME
+        : effectiveContractType === JobContractType.REPLACEMENT
+          ? JobEmploymentType.REPLACEMENT
+          : JobEmploymentType.FULL_TIME);
+
+    // Prisma Json fields must receive plain JSON values (not class instances).
+    const workScheduleJson: Prisma.InputJsonValue | undefined = workSchedule
+      ? (JSON.parse(JSON.stringify(workSchedule)) as Prisma.InputJsonValue)
+      : undefined;
 
     const parsedStartDate =
       startDate && startDate.trim()
@@ -40,7 +56,9 @@ export class RecruitmentService {
     const jobListing = await this.prisma.jobListing.create({
       data: {
         ...rest,
-        contractType: contractType ?? JobContractType.FULL_TIME,
+        contractType: effectiveContractType,
+        employmentType: resolvedEmploymentType,
+        workSchedule: workScheduleJson,
         startDate: parsedStartDate,
         requirements: requirements ?? [],
         responsibilities: responsibilities ?? [],
@@ -102,6 +120,7 @@ export class RecruitmentService {
     location?: string;
     search?: string;
     contractType?: string;
+    employmentType?: string;
     publishedOnly?: boolean;
     lang?: string;
   }) {
@@ -121,6 +140,10 @@ export class RecruitmentService {
 
     if (filters?.contractType) {
       where.contractType = filters.contractType;
+    }
+
+    if (filters?.employmentType) {
+      where.employmentType = filters.employmentType;
     }
 
     if (filters?.search) {
@@ -275,6 +298,8 @@ export class RecruitmentService {
       benefits,
       status,
       contractType,
+      employmentType,
+      workSchedule,
       startDate,
       ...rest
     } = updateJobListingDto;
@@ -287,6 +312,11 @@ export class RecruitmentService {
           })()
         : undefined;
 
+    // Prisma Json fields must receive plain JSON values (not class instances).
+    const workScheduleJson: Prisma.InputJsonValue | undefined = workSchedule
+      ? (JSON.parse(JSON.stringify(workSchedule)) as Prisma.InputJsonValue)
+      : undefined;
+
     const currentListing = await this.prisma.jobListing.findUnique({
       where: { id },
       select: { status: true, publishedAt: true },
@@ -297,6 +327,8 @@ export class RecruitmentService {
       data: {
         ...rest,
         ...(contractType ? { contractType } : {}),
+        ...(employmentType ? { employmentType } : {}),
+        ...(workSchedule ? { workSchedule: workScheduleJson } : {}),
         ...(parsedStartDate ? { startDate: parsedStartDate } : {}),
         ...(requirements ? { requirements } : {}),
         ...(responsibilities ? { responsibilities } : {}),

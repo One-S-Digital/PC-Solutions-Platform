@@ -1,5 +1,8 @@
-import { IsArray, IsEnum, IsISO8601, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsArray, IsEnum, IsISO8601, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { JobContractType, JobStatus } from '@workspace/types';
+import { JobEmploymentType } from '@prisma/client';
+import { JobWorkScheduleDto } from './create-job-listing.dto';
 
 export class UpdateJobListingDto {
   @IsOptional()
@@ -45,6 +48,15 @@ export class UpdateJobListingDto {
   @IsOptional()
   @IsEnum(JobContractType)
   contractType?: JobContractType;
+
+  @IsOptional()
+  @IsEnum(JobEmploymentType)
+  employmentType?: JobEmploymentType;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => JobWorkScheduleDto)
+  workSchedule?: JobWorkScheduleDto;
 
   @IsOptional()
   @IsISO8601()
