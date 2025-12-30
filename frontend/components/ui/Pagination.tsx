@@ -32,13 +32,15 @@ const Pagination: React.FC<PaginationProps> = ({
   const to = Math.min(totalItems, safePage * safePageSize);
 
   return (
-    <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 ${className ?? ''}`}>
-      <div className="flex items-center gap-3">
+    <div
+      className={`grid grid-cols-1 gap-3 sm:grid-cols-3 sm:items-center ${className ?? ''}`}
+    >
+      <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
         {onPageSizeChange && (
           <label className="text-sm text-gray-600 flex items-center gap-2">
             <span>{t('pagination.rowsPerPage', 'Rows per page')}</span>
             <select
-              className="border border-gray-300 rounded-md px-2 py-1 text-sm bg-white"
+              className="border border-gray-300 rounded-md px-2 py-1 pr-8 text-sm leading-5 bg-white min-w-[4.5rem]"
               value={safePageSize}
               onChange={(e) => onPageSizeChange(Number(e.target.value))}
             >
@@ -55,7 +57,7 @@ const Pagination: React.FC<PaginationProps> = ({
         </span>
       </div>
 
-      <div className="flex items-center gap-2 justify-end">
+      <div className="flex items-center gap-2 justify-center">
         <Button
           variant="outline"
           size="sm"
@@ -76,6 +78,9 @@ const Pagination: React.FC<PaginationProps> = ({
           {t('pagination.next', 'Next')}
         </Button>
       </div>
+
+      {/* Spacer column so the pagination controls stay centered on larger screens */}
+      <div className="hidden sm:block" />
     </div>
   );
 };

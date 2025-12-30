@@ -144,7 +144,7 @@ const ParentLeads: React.FC = () => {
           </div>
           <div className="sm:w-48">
             <select
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-mint focus:border-transparent"
+              className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-mint focus:border-transparent"
               value={pageSize}
               onChange={(e) => setPageSize(Number(e.target.value) as 25 | 50 | 100)}
             >
@@ -295,15 +295,15 @@ const ParentLeads: React.FC = () => {
         )}
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div className="text-sm text-gray-600">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:items-center">
+        <div className="text-sm text-gray-600 text-center sm:text-left">
           {t(
             'admin:users.pagination.showing',
             'Showing {{from}}-{{to}} of {{total}}',
             { from: showingFrom, to: showingTo, total: totalLeads },
           )}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-center gap-2">
           <button
             type="button"
             className="px-3 py-2 text-sm rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -324,6 +324,7 @@ const ParentLeads: React.FC = () => {
             {t('admin:users.pagination.next', 'Next')}
           </button>
         </div>
+        <div className="hidden sm:block" />
       </div>
     </div>
   )

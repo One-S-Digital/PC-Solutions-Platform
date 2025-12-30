@@ -1673,15 +1673,15 @@ export default function Translations() {
         </div>
         {/* Pagination */}
         {pagination && pagination.totalPages > 1 && (
-          <div className="mt-4 flex items-center justify-between">
-            <div className="text-sm text-gray-700">
+          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:items-center">
+            <div className="text-sm text-gray-700 text-center sm:text-left">
               {t('admin:translations.pagination.showingResults', 'Showing {{start}} to {{end}} of {{total}} results', {
                 start: (pagination.page - 1) * pagination.limit + 1,
                 end: Math.min(pagination.page * pagination.limit, pagination.total),
                 total: pagination.total,
               })}
             </div>
-            <div className="flex gap-2">
+            <div className="flex justify-center gap-2">
               <Button
                 onClick={() => setPage(page - 1)}
                 disabled={page === 1}
@@ -1705,6 +1705,7 @@ export default function Translations() {
                 {t('common:buttons.next', 'Next')}
               </Button>
             </div>
+            <div className="hidden sm:block" />
           </div>
         )}
       </Card>

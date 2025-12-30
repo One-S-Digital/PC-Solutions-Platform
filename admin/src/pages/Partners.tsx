@@ -998,7 +998,7 @@ const Partners: React.FC = () => {
           </div>
           <div className="w-48">
             <select
-              className={STANDARD_INPUT_FIELD}
+              className={`${STANDARD_INPUT_FIELD} pr-10`}
               value={pageSize}
               onChange={(e) => setPageSize(Number(e.target.value) as 25 | 50 | 100)}
             >
@@ -1052,15 +1052,15 @@ const Partners: React.FC = () => {
         </div>
       )}
 
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div className="text-sm text-gray-600">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:items-center">
+        <div className="text-sm text-gray-600 text-center sm:text-left">
           {t(
             'admin:users.pagination.showing',
             'Showing {{from}}-{{to}} of {{total}}',
             { from: showingFrom, to: showingTo, total: totalPartners },
           )}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-center gap-2">
           <button
             type="button"
             className="px-3 py-2 text-sm rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -1081,6 +1081,7 @@ const Partners: React.FC = () => {
             {t('admin:users.pagination.next', 'Next')}
           </button>
         </div>
+        <div className="hidden sm:block" />
       </div>
 
       {/* Add Modal */}
