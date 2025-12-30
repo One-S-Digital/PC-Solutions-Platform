@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { 
   Package, 
   Plus, 
@@ -33,6 +33,7 @@ const Products: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
 
   const apiClient = useApiClient()
+  const queryClient = useQueryClient()
 
   const { data: productsResponse, isLoading, error } = useQuery({
     queryKey: ['products'],

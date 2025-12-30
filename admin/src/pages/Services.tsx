@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   Wrench,
   Plus,
@@ -34,6 +34,7 @@ const Services: React.FC = () => {
 
   const apiClient = useApiClient()
   const { t } = useTranslation(['admin', 'common'])
+  const queryClient = useQueryClient()
 
   const { data: servicesResponse, isLoading, error } = useQuery({
     queryKey: ['services'],
