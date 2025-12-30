@@ -7,6 +7,7 @@ import {
   Edit,
   Trash2,
   MoreVertical,
+  MessageSquare,
   Shield,
   ShieldCheck,
   Building2,
@@ -22,6 +23,7 @@ import {
 import { useApiClient, apiService } from '../services/api'
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner'
+import type { TFunction } from 'i18next'
 
 import logger from '../utils/logger'
 
@@ -35,6 +37,7 @@ import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 import EditUserModal from '../components/EditUserModal'
 import { useDebouncedValue } from '../hooks/useDebouncedValue'
+import { useNavigate } from 'react-router-dom'
 
 // Delete Confirmation Modal Component
 interface DeleteConfirmModalProps {
@@ -421,39 +424,38 @@ interface SuspendUserModalProps {
   isLoading: boolean
 }
 
-const getSuspendReasonPresets = (t: (key: string, defaultValue?: string) => string) => [
+const getSuspendReasonPresets = (t: TFunction) => [
   {
     code: 'TERMS_VIOLATION',
-    label: t('admin:users.suspend.reasons.termsViolation.label', 'Violation of terms'),
-    message: t(
-      'admin:users.suspend.reasons.termsViolation.message',
-      'Your account has been suspended due to a violation of our terms of service.',
-    ),
+    label: t('admin:users.suspend.reasons.termsViolation.label', { defaultValue: 'Violation of terms' }),
+    message: t('admin:users.suspend.reasons.termsViolation.message', {
+      defaultValue: 'Your account has been suspended due to a violation of our terms of service.',
+    }),
   },
   {
     code: 'SUSPICIOUS_ACTIVITY',
-    label: t('admin:users.suspend.reasons.suspiciousActivity.label', 'Suspicious activity'),
-    message: t(
-      'admin:users.suspend.reasons.suspiciousActivity.message',
-      'Your account has been suspended due to suspicious activity. Please contact support to restore access.',
-    ),
+    label: t('admin:users.suspend.reasons.suspiciousActivity.label', { defaultValue: 'Suspicious activity' }),
+    message: t('admin:users.suspend.reasons.suspiciousActivity.message', {
+      defaultValue: 'Your account has been suspended due to suspicious activity. Please contact support to restore access.',
+    }),
   },
   {
     code: 'PAYMENT_ISSUE',
-    label: t('admin:users.suspend.reasons.paymentIssue.label', 'Payment or billing issue'),
-    message: t(
-      'admin:users.suspend.reasons.paymentIssue.message',
-      'Your account has been suspended due to a billing issue. Please contact support for help.',
-    ),
+    label: t('admin:users.suspend.reasons.paymentIssue.label', { defaultValue: 'Payment or billing issue' }),
+    message: t('admin:users.suspend.reasons.paymentIssue.message', {
+      defaultValue: 'Your account has been suspended due to a billing issue. Please contact support for help.',
+    }),
   },
   {
     code: 'REQUESTED_BY_USER',
-    label: t('admin:users.suspend.reasons.requestedByUser.label', 'Requested by user'),
-    message: t('admin:users.suspend.reasons.requestedByUser.message', 'Your account has been deactivated at your request.'),
+    label: t('admin:users.suspend.reasons.requestedByUser.label', { defaultValue: 'Requested by user' }),
+    message: t('admin:users.suspend.reasons.requestedByUser.message', {
+      defaultValue: 'Your account has been deactivated at your request.',
+    }),
   },
   {
     code: 'OTHER',
-    label: t('admin:users.suspend.reasons.other.label', 'Other'),
+    label: t('admin:users.suspend.reasons.other.label', { defaultValue: 'Other' }),
     message: '',
   },
 ]
@@ -475,7 +477,7 @@ const SuspendUserModal: React.FC<SuspendUserModalProps> = ({ isOpen, onClose, us
   if (!isOpen || !user) return null
 
   const presets = getSuspendReasonPresets(t)
-  const preset = presets.find((p) => p.code === selectedCode) || presets[0]
+  const preset = presets.find((p) => p.code === selectedCode) ?? presets[0]!
   const reasonText = selectedCode === 'OTHER' ? customReason.trim() : preset.message
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -591,6 +593,7 @@ const Users: React.FC = () => {
 
   const apiClient = useApiClient()
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
 
   // Fetch current user to check if they are super admin
   const { data: currentUserResponse } = useQuery({
@@ -689,7 +692,10 @@ const Users: React.FC = () => {
     },
   })
 
-  const { users, meta } = React.useMemo(() => {
+  const { users, meta } = React.useMemo<{
+    users: User[]
+    meta: { total: number; page: number; limit: number; totalPages: number }
+  }>(() => {
     // /admin/users returns DB users directly (not wrapped like many other endpoints).
     const raw = (usersResponse as any)?.data?.data ?? (usersResponse as any)?.data
 
@@ -782,6 +788,15 @@ const Users: React.FC = () => {
   const handleSuspendClick = (user: User) => {
     setSelectedUser(user)
     setIsSuspendModalOpen(true)
+  }
+
+  const handleMessageUser = (user: User) => {
+    const targetUserId = user.profileId || user.id
+    if (!targetUserId) {
+      toast.error(t('admin:users.messaging.missingUserId', 'Cannot message this user (missing user id)'))
+      return
+    }
+    navigate(`/messaging?userId=${encodeURIComponent(targetUserId)}`)
   }
 
   // Handle opening delete modal
@@ -1070,46 +1085,57 @@ const Users: React.FC = () => {
                     {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : t('admin:users.labels.never', 'Never')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <Menu as="div" className="relative inline-block text-left">
-                      <Menu.Button className="p-2 rounded-full hover:bg-gray-100">
-                        <MoreVertical className="h-4 w-4" />
-                      </Menu.Button>
-                      <Transition
-                        as={Fragment}
-                        enter="transition ease-out duration-100"
-                        enterFrom="transform opacity-0 scale-95"
-                        enterTo="transform opacity-100 scale-100"
-                        leave="transition ease-in duration-75"
-                        leaveFrom="transform opacity-100 scale-100"
-                        leaveTo="transform opacity-0 scale-95"
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleMessageUser(user)}
+                        className="p-2 rounded-full hover:bg-gray-100"
+                        title={t('admin:users.actions.message', 'Message user')}
+                        aria-label={t('admin:users.actions.message', 'Message user')}
                       >
-                        <Menu.Items className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
-                          <div className="py-1">
-                            <Menu.Item>
-                              {({ active }) => (
-                                <button
-                                  onClick={() =>
-                                    user.status === 'ACTIVE'
-                                      ? handleSuspendClick(user)
-                                      : updateUserStatusMutation.mutate({ userId: user.id, payload: { status: 'ACTIVE' } })
-                                  }
-                                  className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
-                                  disabled={updateUserStatusMutation.isPending}
-                                >
-                                  {user.status === 'ACTIVE' ? (
-                                    <>
-                                      <Ban className="h-4 w-4 mr-2" />
-                                      {t('admin:users.actions.suspend', 'Suspend')}
-                                    </>
-                                  ) : (
-                                    <>
-                                      <CheckCircle className="h-4 w-4 mr-2" />
-                                      {t('admin:users.actions.reactivate', 'Reactivate')}
-                                    </>
-                                  )}
-                                </button>
-                              )}
-                            </Menu.Item>
+                        <MessageSquare className="h-4 w-4" />
+                      </button>
+
+                      <Menu as="div" className="relative inline-block text-left">
+                        <Menu.Button className="p-2 rounded-full hover:bg-gray-100">
+                          <MoreVertical className="h-4 w-4" />
+                        </Menu.Button>
+                        <Transition
+                          as={Fragment}
+                          enter="transition ease-out duration-100"
+                          enterFrom="transform opacity-0 scale-95"
+                          enterTo="transform opacity-100 scale-100"
+                          leave="transition ease-in duration-75"
+                          leaveFrom="transform opacity-100 scale-100"
+                          leaveTo="transform opacity-0 scale-95"
+                        >
+                          <Menu.Items className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                            <div className="py-1">
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <button
+                                    onClick={() =>
+                                      user.status === 'ACTIVE'
+                                        ? handleSuspendClick(user)
+                                        : updateUserStatusMutation.mutate({ userId: user.id, payload: { status: 'ACTIVE' } })
+                                    }
+                                    className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
+                                    disabled={updateUserStatusMutation.isPending}
+                                  >
+                                    {user.status === 'ACTIVE' ? (
+                                      <>
+                                        <Ban className="h-4 w-4 mr-2" />
+                                        {t('admin:users.actions.suspend', 'Suspend')}
+                                      </>
+                                    ) : (
+                                      <>
+                                        <CheckCircle className="h-4 w-4 mr-2" />
+                                        {t('admin:users.actions.reactivate', 'Reactivate')}
+                                      </>
+                                    )}
+                                  </button>
+                                )}
+                              </Menu.Item>
 
                             {user.role === UserRole.EDUCATOR && (
                               <Menu.Item>
@@ -1192,10 +1218,11 @@ const Users: React.FC = () => {
                                 </button>
                               )}
                             </Menu.Item>
-                          </div>
-                        </Menu.Items>
-                      </Transition>
-                    </Menu>
+                            </div>
+                          </Menu.Items>
+                        </Transition>
+                      </Menu>
+                    </div>
                   </td>
                 </tr>
               ))}

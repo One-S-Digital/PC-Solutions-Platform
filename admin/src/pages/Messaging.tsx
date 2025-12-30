@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useUser, useAuth } from '@clerk/clerk-react'
 import { useTranslation } from 'react-i18next'
+import { useSearchParams } from 'react-router-dom'
 
 import { 
   MessageSquare, 
@@ -94,6 +95,7 @@ const Messaging: React.FC = () => {
   // Debug logging removed - use React DevTools for render tracking
   const { t } = useTranslation(['admin', 'common']);
   const { getToken } = useAuth();
+  const [searchParams] = useSearchParams()
   
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null)
@@ -125,6 +127,7 @@ const Messaging: React.FC = () => {
   const queryClient = useQueryClient()
 
   const isDev = import.meta.env.DEV
+  const userIdToOpen = (searchParams.get('userId') || '').trim() || undefined
 
   // Helper function to format file size
   const formatFileSize = (bytes?: number) => {
@@ -363,6 +366,70 @@ const Messaging: React.FC = () => {
     },
     [conversationsResponse, currentUserId]
   )
+
+  const openDirectConversationMutation = useMutation({
+    mutationFn: async (participantId: string) => {
+      if (!apiClient) throw new Error('API client not ready')
+      if (!currentUserId) throw new Error('Current user ID is required')
+
+      // Avoid attempting to create a self-conversation
+      if (participantId === currentUserId) return { conversationId: undefined as string | undefined }
+
+      // Check if conversation already exists
+      const conversationsResp = await apiService.getConversations(apiClient)
+      const existingConversations = (conversationsResp as any)?.data?.data ?? (conversationsResp as any)?.data ?? []
+
+      const existingConv = (existingConversations as any[]).find((conv: any) => {
+        const participants = conv.participants || []
+        const hasParticipant = participants.some((p: any) => (p.userId || p.user?.id) === participantId)
+        const hasCurrentUser = participants.some((p: any) => (p.userId || p.user?.id) === currentUserId)
+        return hasParticipant && hasCurrentUser && participants.length === 2
+      })
+
+      if (existingConv?.id) return { conversationId: existingConv.id as string }
+
+      const createdResp = await apiService.createConversation(apiClient, {
+        type: 'DIRECT',
+        participantIds: [participantId],
+      })
+
+      const createdConv = (createdResp as any)?.data?.data ?? (createdResp as any)?.data
+      return { conversationId: createdConv?.id as string | undefined }
+    },
+    onSuccess: async ({ conversationId }) => {
+      if (!conversationId) return
+
+      // Refresh conversations and select the newly created/existing one
+      await queryClient.invalidateQueries({ queryKey: ['conversations'] })
+      const conversationsData = await queryClient.fetchQuery({
+        queryKey: ['conversations'],
+        queryFn: async () => apiService.getConversations(apiClient),
+      })
+
+      const rawConversations =
+        (conversationsData as any)?.data?.data ||
+        (conversationsData as any)?.data ||
+        []
+      const conv = (rawConversations as any[]).find((c: any) => c.id === conversationId)
+      if (conv) {
+        setSelectedConversation(transformConversation(conv, currentUserId))
+      }
+
+      await queryClient.invalidateQueries({ queryKey: ['messages', conversationId] })
+      await queryClient.refetchQueries({ queryKey: ['messages', conversationId] })
+    },
+  })
+
+  // Deep-link support: /messaging?userId=<dbUserId> opens or creates a direct conversation
+  useEffect(() => {
+    if (!userIdToOpen) return
+    if (!apiClient || !currentUserId) return
+    if (selectedConversation?.participantId === userIdToOpen) return
+    if (openDirectConversationMutation.isPending) return
+
+    openDirectConversationMutation.mutate(userIdToOpen)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userIdToOpen, apiClient, currentUserId, selectedConversation?.participantId])
 
   const selectedConversationId = selectedConversation?.id
 
