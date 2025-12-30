@@ -1262,14 +1262,14 @@
       "termsLink": "Terms and Conditions"
     }
   },
-  "messaging": {
-    "searchPlaceholder": "Search conversations...",
-    "typePlaceholder": "Type your message..."
-  },
   "support": {
+    "backToList": "Back to tickets",
+    "details": "Details",
+    "quickActions": "Quick actions",
     "searchPlaceholder": "Search tickets...",
     "replyPlaceholder": "Type your reply...",
     "table": {
+      "actions": "Actions",
       "assignedTo": "Assigned To",
       "priority": "Priority",
       "created": "Created",
@@ -1289,6 +1289,8 @@
     "subtitle": "Manage and respond to support tickets ({{total}} total)",
     "sending": "Sending",
     "staff": "Staff",
+    "ticketNotFoundHint": "This ticket may have been deleted, or you may not have access.",
+    "ticketNotFound": "Ticket not found.",
     "title": "Support Tickets",
     "user": "User"
   },
