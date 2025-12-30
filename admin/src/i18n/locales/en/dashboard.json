@@ -1,0 +1,108 @@
+{
+  "activeOrganizations": "active organizations",
+  "adminContentManagementDashboardPage": {
+    "addContent": "",
+    "editContent": "",
+    "title": "Content Management"
+  },
+  "adminDiscountTerminationsPage": {
+    "title": ""
+  },
+  "adminSystemMonitoringPage": {
+    "components": {
+      "api": "API",
+      "database": "Database"
+    },
+    "metadata": {
+      "environment": "Environment"
+    },
+    "overallStatus": {
+      "down": "Down",
+      "operational": "Operational",
+      "title": "Overall System Status"
+    },
+    "serverPerformance": {
+      "uptimeDays": "Uptime (Days)"
+    }
+  },
+  "buttons": {
+    "cancel": "Cancel",
+    "saveChanges": "Save Changes"
+  },
+  "common": {
+    "description": "",
+    "status": "Status",
+    "title": "Title"
+  },
+  "content": {
+    "accessRoles": "Access Roles",
+    "allowedEl": "PDF, MP4, DOCX files allowed",
+    "allowedHr": "PDF, DOCX files allowed",
+    "browse": "Browse",
+    "country": "Country",
+    "critical": "Critical",
+    "criticality": "Criticality",
+    "currentFile": "Current File: {{url}}",
+    "documentTitle": "Document Title",
+    "effectiveDate": "Effective Date",
+    "expirationDate": "Expiration Date",
+    "externalVideoUrl": "External Video URL (YouTube, Vimeo, etc.)",
+    "fileType": "File Type",
+    "linkUrl": "Link URL",
+    "markCritical": "Mark as Critical",
+    "normal": "Normal",
+    "numLessons": "Number of Lessons",
+    "orDragDrop": "or drag and drop",
+    "policyLink": "Link to Official Policy (optional)",
+    "policyType": "Policy Type",
+    "preview": "Description / Content Preview",
+    "region": "Region/Canton",
+    "reviewDate": "Review Date",
+    "selected": "Selected:",
+    "supportsVideoHelp": "Supports YouTube, Vimeo, and direct video URLs",
+    "type": "Content Type",
+    "upload": "Upload",
+    "uploadFile": "Upload File",
+    "uploading": "Uploading...",
+    "uploadTypeFile": "Upload {{type}} File",
+    "uploadVideo": "Upload Video File",
+    "version": "Version",
+    "videoSource": "Video Source",
+    "videoUrl": "Video URL"
+  },
+  "eLearningPage": {
+    "categoryLabel": "Category",
+    "durationLabel": "Duration",
+    "languageLabel": "Language",
+    "title": "E-Learning Items"
+  },
+  "hrProceduresPage": {
+    "backToCategoriesButton": "Back To Categories",
+    "title": "HR Documents"
+  },
+  "jobsPosted": "job listings posted",
+  "live": "Live",
+  "loadingStats": "Loading platform statistics...",
+  "navbar": {
+    "signOut": "",
+    "viewAll": "View All"
+  },
+  "platformSummary": "Platform Summary",
+  "productsAvailable": "products in catalog",
+  "registeredUsers": "registered users in the platform",
+  "sidebar": {
+    "allUsersTitle": "Total Users",
+    "applications": "applications",
+    "dashboard": "Dashboard",
+    "foundations": "Foundations",
+    "jobListings": "Job Listings",
+    "parentLeads": "Parent Leads",
+    "products": "Products"
+  },
+  "statePoliciesPage": {
+    "title": "State Policies"
+  },
+  "systemHealthy": "All systems operational",
+  "total": "Total",
+  "welcome": "Welcome to your Admin Dashboard!"
+}

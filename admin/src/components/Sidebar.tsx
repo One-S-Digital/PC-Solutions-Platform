@@ -47,6 +47,7 @@ const navigation = [
   { key: 'ordersAppointments', href: '/orders', icon: ShoppingCart },
   { key: 'content', href: '/content', icon: FileText },
   { key: 'messages', href: '/messaging', icon: MessageSquare },
+  { key: 'mailingLists', href: '/mailing-lists', icon: Mail },
   { key: 'support', href: '/support', icon: LifeBuoy },
   { key: 'discountTerminations', href: '/discount-terminations', icon: Tag },
   { key: 'subscriptions', href: '/subscriptions', icon: CreditCard },
@@ -104,7 +105,9 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
                   isActive ? 'text-swiss-mint' : 'text-gray-400 group-hover:text-swiss-mint'
                 )}
               />
-              {t(`admin:sidebar.${item.key}`, item.key)}
+              {item.key === 'mailingLists'
+                ? t('admin:sidebar.mailingLists', { defaultValue: 'Mailing lists' })
+                : t(`admin:sidebar.${item.key}`, item.key)}
             </NavLink>
           )
         })}

@@ -538,6 +538,42 @@ export const apiService = {
   sendMessage: (apiClient: AxiosInstance, data: { conversationId: string; content: string }) => apiClient.post<ApiResponse<Message>>('/messaging/messages', data),
   markMessageAsRead: (apiClient: AxiosInstance, id: string) => apiClient.put<ApiResponse<Message>>(`/messaging/messages/${id}/read`),
 
+  // Mailing Lists / Bulk Email (Admin)
+  getMailingLists: (apiClient: AxiosInstance, params?: { search?: string }) =>
+    apiClient.get<ApiResponse<any>>('/admin/mailing/lists', { params }),
+  getMailingList: (apiClient: AxiosInstance, id: string) =>
+    apiClient.get<ApiResponse<any>>(`/admin/mailing/lists/${id}`),
+  createMailingList: (apiClient: AxiosInstance, data: any) =>
+    apiClient.post<ApiResponse<any>>('/admin/mailing/lists', data),
+  updateMailingList: (apiClient: AxiosInstance, id: string, data: any) =>
+    apiClient.put<ApiResponse<any>>(`/admin/mailing/lists/${id}`, data),
+  deleteMailingList: (apiClient: AxiosInstance, id: string) =>
+    apiClient.delete<ApiResponse<any>>(`/admin/mailing/lists/${id}`),
+  previewMailingRecipients: (apiClient: AxiosInstance, id: string, params?: { limit?: number }) =>
+    apiClient.get<ApiResponse<any>>(`/admin/mailing/lists/${id}/preview`, { params }),
+  previewMailingRecipientsForDefinition: (apiClient: AxiosInstance, data: any) =>
+    apiClient.post<ApiResponse<any>>('/admin/mailing/preview', data),
+  exportMailingListCsv: (apiClient: AxiosInstance, id: string) =>
+    apiClient.get(`/admin/mailing/lists/${id}/export`, { responseType: 'blob' as any }),
+  getMailingRegions: (apiClient: AxiosInstance) =>
+    apiClient.get<ApiResponse<any>>('/admin/mailing/regions'),
+  searchMailingUsers: (apiClient: AxiosInstance, params?: any) =>
+    apiClient.get<ApiResponse<any>>('/admin/mailing/users', { params }),
+  listMailingCampaigns: (apiClient: AxiosInstance, params?: { mailingListId?: string }) =>
+    apiClient.get<ApiResponse<any>>('/admin/mailing/campaigns', { params }),
+  createMailingCampaign: (apiClient: AxiosInstance, data: any) =>
+    apiClient.post<ApiResponse<any>>('/admin/mailing/campaigns', data),
+  sendMailingCampaign: (apiClient: AxiosInstance, id: string, data?: any) =>
+    apiClient.post<ApiResponse<any>>(`/admin/mailing/campaigns/${id}/send`, data ?? {}),
+  listMailingOptOuts: (apiClient: AxiosInstance, params?: any) =>
+    apiClient.get<ApiResponse<any>>('/admin/mailing/opt-outs', { params }),
+  createMailingOptOut: (apiClient: AxiosInstance, data: any) =>
+    apiClient.post<ApiResponse<any>>('/admin/mailing/opt-outs', data),
+  deleteMailingOptOut: (apiClient: AxiosInstance, scope: 'GLOBAL' | 'LIST', id: string) =>
+    apiClient.delete<ApiResponse<any>>(`/admin/mailing/opt-outs/${scope}/${id}`),
+  testMailingEmailConnection: (apiClient: AxiosInstance) =>
+    apiClient.get<ApiResponse<any>>('/admin/mailing/email/test-connection'),
+
   // System
   getCurrentUser: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<User>>('/users/me'),
 

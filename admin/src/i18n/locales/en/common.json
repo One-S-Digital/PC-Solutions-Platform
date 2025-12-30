@@ -1,0 +1,206 @@
+{
+  "accepted": "",
+  "actions": "Actions",
+  "active": "Active",
+  "add": "Add",
+  "admin": "Admin",
+  "adminlogo": "",
+  "allnamespaces": "All namespaces",
+  "analytics": "",
+  "archived": "",
+  "authentication": "",
+  "billing": "",
+  "buttons": {
+    "clear": "Clear",
+    "delete": "Delete",
+    "edit": "Edit",
+    "next": "Next",
+    "previous": "Previous",
+    "refresh": "Refresh",
+    "reply": "Reply",
+    "sending": "Sending...",
+    "signIn": "",
+    "signOut": ""
+  },
+  "cancel": "Cancel",
+  "cancelled": "",
+  "childcare": "",
+  "close": "Close",
+  "closed": "",
+  "currentfile": "",
+  "declined": "",
+  "declining": "Declining...",
+  "delete": "Delete",
+  "deleting": "Deleting...",
+  "disabled": "Disabled",
+  "download": "Download",
+  "downloadfile": "",
+  "draft": "",
+  "edit": "Edit",
+  "education": "",
+  "educational": "",
+  "educator": "",
+  "email": "",
+  "enabled": "Enabled",
+  "error": "Error",
+  "errors": {
+    "errorrate": "",
+    "errors": "Errors",
+    "loadFailed": "Failed to load organizations"
+  },
+  "export": "",
+  "fallbackpreview": "",
+  "featurerequest": "",
+  "filters": {
+    "categories": {
+      "all": ""
+    },
+    "category": {
+      "all": ""
+    },
+    "priority": {
+      "all": ""
+    },
+    "roles": {
+      "all": ""
+    },
+    "status": {
+      "all": ""
+    },
+    "title": ""
+  },
+  "foundation": "",
+  "fulfilled": "",
+  "furniture": "",
+  "general": "",
+  "health": "",
+  "high": "",
+  "hygiene": "",
+  "inactive": "Inactive",
+  "info": "Info",
+  "inprogress": "",
+  "labels": {
+    "close": "",
+    "currentquantity": "",
+    "decreasequantity": "",
+    "increasequantity": ""
+  },
+  "languageLabels": {
+    "de": "Deutsch",
+    "en": "English",
+    "fr": "Français"
+  },
+  "languageSwitcher": {
+    "selectLanguage": ""
+  },
+  "loading": "Loading",
+  "low": "",
+  "medium": "",
+  "more": "more",
+  "next": "Next",
+  "none": "None",
+  "notAvailable": "N/A",
+  "notes": "Notes",
+  "nutrition": "",
+  "open": "",
+  "optional": "Optional",
+  "other": "",
+  "parent": "",
+  "payment": "",
+  "pending": "",
+  "placeholders": {
+    "41xxxxxxxxx": "",
+    "addtag": "",
+    "describethisfile": "",
+    "emailaddress": "",
+    "enteryourpassword": "",
+    "firstname": "",
+    "lastname": "",
+    "searchorders": "",
+    "searchparentleads": "",
+    "searchservices": "",
+    "searchusersbynameoremail": "",
+    "select": "Select",
+    "typeorselect": ""
+  },
+  "previewLabel": "Preview",
+  "previous": "Previous",
+  "processing": "",
+  "productsupplier": "",
+  "published": "",
+  "refresh": "Refresh",
+  "resolved": "",
+  "safety": "",
+  "save": "Save",
+  "saved": "Saved",
+  "saving": "Saving...",
+  "sending": "Sending...",
+  "serviceCategories": {
+    "OTHER": ""
+  },
+  "serviceprovider": "",
+  "serviceProvider": {
+    "noServicesFound": ""
+  },
+  "settingsDebug": {
+    "failures": "Failures",
+    "fetchAttempts": "Fetch Attempts",
+    "hasApiClient": "Has API Client",
+    "lastDuration": "Last Duration",
+    "lastIssue": "Last Issue",
+    "lastStatus": "Last Status",
+    "lastSuccess": "Last Success",
+    "lastTransport": "Last Transport",
+    "saving": "Saving",
+    "skipAuth": "Skip Auth",
+    "successes": "Successes"
+  },
+  "shipped": "",
+  "specialneeds": "",
+  "storage": "",
+  "submitted": "",
+  "superadmin": "Super Admin",
+  "supportPage": {
+    "stats": {
+      "inProgress": "",
+      "open": "",
+      "resolved": "",
+      "total": ""
+    }
+  },
+  "technical": "",
+  "titles": {
+    "activealerts": "",
+    "activeconnections": "",
+    "activeusers": "",
+    "apihealth": "",
+    "avgquerytime": "",
+    "blockedips": "",
+    "cancel": "",
+    "connectionhealth": "",
+    "cpuusage": "",
+    "diskusage": "",
+    "failedlogins": "",
+    "lastscan": "",
+    "memoryusage": "",
+    "newuserstoday": "",
+    "pageviews": "",
+    "requestsmin": "",
+    "responsetime": "",
+    "save": "",
+    "sessionduration": "",
+    "storageused": "",
+    "throughput": "",
+    "uptime": ""
+  },
+  "total": "total",
+  "unknown": "Unknown",
+  "uploadFile": "Upload a file",
+  "urgent": "",
+  "validation": {
+    "required": "Please select vendor and daycare"
+  },
+  "view": "View",
+  "viewedbysupplier": "",
+  "warnings": "Warnings"
+}

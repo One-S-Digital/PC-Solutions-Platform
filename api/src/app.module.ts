@@ -54,6 +54,7 @@ import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
 import { MaintenanceModeMiddleware } from './common/middleware/maintenance-mode.middleware';
 import { MaintenanceModule } from './maintenance/maintenance.module';
+import { MailingModule } from './mailing/mailing.module';
 
 import {
   AUTH_REQUESTS_LIMIT,
@@ -147,6 +148,7 @@ import {
     PromoCodesModule,
     VendorClientsModule,
     MaintenanceModule,
+    MailingModule,
   ],
   controllers: [AppController],
   providers: [

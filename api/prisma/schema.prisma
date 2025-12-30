@@ -191,6 +191,27 @@ enum SubscriptionCancellationRequestStatus {
   CANCELLED  // Request withdrawn/cancelled by customer (future use)
 }
 
+// Mailing / bulk email
+enum MailingListType {
+  ALL_USERS
+  ROLE_FILTER
+  CUSTOM
+}
+
+enum MailingCampaignStatus {
+  DRAFT
+  SENDING
+  SENT
+  FAILED
+}
+
+enum MailingCampaignDeliveryStatus {
+  PENDING
+  SENT
+  FAILED
+  SKIPPED
+}
+
 // Core Models
 model User {
   id        String   @id @default(uuid())
@@ -269,6 +290,14 @@ model User {
   // Email notification relations
   emailLogs               EmailLog[]                   @relation("EmailLogs")
   notificationPreferences UserNotificationPreferences? @relation("NotificationPreferences")
+
+  // Mailing / bulk email relations
+  createdMailingLists       MailingList[]              @relation("MailingListCreator")
+  createdMailingCampaigns   MailingCampaign[]          @relation("MailingCampaignCreator")
+  mailingListMemberships    MailingListMember[]        @relation("MailingListMemberUser")
+  mailingCampaignDeliveries MailingCampaignDelivery[]  @relation("MailingCampaignDeliveryUser")
+  mailingGlobalOptOuts      MailingGlobalOptOut[]      @relation("MailingGlobalOptOutUser")
+  mailingListOptOuts        MailingListOptOut[]        @relation("MailingListOptOutUser")
 
   // New admin features relations
   contentItems            ContentItem[]      @relation("ContentUploader")
@@ -1628,6 +1657,129 @@ model UserNotificationPreferences {
   user User @relation("NotificationPreferences", fields: [userId], references: [id])
 
   @@map("user_notification_preferences")
+}
+
+// Mailing Lists / Bulk Email
+model MailingList {
+  id             String           @id @default(uuid())
+  name           String
+  type           MailingListType
+  roles          UserRole[]       @default([])
+  regions        String[]         @default([])
+  includeInactive Boolean         @default(false)
+
+  createdById    String?
+  createdBy      User?            @relation("MailingListCreator", fields: [createdById], references: [id], onDelete: SetNull)
+
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  members        MailingListMember[]
+  campaigns      MailingCampaign[]
+  listOptOuts    MailingListOptOut[]
+
+  @@map("mailing_lists")
+  @@index([type])
+  @@index([createdAt])
+}
+
+model MailingListMember {
+  id            String      @id @default(uuid())
+  mailingListId String
+  userId        String
+  createdAt     DateTime    @default(now())
+
+  mailingList   MailingList @relation(fields: [mailingListId], references: [id], onDelete: Cascade)
+  user          User        @relation("MailingListMemberUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("mailing_list_members")
+  @@unique([mailingListId, userId])
+  @@index([userId])
+}
+
+model MailingCampaign {
+  id           String               @id @default(uuid())
+  mailingListId String
+  status       MailingCampaignStatus @default(DRAFT)
+
+  subject      String
+  htmlContent  String?              @db.Text
+  textContent  String?              @db.Text
+
+  fromName     String?
+  fromEmail    String?
+  replyTo      String?
+
+  totalRecipients Int?              // computed at send time
+  sentCount       Int               @default(0)
+  failedCount     Int               @default(0)
+  skippedCount    Int               @default(0)
+  lastError       String?           @db.Text
+
+  createdById  String?
+  createdBy    User?                @relation("MailingCampaignCreator", fields: [createdById], references: [id], onDelete: SetNull)
+
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  sentAt       DateTime?
+
+  mailingList  MailingList          @relation(fields: [mailingListId], references: [id], onDelete: Cascade)
+  deliveries   MailingCampaignDelivery[]
+
+  @@map("mailing_campaigns")
+  @@index([mailingListId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model MailingCampaignDelivery {
+  id          String                      @id @default(uuid())
+  campaignId  String
+  email       String
+  userId      String?
+  status      MailingCampaignDeliveryStatus @default(PENDING)
+  error       String?                     @db.Text
+  sentAt      DateTime?
+  createdAt   DateTime                    @default(now())
+
+  campaign    MailingCampaign             @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  user        User?                       @relation("MailingCampaignDeliveryUser", fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("mailing_campaign_deliveries")
+  @@unique([campaignId, email])
+  @@index([email])
+  @@index([userId])
+  @@index([status])
+}
+
+model MailingGlobalOptOut {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  userId    String?
+  reason    String?  @db.Text
+  createdAt DateTime @default(now())
+
+  user User? @relation("MailingGlobalOptOutUser", fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("mailing_global_opt_outs")
+  @@index([createdAt])
+}
+
+model MailingListOptOut {
+  id           String      @id @default(uuid())
+  mailingListId String
+  email        String
+  userId       String?
+  reason       String?     @db.Text
+  createdAt    DateTime    @default(now())
+
+  mailingList  MailingList @relation(fields: [mailingListId], references: [id], onDelete: Cascade)
+  user         User?       @relation("MailingListOptOutUser", fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("mailing_list_opt_outs")
+  @@unique([mailingListId, email])
+  @@index([email])
+  @@index([createdAt])
 }
 
 // Subscription Management System

@@ -16,6 +16,7 @@ import ParentLeadsPage from './pages/ParentLeads';
 import OrdersPage from './pages/Orders';
 import ContentPage from './pages/Content';
 import MessagingPage from './pages/Messaging';
+import MailingListsPage from './pages/MailingLists';
 import SystemMonitorPage from './pages/SystemMonitor';
 import SettingsPage from './pages/Settings';
 import DesignSystemPage from './pages/DesignSystem';
@@ -90,6 +91,7 @@ function App() {
           <Route path="orders" element={<OrdersPage />} />
           <Route path="content" element={<ContentPage />} />
           <Route path="messaging" element={<MessagingPage />} />
+          <Route path="mailing-lists" element={<MailingListsPage />} />
           <Route path="support" element={<SupportPage />} />
           <Route path="support/tickets/:ticketId" element={<SupportTicketPage />} />
           <Route path="discount-terminations" element={<DiscountTerminationsPage />} />

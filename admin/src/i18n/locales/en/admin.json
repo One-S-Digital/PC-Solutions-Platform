@@ -1,0 +1,1819 @@
+{
+  "admin": {
+    "discountTerminations": {
+      "actions": {
+        "markCompleted": "Mark Completed"
+      },
+      "allActive": {
+        "description": "All active vendor discounts",
+        "empty": "No active discounts",
+        "title": "Active Discounts"
+      },
+      "manage": "Manage Terminations",
+      "queue": {
+        "description": "Clients pending discount termination",
+        "empty": "No pending terminations",
+        "title": "Termination Queue"
+      },
+      "table": {
+        "actions": "Actions",
+        "activeSince": "Active Since",
+        "daycare": "Daycare",
+        "reason": "Reason",
+        "vendor": "Vendor"
+      }
+    }
+  },
+  "auth": {
+    "login": {
+      "emailLabel": "",
+      "emailPlaceholder": "",
+      "forgotPassword": "",
+      "hidePassword": "",
+      "passwordLabel": "",
+      "showPassword": "",
+      "subtitle": "",
+      "title": ""
+    },
+    "signup": {
+      "termsLink": "",
+      "termsPrefix": ""
+    }
+  },
+  "candidates": {
+    "actions": {
+      "viewProfile": "View Profile"
+    },
+    "addButton": "",
+    "addModal": {
+      "submit": "Add Candidate",
+      "title": "Add New Candidate"
+    },
+    "emptyState": {
+      "description": "",
+      "title": ""
+    },
+    "form": {
+      "availability": "Availability",
+      "education": "Education",
+      "email": "Email",
+      "errors": {
+        "emailInvalid": "Please enter a valid email address",
+        "emailRequired": "Email is required",
+        "firstNameRequired": "First name is required",
+        "lastNameRequired": "Last name is required"
+      },
+      "experience": "Work Experience",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "phone": "Phone Number",
+      "sections": {
+        "basicInfo": "Basic Information",
+        "bio": "Short Bio",
+        "certifications": "Certifications",
+        "professional": "Professional Information",
+        "skills": "Skills"
+      }
+    },
+    "poolStatus": {
+      "inPool": "In pool",
+      "outOfPool": "Not in pool"
+    },
+    "searchPlaceholder": "",
+    "statusFilter": {
+      "all": ""
+    },
+    "subtitle_one": "",
+    "subtitle_other": "",
+    "table": {
+      "appliedDate": "",
+      "candidate": "",
+      "pool": "POOL",
+      "position": "",
+      "status": ""
+    },
+    "title": ""
+  },
+  "content": {
+    "addELearning": "Add E-Learning Content",
+    "addHRDocument": "Add HR Document",
+    "addStatePolicy": "Add State Policy",
+    "delete": "Delete",
+    "deleteConfirm": "Are you sure you want to delete this content?",
+    "deleteSuccess": "Content deleted successfully",
+    "description": "Upload and manage e-learning materials, HR documents, and state policies",
+    "edit": "Edit",
+    "eLearning": {
+      "addFirst": "",
+      "empty": "",
+      "loading": "",
+      "noResults": "",
+      "searchPlaceholder": "",
+      "title": "",
+      "total": ""
+    },
+    "hrDocuments": {
+      "addFirst": "",
+      "empty": "",
+      "loading": "",
+      "noResults": "",
+      "searchPlaceholder": "",
+      "title": ""
+    },
+    "noFileUrl": "No file URL available for this content",
+    "statePolicies": {
+      "addFirst": "",
+      "empty": "",
+      "loading": "",
+      "noResults": "",
+      "searchPlaceholder": "",
+      "title": ""
+    },
+    "title": "Content Management",
+    "updated": "Updated",
+    "updateSuccess": "Content updated successfully",
+    "uploadSuccess": "Content uploaded successfully",
+    "view": "View"
+  },
+  "dashboard": {
+    "contentUploadSuccess": "Content uploaded successfully!",
+    "quickActions": {
+      "analytics": {
+        "description": "View platform metrics",
+        "title": "Analytics"
+      },
+      "manageUsers": {
+        "description": "Add, edit, or remove users",
+        "title": "Manage Users"
+      },
+      "orders": {
+        "description": "View recent orders",
+        "title": "Orders"
+      },
+      "organizations": {
+        "description": "Manage daycare centers",
+        "title": "Organizations"
+      },
+      "title": "Quick Actions"
+    }
+  },
+  "designSystem": {
+    "buttons": {
+      "danger": "",
+      "disabledState": "",
+      "extraSmall": "",
+      "ghost": "",
+      "large": "",
+      "leftIcon": "",
+      "light": "",
+      "mediumDefault": "",
+      "outline": "",
+      "outlineDisabled": "",
+      "primary": "",
+      "primaryDisabled": "",
+      "rightIcon": "",
+      "secondary": "",
+      "secondaryDisabled": "",
+      "sizes": "",
+      "small": "",
+      "smallIcon": "",
+      "title": "",
+      "variants": "",
+      "withIcons": ""
+    },
+    "description": "",
+    "formControls": {
+      "title": ""
+    },
+    "sections": {
+      "cards": "",
+      "colors": ""
+    },
+    "tabs": {
+      "content1": "",
+      "content2": "",
+      "content3": "",
+      "tab1": "",
+      "tab2": "",
+      "tab3": ""
+    },
+    "title": "",
+    "typography": {
+      "bodyBase": "",
+      "bodySmall": "",
+      "fontFamily": "",
+      "heading1": "",
+      "heading2": "",
+      "heading3": "",
+      "heading4": "",
+      "link": "",
+      "title": ""
+    }
+  },
+  "fileUpload": {
+    "dragDrop": "",
+    "selected": ""
+  },
+  "forms": {
+    "candidate": {
+      "bioPlaceholder": "",
+      "certificationPlaceholder": "",
+      "educationPlaceholder": "",
+      "emailPlaceholder": "",
+      "experiencePlaceholder": "",
+      "firstNamePlaceholder": "",
+      "lastNamePlaceholder": "",
+      "skillPlaceholder": ""
+    },
+    "job": {
+      "benefitPlaceholder": "",
+      "descriptionPlaceholder": "",
+      "locationPlaceholder": "",
+      "qualificationPlaceholder": "",
+      "requirementPlaceholder": "",
+      "responsibilityPlaceholder": "",
+      "salaryPlaceholder": "",
+      "titlePlaceholder": ""
+    },
+    "organization": {
+      "emailPlaceholder": "",
+      "languagePlaceholder": "",
+      "pedagogyPlaceholder": "",
+      "regionPlaceholder": "",
+      "websitePlaceholder": ""
+    }
+  },
+  "jobListings": {
+    "actions": {
+      "close": "Close",
+      "delete": "",
+      "draft": "Save as Draft",
+      "publish": "Publish"
+    },
+    "addButton": "",
+    "addModal": {
+      "submit": "Create Job Listing",
+      "title": "Add New Job Listing"
+    },
+    "emptyState": {
+      "description": "",
+      "title": ""
+    },
+    "error": {
+      "description": "",
+      "title": ""
+    },
+    "form": {
+      "contractType": "Contract Type",
+      "description": "Job Description",
+      "errors": {
+        "organizationRequired": "Please select an organization",
+        "titleRequired": "Job title is required"
+      },
+      "location": "Location",
+      "organization": "Organization",
+      "salary": "Salary Range",
+      "sections": {
+        "basicInfo": "Job Details",
+        "benefits": "Benefits",
+        "qualifications": "Qualifications",
+        "requirements": "Requirements",
+        "responsibilities": "Responsibilities"
+      },
+      "status": "Status",
+      "title": "Job Title"
+    },
+    "searchPlaceholder": "",
+    "statusFilter": {
+      "all": "",
+      "closed": "",
+      "draft": "Draft",
+      "published": "Published"
+    },
+    "subtitle_one": "",
+    "subtitle_other": "",
+    "title": ""
+  },
+  "mailingLists": {
+    "actions": {
+      "clearRegions": "Clear",
+      "create": "Create",
+      "export": "Export CSV",
+      "newList": "New list",
+      "preview": "Preview",
+      "send": "Send email"
+    },
+    "confirmDelete": "Delete this mailing list?",
+    "create": {
+      "title": "Create mailing list"
+    },
+    "custom": {
+      "clearSelection": "Clear selection",
+      "noUsers": "No users found.",
+      "searchPlaceholder": "Search by name or email...",
+      "selectedCount_one": "Selected: {{count}}",
+      "selectedCount_other": "Selected: {{count}}",
+      "selection": "Select users"
+    },
+    "edit": {
+      "title": "Edit mailing list"
+    },
+    "email": {
+      "fromEmail": "From email (optional)",
+      "fromName": "From name (optional)",
+      "openSystemConfig": "Open System Config",
+      "provider": "Provider",
+      "providers": {
+        "sendgrid": "SendGrid",
+        "smtp": "SMTP"
+      },
+      "saved": "Email settings saved",
+      "saveFailed": "Failed to save email settings",
+      "saving": "Saving...",
+      "secretHint": "Secrets are stored in IntegrationConfig credentials.",
+      "sendgridApiKey": "SendGrid API key",
+      "smtpHost": "SMTP host",
+      "smtpPass": "SMTP password",
+      "smtpPort": "SMTP port",
+      "smtpSecure": "Use TLS (secure)",
+      "smtpUser": "SMTP user",
+      "subtitle": "Configure SendGrid or SMTP in System Configuration → Integrations (type=email).",
+      "testConnection": "Test connection",
+      "testFailed": "Email connection failed",
+      "testing": "Testing...",
+      "testOk": "Email connection OK",
+      "title": "Email server",
+      "unsubscribeNote": "Make sure APP_URL is set, so unsubscribe links point to the correct domain."
+    },
+    "empty": "No mailing lists yet.",
+    "fields": {
+      "includeInactive": "Include inactive users",
+      "name": "Name",
+      "namePlaceholder": "e.g., All Educators (ZH)",
+      "regions": "Regions",
+      "roles": "Roles",
+      "type": "List type"
+    },
+    "filters": {
+      "includeInactive": "Including inactive users",
+      "none": "No filters",
+      "regions": "Regions:",
+      "roles": "Roles:"
+    },
+    "optOuts": {
+      "add": "Add opt-out",
+      "addButton": "Add",
+      "created": "Opt-out saved",
+      "createFailed": "Failed to save opt-out",
+      "deleted": "Opt-out removed",
+      "deleteFailed": "Failed to remove opt-out",
+      "emailPlaceholder": "Email address",
+      "emailRequired": "Email is required",
+      "global": "Global opt-outs",
+      "list": "List opt-outs",
+      "listRequired": "Please choose a list",
+      "none": "None",
+      "reasonPlaceholder": "Reason (optional)",
+      "remove": "Remove",
+      "scope": {
+        "global": "Global",
+        "list": "Specific list"
+      },
+      "searchPlaceholder": "Search by email...",
+      "selectList": "Select list"
+    },
+    "preview": {
+      "disclaimer": "Final recipient set may also exclude list-specific opt-outs after the list is created.",
+      "empty": "No recipients match these filters.",
+      "error": "Failed to preview recipients.",
+      "hint": "Click “Refresh preview” to compute recipients.",
+      "loading": "Previewing...",
+      "optOutNote": "Preview excludes global opt-outs.",
+      "refresh": "Refresh preview",
+      "title": "Recipient preview",
+      "total_one": "Total recipients: {{count}}",
+      "total_other": "Total recipients: {{count}}"
+    },
+    "previewModal": {
+      "error": "Failed to load preview.",
+      "optOutNote": "This excludes global + list-specific opt-outs.",
+      "title": "Recipient preview",
+      "total_one": "Total recipients: {{count}}",
+      "total_other": "Total recipients: {{count}}"
+    },
+    "regions": {
+      "hint": "If selected, recipients must match user.region or organization canton/regions served.",
+      "none": "No regions available"
+    },
+    "searchPlaceholder": "Search lists...",
+    "send": {
+      "dryRun": "Dry run (no emails sent)",
+      "fromEmail": "From email (optional)",
+      "fromName": "From name (optional)",
+      "html": "HTML content (optional)",
+      "replyTo": "Reply-to (optional)",
+      "sendNow": "Send now",
+      "subject": "Subject",
+      "subjectRequired": "Subject is required",
+      "testEmail": "Test email (optional)",
+      "testEmailPlaceholder": "you@example.com",
+      "text": "Text content (optional)",
+      "title": "Send email",
+      "unsubscribeNote": "An unsubscribe footer and one-click headers are automatically added."
+    },
+    "stats": {
+      "campaigns_one": "Campaigns: {{count}}",
+      "campaigns_other": "Campaigns: {{count}}",
+      "members_one": "Members: {{count}}",
+      "members_other": "Members: {{count}}",
+      "optOuts_one": "List opt-outs: {{count}}",
+      "optOuts_other": "List opt-outs: {{count}}"
+    },
+    "subtitle": "Create recipient lists, export CSVs, and send emails with built-in opt-out.",
+    "table": {
+      "filters": "Filters",
+      "name": "Name",
+      "stats": "Stats",
+      "type": "Type"
+    },
+    "tabs": {
+      "email": "Email server",
+      "lists": "Lists",
+      "optOuts": "Opt-outs"
+    },
+    "title": "Mailing Lists",
+    "toast": {
+      "created": "Mailing list created",
+      "createFailed": "Failed to create mailing list",
+      "deleted": "Mailing list deleted",
+      "deleteFailed": "Failed to delete mailing list",
+      "dryRunComplete": "Dry run complete",
+      "exportFailed": "Export failed",
+      "sendFailed": "Failed to send campaign",
+      "sentSummary": "Sent: {{sent}} • Failed: {{failed}} • Skipped: {{skipped}}",
+      "updated": "Mailing list updated",
+      "updateFailed": "Failed to update mailing list"
+    },
+    "validation": {
+      "membersRequired": "Please select at least one user",
+      "nameRequired": "Name is required",
+      "rolesRequired": "Please select at least one role"
+    }
+  },
+  "messaging": {
+    "actions": {
+      "call": "Call",
+      "viewProfile": "View Profile"
+    },
+    "addCaption": "Add a caption...",
+    "addEmoji": "Add emoji",
+    "attachFile": "Attach file",
+    "confirmDelete": "Are you sure you want to delete this message?",
+    "delete": "Delete message",
+    "download": "Download",
+    "edit": "Edit message",
+    "emptyState": {
+      "chooseConversation": "Choose a conversation from the list to start messaging.",
+      "noConversations": "No conversations found",
+      "noMessagesYet": "No messages yet. Start the conversation!",
+      "noMessagesYetSnippet": "No messages yet",
+      "selectConversation": "Select a conversation",
+      "startNew": "Start a new conversation to get started",
+      "tryAdjusting": "Try adjusting your search"
+    },
+    "errors": {
+      "deleteFailed": "Failed to delete message. Please try again.",
+      "emptyMessage": "Message cannot be empty",
+      "fileTooLarge": "File size exceeds 50MB limit",
+      "updateFailed": "Failed to update message. Please try again."
+    },
+    "labels": {
+      "failedToLoad": "Failed to load conversations.",
+      "failedToLoadMessages": "Failed to load messages.",
+      "initializing": "Initializing..."
+    },
+    "loadFailed": "Failed to load image",
+    "loading": "Loading...",
+    "messageDeleted": "Message deleted",
+    "newConversation": {
+      "button": "New Conversation",
+      "error": "Failed to load users",
+      "noUsersAvailable": "No users available",
+      "noUsersFound": "No users found",
+      "searchPlaceholder": "Search users by name or email...",
+      "start": "Start Conversation",
+      "starting": "Starting...",
+      "success": "Conversation started!",
+      "title": "New Conversation",
+      "tryAgain": "Please try again",
+      "tryDifferentSearch": "Try a different search term",
+      "typeAtLeast": "Type at least 2 characters to search"
+    },
+    "preview": "Click to preview",
+    "remove": "Remove",
+    "searchPlaceholder": "",
+    "send": "Send",
+    "title": "Messages",
+    "typePlaceholder": "",
+    "uploading": "Uploading..."
+  },
+  "orders": {
+    "actions": {
+      "cancelOrder": "Cancel Order",
+      "editOrder": "Edit Order"
+    },
+    "createOrder": "Create Order",
+    "emptyState": {
+      "description": "Try adjusting your search criteria or create a new order.",
+      "title": "No orders found"
+    },
+    "error": {
+      "description": "Please check your connection and try again.",
+      "loadFailed": "Failed to load orders"
+    },
+    "labels": {
+      "items": "items",
+      "noEmail": "N/A"
+    },
+    "subtitle_one": "Manage customer orders and deliveries ({{count}} total)",
+    "subtitle_other": "Manage customer orders and deliveries ({{count}} total)",
+    "table": {
+      "actions": "Actions",
+      "customer": "Customer",
+      "date": "Date",
+      "items": "Items",
+      "order": "Order",
+      "status": "Status",
+      "total": "Total"
+    },
+    "title": "Orders"
+  },
+  "organizations": {
+    "actions": {
+      "create": "Create Organization",
+      "delete": "Delete Organization",
+      "save": "Save Changes"
+    },
+    "childrenCapacity": "children capacity",
+    "delete": {
+      "confirmation": "Are you sure you want to delete",
+      "title": "Delete Organization",
+      "warning": "This action cannot be undone and will permanently remove all associated data including products, services, and job listings."
+    },
+    "emptyState": {
+      "adjustSearch": "Try adjusting your search criteria",
+      "getStarted": "",
+      "noData": "",
+      "noResults": ""
+    },
+    "error": {
+      "description": "Please check your connection and try again.",
+      "title": "Failed to load organizations"
+    },
+    "form": {
+      "address": "Address",
+      "addressPlaceholder": "Street address, City",
+      "basicInfo": "Basic Information",
+      "capacity": "Capacity (Children)",
+      "capacityPlaceholder": "Number of children",
+      "contactInfo": "Contact Information",
+      "daycareDetails": "Daycare Details",
+      "description": "Description",
+      "descriptionPlaceholder": "Brief description of the organization",
+      "email": "Email",
+      "languages": "Languages Spoken",
+      "name": "Organization Name",
+      "namePlaceholder": "Enter organization name",
+      "nameRequired": "Organization name is required",
+      "pedagogy": "Pedagogy Approaches",
+      "phone": "Phone",
+      "region": "Region/Canton",
+      "saveFailed": "Failed to save organization",
+      "type": "Type",
+      "website": "Website"
+    },
+    "foundation": "Foundation",
+    "foundationsDesc": {
+      "subtitle": "Childcare centers and daycare facilities registered on the platform",
+      "title": "Foundations (Daycares)"
+    },
+    "modal": {
+      "addTitle": "Add Organization",
+      "editTitle": "Edit Organization"
+    },
+    "organisation": "Organisation",
+    "organisationsDesc": {
+      "subtitle": "Companies providing services or products to childcare organizations",
+      "title": "Organisations (Service Providers & Product Suppliers)"
+    },
+    "searchPlaceholder": "",
+    "subtitle": "Manage all organizations across the platform",
+    "tabs": {
+      "foundations": "Foundations",
+      "organisations": "Organisations"
+    },
+    "title": "Organizations",
+    "types": {
+      "daycare": "Daycare",
+      "foundation": "Foundation (Daycare)",
+      "productSupplier": "Product Supplier",
+      "serviceProvider": "Service Provider"
+    }
+  },
+  "parentLeads": {
+    "actions": {
+      "delete": "Delete",
+      "editStatus": "Edit Status"
+    },
+    "addLead": "Add Lead",
+    "emptyState": {
+      "description": "Try adjusting your search criteria or add a new lead.",
+      "title": "No parent leads found"
+    },
+    "error": {
+      "description": "Please check your connection and try again.",
+      "loadFailed": "Failed to load parent leads"
+    },
+    "labels": {
+      "noEmail": "N/A",
+      "unknown": "Unknown",
+      "yearsOld": "years old"
+    },
+    "subtitle_one": "Manage parent inquiries and leads ({{count}} total)",
+    "subtitle_other": "Manage parent inquiries and leads ({{count}} total)",
+    "table": {
+      "actions": "Actions",
+      "childInfo": "Child Info",
+      "inquiryDate": "Inquiry Date",
+      "location": "Location",
+      "parent": "Parent",
+      "status": "Status"
+    },
+    "title": "Parent Leads"
+  },
+  "partnersAdmin": {
+    "addPartner": "Add Partner",
+    "card": {
+      "activate": "Activate",
+      "active": "Active",
+      "deactivate": "Deactivate",
+      "delete": "Delete",
+      "edit": "Edit",
+      "inactive": "Inactive",
+      "markFeatured": "Mark Featured",
+      "removeFeatured": "Remove Featured",
+      "since": "Since {{year}}",
+      "visitWebsite": "Visit Website"
+    },
+    "delete": {
+      "confirmation": "Are you sure you want to delete {{name}}? This action cannot be undone.",
+      "deletePartner": "Delete Partner",
+      "deleting": "Deleting...",
+      "title": "Delete Partner"
+    },
+    "emptyState": {
+      "getStarted": "Get started by adding your first partner",
+      "noPartnersFound": "No partners found",
+      "noPartnersYet": "No partners yet",
+      "tryAdjusting": "Try adjusting your search or filter criteria"
+    },
+    "error": {
+      "description": "Please check your connection and try again.",
+      "loadFailed": "Failed to load partners"
+    },
+    "filters": {
+      "active": "Active",
+      "allStatus": "All Status",
+      "allTypes": "All Types",
+      "inactive": "Inactive"
+    },
+    "modal": {
+      "active": "Active",
+      "addTitle": "Add New Partner",
+      "basicInfo": "Basic Information",
+      "contactInfo": "Contact Information",
+      "contactPerson": "Contact Person",
+      "contactPersonPlaceholder": "John Doe",
+      "countryRegion": "Country/Region",
+      "countryRegionPlaceholder": "e.g., Switzerland",
+      "createPartner": "Create Partner",
+      "description": "Description",
+      "descriptionPlaceholder": "Brief description of the partner",
+      "displayOrder": "Display Order",
+      "displayOrderHint": "Lower numbers appear first",
+      "displayOrderPlaceholder": "0",
+      "editTitle": "Edit Partner",
+      "email": "Email",
+      "emailPlaceholder": "contact@example.com",
+      "featured": "Featured",
+      "logoUrl": "Logo URL",
+      "logoUrlPlaceholder": "https://example.com/logo.png",
+      "partnerName": "Enter partner name",
+      "partnerNameRequired": "Partner name is required",
+      "partnershipDetails": "Partnership Details",
+      "partnershipEnd": "Partnership End",
+      "partnershipStart": "Partnership Start",
+      "phone": "Phone",
+      "phonePlaceholder": "+41 XX XXX XX XX",
+      "saveChanges": "Save Changes",
+      "saveFailed": "Failed to save partner",
+      "saving": "Saving...",
+      "type": "Type",
+      "visibility": "Visibility",
+      "websiteUrl": "Website URL",
+      "websiteUrlPlaceholder": "https://example.com"
+    },
+    "searchPlaceholder": "Search partners...",
+    "stats": {
+      "active": "Active",
+      "featured": "Featured",
+      "totalPartners": "Total Partners",
+      "types": "Types"
+    },
+    "subtitle_one": "Manage partner organizations and sponsors ({{count}} total)",
+    "subtitle_other": "Manage partner organizations and sponsors ({{count}} total)",
+    "title": "Partners"
+  },
+  "products": {
+    "actions": {
+      "delete": "",
+      "edit": ""
+    },
+    "addButton": "",
+    "categoryFilter": {
+      "all": ""
+    },
+    "emptyState": {
+      "description": "",
+      "title": ""
+    },
+    "error": {
+      "description": "",
+      "title": ""
+    },
+    "searchPlaceholder": "",
+    "subtitle_one": "",
+    "subtitle_other": "",
+    "title": ""
+  },
+  "servicesPage": {
+    "addService": "",
+    "defaults": {
+      "flexible": "",
+      "onSite": "",
+      "priceNotAvailable": ""
+    },
+    "emptyState": {
+      "suggestion": ""
+    },
+    "errors": {
+      "checkConnection": "",
+      "loadFailed": ""
+    },
+    "subtitle_one": "",
+    "subtitle_other": "",
+    "title": ""
+  },
+  "settings": {
+    "branding": {
+      "adminColors": {
+        "adminAccentColor": "",
+        "adminPrimaryColor": "",
+        "adminSecondaryColor": "",
+        "title": ""
+      },
+      "assetSaved": "",
+      "assetSaveFailed": "",
+      "assetUploaded": "",
+      "assetUploadFailed": "",
+      "brandColors": {
+        "accentColor": "",
+        "primaryColor": "",
+        "secondaryColor": "",
+        "title": ""
+      },
+      "brandColorsSaved": "",
+      "brandColorsSaveFailed": "",
+      "description": "",
+      "logosAssets": {
+        "adminFavicon": "",
+        "adminLogo": "",
+        "favicon": "",
+        "mainLogo": "",
+        "mainLogoDescription": "",
+        "sidebarLogo": "",
+        "sidebarLogoDescription": "",
+        "title": ""
+      },
+      "noAssetToSave": "",
+      "saveAdminColors": "",
+      "saveAdminFavicon": "",
+      "saveAdminLogo": "",
+      "saveColors": "",
+      "saveFavicon": "",
+      "saveLogo": "",
+      "saveSidebarLogo": "",
+      "saving": "",
+      "title": "",
+      "uploaded": {
+        "adminFavicon": "",
+        "adminLogo": "",
+        "favicon": "",
+        "logo": "",
+        "sidebarLogo": ""
+      },
+      "uploading": {
+        "adminFavicon": "",
+        "adminLogo": "",
+        "favicon": "",
+        "logo": "",
+        "sidebarLogo": ""
+      }
+    },
+    "content": {
+      "description": "",
+      "heroContent": {
+        "buttonLink": "",
+        "buttonLinkPlaceholder": "",
+        "buttonText": "",
+        "buttonTextPlaceholder": "",
+        "heroSubtitle": "",
+        "heroSubtitlePlaceholder": "",
+        "heroTitle": "",
+        "heroTitlePlaceholder": "",
+        "title": ""
+      },
+      "heroImage": {
+        "title": ""
+      },
+      "saveChanges": "",
+      "saving": "",
+      "title": ""
+    },
+    "emailNotifications": {
+      "analytics": {
+        "eventsBreakdown": {
+          "title": ""
+        },
+        "labels": {
+          "clicked": "",
+          "clickRate": "",
+          "delivered": "",
+          "deliveryRate": "",
+          "emailsSent": "",
+          "opened": "",
+          "openRate": "",
+          "totalSent": ""
+        },
+        "performance": {
+          "title": ""
+        }
+      },
+      "loading": "",
+      "logs": {
+        "tableHeaders": {
+          "error": "",
+          "event": "",
+          "recipient": "",
+          "sentAt": "",
+          "status": ""
+        },
+        "title": ""
+      },
+      "refresh": "",
+      "send": {
+        "alerts": {
+          "bulkFailed": "",
+          "bulkSent": "",
+          "sendFailed": "",
+          "sent": ""
+        },
+        "buttons": {
+          "sendBulkEmail": "",
+          "sendEmail": ""
+        },
+        "eventType": "",
+        "eventTypes": {
+          "account_verification": "",
+          "job_application_received": "",
+          "new_message": "",
+          "order_confirmation": "",
+          "password_reset": "",
+          "subscription_activation": "",
+          "system_maintenance": "",
+          "welcome_email": ""
+        },
+        "recipientEmail": "",
+        "recipientEmailHint": "",
+        "recipientEmailPlaceholder": "",
+        "recipientName": "",
+        "recipientNamePlaceholder": "",
+        "selectEventType": "",
+        "templateVariables": "",
+        "templateVariablesHint": "",
+        "templateVariablesPlaceholder": "",
+        "title": ""
+      },
+      "sendEmail": "",
+      "tabs": {
+        "analytics": "",
+        "logs": "",
+        "send": "",
+        "templates": ""
+      },
+      "templates": {
+        "alerts": {
+          "created": "Template created",
+          "saveFailed": "",
+          "updated": "Template updated"
+        },
+        "buttons": {
+          "edit": "",
+          "preview": ""
+        },
+        "createTemplate": "",
+        "status": {
+          "active": "",
+          "inactive": ""
+        },
+        "tableHeaders": {
+          "actions": "",
+          "category": "",
+          "event": "",
+          "name": "",
+          "status": "",
+          "subject": "",
+          "updated": ""
+        },
+        "title": ""
+      },
+      "title": ""
+    },
+    "general": {
+      "contactEmail": "",
+      "contactEmailPlaceholder": "",
+      "contactPhone": "",
+      "contactPhonePlaceholder": "",
+      "description": "",
+      "platformSettings": {
+        "maintenanceMessage": "",
+        "maintenanceMessagePlaceholder": "",
+        "maintenanceMode": "",
+        "maintenanceModeActive": "",
+        "maintenanceModeInactive": "",
+        "title": "",
+        "updateMessage": "",
+        "updating": ""
+      },
+      "saveChanges": "",
+      "saving": "",
+      "siteDescription": "",
+      "siteDescriptionPlaceholder": "",
+      "siteName": "",
+      "siteNamePlaceholder": "",
+      "title": "",
+      "userEmailSettings": {
+        "authRequired": "Authentication required",
+        "daysLabel": "days",
+        "gracePeriodDescription": "When a user changes their email address, the old email is retained for this many days before being automatically deleted. This allows users to recover their account if needed. Set to 0 to delete immediately.",
+        "gracePeriodLabel": "Email Change Grace Period (Days)",
+        "invalidDays": "Please enter a valid number of days (0-365)",
+        "noteDescription": "This setting also exists in System Config → System Settings under the \"email\" category as \"email.grace_period_days\".",
+        "noteTitle": "Note:",
+        "saveButton": "Save Email Settings",
+        "saving": "Saving...",
+        "title": "User Email Settings",
+        "updated": "Email grace period updated successfully",
+        "updateFailed": "Failed to update email grace period setting"
+      }
+    },
+    "integrations": {
+      "analytics": {
+        "facebookPixelId": "",
+        "facebookPixelIdPlaceholder": "",
+        "googleAnalyticsId": "",
+        "googleAnalyticsIdPlaceholder": "",
+        "title": ""
+      },
+      "authentication": {
+        "clerkPublishableKey": "",
+        "clerkPublishableKeyPlaceholder": "",
+        "clerkSecretKey": "",
+        "clerkSecretKeyPlaceholder": "",
+        "title": ""
+      },
+      "description": "",
+      "saveIntegrationSettings": "",
+      "saving": "",
+      "title": ""
+    },
+    "notifications": {
+      "description": "",
+      "emailNotifications": {
+        "applicationSubmissions": "",
+        "applicationSubmissionsDesc": "",
+        "newUserRegistrations": "",
+        "newUserRegistrationsDesc": "",
+        "title": ""
+      },
+      "saveSmtpSettings": "",
+      "saving": "",
+      "smtp": {
+        "notificationEmail": "",
+        "notificationEmailPlaceholder": "",
+        "smtpHost": "",
+        "smtpHostPlaceholder": "",
+        "smtpPassword": "",
+        "smtpPasswordPlaceholder": "",
+        "smtpPort": "",
+        "smtpPortPlaceholder": "",
+        "smtpUser": "",
+        "smtpUserPlaceholder": "",
+        "title": ""
+      },
+      "title": ""
+    },
+    "subtitle": "",
+    "systemConfig": {
+      "emailTemplates": {
+        "goToTemplates": "",
+        "title": ""
+      },
+      "integrations": {
+        "alerts": {
+          "created": "",
+          "createFailed": ""
+        },
+        "buttons": {
+          "sync": "",
+          "test": ""
+        },
+        "createIntegration": "",
+        "status": {
+          "active": "",
+          "inactive": "",
+          "never": ""
+        },
+        "tableHeaders": {
+          "actions": "",
+          "lastSync": "",
+          "name": "",
+          "provider": "",
+          "status": "",
+          "type": ""
+        },
+        "title": ""
+      },
+      "loading": "",
+      "maintenance": {
+        "alerts": {
+          "disabled": "",
+          "disableFailed": "",
+          "enabled": "",
+          "enableFailed": "",
+          "scheduleCreated": "",
+          "scheduleFailed": ""
+        },
+        "buttons": {
+          "disable": "",
+          "enable": ""
+        },
+        "estimatedEnd": "",
+        "schedules": {
+          "createSchedule": "",
+          "title": ""
+        },
+        "status": {
+          "disabled": "",
+          "enabled": ""
+        },
+        "tableHeaders": {
+          "actions": "",
+          "description": "",
+          "name": "",
+          "scheduledEnd": "",
+          "scheduledStart": "",
+          "status": ""
+        },
+        "title": ""
+      },
+      "refresh": "",
+      "systemHealth": {
+        "labels": {
+          "activeServices": "",
+          "connections": "",
+          "databaseResponse": "",
+          "responseTime": "",
+          "status": "",
+          "storageUsed": "",
+          "systemStatus": "",
+          "usedSpace": ""
+        },
+        "overview": {
+          "database": "",
+          "externalServices": "",
+          "storage": "",
+          "title": ""
+        }
+      },
+      "systemSettings": {
+        "alerts": {
+          "created": "",
+          "createFailed": "",
+          "updated": "Setting updated successfully",
+          "updateFailed": ""
+        },
+        "badges": {
+          "encrypted": "",
+          "public": ""
+        },
+        "buttons": {
+          "edit": "",
+          "view": ""
+        },
+        "createModal": {
+          "cancel": "",
+          "categories": {
+            "email": "",
+            "general": "",
+            "payment": "",
+            "security": "",
+            "storage": ""
+          },
+          "category": "",
+          "create": "",
+          "description": "",
+          "encrypted": "",
+          "key": "",
+          "public": "",
+          "title": "",
+          "value": ""
+        },
+        "createSetting": "",
+        "description": "Description",
+        "editTitle": "Edit Setting",
+        "gracePeriodHint": "Enter the number of days (e.g., 7)",
+        "tableHeaders": {
+          "actions": "",
+          "category": "",
+          "key": "",
+          "type": "",
+          "value": ""
+        },
+        "title": ""
+      },
+      "tabs": {
+        "emailTemplates": "",
+        "integrations": "",
+        "maintenance": "",
+        "systemHealth": "",
+        "systemSettings": ""
+      },
+      "title": ""
+    },
+    "tabs": {
+      "branding": "",
+      "content": "",
+      "emailTemplates": "",
+      "general": "",
+      "integrations": "",
+      "notifications": "",
+      "systemConfig": ""
+    },
+    "title": ""
+  },
+  "sidebar": {
+    "adminLogo": "Admin Logo",
+    "mailingLists": "Mailing lists",
+    "version": "Backend Management v1.0"
+  },
+  "subscriptions": {
+    "addSubscription": "Add",
+    "backToRoles": "Back to Role Selection",
+    "cancellations": {
+      "actions": {
+        "approve": "Approve",
+        "decline": "Decline"
+      },
+      "filter": {
+        "allStatuses": "All Statuses"
+      },
+      "noRequests": "No cancellation requests found",
+      "table": {
+        "actions": "Actions",
+        "plan": "Plan",
+        "reason": "Reason",
+        "requestedAt": "Requested",
+        "status": "Status",
+        "subscriber": "Subscriber"
+      }
+    },
+    "cancelSubscription": "Cancel Subscription",
+    "confirmCancelInModal": "Cancel this subscription immediately? The user will lose access right away.",
+    "confirmDeleteModal": "Are you sure you want to permanently delete this subscription? This action cannot be undone.",
+    "createSubscription": {
+      "create": "Create Subscription",
+      "title": "Create Subscription"
+    },
+    "deleteError": "Failed to delete subscription: ",
+    "deleteSubscription": "Delete Subscription",
+    "deleteSuccess": "Subscription deleted successfully",
+    "details": {
+      "tier": "Subscription Tier"
+    },
+    "editSubscription": {
+      "currentInfo": "Current Subscription Info",
+      "enquiryBased": "Enquiry-based pricing",
+      "error": "Failed to update subscription: ",
+      "monthlyRecurringHelp": "Auto-renews every month until cancelled, paused, or changed by an admin.",
+      "noPlansAvailable": "No subscription plans available. Please create subscription plans first via the API or database seed.",
+      "notes": "Notes (optional)",
+      "notesPlaceholder": "Add notes about this subscription...",
+      "period": {
+        "monthlyRecurring": "Monthly Recurring",
+        "oneMonth": "1 Month",
+        "oneYear": "1 Year",
+        "selectPeriod": "Select a period...",
+        "sixMonths": "6 Months",
+        "threeMonths": "3 Months",
+        "twoYears": "2 Years"
+      },
+      "periodLabel": "Period",
+      "plan": "Subscription Plan",
+      "planLabel": "Plan",
+      "save": "Save Changes",
+      "saving": "Saving...",
+      "selectPlan": "Select a plan...",
+      "status": "Subscription Status",
+      "subscriptionPeriod": "Subscription Period",
+      "subscriptionPeriodHelp": "Select how long this subscription should be active.",
+      "success": "Subscription updated successfully",
+      "title": "Edit Subscription"
+    },
+    "manageSubscription": "Manage",
+    "managingUsers_one": "Managing {{count}} users",
+    "managingUsers_other": "Managing {{count}} users",
+    "noSubscription": "No Subscription",
+    "noUsersFound": "No users found",
+    "planEditor": {
+      "billingOptions": {
+        "monthly": "Monthly",
+        "monthlyRecurring": "Monthly Recurring",
+        "oneYear": "1 Year",
+        "quarterly": "Quarterly",
+        "thirtyDays": "30 Days",
+        "yearly": "Yearly"
+      },
+      "billingPeriod": "Subscription",
+      "billingPeriodHelp": "Select the subscription billing period shown for this plan.",
+      "currentBillingPeriod": "Current Subscription",
+      "currentInfo": "Current Plan Info",
+      "error": "Failed to update plan: ",
+      "noPlansAvailable": "No subscription plans available. Please run the database seed or create plans via the API.",
+      "open": "Edit Plans",
+      "plan": "Plan",
+      "price": "Price",
+      "save": "Save Changes",
+      "saving": "Saving...",
+      "success": "Plan updated successfully",
+      "title": "Subscription Plan Editor"
+    },
+    "quickActions": "Quick Actions",
+    "quickActionsHelp": "Use these for quick cancellation or deletion. Or modify the fields above and click Save.",
+    "requests": {
+      "actions": {
+        "activate": "Activate Subscription",
+        "confirmPayment": "Mark Payment Received",
+        "decline": "Decline",
+        "markPaymentReceived": "Mark Payment Received",
+        "review": "Mark Under Review",
+        "sendInvoice": "Send Invoice"
+      },
+      "activatedError": "Failed to activate subscription: ",
+      "activatedSuccess": "Subscription activated successfully",
+      "declinedError": "Failed to decline request: ",
+      "declinedSuccess": "Request declined",
+      "declineModal": {
+        "decline": "Decline Request",
+        "notes": "Internal Notes (optional)",
+        "reason": "Reason for Declining",
+        "sendEmailNotification": "Send email notification to customer",
+        "title": "Decline Request",
+        "warning": "You are about to decline the subscription request from"
+      },
+      "detail": {
+        "amount": "Amount",
+        "billingPeriod": "Billing Period",
+        "contactInfo": "Contact Information",
+        "declineReason": "Decline Reason",
+        "email": "Email",
+        "invoiceInfo": "Invoice Information",
+        "invoiceNumber": "Invoice Number",
+        "message": "Message",
+        "name": "Name",
+        "notes": "Admin Notes",
+        "paymentInfo": "Payment Information",
+        "paymentReference": "Reference",
+        "phone": "Phone",
+        "plan": "Plan",
+        "planDetails": "Plan Details",
+        "preferredContact": "Preferred Contact",
+        "receivedAt": "Received At",
+        "sentAt": "Sent At",
+        "status": "Status",
+        "submitted": "Submitted on {{date}}",
+        "tier": "Tier",
+        "title": "Subscription Request"
+      },
+      "filter": {
+        "allStatuses": "All Statuses"
+      },
+      "invoiceModal": {
+        "amount": "Amount",
+        "currency": "Currency",
+        "invoiceNumber": "Invoice Number",
+        "notes": "Notes (optional)",
+        "send": "Send Invoice",
+        "sendEmailNotification": "Send email notification to customer",
+        "sendingTo": "Sending invoice to",
+        "title": "Send Invoice"
+      },
+      "invoiceSentError": "Failed to send invoice: ",
+      "invoiceSentSuccess": "Invoice sent successfully",
+      "noRequests": "No subscription requests found",
+      "paymentConfirmedError": "Failed to confirm payment: ",
+      "paymentConfirmedSuccess": "Payment confirmed successfully",
+      "paymentModal": {
+        "autoActivate": "Automatically activate subscription",
+        "confirm": "Mark Received",
+        "date": "Payment Date",
+        "forInvoice": "For Invoice",
+        "manualPaymentHelp": "Manual/off-platform payment: record the received payment details below.",
+        "notes": "Notes (optional)",
+        "reference": "Payment Reference (optional)",
+        "title": "Mark Payment Received"
+      },
+      "reviewError": "Failed to review request: ",
+      "reviewSuccess": "Request marked as under review",
+      "stats": {
+        "activated": "Activated",
+        "invoiceSent": "Invoice Sent",
+        "paymentReceived": "Payment Received",
+        "pending": "Pending",
+        "underReview": "Under Review"
+      },
+      "table": {
+        "actions": "Actions",
+        "contact": "Contact",
+        "date": "Date",
+        "plan": "Plan",
+        "status": "Status",
+        "tier": "Tier"
+      }
+    },
+    "searchUsers": "Search users by name or email...",
+    "selectRoleType": "Select User Type to Manage Subscriptions",
+    "settings": {
+      "defaultsSection": "Subscription Defaults",
+      "defaultTrialDays": "Default Trial Days",
+      "emailSection": "Email Notifications",
+      "enableNotifications": "Enable Email Notifications",
+      "enableNotificationsHelp": "Receive emails for new subscription requests",
+      "estimatedResponseHours": "Estimated Response Time (hours)",
+      "estimatedResponseHoursHelp": "Shown to users when they submit a request",
+      "gracePeriodDays": "Grace Period Days",
+      "invoicePrefix": "Invoice Prefix",
+      "invoiceSection": "Invoice Settings",
+      "nextInvoiceNumber": "Next Invoice Number",
+      "notificationEmail": "Notification Email",
+      "notificationEmailHelp": "Email address to receive subscription request notifications",
+      "paymentTerms": "Payment Terms (days)",
+      "title": "Subscription Settings",
+      "updateError": "Failed to update settings: ",
+      "updateSuccess": "Settings updated successfully"
+    },
+    "stats": {
+      "activeSubscriptions": "",
+      "expiringSoon": "",
+      "monthlyRevenue": "",
+      "trialSubscriptions": ""
+    },
+    "subscribed": "subscribed",
+    "subscriptions": "Subscriptions",
+    "subtitle": "",
+    "tabs": {
+      "cancellations": "Cancellation Requests",
+      "requests": "Subscription Requests",
+      "subscriptions": "Subscriptions"
+    },
+    "tier": {
+      "help": "Tier applies to Foundation feature access and pricing configuration."
+    },
+    "tierEditor": {
+      "actions": {
+        "addVolumeDiscount": "Add",
+        "save": "Save",
+        "saving": "Saving..."
+      },
+      "billing": {
+        "monthly": "Monthly",
+        "yearly": "Yearly"
+      },
+      "confirmDelete": "Delete this tier?",
+      "createTitle": "Create Subscription Tier",
+      "deleteError": "Failed to delete subscription tier: ",
+      "deleteSuccess": "Subscription tier deleted successfully",
+      "editTitle": "Edit Subscription Tier",
+      "error": "Failed to save subscription tier: ",
+      "fields": {
+        "basePrice": "Base Price",
+        "billingPeriod": "Billing Period",
+        "currency": "Currency",
+        "discountPercentage": "Discount (%)",
+        "displayOrder": "Display Order",
+        "isActive": "Active",
+        "isActiveHelp": "Inactive tiers are hidden from selection and pricing.",
+        "minQuantity": "Min Quantity",
+        "name": "Name",
+        "namePlaceholder": "e.g. Foundation - Essential",
+        "noVolumeDiscounts": "No volume discounts configured.",
+        "subscriptionTier": "Tier",
+        "volumeDiscounts": "Volume Discounts",
+        "volumeDiscountsHelp": "Optional: discounts based on quantity.",
+        "yearlyDiscount": "Yearly Discount (%)"
+      },
+      "success": "Subscription tier saved successfully",
+      "validation": {
+        "basePrice": "Base price must be a valid number.",
+        "displayOrder": "Display order must be a valid number.",
+        "yearlyDiscount": "Yearly discount must be between 0 and 100."
+      }
+    },
+    "tierSection": {
+      "add": "Add Tier",
+      "empty": "No tiers configured yet.",
+      "subtitle": "Configure Foundation subscription tiers and pricing.",
+      "table": {
+        "actions": "Actions",
+        "active": "Active",
+        "billing": "Billing",
+        "price": "Price",
+        "tier": "Tier"
+      },
+      "title": "Subscription Tier"
+    },
+    "title": "",
+    "totalUsers": "total users",
+    "userTable": {
+      "actions": "Actions",
+      "email": "Email",
+      "organization": "Organization",
+      "plan": "Plan",
+      "subscriptionStatus": "Subscription Status",
+      "user": "User"
+    }
+  },
+  "support": {
+    "assignedToYou": "",
+    "assigning": "",
+    "assignToMe": "",
+    "backToList": "Back to tickets",
+    "details": "Details",
+    "noTickets": "",
+    "quickActions": "Quick actions",
+    "replyPlaceholder": "Type your reply...",
+    "searchPlaceholder": "",
+    "staff": "",
+    "staffMember": "",
+    "subtitle": "",
+    "table": {
+      "actions": "Actions",
+      "assignedTo": "",
+      "created": "",
+      "priority": "",
+      "status": "",
+      "ticket": "",
+      "user": ""
+    },
+    "ticketNotFound": "Ticket not found.",
+    "ticketNotFoundHint": "This ticket may have been deleted, or you may not have access.",
+    "title": "",
+    "unassigned": ""
+  },
+  "systemMonitor": {
+    "alerts": {
+      "createAlert": "Create Alert",
+      "title": "System Alerts"
+    },
+    "analytics": {
+      "geographicDistribution": "Geographic Distribution",
+      "performanceAnalytics": "Performance Analytics",
+      "requiresBackend": "Performance analytics require backend monitoring infrastructure to be configured.",
+      "requiresLocation": "Geographic analytics require user location tracking to be implemented. This feature will display user distribution by region once the tracking infrastructure is configured.",
+      "requiresTracking": "User analytics require tracking infrastructure to be configured. See the main Dashboard for available user statistics.",
+      "userAnalytics": "User Analytics"
+    },
+    "logs": {
+      "allLogs": "All Logs",
+      "noLogsFound": "No logs found",
+      "title": "Error Logs Console"
+    },
+    "metrics": {
+      "applicationPerformance": "Application Performance",
+      "databasePerformance": "Database Performance",
+      "requiresBackend": "System metrics require backend monitoring infrastructure. Currently showing available health data.",
+      "serverPerformance": "Server Performance"
+    },
+    "security": {
+      "ipWhitelist": "IP Whitelist",
+      "ipWhitelistDesc": "Restrict admin access to specific IPs",
+      "recentEvents": "Recent Security Events",
+      "requiresAudit": "Security event logging requires audit infrastructure to be configured. When enabled, this section will display recent security events such as failed logins, suspicious activity, and security scans.",
+      "requiresBackend": "Security metrics require security monitoring infrastructure to be configured.",
+      "sessionTimeout": "Session Timeout",
+      "sessionTimeoutDesc": "Auto-logout after 30 minutes of inactivity",
+      "settings": "Security Settings",
+      "title": "Security Overview",
+      "twoFactorAuth": "Two-Factor Authentication",
+      "twoFactorAuthDesc": "Require 2FA for all admin accounts"
+    },
+    "status": {
+      "allSystemsOperational": "All Systems Operational",
+      "authenticationService": "Authentication Service",
+      "backendApi": "Backend API",
+      "database": "Database",
+      "environment": "Environment:",
+      "justNow": "Just now",
+      "lastCheck": "Last Check:",
+      "systemIssuesDetected": "System Issues Detected",
+      "title": "System Status",
+      "uptime": "Uptime:",
+      "version": "Version:"
+    },
+    "subtitle": "Real-time system health and performance monitoring",
+    "tabs": {
+      "alerts": "Alerts",
+      "analytics": "Analytics",
+      "logs": "Error Logs",
+      "metrics": "Metrics",
+      "overview": "Overview",
+      "security": "Security"
+    },
+    "title": "System Monitor"
+  },
+  "translations": {
+    "advanced": {
+      "clean": "Clean",
+      "cleaning": "Cleaning...",
+      "cleanPrefixes": "Clean Prefixes",
+      "cleanPrefixesDesc": "Remove [FR]/[DE]/[EN] prefixes from translations",
+      "expand": "Click to expand",
+      "export": "Export",
+      "exportToFiles": "Export to JSON Files",
+      "exportToFilesDesc": "Sync database translations back to JSON files (required for frontend)",
+      "import": "Import",
+      "importFromFiles": "Import from JSON Files",
+      "importFromFilesDesc": "Load EN/FR/DE from packages/translations/locales into database",
+      "importing": "Importing...",
+      "scan": "Scan",
+      "scanFix": "Scan & Fix Hardcoded Strings",
+      "scanFixDesc": "Find hardcoded strings in code and create translation keys",
+      "scanning": "Scanning...",
+      "title": "⚙️ Advanced Options (Individual Steps)",
+      "translate": "Translate",
+      "translateMissing": "Translate Missing (FR/DE)",
+      "translateMissingDesc": "Translate missing keys to French and German",
+      "translating": "Translating..."
+    },
+    "audit": {
+      "action": "Action",
+      "date": "Date",
+      "key": "Key",
+      "language": "Language",
+      "namespace": "Namespace",
+      "noLogsFound": "No audit logs found",
+      "title": "Audit Logs",
+      "user": "User"
+    },
+    "error": {
+      "description": "Please check your connection and try again.",
+      "loadFailed": "Failed to load translations"
+    },
+    "filters": {
+      "namespace": "Namespace",
+      "search": "Search"
+    },
+    "issues": {
+      "actions": {
+        "copy": "Copy",
+        "markReviewed": "Mark reviewed",
+        "open": "Open",
+        "translate": "Translate"
+      },
+      "error": "Failed to load issues.",
+      "filters": {
+        "language": "Language",
+        "type": "Issue Type"
+      },
+      "none": "No issues found",
+      "selectedCount_one": "{{count}} selected",
+      "selectedCount_other": "{{count}} selected",
+      "subtitle": "Triage missing translations and review queue in one place.",
+      "table": {
+        "issue": "Issue"
+      },
+      "title": "Translation Issues",
+      "translateSelected": "Translate Selected",
+      "translating": "Translating...",
+      "types": {
+        "missing": "Missing translation",
+        "needsReview": "Needs review"
+      }
+    },
+    "missing": "Missing",
+    "moreOptions": {
+      "approveSelected_one": "Approve {{count}} Selected",
+      "approveSelected_other": "Approve {{count}} Selected",
+      "approving": "Approving...",
+      "exportCsv": "Export CSV",
+      "exportJson": "Export JSON",
+      "fixEnLabels": "Fix EN Key Labels",
+      "fixingEnLabels": "Fixing EN Labels...",
+      "hide": "Hide",
+      "import": "Import",
+      "refresh": "Refresh",
+      "show": "Show",
+      "title": "More Options"
+    },
+    "oneClickSync": {
+      "button": "🔄 Full Sync All Languages",
+      "description": "Import English keys → Translate to French & German → Export to files.",
+      "starting": "Starting sync...",
+      "subDescription": "This does everything in one step! Takes 5-10 minutes.",
+      "syncing": "Syncing... (this takes a few minutes)",
+      "title": "One-Click Sync"
+    },
+    "pagination": {
+      "pageOfTotal": "Page {{page}} of {{totalPages}}",
+      "showingResults": "Showing {{start}} to {{end}} of {{total}} results"
+    },
+    "releases": {
+      "createRelease": "Create Release",
+      "creating": "Creating...",
+      "description": "Creating a release will invalidate all caches and force clients to fetch fresh translations.",
+      "descriptionPlaceholder": "Description (optional)",
+      "title": "Translation Releases",
+      "versionPlaceholder": "Version (e.g., v1.2.3)"
+    },
+    "releasesList": {
+      "active": "Active",
+      "by": "by",
+      "created": "Created:",
+      "noReleasesFound": "No releases found",
+      "title": "Translation Releases"
+    },
+    "searchPlaceholder": "Search for keys or values...",
+    "stats": {
+      "namespaces": "Namespaces",
+      "needsReview": "Needs Review",
+      "totalKeys": "Total Keys"
+    },
+    "subtitle": "Manage static UI translations",
+    "table": {
+      "actions": "Actions",
+      "key": "Key",
+      "namespace": "Namespace",
+      "noTranslationsFound": "No translations found"
+    },
+    "tabs": {
+      "auditLogs": "Audit Logs",
+      "issues": "Issues",
+      "releases": "Releases",
+      "translations": "Translations"
+    },
+    "title": "Translation Management"
+  },
+  "users": {
+    "actions": {
+      "addToPool": "Add to candidate pool",
+      "message": "Message user",
+      "reactivate": "Reactivate",
+      "removeFromPool": "Remove from candidate pool",
+      "suspend": "Suspend"
+    },
+    "addUser": "Add User",
+    "deleteUser": {
+      "confirmation": "Are you sure you want to delete",
+      "delete": "Delete User",
+      "deleting": "Deleting...",
+      "title": "Delete User",
+      "warning": " This action cannot be undone and will permanently remove all associated data."
+    },
+    "editUser": {
+      "candidatePool": "Candidate pool",
+      "candidatePoolIn": "In pool",
+      "candidatePoolOut": "Not in pool",
+      "email": "Email",
+      "emailRequired": "Email is required",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "loadFailed": "Failed to load user",
+      "loading": "Loading user...",
+      "role": "Role",
+      "roleHint": "You cannot assign the Super Admin role.",
+      "saveChanges": "Save Changes",
+      "saving": "Saving...",
+      "status": "Status",
+      "title": "Edit User",
+      "updateFailed": "Failed to update user"
+    },
+    "elevateUser": {
+      "adminDescription": "Can manage users, content, and organizations",
+      "alreadyAdmin": "Note:",
+      "alreadyAdminMessage": "This user already has an admin role. You can change their role level below.",
+      "changeRole": "Change Admin Role",
+      "confirm": "Elevate User",
+      "currentRole": "Current role:",
+      "elevate": "Elevate to Admin",
+      "elevating": "Elevating...",
+      "failed": "Failed to elevate user",
+      "reason": "Reason for Elevation",
+      "reasonHint": "This reason will be recorded in the audit log.",
+      "reasonPlaceholder": "Explain why this user needs admin privileges...",
+      "reasonRequired": "Please provide a reason for this role elevation",
+      "selectRole": "Select Admin Role",
+      "superAdminDescription": "Full system access including role management",
+      "title": "Elevate to Admin"
+    },
+    "emptyState": {
+      "description": "Try adjusting your search criteria or add a new user.",
+      "title": "No users found"
+    },
+    "error": {
+      "description": "Please check your connection and try again.",
+      "loadFailed": "Failed to load users"
+    },
+    "labels": {
+      "never": "Never",
+      "noEmail": "No email",
+      "noOrganization": "No organization",
+      "unknown": "Unknown"
+    },
+    "messaging": {
+      "missingUserId": "Cannot message this user (missing user id)"
+    },
+    "pagination": {
+      "next": "Next",
+      "pageOf": "Page {{page}} of {{totalPages}}",
+      "previous": "Previous",
+      "rowsPerPage": "Rows per page",
+      "showing": "Showing {{from}}-{{to}} of {{total}}"
+    },
+    "subtitle": "Manage all users across the platform",
+    "suspend": {
+      "confirm": "Suspend",
+      "customReason": "Custom message",
+      "customReasonPlaceholder": "Write the message the user will see on login...",
+      "preview": "User message preview",
+      "reason": "Reason",
+      "reasonRequired": "Please provide a reason",
+      "reasons": {
+        "other": {
+          "label": "Other"
+        },
+        "paymentIssue": {
+          "label": "Payment or billing issue",
+          "message": "Your account has been suspended due to a billing issue. Please contact support for help."
+        },
+        "requestedByUser": {
+          "label": "Requested by user",
+          "message": "Your account has been deactivated at your request."
+        },
+        "suspiciousActivity": {
+          "label": "Suspicious activity",
+          "message": "Your account has been suspended due to suspicious activity. Please contact support to restore access."
+        },
+        "termsViolation": {
+          "label": "Violation of terms",
+          "message": "Your account has been suspended due to a violation of our terms of service."
+        }
+      },
+      "suspending": "Suspending...",
+      "title": "Suspend account",
+      "userLabel": "User"
+    },
+    "table": {
+      "actions": "Actions",
+      "lastLogin": "Last Login",
+      "organization": "Organization",
+      "role": "Role",
+      "status": "Status",
+      "user": "User"
+    },
+    "title": "Users Management",
+    "viewProfile": {
+      "noOrganization": "This user has no organization profile to view",
+      "title": "View Profile"
+    }
+  }
+}
