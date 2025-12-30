@@ -1275,9 +1275,13 @@
     "typePlaceholder": "Geben Sie Ihre Nachricht ein..."
   },
   "support": {
+    "backToList": "Zurück zu Tickets",
+    "details": "Details",
+    "quickActions": "Schnellaktionen",
     "searchPlaceholder": "Tickets suchen...",
     "replyPlaceholder": "Geben Sie Ihre Antwort ein...",
     "table": {
+      "actions": "Aktionen",
       "assignedTo": "Zugewiesen an",
       "priority": "Priorität",
       "created": "Erstellt",
@@ -1297,6 +1301,8 @@
     "subtitle": "Verwalten und Beantworten von Support-Tickets ({{total}} insgesamt)",
     "sending": "Ich schicke...",
     "staff": "Personal",
+    "ticketNotFoundHint": "Dieses Ticket wurde möglicherweise gelöscht oder Sie haben keinen Zugriff.",
+    "ticketNotFound": "Ticket nicht gefunden.",
     "title": "Tickets unterstützen",
     "user": "Benutzer"
   },

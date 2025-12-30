@@ -1275,9 +1275,13 @@
     "typePlaceholder": "Tapez votre message..."
   },
   "support": {
+    "backToList": "Retour aux tickets",
+    "details": "Détails",
+    "quickActions": "Actions rapides",
     "searchPlaceholder": "Recherche de billets...",
     "replyPlaceholder": "Tapez votre réponse...",
     "table": {
+      "actions": "Actions",
       "assignedTo": "Affecté à",
       "priority": "Priorité",
       "created": "Créée",
@@ -1297,6 +1301,8 @@
     "subtitle": "Gérer les tickets d'assistance et y répondre ({{total}} total)",
     "sending": "Envoi",
     "staff": "Personnel",
+    "ticketNotFoundHint": "Ce ticket a peut-être été supprimé, ou vous n'y avez pas accès.",
+    "ticketNotFound": "Ticket introuvable.",
     "title": "Tickets de soutien",
     "user": "Utilisateur"
   },
