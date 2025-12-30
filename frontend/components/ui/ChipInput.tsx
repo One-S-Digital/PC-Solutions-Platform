@@ -11,6 +11,7 @@ interface ChipInputProps<T extends string> {
   placeholder?: string;
   maxChips?: number;
   allowCustomValues?: boolean; // If true and no availableOptions, input acts as a tag adder
+  onInputValueChange?: (value: string) => void; // Reports unconfirmed typed input (e.g., before pressing Enter)
 }
 
 const ChipInput = <T extends string>({
@@ -19,7 +20,8 @@ const ChipInput = <T extends string>({
   onChange,
   placeholder,
   maxChips,
-  allowCustomValues = !availableOptions // Default to true if no options are provided
+  allowCustomValues = !availableOptions, // Default to true if no options are provided
+  onInputValueChange,
 }: ChipInputProps<T>): React.ReactElement => {
   const { t } = useTranslation(['common']);
   const [inputValue, setInputValue] = useState('');
@@ -27,11 +29,16 @@ const ChipInput = <T extends string>({
   
   const placeholderText = placeholder || t('common:placeholders.typeorselect');
 
+  const setInputValueAndReport = (nextValue: string) => {
+    setInputValue(nextValue);
+    onInputValueChange?.(nextValue);
+  };
+
   const handleAddChip = (chipValue: T) => {
     if (chipValue && !selectedChips.includes(chipValue) && (!maxChips || selectedChips.length < maxChips)) {
       onChange([...selectedChips, chipValue]);
     }
-    setInputValue('');
+    setInputValueAndReport('');
     setShowSuggestions(false);
   };
 
@@ -77,7 +84,10 @@ const ChipInput = <T extends string>({
         <input
           type="text"
           value={inputValue}
-          onChange={(e) => { setInputValue(e.target.value); setShowSuggestions(true); }}
+          onChange={(e) => {
+            setInputValueAndReport(e.target.value);
+            setShowSuggestions(true);
+          }}
           onKeyDown={handleKeyDown}
           onFocus={() => setShowSuggestions(true)}
           onBlur={() => setTimeout(() => setShowSuggestions(false), 150)} // Delay to allow click on suggestions

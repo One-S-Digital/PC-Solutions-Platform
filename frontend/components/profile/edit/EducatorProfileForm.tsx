@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { SettingsFormData } from '../../../types';
 import { STANDARD_INPUT_FIELD, SWISS_CANTONS } from '../../../constants';
 import { useTranslation } from 'react-i18next';
@@ -28,6 +28,8 @@ interface EducatorProfileFormProps {
 const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onChange }) => {
   const { t } = useTranslation(['common', 'settings']);
   const { currentUser } = useAppContext();
+  const [jobRoleDraft, setJobRoleDraft] = useState('');
+  const [citiesDraft, setCitiesDraft] = useState('');
 
   const handleSkillsChange = (newSkills: string[]) => {
     onChange('skills', newSkills);
@@ -73,6 +75,8 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
         ? [formData.jobRole]
         : [];
   const cities = Array.isArray(formData.cities) ? formData.cities : [];
+  const hasUnconfirmedJobRole = jobRoleDraft.trim().length > 0;
+  const hasUnconfirmedCity = citiesDraft.trim().length > 0;
 
   return (
     <div className="space-y-6">
@@ -161,9 +165,19 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
               }}
               placeholder={t('settings:educatorProfile.rolePlaceholder', 'e.g., Educator, Assistant')}
               allowCustomValues={true}
+              onInputValueChange={setJobRoleDraft}
             />
             <p className="mt-1 text-xs text-gray-500">
               {t('settings:educatorProfile.roleHint', 'Add one or more roles to improve matching.')}
+            </p>
+            <p
+              className={`mt-1 text-xs ${hasUnconfirmedJobRole ? 'text-swiss-coral' : 'text-gray-500'}`}
+            >
+              {hasUnconfirmedJobRole && <span className="text-swiss-coral">*</span>}{' '}
+              {t(
+                'settings:educatorProfile.rolePressEnterHint',
+                'Type a role and press Enter to add it.',
+              )}
             </p>
           </div>
 
@@ -194,9 +208,19 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
                 onChange={(nextCities) => onChange('cities', nextCities)}
                 placeholder={t('settings:educatorProfile.citiesPlaceholder', 'Add one or more cities')}
                 allowCustomValues={true}
+                onInputValueChange={setCitiesDraft}
               />
               <p className="mt-1 text-xs text-gray-500">
                 {t('settings:educatorProfile.citiesHint', 'Add multiple cities to increase your visibility.')}
+              </p>
+              <p
+                className={`mt-1 text-xs ${hasUnconfirmedCity ? 'text-swiss-coral' : 'text-gray-500'}`}
+              >
+                {hasUnconfirmedCity && <span className="text-swiss-coral">*</span>}{' '}
+                {t(
+                  'settings:educatorProfile.citiesPressEnterHint',
+                  'Type a city and press Enter to add it.',
+                )}
               </p>
             </div>
           </div>
