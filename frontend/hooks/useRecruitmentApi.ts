@@ -151,22 +151,28 @@ export const useRecruitmentApi = () => {
     },
 
     async createJobListing(payload: JobListingInput): Promise<JobListing> {
+      // Backend DTO uses a strict ValidationPipe with forbidNonWhitelisted=true.
+      // Strip UI-only fields that aren't persisted in the API schema.
+      const { employmentType: _employmentType, workSchedule: _workSchedule, ...rest } = payload;
       const response = await request<any>('/recruitment/job-listings', {
         method: 'POST',
         body: JSON.stringify({
-          ...payload,
-          startDate: payload.startDate ? new Date(payload.startDate).toISOString() : undefined,
+          ...rest,
+          startDate: rest.startDate ? new Date(rest.startDate).toISOString() : undefined,
         }),
       });
       return transformJobListing(response?.data ?? response);
     },
 
     async updateJobListing(id: string, payload: Partial<JobListingInput>): Promise<JobListing> {
+      // Backend DTO uses a strict ValidationPipe with forbidNonWhitelisted=true.
+      // Strip UI-only fields that aren't persisted in the API schema.
+      const { employmentType: _employmentType, workSchedule: _workSchedule, ...rest } = payload;
       const response = await request<any>(`/recruitment/job-listings/${id}`, {
         method: 'PATCH',
         body: JSON.stringify({
-          ...payload,
-          startDate: payload.startDate ? new Date(payload.startDate).toISOString() : undefined,
+          ...rest,
+          startDate: rest.startDate ? new Date(rest.startDate).toISOString() : undefined,
         }),
       });
       return transformJobListing(response?.data ?? response);
