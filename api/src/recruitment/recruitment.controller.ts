@@ -42,6 +42,7 @@ export class RecruitmentController {
     @Query('location') location?: string,
     @Query('search') search?: string,
     @Query('contractType') contractType?: string,
+    @Query('employmentType') employmentType?: string,
     @Query('lang') lang?: string,
     @Request() req?,
   ) {
@@ -66,6 +67,7 @@ export class RecruitmentController {
       location,
       search,
       contractType: normalizedContractType,
+      employmentType: employmentType ? employmentType.toUpperCase() : undefined,
       publishedOnly,
       lang: lang || 'en',
     });

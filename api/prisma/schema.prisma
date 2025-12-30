@@ -83,6 +83,13 @@ enum JobContractType {
   FREELANCE
 }
 
+// Used for job matching/search (aligned with educator availability UI).
+enum JobEmploymentType {
+  FULL_TIME
+  PART_TIME
+  REPLACEMENT
+}
+
 enum ServiceCategory {
   CLEANING
   IT_SUPPORT
@@ -700,6 +707,11 @@ model JobListing {
   salary           String?
   salaryRange      String?
   contractType     JobContractType @default(FULL_TIME)
+  // Search/matching field (separate from contractType: e.g. CDI can still be FULL_TIME)
+  employmentType   JobEmploymentType @default(FULL_TIME)
+  // Structured schedule preferences for PART_TIME/REPLACEMENT roles.
+  // Stored as JSON for flexibility; validated at API boundary.
+  workSchedule     Json?
   startDate        DateTime?
   status           JobStatus       @default(DRAFT)
   foundationId     String
