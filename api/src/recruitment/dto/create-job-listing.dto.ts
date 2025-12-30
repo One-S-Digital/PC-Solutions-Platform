@@ -10,15 +10,8 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
-import { JobContractType, JobStatus } from '@workspace/types';
+import { JobContractType, JobPreferredTimeSlot, JobStatus } from '@workspace/types';
 import { JobEmploymentType } from '@prisma/client';
-
-export enum JobPreferredTimeSlot {
-  MORNING = 'MORNING',
-  AFTERNOON = 'AFTERNOON',
-  FULL_DAY = 'FULL_DAY',
-  FLEXIBLE = 'FLEXIBLE',
-}
 
 export class JobWorkScheduleDto {
   @IsOptional()

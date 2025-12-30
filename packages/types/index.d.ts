@@ -70,6 +70,13 @@ export declare const JobContractType: {
     readonly FREELANCE: "FREELANCE";
 };
 export type JobContractType = (typeof JobContractType)[keyof typeof JobContractType];
+export declare const JobPreferredTimeSlot: {
+    readonly MORNING: "MORNING";
+    readonly AFTERNOON: "AFTERNOON";
+    readonly FULL_DAY: "FULL_DAY";
+    readonly FLEXIBLE: "FLEXIBLE";
+};
+export type JobPreferredTimeSlot = (typeof JobPreferredTimeSlot)[keyof typeof JobPreferredTimeSlot];
 export declare const ServiceCategory: {
     readonly CLEANING: "CLEANING";
     readonly IT_SUPPORT: "IT_SUPPORT";

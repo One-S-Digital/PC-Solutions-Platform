@@ -1,4 +1,5 @@
 import { ConflictException, Injectable } from '@nestjs/common';
+import { instanceToPlain } from 'class-transformer';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateJobListingDto } from './dto/create-job-listing.dto';
 import { UpdateJobListingDto } from './dto/update-job-listing.dto';
@@ -42,7 +43,7 @@ export class RecruitmentService {
 
     // Prisma Json fields must receive plain JSON values (not class instances).
     const workScheduleJson: Prisma.InputJsonValue | undefined = workSchedule
-      ? (JSON.parse(JSON.stringify(workSchedule)) as Prisma.InputJsonValue)
+      ? (instanceToPlain(workSchedule) as Prisma.InputJsonValue)
       : undefined;
 
     const parsedStartDate =
@@ -314,7 +315,7 @@ export class RecruitmentService {
 
     // Prisma Json fields must receive plain JSON values (not class instances).
     const workScheduleJson: Prisma.InputJsonValue | undefined = workSchedule
-      ? (JSON.parse(JSON.stringify(workSchedule)) as Prisma.InputJsonValue)
+      ? (instanceToPlain(workSchedule) as Prisma.InputJsonValue)
       : undefined;
 
     const currentListing = await this.prisma.jobListing.findUnique({
