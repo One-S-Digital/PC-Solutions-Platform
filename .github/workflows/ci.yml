@@ -51,6 +51,9 @@ jobs:
       - name: Run TypeScript type check
         run: pnpm type-check
 
+      - name: Check for Prisma schema drift
+        run: pnpm --filter api run check:schema-drift
+
   # Job 2: Unit Tests
   unit-tests:
     name: Unit Tests
