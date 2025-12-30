@@ -20,7 +20,7 @@ const ChipInput = <T extends string>({
   onChange,
   placeholder,
   maxChips,
-  allowCustomValues = !availableOptions, // Default to true if no options are provided
+  allowCustomValues = !availableOptions || availableOptions.length === 0, // Default to true if no options are provided (or options list is empty)
   onInputValueChange,
 }: ChipInputProps<T>): React.ReactElement => {
   const { t } = useTranslation(['common']);
