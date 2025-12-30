@@ -2,16 +2,13 @@ import React, { useCallback, useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-  AlertCircle,
   ArrowLeft,
   Calendar,
   CheckCircle,
-  Clock,
   LifeBuoy,
   Tag,
   User,
   UserCheck,
-  XCircle,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useUser } from '@clerk/clerk-react';
@@ -21,6 +18,7 @@ import SupportReplyComposer from '../components/support/SupportReplyComposer';
 import { useSupportThread } from '../hooks/useSupportThread';
 import { useApiClient, apiService } from '../services/api';
 import { SupportTicket as SupportTicketType, TicketPriority, TicketStatus } from '../types';
+import { getTicketPriorityColor, getTicketStatusColor, getTicketStatusIcon } from '../utils/supportTicketUi';
 
 const SupportTicket: React.FC = () => {
   const { ticketId } = useParams<{ ticketId: string }>();
@@ -109,50 +107,7 @@ const SupportTicket: React.FC = () => {
     return !!ticket && ticket.status !== 'CLOSED';
   }, [ticket?.id, ticket?.status]);
 
-  const getStatusColor = (status: TicketStatus): string => {
-    switch (status) {
-      case 'OPEN':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'IN_PROGRESS':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'RESOLVED':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'CLOSED':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  const getPriorityColor = (priority: TicketPriority): string => {
-    switch (priority) {
-      case 'LOW':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-      case 'MEDIUM':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'HIGH':
-        return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'URGENT':
-        return 'bg-red-100 text-red-800 border-red-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  const getStatusIcon = (status: TicketStatus) => {
-    switch (status) {
-      case 'OPEN':
-        return <AlertCircle className="h-4 w-4" />;
-      case 'IN_PROGRESS':
-        return <Clock className="h-4 w-4" />;
-      case 'RESOLVED':
-        return <CheckCircle className="h-4 w-4" />;
-      case 'CLOSED':
-        return <XCircle className="h-4 w-4" />;
-      default:
-        return <AlertCircle className="h-4 w-4" />;
-    }
-  };
+  // Ticket badge helpers live in ../utils/supportTicketUi
 
   if (!resolvedTicketId) {
     return (
@@ -221,15 +176,15 @@ const SupportTicket: React.FC = () => {
 
           <div className="mt-3 flex flex-wrap items-center gap-2">
             <span
-              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(
+              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getTicketStatusColor(
                 ticket.status
               )}`}
             >
-              {getStatusIcon(ticket.status)}
+              {getTicketStatusIcon(ticket.status)}
               <span className="ml-1">{ticket.status.replace('_', ' ')}</span>
             </span>
             <span
-              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getPriorityColor(
+              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getTicketPriorityColor(
                 ticket.priority
               )}`}
             >

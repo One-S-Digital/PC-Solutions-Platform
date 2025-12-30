@@ -1262,10 +1262,6 @@
       "termsLink": "Terms and Conditions"
     }
   },
-  "messaging": {
-    "searchPlaceholder": "Search conversations...",
-    "typePlaceholder": "Type your message..."
-  },
   "support": {
     "backToList": "Back to tickets",
     "details": "Details",

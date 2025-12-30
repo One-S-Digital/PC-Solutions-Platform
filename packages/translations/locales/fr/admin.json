@@ -1270,10 +1270,6 @@
       "termsLink": "Conditions générales d'utilisation"
     }
   },
-  "messaging": {
-    "searchPlaceholder": "Recherche de conversations...",
-    "typePlaceholder": "Tapez votre message..."
-  },
   "support": {
     "backToList": "Retour aux tickets",
     "details": "Détails",
