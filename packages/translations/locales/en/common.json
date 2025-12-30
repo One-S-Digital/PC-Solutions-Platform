@@ -588,7 +588,9 @@
       "hint": "hint",
       "placeholder": "placeholder"
     },
+    "locationNotProvided": "Location not provided",
     "loadError": "load Error",
+    "roleNotProvided": "Role not provided",
     "saveError": "save Error",
     "saveSuccess": "save Success",
     "skills": {

@@ -170,6 +170,13 @@ interface CandidateCardProps {
 
 const CandidateCard: React.FC<CandidateCardProps> = ({ candidate, onViewProfile, onToggleFavorite, isFavorite }) => {
   const { t } = useTranslation(['recruitment', 'common']);
+  const roleDisplay = candidate.jobRoles && candidate.jobRoles.length > 0
+    ? candidate.jobRoles.join(', ')
+    : (candidate.currentRoleOrTitle ?? candidate.jobRole ?? candidate.role ?? t('recruitment:candidateCard.roleUnknown', 'Role not specified'));
+  const locationDisplay = candidate.location
+    ?? (candidate.cities && candidate.cities.length > 0 ? candidate.cities.join(', ') : undefined)
+    ?? candidate.preferredRegion
+    ?? t('recruitment:candidateCard.regionUnknown', 'Region not specified');
   return (
     <Card className="mb-4 flex flex-col" hoverEffect>
       <div className="p-5 flex-grow">
@@ -177,7 +184,7 @@ const CandidateCard: React.FC<CandidateCardProps> = ({ candidate, onViewProfile,
           <img src={candidate.avatarUrl || 'https://picsum.photos/100/100'} alt={candidate.name} className="w-16 h-16 rounded-full mr-4" />
           <div>
             <h3 className="text-xl font-semibold text-swiss-mint">{candidate.name}</h3>
-            <p className="text-sm text-gray-500">{candidate.currentRoleOrTitle ?? candidate.jobRole ?? candidate.role ?? t('recruitment:candidateCard.roleUnknown', 'Role not specified')}</p>
+            <p className="text-sm text-gray-500">{roleDisplay}</p>
           </div>
           <StarIcon
             className={`w-5 h-5 ml-auto cursor-pointer ${isFavorite ? 'text-yellow-400' : 'text-gray-300 hover:text-yellow-400'}`}
@@ -186,7 +193,7 @@ const CandidateCard: React.FC<CandidateCardProps> = ({ candidate, onViewProfile,
         </div>
         <div className="space-y-1 text-sm text-gray-600">
           <p><CalendarDaysIcon className="w-4 h-4 inline mr-2 text-gray-400" />{candidate.availabilityStatus || candidate.availability || t('recruitment:candidateCard.availabilityUnknown', 'Availability not provided')}</p>
-          <p><MapPinIcon className="w-4 h-4 inline mr-2 text-gray-400" />{candidate.location || candidate.preferredRegion || t('recruitment:candidateCard.regionUnknown', 'Region not specified')}</p>
+          <p><MapPinIcon className="w-4 h-4 inline mr-2 text-gray-400" />{locationDisplay}</p>
           {candidate.shortBio && <p className="mt-2 text-xs italic line-clamp-2">{candidate.shortBio}</p>}
           {!candidate.shortBio && candidate.experience && <p className="mt-2 text-xs italic line-clamp-2">{candidate.experience}</p>}
         </div>
@@ -361,14 +368,29 @@ const RecruitmentPage: React.FC = () => {
     () =>
       candidateProfiles.filter(
         (candidate) => {
-          const roleText = (candidate.currentRoleOrTitle ?? candidate.jobRole ?? candidate.role ?? '').toLowerCase();
-          const locationText = (candidate.location ?? candidate.preferredRegion ?? '').toLowerCase();
+          const roleText = [
+            candidate.currentRoleOrTitle,
+            candidate.jobRole,
+            ...(candidate.jobRoles ?? []),
+            candidate.role,
+          ].filter(Boolean).join(' ').toLowerCase();
+          const locationText = [
+            candidate.location,
+            ...(candidate.cities ?? []),
+            candidate.preferredRegion,
+          ].filter(Boolean).join(' ').toLowerCase();
 
           const matchesSearch =
             candidate.name.toLowerCase().includes(searchTermCandidates.toLowerCase()) ||
             roleText.includes(searchTermCandidates.toLowerCase());
 
-          const matchesRole = candidateRoleFilter ? roleText === candidateRoleFilter.toLowerCase() : true;
+          const matchesRole = candidateRoleFilter
+            ? (candidate.jobRoles && candidate.jobRoles.length > 0
+                ? candidate.jobRoles
+                : [candidate.currentRoleOrTitle ?? candidate.jobRole ?? ''])
+                .filter(Boolean)
+                .some(role => role.toLowerCase() === candidateRoleFilter.toLowerCase())
+            : true;
           const matchesRegion = candidateRegionFilter
             ? locationText.includes(candidateRegionFilter.toLowerCase())
             : true;
@@ -409,8 +431,12 @@ const RecruitmentPage: React.FC = () => {
   const candidateRoleOptions = useMemo(() => {
     const roles = new Set<string>();
     candidateProfiles.forEach((c) => {
-      const role = (c.currentRoleOrTitle ?? c.jobRole ?? '').trim();
-      if (role) roles.add(role);
+      const roleEntries = c.jobRoles && c.jobRoles.length > 0
+        ? c.jobRoles
+        : [c.currentRoleOrTitle ?? c.jobRole ?? ''].map(r => r.trim()).filter(Boolean);
+      roleEntries.forEach((role) => {
+        if (role) roles.add(role);
+      });
     });
     return Array.from(roles).sort((a, b) => a.localeCompare(b));
   }, [candidateProfiles]);

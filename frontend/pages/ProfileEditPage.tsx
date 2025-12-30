@@ -156,6 +156,8 @@ const ProfileEditPage: React.FC = () => {
           phoneNumber: data.phoneNumber || '',
           region: data.region || '',
           jobRole: data.jobRole || '',
+          jobRoles: Array.isArray(data.jobRoles) ? data.jobRoles : (data.jobRole ? [data.jobRole] : []),
+          cities: Array.isArray(data.cities) ? data.cities : [],
           workExperience: data.workExperience || '',
           education: data.education || '',
           certifications: Array.isArray(data.certifications) ? data.certifications : [],
@@ -191,8 +193,8 @@ const ProfileEditPage: React.FC = () => {
 
     if (currentUser.role === UserRole.EDUCATOR) {
       const region = String((formData as any).region || '').trim();
-      const jobRole = String((formData as any).jobRole || '').trim();
-      if (!region || !jobRole) {
+      const jobRoles = Array.isArray((formData as any).jobRoles) ? (formData as any).jobRoles : [];
+      if (!region || jobRoles.length === 0) {
         addNotification({
           title: t('common:errors.genericErrorTitle', 'Error'),
           message: t(
@@ -288,7 +290,9 @@ const ProfileEditPage: React.FC = () => {
           contactEmail: payload.contactEmail || currentUser.email,
           phoneNumber: payload.phoneNumber || '',
           region: payload.region || '',
-          jobRole: payload.jobRole || '',
+          jobRole: payload.jobRole || (payload.jobRoles?.[0] || ''),
+          jobRoles: Array.isArray(payload.jobRoles) ? payload.jobRoles : [],
+          cities: Array.isArray(payload.cities) ? payload.cities : [],
           workExperience: payload.workExperience || '',
           education: payload.education || '',
           certifications: Array.isArray(payload.certifications) ? payload.certifications : [],

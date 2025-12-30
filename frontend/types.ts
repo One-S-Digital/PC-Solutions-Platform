@@ -306,6 +306,8 @@ export interface CandidateProfile {
     avatarUrl?: string;
     currentRoleOrTitle?: string;
     location?: string; // e.g., "Geneva, GE"
+    jobRoles?: string[];
+    cities?: string[];
     availabilityStatus?: 'Available Immediately' | 'Seeking Opportunities' | 'Not Available';
     shortBio?: string;
     skills: string[];
@@ -914,6 +916,8 @@ interface BaseSettings {
     email?: string; // User's personal email (for Educator/Parent)
     region?: SwissCanton | string; // Candidate location (e.g., canton/city)
     jobRole?: string; // Candidate role/title (e.g., "Educator", "Assistant")
+    jobRoles?: string[]; // Candidate roles/titles for multi-role matching
+    cities?: string[]; // Candidate cities for multi-city matching
     workExperience?: string;
     education?: string;
     certifications?: string[];

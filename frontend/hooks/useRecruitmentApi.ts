@@ -87,6 +87,15 @@ const transformCandidate = (data: any): CandidateProfile => {
   if (!data || typeof data !== 'object') {
     throw new Error('Invalid candidate data received');
   }
+
+  const jobRoles = Array.isArray(data.jobRoles)
+    ? data.jobRoles
+    : (data.jobRole ? [data.jobRole] : []);
+  const cities = Array.isArray(data.cities) ? data.cities : [];
+  const locationParts = [
+    ...(cities.length ? [cities.join(', ')] : []),
+    ...(data.region ? [data.region] : []),
+  ];
   
   return {
     id: data.id,
@@ -94,8 +103,10 @@ const transformCandidate = (data: any): CandidateProfile => {
     email: data.email ?? '',
     phone: data.phoneNumber ?? undefined,
     avatarUrl: data.avatarAsset?.publicUrl ?? data.avatarUrl ?? undefined,
-    currentRoleOrTitle: safeParseJSON<any[]>(data.workExperience)?.[0]?.jobTitle ?? data.jobRole ?? data.role,
-    location: data.region ?? data.location ?? undefined,
+    currentRoleOrTitle: safeParseJSON<any[]>(data.workExperience)?.[0]?.jobTitle ?? jobRoles[0] ?? data.role,
+    location: locationParts.length ? locationParts.join(' • ') : data.location ?? undefined,
+    jobRoles,
+    cities,
     availabilityStatus: data.availability ?? undefined,
     shortBio: data.bio ?? data.shortBio ?? undefined,
     skills: data.skills ?? [],

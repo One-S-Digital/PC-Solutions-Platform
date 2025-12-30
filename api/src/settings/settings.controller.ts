@@ -317,6 +317,10 @@ export class SettingsController {
         candidatePoolVisible: !!(user as any).candidatePoolVisible,
         region: (user as any).region ?? '',
         jobRole: (user as any).jobRole ?? '',
+        jobRoles: Array.isArray((user as any).jobRoles)
+          ? (user as any).jobRoles
+          : ((user as any).jobRole ? [(user as any).jobRole] : []),
+        cities: Array.isArray((user as any).cities) ? (user as any).cities : [],
         avatarAssetId: user.avatarAssetId ?? '',
         avatarUrl: (user as any).avatarAsset?.publicUrl ?? '', // Compute from asset relation
         coverAssetId: (user as any).coverAssetId ?? '',
@@ -359,17 +363,22 @@ export class SettingsController {
           phoneNumber: settings.phoneNumber,
           workExperience: settings.workExperience,
           education: settings.education,
-        certifications: settings.certifications,
-        skills: settings.skills,
-        availability: settings.availability,
-        cvUrl: settings.cvUrl,
-        shortBio: settings.shortBio,
-        region: settings.region,
-        jobRole: settings.jobRole,
-        ...(settings.candidatePoolVisible !== undefined && { candidatePoolVisible: settings.candidatePoolVisible }),
-        ...(settings.avatarAssetId !== undefined && { avatarAssetId: settings.avatarAssetId || null }),
-        ...(settings.coverAssetId !== undefined && { coverAssetId: settings.coverAssetId || null }),
-      },
+          certifications: settings.certifications,
+          skills: settings.skills,
+          availability: settings.availability,
+          cvUrl: settings.cvUrl,
+          shortBio: settings.shortBio,
+          region: settings.region,
+          ...(settings.cities !== undefined && { cities: settings.cities }),
+          ...(settings.jobRoles !== undefined && { jobRoles: settings.jobRoles }),
+          ...(settings.jobRole !== undefined && { jobRole: settings.jobRole }),
+          ...(settings.jobRoles?.length && settings.jobRole === undefined
+            ? { jobRole: settings.jobRoles[0] }
+            : {}),
+          ...(settings.candidatePoolVisible !== undefined && { candidatePoolVisible: settings.candidatePoolVisible }),
+          ...(settings.avatarAssetId !== undefined && { avatarAssetId: settings.avatarAssetId || null }),
+          ...(settings.coverAssetId !== undefined && { coverAssetId: settings.coverAssetId || null }),
+        },
       });
 
       // Store contact email separately (does NOT touch auth email).

@@ -91,6 +91,22 @@ export class UpdateEducatorSettingsDto {
   jobRole?: string;
 
   /**
+   * Candidate roles/titles for multi-role matching.
+   */
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  jobRoles?: string[];
+
+  /**
+   * Candidate cities for multi-city matching.
+   */
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  cities?: string[];
+
+  /**
    * When true, the educator will appear in the Foundation/Admin candidate pool.
    * Default is false (hidden).
    */

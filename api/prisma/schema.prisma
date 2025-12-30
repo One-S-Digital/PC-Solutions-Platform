@@ -206,6 +206,8 @@ model User {
   candidatePoolVisible Boolean  @default(true) // Educator-controlled visibility in candidate pool
   region               String? // Candidate location (e.g., canton/city)
   jobRole              String? // Candidate role/title (e.g., "Educator", "Assistant")
+  jobRoles             String[] @default([]) // Candidate roles/titles for multi-role matching
+  cities               String[] @default([]) // Candidate cities for multi-city matching
 
   // Avatar asset relation
   avatarAssetId String?
