@@ -1187,9 +1187,52 @@ const main = async () => {
   log(`Using schema: ${SCHEMA_PATH}`);
   log(`Using Prisma CLI: ${PRISMA_BIN ? PRISMA_BIN : 'npx prisma (fallback)'}`);
 
-  // If Render points us at an existing DB that was created outside Prisma Migrate,
-  // `prisma migrate deploy` will fail with P3005 unless we baseline it first.
-  await maybeBaselineExistingDatabase();
+  // Determine whether this DB is already managed by Prisma Migrate.
+  // Important: On a fresh empty DB, we must NOT create any tables here, otherwise
+  // `prisma migrate deploy` will immediately fail with P3005 ("schema is not empty").
+  let migrationsTableExists = false;
+  let nonPrismaTableCount = 0;
+  try {
+    migrationsTableExists = getPrismaMigrationsTableExists();
+    nonPrismaTableCount = getNonPrismaTableCount();
+  } catch (e) {
+    // If we can’t inspect the DB, migrations will fail anyway. Surface a clear error.
+    throw new Error(`Could not inspect database schema: ${e.message}`);
+  }
+
+  log(
+    `Database inspection: _prisma_migrations=${migrationsTableExists ? 'present' : 'missing'}, ` +
+      `nonPrismaTables=${nonPrismaTableCount}`
+  );
+
+  if (!migrationsTableExists) {
+    if (nonPrismaTableCount === 0) {
+      log(
+        'Empty database detected (no tables, no Prisma migration history). ' +
+          'Skipping prebuild recovery steps so `prisma migrate deploy` can bootstrap the schema.'
+      );
+      log('Done.');
+      return;
+    }
+
+    // Non-empty schema but no Prisma migration history: Prisma will throw P3005.
+    // Do NOT attempt to "help" by creating more tables here; that only increases drift.
+    // Instead, attempt safe baseline (only if the schema matches) and otherwise fail fast
+    // with actionable instructions.
+    await maybeBaselineExistingDatabase();
+
+    // Re-check: if we still don't have a migrations table, stop here.
+    migrationsTableExists = getPrismaMigrationsTableExists();
+    if (!migrationsTableExists) {
+      error(
+        '❌ Database has tables but no `_prisma_migrations` history table. ' +
+          '`prisma migrate deploy` will fail with P3005 until this DB is reset or baselined.'
+      );
+      error('   Dev fix: use a fresh empty database (recommended) or wipe/reset this database.');
+      error('   Prisma baseline docs: https://pris.ly/d/migrate-baseline');
+      throw new Error('Database is not managed by Prisma Migrate (P3005 precondition).');
+    }
+  }
 
   // Known migration handlers (documented in api/scripts/README-MIGRATION-RECOVERY.md)
   // For already-applied migrations, just ensure schema exists (idempotent safety net)
