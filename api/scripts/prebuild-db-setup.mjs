@@ -79,11 +79,171 @@ const runPrisma = (args, { silent = false, input } = {}) => {
   return typeof result.stdout === 'string' ? result.stdout.trim() : '';
 };
 
+/**
+ * Run Prisma CLI but return status/stdout/stderr (no throw).
+ * Useful for commands like `migrate diff --exit-code` where non-zero is expected.
+ */
+const runPrismaResult = (args, { input } = {}) => {
+  const useNpx = !PRISMA_BIN;
+  const cmd = useNpx ? 'npx' : PRISMA_BIN;
+  const cmdArgs = useNpx ? ['prisma', ...args] : args;
+
+  const result = spawnSync(cmd, cmdArgs, {
+    cwd: API_ROOT,
+    env: {
+      ...process.env,
+      PRISMA_HIDE_UPDATE_MESSAGE: '1',
+    },
+    stdio: ['pipe', 'pipe', 'pipe'],
+    encoding: 'utf8',
+    input,
+  });
+
+  return {
+    status: result.status ?? 1,
+    stdout: typeof result.stdout === 'string' ? result.stdout.trim() : '',
+    stderr: typeof result.stderr === 'string' ? result.stderr.trim() : '',
+    error: result.error,
+    cmd: `${cmd} ${cmdArgs.join(' ')}`.trim(),
+  };
+};
+
 const runSql = (sql) =>
   runPrisma(['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'], {
     silent: true,
     input: sql,
   });
+
+const isTruthy = (value) => ['1', 'true', 'yes', 'on'].includes(String(value ?? '').toLowerCase());
+
+const getPrismaMigrationsTableExists = () => {
+  const sql = `
+SELECT EXISTS (
+  SELECT 1
+  FROM information_schema.tables
+  WHERE table_schema = 'public'
+    AND table_name = '_prisma_migrations'
+) AS exists;
+`;
+  const out = runSql(sql);
+  return out.toLowerCase().includes('true');
+};
+
+const getNonPrismaTableCount = () => {
+  const sql = `
+SELECT COUNT(*)::int AS count
+FROM information_schema.tables
+WHERE table_schema = 'public'
+  AND table_type = 'BASE TABLE'
+  AND table_name <> '_prisma_migrations';
+`;
+  const out = runSql(sql);
+  const match = out.match(/(\d+)/);
+  return match ? Number(match[1]) : 0;
+};
+
+const getMigrationsOnDisk = () => {
+  const migrationsDir = path.join(API_ROOT, 'prisma', 'migrations');
+  const entries = fs.readdirSync(migrationsDir, { withFileTypes: true });
+  return entries
+    .filter((e) => e.isDirectory())
+    .map((e) => e.name)
+    // Prisma expects migration folder names in chronological order (timestamp prefix)
+    .sort((a, b) => a.localeCompare(b));
+};
+
+const dbMatchesPrismaSchema = () => {
+  // Exit codes (with --exit-code):
+  // - 0: no differences
+  // - 2: differences found
+  // Prisma may return 1 for unexpected errors (bad connection, etc).
+  const res = runPrismaResult([
+    'migrate',
+    'diff',
+    '--from-schema-datasource',
+    SCHEMA_PATH,
+    '--to-schema-datamodel',
+    SCHEMA_PATH,
+    '--exit-code',
+  ]);
+
+  if (res.error) {
+    throw res.error;
+  }
+
+  if (res.status === 0) return true;
+  if (res.status === 2) return false;
+
+  // Unexpected failure: surface stderr for actionable debugging.
+  throw new Error(`${res.cmd} failed: ${res.stderr || res.stdout}`.trim());
+};
+
+/**
+ * Baseline a non-empty database that matches schema.prisma but is missing Prisma migration history.
+ * This prevents Prisma P3005 during `prisma migrate deploy` on Render.
+ *
+ * Safety:
+ * - Only runs when we can confirm DB schema matches schema.prisma (no diff)
+ * - Otherwise we fail fast with clear instructions (don’t guess / don’t mutate history)
+ */
+const maybeBaselineExistingDatabase = async () => {
+  let migrationsTableExists = false;
+  let nonPrismaTableCount = 0;
+
+  try {
+    migrationsTableExists = getPrismaMigrationsTableExists();
+    nonPrismaTableCount = getNonPrismaTableCount();
+  } catch (e) {
+    // If we can’t even query information_schema, Prisma migrations will fail anyway.
+    throw new Error(`Could not inspect database schema: ${e.message}`);
+  }
+
+  if (migrationsTableExists) return;
+  if (nonPrismaTableCount === 0) return; // empty DB, normal migrate deploy will work
+
+  // Detect Render environment (Render sets several env vars; `RENDER` is commonly present)
+  const autoBaselineEnabled = isTruthy(process.env.PRISMA_AUTO_BASELINE) || Boolean(process.env.RENDER);
+
+  warn(
+    `⚠️  Detected non-empty database schema without Prisma migration history (_prisma_migrations missing). ` +
+      `Prisma migrate deploy will fail with P3005 unless this database is baselined.`
+  );
+
+  if (!autoBaselineEnabled) {
+    warn('ℹ️  Auto-baseline is disabled. To enable safe auto-baseline, set PRISMA_AUTO_BASELINE=true.');
+    warn('   Alternatively, use a fresh empty database, or baseline manually:');
+    warn('   1) Confirm schema matches: npx prisma migrate diff --from-schema-datasource prisma/schema.prisma --to-schema-datamodel prisma/schema.prisma --exit-code');
+    warn('   2) Mark migrations applied: npx prisma migrate resolve --applied <migration_name> (repeat for each migration)');
+    return;
+  }
+
+  log('🔎 Verifying database schema matches prisma/schema.prisma before baselining...');
+  const matches = dbMatchesPrismaSchema();
+
+  if (!matches) {
+    error(
+      '❌ Database schema does NOT match prisma/schema.prisma, so auto-baseline is unsafe and will not run.'
+    );
+    error('   You are likely pointing at the wrong database, or it is out of date / drifted.');
+    error('   Fix options:');
+    error('   - Point DATABASE_URL at the correct environment DB');
+    error('   - Use a fresh empty database and let Prisma apply migrations');
+    error('   - Or manually reconcile schema drift, then baseline (see Prisma baseline docs: https://pris.ly/d/migrate-baseline)');
+    throw new Error('Auto-baseline aborted due to schema drift.');
+  }
+
+  log('✅ Schema matches. Creating Prisma migration baseline by marking migrations as applied...');
+  const migrations = getMigrationsOnDisk();
+  for (const name of migrations) {
+    try {
+      await resolveMigration('applied', name);
+    } catch (e) {
+      // resolveMigration already logs warnings; treat as fatal here because baseline must be complete
+      throw new Error(`Failed to baseline migration ${name}: ${e.message}`);
+    }
+  }
+  log(`✅ Baseline complete (${migrations.length} migrations marked as applied).`);
+};
 
 const resolveMigration = async (status, migrationName) => {
   const flag = status === 'applied' ? '--applied' : '--rolled-back';
@@ -1021,6 +1181,10 @@ CREATE UNIQUE INDEX IF NOT EXISTS "mt_cost_tracking_date_provider_sourceLang_tar
 const main = async () => {
   log(`Using schema: ${SCHEMA_PATH}`);
   log(`Using Prisma CLI: ${PRISMA_BIN ? PRISMA_BIN : 'npx prisma (fallback)'}`);
+
+  // If Render points us at an existing DB that was created outside Prisma Migrate,
+  // `prisma migrate deploy` will fail with P3005 unless we baseline it first.
+  await maybeBaselineExistingDatabase();
 
   // Known migration handlers (documented in api/scripts/README-MIGRATION-RECOVERY.md)
   // For already-applied migrations, just ensure schema exists (idempotent safety net)
