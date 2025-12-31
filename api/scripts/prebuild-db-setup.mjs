@@ -160,8 +160,9 @@ const dbMatchesPrismaSchema = () => {
   const res = runPrismaResult([
     'migrate',
     'diff',
-    '--from-schema-datasource',
+    '--schema',
     SCHEMA_PATH,
+    '--from-schema-datasource',
     '--to-schema-datamodel',
     SCHEMA_PATH,
     '--exit-code',
@@ -201,8 +202,10 @@ const maybeBaselineExistingDatabase = async () => {
   if (migrationsTableExists) return;
   if (nonPrismaTableCount === 0) return; // empty DB, normal migrate deploy will work
 
-  // Detect Render environment (Render sets several env vars; `RENDER` is commonly present)
-  const autoBaselineEnabled = isTruthy(process.env.PRISMA_AUTO_BASELINE) || Boolean(process.env.RENDER);
+  // Detect Render environment (Render typically sets multiple RENDER_* env vars)
+  const isRenderEnv =
+    Boolean(process.env.RENDER) || Object.keys(process.env).some((k) => k === 'RENDER' || k.startsWith('RENDER_'));
+  const autoBaselineEnabled = isTruthy(process.env.PRISMA_AUTO_BASELINE) || isRenderEnv;
 
   warn(
     `⚠️  Detected non-empty database schema without Prisma migration history (_prisma_migrations missing). ` +
@@ -212,7 +215,9 @@ const maybeBaselineExistingDatabase = async () => {
   if (!autoBaselineEnabled) {
     warn('ℹ️  Auto-baseline is disabled. To enable safe auto-baseline, set PRISMA_AUTO_BASELINE=true.');
     warn('   Alternatively, use a fresh empty database, or baseline manually:');
-    warn('   1) Confirm schema matches: npx prisma migrate diff --from-schema-datasource prisma/schema.prisma --to-schema-datamodel prisma/schema.prisma --exit-code');
+    warn(
+      '   1) Confirm schema matches: npx prisma migrate diff --schema prisma/schema.prisma --from-schema-datasource --to-schema-datamodel prisma/schema.prisma --exit-code'
+    );
     warn('   2) Mark migrations applied: npx prisma migrate resolve --applied <migration_name> (repeat for each migration)');
     return;
   }
