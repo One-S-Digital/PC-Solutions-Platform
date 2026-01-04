@@ -24,8 +24,9 @@ services:
     name: pc-solutions-v2
     env: node
     plan: starter
+    branch: merge/pcs-development-integration
     buildCommand: pnpm run prebuild:render && cd api && pnpm install --frozen-lockfile && pnpm run build:render
-    startCommand: cd api && pnpm run start:prod
+    startCommand: cd api && bash ./scripts/start-with-migration.sh
     envVars:
       - key: NODE_ENV
         value: production
@@ -70,5 +71,5 @@ databases:
   # PostgreSQL Database
   - name: pc-solutions-db
     plan: starter
-    databaseName: pc_solutions_prod
+    databaseName: pc_solutions_dev
     user: pc_solutions_user
