@@ -1375,6 +1375,27 @@ const main = async () => {
     log(`ℹ️  ${I18N_MIGRATION} not applied yet; skipping translation infra pre-creation (Prisma will create it).`);
   }
 
+  // Fix for Render/prod: failed migration can block all subsequent deploys until resolved.
+  // `20251106001000_user_email_nullable` historically failed due to a regclass lookup using an
+  // unquoted identifier for the legacy "AppUser" table. If this migration is FAILED, clear its
+  // state so Prisma can retry it (the migration SQL is now safe).
+  const USER_EMAIL_NULLABLE = '20251106001000_user_email_nullable';
+  if (failedMigrations.has(USER_EMAIL_NULLABLE)) {
+    try {
+      log(`🔧 Detected FAILED migration ${USER_EMAIL_NULLABLE}. Clearing failed state so Prisma can retry...`);
+      let cleared = await resolveMigration('rolled-back', USER_EMAIL_NULLABLE);
+      if (!cleared) {
+        log('⚠️  Standard resolve failed, force-marking as rolled-back...');
+        cleared = forceMarkMigrationRolledBack(USER_EMAIL_NULLABLE);
+      }
+      if (!cleared) {
+        warn(`⚠️  Could not clear failed state for ${USER_EMAIL_NULLABLE} (deploy may remain blocked).`);
+      }
+    } catch (e) {
+      warn(`⚠️  Could not clear failed state for ${USER_EMAIL_NULLABLE}: ${e.message}`);
+    }
+  }
+
   try {
     ensureMessageFileColumns();
   } catch (e) {
