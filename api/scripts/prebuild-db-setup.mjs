@@ -170,15 +170,17 @@ WHERE "migration_name" = '${migrationName.replace(/'/g, "''")}';
 
 const getPrismaMigrationsTableExists = () => {
   const sql = `
-SELECT EXISTS (
+-- Return a stable scalar value so parsing is reliable across Prisma/psql output formats.
+SELECT CASE WHEN EXISTS (
   SELECT 1
   FROM information_schema.tables
   WHERE table_schema = 'public'
     AND table_name = '_prisma_migrations'
-) AS exists;
+) THEN 1 ELSE 0 END AS "exists";
 `;
   const out = runSql(sql);
-  return out.toLowerCase().includes('true');
+  // Prisma db execute output may include headers/formatting; accept any standalone "1".
+  return /(^|\s)1(\s|$)/.test(String(out));
 };
 
 const getNonPrismaTableCount = () => {
