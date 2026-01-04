@@ -116,6 +116,58 @@ const runSql = (sql) =>
 
 const isTruthy = (value) => ['1', 'true', 'yes', 'on'].includes(String(value ?? '').toLowerCase());
 
+/**
+ * Extract migration folder names from prisma db execute output.
+ * We avoid relying on table formatting and instead regex-scan for names.
+ */
+const extractMigrationNames = (text) => {
+  if (!text) return [];
+  const matches = text.match(/\d{8,}_[A-Za-z0-9_]+/g) ?? [];
+  return Array.from(new Set(matches));
+};
+
+/**
+ * Read migrations from the _prisma_migrations table.
+ * We intentionally use string_agg so we can parse output reliably.
+ */
+const getMigrationNamesFromDb = (whereClauseSql) => {
+  const sql = `
+SELECT COALESCE(string_agg("migration_name", E'\\n'), '') AS names
+FROM "public"."_prisma_migrations"
+WHERE ${whereClauseSql};
+`;
+  const out = runSql(sql);
+  return extractMigrationNames(out);
+};
+
+const getAppliedMigrationNamesFromDb = () =>
+  getMigrationNamesFromDb(`"finished_at" IS NOT NULL AND "rolled_back_at" IS NULL`);
+
+const getFailedMigrationNamesFromDb = () =>
+  getMigrationNamesFromDb(`"finished_at" IS NULL AND "rolled_back_at" IS NULL`);
+
+/**
+ * Force mark a migration as applied by updating the tracking table directly.
+ * This is ONLY safe when the migration record already exists (e.g. FAILED state)
+ * and the DB schema has already been brought to the post-migration shape.
+ */
+const forceMarkMigrationApplied = (migrationName) => {
+  const sql = `
+UPDATE "public"."_prisma_migrations"
+SET "finished_at" = NOW(),
+    "rolled_back_at" = NULL
+WHERE "migration_name" = '${migrationName.replace(/'/g, "''")}';
+`;
+  try {
+    runSql(sql);
+    log(`✅ Force-marked migration ${migrationName} as applied.`);
+    return true;
+  } catch (e) {
+    warn(`⚠️  Could not force-mark migration ${migrationName} as applied: ${e.message}`);
+    return false;
+  }
+};
+
 const getPrismaMigrationsTableExists = () => {
   const sql = `
 SELECT EXISTS (
@@ -1234,6 +1286,51 @@ const main = async () => {
     }
   }
 
+  // ------------------------------------------------------------
+  // Migration history inspection
+  // ------------------------------------------------------------
+  let appliedMigrations = new Set();
+  let failedMigrations = new Set();
+  try {
+    appliedMigrations = new Set(getAppliedMigrationNamesFromDb());
+    failedMigrations = new Set(getFailedMigrationNamesFromDb());
+  } catch (e) {
+    warn(`⚠️  Could not read _prisma_migrations status: ${e.message}`);
+  }
+
+  const isRenderEnv =
+    Boolean(process.env.RENDER) || Object.keys(process.env).some((k) => k === 'RENDER' || k.startsWith('RENDER_'));
+  const autoReconcileEnabled = isTruthy(process.env.PRISMA_AUTO_RECONCILE) || isRenderEnv;
+
+  // If the DB already matches schema.prisma exactly, but migration history is drifted
+  // (missing entries / failed entries), we can safely reconcile by marking all migrations applied.
+  // This unblocks Render deploys without requiring terminal access.
+  if (autoReconcileEnabled) {
+    try {
+      const matches = dbMatchesPrismaSchema();
+      if (matches) {
+        log('✅ Database matches schema.prisma. Reconciling migration history (marking all migrations applied)...');
+        const allMigrations = getMigrationsOnDisk();
+        for (const name of allMigrations) {
+          try {
+            await resolveMigration('applied', name);
+          } catch (e) {
+            // If resolve fails for an existing failed record, attempt a direct update.
+            // (We cannot safely INSERT a new record without Prisma because checksum is required.)
+            if (String(e?.message || '').includes('P3019') || String(e?.message || '').includes('P3009')) {
+              forceMarkMigrationApplied(name);
+            }
+          }
+        }
+        log(`✅ Reconciled migration history (${allMigrations.length} migrations).`);
+        log('Done.');
+        return;
+      }
+    } catch (e) {
+      warn(`⚠️  Auto-reconcile skipped (could not diff schema): ${e.message}`);
+    }
+  }
+
   // Known migration handlers (documented in api/scripts/README-MIGRATION-RECOVERY.md)
   // For already-applied migrations, just ensure schema exists (idempotent safety net)
   try {
@@ -1249,10 +1346,54 @@ const main = async () => {
     warn(`⚠️  categories schema verification failed: ${e.message}`);
   }
 
-  try {
-    ensureTranslationInfrastructure();
-  } catch (e) {
-    warn(`⚠️  translation infrastructure verification failed: ${e.message}`);
+  // IMPORTANT:
+  // Do NOT pre-create translation tables unless the migration is already applied (or failed).
+  // The migration SQL contains CREATE TABLE statements without IF NOT EXISTS and will fail
+  // if these tables already exist.
+  const I18N_MIGRATION = '20251114140526_add_i18n_translation_tables';
+  if (failedMigrations.has(I18N_MIGRATION)) {
+    try {
+      log(`🔧 Detected FAILED migration ${I18N_MIGRATION}. Repairing translation infra + marking applied...`);
+      ensureTranslationInfrastructure();
+      let ok = await resolveMigration('applied', I18N_MIGRATION);
+      if (!ok) {
+        ok = forceMarkMigrationApplied(I18N_MIGRATION);
+      }
+      if (!ok) {
+        warn(`⚠️  Could not mark ${I18N_MIGRATION} as applied (migration may remain blocked).`);
+      }
+    } catch (e) {
+      warn(`⚠️  translation infrastructure repair failed: ${e.message}`);
+    }
+  } else if (appliedMigrations.has(I18N_MIGRATION)) {
+    try {
+      ensureTranslationInfrastructure();
+    } catch (e) {
+      warn(`⚠️  translation infrastructure verification failed: ${e.message}`);
+    }
+  } else {
+    log(`ℹ️  ${I18N_MIGRATION} not applied yet; skipping translation infra pre-creation (Prisma will create it).`);
+  }
+
+  // Fix for Render/prod: failed migration can block all subsequent deploys until resolved.
+  // `20251106001000_user_email_nullable` historically failed due to a regclass lookup using an
+  // unquoted identifier for the legacy "AppUser" table. If this migration is FAILED, clear its
+  // state so Prisma can retry it (the migration SQL is now safe).
+  const USER_EMAIL_NULLABLE = '20251106001000_user_email_nullable';
+  if (failedMigrations.has(USER_EMAIL_NULLABLE)) {
+    try {
+      log(`🔧 Detected FAILED migration ${USER_EMAIL_NULLABLE}. Clearing failed state so Prisma can retry...`);
+      let cleared = await resolveMigration('rolled-back', USER_EMAIL_NULLABLE);
+      if (!cleared) {
+        log('⚠️  Standard resolve failed, force-marking as rolled-back...');
+        cleared = forceMarkMigrationRolledBack(USER_EMAIL_NULLABLE);
+      }
+      if (!cleared) {
+        warn(`⚠️  Could not clear failed state for ${USER_EMAIL_NULLABLE} (deploy may remain blocked).`);
+      }
+    } catch (e) {
+      warn(`⚠️  Could not clear failed state for ${USER_EMAIL_NULLABLE}: ${e.message}`);
+    }
   }
 
   try {
