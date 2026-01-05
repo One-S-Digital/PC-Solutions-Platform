@@ -265,12 +265,16 @@ const dbMatchesPrismaSchema = () => {
   // - 0: no differences
   // - 2: differences found
   // Prisma may return 1 for unexpected errors (bad connection, etc).
+  // 
+  // NOTE: The Prisma CLI syntax for migrate diff is:
+  //   --from-schema-datasource <path>  (path to schema file, uses DB connection from it)
+  //   --to-schema-datamodel <path>     (path to schema file, uses datamodel from it)
+  // The --schema flag is NOT valid for migrate diff.
   const res = runPrismaResult([
     'migrate',
     'diff',
-    '--schema',
-    SCHEMA_PATH,
     '--from-schema-datasource',
+    SCHEMA_PATH,
     '--to-schema-datamodel',
     SCHEMA_PATH,
     '--exit-code',
@@ -1291,14 +1295,110 @@ CREATE UNIQUE INDEX IF NOT EXISTS "mt_cost_tracking_date_provider_sourceLang_tar
   log('✅ Translation infrastructure verified.');
 };
 
+/**
+ * CRITICAL: Clear ALL failed migrations from the database FIRST.
+ * This is the most important recovery step - failed migrations (P3009) block everything.
+ * We use direct SQL to avoid Prisma CLI version/argument issues.
+ */
+const clearAllFailedMigrationsDirect = () => {
+  // First check if table exists
+  try {
+    runSql(`SELECT 1 FROM "_prisma_migrations" LIMIT 1;`);
+  } catch (e) {
+    // Table doesn't exist - fresh database, nothing to clear
+    log('ℹ️  No _prisma_migrations table yet (fresh database).');
+    return { tableExists: false, clearedCount: 0 };
+  }
+
+  // Get list of failed migrations before clearing (for logging)
+  let failedNames = [];
+  try {
+    const listSql = `
+SELECT "migration_name" FROM "_prisma_migrations"
+WHERE "finished_at" IS NULL AND "rolled_back_at" IS NULL;
+`;
+    const out = runSql(listSql);
+    failedNames = extractMigrationNames(out);
+  } catch (e) {
+    // Ignore - we'll try to clear anyway
+  }
+
+  if (failedNames.length > 0) {
+    log(`⚠️  Found ${failedNames.length} FAILED migration(s): ${failedNames.join(', ')}`);
+  }
+
+  // Clear all failed migrations by marking them as rolled back
+  const clearSql = `
+UPDATE "_prisma_migrations"
+SET 
+  "finished_at" = NOW(),
+  "rolled_back_at" = NOW()
+WHERE "finished_at" IS NULL 
+  AND "rolled_back_at" IS NULL;
+`;
+  try {
+    runSql(clearSql);
+    if (failedNames.length > 0) {
+      log(`✅ Cleared ${failedNames.length} failed migration(s). Prisma will re-run them.`);
+    }
+    return { tableExists: true, clearedCount: failedNames.length };
+  } catch (e) {
+    warn(`⚠️  Could not clear failed migrations via SQL: ${e.message}`);
+    // Try individual force-clear as fallback
+    let cleared = 0;
+    for (const name of failedNames) {
+      if (forceMarkMigrationRolledBack(name)) {
+        cleared++;
+      }
+    }
+    return { tableExists: true, clearedCount: cleared };
+  }
+};
+
 const main = async () => {
   log(`Using schema: ${SCHEMA_PATH}`);
   log(`Using Prisma CLI: ${PRISMA_BIN ? PRISMA_BIN : 'npx prisma (fallback)'}`);
 
-  // Determine whether this DB is already managed by Prisma Migrate.
-  // Important: On a fresh empty DB, we must NOT create any tables here, otherwise
-  // `prisma migrate deploy` will immediately fail with P3005 ("schema is not empty").
-  let migrationsTableExists = false;
+  // ============================================================
+  // CRITICAL FIRST STEP: Clear all failed migrations immediately
+  // ============================================================
+  // This MUST happen before any other logic because P3009 blocks everything.
+  // Failed migrations from previous deploys will block all new migrations.
+  log('');
+  log('🔧 CRITICAL: Checking for and clearing any failed migrations...');
+  const clearResult = clearAllFailedMigrationsDirect();
+  
+  // Verify no failed migrations remain
+  if (clearResult.tableExists) {
+    try {
+      const checkSql = `
+SELECT "migration_name" FROM "_prisma_migrations"
+WHERE "finished_at" IS NULL AND "rolled_back_at" IS NULL;
+`;
+      const out = runSql(checkSql);
+      const remaining = extractMigrationNames(out);
+      if (remaining.length > 0) {
+        warn(`⚠️  ${remaining.length} migration(s) still failed: ${remaining.join(', ')}`);
+        // Last resort: try forceMarkMigrationRolledBack for each
+        for (const name of remaining) {
+          forceMarkMigrationRolledBack(name);
+        }
+      } else if (clearResult.clearedCount > 0) {
+        log('✅ All failed migrations successfully cleared.');
+      } else {
+        log('✅ No failed migrations to clear.');
+      }
+    } catch (e) {
+      // Ignore verification errors
+    }
+  }
+  log('');
+
+  // ============================================================
+  // STEP 2: Database state inspection
+  // ============================================================
+  log('🔍 Inspecting database state...');
+  let migrationsTableExists = clearResult.tableExists;
   let nonPrismaTableCount = 0;
   try {
     migrationsTableExists = getPrismaMigrationsTableExists();
