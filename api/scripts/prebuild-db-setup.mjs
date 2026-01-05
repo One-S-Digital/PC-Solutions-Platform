@@ -178,9 +178,63 @@ SELECT CASE WHEN EXISTS (
     AND table_name = '_prisma_migrations'
 ) THEN 1 ELSE 0 END AS "exists";
 `;
-  const out = runSql(sql);
-  // Prisma db execute output may include headers/formatting; accept any standalone "1".
-  return /(^|\s)1(\s|$)/.test(String(out));
+  try {
+    const out = runSql(sql);
+    // Prisma db execute output may include headers/formatting; accept any standalone "1".
+    // Check for both "1" and exclude "0" to be more robust
+    const outputStr = String(out);
+    if (outputStr.includes('1') && !outputStr.match(/\b0\b/)) {
+      return true;
+    }
+    if (/(^|\s)1(\s|$)/.test(outputStr)) {
+      return true;
+    }
+    // If output contains "0" explicitly, table doesn't exist
+    if (/\b0\b/.test(outputStr) || outputStr.trim() === '0') {
+      return false;
+    }
+    // Fallback: try to query the table directly to confirm existence
+    return checkMigrationsTableDirectly();
+  } catch (e) {
+    // On error, try direct check as fallback
+    return checkMigrationsTableDirectly();
+  }
+};
+
+/**
+ * Fallback check: try to query the _prisma_migrations table directly.
+ * If the table doesn't exist, we'll get an error. If it does, we'll get results (or empty).
+ */
+const checkMigrationsTableDirectly = () => {
+  const sql = `SELECT COUNT(*) FROM "_prisma_migrations" LIMIT 1;`;
+  try {
+    runSql(sql);
+    // If we got here without error, the table exists
+    return true;
+  } catch (e) {
+    // Error likely means table doesn't exist (relation does not exist)
+    return false;
+  }
+};
+
+/**
+ * Check for any failed migrations directly in the _prisma_migrations table.
+ * This is a more reliable check than relying on table existence detection.
+ */
+const hasFailedMigrationsDirectCheck = () => {
+  const sql = `
+SELECT COUNT(*) AS cnt
+FROM "_prisma_migrations"
+WHERE "finished_at" IS NULL AND "rolled_back_at" IS NULL;
+`;
+  try {
+    const out = runSql(sql);
+    const match = out.match(/(\d+)/);
+    return match ? Number(match[1]) > 0 : false;
+  } catch (e) {
+    // Table likely doesn't exist
+    return false;
+  }
 };
 
 const getNonPrismaTableCount = () => {
@@ -1259,14 +1313,33 @@ const main = async () => {
       `nonPrismaTables=${nonPrismaTableCount}`
   );
 
+  // CRITICAL FIX: Even if we think the migrations table is missing, do a secondary check
+  // for failed migrations. The primary detection can have false negatives due to Prisma
+  // output formatting changes.
+  if (!migrationsTableExists) {
+    const hasFailedMigrations = hasFailedMigrationsDirectCheck();
+    if (hasFailedMigrations) {
+      log('⚠️  Secondary check found failed migrations! Correcting detection...');
+      migrationsTableExists = true;
+    }
+  }
+
   if (!migrationsTableExists) {
     if (nonPrismaTableCount === 0) {
-      log(
-        'Empty database detected (no tables, no Prisma migration history). ' +
-          'Skipping prebuild recovery steps so `prisma migrate deploy` can bootstrap the schema.'
-      );
-      log('Done.');
-      return;
+      // Final safety check: try one more direct query to confirm no failed migrations
+      // This catches edge cases where Prisma output parsing fails
+      const finalCheck = hasFailedMigrationsDirectCheck();
+      if (finalCheck) {
+        log('⚠️  Final check detected failed migrations. Proceeding with recovery...');
+        migrationsTableExists = true;
+      } else {
+        log(
+          'Empty database detected (no tables, no Prisma migration history). ' +
+            'Skipping prebuild recovery steps so `prisma migrate deploy` can bootstrap the schema.'
+        );
+        log('Done.');
+        return;
+      }
     }
 
     // Non-empty schema but no Prisma migration history: Prisma will throw P3005.
