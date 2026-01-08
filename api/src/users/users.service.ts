@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, ConflictException, ForbiddenException, Logger } from '@nestjs/common';
-import { Prisma, UserRole } from '@prisma/client';
+import { OrganizationType, Prisma, UserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -533,14 +533,88 @@ export class UsersService {
           },
         });
       });
-      
-      // If organization details are provided, we should ideally create the organization here
-      // This is a simplification
-      if (dto.organisationName) {
-         // Logic to create organization would go here
-         // For now we rely on the user updating their profile/org later or implement a separate flow
-         this.logger.log(`🏢 [COMPLETE PROFILE] Organization name provided: ${dto.organisationName}`);
-      }
+    }
+
+    // Ensure we persist any organization/profile fields supplied during signup/profile completion.
+    // This prevents users from needing to re-enter organization details on the org profile page.
+    const organisationName = dto.organisationName?.trim() || null;
+    const ORG_ROLES: UserRole[] = [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER];
+    const isOrganizationRole = ORG_ROLES.includes(dto.role);
+
+    if (isOrganizationRole && organisationName) {
+      const nameParts = dto.contactPerson ? dto.contactPerson.trim().split(' ') : [];
+      const firstName = nameParts[0] || null;
+      const lastName = nameParts.slice(1).join(' ') || null;
+      const derivedContactPerson = dto.contactPerson?.trim() || `${firstName ?? ''} ${lastName ?? ''}`.trim() || null;
+
+      await this.prisma.$transaction(async (tx) => {
+        // Guarantee the profile row exists and apply contact info updates when provided.
+        const profile = await tx.user.upsert({
+          where: { clerkId },
+          update: {
+            role: dto.role,
+            ...(email ? { email } : {}),
+            ...(dto.phone !== undefined ? { phoneNumber: dto.phone } : {}),
+            ...(dto.contactPerson ? { firstName, lastName } : {}),
+          },
+          create: {
+            clerkId,
+            email,
+            role: dto.role,
+            firstName,
+            lastName,
+            phoneNumber: dto.phone,
+            isActive: true,
+          },
+          select: { id: true },
+        });
+
+        const existingMembership = await tx.userOrganization.findFirst({
+          where: { userId: profile.id },
+          select: { organizationId: true },
+        });
+
+        if (existingMembership) {
+          // Organization already exists/linked; don't overwrite it here.
+          return;
+        }
+
+        const orgType: OrganizationType =
+          dto.role === UserRole.FOUNDATION
+            ? OrganizationType.FOUNDATION
+            : dto.role === UserRole.PRODUCT_SUPPLIER
+              ? OrganizationType.PRODUCT_SUPPLIER
+              : OrganizationType.SERVICE_PROVIDER;
+
+        const organization = await tx.organization.create({
+          data: {
+            name: organisationName,
+            type: orgType,
+            contactPerson: derivedContactPerson,
+            phoneNumber: dto.phone ?? null,
+            canton: dto.canton?.trim() || null,
+            regionsServed: dto.canton?.trim() ? [dto.canton.trim()] : [],
+            languages: [],
+            pedagogy: [],
+            serviceCategories: [],
+            productCategories: [],
+            capacity: dto.role === UserRole.FOUNDATION ? (dto.capacity ?? null) : null,
+            productCategory:
+              dto.role === UserRole.PRODUCT_SUPPLIER ? (dto.category?.trim() || null) : null,
+            serviceType:
+              dto.role === UserRole.SERVICE_PROVIDER ? (dto.serviceType?.trim() || null) : null,
+            isActive: true,
+          },
+        });
+
+        await tx.userOrganization.create({
+          data: {
+            userId: profile.id,
+            organizationId: organization.id,
+            role: dto.role,
+          },
+        });
+      });
     }
 
     return this.findByClerkId(clerkId);

@@ -488,9 +488,16 @@ const SignupPage: React.FC = () => {
           // Backend will assign actual role via publicMetadata (secure)
             signupType: selectedRole,
             pendingRole: pendingUserRole,
+            // Persist the full signup form so users don't need to re-enter it later
+            contactPerson: formData.contactPerson || undefined,
             organisationName: requiresOrganizationDetails ? formData.organisationName : undefined,
             phone: formData.phone || undefined,
             canton: formData.canton || undefined,
+            capacity: formData.capacity ?? undefined,
+            category: formData.category || undefined,
+            serviceType: formData.serviceType || undefined,
+            childAge: formData.childAge ?? undefined,
+            childStartDate: formData.childStartDate || undefined,
         },
       });
 

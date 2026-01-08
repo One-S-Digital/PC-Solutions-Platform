@@ -13,7 +13,7 @@ import { Request, Response } from 'express';
 import { PrismaService } from '../prisma/prisma.service';
 import { createClerkClient } from '@clerk/clerk-sdk-node';
 import { ConfigService } from '@nestjs/config';
-import { UserRole } from '@prisma/client';
+import { OrganizationType, UserRole } from '@prisma/client';
 
 // Simple in-memory set for idempotency (replace with Redis in production)
 const processedEvents = new Set<string>();
@@ -553,6 +553,32 @@ ${'='.repeat(100)}`);
     const lastName = data.last_name || 'User';
     const phoneNumber = data.phone_numbers?.[0]?.phone_number || null;
 
+    // Signup metadata (captured on frontend) used to provision org/profile fields.
+    const unsafe = (data?.unsafe_metadata ?? {}) as Record<string, any>;
+    const signupOrganisationNameRaw = unsafe.organisationName ?? unsafe.organizationName ?? null;
+    const signupOrganisationName =
+      typeof signupOrganisationNameRaw === 'string' ? signupOrganisationNameRaw.trim() : null;
+    const signupPhone =
+      typeof unsafe.phone === 'string' && unsafe.phone.trim() ? unsafe.phone.trim() : null;
+    const signupCanton =
+      typeof unsafe.canton === 'string' && unsafe.canton.trim() ? unsafe.canton.trim() : null;
+    const signupCapacity =
+      typeof unsafe.capacity === 'number'
+        ? unsafe.capacity
+        : typeof unsafe.capacity === 'string'
+          ? Number.parseInt(unsafe.capacity, 10)
+          : null;
+    const signupCategory =
+      typeof unsafe.category === 'string' && unsafe.category.trim() ? unsafe.category.trim() : null;
+    const signupServiceType =
+      typeof unsafe.serviceType === 'string' && unsafe.serviceType.trim()
+        ? unsafe.serviceType.trim()
+        : null;
+    const signupContactPerson =
+      typeof unsafe.contactPerson === 'string' && unsafe.contactPerson.trim()
+        ? unsafe.contactPerson.trim()
+        : `${firstName} ${lastName}`.trim() || null;
+
     console.log(`👤 [E2E DEBUG] USER DETAILS EXTRACTED:`, {
       clerkId,
       primaryEmail,
@@ -588,6 +614,7 @@ ${'='.repeat(100)}`);
     console.log(`💾 [E2E DEBUG] STARTING DATABASE OPERATIONS...`);
 
     let appUser: any;
+    let profileId: string | null = null;
 
     try {
       await this.prisma.$transaction(async (tx) => {
@@ -606,7 +633,7 @@ ${'='.repeat(100)}`);
           select: { id: true, role: true, email: true },
         });
 
-        await tx.user.upsert({
+        const profile = await tx.user.upsert({
           where: { clerkId },
           update: {
             email: primaryEmail,
@@ -625,7 +652,61 @@ ${'='.repeat(100)}`);
             phoneNumber,
             isActive: true,
           },
+          select: { id: true },
         });
+
+        profileId = profile.id;
+
+        // Provision organization at signup for organization roles, so users don't need to re-enter
+        // their org details later in the organization profile/settings page.
+        const ORG_ROLES: UserRole[] = [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER];
+        const isOrganizationRole = ORG_ROLES.includes(validRole as UserRole);
+
+        if (isOrganizationRole && signupOrganisationName) {
+          const existingMembership = await tx.userOrganization.findFirst({
+            where: { userId: profile.id },
+            select: { organizationId: true },
+          });
+
+          if (!existingMembership) {
+            const orgType: OrganizationType =
+              (validRole as UserRole) === UserRole.FOUNDATION
+                ? OrganizationType.FOUNDATION
+                : (validRole as UserRole) === UserRole.PRODUCT_SUPPLIER
+                  ? OrganizationType.PRODUCT_SUPPLIER
+                  : OrganizationType.SERVICE_PROVIDER;
+
+            const organization = await tx.organization.create({
+              data: {
+                name: signupOrganisationName,
+                type: orgType,
+                contactPerson: signupContactPerson,
+                phoneNumber: signupPhone ?? phoneNumber,
+                canton: signupCanton,
+                regionsServed: signupCanton ? [signupCanton] : [],
+                languages: [],
+                pedagogy: [],
+                serviceCategories: [],
+                productCategories: [],
+                capacity:
+                  (validRole as UserRole) === UserRole.FOUNDATION ? (signupCapacity ?? null) : null,
+                productCategory:
+                  (validRole as UserRole) === UserRole.PRODUCT_SUPPLIER ? signupCategory : null,
+                serviceType:
+                  (validRole as UserRole) === UserRole.SERVICE_PROVIDER ? signupServiceType : null,
+                isActive: true,
+              },
+            });
+
+            await tx.userOrganization.create({
+              data: {
+                userId: profile.id,
+                organizationId: organization.id,
+                role: validRole as UserRole,
+              },
+            });
+          }
+        }
       });
 
       console.log(`✅ [E2E DEBUG] APPUSER & USER UPSERTED SUCCESSFULLY:`, {
@@ -635,6 +716,7 @@ ${'='.repeat(100)}`);
         email: primaryEmail,
         role: validRole,
         hasPhone: !!phoneNumber,
+        profileId,
       });
     } catch (error) {
       console.error(`❌ [E2E DEBUG] FAILED TO UPSERT ACCOUNT/PROFILE:`, {
