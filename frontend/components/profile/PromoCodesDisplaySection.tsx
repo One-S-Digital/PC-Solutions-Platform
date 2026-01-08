@@ -70,6 +70,9 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
   const loadPromoCodes = async () => {
     setIsLoading(true);
     setError(null);
+    if (isOwnProfile) {
+      setHasOrganization(null);
+    }
 
     try {
       let endpoint = '/promo-codes';
@@ -83,20 +86,14 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
       
       if (response && (response as any).success && (response as any).data) {
         setPromoCodes((response as any).data);
-        // Owners can still have zero promo codes even when organization exists.
-        // The API returns a helpful message when the user has NO organization at all.
         if (isOwnProfile) {
-          const message = (response as any)?.message;
-          const noOrg =
-            typeof message === 'string' &&
-            message.toLowerCase().includes('no organization');
-          setHasOrganization(!noOrg);
+          setHasOrganization((response as any)?.hasOrganization ?? null);
         } else {
           setHasOrganization(null);
         }
       } else {
         setPromoCodes([]);
-        setHasOrganization(isOwnProfile ? null : null);
+        setHasOrganization(null);
       }
     } catch (err) {
       console.error('Failed to load promo codes', err);
@@ -112,12 +109,14 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
     if (!isOwnProfile) {
       return;
     }
-    if (hasOrganization === false) {
+    if (hasOrganization !== true) {
       addNotification({
         title: t('common:errors.validationError', 'Action required'),
         message: t(
           'settingsPromoCodeManager.validation.organizationRequired',
-          'You need to create/link an organization profile before adding promo codes.',
+          hasOrganization === null
+            ? 'Please wait while we verify your organization status.'
+            : 'You need to create/link an organization profile before adding promo codes.',
         ),
         type: 'error',
       });
@@ -235,12 +234,14 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
     if (!isOwnProfile) {
       return;
     }
-    if (hasOrganization === false) {
+    if (hasOrganization !== true) {
       addNotification({
         title: t('common:errors.validationError', 'Action required'),
         message: t(
           'settingsPromoCodeManager.validation.organizationRequired',
-          'You need to create/link an organization profile before adding promo codes.',
+          hasOrganization === null
+            ? 'Please wait while we verify your organization status.'
+            : 'You need to create/link an organization profile before adding promo codes.',
         ),
         type: 'error',
       });
@@ -343,8 +344,8 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
     } catch (saveError) {
       console.error('Failed to save promo code:', saveError);
       const resolvedMessage =
-        saveError instanceof Error && saveError.message
-          ? saveError.message
+        typeof (saveError as any)?.message === 'string' && (saveError as any).message
+          ? (saveError as any).message
           : t('common:errors.genericErrorMessage');
       addNotification({
         title: t('common:errors.genericErrorTitle'),
@@ -489,7 +490,14 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
           </h3>
         </div>
         <div className="text-center py-4 space-y-3">
-          {isOwnProfile && hasOrganization === false ? (
+          {isOwnProfile && hasOrganization === null ? (
+            <p className="text-sm text-gray-500">
+              {t(
+                'settingsPromoCodeManager.validation.organizationRequired',
+                'Please wait while we verify your organization status.',
+              )}
+            </p>
+          ) : isOwnProfile && hasOrganization === false ? (
             <p className="text-sm text-gray-500">
               {t(
                 'settingsPromoCodeManager.validation.organizationRequired',
@@ -513,7 +521,7 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
                 size="sm"
                 leftIcon={PlusCircleIcon}
                 onClick={() => handleOpenModal()}
-                disabled={hasOrganization === false}
+                disabled={hasOrganization !== true}
               >
                 {t('settingsPromoCodeManager.addNewCode')}
               </Button>
@@ -543,7 +551,7 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
               size="sm"
               leftIcon={PlusCircleIcon}
               onClick={() => handleOpenModal()}
-              disabled={hasOrganization === false}
+              disabled={hasOrganization !== true}
             >
               {t('settingsPromoCodeManager.addNewCode')}
             </Button>

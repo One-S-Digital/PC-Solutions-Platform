@@ -556,7 +556,7 @@ const SupplierOrganisationProfilePage: React.FC = () => {
           </Card>
 
           {/* Promo Codes Section */}
-          <PromoCodesDisplaySection isOwnProfile={true} organizationId={organizationId || undefined} />
+          <PromoCodesDisplaySection isOwnProfile={true} />
 
           {/* Documents Section */}
           <Card className="p-6">
