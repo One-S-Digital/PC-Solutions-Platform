@@ -62,6 +62,7 @@ export class PromoCodesController {
     if (!organizationId) {
       return {
         success: true,
+        hasOrganization: false,
         data: [],
         message: 'No organization found',
       };
@@ -71,6 +72,7 @@ export class PromoCodesController {
 
     return {
       success: true,
+      hasOrganization: true,
       data: promoCodes,
     };
   }

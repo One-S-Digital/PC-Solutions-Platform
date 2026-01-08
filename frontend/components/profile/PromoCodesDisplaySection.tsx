@@ -44,6 +44,7 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
   const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [hasOrganization, setHasOrganization] = useState<boolean | null>(null);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -69,6 +70,9 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
   const loadPromoCodes = async () => {
     setIsLoading(true);
     setError(null);
+    if (isOwnProfile) {
+      setHasOrganization(null);
+    }
 
     try {
       let endpoint = '/promo-codes';
@@ -82,13 +86,20 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
       
       if (response && (response as any).success && (response as any).data) {
         setPromoCodes((response as any).data);
+        if (isOwnProfile) {
+          setHasOrganization((response as any)?.hasOrganization ?? null);
+        } else {
+          setHasOrganization(null);
+        }
       } else {
         setPromoCodes([]);
+        setHasOrganization(null);
       }
     } catch (err) {
       console.error('Failed to load promo codes', err);
       setError(t('common:errors.genericErrorMessage', 'Failed to load promo codes'));
       setPromoCodes([]);
+      setHasOrganization(null);
     } finally {
       setIsLoading(false);
     }
@@ -96,6 +107,19 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
 
   const handleOpenModal = (promo?: PromoCode) => {
     if (!isOwnProfile) {
+      return;
+    }
+    if (hasOrganization !== true) {
+      addNotification({
+        title: t('common:errors.validationError', 'Action required'),
+        message: t(
+          'settingsPromoCodeManager.validation.organizationRequired',
+          hasOrganization === null
+            ? 'Please wait while we verify your organization status.'
+            : 'You need to create/link an organization profile before adding promo codes.',
+        ),
+        type: 'error',
+      });
       return;
     }
 
@@ -210,6 +234,19 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
     if (!isOwnProfile) {
       return;
     }
+    if (hasOrganization !== true) {
+      addNotification({
+        title: t('common:errors.validationError', 'Action required'),
+        message: t(
+          'settingsPromoCodeManager.validation.organizationRequired',
+          hasOrganization === null
+            ? 'Please wait while we verify your organization status.'
+            : 'You need to create/link an organization profile before adding promo codes.',
+        ),
+        type: 'error',
+      });
+      return;
+    }
 
     if (!formData.code.trim() || !formData.expiryDate) {
       addNotification({
@@ -306,9 +343,13 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
       loadPromoCodes();
     } catch (saveError) {
       console.error('Failed to save promo code:', saveError);
+      const resolvedMessage =
+        typeof (saveError as any)?.message === 'string' && (saveError as any).message
+          ? (saveError as any).message
+          : t('common:errors.genericErrorMessage');
       addNotification({
         title: t('common:errors.genericErrorTitle'),
-        message: t('common:errors.genericErrorMessage'),
+        message: resolvedMessage,
         type: 'error',
       });
     } finally {
@@ -449,17 +490,39 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
           </h3>
         </div>
         <div className="text-center py-4 space-y-3">
-          <p className="text-sm text-gray-500">
-            {isOwnProfile
-              ? t('settingsPromoCodeManager.noCodesYet')
-              : t('promoCodesDisplay.noActivePromoCodes')}
-          </p>
+          {isOwnProfile && hasOrganization === null ? (
+            <p className="text-sm text-gray-500">
+              {t(
+                'settingsPromoCodeManager.validation.organizationRequired',
+                'Please wait while we verify your organization status.',
+              )}
+            </p>
+          ) : isOwnProfile && hasOrganization === false ? (
+            <p className="text-sm text-gray-500">
+              {t(
+                'settingsPromoCodeManager.validation.organizationRequired',
+                'You need to create/link an organization profile before adding promo codes.',
+              )}
+            </p>
+          ) : (
+            <p className="text-sm text-gray-500">
+              {isOwnProfile
+                ? t('settingsPromoCodeManager.noCodesYet')
+                : t('promoCodesDisplay.noActivePromoCodes')}
+            </p>
+          )}
           {isOwnProfile && (
             <div className="flex items-center justify-center gap-2">
               <Button variant="light" size="sm" leftIcon={ArrowPathIcon} onClick={loadPromoCodes}>
                 {t('common:buttons.refresh')}
               </Button>
-              <Button variant="primary" size="sm" leftIcon={PlusCircleIcon} onClick={() => handleOpenModal()}>
+              <Button
+                variant="primary"
+                size="sm"
+                leftIcon={PlusCircleIcon}
+                onClick={() => handleOpenModal()}
+                disabled={hasOrganization !== true}
+              >
                 {t('settingsPromoCodeManager.addNewCode')}
               </Button>
             </div>
@@ -483,7 +546,13 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
             <Button variant="light" size="sm" leftIcon={ArrowPathIcon} onClick={loadPromoCodes}>
               {t('common:buttons.refresh')}
             </Button>
-            <Button variant="primary" size="sm" leftIcon={PlusCircleIcon} onClick={() => handleOpenModal()}>
+            <Button
+              variant="primary"
+              size="sm"
+              leftIcon={PlusCircleIcon}
+              onClick={() => handleOpenModal()}
+              disabled={hasOrganization !== true}
+            >
               {t('settingsPromoCodeManager.addNewCode')}
             </Button>
           </div>
