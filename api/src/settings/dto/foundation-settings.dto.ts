@@ -52,6 +52,10 @@ export class UpdateFoundationSettingsDto {
   vatNumber?: string;
 
   @IsOptional()
+  @IsString()
+  websiteUrl?: string;
+
+  @IsOptional()
   @IsArray()
   @IsString({ each: true })
   languages?: string[];

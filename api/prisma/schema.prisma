@@ -331,6 +331,7 @@ model Organization {
   minimumOrderQuantity Int? // For suppliers
   directOrderLink      String? // For suppliers
   catalogUrl           String? // For suppliers
+  websiteUrl           String? // Public website (all org types)
   serviceCategories    String[] // For service providers
   deliveryType         String? // On-site, Remote, Hybrid for service providers
   bookingLink          String? // For service providers
