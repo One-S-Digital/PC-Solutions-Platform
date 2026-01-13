@@ -386,14 +386,15 @@ export class AdminController {
         this.logger.log(`✅ [BACKFILL] Created organization for user ${user.email} (${user.role}): ${result.id}`);
       } catch (error) {
         results.failed++;
+        const errorMessage = error instanceof Error ? error.message : String(error);
         results.details.push({
           userId: user.id,
           email: user.email,
           role: user.role,
-          error: error.message,
+          error: errorMessage,
         });
 
-        this.logger.error(`❌ [BACKFILL] Failed to create organization for user ${user.email}: ${error.message}`);
+        this.logger.error(`❌ [BACKFILL] Failed to create organization for user ${user.email}: ${errorMessage}`);
       }
     }
 

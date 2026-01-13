@@ -19,8 +19,7 @@ import {
   Wrench,
   Globe,
   RefreshCw,
-  CheckCircle,
-  XCircle
+  CheckCircle
 } from 'lucide-react'
 import { useApiClient, apiService } from '../services/api'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
