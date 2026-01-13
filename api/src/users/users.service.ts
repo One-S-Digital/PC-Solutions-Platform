@@ -521,7 +521,7 @@ export class UsersService {
           },
         });
 
-        await tx.user.create({
+        const user = await tx.user.create({
           data: {
             clerkId,
             email,
@@ -532,15 +532,47 @@ export class UsersService {
             isActive: true,
           },
         });
+
+        // Create organization and link user for organization-based roles
+        const orgBasedRoles = [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER];
+        if (orgBasedRoles.includes(dto.role)) {
+          // Determine organization type from user role
+          const orgTypeMap: Record<string, 'FOUNDATION' | 'PRODUCT_SUPPLIER' | 'SERVICE_PROVIDER'> = {
+            [UserRole.FOUNDATION]: 'FOUNDATION',
+            [UserRole.PRODUCT_SUPPLIER]: 'PRODUCT_SUPPLIER',
+            [UserRole.SERVICE_PROVIDER]: 'SERVICE_PROVIDER',
+          };
+          const orgType = orgTypeMap[dto.role];
+          
+          // Create the organization with signup data
+          const organization = await tx.organization.create({
+            data: {
+              name: dto.organisationName || `${firstName} ${lastName}`.trim() || 'New Organization',
+              type: orgType,
+              contactPerson: dto.contactPerson || `${firstName} ${lastName}`.trim() || null,
+              phoneNumber: dto.phone || null,
+              canton: dto.canton || null,
+              region: dto.canton || null,
+              // Role-specific fields
+              ...(dto.role === UserRole.FOUNDATION && dto.capacity ? { capacity: dto.capacity } : {}),
+              ...(dto.role === UserRole.PRODUCT_SUPPLIER && dto.category ? { productCategory: dto.category } : {}),
+              ...(dto.role === UserRole.SERVICE_PROVIDER && dto.serviceType ? { serviceType: dto.serviceType } : {}),
+              isActive: true,
+            },
+          });
+
+          // Link user to organization
+          await tx.userOrganization.create({
+            data: {
+              userId: user.id,
+              organizationId: organization.id,
+              role: dto.role,
+            },
+          });
+
+          this.logger.log(`🏢 [COMPLETE PROFILE] Created organization "${organization.name}" (${orgType}) and linked to user ${user.id}`);
+        }
       });
-      
-      // If organization details are provided, we should ideally create the organization here
-      // This is a simplification
-      if (dto.organisationName) {
-         // Logic to create organization would go here
-         // For now we rely on the user updating their profile/org later or implement a separate flow
-         this.logger.log(`🏢 [COMPLETE PROFILE] Organization name provided: ${dto.organisationName}`);
-      }
     }
 
     return this.findByClerkId(clerkId);
