@@ -534,7 +534,7 @@ export class UsersService {
         });
 
         // Create organization and link user for organization-based roles
-        const orgBasedRoles = [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER];
+        const orgBasedRoles: UserRole[] = [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER];
         if (orgBasedRoles.includes(dto.role)) {
           // Determine organization type from user role
           const orgTypeMap: Record<string, 'FOUNDATION' | 'PRODUCT_SUPPLIER' | 'SERVICE_PROVIDER'> = {
