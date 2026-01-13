@@ -198,3 +198,109 @@ Within a visible organization profile, individual products and services also hav
 ### Admin can see profile but public cannot?
 
 - This is expected behavior - admins and organization members bypass the subscription gate for individual profile viewing
+
+---
+
+## Common Issues (Why Profiles Don't Show)
+
+### Issue 1: Subscription Linked to User, Not Organization (Most Common!)
+
+**Problem**: The subscription was created with `userId` but without `organizationId`. The marketplace query checks `organization.subscriptions`, which only finds subscriptions where `organizationId` is set.
+
+**How to detect**:
+```sql
+SELECT s.id, s.status, s."userId", s."organizationId", u.email
+FROM subscriptions s
+LEFT JOIN users u ON u.id = s."userId"
+WHERE s."organizationId" IS NULL
+  AND s."userId" IS NOT NULL
+  AND s.status IN ('ACTIVE', 'TRIAL', 'GRACE_PERIOD');
+```
+
+**Fix**: Link the subscription to the organization:
+```sql
+UPDATE subscriptions s
+SET "organizationId" = uo."organizationId"
+FROM user_organizations uo
+WHERE s."userId" = uo."userId"
+  AND s."organizationId" IS NULL
+  AND s.status IN ('ACTIVE', 'TRIAL', 'GRACE_PERIOD');
+```
+
+### Issue 2: No Subscription at All
+
+**Problem**: The organization doesn't have any subscription record.
+
+**How to detect**:
+```sql
+SELECT o.id, o.name, o.type
+FROM organizations o
+LEFT JOIN subscriptions s ON s."organizationId" = o.id
+WHERE o.type IN ('PRODUCT_SUPPLIER', 'SERVICE_PROVIDER')
+  AND s.id IS NULL;
+```
+
+**Fix**: Create a subscription for the organization through the admin panel.
+
+### Issue 3: Wrong Subscription Status
+
+**Problem**: The subscription exists but has status like `PENDING`, `INACTIVE`, `CANCELLED`, or `EXPIRED`.
+
+**How to detect**:
+```sql
+SELECT o.name, s.status
+FROM organizations o
+JOIN subscriptions s ON s."organizationId" = o.id
+WHERE o.type IN ('PRODUCT_SUPPLIER', 'SERVICE_PROVIDER')
+  AND s.status NOT IN ('ACTIVE', 'TRIAL', 'GRACE_PERIOD');
+```
+
+**Fix**: Activate the subscription through the admin panel or update the status.
+
+### Issue 4: Subscription Dates Expired
+
+**Problem**: The subscription has the right status, but the end dates are in the past.
+
+**How to detect**:
+```sql
+SELECT o.name, s.status, s."currentPeriodEnd", s."trialEnd"
+FROM organizations o
+JOIN subscriptions s ON s."organizationId" = o.id
+WHERE o.type IN ('PRODUCT_SUPPLIER', 'SERVICE_PROVIDER')
+  AND s.status IN ('ACTIVE', 'TRIAL', 'GRACE_PERIOD')
+  AND (
+    (s.status = 'ACTIVE' AND s."currentPeriodEnd" < NOW())
+    OR (s.status = 'TRIAL' AND s."trialEnd" < NOW())
+  );
+```
+
+**Fix**: Renew or extend the subscription through the admin panel.
+
+### Issue 5: Organization isActive = false
+
+**Problem**: The organization has been deactivated.
+
+**How to detect**:
+```sql
+SELECT o.name, o."isActive"
+FROM organizations o
+WHERE o.type IN ('PRODUCT_SUPPLIER', 'SERVICE_PROVIDER')
+  AND o."isActive" = false;
+```
+
+**Fix**: Set `isActive = true` in the database or through the admin panel.
+
+---
+
+## Diagnostic Script
+
+A comprehensive diagnostic script is available at:
+`api/scripts/diagnose-marketplace-visibility.sql`
+
+This script will:
+1. Identify subscriptions linked to users but not organizations
+2. Find suppliers/providers without any subscription
+3. Find subscriptions with wrong status
+4. Find expired subscription dates
+5. Find deactivated organizations
+6. Show overall visibility summary and statistics
