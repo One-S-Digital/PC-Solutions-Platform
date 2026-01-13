@@ -31,6 +31,7 @@ import { useOrganizationMessaging } from '../../hooks/useOrganizationMessaging';
 import ActiveClientToggle from '../../components/shared/ActiveClientToggle';
 import OrganizationDocumentsList from '../../components/profile/OrganizationDocumentsList';
 import { formatServiceCategory, formatServiceDeliveryType, formatCategory } from '../../utils/serviceFormatting';
+import { openExternalUrl, toExternalUrl } from '../../utils/url';
 import { organizationService } from '../../services/organizationService';
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
 import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/solid';
@@ -505,7 +506,7 @@ const PartnerDetailPage: React.FC = () => {
                 <p className="flex items-center">
                   <GlobeAltIcon className="w-5 h-5 mr-2 text-gray-400" /> 
                   <a 
-                    href={partner.catalogUrl || partner.bookingLink || partner.directOrderLink} 
+                    href={toExternalUrl(partner.catalogUrl || partner.bookingLink || partner.directOrderLink) ?? undefined} 
                     target="_blank" 
                     rel="noopener noreferrer" 
                     className="hover:text-swiss-mint truncate"
@@ -519,7 +520,7 @@ const PartnerDetailPage: React.FC = () => {
               <Button 
                 variant="secondary" 
                 leftIcon={ArrowTopRightOnSquareIcon} 
-                onClick={() => window.open(partner.directOrderLink, '_blank')}
+                onClick={() => openExternalUrl(partner.directOrderLink)}
                 className="w-full mt-4"
               >
                 {t('partnerDetailPage.directOrderButton')}

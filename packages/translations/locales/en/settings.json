@@ -136,7 +136,10 @@
     "deliveryType": "Delivery Type",
     "selectDeliveryType": "Select Delivery Type",
     "deliveryTypeHint": "Choose how you deliver your services",
-    "bookingLink": "Booking Link"
+    "bookingLink": "Booking Link",
+    "bookingLinkHint": "You can enter it without https://",
+    "website": "Website",
+    "websiteHint": "You can enter it without https://"
   },
   "educatorProfile": {
     "avatar": "Profile Photo",

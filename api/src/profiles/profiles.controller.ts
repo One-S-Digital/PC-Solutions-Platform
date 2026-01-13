@@ -109,11 +109,11 @@ export class UpdateProfileDto {
   minimumOrderQuantity?: number;
 
   @IsOptional()
-  @IsUrl()
+  @IsString()
   directOrderLink?: string;
 
   @IsOptional()
-  @IsUrl()
+  @IsString()
   catalogUrl?: string;
 
   @IsOptional()
@@ -126,8 +126,12 @@ export class UpdateProfileDto {
   deliveryType?: string;
 
   @IsOptional()
-  @IsUrl()
+  @IsString()
   bookingLink?: string;
+
+  @IsOptional()
+  @IsString()
+  websiteUrl?: string;
 
   // Parent fields
   @IsOptional()
@@ -201,11 +205,11 @@ export class CreateOrganizationDto {
   minimumOrderQuantity?: number;
 
   @IsOptional()
-  @IsUrl()
+  @IsString()
   directOrderLink?: string;
 
   @IsOptional()
-  @IsUrl()
+  @IsString()
   catalogUrl?: string;
 
   @IsOptional()
@@ -218,8 +222,12 @@ export class CreateOrganizationDto {
   deliveryType?: string;
 
   @IsOptional()
-  @IsUrl()
+  @IsString()
   bookingLink?: string;
+
+  @IsOptional()
+  @IsString()
+  websiteUrl?: string;
 }
 
 @ApiTags('profiles')
@@ -357,6 +365,7 @@ export class ProfileController {
             minimumOrderQuantity: updateData.minimumOrderQuantity ?? organization.minimumOrderQuantity,
             directOrderLink: updateData.directOrderLink ?? organization.directOrderLink,
             catalogUrl: updateData.catalogUrl ?? organization.catalogUrl,
+            websiteUrl: updateData.websiteUrl ?? organization.websiteUrl,
             serviceCategories: updateData.serviceCategories ?? organization.serviceCategories,
             deliveryType: updateData.deliveryType ?? organization.deliveryType,
             bookingLink: updateData.bookingLink ?? organization.bookingLink,
@@ -451,6 +460,7 @@ export class ProfileController {
         minimumOrderQuantity: organizationData.minimumOrderQuantity,
         directOrderLink: organizationData.directOrderLink,
         catalogUrl: organizationData.catalogUrl,
+        websiteUrl: organizationData.websiteUrl,
         serviceCategories: organizationData.serviceCategories || [],
         deliveryType: organizationData.deliveryType,
         bookingLink: organizationData.bookingLink,

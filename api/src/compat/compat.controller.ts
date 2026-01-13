@@ -711,6 +711,7 @@ export class CompatController {
           capacity: data.capacity,
           pedagogy: data.pedagogy || [],
           contactPerson: data.contactPerson,
+          websiteUrl: data.websiteUrl ?? data.website,
           directOrderLink: data.directOrderLink,
           catalogUrl: data.catalogUrl,
           serviceCategories: data.serviceCategories || [],
@@ -742,7 +743,8 @@ export class CompatController {
       if (data.languagesSpoken !== undefined) updateData.languages = data.languagesSpoken;
       if (data.capacity !== undefined) updateData.capacity = data.capacity;
       if (data.pedagogy !== undefined) updateData.pedagogy = data.pedagogy;
-      if (data.website !== undefined) updateData.catalogUrl = data.website;
+      const resolvedWebsiteUrl = data.websiteUrl ?? data.website;
+      if (resolvedWebsiteUrl !== undefined) updateData.websiteUrl = resolvedWebsiteUrl;
       if (data.catalogUrl !== undefined) updateData.catalogUrl = data.catalogUrl;
       if (data.directOrderLink !== undefined) updateData.directOrderLink = data.directOrderLink;
       if (data.serviceCategories !== undefined) updateData.serviceCategories = data.serviceCategories;

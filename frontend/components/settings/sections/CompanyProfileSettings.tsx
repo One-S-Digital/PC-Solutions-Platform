@@ -403,6 +403,23 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                 placeholder={t('settings:companyProfile.contactEmailPlaceholder', 'Enter contact email address')}
               />
             </div>
+
+            <label htmlFor="websiteUrl" className="form-label md:pt-2">
+              {t('settings:companyProfile.website', 'Website')}
+            </label>
+            <div className="form-input-container">
+              <input
+                type="text"
+                id="websiteUrl"
+                value={settings.websiteUrl || ''}
+                onChange={(e) => onChange('websiteUrl', e.target.value)}
+                className={STANDARD_INPUT_FIELD}
+                placeholder={t('common:placeholders.url', 'www.example.com')}
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                {t('settings:companyProfile.websiteHint', 'You can enter it without https://')}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -653,13 +670,16 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                 </label>
                 <div className="form-input-container">
                   <input
-                    type="url"
+                    type="text"
                     id="bookingLink"
                     value={settings.bookingLink || ''}
                     onChange={(e) => onChange('bookingLink', e.target.value)}
                     className={STANDARD_INPUT_FIELD}
                     placeholder={t('common:placeholders.url')}
                   />
+                  <p className="mt-1 text-xs text-gray-500">
+                    {t('settings:companyProfile.bookingLinkHint', 'You can enter it without https://')}
+                  </p>
                 </div>
               </div>
             </div>
