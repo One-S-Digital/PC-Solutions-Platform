@@ -845,6 +845,16 @@ export const apiService = {
     timeout: 300000, // 5 minutes timeout for cleanup operations (can take a while for large datasets)
   }),
 
+  // Admin Profile Management
+  getAdminUserProfile: (apiClient: AxiosInstance, userId: string) =>
+    apiClient.get<ApiResponse<any>>(`/admin/users/${userId}/profile`),
+  updateAdminUserProfile: (apiClient: AxiosInstance, userId: string, data: any) =>
+    apiClient.patch<ApiResponse<any>>(`/admin/users/${userId}/profile`, data),
+  getAdminOrganizationProfile: (apiClient: AxiosInstance, orgId: string) =>
+    apiClient.get<ApiResponse<any>>(`/admin/organizations/${orgId}/profile`),
+  updateAdminOrganizationProfile: (apiClient: AxiosInstance, orgId: string, data: any) =>
+    apiClient.patch<ApiResponse<any>>(`/admin/organizations/${orgId}/profile`, data),
+
   // Support Tickets
   getSupportTickets: (apiClient: AxiosInstance, filters?: {
     status?: string;

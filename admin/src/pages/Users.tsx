@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import { 
   Users as UsersIcon, 
@@ -576,6 +577,7 @@ const SuspendUserModal: React.FC<SuspendUserModalProps> = ({ isOpen, onClose, us
 
 const Users: React.FC = () => {
   const { t } = useTranslation(['common', 'admin']);
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedRole, setSelectedRole] = useState('')
   const [page, setPage] = useState(1)
@@ -1140,6 +1142,18 @@ const Users: React.FC = () => {
                               </Menu.Item>
                             )}
 
+                            {/* Edit Full Profile - Navigate to full profile edit page */}
+                            <Menu.Item>
+                              {({ active }) => (
+                                <button
+                                  onClick={() => navigate(`/users/${user.id}/profile`)}
+                                  className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-swiss-teal font-medium`}
+                                >
+                                  <Edit className="h-4 w-4 mr-2" />
+                                  {t('admin:users.editFullProfile', 'Edit Full Profile')}
+                                </button>
+                              )}
+                            </Menu.Item>
                             {/* View Profile - Only for users with organizations (suppliers/service providers) */}
                             {user.orgId && (user.role === UserRole.PRODUCT_SUPPLIER || user.role === UserRole.SERVICE_PROVIDER) && (
                               <Menu.Item>

@@ -25,6 +25,8 @@ import SupportPage from './pages/Support';
 import SupportTicketPage from './pages/SupportTicket';
 import SubscriptionsPage from './pages/Subscriptions';
 import DiscountTerminationsPage from './pages/DiscountTerminations';
+import AdminUserProfileEdit from './pages/AdminUserProfileEdit';
+import AdminOrganizationProfileEdit from './pages/AdminOrganizationProfileEdit';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -80,7 +82,9 @@ function App() {
         >
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="users" element={<UsersPage />} />
+          <Route path="users/:id/profile" element={<AdminUserProfileEdit />} />
           <Route path="organizations" element={<OrganizationsPage />} />
+          <Route path="organizations/:id/profile" element={<AdminOrganizationProfileEdit />} />
           <Route path="partners" element={<PartnersPage />} />
           <Route path="products" element={<ProductsPage />} />
           <Route path="services" element={<ServicesPage />} />
