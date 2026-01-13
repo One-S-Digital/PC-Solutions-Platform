@@ -331,7 +331,7 @@ export const apiService = {
   ) => apiClient.post<ApiResponse<User>>(`/users/${userId}/elevate-to-admin`, { targetRole, reason }),
 
   // Organizations
-  getOrganizations: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Organization[]>>('/compat/organizations'),
+  getOrganizations: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Organization[]>>('/compat/organizations', { params: { limit: 10000 } }),
   getOrganizationById: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Organization>>(`/compat/organizations/${id}`),
   createOrganization: (apiClient: AxiosInstance, orgData: Partial<Organization>) => apiClient.post<ApiResponse<Organization>>('/compat/organizations', orgData),
   updateOrganization: (apiClient: AxiosInstance, id: string, orgData: Partial<Organization>) => apiClient.put<ApiResponse<Organization>>(`/compat/organizations/${id}`, orgData),
