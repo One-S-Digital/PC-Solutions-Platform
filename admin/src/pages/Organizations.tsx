@@ -1,4 +1,5 @@
 import React, { useState, useEffect, Fragment, useMemo, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import { 
   Building2, 
@@ -531,9 +532,10 @@ interface OrganizationCardProps {
   org: Organization
   onEdit: (org: Organization) => void
   onDelete: (org: Organization) => void
+  onEditFullProfile: (org: Organization) => void
 }
 
-const OrganizationCard: React.FC<OrganizationCardProps> = ({ org, onEdit, onDelete }) => {
+const OrganizationCard: React.FC<OrganizationCardProps> = ({ org, onEdit, onDelete, onEditFullProfile }) => {
   const { t } = useTranslation(['admin', 'common'])
 
   const getTypeIcon = () => {
@@ -606,8 +608,19 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ org, onEdit, onDele
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+            <Menu.Items className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
               <div className="py-1">
+                <Menu.Item>
+                  {({ active }) => (
+                    <button
+                      onClick={() => onEditFullProfile(org)}
+                      className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-swiss-teal font-medium`}
+                    >
+                      <Edit className="h-4 w-4 mr-2" />
+                      {t('admin:organizations.editFullProfile', 'Edit Full Profile')}
+                    </button>
+                  )}
+                </Menu.Item>
                 <Menu.Item>
                   {({ active }) => (
                     <button
@@ -691,6 +704,7 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ org, onEdit, onDele
 // Main Organizations Component
 const Organizations: React.FC = () => {
   const { t } = useTranslation(['admin', 'common'])
+  const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
   const [activeTab, setActiveTab] = useState<TabType>('foundations')
   const [page, setPage] = useState(1)
@@ -982,6 +996,7 @@ const Organizations: React.FC = () => {
             org={org}
             onEdit={handleEditOrganization}
             onDelete={handleDeleteClick}
+            onEditFullProfile={(org) => navigate(`/organizations/${org.id}/profile`)}
           />
         ))}
       </div>
