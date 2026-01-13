@@ -164,10 +164,6 @@ class AdminUpdateOrganizationProfileDto {
   @IsString({ each: true })
   languages?: string[];
 
-  @IsOptional()
-  @IsString()
-  website?: string;
-
   // Foundation-specific
   @IsOptional()
   @IsNumber()
@@ -292,40 +288,19 @@ export class AdminProfilesController {
   async getUserProfile(@Param('id', ParseUUIDPipe) id: string) {
     this.logger.log(`[ADMIN] Fetching profile for user: ${id}`);
 
-    // First try to find by AppUser.id, then by User.id (profileId)
-    let appUser = await this.prisma.appUser.findUnique({
+    // First try to find by AppUser.id
+    const appUser = await this.prisma.appUser.findUnique({
       where: { id },
-      include: {
-        profile: {
-          include: {
-            avatarAsset: true,
-            coverAsset: true,
-            contactInfo: true,
-            organizations: {
-              include: {
-                organization: {
-                  include: {
-                    logoAsset: true,
-                    coverAsset: true,
-                    contactInfo: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
     });
 
-    if (!appUser) {
-      // Try by profile ID (User.id)
+    if (appUser) {
+      // Found AppUser, now get the User profile by clerkId
       const user = await this.prisma.user.findUnique({
-        where: { id },
+        where: { clerkId: appUser.clerkId },
         include: {
           avatarAsset: true,
           coverAsset: true,
           contactInfo: true,
-          appUser: true,
           organizations: {
             include: {
               organization: {
@@ -341,25 +316,50 @@ export class AdminProfilesController {
       });
 
       if (!user) {
-        throw new NotFoundException('User not found');
+        throw new NotFoundException('User profile not found');
       }
 
-      // Build response from User record using helper
       const primaryOrg = user.organizations?.[0]?.organization;
-      return this.buildUserProfileResponse(
-        user,
-        user.appUser?.id || user.id,
-        primaryOrg,
-      );
+      return this.buildUserProfileResponse(user, appUser.id, primaryOrg);
     }
 
-    const user = appUser.profile;
+    // Try by profile ID (User.id)
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      include: {
+        avatarAsset: true,
+        coverAsset: true,
+        contactInfo: true,
+        organizations: {
+          include: {
+            organization: {
+              include: {
+                logoAsset: true,
+                coverAsset: true,
+                contactInfo: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
     if (!user) {
-      throw new NotFoundException('User profile not found');
+      throw new NotFoundException('User not found');
     }
 
+    // Find AppUser by clerkId
+    const relatedAppUser = await this.prisma.appUser.findUnique({
+      where: { clerkId: user.clerkId },
+    });
+
+    // Build response from User record using helper
     const primaryOrg = user.organizations?.[0]?.organization;
-    return this.buildUserProfileResponse(user, appUser.id, primaryOrg);
+    return this.buildUserProfileResponse(
+      user,
+      relatedAppUser?.id || user.id,
+      primaryOrg,
+    );
   }
 
   @Patch('users/:id/profile')
@@ -373,21 +373,28 @@ export class AdminProfilesController {
 
     // Find the user - first try AppUser.id, then User.id
     let profileId: string;
-    let accountId: string;
+    let clerkId: string;
     
     const appUser = await this.prisma.appUser.findUnique({
       where: { id },
-      include: { profile: true },
     });
 
-    if (appUser && appUser.profile) {
-      profileId = appUser.profile.id;
-      accountId = appUser.id;
+    if (appUser) {
+      // Found AppUser, now get the User profile by clerkId
+      const userProfile = await this.prisma.user.findUnique({
+        where: { clerkId: appUser.clerkId },
+      });
+
+      if (userProfile) {
+        profileId = userProfile.id;
+        clerkId = appUser.clerkId;
+      } else {
+        throw new NotFoundException('User profile not found');
+      }
     } else {
       // Try by User.id (profileId)
       const user = await this.prisma.user.findUnique({
         where: { id },
-        include: { appUser: true },
       });
 
       if (!user) {
@@ -395,7 +402,7 @@ export class AdminProfilesController {
       }
 
       profileId = user.id;
-      accountId = user.appUser?.id || user.id;
+      clerkId = user.clerkId;
     }
 
     await this.prisma.$transaction(async (tx) => {
@@ -441,10 +448,10 @@ export class AdminProfilesController {
         });
       }
 
-      // Update AppUser email if changed
+      // Update AppUser email if changed (using clerkId to find the AppUser)
       if (dto.email) {
         await tx.appUser.updateMany({
-          where: { profileId },
+          where: { clerkId },
           data: { email: dto.email },
         });
       }
@@ -496,11 +503,10 @@ export class AdminProfilesController {
         region: org.region ?? '',
         canton: org.canton ?? '',
         city: org.city ?? '',
-        regionsServed: (org as any).regionsServed ?? [],
+        regionsServed: org.regionsServed ?? [],
         description: org.description ?? '',
         vatNumber: org.vatNumber ?? '',
         languages: org.languages ?? [],
-        website: org.website ?? '',
         logoUrl: org.logoAsset?.publicUrl ?? null,
         logoAssetId: org.logoAssetId ?? null,
         coverImageUrl: org.coverAsset?.publicUrl ?? null,
@@ -581,7 +587,6 @@ export class AdminProfilesController {
           ...(dto.description !== undefined && { description: dto.description }),
           ...(dto.vatNumber !== undefined && { vatNumber: dto.vatNumber }),
           ...(dto.languages !== undefined && { languages: dto.languages }),
-          ...(dto.website !== undefined && { website: dto.website }),
           // Foundation-specific
           ...(dto.capacity !== undefined && { capacity: dto.capacity }),
           ...(dto.pedagogy !== undefined && { pedagogy: dto.pedagogy }),

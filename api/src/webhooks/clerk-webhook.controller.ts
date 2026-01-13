@@ -639,7 +639,7 @@ ${'='.repeat(100)}`);
         });
 
         // Create organization and link user for organization-based roles
-        const orgBasedRoles = [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER];
+        const orgBasedRoles: UserRole[] = [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER];
         if (orgBasedRoles.includes(validRole as UserRole)) {
           // Check if user already has an organization link (to avoid duplicates on updates)
           const existingOrgLink = await tx.userOrganization.findFirst({
