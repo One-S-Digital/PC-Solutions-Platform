@@ -33,6 +33,9 @@ export function useAuthenticatedApi() {
 
         const response = await fetch(url, {
           ...options,
+          // Avoid browser HTTP caching/conditional requests (304 has no body, and these
+          // endpoints are auth-protected + user-specific anyway).
+          cache: 'no-store',
           headers: {
             'Content-Type': 'application/json',
             Accept: 'application/json',
