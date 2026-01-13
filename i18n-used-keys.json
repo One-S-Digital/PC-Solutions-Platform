@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-01-13T17:50:30.544Z",
-  "totalKeys": 2024,
+  "timestamp": "2026-01-13T23:48:02.840Z",
+  "totalKeys": 2025,
   "byNamespace": {
     "common": 2876,
-    "settings": 572,
+    "settings": 578,
     "content": 38,
     "signup": 120,
     "recruitment": 252,
     "dashboard": 368,
     "admin": 168,
-    "profile": 226,
+    "profile": 228,
     "parentLeadForm": 56,
     "auth": 2,
     "messages": 52,
@@ -8880,6 +8880,18 @@
       "context": "label={t('common:foundationOrganisationProfilePage.labels.address', 'Address')}"
     },
     {
+      "key": "settings:companyProfile.website",
+      "file": "pages/supplier/SupplierOrganisationProfilePage.tsx",
+      "line": 475,
+      "context": "label={t('settings:companyProfile.website', 'Website')}"
+    },
+    {
+      "key": "settings:companyProfile.website",
+      "file": "pages/supplier/SupplierOrganisationProfilePage.tsx",
+      "line": 475,
+      "context": "label={t('settings:companyProfile.website', 'Website')}"
+    },
+    {
       "key": "settings:companyProfile.supplierInfo",
       "file": "pages/supplier/SupplierOrganisationProfilePage.tsx",
       "line": 500,
@@ -10396,6 +10408,18 @@
       "file": "pages/service-provider/ServiceProviderOrganisationProfilePage.tsx",
       "line": 477,
       "context": "label={t('foundationOrganisationProfilePage.labels.address', 'Location')}"
+    },
+    {
+      "key": "settings:companyProfile.website",
+      "file": "pages/service-provider/ServiceProviderOrganisationProfilePage.tsx",
+      "line": 482,
+      "context": "label={t('settings:companyProfile.website', 'Website')}"
+    },
+    {
+      "key": "settings:companyProfile.website",
+      "file": "pages/service-provider/ServiceProviderOrganisationProfilePage.tsx",
+      "line": 482,
+      "context": "label={t('settings:companyProfile.website', 'Website')}"
     },
     {
       "key": "settings:companyProfile.serviceProviderInfo",
@@ -13210,6 +13234,18 @@
       "file": "pages/foundation/FoundationOrganisationProfilePage.tsx",
       "line": 490,
       "context": "label={t('foundationOrganisationProfilePage.labels.address', 'Location')}"
+    },
+    {
+      "key": "settings:companyProfile.website",
+      "file": "pages/foundation/FoundationOrganisationProfilePage.tsx",
+      "line": 495,
+      "context": "label={t('settings:companyProfile.website', 'Website')}"
+    },
+    {
+      "key": "settings:companyProfile.website",
+      "file": "pages/foundation/FoundationOrganisationProfilePage.tsx",
+      "line": 495,
+      "context": "label={t('settings:companyProfile.website', 'Website')}"
     },
     {
       "key": "foundationOrganisationProfilePage.sections.operations.title",
@@ -20836,6 +20872,18 @@
       "file": "components/profile/OrganizationPublicProfile.tsx",
       "line": 267,
       "context": "<p className=\"text-gray-400 italic text-xs\">{t('profile:organization.notProvided', { defaultValue: 'Not provided' })}</p>"
+    },
+    {
+      "key": "profile:organization.bookingLink",
+      "file": "components/profile/OrganizationPublicProfile.tsx",
+      "line": 273,
+      "context": "{t('profile:organization.bookingLink', { defaultValue: 'Booking Link' })}"
+    },
+    {
+      "key": "profile:organization.bookingLink",
+      "file": "components/profile/OrganizationPublicProfile.tsx",
+      "line": 273,
+      "context": "{t('profile:organization.bookingLink', { defaultValue: 'Booking Link' })}"
     },
     {
       "key": "profile:organization.notProvided",

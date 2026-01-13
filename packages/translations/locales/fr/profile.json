@@ -113,6 +113,7 @@
     "setupRequired": "Configuration requise",
     "vatNumber": "Numéro de TVA",
     "viewCatalog": "Voir le catalogue",
+    "bookingLink": "Lien de réservation",
     "website": "Site web"
   },
   "subtitle": "Passez en revue les détails de votre compte et les informations relatives à votre organisation.",

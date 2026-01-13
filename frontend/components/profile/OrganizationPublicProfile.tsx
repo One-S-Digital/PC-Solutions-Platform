@@ -270,7 +270,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
 
               <div>
                 <p className="text-xs text-gray-500 mb-1 font-medium">
-                  {'Booking Link'}
+                  {t('profile:organization.bookingLink', { defaultValue: 'Booking Link' })}
                 </p>
                 {organization.bookingLink && bookingHref ? (
                   <a

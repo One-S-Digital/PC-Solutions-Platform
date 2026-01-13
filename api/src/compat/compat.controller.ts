@@ -743,8 +743,8 @@ export class CompatController {
       if (data.languagesSpoken !== undefined) updateData.languages = data.languagesSpoken;
       if (data.capacity !== undefined) updateData.capacity = data.capacity;
       if (data.pedagogy !== undefined) updateData.pedagogy = data.pedagogy;
-      if (data.websiteUrl !== undefined) updateData.websiteUrl = data.websiteUrl;
-      if (data.website !== undefined) updateData.websiteUrl = data.website;
+      const resolvedWebsiteUrl = data.websiteUrl ?? data.website;
+      if (resolvedWebsiteUrl !== undefined) updateData.websiteUrl = resolvedWebsiteUrl;
       if (data.catalogUrl !== undefined) updateData.catalogUrl = data.catalogUrl;
       if (data.directOrderLink !== undefined) updateData.directOrderLink = data.directOrderLink;
       if (data.serviceCategories !== undefined) updateData.serviceCategories = data.serviceCategories;

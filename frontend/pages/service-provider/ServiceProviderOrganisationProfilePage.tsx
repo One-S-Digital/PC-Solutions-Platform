@@ -479,7 +479,7 @@ const ServiceProviderOrganisationProfilePage: React.FC = () => {
                 />
                 <InfoItem
                   icon={GlobeAltIcon}
-                  label={'Website'}
+                  label={t('settings:companyProfile.website', 'Website')}
                   value={
                     websiteUrl
                       ? websiteHref
