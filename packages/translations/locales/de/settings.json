@@ -24,6 +24,9 @@
   "companyProfile": {
     "basicInfo": "Grundlegende Informationen",
     "bookingLink": "Buchungslink",
+    "bookingLinkHint": "Sie können es ohne https:// eingeben",
+    "website": "Website",
+    "websiteHint": "Sie können es ohne https:// eingeben",
     "capacity": "Kapazität (Anzahl der Kinder)",
     "capacityPlaceholder": "Geben Sie die Anzahl der Kinder ein",
     "catalogUrl": "Katalog-URL",

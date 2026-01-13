@@ -285,13 +285,16 @@ const ServiceProviderProfileForm: React.FC<ServiceProviderProfileFormProps> = ({
               {t('settings:companyProfile.bookingLink', 'Booking Link')}
             </label>
             <input
-              type="url"
+              type="text"
               id="bookingLink"
               value={formData.bookingLink || ''}
               onChange={(e) => onChange('bookingLink', e.target.value)}
               className={STANDARD_INPUT_FIELD}
               placeholder={t('common:placeholders.url')}
             />
+            <p className="mt-1 text-xs text-gray-500">
+              {t('settings:companyProfile.bookingLinkHint', 'You can enter it without https://')}
+            </p>
           </div>
         </div>
       </div>

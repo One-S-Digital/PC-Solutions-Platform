@@ -24,6 +24,7 @@ import { useNotifications } from '../../contexts/NotificationContext';
 import ProfileDocumentsSettings from '../../components/settings/sections/ProfileDocumentsSettings';
 import PromoCodesDisplaySection from '../../components/profile/PromoCodesDisplaySection';
 import { UserRole } from '../../types';
+import { openExternalUrl, toExternalUrl } from '../../utils/url';
 
 interface ServiceProviderSettingsData {
   companyName?: string;
@@ -36,6 +37,7 @@ interface ServiceProviderSettingsData {
   languages?: string[];
   description?: string;
   vatNumber?: string;
+  websiteUrl?: string;
   logoUrl?: string;
   coverImageUrl?: string;
   serviceType?: string;
@@ -62,6 +64,7 @@ interface OrganizationDetails {
   serviceCategories?: string[];
   deliveryType?: string | null;
   bookingLink?: string | null;
+  websiteUrl?: string | null;
   createdAt?: string;
   updatedAt?: string;
   isActive?: boolean;
@@ -199,6 +202,7 @@ const ServiceProviderOrganisationProfilePage: React.FC = () => {
           languages: Array.isArray(data.languages) ? data.languages.filter(Boolean) : [],
           description: data.description || '',
           vatNumber: data.vatNumber || '',
+          websiteUrl: data.websiteUrl || '',
           logoUrl: data.logoUrl || '',
           coverImageUrl: data.coverImageUrl || '',
           serviceType: data.serviceType || '',
@@ -296,6 +300,8 @@ const ServiceProviderOrganisationProfilePage: React.FC = () => {
   const organizationId = organizationDetails?.id || currentUser?.orgId || '';
   const vatNumber = serviceProviderSettings?.vatNumber || organizationDetails?.vatNumber || notProvidedLabel;
   const bookingLink = serviceProviderSettings?.bookingLink || organizationDetails?.bookingLink || '';
+  const websiteUrl = serviceProviderSettings?.websiteUrl || organizationDetails?.websiteUrl || '';
+  const websiteHref = toExternalUrl(websiteUrl);
 
   const logoUrl = serviceProviderSettings?.logoUrl || organizationDetails?.logoUrl || currentUser?.orgLogoUrl ||
     `https://ui-avatars.com/api/?name=${encodeURIComponent(organizationName)}&background=2DD4BF&color=ffffff&size=128&rounded=true`;
@@ -471,6 +477,26 @@ const ServiceProviderOrganisationProfilePage: React.FC = () => {
                   label={t('foundationOrganisationProfilePage.labels.address', 'Location')}
                   value={locationValue}
                 />
+                <InfoItem
+                  icon={GlobeAltIcon}
+                  label={'Website'}
+                  value={
+                    websiteUrl
+                      ? websiteHref
+                        ? (
+                          <a
+                            href={websiteHref}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-swiss-mint hover:text-swiss-teal break-all"
+                          >
+                            {websiteUrl}
+                          </a>
+                        )
+                        : websiteUrl
+                      : notProvidedLabel
+                  }
+                />
               </div>
             </Card>
 
@@ -550,7 +576,7 @@ const ServiceProviderOrganisationProfilePage: React.FC = () => {
                   variant="outline"
                   size="sm"
                   leftIcon={LinkIcon}
-                  onClick={() => window.open(bookingLink, '_blank', 'noopener,noreferrer')}
+                  onClick={() => openExternalUrl(bookingLink)}
                 >
                   {t('serviceProviderOrganisationProfilePage.actions.openBookingLink', 'Open Booking Link')}
                 </Button>

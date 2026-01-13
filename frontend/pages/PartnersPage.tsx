@@ -6,6 +6,7 @@ import { BuildingStorefrontIcon, ArrowTopRightOnSquareIcon, ChatBubbleLeftEllips
 import { SwissFlagIcon } from '../components/icons/CustomIcons';
 import { useTranslation } from 'react-i18next';
 import { apiService } from '../services/api';
+import { openExternalUrl } from '../utils/url';
 
 // Partner type options for the form
 const PARTNER_TYPES: { value: PartnerType; labelKey: string }[] = [
@@ -366,7 +367,7 @@ const PartnerCard: React.FC<{ partner: Partner }> = ({ partner }) => {
           variant="outline" 
           size="sm" 
           rightIcon={ArrowTopRightOnSquareIcon} 
-          onClick={() => window.open(partner.websiteUrl, '_blank')}
+          onClick={() => openExternalUrl(partner.websiteUrl)}
         >
           {t('partners.partnerCard.learnMoreButton', 'Learn More')}
         </Button>

@@ -25,11 +25,13 @@ import { useAppContext } from '../../contexts/AppContext';
 import { useNotifications } from '../../contexts/NotificationContext';
 import { UserRole } from '../../types';
 import { PEDAGOGY_KEY_MAP } from '../../constants';
+import { openExternalUrl, toExternalUrl } from '../../utils/url';
 
 interface FoundationSettingsData {
   companyName?: string;
   contactEmail?: string;
   phoneNumber?: string;
+  websiteUrl?: string;
   address?: string;
   canton?: string;
   city?: string;
@@ -56,6 +58,7 @@ interface OrganizationDetails {
   pedagogy?: string[];
   bookingLink?: string | null;
   directOrderLink?: string | null;
+  websiteUrl?: string | null;
   createdAt?: string;
   updatedAt?: string;
   isActive?: boolean;
@@ -213,6 +216,7 @@ const FoundationOrganisationProfilePage: React.FC = () => {
           companyName: data.companyName || currentUser.orgName || '',
           contactEmail: data.contactEmail || currentUser.email || '',
           phoneNumber: data.phoneNumber || '',
+          websiteUrl: data.websiteUrl || '',
           address: data.address || '',
           canton: data.canton || '',
           city: data.city || '',
@@ -321,6 +325,8 @@ const FoundationOrganisationProfilePage: React.FC = () => {
   const vatNumber = organizationDetails?.vatNumber || notProvidedLabel;
   const bookingLink = organizationDetails?.bookingLink || '';
   const directOrderLink = organizationDetails?.directOrderLink || '';
+  const websiteUrl = foundationSettings?.websiteUrl || organizationDetails?.websiteUrl || '';
+  const websiteHref = toExternalUrl(websiteUrl);
 
   const pageTitle = t('foundationOrganisationProfilePage.title', 'Organization Profile');
   const pageSubtitle = t(
@@ -484,6 +490,26 @@ const FoundationOrganisationProfilePage: React.FC = () => {
                   label={t('foundationOrganisationProfilePage.labels.address', 'Location')}
                   value={locationValue}
                 />
+                <InfoItem
+                  icon={GlobeAltIcon}
+                  label={'Website'}
+                  value={
+                    websiteUrl
+                      ? websiteHref
+                        ? (
+                          <a
+                            href={websiteHref}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-swiss-mint hover:text-swiss-teal break-all"
+                          >
+                            {websiteUrl}
+                          </a>
+                        )
+                        : websiteUrl
+                      : notProvidedLabel
+                  }
+                />
               </div>
             </Card>
 
@@ -560,7 +586,7 @@ const FoundationOrganisationProfilePage: React.FC = () => {
                     variant="outline"
                     size="sm"
                     leftIcon={LinkIcon}
-                    onClick={() => window.open(bookingLink, '_blank', 'noopener,noreferrer')}
+                    onClick={() => openExternalUrl(bookingLink)}
                   >
                     {t('foundationOrganisationProfilePage.actions.openBookingLink', 'Open booking link')}
                   </Button>
@@ -570,7 +596,7 @@ const FoundationOrganisationProfilePage: React.FC = () => {
                     variant="outline"
                     size="sm"
                     leftIcon={LinkIcon}
-                    onClick={() => window.open(directOrderLink, '_blank', 'noopener,noreferrer')}
+                    onClick={() => openExternalUrl(directOrderLink)}
                   >
                     {t('foundationOrganisationProfilePage.actions.openDirectOrderLink', 'Open direct order link')}
                   </Button>

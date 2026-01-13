@@ -19,6 +19,7 @@ export interface OrganizationCreateData {
   minimumOrderQuantity?: number;
   directOrderLink?: string;
   catalogUrl?: string;
+  websiteUrl?: string;
   serviceCategories?: string[];
   deliveryType?: string;
   bookingLink?: string;
@@ -147,7 +148,7 @@ class OrganizationService {
       coverImageUrl: org.coverAsset?.publicUrl || org.coverImageUrl,
       email: org.email, // Use actual email if available
       phone: org.phoneNumber,
-      website: org.directOrderLink || org.bookingLink || org.catalogUrl,
+      website: org.websiteUrl || org.directOrderLink || org.bookingLink || org.catalogUrl,
       address: org.region ? `${org.region}, Switzerland` : undefined,
       tags: org.pedagogy || org.serviceCategories || org.productCategories || [],
       rating: org.rating, // Preserve actual rating or leave undefined

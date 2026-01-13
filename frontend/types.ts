@@ -98,6 +98,7 @@ export interface Organization {
   minimumOrderQuantity?: number;
   directOrderLink?: string;
   catalogUrl?: string;
+  websiteUrl?: string;
   serviceCategories?: string[];
   deliveryType?: string;
   bookingLink?: string;
@@ -870,6 +871,7 @@ interface BaseSettings {
     contactPerson?: string;
     phoneNumber?: string;
     contactEmail?: string;
+    websiteUrl?: string;
     address?: string;
     canton?: string;
     city?: string;
