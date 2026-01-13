@@ -584,6 +584,17 @@ ${'='.repeat(100)}`);
       }
     });
 
+    // Extract organization data from unsafe_metadata (set during signup)
+    const organisationName = data.unsafe_metadata?.organisationName;
+    const signupCanton = data.unsafe_metadata?.canton;
+
+    console.log(`🏢 [E2E DEBUG] ORGANIZATION DATA FROM SIGNUP:`, {
+      organisationName,
+      signupCanton,
+      phone: phoneNumber,
+      unsafeMetadataKeys: data.unsafe_metadata ? Object.keys(data.unsafe_metadata) : [],
+    });
+
     // E2E DEBUG: Database operations with comprehensive logging
     console.log(`💾 [E2E DEBUG] STARTING DATABASE OPERATIONS...`);
 
@@ -606,7 +617,7 @@ ${'='.repeat(100)}`);
           select: { id: true, role: true, email: true },
         });
 
-        await tx.user.upsert({
+        const user = await tx.user.upsert({
           where: { clerkId },
           update: {
             email: primaryEmail,
@@ -626,6 +637,51 @@ ${'='.repeat(100)}`);
             isActive: true,
           },
         });
+
+        // Create organization and link user for organization-based roles
+        const orgBasedRoles = [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER];
+        if (orgBasedRoles.includes(validRole as UserRole)) {
+          // Check if user already has an organization link (to avoid duplicates on updates)
+          const existingOrgLink = await tx.userOrganization.findFirst({
+            where: { userId: user.id },
+          });
+
+          if (!existingOrgLink) {
+            // Determine organization type from user role
+            const orgTypeMap: Record<string, 'FOUNDATION' | 'PRODUCT_SUPPLIER' | 'SERVICE_PROVIDER'> = {
+              [UserRole.FOUNDATION]: 'FOUNDATION',
+              [UserRole.PRODUCT_SUPPLIER]: 'PRODUCT_SUPPLIER',
+              [UserRole.SERVICE_PROVIDER]: 'SERVICE_PROVIDER',
+            };
+            const orgType = orgTypeMap[validRole as string];
+
+            // Create the organization with signup data
+            const organization = await tx.organization.create({
+              data: {
+                name: organisationName || `${firstName} ${lastName}`.trim() || 'New Organization',
+                type: orgType,
+                contactPerson: `${firstName} ${lastName}`.trim() || null,
+                phoneNumber: phoneNumber || null,
+                canton: signupCanton || null,
+                region: signupCanton || null,
+                isActive: true,
+              },
+            });
+
+            // Link user to organization
+            await tx.userOrganization.create({
+              data: {
+                userId: user.id,
+                organizationId: organization.id,
+                role: validRole as UserRole,
+              },
+            });
+
+            console.log(`🏢 [E2E DEBUG] Created organization "${organization.name}" (${orgType}) and linked to user ${user.id}`);
+          } else {
+            console.log(`⏭️ [E2E DEBUG] User already has an organization link, skipping org creation`);
+          }
+        }
       });
 
       console.log(`✅ [E2E DEBUG] APPUSER & USER UPSERTED SUCCESSFULLY:`, {
