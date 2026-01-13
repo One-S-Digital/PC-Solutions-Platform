@@ -3,6 +3,24 @@
 -- Run this to diagnose marketplace visibility issues for vendors
 
 -- ============================================
+-- STEP 0: Verify tables exist
+-- ============================================
+-- Run this first to confirm the tables exist in your database
+
+SELECT 'Checking if required tables exist...' as status;
+
+SELECT 
+    table_name,
+    CASE WHEN table_name IS NOT NULL THEN 'EXISTS' ELSE 'MISSING' END as status
+FROM information_schema.tables 
+WHERE table_schema = 'public' 
+    AND table_name IN ('users', 'subscriptions', 'organizations', 'user_organizations', 'subscription_plans')
+ORDER BY table_name;
+
+-- If any tables are missing, you may need to run migrations:
+-- cd api && npx prisma migrate deploy
+
+-- ============================================
 -- ISSUE 1: Subscriptions linked to userId instead of organizationId
 -- ============================================
 -- The marketplace query checks organizations.subscriptions which only finds
