@@ -11,64 +11,215 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  IsString,
+  IsOptional,
+  IsEmail,
+  IsBoolean,
+  IsArray,
+  IsNumber,
+  IsUrl,
+  IsUUID,
+} from 'class-validator';
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { UserRole, AssetKind } from '@prisma/client';
+import { UserRole, OrganizationType, AssetKind } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 
-// DTOs for admin profile updates
+// Valid organization types for validation
+const VALID_ORGANIZATION_TYPES = Object.values(OrganizationType);
+
+// DTOs for admin profile updates with class-validator decorators
 class AdminUpdateUserProfileDto {
+  @IsOptional()
+  @IsString()
   firstName?: string;
+
+  @IsOptional()
+  @IsString()
   lastName?: string;
+
+  @IsOptional()
+  @IsEmail()
   email?: string;
+
+  @IsOptional()
+  @IsEmail()
   contactEmail?: string;
+
+  @IsOptional()
+  @IsString()
   phoneNumber?: string;
+
+  @IsOptional()
+  @IsString()
   region?: string;
+
+  @IsOptional()
+  @IsString()
   jobRole?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   jobRoles?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   cities?: string[];
+
+  @IsOptional()
+  @IsString()
   workExperience?: string;
+
+  @IsOptional()
+  @IsString()
   education?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   certifications?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   skills?: string[];
+
+  @IsOptional()
+  @IsString()
   availability?: string;
+
+  @IsOptional()
+  @IsString()
   cvUrl?: string;
+
+  @IsOptional()
+  @IsString()
   shortBio?: string;
+
+  @IsOptional()
+  @IsBoolean()
   candidatePoolVisible?: boolean;
+
+  @IsOptional()
+  @IsString()
   avatarAssetId?: string;
+
+  @IsOptional()
+  @IsString()
   coverAssetId?: string;
 }
 
 class AdminUpdateOrganizationProfileDto {
+  @IsOptional()
+  @IsString()
   name?: string;
+
+  @IsOptional()
+  @IsString()
   type?: string;
+
+  @IsOptional()
+  @IsEmail()
   contactEmail?: string;
+
+  @IsOptional()
+  @IsString()
   phoneNumber?: string;
+
+  @IsOptional()
+  @IsString()
   contactPerson?: string;
+
+  @IsOptional()
+  @IsString()
   region?: string;
+
+  @IsOptional()
+  @IsString()
   canton?: string;
+
+  @IsOptional()
+  @IsString()
   city?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   regionsServed?: string[];
+
+  @IsOptional()
+  @IsString()
   description?: string;
+
+  @IsOptional()
+  @IsString()
   vatNumber?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   languages?: string[];
+
+  @IsOptional()
+  @IsString()
   website?: string;
+
   // Foundation-specific
+  @IsOptional()
+  @IsNumber()
   capacity?: number;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   pedagogy?: string[];
+
   // Supplier-specific
+  @IsOptional()
+  @IsString()
   productCategory?: string;
+
+  @IsOptional()
+  @IsNumber()
   minimumOrderQuantity?: number;
+
+  @IsOptional()
+  @IsString()
   directOrderLink?: string;
+
+  @IsOptional()
+  @IsString()
   catalogUrl?: string;
+
   // Service Provider-specific
+  @IsOptional()
+  @IsString()
   serviceType?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   serviceCategories?: string[];
+
+  @IsOptional()
+  @IsString()
   deliveryType?: string;
+
+  @IsOptional()
+  @IsString()
   bookingLink?: string;
+
   // Assets
+  @IsOptional()
+  @IsString()
   logoAssetId?: string;
+
+  @IsOptional()
+  @IsString()
   coverAssetId?: string;
 }
 
@@ -81,6 +232,55 @@ export class AdminProfilesController {
   private readonly logger = new Logger(AdminProfilesController.name);
 
   constructor(private readonly prisma: PrismaService) {}
+
+  /**
+   * Helper function to build consistent user profile response
+   * Extracts duplicated mapping logic into a single reusable method
+   */
+  private buildUserProfileResponse(
+    user: any,
+    appUserId: string,
+    primaryOrg: any | null,
+  ) {
+    return {
+      success: true,
+      data: {
+        id: appUserId,
+        profileId: user.id,
+        clerkId: user.clerkId,
+        role: user.role,
+        email: user.email,
+        firstName: user.firstName ?? '',
+        lastName: user.lastName ?? '',
+        contactEmail: user.contactInfo?.contactEmail ?? user.email,
+        phoneNumber: user.phoneNumber ?? '',
+        region: user.region ?? '',
+        jobRole: user.jobRole ?? '',
+        jobRoles: Array.isArray(user.jobRoles) ? user.jobRoles : [],
+        cities: Array.isArray(user.cities) ? user.cities : [],
+        workExperience: user.workExperience ?? '',
+        education: user.education ?? '',
+        certifications: user.certifications ?? [],
+        skills: user.skills ?? [],
+        availability: user.availability ?? '',
+        cvUrl: user.cvUrl ?? '',
+        shortBio: user.shortBio ?? '',
+        candidatePoolVisible: user.candidatePoolVisible ?? false,
+        avatarUrl: user.avatarAsset?.publicUrl ?? null,
+        avatarAssetId: user.avatarAssetId ?? null,
+        coverImageUrl: user.coverAsset?.publicUrl ?? null,
+        coverAssetId: user.coverAssetId ?? null,
+        organization: primaryOrg
+          ? {
+              id: primaryOrg.id,
+              name: primaryOrg.name,
+              type: primaryOrg.type,
+              logoUrl: primaryOrg.logoAsset?.publicUrl ?? null,
+            }
+          : null,
+      },
+    };
+  }
 
   // ─────────────────────────────────────────────────────────────
   // User Profile Management
@@ -144,46 +344,13 @@ export class AdminProfilesController {
         throw new NotFoundException('User not found');
       }
 
-      // Build response from User record
+      // Build response from User record using helper
       const primaryOrg = user.organizations?.[0]?.organization;
-      
-      return {
-        success: true,
-        data: {
-          id: user.appUser?.id || user.id,
-          profileId: user.id,
-          clerkId: user.clerkId,
-          role: user.role,
-          email: user.email,
-          firstName: user.firstName ?? '',
-          lastName: user.lastName ?? '',
-          contactEmail: user.contactInfo?.contactEmail ?? user.email,
-          phoneNumber: user.phoneNumber ?? '',
-          region: (user as any).region ?? '',
-          jobRole: (user as any).jobRole ?? '',
-          jobRoles: Array.isArray((user as any).jobRoles) ? (user as any).jobRoles : [],
-          cities: Array.isArray((user as any).cities) ? (user as any).cities : [],
-          workExperience: user.workExperience ?? '',
-          education: user.education ?? '',
-          certifications: user.certifications ?? [],
-          skills: user.skills ?? [],
-          availability: user.availability ?? '',
-          cvUrl: user.cvUrl ?? '',
-          shortBio: user.shortBio ?? '',
-          candidatePoolVisible: (user as any).candidatePoolVisible ?? false,
-          avatarUrl: user.avatarAsset?.publicUrl ?? null,
-          avatarAssetId: user.avatarAssetId ?? null,
-          coverImageUrl: user.coverAsset?.publicUrl ?? null,
-          coverAssetId: (user as any).coverAssetId ?? null,
-          // Organization info if exists
-          organization: primaryOrg ? {
-            id: primaryOrg.id,
-            name: primaryOrg.name,
-            type: primaryOrg.type,
-            logoUrl: (primaryOrg as any).logoAsset?.publicUrl ?? null,
-          } : null,
-        },
-      };
+      return this.buildUserProfileResponse(
+        user,
+        user.appUser?.id || user.id,
+        primaryOrg,
+      );
     }
 
     const user = appUser.profile;
@@ -192,44 +359,7 @@ export class AdminProfilesController {
     }
 
     const primaryOrg = user.organizations?.[0]?.organization;
-
-    return {
-      success: true,
-      data: {
-        id: appUser.id,
-        profileId: user.id,
-        clerkId: user.clerkId,
-        role: user.role,
-        email: user.email,
-        firstName: user.firstName ?? '',
-        lastName: user.lastName ?? '',
-        contactEmail: user.contactInfo?.contactEmail ?? user.email,
-        phoneNumber: user.phoneNumber ?? '',
-        region: (user as any).region ?? '',
-        jobRole: (user as any).jobRole ?? '',
-        jobRoles: Array.isArray((user as any).jobRoles) ? (user as any).jobRoles : [],
-        cities: Array.isArray((user as any).cities) ? (user as any).cities : [],
-        workExperience: user.workExperience ?? '',
-        education: user.education ?? '',
-        certifications: user.certifications ?? [],
-        skills: user.skills ?? [],
-        availability: user.availability ?? '',
-        cvUrl: user.cvUrl ?? '',
-        shortBio: user.shortBio ?? '',
-        candidatePoolVisible: (user as any).candidatePoolVisible ?? false,
-        avatarUrl: user.avatarAsset?.publicUrl ?? null,
-        avatarAssetId: user.avatarAssetId ?? null,
-        coverImageUrl: user.coverAsset?.publicUrl ?? null,
-        coverAssetId: (user as any).coverAssetId ?? null,
-        // Organization info if exists
-        organization: primaryOrg ? {
-          id: primaryOrg.id,
-          name: primaryOrg.name,
-          type: primaryOrg.type,
-          logoUrl: (primaryOrg as any).logoAsset?.publicUrl ?? null,
-        } : null,
-      },
-    };
+    return this.buildUserProfileResponse(user, appUser.id, primaryOrg);
   }
 
   @Patch('users/:id/profile')
@@ -416,6 +546,11 @@ export class AdminProfilesController {
       throw new NotFoundException('Organization not found');
     }
 
+    // Validate organization type if provided
+    if (dto.type !== undefined && !VALID_ORGANIZATION_TYPES.includes(dto.type as OrganizationType)) {
+      throw new BadRequestException(`Invalid organization type: ${dto.type}. Valid types are: ${VALID_ORGANIZATION_TYPES.join(', ')}`);
+    }
+
     await this.prisma.$transaction(async (tx) => {
       // Update contact email separately
       if (dto.contactEmail !== undefined) {
@@ -436,7 +571,7 @@ export class AdminProfilesController {
         where: { id },
         data: {
           ...(dto.name !== undefined && { name: dto.name }),
-          ...(dto.type !== undefined && { type: dto.type as any }),
+          ...(dto.type !== undefined && { type: dto.type as OrganizationType }),
           ...(dto.phoneNumber !== undefined && { phoneNumber: dto.phoneNumber }),
           ...(dto.contactPerson !== undefined && { contactPerson: dto.contactPerson }),
           ...(dto.region !== undefined && { region: dto.region }),

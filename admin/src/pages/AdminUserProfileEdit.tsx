@@ -124,9 +124,23 @@ const AdminUserProfileEdit: React.FC = () => {
     setIsDirty(true);
   };
 
+  // Core submit logic - separated for reuse by both form submit and button click
+  const submitForm = async () => {
+    try {
+      await updateMutation.mutateAsync(formData);
+    } catch {
+      // Error already handled by onError callback
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await updateMutation.mutateAsync(formData);
+    await submitForm();
+  };
+
+  // Handler for Save button click (avoids MouseEvent/FormEvent type mismatch)
+  const handleSaveClick = () => {
+    submitForm();
   };
 
   const handleBack = () => {
@@ -182,7 +196,7 @@ const AdminUserProfileEdit: React.FC = () => {
         <Button
           variant="primary"
           leftIcon={Save}
-          onClick={handleSubmit}
+          onClick={handleSaveClick}
           disabled={!isDirty || updateMutation.isPending}
         >
           {updateMutation.isPending ? t('common:saving', 'Saving...') : t('common:saveChanges', 'Save Changes')}
