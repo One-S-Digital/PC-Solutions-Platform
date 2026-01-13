@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   TagIcon,
@@ -26,6 +26,13 @@ interface PromoCode {
   description?: string;
   usageCount: number;
   maxUsage?: number;
+}
+
+interface PromoCodesApiResponse {
+  success: boolean;
+  data: PromoCode[];
+  hasOrganization?: boolean;
+  message?: string;
 }
 
 interface PromoCodesDisplaySectionProps {
@@ -63,11 +70,7 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
     status: 'Active' as 'Active' | 'Expired' | 'Disabled',
   });
 
-  useEffect(() => {
-    loadPromoCodes();
-  }, [organizationId, isOwnProfile]);
-
-  const loadPromoCodes = async () => {
+  const loadPromoCodes = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     if (isOwnProfile) {
@@ -82,47 +85,73 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
         endpoint = `/promo-codes/public/${organizationId}`;
       }
 
-      const response = await request<{ success: boolean; data: PromoCode[] }>(endpoint);
+      const response = await request<PromoCodesApiResponse>(endpoint);
       
-      if (response && (response as any).success && (response as any).data) {
-        setPromoCodes((response as any).data);
+      if (response && response.success) {
+        // Handle both cases: data exists or is empty array
+        const promoCodesData = Array.isArray(response.data) ? response.data : [];
+        setPromoCodes(promoCodesData);
+        
         if (isOwnProfile) {
-          setHasOrganization((response as any)?.hasOrganization ?? null);
+          // Explicitly check for hasOrganization field in response
+          // Default to true if not present (backward compatibility)
+          const orgStatus = typeof response.hasOrganization === 'boolean' 
+            ? response.hasOrganization 
+            : true;
+          setHasOrganization(orgStatus);
         } else {
           setHasOrganization(null);
         }
       } else {
         setPromoCodes([]);
-        setHasOrganization(null);
+        // If response exists but success is false, user might not have organization
+        if (isOwnProfile) {
+          setHasOrganization(false);
+        } else {
+          setHasOrganization(null);
+        }
       }
     } catch (err) {
       console.error('Failed to load promo codes', err);
       setError(t('common:errors.genericErrorMessage', 'Failed to load promo codes'));
       setPromoCodes([]);
-      setHasOrganization(null);
+      // On error, assume organization exists to allow retry
+      if (isOwnProfile) {
+        setHasOrganization(true);
+      } else {
+        setHasOrganization(null);
+      }
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [isOwnProfile, organizationId, request, t]);
 
-  const handleOpenModal = (promo?: PromoCode) => {
+  useEffect(() => {
+    loadPromoCodes();
+  }, [loadPromoCodes]);
+
+  const handleOpenModal = useCallback((promo?: PromoCode) => {
     if (!isOwnProfile) {
+      console.warn('Cannot open modal: not own profile');
       return;
     }
-    if (hasOrganization !== true) {
+    
+    // Allow modal to open even if hasOrganization is null/false
+    // The save operation will fail with a proper error message if no org exists
+    // This provides better UX than blocking the modal entirely
+    if (hasOrganization === false) {
       addNotification({
         title: t('common:errors.validationError', 'Action required'),
         message: t(
           'settingsPromoCodeManager.validation.organizationRequired',
-          hasOrganization === null
-            ? 'Please wait while we verify your organization status.'
-            : 'You need to create/link an organization profile before adding promo codes.',
+          'You need to create/link an organization profile before adding promo codes.',
         ),
         type: 'error',
       });
       return;
     }
 
+    // Store the currently focused element for accessibility
     lastFocusedElementRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
 
     if (promo) {
@@ -149,13 +178,13 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
       });
     }
     setIsModalOpen(true);
-  };
+  }, [isOwnProfile, hasOrganization, addNotification, t]);
 
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     setIsModalOpen(false);
     setEditingPromo(null);
     window.setTimeout(() => lastFocusedElementRef.current?.focus?.(), 0);
-  };
+  }, []);
 
   useEffect(() => {
     if (!isModalOpen) {
@@ -209,9 +238,9 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
       document.removeEventListener('keydown', handleEscape);
       document.removeEventListener('keydown', handleTabTrap);
     };
-  }, [isModalOpen]);
+  }, [isModalOpen, handleCloseModal]);
 
-  const getExpiryEndOfDayUtcIso = (dateString: string) => {
+  const getExpiryEndOfDayUtcIso = useCallback((dateString: string) => {
     const parts = dateString.split('-').map(Number);
     if (parts.length !== 3) {
       return null;
@@ -228,23 +257,10 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
     }
 
     return new Date(utcMillis).toISOString();
-  };
+  }, []);
 
-  const handleSavePromo = async () => {
+  const handleSavePromo = useCallback(async () => {
     if (!isOwnProfile) {
-      return;
-    }
-    if (hasOrganization !== true) {
-      addNotification({
-        title: t('common:errors.validationError', 'Action required'),
-        message: t(
-          'settingsPromoCodeManager.validation.organizationRequired',
-          hasOrganization === null
-            ? 'Please wait while we verify your organization status.'
-            : 'You need to create/link an organization profile before adding promo codes.',
-        ),
-        type: 'error',
-      });
       return;
     }
 
@@ -355,9 +371,9 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
     } finally {
       setIsSaving(false);
     }
-  };
+  }, [isOwnProfile, formData, editingPromo, addNotification, t, getExpiryEndOfDayUtcIso, request, handleCloseModal, loadPromoCodes]);
 
-  const handleDeletePromo = async (promoId: string) => {
+  const handleDeletePromo = useCallback(async (promoId: string) => {
     if (!isOwnProfile) {
       return;
     }
@@ -382,9 +398,9 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
         type: 'error',
       });
     }
-  };
+  }, [isOwnProfile, t, request, addNotification, loadPromoCodes]);
 
-  const copyToClipboard = async (code: string) => {
+  const copyToClipboard = useCallback(async (code: string) => {
     try {
       await navigator.clipboard.writeText(code);
       setCopiedCode(code);
@@ -392,9 +408,9 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
     } catch (err) {
       console.error('Failed to copy to clipboard', err);
     }
-  };
+  }, []);
 
-  const getDiscountText = (promo: PromoCode) => {
+  const getDiscountText = useCallback((promo: PromoCode) => {
     switch (promo.discountType) {
       case 'Percentage':
         return t('settingsPromoCodeManager.discountTypes.percentage', { value: promo.value });
@@ -405,9 +421,9 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
       default:
         return `${promo.value}`;
     }
-  };
+  }, [t]);
 
-  const getStatusLabel = (status: PromoCode['status']) => {
+  const getStatusLabel = useCallback((status: PromoCode['status']) => {
     switch (status) {
       case 'Active':
         return t('settingsPromoCodeManager.status.active');
@@ -418,18 +434,18 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
       default:
         return status;
     }
-  };
+  }, [t]);
 
-  const formatDate = (dateString: string) => {
+  const formatDate = useCallback((dateString: string) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat(i18n.language || 'en', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
     }).format(date);
-  };
+  }, [i18n.language]);
 
-  const getStatusBadgeClasses = (status: string) => {
+  const getStatusBadgeClasses = useCallback((status: string) => {
     switch (status) {
       case 'Active':
         return 'bg-green-100 text-green-700';
@@ -440,7 +456,7 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
       default:
         return 'bg-gray-100 text-gray-700';
     }
-  };
+  }, []);
 
   // Filter to show only active codes for non-owners
   const displayCodes = isOwnProfile 
@@ -490,14 +506,7 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
           </h3>
         </div>
         <div className="text-center py-4 space-y-3">
-          {isOwnProfile && hasOrganization === null ? (
-            <p className="text-sm text-gray-500">
-              {t(
-                'settingsPromoCodeManager.validation.organizationRequired',
-                'Please wait while we verify your organization status.',
-              )}
-            </p>
-          ) : isOwnProfile && hasOrganization === false ? (
+          {isOwnProfile && hasOrganization === false ? (
             <p className="text-sm text-gray-500">
               {t(
                 'settingsPromoCodeManager.validation.organizationRequired',
@@ -521,7 +530,7 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
                 size="sm"
                 leftIcon={PlusCircleIcon}
                 onClick={() => handleOpenModal()}
-                disabled={hasOrganization !== true}
+                disabled={hasOrganization === false}
               >
                 {t('settingsPromoCodeManager.addNewCode')}
               </Button>
@@ -551,7 +560,7 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
               size="sm"
               leftIcon={PlusCircleIcon}
               onClick={() => handleOpenModal()}
-              disabled={hasOrganization !== true}
+              disabled={hasOrganization === false}
             >
               {t('settingsPromoCodeManager.addNewCode')}
             </Button>

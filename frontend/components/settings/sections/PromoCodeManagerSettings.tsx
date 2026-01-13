@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { SettingsFormData, UserRole, PromoCode } from '../../../types';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
 import Button from '../../ui/Button';
@@ -18,6 +18,13 @@ interface ApiPromoCode {
   description?: string;
   usageCount: number;
   maxUsage?: number;
+}
+
+interface PromoCodesApiResponse {
+  success: boolean;
+  data: ApiPromoCode[];
+  hasOrganization?: boolean;
+  message?: string;
 }
 
 interface PromoCodeManagerSettingsProps {
@@ -50,16 +57,15 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({ set
     status: 'Active' as 'Active' | 'Expired' | 'Disabled',
   });
 
-  useEffect(() => {
-    loadPromoCodes();
-  }, []);
-
-  const loadPromoCodes = async () => {
+  const loadPromoCodes = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await request<{ success: boolean; data: ApiPromoCode[] }>('/promo-codes');
-      if (response && (response as any).success && (response as any).data) {
-        setPromoCodes((response as any).data);
+      const response = await request<PromoCodesApiResponse>('/promo-codes');
+      if (response && response.success) {
+        const promoCodesData = Array.isArray(response.data) ? response.data : [];
+        setPromoCodes(promoCodesData);
+      } else {
+        setPromoCodes([]);
       }
     } catch (error) {
       console.error('Failed to load promo codes:', error);
@@ -68,12 +74,17 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({ set
         message: t('common:errors.genericErrorMessage'),
         type: 'error',
       });
+      setPromoCodes([]);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [request, addNotification, t]);
 
-  const handleOpenModal = (promo?: ApiPromoCode) => {
+  useEffect(() => {
+    loadPromoCodes();
+  }, [loadPromoCodes]);
+
+  const handleOpenModal = useCallback((promo?: ApiPromoCode) => {
     if (promo) {
       setEditingPromo(promo);
       setFormData({
@@ -98,14 +109,14 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({ set
       });
     }
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     setIsModalOpen(false);
     setEditingPromo(null);
-  };
+  }, []);
 
-  const handleSavePromo = async () => {
+  const handleSavePromo = useCallback(async () => {
     if (!formData.code.trim() || !formData.expiryDate) {
       addNotification({
         title: t('common:errors.validationError'),
@@ -123,7 +134,7 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({ set
         value: Number(formData.value),
         expiryDate: new Date(`${formData.expiryDate}T23:59:59`).toISOString(),
         description: formData.description || undefined,
-        maxUsage: formData.maxUsage ? parseInt(formData.maxUsage) : undefined,
+        maxUsage: formData.maxUsage ? parseInt(formData.maxUsage, 10) : undefined,
         ...(editingPromo && { status: formData.status }),
       };
 
@@ -153,17 +164,21 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({ set
       loadPromoCodes();
     } catch (error) {
       console.error('Failed to save promo code:', error);
+      const resolvedMessage =
+        typeof (error as any)?.message === 'string' && (error as any).message
+          ? (error as any).message
+          : t('common:errors.genericErrorMessage');
       addNotification({
         title: t('common:errors.genericErrorTitle'),
-        message: t('common:errors.genericErrorMessage'),
+        message: resolvedMessage,
         type: 'error',
       });
     } finally {
       setIsSaving(false);
     }
-  };
+  }, [formData, editingPromo, addNotification, t, request, handleCloseModal, loadPromoCodes]);
 
-  const handleDeletePromo = async (promoId: string) => {
+  const handleDeletePromo = useCallback(async (promoId: string) => {
     if (!window.confirm(t('settingsPromoCodeManager.confirmDelete'))) {
       return;
     }
@@ -184,9 +199,9 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({ set
         type: 'error',
       });
     }
-  };
+  }, [t, request, addNotification, loadPromoCodes]);
   
-  const getDiscountText = (promo: ApiPromoCode) => {
+  const getDiscountText = useCallback((promo: ApiPromoCode) => {
     switch(promo.discountType) {
       case 'Percentage': 
         return t('settingsPromoCodeManager.discountTypes.percentage', { value: promo.value });
@@ -197,9 +212,9 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({ set
       default: 
         return promo.description || `${promo.value}`;
     }
-  };
+  }, [t]);
 
-  const getStatusLabel = (status: ApiPromoCode['status']) => {
+  const getStatusLabel = useCallback((status: ApiPromoCode['status']) => {
     switch (status) {
       case 'Active':
         return t('settingsPromoCodeManager.status.active');
@@ -210,7 +225,7 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({ set
       default:
         return status;
     }
-  };
+  }, [t]);
 
   if (isLoading) {
     return (
