@@ -135,21 +135,6 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
       console.warn('Cannot open modal: not own profile');
       return;
     }
-    
-    // Allow modal to open even if hasOrganization is null/false
-    // The save operation will fail with a proper error message if no org exists
-    // This provides better UX than blocking the modal entirely
-    if (hasOrganization === false) {
-      addNotification({
-        title: t('common:errors.validationError', 'Action required'),
-        message: t(
-          'settingsPromoCodeManager.validation.organizationRequired',
-          'You need to create/link an organization profile before adding promo codes.',
-        ),
-        type: 'error',
-      });
-      return;
-    }
 
     // Store the currently focused element for accessibility
     lastFocusedElementRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -178,7 +163,7 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
       });
     }
     setIsModalOpen(true);
-  }, [isOwnProfile, hasOrganization, addNotification, t]);
+  }, [isOwnProfile]);
 
   const handleCloseModal = useCallback(() => {
     setIsModalOpen(false);
@@ -506,20 +491,11 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
           </h3>
         </div>
         <div className="text-center py-4 space-y-3">
-          {isOwnProfile && hasOrganization === false ? (
-            <p className="text-sm text-gray-500">
-              {t(
-                'settingsPromoCodeManager.validation.organizationRequired',
-                'You need to create/link an organization profile before adding promo codes.',
-              )}
-            </p>
-          ) : (
-            <p className="text-sm text-gray-500">
-              {isOwnProfile
-                ? t('settingsPromoCodeManager.noCodesYet')
-                : t('promoCodesDisplay.noActivePromoCodes')}
-            </p>
-          )}
+          <p className="text-sm text-gray-500">
+            {isOwnProfile
+              ? t('settingsPromoCodeManager.noCodesYet')
+              : t('promoCodesDisplay.noActivePromoCodes')}
+          </p>
           {isOwnProfile && (
             <div className="flex items-center justify-center gap-2">
               <Button variant="light" size="sm" leftIcon={ArrowPathIcon} onClick={loadPromoCodes}>
@@ -530,7 +506,6 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
                 size="sm"
                 leftIcon={PlusCircleIcon}
                 onClick={() => handleOpenModal()}
-                disabled={hasOrganization === false}
               >
                 {t('settingsPromoCodeManager.addNewCode')}
               </Button>
@@ -560,7 +535,6 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
               size="sm"
               leftIcon={PlusCircleIcon}
               onClick={() => handleOpenModal()}
-              disabled={hasOrganization === false}
             >
               {t('settingsPromoCodeManager.addNewCode')}
             </Button>
