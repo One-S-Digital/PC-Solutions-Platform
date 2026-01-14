@@ -139,7 +139,7 @@ const ResetPasswordPage: React.FC = () => {
           navigate('/dashboard', { replace: true });
           return;
         }
-        setError(t('common:resetPassword', 'Reset Password') + ' ' + t('common:errors.unknown', 'An unknown error occurred'));
+        setError(t('common:errors.unknown', 'An unknown error occurred'));
         return;
       }
 

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth, useSignIn } from '@clerk/clerk-react';
 import { useTranslation } from 'react-i18next';
@@ -43,9 +43,11 @@ export default function ResetPassword() {
   const [info, setInfo] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (isAuthLoaded && isSignedIn) {
-    navigate('/dashboard', { replace: true });
-  }
+  useEffect(() => {
+    if (isAuthLoaded && isSignedIn) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isAuthLoaded, isSignedIn, navigate]);
 
   if (!isSignInLoaded || !isAuthLoaded) {
     return (
