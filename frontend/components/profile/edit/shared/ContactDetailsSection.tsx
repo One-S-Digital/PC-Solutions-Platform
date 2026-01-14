@@ -1,5 +1,5 @@
 import React from 'react';
-import { PhoneIcon, EnvelopeIcon, UserIcon } from '@heroicons/react/24/outline';
+import { PhoneIcon } from '@heroicons/react/24/outline';
 import { SettingsFormData } from '../../../../types';
 import { STANDARD_INPUT_FIELD } from '../../../../constants';
 import { useTranslation } from 'react-i18next';
@@ -64,6 +64,22 @@ const ContactDetailsSection: React.FC<ContactDetailsSectionProps> = ({
             className={STANDARD_INPUT_FIELD}
             placeholder={t('common:placeholders.email')}
           />
+        </div>
+        <div>
+          <label htmlFor="websiteUrl" className="block text-sm font-medium text-gray-700 mb-1">
+            {t('settings:companyProfile.website', 'Website')}
+          </label>
+          <input
+            type="text"
+            id="websiteUrl"
+            value={formData.websiteUrl || ''}
+            onChange={(e) => onChange('websiteUrl', e.target.value)}
+            className={STANDARD_INPUT_FIELD}
+            placeholder={t('common:placeholders.url', 'www.example.com')}
+          />
+          <p className="mt-1 text-xs text-gray-500">
+            {t('settings:companyProfile.websiteHint', 'You can enter it without https://')}
+          </p>
         </div>
       </div>
     </div>

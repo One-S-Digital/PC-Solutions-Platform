@@ -17,12 +17,13 @@ import { CreateJobListingDto } from './dto/create-job-listing.dto';
 import { UpdateJobListingDto } from './dto/update-job-listing.dto';
 import { CreateJobApplicationDto, UpdateJobApplicationDto } from './dto/create-job-application.dto';
 
+import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '@prisma/client';
 
 @Controller('recruitment')
-@UseGuards(RolesGuard)
+@UseGuards(ClerkAuthGuard, RolesGuard)
 export class RecruitmentController {
   constructor(private readonly recruitmentService: RecruitmentService) {}
 
@@ -41,17 +42,24 @@ export class RecruitmentController {
     @Query('location') location?: string,
     @Query('search') search?: string,
     @Query('contractType') contractType?: string,
+    @Query('employmentType') employmentType?: string,
     @Query('lang') lang?: string,
     @Request() req?,
   ) {
     const normalizedContractType = contractType ? contractType.toUpperCase() : undefined;
-    const isPublicRole = !req?.user || [
-      UserRole.EDUCATOR,
-      UserRole.PARENT,
-      UserRole.SERVICE_PROVIDER,
-      UserRole.PRODUCT_SUPPLIER,
-    ].includes(req.user.role);
-    const publishedOnly = isPublicRole;
+    // Recruitment endpoints are authenticated (controller-level auth guard).
+    // Some roles should only see published listings.
+    const viewerRole = req?.context?.role ?? req?.user?.role;
+    const publishedOnly = !viewerRole
+      ? true
+      : [
+          UserRole.EDUCATOR,
+          UserRole.PARENT,
+          UserRole.SERVICE_PROVIDER,
+          UserRole.PRODUCT_SUPPLIER,
+          // Defensive: treat pending users as public viewers
+          'PENDING',
+        ].includes(viewerRole);
 
     return this.recruitmentService.findAllJobListings({
       foundationId,
@@ -59,6 +67,7 @@ export class RecruitmentController {
       location,
       search,
       contractType: normalizedContractType,
+      employmentType: employmentType ? employmentType.toUpperCase() : undefined,
       publishedOnly,
       lang: lang || 'en',
     });
@@ -104,7 +113,8 @@ export class RecruitmentController {
   @Post('applications')
   @Roles(UserRole.EDUCATOR, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   createJobApplication(@Body() createJobApplicationDto: CreateJobApplicationDto, @Request() req) {
-    const candidateId = req.context.userId;
+    // IMPORTANT: JobApplication.candidateId references User.id (profile UUID), not Clerk ID.
+    const candidateId = req.user.id;
     return this.recruitmentService.createJobApplication(createJobApplicationDto, candidateId);
   }
 
@@ -124,7 +134,8 @@ export class RecruitmentController {
   @Get('applications/my')
   @Roles(UserRole.EDUCATOR, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   getMyJobApplications(@Request() req) {
-    const candidateId = req.context.userId;
+    // IMPORTANT: JobApplication.candidateId references User.id (profile UUID), not Clerk ID.
+    const candidateId = req.user.id;
     return this.recruitmentService.findJobApplicationsForCandidate(candidateId);
   }
 
@@ -166,6 +177,7 @@ export class RecruitmentController {
 
   // Candidate endpoints
   @Get('candidates')
+  @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   findAllCandidates(
     @Query('role') role?: string,
     @Query('skills') skills?: string,

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isValidCantonCode = exports.getCantonDefaultLanguage = exports.getCantonName = exports.CANTON_DEFAULT_LANGUAGES = exports.CANTON_CODES = exports.ConversationType = exports.MessageType = exports.QuizType = exports.LessonStatus = exports.ContentType = exports.CourseStatus = exports.ApplicationStatus = exports.ServiceCategory = exports.JobContractType = exports.JobStatus = exports.OrganizationType = exports.AssetKind = exports.SubscriptionStatus = exports.SubscriptionTier = exports.UserRole = void 0;
+exports.isValidCantonCode = exports.getCantonDefaultLanguage = exports.getCantonName = exports.CANTON_DEFAULT_LANGUAGES = exports.CANTON_CODES = exports.ConversationType = exports.MessageType = exports.QuizType = exports.LessonStatus = exports.ContentType = exports.CourseStatus = exports.ApplicationStatus = exports.ServiceCategory = exports.JobPreferredTimeSlot = exports.JobContractType = exports.JobStatus = exports.OrganizationType = exports.AssetKind = exports.SubscriptionStatus = exports.SubscriptionTier = exports.UserRole = void 0;
 // User Roles
 exports.UserRole = {
     SUPER_ADMIN: 'SUPER_ADMIN',
@@ -72,6 +72,13 @@ exports.JobContractType = {
     REPLACEMENT: 'REPLACEMENT',
     TEMPORARY: 'TEMPORARY',
     FREELANCE: 'FREELANCE',
+};
+// Preferred time slots for work schedule matching
+exports.JobPreferredTimeSlot = {
+    MORNING: 'MORNING',
+    AFTERNOON: 'AFTERNOON',
+    FULL_DAY: 'FULL_DAY',
+    FLEXIBLE: 'FLEXIBLE',
 };
 // Service Categories
 exports.ServiceCategory = {

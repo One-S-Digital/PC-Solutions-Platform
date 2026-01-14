@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { SettingsFormData } from '../../../types';
-import { STANDARD_INPUT_FIELD } from '../../../constants';
+import { STANDARD_INPUT_FIELD, SWISS_CANTONS } from '../../../constants';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
 import CoverImageSection from './shared/CoverImageSection';
@@ -12,6 +12,7 @@ import {
   UserCircleIcon,
   BriefcaseIcon,
   AcademicCapIcon,
+  MapPinIcon,
   StarIcon,
   PaperClipIcon,
   DocumentTextIcon,
@@ -27,6 +28,8 @@ interface EducatorProfileFormProps {
 const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onChange }) => {
   const { t } = useTranslation(['common', 'settings']);
   const { currentUser } = useAppContext();
+  const [jobRoleDraft, setJobRoleDraft] = useState('');
+  const [citiesDraft, setCitiesDraft] = useState('');
 
   const handleSkillsChange = (newSkills: string[]) => {
     onChange('skills', newSkills);
@@ -65,6 +68,15 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
     'https://images.unsplash.com/photo-1503676260728-4c8c0c7832a6?auto=format&fit=crop&w=1600&q=80';
 
   const fullName = `${formData.firstName || ''} ${formData.lastName || ''}`.trim() || t('settings:educatorProfile.educator', 'Educator');
+  const jobRoles =
+    Array.isArray(formData.jobRoles) && formData.jobRoles.length > 0
+      ? formData.jobRoles
+      : formData.jobRole
+        ? [formData.jobRole]
+        : [];
+  const cities = Array.isArray(formData.cities) ? formData.cities : [];
+  const hasUnconfirmedJobRole = jobRoleDraft.trim().length > 0;
+  const hasUnconfirmedCity = citiesDraft.trim().length > 0;
 
   return (
     <div className="space-y-6">
@@ -132,6 +144,93 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
             />
           </div>
         </div>
+      </div>
+
+      {/* Professional Details */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+          <MapPinIcon className="w-5 h-5 mr-2 text-swiss-mint" />
+          {t('settings:educatorProfile.professionalDetails', 'Professional Details')}
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="jobRole" className="block text-sm font-medium text-gray-700 mb-1">
+              {t('settings:educatorProfile.role', 'Role')} <span className="text-swiss-coral">*</span>
+            </label>
+            <ChipInput
+              selectedChips={jobRoles}
+              onChange={(roles) => {
+                onChange('jobRoles', roles);
+                onChange('jobRole', roles[0] || '');
+              }}
+              placeholder={t('settings:educatorProfile.rolePlaceholder', 'e.g., Educator, Assistant')}
+              allowCustomValues={true}
+              onInputValueChange={setJobRoleDraft}
+            />
+            <p className="mt-1 text-xs text-gray-500">
+              {t('settings:educatorProfile.roleHint', 'Add one or more roles to improve matching.')}
+            </p>
+            <p
+              className={`mt-1 text-xs ${hasUnconfirmedJobRole ? 'text-swiss-coral' : 'text-gray-500'}`}
+            >
+              {hasUnconfirmedJobRole && <span className="text-swiss-coral">*</span>}{' '}
+              {t(
+                'settings:educatorProfile.rolePressEnterHint',
+                'Type a role and press Enter to add it.',
+              )}
+            </p>
+          </div>
+
+          <div>
+            <label htmlFor="region" className="block text-sm font-medium text-gray-700 mb-1">
+              {t('settings:educatorProfile.location', 'Location')} <span className="text-swiss-coral">*</span>
+            </label>
+            <select
+              id="region"
+              value={formData.region || ''}
+              onChange={(e) => onChange('region', e.target.value)}
+              className={STANDARD_INPUT_FIELD}
+              required
+            >
+              <option value="">{t('settings:educatorProfile.locationPlaceholder', 'Select a canton')}</option>
+              {SWISS_CANTONS.map((canton) => (
+                <option key={canton} value={canton}>
+                  {canton}
+                </option>
+              ))}
+            </select>
+            <div className="mt-3">
+              <label htmlFor="cities" className="block text-sm font-medium text-gray-700 mb-1">
+                {t('settings:educatorProfile.cities', 'Cities')}
+              </label>
+              <ChipInput
+                selectedChips={cities}
+                onChange={(nextCities) => onChange('cities', nextCities)}
+                placeholder={t('settings:educatorProfile.citiesPlaceholder', 'Add one or more cities')}
+                allowCustomValues={true}
+                onInputValueChange={setCitiesDraft}
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                {t('settings:educatorProfile.citiesHint', 'Add multiple cities to increase your visibility.')}
+              </p>
+              <p
+                className={`mt-1 text-xs ${hasUnconfirmedCity ? 'text-swiss-coral' : 'text-gray-500'}`}
+              >
+                {hasUnconfirmedCity && <span className="text-swiss-coral">*</span>}{' '}
+                {t(
+                  'settings:educatorProfile.citiesPressEnterHint',
+                  'Type a city and press Enter to add it.',
+                )}
+              </p>
+            </div>
+          </div>
+        </div>
+        <p className="mt-2 text-xs text-gray-500">
+          {t(
+            'settings:educatorProfile.professionalDetailsHint',
+            'These fields help foundations find you in the candidate pool.',
+          )}
+        </p>
       </div>
 
       {/* Contact Information - Using Shared Component */}

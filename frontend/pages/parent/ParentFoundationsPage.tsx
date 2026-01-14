@@ -4,6 +4,7 @@ import { useAppContext } from '../../contexts/AppContext';
 import { UserRole } from '../../types';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
+import Pagination from '../../components/ui/Pagination';
 import {
   BuildingOfficeIcon,
   MapPinIcon,
@@ -20,6 +21,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
 import { SWISS_CANTONS } from '../../constants';
+import { openExternalUrl } from '../../utils/url';
 
 interface Foundation {
   id: string;
@@ -27,6 +29,7 @@ interface Foundation {
   description?: string;
   region?: string;
   canton?: string;
+  city?: string;
   languages?: string[];
   capacity?: number;
   pedagogy?: string[];
@@ -59,6 +62,8 @@ const ParentFoundationsPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCanton, setFilterCanton] = useState<string>('');
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(25);
 
   // Fetch foundations
   const fetchFoundations = useCallback(async () => {
@@ -90,6 +95,10 @@ const ParentFoundationsPage: React.FC = () => {
   useEffect(() => {
     fetchFoundations();
   }, [fetchFoundations]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchQuery, filterCanton]);
 
   // Access check
   if (!currentUser || currentUser.role !== UserRole.PARENT) {
@@ -209,7 +218,9 @@ const ParentFoundationsPage: React.FC = () => {
 
       {/* Foundations grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {foundations.map((foundation) => (
+        {foundations
+          .slice((page - 1) * perPage, (page - 1) * perPage + perPage)
+          .map((foundation) => (
           <Card key={foundation.id} className="flex flex-col p-5 hover:shadow-lg transition-shadow">
             {/* Header */}
             <div className="flex items-start gap-4 mb-4">
@@ -228,10 +239,12 @@ const ParentFoundationsPage: React.FC = () => {
                 <h3 className="text-lg font-semibold text-swiss-charcoal truncate">
                   {foundation.name}
                 </h3>
-                {(foundation.canton || foundation.region) && (
+                {(foundation.city || foundation.canton || foundation.region) && (
                   <p className="text-sm text-gray-500 flex items-center">
                     <MapPinIcon className="w-4 h-4 mr-1" />
-                    {foundation.canton || foundation.region}
+                    {foundation.city && foundation.canton
+                      ? `${foundation.city}, ${foundation.canton}`
+                      : foundation.city || foundation.canton || foundation.region}
                   </p>
                 )}
               </div>
@@ -287,7 +300,7 @@ const ParentFoundationsPage: React.FC = () => {
                   variant="outline"
                   size="sm"
                   leftIcon={GlobeAltIcon}
-                  onClick={() => window.open(foundation.catalogUrl, '_blank')}
+                  onClick={() => openExternalUrl(foundation.catalogUrl)}
                 >
                   {t('parentFoundationsPage.website', 'Website')}
                 </Button>
@@ -297,11 +310,17 @@ const ParentFoundationsPage: React.FC = () => {
         ))}
       </div>
 
-      {/* Results count */}
       {foundations.length > 0 && (
-        <p className="text-center text-sm text-gray-500">
-          {t('parentFoundationsPage.resultsCount', 'Showing {{count}} daycares', { count: foundations.length })}
-        </p>
+        <Pagination
+          page={page}
+          totalItems={foundations.length}
+          pageSize={perPage}
+          onPageChange={setPage}
+          onPageSizeChange={(n) => {
+            setPerPage(n);
+            setPage(1);
+          }}
+        />
       )}
     </div>
   );

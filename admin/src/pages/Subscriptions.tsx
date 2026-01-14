@@ -3236,7 +3236,7 @@ const Subscriptions: React.FC = () => {
                 <select
                   value={userListPageSize}
                   onChange={(e) => setUserListPageSize(Number(e.target.value) as 25 | 50 | 100)}
-                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-2 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value={25}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 25</option>
                   <option value={50}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 50</option>
@@ -3354,8 +3354,8 @@ const Subscriptions: React.FC = () => {
           </div>
 
           {/* Pagination */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div className="text-sm text-gray-600">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:items-center">
+            <div className="text-sm text-gray-600 text-center sm:text-left">
               {t(
                 'admin:users.pagination.showing',
                 'Showing {{from}}-{{to}} of {{total}}',
@@ -3366,7 +3366,7 @@ const Subscriptions: React.FC = () => {
                 },
               )}
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-center gap-2">
               <button
                 type="button"
                 className="px-3 py-2 text-sm rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -3390,6 +3390,7 @@ const Subscriptions: React.FC = () => {
                 {t('admin:users.pagination.next', 'Next')}
               </button>
             </div>
+            <div className="hidden sm:block" />
           </div>
         </div>
       ) : null}

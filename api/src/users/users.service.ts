@@ -521,7 +521,7 @@ export class UsersService {
           },
         });
 
-        await tx.user.create({
+        const user = await tx.user.create({
           data: {
             clerkId,
             email,
@@ -532,15 +532,47 @@ export class UsersService {
             isActive: true,
           },
         });
+
+        // Create organization and link user for organization-based roles
+        const orgBasedRoles: UserRole[] = [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER];
+        if (orgBasedRoles.includes(dto.role)) {
+          // Determine organization type from user role
+          const orgTypeMap: Record<string, 'FOUNDATION' | 'PRODUCT_SUPPLIER' | 'SERVICE_PROVIDER'> = {
+            [UserRole.FOUNDATION]: 'FOUNDATION',
+            [UserRole.PRODUCT_SUPPLIER]: 'PRODUCT_SUPPLIER',
+            [UserRole.SERVICE_PROVIDER]: 'SERVICE_PROVIDER',
+          };
+          const orgType = orgTypeMap[dto.role];
+          
+          // Create the organization with signup data
+          const organization = await tx.organization.create({
+            data: {
+              name: dto.organisationName || `${firstName} ${lastName}`.trim() || 'New Organization',
+              type: orgType,
+              contactPerson: dto.contactPerson || `${firstName} ${lastName}`.trim() || null,
+              phoneNumber: dto.phone || null,
+              canton: dto.canton || null,
+              region: dto.canton || null,
+              // Role-specific fields
+              ...(dto.role === UserRole.FOUNDATION && dto.capacity ? { capacity: dto.capacity } : {}),
+              ...(dto.role === UserRole.PRODUCT_SUPPLIER && dto.category ? { productCategory: dto.category } : {}),
+              ...(dto.role === UserRole.SERVICE_PROVIDER && dto.serviceType ? { serviceType: dto.serviceType } : {}),
+              isActive: true,
+            },
+          });
+
+          // Link user to organization
+          await tx.userOrganization.create({
+            data: {
+              userId: user.id,
+              organizationId: organization.id,
+              role: dto.role,
+            },
+          });
+
+          this.logger.log(`🏢 [COMPLETE PROFILE] Created organization "${organization.name}" (${orgType}) and linked to user ${user.id}`);
+        }
       });
-      
-      // If organization details are provided, we should ideally create the organization here
-      // This is a simplification
-      if (dto.organisationName) {
-         // Logic to create organization would go here
-         // For now we rely on the user updating their profile/org later or implement a separate flow
-         this.logger.log(`🏢 [COMPLETE PROFILE] Organization name provided: ${dto.organisationName}`);
-      }
     }
 
     return this.findByClerkId(clerkId);
@@ -775,36 +807,46 @@ export class UsersService {
   }
 
   async findOne(id: string) {
-    const appUser = await this.prisma.appUser.findUnique({
-      where: { id },
-    });
+    // Historically, various admin UIs have passed either:
+    // - AppUser.id (account id) OR
+    // - User.id (profile id)
+    //
+    // For admin candidate editing, we need an enriched response and we need to
+    // gracefully handle profiles that exist without a corresponding AppUser row
+    // (e.g., admin-created candidate records).
 
-    if (!appUser) {
+    const appUser = await this.prisma.appUser.findUnique({ where: { id } });
+    if (appUser) {
+      const enriched = await this.findByClerkId(appUser.clerkId);
+      if (!enriched) {
+        throw new NotFoundException('User not found');
+      }
+      return enriched;
+    }
+
+    const profile = await this.prisma.user.findUnique({ where: { id } });
+    if (!profile) {
       throw new NotFoundException('User not found');
     }
 
-    // Return in User format for compatibility
-    return {
-      id: appUser.id,
-      clerkId: appUser.clerkId,
-      email: appUser.email,
-      firstName: null,
-      lastName: null,
-      role: appUser.role,
-      phoneNumber: null,
-      workExperience: null,
-      education: null,
-      certifications: [],
-      skills: [],
-      availability: null,
-      cvUrl: null,
-      stripeCustomerId: null,
-      lastActiveAt: null,
-      isActive: true,
-      createdAt: appUser.createdAt,
-      updatedAt: appUser.updatedAt,
-      organizations: [],
-    };
+    // Ensure an AppUser exists so downstream admin operations (/users/:id PATCH)
+    // can function consistently.
+    const existingAppUser = await this.prisma.appUser.findUnique({ where: { clerkId: profile.clerkId } });
+    if (!existingAppUser) {
+      await this.prisma.appUser.create({
+        data: {
+          clerkId: profile.clerkId,
+          email: profile.email,
+          role: profile.role,
+        },
+      });
+    }
+
+    const enriched = await this.findByClerkId(profile.clerkId);
+    if (!enriched) {
+      throw new NotFoundException('User not found');
+    }
+    return enriched;
   }
 
   async findByEmail(email: string) {
@@ -1092,12 +1134,33 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto, changedBy?: string, callerRole?: UserRole) {
-    const appUser = await this.prisma.appUser.findUnique({
-      where: { id },
-    });
+    // Admin UIs may pass either AppUser.id (account id) OR User.id (profile id).
+    // Support both to keep edit flows (e.g. candidate pool) reliable.
+    let appUser = await this.prisma.appUser.findUnique({ where: { id } });
+    let appUserId = id;
 
     if (!appUser) {
-      throw new NotFoundException('User not found');
+      const profile = await this.prisma.user.findUnique({ where: { id } });
+      if (!profile) {
+        throw new NotFoundException('User not found');
+      }
+
+      // Ensure an AppUser exists for the profile's clerkId so updates can proceed.
+      const existingAppUser = await this.prisma.appUser.findUnique({
+        where: { clerkId: profile.clerkId },
+      });
+
+      appUser =
+        existingAppUser ??
+        (await this.prisma.appUser.create({
+          data: {
+            clerkId: profile.clerkId,
+            email: profile.email,
+            role: profile.role,
+          },
+        }));
+
+      appUserId = appUser.id;
     }
 
     // Check if role is changing - if so, validate and use RoleSyncService for proper Clerk sync
@@ -1121,7 +1184,7 @@ export class UsersService {
       // Handle role change through RoleSyncService (includes Clerk sync)
       if (isRoleChanging && targetRole) {
         await this.roleSyncService.changeRole({
-          appUserId: id,
+          appUserId: appUserId,
           newRole: targetRole,
           changedBy: changedBy || 'system',
           reason: isElevatingToAdmin ? `Role elevation from ${previousRole} to ${targetRole}` : 'Admin user update',
@@ -1131,7 +1194,7 @@ export class UsersService {
 
       // Update AppUser table (non-role fields)
       const updatedAppUser = await tx.appUser.update({
-        where: { id },
+        where: { id: appUserId },
         data: {
           email: updateUserDto.email || appUser.email,
           // Role is already handled by RoleSyncService above
@@ -1226,12 +1289,12 @@ export class UsersService {
     // This ensures the user can log in with their new email
     const isEmailChanging = updateUserDto.email && updateUserDto.email !== appUser.email;
     if (isEmailChanging && updateUserDto.email) {
-      this.logger.log(`📧 [UPDATE] Email changed for user ${id}, syncing to Clerk...`);
+      this.logger.log(`📧 [UPDATE] Email changed for user ${appUserId}, syncing to Clerk...`);
       await this.syncEmailToClerkWithFallback(appUser.clerkId, updateUserDto.email);
     }
 
     // Fetch the latest role (in case it was updated by RoleSyncService)
-    const latestAppUser = await this.prisma.appUser.findUnique({ where: { id } });
+    const latestAppUser = await this.prisma.appUser.findUnique({ where: { id: appUserId } });
 
     // Return the fully refreshed user profile (ensures status/isActive/candidatePoolVisible are correct)
     return this.findByClerkId(updatedAppUser.clerkId);

@@ -3,8 +3,10 @@ import {
   Logger,
   NotFoundException,
   ConflictException,
+  BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { UserRole, OrganizationType } from '@prisma/client';
 import {
   CreatePromoCodeDto,
   UpdatePromoCodeDto,
@@ -26,6 +28,78 @@ export class PromoCodesService {
       select: { organizationId: true },
     });
     return userOrg?.organizationId || null;
+  }
+
+  /**
+   * Get or create organization for user (for suppliers/service providers only)
+   */
+  async getOrCreateOrganizationForUser(profileId: string): Promise<string | null> {
+    // First check if organization already exists
+    const existingOrg = await this.prisma.userOrganization.findFirst({
+      where: { userId: profileId },
+      select: { organizationId: true },
+    });
+
+    if (existingOrg) {
+      return existingOrg.organizationId;
+    }
+
+    // Get user to determine their role
+    const user = await this.prisma.user.findUnique({
+      where: { id: profileId },
+      select: { 
+        id: true, 
+        role: true, 
+        firstName: true, 
+        lastName: true, 
+        email: true,
+      },
+    });
+
+    if (!user) {
+      this.logger.warn(`User not found: ${profileId}`);
+      return null;
+    }
+
+    // Only create organizations for supplier/service provider roles
+    const roleToOrgType: Record<string, OrganizationType> = {
+      [UserRole.PRODUCT_SUPPLIER]: OrganizationType.PRODUCT_SUPPLIER,
+      [UserRole.SERVICE_PROVIDER]: OrganizationType.SERVICE_PROVIDER,
+    };
+
+    const orgType = roleToOrgType[user.role];
+    if (!orgType) {
+      this.logger.warn(`User role ${user.role} does not support promo codes`);
+      return null;
+    }
+
+    // Create organization and link it to the user in a transaction
+    const result = await this.prisma.$transaction(async (tx) => {
+      const organization = await tx.organization.create({
+        data: {
+          name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'My Organization',
+          type: orgType,
+          contactPerson: `${user.firstName || ''} ${user.lastName || ''}`.trim() || null,
+          isActive: true,
+        },
+      });
+
+      await tx.userOrganization.create({
+        data: {
+          userId: user.id,
+          organizationId: organization.id,
+          role: user.role,
+        },
+      });
+
+      this.logger.log(
+        `Created organization ${organization.id} for user ${profileId} (${user.role})`
+      );
+
+      return organization.id;
+    });
+
+    return result;
   }
 
   /**

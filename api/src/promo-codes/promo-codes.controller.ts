@@ -46,6 +46,7 @@ export class PromoCodesController {
 
   /**
    * Get all promo codes for the current user's organization
+   * Creates organization on-demand for suppliers/service providers if needed
    */
   @Get()
   @Roles(UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER)
@@ -58,12 +59,22 @@ export class PromoCodesController {
   async getPromoCodes(@Request() req) {
     const { profileId } = this.getContext(req);
 
-    const organizationId = await this.promoCodesService.getUserOrganizationId(profileId);
+    // Try to get existing organization first
+    let organizationId = await this.promoCodesService.getUserOrganizationId(profileId);
+    
+    // If no organization exists, try to create one
+    if (!organizationId) {
+      organizationId = await this.promoCodesService.getOrCreateOrganizationForUser(profileId);
+    }
+
+    // If still no organization (e.g., wrong role), return empty with hasOrganization: true
+    // This prevents the button from being disabled - the create will handle validation
     if (!organizationId) {
       return {
         success: true,
+        hasOrganization: true, // Allow the UI to show the add button
         data: [],
-        message: 'No organization found',
+        message: 'Ready to add promo codes',
       };
     }
 
@@ -71,12 +82,14 @@ export class PromoCodesController {
 
     return {
       success: true,
+      hasOrganization: true,
       data: promoCodes,
     };
   }
 
   /**
    * Create a new promo code
+   * Creates organization on-demand for suppliers/service providers if needed
    */
   @Post()
   @Roles(UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER)
@@ -92,9 +105,12 @@ export class PromoCodesController {
   ) {
     const { profileId } = this.getContext(req);
 
-    const organizationId = await this.promoCodesService.getUserOrganizationId(profileId);
+    // Get or create organization for this user
+    const organizationId = await this.promoCodesService.getOrCreateOrganizationForUser(profileId);
     if (!organizationId) {
-      throw new BadRequestException('No organization found for this user');
+      throw new BadRequestException(
+        'Could not create promo code. Please ensure your profile is complete.'
+      );
     }
 
     const promoCode = await this.promoCodesService.createPromoCode(organizationId, dto);

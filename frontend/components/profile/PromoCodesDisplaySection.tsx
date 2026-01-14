@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   TagIcon,
@@ -28,6 +28,13 @@ interface PromoCode {
   maxUsage?: number;
 }
 
+interface PromoCodesApiResponse {
+  success: boolean;
+  data: PromoCode[];
+  hasOrganization?: boolean;
+  message?: string;
+}
+
 interface PromoCodesDisplaySectionProps {
   organizationId?: string;
   isOwnProfile?: boolean;
@@ -44,6 +51,7 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
   const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [hasOrganization, setHasOrganization] = useState<boolean | null>(null);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -62,13 +70,12 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
     status: 'Active' as 'Active' | 'Expired' | 'Disabled',
   });
 
-  useEffect(() => {
-    loadPromoCodes();
-  }, [organizationId, isOwnProfile]);
-
-  const loadPromoCodes = async () => {
+  const loadPromoCodes = useCallback(async () => {
     setIsLoading(true);
     setError(null);
+    if (isOwnProfile) {
+      setHasOrganization(null);
+    }
 
     try {
       let endpoint = '/promo-codes';
@@ -78,27 +85,58 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
         endpoint = `/promo-codes/public/${organizationId}`;
       }
 
-      const response = await request<{ success: boolean; data: PromoCode[] }>(endpoint);
+      const response = await request<PromoCodesApiResponse>(endpoint);
       
-      if (response && (response as any).success && (response as any).data) {
-        setPromoCodes((response as any).data);
+      if (response && response.success) {
+        // Handle both cases: data exists or is empty array
+        const promoCodesData = Array.isArray(response.data) ? response.data : [];
+        setPromoCodes(promoCodesData);
+        
+        if (isOwnProfile) {
+          // Explicitly check for hasOrganization field in response
+          // Default to true if not present (backward compatibility)
+          const orgStatus = typeof response.hasOrganization === 'boolean' 
+            ? response.hasOrganization 
+            : true;
+          setHasOrganization(orgStatus);
+        } else {
+          setHasOrganization(null);
+        }
       } else {
         setPromoCodes([]);
+        // If response exists but success is false, user might not have organization
+        if (isOwnProfile) {
+          setHasOrganization(false);
+        } else {
+          setHasOrganization(null);
+        }
       }
     } catch (err) {
       console.error('Failed to load promo codes', err);
       setError(t('common:errors.genericErrorMessage', 'Failed to load promo codes'));
       setPromoCodes([]);
+      // On error, assume organization exists to allow retry
+      if (isOwnProfile) {
+        setHasOrganization(true);
+      } else {
+        setHasOrganization(null);
+      }
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [isOwnProfile, organizationId, request, t]);
 
-  const handleOpenModal = (promo?: PromoCode) => {
+  useEffect(() => {
+    loadPromoCodes();
+  }, [loadPromoCodes]);
+
+  const handleOpenModal = useCallback((promo?: PromoCode) => {
     if (!isOwnProfile) {
+      console.warn('Cannot open modal: not own profile');
       return;
     }
 
+    // Store the currently focused element for accessibility
     lastFocusedElementRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
 
     if (promo) {
@@ -125,13 +163,13 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
       });
     }
     setIsModalOpen(true);
-  };
+  }, [isOwnProfile]);
 
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     setIsModalOpen(false);
     setEditingPromo(null);
     window.setTimeout(() => lastFocusedElementRef.current?.focus?.(), 0);
-  };
+  }, []);
 
   useEffect(() => {
     if (!isModalOpen) {
@@ -185,9 +223,9 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
       document.removeEventListener('keydown', handleEscape);
       document.removeEventListener('keydown', handleTabTrap);
     };
-  }, [isModalOpen]);
+  }, [isModalOpen, handleCloseModal]);
 
-  const getExpiryEndOfDayUtcIso = (dateString: string) => {
+  const getExpiryEndOfDayUtcIso = useCallback((dateString: string) => {
     const parts = dateString.split('-').map(Number);
     if (parts.length !== 3) {
       return null;
@@ -204,9 +242,9 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
     }
 
     return new Date(utcMillis).toISOString();
-  };
+  }, []);
 
-  const handleSavePromo = async () => {
+  const handleSavePromo = useCallback(async () => {
     if (!isOwnProfile) {
       return;
     }
@@ -306,17 +344,21 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
       loadPromoCodes();
     } catch (saveError) {
       console.error('Failed to save promo code:', saveError);
+      const resolvedMessage =
+        typeof (saveError as any)?.message === 'string' && (saveError as any).message
+          ? (saveError as any).message
+          : t('common:errors.genericErrorMessage');
       addNotification({
         title: t('common:errors.genericErrorTitle'),
-        message: t('common:errors.genericErrorMessage'),
+        message: resolvedMessage,
         type: 'error',
       });
     } finally {
       setIsSaving(false);
     }
-  };
+  }, [isOwnProfile, formData, editingPromo, addNotification, t, getExpiryEndOfDayUtcIso, request, handleCloseModal, loadPromoCodes]);
 
-  const handleDeletePromo = async (promoId: string) => {
+  const handleDeletePromo = useCallback(async (promoId: string) => {
     if (!isOwnProfile) {
       return;
     }
@@ -341,9 +383,9 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
         type: 'error',
       });
     }
-  };
+  }, [isOwnProfile, t, request, addNotification, loadPromoCodes]);
 
-  const copyToClipboard = async (code: string) => {
+  const copyToClipboard = useCallback(async (code: string) => {
     try {
       await navigator.clipboard.writeText(code);
       setCopiedCode(code);
@@ -351,9 +393,9 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
     } catch (err) {
       console.error('Failed to copy to clipboard', err);
     }
-  };
+  }, []);
 
-  const getDiscountText = (promo: PromoCode) => {
+  const getDiscountText = useCallback((promo: PromoCode) => {
     switch (promo.discountType) {
       case 'Percentage':
         return t('settingsPromoCodeManager.discountTypes.percentage', { value: promo.value });
@@ -364,9 +406,9 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
       default:
         return `${promo.value}`;
     }
-  };
+  }, [t]);
 
-  const getStatusLabel = (status: PromoCode['status']) => {
+  const getStatusLabel = useCallback((status: PromoCode['status']) => {
     switch (status) {
       case 'Active':
         return t('settingsPromoCodeManager.status.active');
@@ -377,18 +419,18 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
       default:
         return status;
     }
-  };
+  }, [t]);
 
-  const formatDate = (dateString: string) => {
+  const formatDate = useCallback((dateString: string) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat(i18n.language || 'en', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
     }).format(date);
-  };
+  }, [i18n.language]);
 
-  const getStatusBadgeClasses = (status: string) => {
+  const getStatusBadgeClasses = useCallback((status: string) => {
     switch (status) {
       case 'Active':
         return 'bg-green-100 text-green-700';
@@ -399,7 +441,7 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
       default:
         return 'bg-gray-100 text-gray-700';
     }
-  };
+  }, []);
 
   // Filter to show only active codes for non-owners
   const displayCodes = isOwnProfile 
@@ -459,7 +501,12 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
               <Button variant="light" size="sm" leftIcon={ArrowPathIcon} onClick={loadPromoCodes}>
                 {t('common:buttons.refresh')}
               </Button>
-              <Button variant="primary" size="sm" leftIcon={PlusCircleIcon} onClick={() => handleOpenModal()}>
+              <Button
+                variant="primary"
+                size="sm"
+                leftIcon={PlusCircleIcon}
+                onClick={() => handleOpenModal()}
+              >
                 {t('settingsPromoCodeManager.addNewCode')}
               </Button>
             </div>
@@ -483,7 +530,12 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
             <Button variant="light" size="sm" leftIcon={ArrowPathIcon} onClick={loadPromoCodes}>
               {t('common:buttons.refresh')}
             </Button>
-            <Button variant="primary" size="sm" leftIcon={PlusCircleIcon} onClick={() => handleOpenModal()}>
+            <Button
+              variant="primary"
+              size="sm"
+              leftIcon={PlusCircleIcon}
+              onClick={() => handleOpenModal()}
+            >
               {t('settingsPromoCodeManager.addNewCode')}
             </Button>
           </div>

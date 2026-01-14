@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useAuthenticatedApi } from './useAuthenticatedApi';
 import { Application, ApplicationStatus, JobContractType, JobListing, JobStatus, CandidateProfile, JobEmploymentType, JobWorkSchedule } from '../types';
+import type { EducatorAvailabilitySettings } from '../types/availability';
 
 interface ListJobListingsParams {
   foundationId?: string;
@@ -86,6 +87,15 @@ const transformCandidate = (data: any): CandidateProfile => {
   if (!data || typeof data !== 'object') {
     throw new Error('Invalid candidate data received');
   }
+
+  const jobRoles = Array.isArray(data.jobRoles)
+    ? data.jobRoles
+    : (data.jobRole ? [data.jobRole] : []);
+  const cities = Array.isArray(data.cities) ? data.cities : [];
+  const locationParts = [
+    ...(cities.length ? [cities.join(', ')] : []),
+    ...(data.region ? [data.region] : []),
+  ];
   
   return {
     id: data.id,
@@ -93,8 +103,10 @@ const transformCandidate = (data: any): CandidateProfile => {
     email: data.email ?? '',
     phone: data.phoneNumber ?? undefined,
     avatarUrl: data.avatarAsset?.publicUrl ?? data.avatarUrl ?? undefined,
-    currentRoleOrTitle: safeParseJSON<any[]>(data.workExperience)?.[0]?.jobTitle ?? data.role,
-    location: data.region ?? undefined,
+    currentRoleOrTitle: safeParseJSON<any[]>(data.workExperience)?.[0]?.jobTitle ?? jobRoles[0] ?? data.role,
+    location: locationParts.length ? locationParts.join(' • ') : data.location ?? undefined,
+    jobRoles,
+    cities,
     availabilityStatus: data.availability ?? undefined,
     shortBio: data.bio ?? data.shortBio ?? undefined,
     skills: data.skills ?? [],
@@ -102,8 +114,10 @@ const transformCandidate = (data: any): CandidateProfile => {
     education: safeParseJSON(data.education),
     certifications: data.certifications ?? [],
     availabilityPreferences: data.availabilityPreferences ?? undefined,
+    availabilitySettings: (data.availabilitySettings as EducatorAvailabilitySettings | undefined) ?? undefined,
     documents: data.documents ?? [],
     role: data.role,
+    jobRole: data.jobRole ?? undefined,
     availability: data.availability ?? undefined,
     preferredRegion: data.region ?? undefined,
     experience: data.experience ?? undefined,
@@ -126,13 +140,14 @@ export const useRecruitmentApi = () => {
 
       const endpoint = `/recruitment/job-listings${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
       const response = await request<any>(endpoint);
-      const listings = Array.isArray(response?.data) ? response.data : response?.jobListings ?? [];
+      const raw = (response as any)?.data ?? response;
+      const listings = Array.isArray(raw) ? raw : (raw?.jobListings ?? []);
       return listings.map(transformJobListing);
     },
 
     async getJobListing(id: string): Promise<JobListing> {
       const response = await request<any>(`/recruitment/job-listings/${id}`);
-      return transformJobListing(response?.data ?? response);
+      return transformJobListing((response as any)?.data ?? response);
     },
 
     async createJobListing(payload: JobListingInput): Promise<JobListing> {
@@ -168,7 +183,8 @@ export const useRecruitmentApi = () => {
 
       const endpoint = `/recruitment/candidates${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
       const response = await request<any>(endpoint);
-      const candidates = Array.isArray(response?.data) ? response.data : response?.candidates ?? [];
+      const raw = (response as any)?.data ?? response;
+      const candidates = Array.isArray(raw) ? raw : (raw?.candidates ?? []);
       return candidates.map(transformCandidate);
     },
 
@@ -180,25 +196,28 @@ export const useRecruitmentApi = () => {
 
       const endpoint = `/recruitment/applications${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
       const response = await request<any>(endpoint);
-      const applications = Array.isArray(response?.data) ? response.data : response?.applications ?? [];
+      const raw = (response as any)?.data ?? response;
+      const applications = Array.isArray(raw) ? raw : (raw?.applications ?? []);
       return applications.map(transformApplication);
     },
 
     async listMyApplications(): Promise<Application[]> {
       const response = await request<any>('/recruitment/applications/my');
-      const applications = Array.isArray(response?.data) ? response.data : response?.applications ?? [];
+      const raw = (response as any)?.data ?? response;
+      const applications = Array.isArray(raw) ? raw : (raw?.applications ?? []);
       return applications.map(transformApplication);
     },
 
     async listApplicationsForJob(jobListingId: string): Promise<Application[]> {
       const response = await request<any>(`/recruitment/applications/job/${jobListingId}`);
-      const applications = Array.isArray(response?.data) ? response.data : response?.applications ?? [];
+      const raw = (response as any)?.data ?? response;
+      const applications = Array.isArray(raw) ? raw : (raw?.applications ?? []);
       return applications.map(transformApplication);
     },
 
     async getCandidateById(candidateId: string): Promise<CandidateProfile> {
       const response = await request<any>(`/recruitment/candidates/${candidateId}`);
-      return transformCandidate(response?.data ?? response);
+      return transformCandidate((response as any)?.data ?? response);
     },
 
     async createApplication(payload: JobApplicationInput): Promise<Application> {

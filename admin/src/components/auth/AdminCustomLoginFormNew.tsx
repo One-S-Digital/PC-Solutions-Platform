@@ -283,9 +283,12 @@ export default function AdminCustomLoginForm() {
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                   {t('admin:auth.login.passwordLabel')}
                 </label>
-                <a href="#/password-reset" onClick={(e) => {e.preventDefault(); alert('Password reset functionality TBD');}} className="text-xs text-swiss-mint hover:underline">
-                    {t('admin:auth.login.forgotPassword')}
-                </a>
+                <Link
+                  to={formData.email ? `/reset-password?email=${encodeURIComponent(formData.email)}` : '/reset-password'}
+                  className="text-xs text-swiss-mint hover:underline"
+                >
+                  {t('admin:auth.login.forgotPassword')}
+                </Link>
             </div>
             <div className="relative">
                 <input

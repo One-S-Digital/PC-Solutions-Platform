@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment, useRef } from 'react'
+import React, { useState, useEffect, Fragment, useMemo, useRef } from 'react'
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import { 
   Handshake, 
@@ -737,6 +737,8 @@ const Partners: React.FC = () => {
   const debouncedSearch = useDebouncedValue(searchQuery, 300)
   const [filterType, setFilterType] = useState<PartnerType | ''>('')
   const [filterActive, setFilterActive] = useState<string>('')
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState<25 | 50 | 100>(25)
   
   // Modal states
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
@@ -765,6 +767,25 @@ const Partners: React.FC = () => {
 
   const partners: Partner[] = partnersResponse?.data?.data || []
   const stats: PartnerStats | null = statsResponse?.data?.data || null
+  const totalPartners = partners.length
+  const totalPages = Math.max(1, Math.ceil(totalPartners / pageSize))
+  const showingFrom = totalPartners === 0 ? 0 : (page - 1) * pageSize + 1
+  const showingTo = totalPartners === 0 ? 0 : Math.min(page * pageSize, totalPartners)
+  const canGoPrev = page > 1
+  const canGoNext = page < totalPages
+
+  const paginatedPartners = useMemo(() => {
+    const start = (page - 1) * pageSize
+    return partners.slice(start, start + pageSize)
+  }, [partners, page, pageSize])
+
+  useEffect(() => {
+    setPage(1)
+  }, [debouncedSearch, filterType, filterActive, pageSize])
+
+  useEffect(() => {
+    setPage((prev) => Math.min(prev, totalPages))
+  }, [totalPages])
 
   // Create partner mutation
   const createMutation = useMutation({
@@ -975,6 +996,17 @@ const Partners: React.FC = () => {
               <option value="false">{t('admin:partnersAdmin.filters.inactive', 'Inactive')}</option>
             </select>
           </div>
+          <div className="w-48">
+            <select
+              className={`${STANDARD_INPUT_FIELD} pr-10`}
+              value={pageSize}
+              onChange={(e) => setPageSize(Number(e.target.value) as 25 | 50 | 100)}
+            >
+              <option value={25}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 25</option>
+              <option value={50}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 50</option>
+              <option value={100}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 100</option>
+            </select>
+          </div>
         </div>
       </Card>
 
@@ -985,7 +1017,7 @@ const Partners: React.FC = () => {
             <LoadingSpinner size="large" />
           </div>
         ) : (
-          partners.map((partner) => (
+          paginatedPartners.map((partner) => (
             <PartnerCard
               key={partner.id}
               partner={partner}
@@ -1019,6 +1051,38 @@ const Partners: React.FC = () => {
           )}
         </div>
       )}
+
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:items-center">
+        <div className="text-sm text-gray-600 text-center sm:text-left">
+          {t(
+            'admin:users.pagination.showing',
+            'Showing {{from}}-{{to}} of {{total}}',
+            { from: showingFrom, to: showingTo, total: totalPartners },
+          )}
+        </div>
+        <div className="flex items-center justify-center gap-2">
+          <button
+            type="button"
+            className="px-3 py-2 text-sm rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!canGoPrev}
+            onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+          >
+            {t('admin:users.pagination.previous', 'Previous')}
+          </button>
+          <span className="text-sm text-gray-600 px-2">
+            {t('admin:users.pagination.pageOf', 'Page {{page}} of {{totalPages}}', { page, totalPages })}
+          </span>
+          <button
+            type="button"
+            className="px-3 py-2 text-sm rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!canGoNext}
+            onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+          >
+            {t('admin:users.pagination.next', 'Next')}
+          </button>
+        </div>
+        <div className="hidden sm:block" />
+      </div>
 
       {/* Add Modal */}
       <PartnerModal

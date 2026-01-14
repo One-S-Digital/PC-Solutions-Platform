@@ -19,3 +19,25 @@ node scripts/find-hardcoded-strings.mjs || exit 1
 
 # Lint translation values for quality issues (mandatory - fails commit on error)
 node scripts/lint-translation-values.mjs || exit 1
+
+# Check for Prisma schema drift (warns if schema changes lack migrations)
+# Only run if schema.prisma is being committed
+if git diff --cached --name-only | grep -q "api/prisma/schema.prisma"; then
+  echo "📋 Checking for Prisma schema drift..."
+  if [ -f "api/scripts/check-schema-drift.mjs" ]; then
+    # Check if there's also a migration being committed
+    if git diff --cached --name-only | grep -q "api/prisma/migrations/"; then
+      echo "✅ Schema changes include migration files"
+    else
+      echo ""
+      echo "⚠️  WARNING: schema.prisma is being committed without new migrations!"
+      echo ""
+      echo "   If you've added/modified fields, you should run:"
+      echo "   cd api && npx prisma migrate dev --name <migration_name>"
+      echo ""
+      echo "   Then stage the generated migration file."
+      echo ""
+      # Don't block commit, just warn (CI will catch it)
+    fi
+  fi
+fi

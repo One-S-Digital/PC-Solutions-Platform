@@ -53,6 +53,42 @@ export class CompatController {
     };
   }
 
+  /**
+   * Build the marketplace visibility condition for organizations.
+   * An organization is visible if it has an active subscription linked EITHER:
+   * 1. Directly to the organization (via organizationId), OR
+   * 2. Through a member user (via userId -> UserOrganization -> User -> Subscription)
+   * 
+   * This handles both new subscriptions (with organizationId) and legacy subscriptions
+   * (with only userId).
+   */
+  private marketplaceVisibilityWhere(now: Date): Prisma.OrganizationWhereInput {
+    const activeSubCondition = this.marketplaceActiveSubscriptionWhere(now);
+    
+    return {
+      OR: [
+        // Option 1: Direct subscription linked to organization
+        {
+          subscriptions: {
+            some: activeSubCondition,
+          },
+        },
+        // Option 2: Subscription linked through a member user
+        {
+          members: {
+            some: {
+              user: {
+                mainSubscriptions: {
+                  some: activeSubCondition,
+                },
+              },
+            },
+          },
+        },
+      ],
+    };
+  }
+
   private canBypassMarketplaceSubscriptionGate(user: RequestUser | undefined, organizationId: string): boolean {
     const role = user?.role;
     if (role === UserRole.ADMIN || role === UserRole.SUPER_ADMIN) return true;
@@ -434,14 +470,18 @@ export class CompatController {
 
         // Marketplace visibility gate:
         // if requesting suppliers or service providers, only return orgs with an active subscription.
+        // This checks BOTH direct org subscriptions AND subscriptions through member users.
         if (
           orgType === OrganizationType.PRODUCT_SUPPLIER ||
           orgType === OrganizationType.SERVICE_PROVIDER
         ) {
           const now = new Date();
-          where.subscriptions = {
-            some: this.marketplaceActiveSubscriptionWhere(now),
-          };
+          const visibilityCondition = this.marketplaceVisibilityWhere(now);
+          // Merge the visibility OR conditions into the where clause
+          where.AND = [
+            ...(where.AND || []),
+            visibilityCondition,
+          ];
         }
       }
       
@@ -557,6 +597,8 @@ export class CompatController {
   async getOrganizationById(@Param('id') id: string, @Request() req: RequestWithUser) {
     try {
       const now = new Date();
+      const activeSubWhere = this.marketplaceActiveSubscriptionWhere(now);
+      
       const org = await this.prisma.organization.findUnique({
         where: { id },
         include: {
@@ -589,13 +631,19 @@ export class CompatController {
                   lastName: true,
                   email: true,
                   role: true,
+                  // Include user's subscriptions to check for user-based subscriptions
+                  mainSubscriptions: {
+                    where: activeSubWhere,
+                    select: { id: true },
+                  },
                 },
               },
             },
             orderBy: { createdAt: 'asc' },
           },
+          // Direct organization subscriptions
           subscriptions: {
-            where: this.marketplaceActiveSubscriptionWhere(now),
+            where: activeSubWhere,
             select: { id: true },
           },
         },
@@ -603,6 +651,13 @@ export class CompatController {
       if (!org) {
         return { success: false, message: 'Organization not found', timestamp: new Date().toISOString() };
       }
+
+      // Check if org has valid subscription either directly or through a member user
+      const hasDirectSubscription = org.subscriptions && org.subscriptions.length > 0;
+      const hasUserSubscription = org.members?.some(
+        member => member.user?.mainSubscriptions && member.user.mainSubscriptions.length > 0
+      );
+      const hasValidSubscription = hasDirectSubscription || hasUserSubscription;
 
       // Marketplace visibility gate for vendor profiles (supplier/service provider).
       // Vendors without an active subscription should not appear as marketplace profiles.
@@ -612,7 +667,7 @@ export class CompatController {
           org.type === OrganizationType.SERVICE_PROVIDER) &&
         !this.canBypassMarketplaceSubscriptionGate(req?.user, org.id)
       ) {
-        if (!org.subscriptions || org.subscriptions.length === 0) {
+        if (!hasValidSubscription) {
           return { success: false, message: 'Organization not found', timestamp: new Date().toISOString() };
         }
       }
@@ -656,6 +711,7 @@ export class CompatController {
           capacity: data.capacity,
           pedagogy: data.pedagogy || [],
           contactPerson: data.contactPerson,
+          websiteUrl: data.websiteUrl ?? data.website,
           directOrderLink: data.directOrderLink,
           catalogUrl: data.catalogUrl,
           serviceCategories: data.serviceCategories || [],
@@ -687,7 +743,8 @@ export class CompatController {
       if (data.languagesSpoken !== undefined) updateData.languages = data.languagesSpoken;
       if (data.capacity !== undefined) updateData.capacity = data.capacity;
       if (data.pedagogy !== undefined) updateData.pedagogy = data.pedagogy;
-      if (data.website !== undefined) updateData.catalogUrl = data.website;
+      const resolvedWebsiteUrl = data.websiteUrl ?? data.website;
+      if (resolvedWebsiteUrl !== undefined) updateData.websiteUrl = resolvedWebsiteUrl;
       if (data.catalogUrl !== undefined) updateData.catalogUrl = data.catalogUrl;
       if (data.directOrderLink !== undefined) updateData.directOrderLink = data.directOrderLink;
       if (data.serviceCategories !== undefined) updateData.serviceCategories = data.serviceCategories;
