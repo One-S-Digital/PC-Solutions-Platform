@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { SettingsFormData, UserRole } from '../../../types';
-import { STANDARD_INPUT_FIELD } from '../../../constants';
+import { STANDARD_INPUT_FIELD, SWISS_CANTONS } from '../../../constants';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
 import ImageCropperModal from '../../shared/ImageCropperModal';
 import FileUploadZone from '../../ui/FileUploadZone';
 import ChipInput from '../../ui/ChipInput';
 import Button from '../../ui/Button';
-import ChipInput from '../../ui/ChipInput';
 import { AvailabilityScheduler } from '../../availability';
 import { EducatorAvailabilitySettings, createEmptyAvailabilitySettings } from '../../../types/availability';
 import { 
   UserCircleIcon, 
   PhotoIcon, 
+  MapPinIcon,
   BriefcaseIcon, 
   AcademicCapIcon, 
   StarIcon, 
@@ -76,6 +76,8 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
     lastName: settings.lastName || currentUser?.lastName || '',
     email: settings.email || currentUser?.email || '',
     phoneNumber: settings.phoneNumber || '',
+    jobRole: (settings as any).jobRole || '',
+    region: (settings as any).region || '',
     shortBio: settings.shortBio || '',
     workExperience: settings.workExperience || '',
     education: settings.education || '',
@@ -93,6 +95,8 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
       lastName: settings.lastName || currentUser?.lastName || '',
       email: settings.email || currentUser?.email || '',
       phoneNumber: settings.phoneNumber || '',
+      jobRole: (settings as any).jobRole || '',
+      region: (settings as any).region || '',
       shortBio: settings.shortBio || '',
       workExperience: settings.workExperience || '',
       education: settings.education || '',
@@ -291,6 +295,50 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
                 className={STANDARD_INPUT_FIELD}
                 placeholder={t('settings:educatorProfile.phoneNumberPlaceholder', '+41 XX XXX XX XX')}
               />
+            </div>
+
+            <label htmlFor="jobRole" className="form-label md:pt-2">
+              {t('settings:educatorProfile.role', 'Role')} <span className="text-swiss-coral">*</span>
+            </label>
+            <div className="form-input-container">
+              <input
+                type="text"
+                id="jobRole"
+                value={(profileData as any).jobRole}
+                onChange={(e) => handleFieldChange('jobRole', e.target.value)}
+                className={STANDARD_INPUT_FIELD}
+                placeholder={t('settings:educatorProfile.rolePlaceholder', 'e.g., Educator, Assistant')}
+                required
+              />
+            </div>
+
+            <label htmlFor="region" className="form-label md:pt-2">
+              <span className="inline-flex items-center">
+                <MapPinIcon className="w-4 h-4 mr-2 text-gray-400" />
+                {t('settings:educatorProfile.location', 'Location')} <span className="text-swiss-coral">*</span>
+              </span>
+            </label>
+            <div className="form-input-container">
+              <select
+                id="region"
+                value={(profileData as any).region}
+                onChange={(e) => handleFieldChange('region', e.target.value)}
+                className={STANDARD_INPUT_FIELD}
+                required
+              >
+                <option value="">{t('settings:educatorProfile.locationPlaceholder', 'Select a canton')}</option>
+                {SWISS_CANTONS.map((canton) => (
+                  <option key={canton} value={canton}>
+                    {canton}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-1 text-xs text-gray-500">
+                {t(
+                  'settings:educatorProfile.locationHint',
+                  'This helps foundations find you in the candidate pool.',
+                )}
+              </p>
             </div>
           </div>
         </div>

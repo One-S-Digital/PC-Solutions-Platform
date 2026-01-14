@@ -113,6 +113,7 @@
     "remove": "Entfernen",
     "reply": "Antworten",
     "sending": "Wird gesendet...",
+    "resetFilters": "Filter zurücksetzen",
     "retry": "Wiederholen",
     "save": "Speichern",
     "saveChanges": "Änderungen speichern",
@@ -127,6 +128,13 @@
     "verifyEmail": "E-Mail verifizieren",
     "view": "Anzeigen",
     "viewDetails": "Details anzeigen"
+  },
+  "pagination": {
+    "rowsPerPage": "Zeilen pro Seite",
+    "range": "{{from}}-{{to}} von {{total}}",
+    "pageOf": "Seite {{page}} von {{totalPages}}",
+    "previous": "Zurück",
+    "next": "Weiter"
   },
   "candidateCard": {
     "viewProfile": "Profil anzeigen"
@@ -554,7 +562,9 @@
       "hint": "hint",
       "placeholder": "placeholder"
     },
+    "locationNotProvided": "Standort nicht angegeben",
     "loadError": "load Error",
+    "roleNotProvided": "Rolle nicht angegeben",
     "saveError": "Speichern error",
     "saveSuccess": "Speichern success",
     "skills": {

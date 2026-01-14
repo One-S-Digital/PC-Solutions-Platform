@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import { 
   Users as UsersIcon, 
@@ -576,6 +577,7 @@ const SuspendUserModal: React.FC<SuspendUserModalProps> = ({ isOpen, onClose, us
 
 const Users: React.FC = () => {
   const { t } = useTranslation(['common', 'admin']);
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedRole, setSelectedRole] = useState('')
   const [page, setPage] = useState(1)
@@ -972,7 +974,7 @@ const Users: React.FC = () => {
           </div>
           <div className="sm:w-48">
             <select
-              className={STANDARD_INPUT_FIELD}
+              className={`${STANDARD_INPUT_FIELD} pr-10`}
               value={pageSize}
               onChange={(e) => setPageSize(Number(e.target.value) as 25 | 50 | 100)}
             >
@@ -1140,6 +1142,18 @@ const Users: React.FC = () => {
                               </Menu.Item>
                             )}
 
+                            {/* Edit Full Profile - Navigate to full profile edit page */}
+                            <Menu.Item>
+                              {({ active }) => (
+                                <button
+                                  onClick={() => navigate(`/users/${user.id}/profile`)}
+                                  className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-swiss-teal font-medium`}
+                                >
+                                  <Edit className="h-4 w-4 mr-2" />
+                                  {t('admin:users.editFullProfile', 'Edit Full Profile')}
+                                </button>
+                              )}
+                            </Menu.Item>
                             {/* View Profile - Only for users with organizations (suppliers/service providers) */}
                             {user.orgId && (user.role === UserRole.PRODUCT_SUPPLIER || user.role === UserRole.SERVICE_PROVIDER) && (
                               <Menu.Item>
@@ -1213,15 +1227,15 @@ const Users: React.FC = () => {
       </Card>
 
       {/* Pagination */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div className="text-sm text-gray-600">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:items-center">
+        <div className="text-sm text-gray-600 text-center sm:text-left">
           {t(
             'admin:users.pagination.showing',
             'Showing {{from}}-{{to}} of {{total}}',
             { from: showingFrom, to: showingTo, total: totalUsers },
           )}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-center gap-2">
           <button
             type="button"
             className="px-3 py-2 text-sm rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -1242,6 +1256,7 @@ const Users: React.FC = () => {
             {t('admin:users.pagination.next', 'Next')}
           </button>
         </div>
+        <div className="hidden sm:block" />
       </div>
 
       {/* Edit User Modal */}
@@ -1251,6 +1266,7 @@ const Users: React.FC = () => {
         user={selectedUser}
         onSave={handleUpdateUser}
         isLoading={updateUserMutation.isPending}
+        isFetchingUser={false}
         currentUserRole={currentUser?.role}
       />
 

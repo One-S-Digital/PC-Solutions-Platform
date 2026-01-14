@@ -83,6 +83,13 @@ enum JobContractType {
   FREELANCE
 }
 
+// Used for job matching/search (aligned with educator availability UI).
+enum JobEmploymentType {
+  FULL_TIME
+  PART_TIME
+  REPLACEMENT
+}
+
 enum ServiceCategory {
   CLEANING
   IT_SUPPORT
@@ -204,6 +211,10 @@ model User {
   cvUrl                String? // URL to CV document
   shortBio             String? // Short bio/description for profile
   candidatePoolVisible Boolean  @default(true) // Educator-controlled visibility in candidate pool
+  region               String? // Candidate location (e.g., canton/city)
+  jobRole              String? // Candidate role/title (e.g., "Educator", "Assistant")
+  jobRoles             String[] @default([]) // Candidate roles/titles for multi-role matching
+  cities               String[] @default([]) // Candidate cities for multi-city matching
 
   // Avatar asset relation
   avatarAssetId String?
@@ -320,6 +331,7 @@ model Organization {
   minimumOrderQuantity Int? // For suppliers
   directOrderLink      String? // For suppliers
   catalogUrl           String? // For suppliers
+  websiteUrl           String? // Public website (all org types)
   serviceCategories    String[] // For service providers
   deliveryType         String? // On-site, Remote, Hybrid for service providers
   bookingLink          String? // For service providers
@@ -778,6 +790,11 @@ model JobListing {
   salary           String?
   salaryRange      String?
   contractType     JobContractType @default(FULL_TIME)
+  // Search/matching field (separate from contractType: e.g. CDI can still be FULL_TIME)
+  employmentType   JobEmploymentType @default(FULL_TIME)
+  // Structured schedule preferences for PART_TIME/REPLACEMENT roles.
+  // Stored as JSON for flexibility; validated at API boundary.
+  workSchedule     Json?
   startDate        DateTime?
   status           JobStatus       @default(DRAFT)
   foundationId     String

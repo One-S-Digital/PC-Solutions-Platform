@@ -98,6 +98,7 @@ export interface Organization {
   minimumOrderQuantity?: number;
   directOrderLink?: string;
   catalogUrl?: string;
+  websiteUrl?: string;
   serviceCategories?: string[];
   deliveryType?: string;
   bookingLink?: string;
@@ -306,6 +307,8 @@ export interface CandidateProfile {
     avatarUrl?: string;
     currentRoleOrTitle?: string;
     location?: string; // e.g., "Geneva, GE"
+    jobRoles?: string[];
+    cities?: string[];
     availabilityStatus?: 'Available Immediately' | 'Seeking Opportunities' | 'Not Available';
     shortBio?: string;
     skills: string[];
@@ -318,10 +321,12 @@ export interface CandidateProfile {
         contractType?: 'Full-time' | 'Part-time' | 'Internship' | 'Temporary';
         preferredAgeGroups?: ('Infants' | 'Toddlers' | 'Preschool')[];
     };
+    availabilitySettings?: EducatorAvailabilitySettings;
     documents?: DocumentItem[];
     
     // Legacy fields for simpler list view
     role?: string;
+    jobRole?: string;
     availability?: string;
     preferredRegion?: string;
     experience?: string;
@@ -866,6 +871,7 @@ interface BaseSettings {
     contactPerson?: string;
     phoneNumber?: string;
     contactEmail?: string;
+    websiteUrl?: string;
     address?: string;
     canton?: string;
     city?: string;
@@ -910,6 +916,10 @@ interface BaseSettings {
     firstName?: string;
     lastName?: string;
     email?: string; // User's personal email (for Educator/Parent)
+    region?: SwissCanton | string; // Candidate location (e.g., canton/city)
+    jobRole?: string; // Candidate role/title (e.g., "Educator", "Assistant")
+    jobRoles?: string[]; // Candidate roles/titles for multi-role matching
+    cities?: string[]; // Candidate cities for multi-city matching
     workExperience?: string;
     education?: string;
     certifications?: string[];

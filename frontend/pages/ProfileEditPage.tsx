@@ -83,6 +83,7 @@ const ProfileEditPage: React.FC = () => {
           contactEmail: data.contactEmail || currentUser.email,
           phoneNumber: data.phoneNumber || org?.phoneNumber || '',
           contactPerson: data.contactPerson || org?.contactPerson || '',
+          websiteUrl: data.websiteUrl || org?.websiteUrl || '',
           address: data.address || org?.region || '',
           canton: data.canton || org?.canton || '',
           city: data.city || org?.city || '',
@@ -105,6 +106,7 @@ const ProfileEditPage: React.FC = () => {
           contactEmail: data.contactEmail || currentUser.email,
           phoneNumber: data.phoneNumber || org?.phoneNumber || '',
           contactPerson: data.contactPerson || org?.contactPerson || '',
+          websiteUrl: data.websiteUrl || org?.websiteUrl || '',
           address: data.address || org?.region || '',
           canton: data.canton || org?.canton || '',
           city: data.city || org?.city || '',
@@ -130,6 +132,7 @@ const ProfileEditPage: React.FC = () => {
           contactEmail: data.contactEmail || currentUser.email,
           phoneNumber: data.phoneNumber || org?.phoneNumber || '',
           contactPerson: data.contactPerson || org?.contactPerson || '',
+          websiteUrl: data.websiteUrl || org?.websiteUrl || '',
           address: data.address || org?.region || '',
           canton: data.canton || org?.canton || '',
           city: data.city || org?.city || '',
@@ -154,6 +157,10 @@ const ProfileEditPage: React.FC = () => {
           email: data.email || currentUser.email || '',
           contactEmail: data.contactEmail || currentUser.email || '',
           phoneNumber: data.phoneNumber || '',
+          region: data.region || '',
+          jobRole: data.jobRole || '',
+          jobRoles: Array.isArray(data.jobRoles) ? data.jobRoles : (data.jobRole ? [data.jobRole] : []),
+          cities: Array.isArray(data.cities) ? data.cities : [],
           workExperience: data.workExperience || '',
           education: data.education || '',
           certifications: Array.isArray(data.certifications) ? data.certifications : [],
@@ -187,6 +194,22 @@ const ProfileEditPage: React.FC = () => {
       return;
     }
 
+    if (currentUser.role === UserRole.EDUCATOR) {
+      const region = String((formData as any).region || '').trim();
+      const jobRoles = Array.isArray((formData as any).jobRoles) ? (formData as any).jobRoles : [];
+      if (!region || jobRoles.length === 0) {
+        addNotification({
+          title: t('common:errors.genericErrorTitle', 'Error'),
+          message: t(
+            'settings:educatorProfile.missingRequiredFields',
+            'Please provide both Location and Role before saving your profile.',
+          ),
+          type: 'error',
+        });
+        return;
+      }
+    }
+
     setIsSaving(true);
     setSaveSuccess(false);
     
@@ -202,6 +225,7 @@ const ProfileEditPage: React.FC = () => {
             contactEmail: payload.contactEmail || currentUser.email,
             phoneNumber: payload.phoneNumber || '',
             contactPerson: payload.contactPerson || '',
+            websiteUrl: payload.websiteUrl || '',
             address: payload.address || '',
             canton: payload.canton || '',
             city: payload.city || '',
@@ -223,6 +247,7 @@ const ProfileEditPage: React.FC = () => {
             contactEmail: payload.contactEmail || currentUser.email,
             phoneNumber: payload.phoneNumber || '',
             contactPerson: payload.contactPerson || '',
+            websiteUrl: payload.websiteUrl || '',
             address: payload.address || '',
             canton: payload.canton || '',
             city: payload.city || '',
@@ -247,6 +272,7 @@ const ProfileEditPage: React.FC = () => {
             contactEmail: payload.contactEmail || currentUser.email,
             phoneNumber: payload.phoneNumber || '',
             contactPerson: payload.contactPerson || '',
+            websiteUrl: payload.websiteUrl || '',
             address: payload.address || '',
             canton: payload.canton || '',
             city: payload.city || '',
@@ -269,6 +295,10 @@ const ProfileEditPage: React.FC = () => {
           email: payload.email || currentUser.email,
           contactEmail: payload.contactEmail || currentUser.email,
           phoneNumber: payload.phoneNumber || '',
+          region: payload.region || '',
+          jobRole: payload.jobRole || (payload.jobRoles?.[0] || ''),
+          jobRoles: Array.isArray(payload.jobRoles) ? payload.jobRoles : [],
+          cities: Array.isArray(payload.cities) ? payload.cities : [],
           workExperience: payload.workExperience || '',
           education: payload.education || '',
           certifications: Array.isArray(payload.certifications) ? payload.certifications : [],

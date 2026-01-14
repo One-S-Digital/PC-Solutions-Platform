@@ -66,6 +66,7 @@ const OrganizationProfileViewPage: React.FC = () => {
             minimumOrderQuantity: orgData.minimumOrderQuantity,
             directOrderLink: orgData.directOrderLink,
             catalogUrl: orgData.catalogUrl,
+            websiteUrl: orgData.websiteUrl,
             serviceCategories: orgData.serviceCategories || [],
             deliveryType: deliveryType,
             bookingLink: bookingLink,

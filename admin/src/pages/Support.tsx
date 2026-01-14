@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   LifeBuoy,
@@ -7,9 +7,7 @@ import {
   MessageSquare,
   Clock,
   CheckCircle,
-  XCircle,
   AlertCircle,
-  Send,
   User,
   Calendar,
   Tag,
@@ -18,36 +16,30 @@ import {
 } from 'lucide-react';
 import { useApiClient, apiService } from '../services/api';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
-import { SupportTicket, TicketCategory, TicketPriority, TicketStatus, TicketStats, TicketResponse } from '../types';
+import { SupportTicket, TicketCategory, TicketPriority, TicketStatus, TicketStats } from '../types';
 import { useTranslation } from 'react-i18next';
-import { useUser } from '@clerk/clerk-react';
-import { useSupportThread } from '../hooks/useSupportThread';
-import SupportReplyComposer from '../components/support/SupportReplyComposer';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { getTicketPriorityColor, getTicketStatusColor, getTicketStatusIcon } from '../utils/supportTicketUi';
 
 const Support: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<TicketStatus | ''>('');
   const [selectedPriority, setSelectedPriority] = useState<TicketPriority | ''>('');
   const [selectedCategory, setSelectedCategory] = useState<TicketCategory | ''>('');
-  const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
 
   const apiClient = useApiClient();
   const { t } = useTranslation(['common', 'admin']);
-  const { user } = useUser();
   const queryClient = useQueryClient();
-  
-  // Stable callback for ticket updates
-  const handleTicketUpdate = useCallback(() => {
-    queryClient.invalidateQueries({ queryKey: ['support-tickets'] });
-  }, [queryClient]);
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
-  // Use shared thread hook for replies management
-  const currentUserId = user?.id || '';
-  const { replies, sendReply, messagesEndRef, scrollContainerRef } = useSupportThread({
-    ticketId: selectedTicket?.id || null,
-    userId: currentUserId,
-    onTicketUpdate: handleTicketUpdate,
-  });
+  // Deep-link compatibility: /support?ticket=<id> -> /support/tickets/<id>
+  useEffect(() => {
+    const ticketFromQuery = searchParams.get('ticket');
+    if (ticketFromQuery) {
+      navigate(`/support/tickets/${ticketFromQuery}`, { replace: true });
+    }
+  }, [searchParams, navigate]);
 
   // Fetch current user to check assignment
   const { data: currentUserResponse } = useQuery({
@@ -94,11 +86,6 @@ const Support: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['support-tickets'] });
       queryClient.invalidateQueries({ queryKey: ['support-stats'] });
-      if (selectedTicket) {
-        apiService.getSupportTicket(apiClient, selectedTicket.id).then((response) => {
-          setSelectedTicket(response.data.data);
-        });
-      }
     },
   });
 
@@ -107,14 +94,8 @@ const Support: React.FC = () => {
     mutationFn: (ticketId: string) => apiService.assignTicket(apiClient, ticketId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['support-tickets'] });
-      if (selectedTicket) {
-        apiService.getSupportTicket(apiClient, selectedTicket.id).then((response) => {
-          setSelectedTicket(response.data.data);
-        });
-      }
     },
   });
-
 
   const handleStatusChange = (ticketId: string, status: TicketStatus) => {
     updateStatusMutation.mutate({ ticketId, status });
@@ -124,77 +105,7 @@ const Support: React.FC = () => {
     assignTicketMutation.mutate(ticketId);
   };
 
-  // Memoize ticketId to ensure stable prop
-  const currentTicketId = useMemo(() => selectedTicket?.id || null, [selectedTicket?.id]);
-
-  // Stable callback for sending replies - sendReply already has ticketId in closure
-  const handleSendReply = useCallback(async (content: string) => {
-    await sendReply(content);
-    // Invalidate queries to refresh ticket list
-    queryClient.invalidateQueries({ queryKey: ['support-tickets'] });
-    if (currentTicketId) {
-      queryClient.invalidateQueries({ queryKey: ['support-ticket', currentTicketId] });
-    }
-  }, [sendReply, queryClient, currentTicketId]);
-
-  // Memoize whether to show composer (stable boolean)
-  const showComposer = useMemo(() => {
-    return selectedTicket && selectedTicket.status !== 'CLOSED';
-  }, [selectedTicket?.id, selectedTicket?.status]);
-
-  // Auto-scroll to bottom on mount or when selected ticket changes
-  useEffect(() => {
-    if (selectedTicket) {
-      setTimeout(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-    }
-  }, [selectedTicket?.id]);
-
-  const getStatusColor = (status: TicketStatus): string => {
-    switch (status) {
-      case 'OPEN':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'IN_PROGRESS':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'RESOLVED':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'CLOSED':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  const getPriorityColor = (priority: TicketPriority): string => {
-    switch (priority) {
-      case 'LOW':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-      case 'MEDIUM':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'HIGH':
-        return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'URGENT':
-        return 'bg-red-100 text-red-800 border-red-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  const getStatusIcon = (status: TicketStatus) => {
-    switch (status) {
-      case 'OPEN':
-        return <AlertCircle className="h-4 w-4" />;
-      case 'IN_PROGRESS':
-        return <Clock className="h-4 w-4" />;
-      case 'RESOLVED':
-        return <CheckCircle className="h-4 w-4" />;
-      case 'CLOSED':
-        return <XCircle className="h-4 w-4" />;
-      default:
-        return <AlertCircle className="h-4 w-4" />;
-    }
-  };
+  // Ticket badge helpers live in ../utils/supportTicketUi
 
   if (ticketsLoading) {
     return (
@@ -310,257 +221,150 @@ const Support: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Tickets List */}
-        <div className="lg:col-span-2">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      {t('admin:support.table.ticket')}
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      {t('admin:support.table.user')}
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      {t('admin:support.table.assignedTo')}
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      {t('admin:support.table.priority')}
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      {t('admin:support.table.status')}
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      {t('admin:support.table.created')}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {tickets.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
-                        {t('admin:support.noTickets')}
-                      </td>
-                    </tr>
-                  ) : (
-                    tickets.map((ticket) => (
-                      <tr
-                        key={ticket.id}
-                        className={`hover:bg-gray-50 cursor-pointer ${
-                          selectedTicket?.id === ticket.id ? 'bg-blue-50' : ''
-                        }`}
-                        onClick={() => setSelectedTicket(ticket)}
-                      >
-                        <td className="px-6 py-4">
-                          <div className="flex items-start">
-                            <MessageSquare className="h-5 w-5 text-gray-400 mr-2 mt-0.5 flex-shrink-0" />
-                            <div>
-                              <p className="text-sm font-medium text-gray-900 line-clamp-1">{ticket.subject}</p>
-                              <p className="text-xs text-gray-500 mt-1 flex items-center">
-                                <Tag className="h-3 w-3 mr-1" />
-                                {ticket.category}
-                              </p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <User className="h-4 w-4 text-gray-400 mr-2" />
-                            <div className="text-sm text-gray-900">
-                              {ticket.user
-                                ? `${ticket.user.firstName || ''} ${ticket.user.lastName || ''}`.trim() ||
-                                  ticket.user.email
-                                : t('common:unknown')}
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            {ticket.assignee ? (
-                              <>
-                                <UserCheck className="h-4 w-4 text-green-600 mr-2" />
-                                <div className="text-sm text-gray-900">
-                                  {`${ticket.assignee.firstName || ''} ${ticket.assignee.lastName || ''}`.trim() ||
-                                    ticket.assignee.email ||
-                                    t('admin:support.staff')}
-                                </div>
-                              </>
-                            ) : (
-                              <span className="text-sm text-gray-400 italic">{t('admin:support.unassigned')}</span>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span
-                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getPriorityColor(
-                              ticket.priority
-                            )}`}
-                          >
-                            {ticket.priority}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span
-                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(
-                              ticket.status
-                            )}`}
-                          >
-                            <span className="mr-1">{getStatusIcon(ticket.status)}</span>
-                            {ticket.status.replace('_', ' ')}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center text-sm text-gray-500">
-                            <Calendar className="h-4 w-4 mr-1" />
-                            {new Date(ticket.createdAt).toLocaleDateString()}
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        {/* Ticket Detail Panel */}
-        <div className="lg:col-span-1">
-          {selectedTicket ? (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden sticky top-4">
-              <div className="p-6 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{selectedTicket.subject}</h3>
-                <div className="flex items-center gap-2 mb-4">
-                  <span
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(
-                      selectedTicket.status
-                    )}`}
+      {/* Tickets List (table-only) */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t('admin:support.table.ticket')}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t('admin:support.table.user')}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t('admin:support.table.assignedTo')}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t('admin:support.table.priority')}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t('admin:support.table.status')}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t('admin:support.table.created')}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t('admin:support.table.actions', { defaultValue: 'Actions' })}
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {tickets.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
+                    {t('admin:support.noTickets')}
+                  </td>
+                </tr>
+              ) : (
+                tickets.map((ticket) => (
+                  <tr
+                    key={ticket.id}
+                    className="hover:bg-gray-50 cursor-pointer"
+                    onClick={() => navigate(`/support/tickets/${ticket.id}`)}
                   >
-                    {getStatusIcon(selectedTicket.status)}
-                    <span className="ml-1">{selectedTicket.status.replace('_', ' ')}</span>
-                  </span>
-                  <span
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getPriorityColor(
-                      selectedTicket.priority
-                    )}`}
-                  >
-                    {selectedTicket.priority}
-                  </span>
-                </div>
-
-                {/* Assignee Information */}
-                {selectedTicket.assignee && (
-                  <div className="mb-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                    <div className="flex items-center text-sm text-blue-800">
-                      <UserCheck className="h-4 w-4 mr-2" />
-                      <span className="font-medium">
-                        {t('admin:support.assignedTo')}:{' '}
-                        {`${selectedTicket.assignee.firstName || ''} ${selectedTicket.assignee.lastName || ''}`.trim() ||
-                          selectedTicket.assignee.email ||
-                          t('admin:support.staffMember')}
-                      </span>
-                    </div>
-                  </div>
-                )}
-
-                {/* Quick Actions */}
-                <div className="space-y-2">
-                  <select
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                    value={selectedTicket.status}
-                    onChange={(e) => handleStatusChange(selectedTicket.id, e.target.value as TicketStatus)}
-                  >
-                    <option value="OPEN">{t('common:open')}</option>
-                    <option value="IN_PROGRESS">{t('common:inprogress')}</option>
-                    <option value="RESOLVED">{t('common:resolved')}</option>
-                    <option value="CLOSED">{t('common:closed')}</option>
-                  </select>
-                  {!selectedTicket.assignedTo || selectedTicket.assignedTo !== currentUser?.id ? (
-                    <button
-                      onClick={() => handleAssignToMe(selectedTicket.id)}
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center justify-center text-sm"
-                      disabled={assignTicketMutation.isPending}
-                    >
-                      <UserCheck className="h-4 w-4 mr-2" />
-                      {assignTicketMutation.isPending ? t('admin:support.assigning') : t('admin:support.assignToMe')}
-                    </button>
-                  ) : (
-                    <div className="w-full bg-green-50 border border-green-200 text-green-800 px-4 py-2 rounded-lg flex items-center justify-center text-sm font-medium">
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                      {t('admin:support.assignedToYou')}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div 
-                ref={scrollContainerRef}
-                className="p-6 max-h-96 overflow-y-auto"
-              >
-                <div className="space-y-4">
-                  {/* Original Message */}
-                  <div className="border-l-4 border-blue-500 pl-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-900">
-                        {selectedTicket.user
-                          ? `${selectedTicket.user.firstName || ''} ${selectedTicket.user.lastName || ''}`.trim()
-                          : t('admin:support.user')}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        {new Date(selectedTicket.createdAt).toLocaleString()}
-                      </span>
-                    </div>
-                    <p className="text-sm text-gray-700">{selectedTicket.message}</p>
-                  </div>
-
-                  {/* Responses - sorted by createdAt */}
-                  {replies.map((response) => (
-                      <div
-                        key={response.id}
-                        className={`border-l-4 ${
-                          response.isStaff ? 'border-green-500' : 'border-gray-300'
-                        } pl-4`}
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium text-gray-900">
-                            {response.userName || t('common:unknown')}
-                            {response.isStaff && (
-                              <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
-                                {t('admin:support.staff')}
-                              </span>
-                            )}
-                          </span>
-                          <span className="text-xs text-gray-500">
-                            {new Date(response.createdAt).toLocaleString()}
-                          </span>
+                    <td className="px-6 py-4">
+                      <div className="flex items-start">
+                        <MessageSquare className="h-5 w-5 text-gray-400 mr-2 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 line-clamp-1">{ticket.subject}</p>
+                          <p className="text-xs text-gray-500 mt-1 flex items-center">
+                            <Tag className="h-3 w-3 mr-1" />
+                            {ticket.category}
+                          </p>
                         </div>
-                        <p className="text-sm text-gray-700">{response.message}</p>
                       </div>
-                    ))}
-                  <div ref={messagesEndRef} />
-                </div>
-              </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <User className="h-4 w-4 text-gray-400 mr-2" />
+                        <div className="text-sm text-gray-900">
+                          {ticket.user
+                            ? `${ticket.user.firstName || ''} ${ticket.user.lastName || ''}`.trim() ||
+                              ticket.user.email
+                            : t('common:unknown')}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        {ticket.assignee ? (
+                          <>
+                            <UserCheck className="h-4 w-4 text-green-600 mr-2" />
+                            <div className="text-sm text-gray-900">
+                              {`${ticket.assignee.firstName || ''} ${ticket.assignee.lastName || ''}`.trim() ||
+                                ticket.assignee.email ||
+                                t('admin:support.staff')}
+                            </div>
+                          </>
+                        ) : (
+                          <span className="text-sm text-gray-400 italic">{t('admin:support.unassigned')}</span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getTicketPriorityColor(
+                          ticket.priority
+                        )}`}
+                      >
+                        {ticket.priority}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getTicketStatusColor(
+                          ticket.status
+                        )}`}
+                      >
+                        <span className="mr-1">{getTicketStatusIcon(ticket.status)}</span>
+                        {ticket.status.replace('_', ' ')}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center text-sm text-gray-500">
+                        <Calendar className="h-4 w-4 mr-1" />
+                        {new Date(ticket.createdAt).toLocaleDateString()}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                      <div className="flex items-center gap-2">
+                        <select
+                          className="px-2 py-1 border border-gray-300 rounded-md text-xs focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          value={ticket.status}
+                          onChange={(e) => handleStatusChange(ticket.id, e.target.value as TicketStatus)}
+                          disabled={updateStatusMutation.isPending}
+                        >
+                          <option value="OPEN">{t('common:open')}</option>
+                          <option value="IN_PROGRESS">{t('common:inprogress')}</option>
+                          <option value="RESOLVED">{t('common:resolved')}</option>
+                          <option value="CLOSED">{t('common:closed')}</option>
+                        </select>
 
-              {/* Reply Box */}
-              {showComposer && currentTicketId && (
-                <div className="p-6 border-t border-gray-200">
-                  <SupportReplyComposer
-                    ticketId={currentTicketId}
-                    onSend={handleSendReply}
-                    placeholder={t('admin:support.replyPlaceholder')}
-                  />
-                </div>
+                        {!ticket.assignedTo || ticket.assignedTo !== currentUser?.id ? (
+                          <button
+                            type="button"
+                            onClick={() => handleAssignToMe(ticket.id)}
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-xs inline-flex items-center"
+                            disabled={assignTicketMutation.isPending}
+                          >
+                            <UserCheck className="h-3.5 w-3.5 mr-1.5" />
+                            {t('admin:support.assignToMe')}
+                          </button>
+                        ) : (
+                          <span className="inline-flex items-center text-xs font-medium text-green-800 bg-green-50 border border-green-200 px-2.5 py-1 rounded-md">
+                            <CheckCircle className="h-3.5 w-3.5 mr-1.5" />
+                            {t('admin:support.assignedToYou')}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))
               )}
-            </div>
-          ) : (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-              <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500">{t('admin:support.selectTicket')}</p>
-            </div>
-          )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

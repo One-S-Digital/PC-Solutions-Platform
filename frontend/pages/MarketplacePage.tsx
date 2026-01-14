@@ -5,6 +5,7 @@ import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Tabs from '../components/ui/Tabs';
 import RatingStars from '../components/ui/RatingStars';
+import Pagination from '../components/ui/Pagination';
 import { BuildingStorefrontIcon, WrenchScrewdriverIcon, TagIcon, FunnelIcon, MagnifyingGlassIcon, ListBulletIcon, Squares2X2Icon, InformationCircleIcon, EyeIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import ServiceRequestModal from '../components/marketplace/ServiceRequestModal';
 import SupplierCard from '../components/marketplace/SupplierCard'; 
@@ -134,6 +135,9 @@ const MarketplacePage: React.FC = () => {
   const [tagFilter, setTagFilter] = useState('All');
   const [sortOption, setSortOption] = useState('name_asc');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [itemsPerPage, setItemsPerPage] = useState(25);
+  const [suppliersPage, setSuppliersPage] = useState(1);
+  const [providersPage, setProvidersPage] = useState(1);
 
   // Data state
   const [productSuppliers, setProductSuppliers] = useState<Organization[]>([]);
@@ -152,6 +156,11 @@ const MarketplacePage: React.FC = () => {
     }, 300);
     return () => clearTimeout(timer);
   }, [searchTerm]);
+
+  useEffect(() => {
+    setSuppliersPage(1);
+    setProvidersPage(1);
+  }, [debouncedSearchTerm, categoryFilter, regionFilter, tagFilter, sortOption]);
   
   // Fetch data from API
   const fetchMarketplaceData = useCallback(async () => {
@@ -342,6 +351,16 @@ const MarketplacePage: React.FC = () => {
       });
   }, [serviceProviders, categoryFilter, sortOption]);
 
+  const paginatedSuppliers = useMemo(() => {
+    const start = (suppliersPage - 1) * itemsPerPage;
+    return filteredSuppliers.slice(start, start + itemsPerPage);
+  }, [filteredSuppliers, suppliersPage, itemsPerPage]);
+
+  const paginatedProviders = useMemo(() => {
+    const start = (providersPage - 1) * itemsPerPage;
+    return filteredProviders.slice(start, start + itemsPerPage);
+  }, [filteredProviders, providersPage, itemsPerPage]);
+
 
   const handleViewPartner = (partnerId: string) => {
     navigate(`/partner/${partnerId}`);
@@ -350,6 +369,8 @@ const MarketplacePage: React.FC = () => {
   const handleTabChange = (index: number) => {
     setCategoryFilter('All');
     setTagFilter('All');
+    setSuppliersPage(1);
+    setProvidersPage(1);
     if (index === 0) {
       navigate('/marketplace/products');
     } else if (index === 1) {
@@ -388,7 +409,7 @@ const MarketplacePage: React.FC = () => {
             </div>
           ) : filteredSuppliers.length > 0 ? (
             <div className={`grid gap-6 ${gridClass}`}>
-              {filteredSuppliers.map(supplier => 
+              {paginatedSuppliers.map(supplier => 
                 <SupplierCard key={supplier.id} supplier={supplier} onViewProfile={handleViewPartner} />
               )}
             </div>
@@ -397,6 +418,22 @@ const MarketplacePage: React.FC = () => {
               message={t('emptyStates.noProductSuppliers')} 
               icon={BuildingStorefrontIcon} 
             />
+          )}
+
+          {!loading && !error && filteredSuppliers.length > 0 && (
+            <div className="mt-6">
+              <Pagination
+                page={suppliersPage}
+                totalItems={filteredSuppliers.length}
+                pageSize={itemsPerPage}
+                onPageChange={setSuppliersPage}
+                onPageSizeChange={(n) => {
+                  setItemsPerPage(n);
+                  setSuppliersPage(1);
+                  setProvidersPage(1);
+                }}
+              />
+            </div>
           )}
         </>
       )
@@ -419,7 +456,7 @@ const MarketplacePage: React.FC = () => {
             </div>
           ) : filteredProviders.length > 0 ? (
             <div className={`grid gap-6 ${gridClass}`}>
-              {filteredProviders.map(provider => 
+              {paginatedProviders.map(provider => 
                 <ServiceProviderCard 
                   key={provider.id} 
                   provider={provider} 
@@ -432,6 +469,22 @@ const MarketplacePage: React.FC = () => {
               message={t('emptyStates.noServices')} 
               icon={WrenchScrewdriverIcon} 
             />
+          )}
+
+          {!loading && !error && filteredProviders.length > 0 && (
+            <div className="mt-6">
+              <Pagination
+                page={providersPage}
+                totalItems={filteredProviders.length}
+                pageSize={itemsPerPage}
+                onPageChange={setProvidersPage}
+                onPageSizeChange={(n) => {
+                  setItemsPerPage(n);
+                  setSuppliersPage(1);
+                  setProvidersPage(1);
+                }}
+              />
+            </div>
           )}
         </>
       )

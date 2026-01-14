@@ -1,4 +1,5 @@
-import React, { useState, useEffect, Fragment, useRef } from 'react'
+import React, { useState, useEffect, Fragment, useMemo, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import { 
   Building2, 
@@ -17,7 +18,9 @@ import {
   Briefcase,
   Package,
   Wrench,
-  Globe
+  Globe,
+  RefreshCw,
+  CheckCircle
 } from 'lucide-react'
 import { useApiClient, apiService } from '../services/api'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
@@ -531,9 +534,10 @@ interface OrganizationCardProps {
   org: Organization
   onEdit: (org: Organization) => void
   onDelete: (org: Organization) => void
+  onEditFullProfile: (org: Organization) => void
 }
 
-const OrganizationCard: React.FC<OrganizationCardProps> = ({ org, onEdit, onDelete }) => {
+const OrganizationCard: React.FC<OrganizationCardProps> = ({ org, onEdit, onDelete, onEditFullProfile }) => {
   const { t } = useTranslation(['admin', 'common'])
 
   const getTypeIcon = () => {
@@ -606,8 +610,19 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ org, onEdit, onDele
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+            <Menu.Items className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
               <div className="py-1">
+                <Menu.Item>
+                  {({ active }) => (
+                    <button
+                      onClick={() => onEditFullProfile(org)}
+                      className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-swiss-teal font-medium`}
+                    >
+                      <Edit className="h-4 w-4 mr-2" />
+                      {t('admin:organizations.editFullProfile', 'Edit Full Profile')}
+                    </button>
+                  )}
+                </Menu.Item>
                 <Menu.Item>
                   {({ active }) => (
                     <button
@@ -691,8 +706,11 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ org, onEdit, onDele
 // Main Organizations Component
 const Organizations: React.FC = () => {
   const { t } = useTranslation(['admin', 'common'])
+  const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
   const [activeTab, setActiveTab] = useState<TabType>('foundations')
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState<25 | 50 | 100>(25)
   
   // Modal states
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
@@ -768,19 +786,72 @@ const Organizations: React.FC = () => {
     },
   })
 
-  // Filter organizations by type and search
-  const filteredOrgs = (Array.isArray(organizations) ? organizations : []).filter((org) => {
-    const matchesSearch = 
-      org.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (org.address && org.address.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (org.region && org.region.toLowerCase().includes(searchQuery.toLowerCase()))
-    
-    if (activeTab === 'foundations') {
-      return matchesSearch && org.type === 'FOUNDATION'
-    } else {
-      return matchesSearch && (org.type === 'SERVICE_PROVIDER' || org.type === 'PRODUCT_SUPPLIER')
-    }
+  // Backfill state
+  const [backfillResult, setBackfillResult] = useState<{ total: number; created: number; failed: number } | null>(null)
+  const [showBackfillResult, setShowBackfillResult] = useState(false)
+
+  // Check for users without organizations
+  const { data: usersWithoutOrgsResponse, refetch: refetchUsersWithoutOrgs } = useQuery({
+    queryKey: ['users-without-organizations'],
+    queryFn: () => apiService.getUsersWithoutOrganizations(apiClient),
+    staleTime: 30000, // Cache for 30 seconds
   })
+
+  const usersWithoutOrgsCount = usersWithoutOrgsResponse?.data?.data?.total || 0
+
+  // Backfill organizations mutation
+  const backfillMutation = useMutation({
+    mutationFn: () => apiService.backfillOrganizations(apiClient),
+    onSuccess: (response) => {
+      const result = response.data?.data
+      if (result) {
+        setBackfillResult({ total: result.total, created: result.created, failed: result.failed })
+        setShowBackfillResult(true)
+      }
+      queryClient.invalidateQueries({ queryKey: ['organizations'] })
+      refetchUsersWithoutOrgs()
+      logger.log('Organization backfill completed:', result)
+    },
+    onError: (error) => {
+      logger.error('Failed to backfill organizations:', error)
+    },
+  })
+
+  // Filter organizations by type and search
+  const filteredOrgs = useMemo(() => {
+    return (Array.isArray(organizations) ? organizations : []).filter((org) => {
+      const matchesSearch = 
+        org.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (org.address && org.address.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (org.region && org.region.toLowerCase().includes(searchQuery.toLowerCase()))
+      
+      if (activeTab === 'foundations') {
+        return matchesSearch && org.type === 'FOUNDATION'
+      } else {
+        return matchesSearch && (org.type === 'SERVICE_PROVIDER' || org.type === 'PRODUCT_SUPPLIER')
+      }
+    })
+  }, [organizations, searchQuery, activeTab])
+
+  const totalOrgs = filteredOrgs.length
+  const totalPages = Math.max(1, Math.ceil(totalOrgs / pageSize))
+  const showingFrom = totalOrgs === 0 ? 0 : (page - 1) * pageSize + 1
+  const showingTo = totalOrgs === 0 ? 0 : Math.min(page * pageSize, totalOrgs)
+  const canGoPrev = page > 1
+  const canGoNext = page < totalPages
+
+  const paginatedOrgs = useMemo(() => {
+    const start = (page - 1) * pageSize
+    return filteredOrgs.slice(start, start + pageSize)
+  }, [filteredOrgs, page, pageSize])
+
+  useEffect(() => {
+    setPage(1)
+  }, [searchQuery, activeTab, pageSize])
+
+  useEffect(() => {
+    setPage((prev) => Math.min(prev, totalPages))
+  }, [totalPages])
 
   const foundationsCount = (Array.isArray(organizations) ? organizations : []).filter(o => o.type === 'FOUNDATION').length
   const organisationsCount = (Array.isArray(organizations) ? organizations : []).filter(o => o.type === 'SERVICE_PROVIDER' || o.type === 'PRODUCT_SUPPLIER').length
@@ -851,14 +922,78 @@ const Organizations: React.FC = () => {
             {t('admin:organizations.subtitle', 'Manage all organizations across the platform')} ({Array.isArray(organizations) ? organizations.length : 0} {t('common:total', 'total')})
           </p>
         </div>
-        <Button
-          variant="primary"
-          leftIcon={Plus}
-          onClick={handleAddOrganization}
-        >
-          {t('common:add', 'Add')} {activeTab === 'foundations' ? t('admin:organizations.foundation', 'Foundation') : t('admin:organizations.organisation', 'Organisation')}
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="primary"
+            leftIcon={Plus}
+            onClick={handleAddOrganization}
+          >
+            {t('common:add', 'Add')} {activeTab === 'foundations' ? t('admin:organizations.foundation', 'Foundation') : t('admin:organizations.organisation', 'Organisation')}
+          </Button>
+        </div>
       </div>
+
+      {/* Backfill Banner - Show when there are users without organizations */}
+      {usersWithoutOrgsCount > 0 && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <AlertTriangle className="h-5 w-5 text-amber-500 mr-3" />
+              <div>
+                <p className="text-sm font-medium text-amber-800">
+                  {t('admin:organizations.backfill.usersWithoutOrgs', '{{count}} users have organization roles but no organization profile', { count: usersWithoutOrgsCount })}
+                </p>
+                <p className="text-xs text-amber-600 mt-0.5">
+                  {t('admin:organizations.backfill.description', 'These users signed up before automatic organization creation was enabled. Click to create their organizations.')}
+                </p>
+              </div>
+            </div>
+            <Button
+              variant="secondary"
+              size="sm"
+              leftIcon={RefreshCw}
+              onClick={() => backfillMutation.mutate()}
+              disabled={backfillMutation.isPending}
+            >
+              {backfillMutation.isPending 
+                ? t('admin:organizations.backfill.creating', 'Creating...') 
+                : t('admin:organizations.backfill.createOrgs', 'Create Organizations')}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Backfill Result Banner */}
+      {showBackfillResult && backfillResult && (
+        <div className={`border rounded-lg p-4 ${backfillResult.failed > 0 ? 'bg-amber-50 border-amber-200' : 'bg-green-50 border-green-200'}`}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              {backfillResult.failed > 0 ? (
+                <AlertTriangle className="h-5 w-5 text-amber-500 mr-3" />
+              ) : (
+                <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
+              )}
+              <div>
+                <p className={`text-sm font-medium ${backfillResult.failed > 0 ? 'text-amber-800' : 'text-green-800'}`}>
+                  {t('admin:organizations.backfill.resultTitle', 'Organization Creation Complete')}
+                </p>
+                <p className={`text-xs mt-0.5 ${backfillResult.failed > 0 ? 'text-amber-600' : 'text-green-600'}`}>
+                  {t('admin:organizations.backfill.resultDetails', '{{created}} organizations created successfully{{failed}}', { 
+                    created: backfillResult.created,
+                    failed: backfillResult.failed > 0 ? `, ${backfillResult.failed} failed` : ''
+                  })}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowBackfillResult(false)}
+              className="p-1 rounded-full hover:bg-gray-200 transition-colors"
+            >
+              <X className="h-4 w-4 text-gray-500" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Horizontal Tab Navigation */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-2">
@@ -925,26 +1060,40 @@ const Organizations: React.FC = () => {
 
       {/* Search */}
       <Card className="p-4">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder={t('admin:organizations.searchPlaceholder', `Search ${activeTab === 'foundations' ? 'foundations' : 'organisations'} by name, address, or region...`)}
-            className={`${STANDARD_INPUT_FIELD} pl-10`}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder={t('admin:organizations.searchPlaceholder', `Search ${activeTab === 'foundations' ? 'foundations' : 'organisations'} by name, address, or region...`)}
+              className={`${STANDARD_INPUT_FIELD} pl-10`}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <div className="sm:w-48">
+            <select
+              className={`${STANDARD_INPUT_FIELD} pr-10`}
+              value={pageSize}
+              onChange={(e) => setPageSize(Number(e.target.value) as 25 | 50 | 100)}
+            >
+              <option value={25}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 25</option>
+              <option value={50}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 50</option>
+              <option value={100}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 100</option>
+            </select>
+          </div>
         </div>
       </Card>
 
       {/* Organizations Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredOrgs.map((org) => (
+        {paginatedOrgs.map((org) => (
           <OrganizationCard
             key={org.id}
             org={org}
             onEdit={handleEditOrganization}
             onDelete={handleDeleteClick}
+            onEditFullProfile={(org) => navigate(`/organizations/${org.id}/profile`)}
           />
         ))}
       </div>
@@ -970,6 +1119,38 @@ const Organizations: React.FC = () => {
           )}
         </div>
       )}
+
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:items-center">
+        <div className="text-sm text-gray-600 text-center sm:text-left">
+          {t(
+            'admin:users.pagination.showing',
+            'Showing {{from}}-{{to}} of {{total}}',
+            { from: showingFrom, to: showingTo, total: totalOrgs },
+          )}
+        </div>
+        <div className="flex items-center justify-center gap-2">
+          <button
+            type="button"
+            className="px-3 py-2 text-sm rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!canGoPrev}
+            onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+          >
+            {t('admin:users.pagination.previous', 'Previous')}
+          </button>
+          <span className="text-sm text-gray-600 px-2">
+            {t('admin:users.pagination.pageOf', 'Page {{page}} of {{totalPages}}', { page, totalPages })}
+          </span>
+          <button
+            type="button"
+            className="px-3 py-2 text-sm rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!canGoNext}
+            onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+          >
+            {t('admin:users.pagination.next', 'Next')}
+          </button>
+        </div>
+        <div className="hidden sm:block" />
+      </div>
 
       {/* Add Modal */}
       <OrganizationModal

@@ -252,7 +252,7 @@ class MarketplaceService {
       coverImageUrl: org.coverAsset?.publicUrl || org.coverImageUrl,
       email: org.email, // Use actual email if available
       phone: org.phoneNumber,
-      website: org.directOrderLink || org.bookingLink || org.catalogUrl,
+      website: org.websiteUrl || org.directOrderLink || org.bookingLink || org.catalogUrl,
       address: org.region ? `${org.region}, Switzerland` : undefined,
       tags: org.productCategories || org.serviceCategories || org.pedagogy || [],
       rating: org.rating, // Preserve actual rating or leave undefined

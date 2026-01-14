@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { 
   Briefcase, 
@@ -24,6 +24,8 @@ const JobListings: React.FC = () => {
   const { t } = useTranslation(['admin', 'common'])
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('')
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState<25 | 50 | 100>(25)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const apiClient = useApiClient()
   const queryClient = useQueryClient()
@@ -65,11 +67,33 @@ const JobListings: React.FC = () => {
 
   const jobs: JobListing[] = jobsResponse?.data?.data || []
 
-  const filteredJobs = jobs.filter((job: JobListing) => {
-    const matchesSearch = job.title.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesStatus = !selectedStatus || job.status === selectedStatus
-    return matchesSearch && matchesStatus
-  })
+  const filteredJobs = useMemo(() => {
+    return jobs.filter((job: JobListing) => {
+      const matchesSearch = job.title.toLowerCase().includes(searchQuery.toLowerCase())
+      const matchesStatus = !selectedStatus || job.status === selectedStatus
+      return matchesSearch && matchesStatus
+    })
+  }, [jobs, searchQuery, selectedStatus])
+
+  const totalJobs = filteredJobs.length
+  const totalPages = Math.max(1, Math.ceil(totalJobs / pageSize))
+  const showingFrom = totalJobs === 0 ? 0 : (page - 1) * pageSize + 1
+  const showingTo = totalJobs === 0 ? 0 : Math.min(page * pageSize, totalJobs)
+  const canGoPrev = page > 1
+  const canGoNext = page < totalPages
+
+  const paginatedJobs = useMemo(() => {
+    const start = (page - 1) * pageSize
+    return filteredJobs.slice(start, start + pageSize)
+  }, [filteredJobs, page, pageSize])
+
+  useEffect(() => {
+    setPage(1)
+  }, [searchQuery, selectedStatus, pageSize])
+
+  useEffect(() => {
+    setPage((prev) => Math.min(prev, totalPages))
+  }, [totalPages])
 
   if (isLoading) {
     return (
@@ -145,12 +169,23 @@ const JobListings: React.FC = () => {
               <option value="CLOSED">{t('admin:jobListings.statusFilter.closed')}</option>
             </select>
           </div>
+          <div className="sm:w-48">
+            <select
+              className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-mint focus:border-transparent"
+              value={pageSize}
+              onChange={(e) => setPageSize(Number(e.target.value) as 25 | 50 | 100)}
+            >
+              <option value={25}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 25</option>
+              <option value={50}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 50</option>
+              <option value={100}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 100</option>
+            </select>
+          </div>
         </div>
       </div>
 
       {/* Job Listings */}
       <div className="space-y-4">
-        {filteredJobs.map((job: JobListing) => (
+        {paginatedJobs.map((job: JobListing) => (
           <div key={job.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
@@ -272,6 +307,38 @@ const JobListings: React.FC = () => {
           <p className="text-gray-600">{t('admin:jobListings.emptyState.description')}</p>
         </div>
       )}
+
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:items-center">
+        <div className="text-sm text-gray-600 text-center sm:text-left">
+          {t(
+            'admin:users.pagination.showing',
+            'Showing {{from}}-{{to}} of {{total}}',
+            { from: showingFrom, to: showingTo, total: totalJobs },
+          )}
+        </div>
+        <div className="flex items-center justify-center gap-2">
+          <button
+            type="button"
+            className="px-3 py-2 text-sm rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!canGoPrev}
+            onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+          >
+            {t('admin:users.pagination.previous', 'Previous')}
+          </button>
+          <span className="text-sm text-gray-600 px-2">
+            {t('admin:users.pagination.pageOf', 'Page {{page}} of {{totalPages}}', { page, totalPages })}
+          </span>
+          <button
+            type="button"
+            className="px-3 py-2 text-sm rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!canGoNext}
+            onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+          >
+            {t('admin:users.pagination.next', 'Next')}
+          </button>
+        </div>
+        <div className="hidden sm:block" />
+      </div>
     </div>
   )
 }

@@ -8,6 +8,7 @@ import { APP_NAME } from '../constants';
 import { useAppContext } from '../contexts/AppContext';
 import { getHomePath } from '../utils/navigation';
 import Button from '../components/ui/Button';
+import Pagination from '../components/ui/Pagination';
 import LanguageSwitcher from '../components/ui/LanguageSwitcher';
 import LogoLink from '../components/shared/LogoLink';
 import {
@@ -250,6 +251,8 @@ const PublicPartnersPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<PartnerType | ''>('');
   const [showFilters, setShowFilters] = useState(false);
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(25);
 
   useEffect(() => {
     fetchPartners();
@@ -285,6 +288,15 @@ const PublicPartnersPage: React.FC = () => {
       return matchesSearch && matchesType;
     });
   }, [partners, searchQuery, filterType]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchQuery, filterType]);
+
+  const paginatedPartners = useMemo(() => {
+    const start = (page - 1) * perPage;
+    return filteredPartners.slice(start, start + perPage);
+  }, [filteredPartners, page, perPage]);
 
   // Get featured partners
   const featuredPartners = useMemo(() => {
@@ -559,9 +571,24 @@ const PublicPartnersPage: React.FC = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredPartners.map((partner, index) => (
-                <PartnerCard key={partner.id} partner={partner} index={index} />
+              {paginatedPartners.map((partner, index) => (
+                <PartnerCard key={partner.id} partner={partner} index={index + (page - 1) * perPage} />
               ))}
+            </div>
+          )}
+
+          {!loading && !error && filteredPartners.length > 0 && (
+            <div className="mt-8">
+              <Pagination
+                page={page}
+                totalItems={filteredPartners.length}
+                pageSize={perPage}
+                onPageChange={setPage}
+                onPageSizeChange={(n) => {
+                  setPerPage(n);
+                  setPage(1);
+                }}
+              />
             </div>
           )}
         </div>

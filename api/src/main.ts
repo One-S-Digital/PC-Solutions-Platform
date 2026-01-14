@@ -20,6 +20,11 @@ async function bootstrap() {
     bodyParser: false, // We'll handle body parsing manually
   });
   const logger = app.get(AppLoggerService);
+
+  // Prevent Express from generating automatic ETags (and 304 responses) for API JSON responses.
+  // We manage caching explicitly for endpoints that need it (e.g. static translations).
+  const expressApp = app.getHttpAdapter().getInstance();
+  expressApp.set('etag', false);
   
   // CORS configuration - MUST run before helmet
   const prodAllowed = new Set([
@@ -139,7 +144,6 @@ async function bootstrap() {
   }
 
   // Root handlers for Render's default probes
-  const expressApp = app.getHttpAdapter().getInstance();
   expressApp.head('/', (_req, res) => res.sendStatus(204));
   expressApp.get('/', (_req, res) => res.sendStatus(204));
 

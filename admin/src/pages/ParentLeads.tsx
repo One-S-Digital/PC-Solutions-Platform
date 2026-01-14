@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { 
   Heart, 
@@ -24,6 +24,8 @@ import { useTranslation } from 'react-i18next';
 const ParentLeads: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedStatus, setSelectedStatus] = useState<LeadMainStatus | ''>('')
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState<25 | 50 | 100>(25)
   const apiClient = useApiClient()
   const { t } = useTranslation(['common', 'admin']);
 
@@ -34,16 +36,38 @@ const ParentLeads: React.FC = () => {
 
   const leads: ParentLead[] = leadsResponse?.data?.data || []
 
-  const filteredLeads = leads.filter((lead) => {
-    const query = searchQuery.toLowerCase()
-    const matchesSearch =
-      lead.contactName?.toLowerCase().includes(query) ||
-      lead.contactEmail?.toLowerCase().includes(query) ||
-      lead.parent?.name?.toLowerCase().includes(query) ||
-      lead.parent?.email?.toLowerCase().includes(query)
-    const matchesStatus = !selectedStatus || lead.mainStatus === selectedStatus
-    return matchesSearch && matchesStatus
-  })
+  const filteredLeads = useMemo(() => {
+    return leads.filter((lead) => {
+      const query = searchQuery.toLowerCase()
+      const matchesSearch =
+        lead.contactName?.toLowerCase().includes(query) ||
+        lead.contactEmail?.toLowerCase().includes(query) ||
+        lead.parent?.name?.toLowerCase().includes(query) ||
+        lead.parent?.email?.toLowerCase().includes(query)
+      const matchesStatus = !selectedStatus || lead.mainStatus === selectedStatus
+      return matchesSearch && matchesStatus
+    })
+  }, [leads, searchQuery, selectedStatus])
+
+  const totalLeads = filteredLeads.length
+  const totalPages = Math.max(1, Math.ceil(totalLeads / pageSize))
+  const showingFrom = totalLeads === 0 ? 0 : (page - 1) * pageSize + 1
+  const showingTo = totalLeads === 0 ? 0 : Math.min(page * pageSize, totalLeads)
+  const canGoPrev = page > 1
+  const canGoNext = page < totalPages
+
+  const paginatedLeads = useMemo(() => {
+    const start = (page - 1) * pageSize
+    return filteredLeads.slice(start, start + pageSize)
+  }, [filteredLeads, page, pageSize])
+
+  useEffect(() => {
+    setPage(1)
+  }, [searchQuery, selectedStatus, pageSize])
+
+  useEffect(() => {
+    setPage((prev) => Math.min(prev, totalPages))
+  }, [totalPages])
 
   const statusColors: Record<LeadMainStatus, string> = {
     [LeadMainStatus.NEW]: 'bg-blue-100 text-blue-800',
@@ -118,6 +142,17 @@ const ParentLeads: React.FC = () => {
               ))}
             </select>
           </div>
+          <div className="sm:w-48">
+            <select
+              className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-mint focus:border-transparent"
+              value={pageSize}
+              onChange={(e) => setPageSize(Number(e.target.value) as 25 | 50 | 100)}
+            >
+              <option value={25}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 25</option>
+              <option value={50}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 50</option>
+              <option value={100}>{t('admin:users.pagination.rowsPerPage', 'Rows per page')}: 100</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -148,7 +183,7 @@ const ParentLeads: React.FC = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredLeads.map((lead) => {
+              {paginatedLeads.map((lead) => {
                 const displayName = lead.parent?.name || lead.contactName || t('admin:parentLeads.labels.unknown', 'Unknown')
                 const displayEmail = lead.parent?.email || lead.contactEmail || t('admin:parentLeads.labels.noEmail', 'N/A')
                 return (
@@ -258,6 +293,38 @@ const ParentLeads: React.FC = () => {
             <p className="text-gray-600">{t('admin:parentLeads.emptyState.description', 'Try adjusting your search criteria or add a new lead.')}</p>
           </div>
         )}
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:items-center">
+        <div className="text-sm text-gray-600 text-center sm:text-left">
+          {t(
+            'admin:users.pagination.showing',
+            'Showing {{from}}-{{to}} of {{total}}',
+            { from: showingFrom, to: showingTo, total: totalLeads },
+          )}
+        </div>
+        <div className="flex items-center justify-center gap-2">
+          <button
+            type="button"
+            className="px-3 py-2 text-sm rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!canGoPrev}
+            onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+          >
+            {t('admin:users.pagination.previous', 'Previous')}
+          </button>
+          <span className="text-sm text-gray-600 px-2">
+            {t('admin:users.pagination.pageOf', 'Page {{page}} of {{totalPages}}', { page, totalPages })}
+          </span>
+          <button
+            type="button"
+            className="px-3 py-2 text-sm rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!canGoNext}
+            onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+          >
+            {t('admin:users.pagination.next', 'Next')}
+          </button>
+        </div>
+        <div className="hidden sm:block" />
       </div>
     </div>
   )
