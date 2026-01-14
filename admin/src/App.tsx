@@ -27,6 +27,7 @@ import SubscriptionsPage from './pages/Subscriptions';
 import DiscountTerminationsPage from './pages/DiscountTerminations';
 import AdminUserProfileEdit from './pages/AdminUserProfileEdit';
 import AdminOrganizationProfileEdit from './pages/AdminOrganizationProfileEdit';
+import ResetPassword from './pages/ResetPassword';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -71,6 +72,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<AdminLoginPage />} />
         <Route path="/signup" element={<AdminSignupPage />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/access-denied" element={<AccessDeniedPage />} />
         <Route
           path="/"

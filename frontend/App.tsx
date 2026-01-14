@@ -94,6 +94,7 @@ import EducatorProfileViewPage from './pages/profile/EducatorProfileViewPage';
 import LoginPageE2E from './pages/LoginPageE2E';
 import SignupPageE2E from './pages/SignupPageE2E';
 import PricingPage from './pages/PricingPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 
 
 const ProtectedRoute: React.FC<{ children: React.ReactElement; roles: UserRole[] }> = ({ children, roles }): React.ReactElement | null => {
@@ -592,6 +593,7 @@ const App: React.FC = () => {
             <Route path="/signup" element={<SignupPageE2E />} />
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
+            <Route path="/reset-password" element={<Navigate to="/login" replace />} />
 
             {/* Protected routes: always redirect to login in E2E */}
             <Route path="/dashboard" element={<Navigate to="/login" replace />} />
@@ -621,6 +623,7 @@ const App: React.FC = () => {
                 <Route path="/pricing" element={<PricingPage />} />
                 <Route path="/partners" element={<PublicPartnersPage />} />
                 <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
+                <Route path="/reset-password" element={<ResetPasswordPage />} />
                 <Route path="/*" element={<ProtectedLayout />} />
               </Routes>
             </SubscriptionProvider>
