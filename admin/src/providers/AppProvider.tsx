@@ -24,9 +24,9 @@ export function AppProvider({ children }: AppProviderProps) {
   return (
     <ClerkProvider 
       publishableKey={clerkPubKey}
-      signInUrl="/sign-in"
-      signUpUrl="/sign-up"
-      afterSignOutUrl="/sign-in"
+      signInUrl="/login"
+      signUpUrl="/signup"
+      afterSignOutUrl="/login"
     >
       {children}
     </ClerkProvider>

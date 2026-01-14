@@ -401,7 +401,7 @@ const LoginPage: React.FC = () => {
                     {t('common:loginPage.passwordLabel')}
                   </label>
                   <Link
-                    to="/reset-password"
+                    to={email ? `/reset-password?email=${encodeURIComponent(email)}` : '/reset-password'}
                     className="text-xs text-swiss-mint hover:underline"
                   >
                     {t('common:loginPage.forgotPassword')}
