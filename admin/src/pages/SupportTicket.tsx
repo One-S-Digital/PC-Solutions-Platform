@@ -153,7 +153,7 @@ const SupportTicket: React.FC = () => {
     );
   }
 
-  const isAssignedToYou = !!currentUser?.id && ticket.assignedTo === currentUser.id;
+  const isAssignedToYou = !!currentUser?.profileId && ticket.assignedTo === currentUser.profileId;
 
   return (
     <div className="space-y-6">

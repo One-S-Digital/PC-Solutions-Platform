@@ -209,6 +209,10 @@ class AdminUpdateOrganizationProfileDto {
   @IsString()
   bookingLink?: string;
 
+  @IsOptional()
+  @IsString()
+  websiteUrl?: string;
+
   // Assets
   @IsOptional()
   @IsString()
@@ -524,6 +528,7 @@ export class AdminProfilesController {
         serviceCategories: org.serviceCategories ?? [],
         deliveryType: org.deliveryType ?? '',
         bookingLink: org.bookingLink ?? '',
+        websiteUrl: org.websiteUrl ?? '',
         // Members
         members: org.members.map((m) => ({
           userId: m.userId,
@@ -600,6 +605,7 @@ export class AdminProfilesController {
           ...(dto.serviceCategories !== undefined && { serviceCategories: dto.serviceCategories }),
           ...(dto.deliveryType !== undefined && { deliveryType: dto.deliveryType }),
           ...(dto.bookingLink !== undefined && { bookingLink: dto.bookingLink }),
+          ...(dto.websiteUrl !== undefined && { websiteUrl: dto.websiteUrl }),
           // Assets
           ...(dto.logoAssetId !== undefined && { logoAssetId: dto.logoAssetId || null }),
           ...(dto.coverAssetId !== undefined && { coverAssetId: dto.coverAssetId || null }),
