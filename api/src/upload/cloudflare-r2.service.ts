@@ -5,6 +5,28 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { AssetKind } from '@prisma/client';
 import { createHash } from 'crypto';
 
+const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365;
+const IMMUTABLE_PUBLIC_CACHE_CONTROL = `public, max-age=${ONE_YEAR_SECONDS}, immutable`;
+
+function getCacheControlForUpload(assetKind: AssetKind, mimeType?: string): string | undefined {
+  // Branding assets (logo/favicon) are referenced by URL and the storage key includes a timestamp,
+  // so they are safe to cache "forever" (new upload => new URL => instant cache bust).
+  const isImage = !!mimeType && mimeType.startsWith('image/');
+  const isBranding =
+    assetKind === 'FRONTEND_LOGO' ||
+    assetKind === 'FRONTEND_FAVICON' ||
+    assetKind === 'FRONTEND_OG_IMAGE' ||
+    assetKind === 'ADMIN_LOGO' ||
+    assetKind === 'ADMIN_FAVICON' ||
+    assetKind === 'SIDEBAR_LOGO';
+
+  if (isBranding || isImage) {
+    return IMMUTABLE_PUBLIC_CACHE_CONTROL;
+  }
+
+  return undefined;
+}
+
 export interface UploadResult {
   key: string;
   url: string;
@@ -65,11 +87,13 @@ export class CloudflareR2Service {
     appUserId: string,
   ): Promise<PresignedUploadData> {
     const key = this.generateStorageKey(filename, assetKind, appUserId, undefined);
+    const cacheControl = getCacheControlForUpload(assetKind, mimeType);
     
     const command = new PutObjectCommand({
       Bucket: this.bucketName,
       Key: key,
       ContentType: mimeType,
+      CacheControl: cacheControl,
       Metadata: {
         'uploaded-by': appUserId,
         'asset-kind': assetKind,
@@ -84,6 +108,7 @@ export class CloudflareR2Service {
         url,
         fields: {
           'Content-Type': mimeType,
+          ...(cacheControl ? { 'Cache-Control': cacheControl } : {}),
         },
         key,
       };
@@ -122,12 +147,14 @@ export class CloudflareR2Service {
       
       // Calculate SHA-256 checksum
       const checksum = this.calculateChecksum(file.buffer);
+      const cacheControl = getCacheControlForUpload(assetKind, file.mimetype);
       
       const command = new PutObjectCommand({
         Bucket: this.bucketName,
         Key: key,
         Body: file.buffer,
         ContentType: file.mimetype,
+        CacheControl: cacheControl,
         ChecksumSHA256: checksum, // S3-compatible checksum
         Metadata: {
           'uploaded-by': appUserId,

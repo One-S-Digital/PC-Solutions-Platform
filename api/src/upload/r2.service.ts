@@ -3,6 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
+const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365;
+const IMMUTABLE_PUBLIC_CACHE_CONTROL = `public, max-age=${ONE_YEAR_SECONDS}, immutable`;
+
 export interface UploadResult {
   key: string;
   url: string;
@@ -74,12 +77,14 @@ export class R2Service {
       }
 
       const key = this.generateStorageKey(file.originalname, category);
+      const cacheControl = file.mimetype?.startsWith('image/') ? IMMUTABLE_PUBLIC_CACHE_CONTROL : undefined;
       
       const command = new PutObjectCommand({
         Bucket: this.bucketName,
         Key: key,
         Body: file.buffer,
         ContentType: file.mimetype,
+        CacheControl: cacheControl,
         Metadata: {
           'original-filename': file.originalname,
           'category': category,
