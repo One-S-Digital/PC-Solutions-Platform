@@ -300,6 +300,11 @@
     "title": "Apprentissage en ligne"
   },
   "statePolicies": {
-    "title": "Politiques nationales"
+    "title": "Politiques nationales",
+    "legalNotice": "Avis juridique",
+    "documentSingular": "document",
+    "documentPlural": "documents",
+    "updatedShort": "Mis à jour",
+    "disclaimer": "Toutes les politiques et documents listés ici proviennent directement des sites officiels cantonaux et fédéraux. ProCrèche ne crée, ne modifie ni ne garantit la validité juridique de ces documents et ne peut être tenue responsable de leur contenu ou des modifications apportées par les autorités émettrices. Référez-vous toujours à la source officielle pour la dernière version."
   }
 }

@@ -133,6 +133,41 @@ export declare const ConversationType: {
     readonly SUPPORT: "SUPPORT";
 };
 export type ConversationType = (typeof ConversationType)[keyof typeof ConversationType];
+
+export declare const CANTON_CODES: {
+    readonly AG: "Aargau";
+    readonly AR: "Appenzell Ausserrhoden";
+    readonly AI: "Appenzell Innerrhoden";
+    readonly BL: "Basel-Landschaft";
+    readonly BS: "Basel-Stadt";
+    readonly BE: "Bern";
+    readonly FR: "Fribourg";
+    readonly GE: "Geneva";
+    readonly GL: "Glarus";
+    readonly GR: "Grisons";
+    readonly JU: "Jura";
+    readonly LU: "Lucerne";
+    readonly NE: "Neuchâtel";
+    readonly NW: "Nidwalden";
+    readonly OW: "Obwalden";
+    readonly SH: "Schaffhausen";
+    readonly SZ: "Schwyz";
+    readonly SO: "Solothurn";
+    readonly SG: "St. Gallen";
+    readonly TG: "Thurgau";
+    readonly TI: "Ticino";
+    readonly UR: "Uri";
+    readonly VS: "Valais";
+    readonly VD: "Vaud";
+    readonly ZG: "Zug";
+    readonly ZH: "Zurich";
+    readonly CH: "Federal (Switzerland)";
+};
+export type CantonCode = keyof typeof CANTON_CODES;
+export declare const CANTON_DEFAULT_LANGUAGES: Record<CantonCode, 'fr' | 'de' | 'it'>;
+export declare function getCantonName(code: CantonCode): string;
+export declare function getCantonDefaultLanguage(code: CantonCode): 'fr' | 'de' | 'it';
+export declare function isValidCantonCode(code: string): code is CantonCode;
 export interface ClerkUser {
     id: string;
     email: string;

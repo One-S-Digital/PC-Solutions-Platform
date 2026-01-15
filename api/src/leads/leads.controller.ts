@@ -19,6 +19,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { Public } from '../auth/decorators/public.decorator';
 import { UserRole } from '@prisma/client';
 import { wrapResponse, wrapErrorResponse } from '../common/utils/response.util';
 
@@ -49,13 +50,14 @@ export class LeadsController {
   // ============================================
 
   @Post('parent-leads')
-  @Roles(UserRole.PARENT, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Public()
   @ApiOperation({ summary: 'Create a new parent lead' })
   createParentLead(@Body() createParentLeadDto: CreateParentLeadDto) {
     return this.leadsService.createParentLead(createParentLeadDto);
   }
 
   @Get('parent-leads')
+  @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Get all parent leads with optional filters' })
   findAllParentLeads(
     @Query('foundationId') foundationId?: string,
@@ -74,6 +76,7 @@ export class LeadsController {
   }
 
   @Get('parent-leads/:id')
+  @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Get a parent lead by ID' })
   findParentLeadById(@Param('id') id: string) {
     return this.leadsService.findParentLeadById(id);

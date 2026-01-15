@@ -37,6 +37,18 @@ const Dashboard: React.FC = () => {
     refetchInterval: 120000, // Refresh every 2 minutes instead of 30 seconds
   })
 
+  // Policy crawler status (visible regardless of feature toggles)
+  const { data: crawlerHealthResp } = useQuery({
+    queryKey: ['dashboard-policy-crawler-health'],
+    queryFn: async () => apiClient.get('/admin/crawler/health'),
+    enabled: !!apiClient,
+    staleTime: 60000,
+    refetchInterval: 120000,
+    retry: 0,
+  })
+
+  const crawlerEnabled = Boolean((crawlerHealthResp?.data as any)?.enabled)
+
   // Fetch dashboard counts from analytics endpoint (accurate DB counts)
   const { data: dashboardCountsResponse, isLoading: countsLoading } = useQuery({
     queryKey: ['dashboard-counts'],
@@ -310,6 +322,24 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
         )}
+
+        <div className="mt-4 pt-4 border-t border-gray-200 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-500">{t('admin:dashboard.policyCrawler.label', 'Policy Crawler')}:</span>
+            <span className={`text-sm font-medium ${crawlerEnabled ? 'text-green-700' : 'text-red-700'}`}>
+              {crawlerEnabled
+                ? t('admin:dashboard.policyCrawler.enabled', 'Enabled')
+                : t('admin:dashboard.policyCrawler.disabled', 'Disabled')}
+            </span>
+          </div>
+          <Button
+            variant="outline"
+            className="text-sm"
+            onClick={() => navigate('/policy-crawler')}
+          >
+            {t('admin:dashboard.policyCrawler.manage', 'Manage')} →
+          </Button>
+        </div>
       </Card>
 
       {/* Stats Grid */}

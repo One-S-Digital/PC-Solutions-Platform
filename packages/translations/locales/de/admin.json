@@ -625,10 +625,143 @@
     "support": "Support",
     "discountTerminations": "Rabattkündigungen",
     "subscriptions": "Abonnements",
+    "policyCrawler": "Richtlinien-Crawler",
     "systemMonitoring": "Systemüberwachung",
     "translations": "Übersetzungen",
     "designSystem": "Design-System",
     "settings": "Einstellungen"
+  },
+  "policyCrawler": {
+    "title": "Richtlinien-Crawler",
+    "subtitle": "Kantonale Quellen verwalten und gecrawlte Richtlinien prüfen",
+    "disabledNotice": "Der Richtlinien-Crawler ist derzeit auf der API deaktiviert. Die Admin-Seiten bleiben sichtbar, aber Crawling und Prüfwarteschlange bleiben leer, bis er aktiviert ist.",
+    "tabs": {
+      "cantons": "Kantone",
+      "review": "Richtlinienprüfung"
+    },
+    "status": {
+      "enabled": "Aktiv",
+      "disabled": "Deaktiviert"
+    }
+  },
+  "dashboard": {
+    "policyCrawler": {
+      "label": "Richtlinien-Crawler",
+      "enabled": "Aktiv",
+      "disabled": "Deaktiviert",
+      "manage": "Verwalten"
+    }
+  },
+  "cantons": {
+    "title": "Kantonale Richtlinienquellen",
+    "subtitle": "Richtliniendokumentquellen für jeden Schweizer Kanton verwalten",
+    "emptyState": {
+      "noCantons": "Keine Kantone gefunden. Führen Sie das Seed-Skript aus, um Kantondaten zu füllen."
+    },
+    "card": {
+      "code": "Code:",
+      "sources": "Quellen",
+      "documents": "Dokumente",
+      "pendingReview": "Ausstehende Überprüfung",
+      "defaultLanguage": "Standardsprache:"
+    },
+    "detail": {
+      "title": "Kantonale Richtlinienquellen",
+      "code": "Code:",
+      "defaultLanguage": "Standardsprache:",
+      "addSourceButton": "Quelle hinzufügen",
+      "table": {
+        "label": "BEZEICHNUNG",
+        "url": "URL",
+        "type": "TYP",
+        "status": "STATUS",
+        "lastCrawl": "LETZTER CRAWL",
+        "actions": "AKTIONEN"
+      },
+      "emptyState": {
+        "noSources": "Keine Quellen konfiguriert. Fügen Sie eine Quelle hinzu, um mit dem Crawling zu beginnen."
+      },
+      "actions": {
+        "crawlNow": "Jetzt crawlen",
+        "edit": "Bearbeiten"
+      },
+      "status": {
+        "active": "Aktiv",
+        "inactive": "Inaktiv",
+        "success": "Erfolg",
+        "error": "Fehler",
+        "pending": "Ausstehend",
+        "never": "Nie",
+        "crawling": "Wird gecrawlt..."
+      },
+      "crawlSuccess": "Crawl erfolgreich ausgelöst",
+      "crawlError": "Crawl konnte nicht ausgelöst werden",
+      "deleteConfirm": "Möchten Sie diese Quelle wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "deleteSuccess": "Quelle erfolgreich gelöscht",
+      "deleteError": "Fehler beim Löschen der Quelle"
+    },
+    "addSource": {
+      "title": "Quelle hinzufügen",
+      "label": "Bezeichnung",
+      "labelPlaceholder": "z.B., SCAJE - Hauptseite",
+      "url": "URL",
+      "urlPlaceholder": "https://www.vd.ch/themes/...",
+      "sourceType": "Quelltyp",
+      "renderType": "Render-Typ",
+      "cssSelector": "CSS-Selektor (optional)",
+      "cssSelectorPlaceholder": "z.B., .content-area, #main-content",
+      "cssSelectorHelp": "Link-Extraktion auf bestimmten Container beschränken",
+      "crawlFrequency": "Crawl-Frequenz (Tage)",
+      "cancel": "Abbrechen",
+      "create": "Quelle erstellen",
+      "createLoading": "Wird erstellt...",
+      "error": "Quelle konnte nicht erstellt werden"
+    },
+    "editSource": {
+      "title": "Quelle bearbeiten",
+      "update": "Quelle aktualisieren",
+      "updateLoading": "Wird aktualisiert...",
+      "error": "Quelle konnte nicht aktualisiert werden"
+    },
+    "error": {
+      "retry": "Wiederholen",
+      "fetchError": "Kantone konnten nicht abgerufen werden"
+    }
+  },
+  "policyReview": {
+    "title": "Richtlinienprüfungswarteschlange",
+    "subtitle": "Geprüfte Richtliniendokumente überprüfen und genehmigen",
+    "filters": {
+      "allCantons": "Alle Kantone",
+      "changedOnly": "Nur geänderte"
+    },
+    "emptyState": {
+      "noPolicies": "Keine Richtlinien zur Überprüfung ausstehend"
+    },
+    "panel": {
+      "title": "Richtlinie überprüfen",
+      "officialSource": "Offizielle Quelle:",
+      "titleLabel": "Titel:",
+      "categoryLabel": "Kategorie:",
+      "documentTypeLabel": "Dokumenttyp:",
+      "summaryLabel": "Zusammenfassung (für Benutzer):",
+      "summaryPlaceholder": "Kurze Beschreibung dieses Dokuments...",
+      "approveButton": "Genehmigen & Veröffentlichen",
+      "rejectButton": "Ablehnen",
+      "rejectPrompt": "Grund für die Ablehnung:",
+      "approveSuccess": "Richtlinie genehmigt und veröffentlicht",
+      "rejectSuccess": "Richtlinie abgelehnt",
+      "approveError": "Richtlinie konnte nicht genehmigt werden",
+      "rejectError": "Richtlinie konnte nicht abgelehnt werden",
+      "extractButton": "Text extrahieren (PDF)",
+      "extracting": "Wird extrahiert...",
+      "extracted": "Text extrahiert",
+      "extractSuccess": "Text erfolgreich zur Überprüfung extrahiert",
+      "extractError": "Text konnte nicht extrahiert werden"
+    },
+    "policyCard": {
+      "unknownDate": "Unbekannt"
+    }
   },
   "partners": {
     "application": {

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConversationType = exports.MessageType = exports.QuizType = exports.LessonStatus = exports.ContentType = exports.CourseStatus = exports.ApplicationStatus = exports.ServiceCategory = exports.JobPreferredTimeSlot = exports.JobContractType = exports.JobStatus = exports.OrganizationType = exports.AssetKind = exports.SubscriptionStatus = exports.SubscriptionTier = exports.UserRole = void 0;
+exports.isValidCantonCode = exports.getCantonDefaultLanguage = exports.getCantonName = exports.CANTON_DEFAULT_LANGUAGES = exports.CANTON_CODES = exports.ConversationType = exports.MessageType = exports.QuizType = exports.LessonStatus = exports.ContentType = exports.CourseStatus = exports.ApplicationStatus = exports.ServiceCategory = exports.JobPreferredTimeSlot = exports.JobContractType = exports.JobStatus = exports.OrganizationType = exports.AssetKind = exports.SubscriptionStatus = exports.SubscriptionTier = exports.UserRole = void 0;
 // User Roles
 exports.UserRole = {
     SUPER_ADMIN: 'SUPER_ADMIN',
@@ -136,3 +136,75 @@ exports.ConversationType = {
     GROUP: 'GROUP',
     SUPPORT: 'SUPPORT',
 };
+
+// Swiss Canton Codes and Metadata
+exports.CANTON_CODES = {
+    AG: 'Aargau',
+    AR: 'Appenzell Ausserrhoden',
+    AI: 'Appenzell Innerrhoden',
+    BL: 'Basel-Landschaft',
+    BS: 'Basel-Stadt',
+    BE: 'Bern',
+    FR: 'Fribourg',
+    GE: 'Geneva',
+    GL: 'Glarus',
+    GR: 'Grisons',
+    JU: 'Jura',
+    LU: 'Lucerne',
+    NE: 'Neuchâtel',
+    NW: 'Nidwalden',
+    OW: 'Obwalden',
+    SH: 'Schaffhausen',
+    SZ: 'Schwyz',
+    SO: 'Solothurn',
+    SG: 'St. Gallen',
+    TG: 'Thurgau',
+    TI: 'Ticino',
+    UR: 'Uri',
+    VS: 'Valais',
+    VD: 'Vaud',
+    ZG: 'Zug',
+    ZH: 'Zurich',
+    CH: 'Federal (Switzerland)',
+};
+exports.CANTON_DEFAULT_LANGUAGES = {
+    AG: 'de',
+    AR: 'de',
+    AI: 'de',
+    BL: 'de',
+    BS: 'de',
+    BE: 'de',
+    FR: 'fr',
+    GE: 'fr',
+    GL: 'de',
+    GR: 'de',
+    JU: 'fr',
+    LU: 'de',
+    NE: 'fr',
+    NW: 'de',
+    OW: 'de',
+    SH: 'de',
+    SZ: 'de',
+    SO: 'de',
+    SG: 'de',
+    TG: 'de',
+    TI: 'it',
+    UR: 'de',
+    VS: 'fr',
+    VD: 'fr',
+    ZG: 'de',
+    ZH: 'de',
+    CH: 'de',
+};
+function getCantonName(code) {
+    return exports.CANTON_CODES[code];
+}
+exports.getCantonName = getCantonName;
+function getCantonDefaultLanguage(code) {
+    return exports.CANTON_DEFAULT_LANGUAGES[code];
+}
+exports.getCantonDefaultLanguage = getCantonDefaultLanguage;
+function isValidCantonCode(code) {
+    return code in exports.CANTON_CODES;
+}
+exports.isValidCantonCode = isValidCantonCode;

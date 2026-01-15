@@ -24,6 +24,7 @@ import {
   LifeBuoy,
   CreditCard,
   Tag,
+  FileSearch,
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useSettings } from '../hooks/useSettings'
@@ -50,6 +51,7 @@ const navigation = [
   { key: 'support', href: '/support', icon: LifeBuoy },
   { key: 'discountTerminations', href: '/discount-terminations', icon: Tag },
   { key: 'subscriptions', href: '/subscriptions', icon: CreditCard },
+  { key: 'policyCrawler', href: '/policy-crawler', icon: FileSearch },
   { key: 'systemMonitoring', href: '/system', icon: Monitor },
   { key: 'translations', href: '/translations', icon: Globe },
   { key: 'designSystem', href: '/design-system', icon: Palette },

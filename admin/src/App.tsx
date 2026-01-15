@@ -25,6 +25,7 @@ import SupportPage from './pages/Support';
 import SupportTicketPage from './pages/SupportTicket';
 import SubscriptionsPage from './pages/Subscriptions';
 import DiscountTerminationsPage from './pages/DiscountTerminations';
+import PolicyCrawlerPage from './pages/PolicyCrawler';
 import AdminUserProfileEdit from './pages/AdminUserProfileEdit';
 import AdminOrganizationProfileEdit from './pages/AdminOrganizationProfileEdit';
 import ResetPassword from './pages/ResetPassword';
@@ -100,6 +101,10 @@ function App() {
           <Route path="support/tickets/:ticketId" element={<SupportTicketPage />} />
           <Route path="discount-terminations" element={<DiscountTerminationsPage />} />
           <Route path="subscriptions" element={<SubscriptionsPage />} />
+
+          {/* Policy crawler (always visible; status is indicated inside) */}
+          <Route path="policy-crawler/*" element={<PolicyCrawlerPage />} />
+
           <Route path="system" element={<SystemMonitorPage />} />
           <Route path="translations" element={<TranslationsPage />} />
           <Route path="settings" element={<SettingsPage />} />
