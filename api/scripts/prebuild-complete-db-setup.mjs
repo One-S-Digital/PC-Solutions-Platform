@@ -197,6 +197,7 @@ const verifyCriticalTables = () => {
     'job_listings',
     'static_translations',
     'messages',
+    'promo_codes',
   ];
   
   const sql = `
