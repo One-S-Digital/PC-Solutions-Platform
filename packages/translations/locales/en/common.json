@@ -1976,7 +1976,12 @@
     "promoUpdated": "Promo code updated successfully",
     "promoDeleted": "Promo code deleted successfully",
     "validation": {
-      "required": "Code and expiry date are required"
+      "required": "Code and expiry date are required",
+      "codeMinLength": "Code must be at least 3 characters",
+      "expiryFuture": "Expiry date must be in the future",
+      "valuePositive": "Value must be greater than zero",
+      "percentageMax": "Percentage cannot exceed 100%",
+      "maxUsageMin": "Max usage must be at least 1"
     },
     "form": {
       "code": "Code",
