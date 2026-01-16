@@ -97,12 +97,16 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({
     setIsSaving(true);
     
     try {
+      // Create UTC end-of-day timestamp to avoid timezone issues
+      const [year, month, day] = formData.expiryDate.split('-').map(Number);
+      const expiryDateUtc = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
+      
       const payload = {
         code: formData.code.toUpperCase().trim(),
         discountType: formData.discountType,
         value: Number(formData.value),
-        expiryDate: new Date(`${formData.expiryDate}T23:59:59`).toISOString(),
-        description: formData.description.trim() || undefined,
+        expiryDate: expiryDateUtc.toISOString(),
+        description: formData.description.trim() || null,
         maxUsage: formData.maxUsage ? parseInt(formData.maxUsage, 10) : undefined,
         ...(editingPromo && { status: formData.status }),
       };

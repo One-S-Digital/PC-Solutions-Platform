@@ -1949,6 +1949,11 @@
     "promoUpdated": "Code promo mis à jour avec succès",
     "promoDeleted": "Code promo supprimé avec succès",
     "validation": {
+      "codeMinLength": "Le code doit contenir au moins 3 caractères",
+      "expiryFuture": "La date d'expiration doit être dans le futur",
+      "valuePositive": "La valeur doit être supérieure à zéro",
+      "percentageMax": "Le pourcentage ne peut pas dépasser 100%",
+      "maxUsageMin": "L'utilisation maximale doit être d'au moins 1",
       "required": "Le code et la date d’expiration sont obligatoires"
     },
     "form": {

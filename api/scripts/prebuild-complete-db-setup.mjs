@@ -201,9 +201,9 @@ const verifyCriticalTables = () => {
   ];
   
   const sql = `
-    SELECT table_name 
-    FROM information_schema.tables 
-    WHERE table_schema = 'public' 
+    SELECT COUNT(*) AS count
+    FROM information_schema.tables
+    WHERE table_schema = 'public'
     AND table_name IN (${criticalTables.map(t => `'${t}'`).join(', ')});
   `;
   
@@ -219,7 +219,17 @@ const verifyCriticalTables = () => {
     throw new Error('Failed to verify critical tables');
   }
   
-  success('Critical tables verified');
+  // Parse the count from the result to verify all tables exist
+  const countMatch = result.stdout?.match(/\b(\d+)\b/);
+  const count = countMatch ? Number(countMatch[1]) : NaN;
+  
+  if (!Number.isInteger(count) || count !== criticalTables.length) {
+    warn(`Expected ${criticalTables.length} critical tables, found ${count || 'unknown'}`);
+    // Log which tables might be missing for debugging
+    log('Expected tables: ' + criticalTables.join(', '));
+  }
+  
+  success(`Critical tables verified (${count}/${criticalTables.length})`);
 };
 
 /**

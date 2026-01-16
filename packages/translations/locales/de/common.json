@@ -1972,7 +1972,12 @@
     "promoUpdated": "Promo-Code erfolgreich aktualisiert",
     "promoDeleted": "Promo-Code erfolgreich gelöscht",
     "validation": {
-      "required": "Code und Ablaufdatum sind erforderlich"
+      "required": "Code und Ablaufdatum sind erforderlich",
+      "codeMinLength": "Der Code muss mindestens 3 Zeichen lang sein",
+      "expiryFuture": "Das Ablaufdatum muss in der Zukunft liegen",
+      "valuePositive": "Der Wert muss größer als Null sein",
+      "percentageMax": "Der Prozentsatz darf 100% nicht überschreiten",
+      "maxUsageMin": "Die maximale Nutzung muss mindestens 1 betragen"
     },
     "form": {
       "code": "Code",

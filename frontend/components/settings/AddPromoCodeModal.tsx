@@ -85,7 +85,7 @@ const AddPromoCodeModal: React.FC<AddPromoCodeModalProps> = ({
     if (!formData.code.trim()) {
       newErrors.code = t('forms.required');
     } else if (formData.code.trim().length < 3) {
-      newErrors.code = 'Code must be at least 3 characters';
+      newErrors.code = t('settingsPromoCodeManager.validation.codeMinLength');
     }
 
     if (!formData.expiryDate) {
@@ -95,20 +95,20 @@ const AddPromoCodeModal: React.FC<AddPromoCodeModalProps> = ({
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       if (expiryDate < today && !editingPromo) {
-        newErrors.expiryDate = 'Expiry date must be in the future';
+        newErrors.expiryDate = t('settingsPromoCodeManager.validation.expiryFuture');
       }
     }
 
-    if (formData.value < 0) {
-      newErrors.value = 'Value must be positive';
+    if (formData.value <= 0) {
+      newErrors.value = t('settingsPromoCodeManager.validation.valuePositive');
     }
 
     if (formData.discountType === 'Percentage' && formData.value > 100) {
-      newErrors.value = 'Percentage cannot exceed 100%';
+      newErrors.value = t('settingsPromoCodeManager.validation.percentageMax');
     }
 
     if (formData.maxUsage && parseInt(formData.maxUsage, 10) < 1) {
-      newErrors.maxUsage = 'Max usage must be at least 1';
+      newErrors.maxUsage = t('settingsPromoCodeManager.validation.maxUsageMin');
     }
 
     setErrors(newErrors);
@@ -122,7 +122,12 @@ const AddPromoCodeModal: React.FC<AddPromoCodeModalProps> = ({
       return;
     }
 
-    await onSave(formData);
+    try {
+      await onSave(formData);
+    } catch (error) {
+      // Error is handled by parent component
+      console.error('Failed to save promo code:', error);
+    }
   };
 
   const handleInputChange = (field: keyof PromoCodeFormData, value: string | number) => {
@@ -139,6 +144,9 @@ const AddPromoCodeModal: React.FC<AddPromoCodeModalProps> = ({
     <div 
       className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
       onClick={(e) => e.target === e.currentTarget && onClose()}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="promo-modal-title"
     >
       <div 
         className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto"
@@ -146,7 +154,7 @@ const AddPromoCodeModal: React.FC<AddPromoCodeModalProps> = ({
       >
         {/* Header */}
         <div className="flex justify-between items-center p-6 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-swiss-charcoal">
+          <h3 id="promo-modal-title" className="text-lg font-semibold text-swiss-charcoal">
             {editingPromo 
               ? t('settingsPromoCodeManager.addEditModal.editTitle') 
               : t('settingsPromoCodeManager.addEditModal.addTitle')}
@@ -155,6 +163,7 @@ const AddPromoCodeModal: React.FC<AddPromoCodeModalProps> = ({
             onClick={onClose} 
             className="text-gray-400 hover:text-gray-600 transition-colors"
             type="button"
+            aria-label={t('buttons.close')}
           >
             <XMarkIcon className="w-5 h-5" />
           </button>
