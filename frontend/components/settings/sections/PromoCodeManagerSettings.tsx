@@ -228,6 +228,9 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({
     }
   }, []);
 
+  // Debug logging
+  console.log('[PromoCodeManager] Rendering - isModalOpen:', isModalOpen, 'promoCodes.length:', promoCodes.length);
+
   // Loading state
   if (isLoading) {
     return (
@@ -253,6 +256,7 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({
           variant="primary" 
           leftIcon={PlusCircleIcon} 
           onClick={handleAddNew}
+          type="button"
         >
           {t('settingsPromoCodeManager.addNewCode')}
         </Button>
@@ -268,6 +272,7 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({
             size="sm"
             leftIcon={PlusCircleIcon}
             onClick={handleAddNew}
+            type="button"
             className="mt-4"
           >
             {t('settingsPromoCodeManager.addNewCode')}
@@ -350,7 +355,6 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({
       )}
 
       {/* Modal */}
-      {console.log('[PromoCodeManager] Rendering modal with isOpen:', isModalOpen)}
       <AddPromoCodeModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
