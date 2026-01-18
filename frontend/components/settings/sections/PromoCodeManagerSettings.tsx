@@ -76,6 +76,7 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({
 
   // Open modal for new promo code
   const handleAddNew = useCallback(() => {
+    console.log('[PromoCodeManager] handleAddNew called - opening modal');
     setEditingPromo(null);
     setIsModalOpen(true);
   }, []);
@@ -349,6 +350,7 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({
       )}
 
       {/* Modal */}
+      {console.log('[PromoCodeManager] Rendering modal with isOpen:', isModalOpen)}
       <AddPromoCodeModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}

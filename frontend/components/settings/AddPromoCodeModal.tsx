@@ -53,6 +53,7 @@ const AddPromoCodeModal: React.FC<AddPromoCodeModalProps> = ({
   editingPromo,
   isSaving,
 }) => {
+  console.log('[AddPromoCodeModal] Rendered with isOpen:', isOpen);
   const { t } = useTranslation(['common', 'settings']);
   const [formData, setFormData] = useState<PromoCodeFormData>(initialFormData);
   const [errors, setErrors] = useState<Partial<Record<keyof PromoCodeFormData, string>>>({});
@@ -141,8 +142,12 @@ const AddPromoCodeModal: React.FC<AddPromoCodeModalProps> = ({
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) {
+    console.log('[AddPromoCodeModal] isOpen is false, returning null');
+    return null;
+  }
 
+  console.log('[AddPromoCodeModal] isOpen is true, rendering modal content');
   return (
     <div 
       className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
