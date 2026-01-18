@@ -91,7 +91,10 @@ const AddPromoCodeModal: React.FC<AddPromoCodeModalProps> = ({
     if (!formData.expiryDate) {
       newErrors.expiryDate = t('forms.required');
     } else {
-      const expiryDate = new Date(formData.expiryDate);
+      // Parse expiry date as local date components to avoid timezone issues
+      // new Date("YYYY-MM-DD") parses as UTC midnight, which can be "yesterday" in negative UTC offsets
+      const [year, month, day] = formData.expiryDate.split('-').map(Number);
+      const expiryDate = new Date(year, month - 1, day); // Local midnight of selected date
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       if (expiryDate < today && !editingPromo) {
