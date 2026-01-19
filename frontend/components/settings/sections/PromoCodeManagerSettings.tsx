@@ -97,8 +97,10 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({
     setIsSaving(true);
     
     try {
+      // Manual promo codes may omit expiry; default to far-future.
+      const rawExpiry = formData.expiryDate?.trim() ? formData.expiryDate : '2099-12-31';
       // Create UTC end-of-day timestamp to avoid timezone issues
-      const [year, month, day] = formData.expiryDate.split('-').map(Number);
+      const [year, month, day] = rawExpiry.split('-').map(Number);
       const expiryDateUtc = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
       
       const payload = {
@@ -321,7 +323,12 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({
                     )}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
-                    {new Date(promo.expiryDate).toLocaleDateString(i18n.language)}
+                    {(() => {
+                      const d = new Date(promo.expiryDate);
+                      const isNoExpiry = Number.isFinite(d.getTime()) && d.getUTCFullYear() >= 2099;
+                      if (isNoExpiry) return '—';
+                      return d.toLocaleDateString(i18n.language);
+                    })()}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">
                     <span className={`px-2 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClass(promo.status)}`}>

@@ -194,12 +194,14 @@ export class PromoCodesService {
       throw new ConflictException('A promo code with this code already exists');
     }
 
+    // Manual promo codes may omit expiry; default to far-future.
+    const defaultNoExpiry = new Date(Date.UTC(2099, 11, 31, 23, 59, 59, 999));
     const promoCode = await this.prisma.promoCode.create({
       data: {
         code: dto.code.toUpperCase(),
         discountType: dto.discountType,
         value: dto.value,
-        expiryDate: new Date(dto.expiryDate),
+        expiryDate: dto.expiryDate ? new Date(dto.expiryDate) : defaultNoExpiry,
         description: dto.description,
         maxUsage: dto.maxUsage,
         organizationId,
