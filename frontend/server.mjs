@@ -10,16 +10,18 @@ const host = process.env.HOST ?? '0.0.0.0';
 const serve = sirv('dist', {
   etag: true,
   setHeaders(res, pathname) {
+    const p = pathname.startsWith('/') ? pathname : `/${pathname}`;
+
     // Cache-busting is handled by hashed filenames, so cache built assets
     // aggressively. Never cache the SPA entrypoint.
-    if (pathname === '/index.html') {
+    if (p === '/index.html') {
       res.setHeader('Cache-Control', 'no-cache');
       return;
     }
 
     const isAsset =
-      pathname.startsWith('/assets/') ||
-      /\.(?:js|mjs|css|map|png|jpg|jpeg|gif|svg|ico|woff2?|ttf|eot)$/.test(pathname);
+      p.startsWith('/assets/') ||
+      /\.(?:js|mjs|css|map|png|jpg|jpeg|gif|svg|ico|woff2?|ttf|eot)$/.test(p);
 
     if (isAsset) {
       res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
