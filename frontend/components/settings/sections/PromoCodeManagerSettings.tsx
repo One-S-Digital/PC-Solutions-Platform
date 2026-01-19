@@ -113,10 +113,13 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({
 
       if (editingPromo) {
         // Update existing promo code
-        await request<CreatePromoCodeResponse>(`/promo-codes/${editingPromo.id}`, {
+        const res = await request<CreatePromoCodeResponse>(`/promo-codes/${editingPromo.id}`, {
           method: 'PATCH',
           body: JSON.stringify(payload),
         });
+        if (!res?.success) {
+          throw new Error(res?.message || t('errors.genericErrorMessage'));
+        }
         
         addNotification({
           title: t('notifications.successTitle'),
@@ -125,10 +128,13 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({
         });
       } else {
         // Create new promo code
-        await request<CreatePromoCodeResponse>('/promo-codes', {
+        const res = await request<CreatePromoCodeResponse>('/promo-codes', {
           method: 'POST',
           body: JSON.stringify(payload),
         });
+        if (!res?.success) {
+          throw new Error(res?.message || t('errors.genericErrorMessage'));
+        }
         
         addNotification({
           title: t('notifications.successTitle'),
@@ -165,7 +171,10 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({
     }
 
     try {
-      await request(`/promo-codes/${promoId}`, { method: 'DELETE' });
+      const res = await request(`/promo-codes/${promoId}`, { method: 'DELETE' });
+      if (!res?.success) {
+        throw new Error(res?.message || t('errors.genericErrorMessage'));
+      }
       
       addNotification({
         title: t('notifications.successTitle'),

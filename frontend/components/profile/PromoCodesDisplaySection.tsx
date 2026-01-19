@@ -18,7 +18,7 @@ import AddPromoCodeModal, { PromoCodeData, PromoCodeFormData } from '../settings
 
 interface PromoCodesApiResponse {
   success: boolean;
-  data: PromoCodeData[];
+  data?: PromoCodeData[];
   hasOrganization?: boolean;
   message?: string;
 }
@@ -79,17 +79,13 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
           setHasOrganization(null);
         }
       } else {
-        setPromoCodes([]);
-        // If response exists but success is false, user might not have organization
-        if (isOwnProfile) {
-          setHasOrganization(false);
-        } else {
-          setHasOrganization(null);
-        }
+        const message =
+          response?.message || t('common:errors.genericErrorMessage', 'Failed to load promo codes');
+        throw new Error(message);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to load promo codes', err);
-      setError(t('common:errors.genericErrorMessage', 'Failed to load promo codes'));
+      setError(err?.message || t('common:errors.genericErrorMessage', 'Failed to load promo codes'));
       setPromoCodes([]);
       // On error, assume organization exists to allow retry
       if (isOwnProfile) {
@@ -141,20 +137,26 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
         };
 
         if (editingPromo) {
-          await request(`/promo-codes/${editingPromo.id}`, {
+          const res = await request(`/promo-codes/${editingPromo.id}`, {
             method: 'PATCH',
             body: JSON.stringify(payload),
           });
+          if (!res?.success) {
+            throw new Error(res?.message || t('common:errors.genericErrorMessage'));
+          }
           addNotification({
             title: t('common:notifications.successTitle'),
             message: t('settingsPromoCodeManager.promoUpdated'),
             type: 'success',
           });
         } else {
-          await request('/promo-codes', {
+          const res = await request('/promo-codes', {
             method: 'POST',
             body: JSON.stringify(payload),
           });
+          if (!res?.success) {
+            throw new Error(res?.message || t('common:errors.genericErrorMessage'));
+          }
           addNotification({
             title: t('common:notifications.successTitle'),
             message: t('settingsPromoCodeManager.promoCreated'),
@@ -188,18 +190,21 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
     }
 
     try {
-      await request(`/promo-codes/${promoId}`, { method: 'DELETE' });
+      const res = await request(`/promo-codes/${promoId}`, { method: 'DELETE' });
+      if (!res?.success) {
+        throw new Error(res?.message || t('common:errors.genericErrorMessage'));
+      }
       addNotification({
         title: t('common:notifications.successTitle'),
         message: t('settingsPromoCodeManager.promoDeleted'),
         type: 'success',
       });
       loadPromoCodes();
-    } catch (deleteError) {
+    } catch (deleteError: any) {
       console.error('Failed to delete promo code:', deleteError);
       addNotification({
         title: t('common:errors.genericErrorTitle'),
-        message: t('common:errors.genericErrorMessage'),
+        message: deleteError?.message || t('common:errors.genericErrorMessage'),
         type: 'error',
       });
     }
