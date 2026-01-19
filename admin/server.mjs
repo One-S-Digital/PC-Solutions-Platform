@@ -11,6 +11,12 @@ const serve = sirv('dist', {
   etag: true,
   maxAge: 31536000,
   immutable: true,
+  setHeaders(res, pathname) {
+    // Don't cache the SPA entrypoint; cache-busting is handled by hashed assets.
+    if (pathname === '/index.html') {
+      res.setHeader('Cache-Control', 'no-cache');
+    }
+  },
 });
 
 createServer((req, res) => {
@@ -22,7 +28,6 @@ createServer((req, res) => {
   const looksLikeFile = pathname.split('/').pop()?.includes('.') ?? false;
   if (!looksLikeFile) {
     req.url = '/index.html';
-    res.setHeader('Cache-Control', 'no-cache');
   }
 
   return serve(req, res);
