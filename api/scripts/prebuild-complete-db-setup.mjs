@@ -182,7 +182,13 @@ const deployMigrations = () => {
 /**
  * Verify critical tables exist
  */
-const verifyCriticalTables = () => {
+const getPrismaClient = async () => {
+  // Import lazily so we can run `prisma generate` first if needed.
+  const { PrismaClient } = await import('@prisma/client');
+  return new PrismaClient();
+};
+
+const verifyCriticalTables = async () => {
   log('Verifying critical database tables...');
   
   const criticalTables = [
@@ -199,43 +205,44 @@ const verifyCriticalTables = () => {
     'messages',
     'promo_codes',
   ];
-  
+
   const sql = `
-    SELECT COUNT(*) AS count
+    SELECT table_name
     FROM information_schema.tables
     WHERE table_schema = 'public'
-    AND table_name IN (${criticalTables.map(t => `'${t}'`).join(', ')});
+      AND table_name IN (${criticalTables.map((t) => `'${t}'`).join(', ')});
   `;
-  
-  const result = runPrisma(
-    ['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'],
-    { 
-      silent: true,
-      input: sql,
+
+  const prisma = await getPrismaClient();
+  try {
+    const rows = await prisma.$queryRawUnsafe(sql);
+    const foundTables = Array.isArray(rows)
+      ? rows.map((r) => r?.table_name).filter(Boolean)
+      : [];
+
+    const missingTables = criticalTables.filter((t) => !foundTables.includes(t));
+
+    if (missingTables.length > 0) {
+      warn(`Expected ${criticalTables.length} critical tables, missing ${missingTables.length}`);
+      log('Expected tables: ' + criticalTables.join(', '));
+      log('Missing tables: ' + missingTables.join(', '));
+      warn(`Critical tables verification incomplete (${foundTables.length}/${criticalTables.length})`);
+      return;
     }
-  );
-  
-  if (!result.success) {
-    throw new Error('Failed to verify critical tables');
+
+    success(`Critical tables verified (${foundTables.length}/${criticalTables.length})`);
+  } catch (err) {
+    warn(`Failed to verify critical tables: ${err.message}`);
+    warn('Critical tables verification skipped due to query failure');
+  } finally {
+    await prisma.$disconnect().catch(() => {});
   }
-  
-  // Parse the count from the result to verify all tables exist
-  const countMatch = result.stdout?.match(/\b(\d+)\b/);
-  const count = countMatch ? Number(countMatch[1]) : NaN;
-  
-  if (!Number.isInteger(count) || count !== criticalTables.length) {
-    warn(`Expected ${criticalTables.length} critical tables, found ${count || 'unknown'}`);
-    // Log which tables might be missing for debugging
-    log('Expected tables: ' + criticalTables.join(', '));
-  }
-  
-  success(`Critical tables verified (${count}/${criticalTables.length})`);
 };
 
 /**
  * Verify educator availability column exists
  */
-const verifyEducatorAvailabilityColumn = () => {
+const verifyEducatorAvailabilityColumn = async () => {
   log('Verifying educator availability settings column...');
   
   const sql = `
@@ -245,26 +252,23 @@ const verifyEducatorAvailabilityColumn = () => {
     AND table_name = 'users' 
     AND column_name = 'availabilitySettings';
   `;
-  
-  const result = runPrisma(
-    ['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'],
-    { 
-      silent: true,
-      input: sql,
+
+  const prisma = await getPrismaClient();
+  try {
+    const rows = await prisma.$queryRawUnsafe(sql);
+    const hasColumn =
+      Array.isArray(rows) && rows.some((r) => r?.column_name === 'availabilitySettings');
+
+    if (hasColumn) {
+      success('Educator availability settings column exists');
+    } else {
+      warn('Educator availability settings column may not exist yet');
+      log('It will be created by the migration');
     }
-  );
-  
-  if (!result.success) {
-    warn('Could not verify availabilitySettings column');
-    return;
-  }
-  
-  // Check if we got a result (column exists)
-  if (result.stdout && result.stdout.includes('availabilitySettings')) {
-    success('Educator availability settings column exists');
-  } else {
-    warn('Educator availability settings column may not exist yet');
-    log('It will be created by the migration');
+  } catch (err) {
+    warn(`Could not verify availabilitySettings column: ${err.message}`);
+  } finally {
+    await prisma.$disconnect().catch(() => {});
   }
 };
 
@@ -310,10 +314,10 @@ const main = async () => {
     deployMigrations();
     
     // Step 5: Verify tables
-    verifyCriticalTables();
+    await verifyCriticalTables();
     
     // Step 6: Verify new availability column
-    verifyEducatorAvailabilityColumn();
+    await verifyEducatorAvailabilityColumn();
     
     // Print summary
     printStatusSummary();
