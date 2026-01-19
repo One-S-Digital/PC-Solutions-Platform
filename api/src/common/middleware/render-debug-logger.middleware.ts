@@ -78,7 +78,9 @@ export class RenderDebugLoggerMiddleware implements NestMiddleware {
       return originalSend(body);
     };
 
-    this.logger.debug('RENDER_DEBUG_REQUEST', 'RenderDebugLogger', {
+    // IMPORTANT: In production we default to `info` log level.
+    // Use `info` so Render logs always show this when explicitly enabled.
+    this.logger.log('RENDER_DEBUG_REQUEST', 'RenderDebugLogger', {
       requestId,
       method: req.method,
       url,
@@ -91,7 +93,7 @@ export class RenderDebugLoggerMiddleware implements NestMiddleware {
 
     res.on('finish', () => {
       const duration = Date.now() - start;
-      this.logger.debug('RENDER_DEBUG_RESPONSE', 'RenderDebugLogger', {
+      this.logger.log('RENDER_DEBUG_RESPONSE', 'RenderDebugLogger', {
         requestId,
         method: req.method,
         url,
