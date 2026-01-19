@@ -10,7 +10,7 @@
   },
   "scripts": {
     "postinstall": "prisma generate",
-    "prebuild": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
+    "prebuild": "node scripts/prebuild-complete-db-setup.mjs && node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
     "copy:locales": "node scripts/copy-locales.mjs",
     "build": "nest build && pnpm run copy:locales",
     "build:render": "SKIP_SEED=true ./scripts/render-build-with-recovery.sh && node ./scripts/seed-once.js && pnpm run build",

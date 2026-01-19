@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   TagIcon,
@@ -8,29 +8,17 @@ import {
   PlusCircleIcon,
   PencilSquareIcon,
   TrashIcon,
-  XMarkIcon,
 } from '@heroicons/react/24/outline';
 import Card from '../ui/Card';
 import Button from '../ui/Button';
 import LoadingSpinner from '../shared/LoadingSpinner';
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
 import { useNotifications } from '../../contexts/NotificationContext';
-
-interface PromoCode {
-  id: string;
-  code: string;
-  discountType: 'Percentage' | 'FixedAmount' | 'FreeMinutes';
-  value: number;
-  expiryDate: string;
-  status: 'Active' | 'Expired' | 'Disabled';
-  description?: string;
-  usageCount: number;
-  maxUsage?: number;
-}
+import AddPromoCodeModal, { PromoCodeData, PromoCodeFormData } from '../settings/AddPromoCodeModal';
 
 interface PromoCodesApiResponse {
   success: boolean;
-  data: PromoCode[];
+  data: PromoCodeData[];
   hasOrganization?: boolean;
   message?: string;
 }
@@ -48,27 +36,15 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
   const { t, i18n } = useTranslation(['common', 'settings']);
   const { request } = useAuthenticatedApi();
   const { addNotification } = useNotifications();
-  const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
+  const [promoCodes, setPromoCodes] = useState<PromoCodeData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hasOrganization, setHasOrganization] = useState<boolean | null>(null);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingPromo, setEditingPromo] = useState<PromoCode | null>(null);
+  const [editingPromo, setEditingPromo] = useState<PromoCodeData | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const lastFocusedElementRef = useRef<HTMLElement | null>(null);
-  const modalRef = useRef<HTMLDivElement | null>(null);
-  const firstInputRef = useRef<HTMLInputElement | null>(null);
-  const [formData, setFormData] = useState({
-    code: '',
-    discountType: 'Percentage' as 'Percentage' | 'FixedAmount' | 'FreeMinutes',
-    value: 0,
-    expiryDate: '',
-    description: '',
-    maxUsage: '',
-    status: 'Active' as 'Active' | 'Expired' | 'Disabled',
-  });
 
   const loadPromoCodes = useCallback(async () => {
     setIsLoading(true);
@@ -130,233 +106,77 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
     loadPromoCodes();
   }, [loadPromoCodes]);
 
-  const handleOpenModal = useCallback((promo?: PromoCode) => {
-    if (!isOwnProfile) {
-      console.warn('Cannot open modal: not own profile');
-      return;
-    }
-
-    // Store the currently focused element for accessibility
-    lastFocusedElementRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-
-    if (promo) {
-      setEditingPromo(promo);
-      setFormData({
-        code: promo.code,
-        discountType: promo.discountType,
-        value: promo.value,
-        expiryDate: promo.expiryDate.split('T')[0],
-        description: promo.description || '',
-        maxUsage: promo.maxUsage?.toString() || '',
-        status: promo.status,
-      });
-    } else {
-      setEditingPromo(null);
-      setFormData({
-        code: '',
-        discountType: 'Percentage',
-        value: 0,
-        expiryDate: '',
-        description: '',
-        maxUsage: '',
-        status: 'Active',
-      });
-    }
-    setIsModalOpen(true);
-  }, [isOwnProfile]);
+  const handleOpenModal = useCallback(
+    (promo?: PromoCodeData) => {
+      if (!isOwnProfile) {
+        return;
+      }
+      setEditingPromo(promo ?? null);
+      setIsModalOpen(true);
+    },
+    [isOwnProfile],
+  );
 
   const handleCloseModal = useCallback(() => {
     setIsModalOpen(false);
     setEditingPromo(null);
-    window.setTimeout(() => lastFocusedElementRef.current?.focus?.(), 0);
   }, []);
 
-  useEffect(() => {
-    if (!isModalOpen) {
-      return;
-    }
+  const handleSavePromo = useCallback(
+    async (formData: PromoCodeFormData) => {
+      setIsSaving(true);
+      try {
+        // Create UTC end-of-day timestamp to avoid timezone issues
+        const [year, month, day] = formData.expiryDate.split('-').map(Number);
+        const expiryDateUtc = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
 
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+        const payload = {
+          code: formData.code.toUpperCase().trim(),
+          discountType: formData.discountType,
+          value: Number(formData.value),
+          expiryDate: expiryDateUtc.toISOString(),
+          description: formData.description.trim() || null,
+          maxUsage: formData.maxUsage ? parseInt(formData.maxUsage, 10) : undefined,
+          ...(editingPromo && { status: formData.status }),
+        };
+
+        if (editingPromo) {
+          await request(`/promo-codes/${editingPromo.id}`, {
+            method: 'PATCH',
+            body: JSON.stringify(payload),
+          });
+          addNotification({
+            title: t('common:notifications.successTitle'),
+            message: t('settingsPromoCodeManager.promoUpdated'),
+            type: 'success',
+          });
+        } else {
+          await request('/promo-codes', {
+            method: 'POST',
+            body: JSON.stringify(payload),
+          });
+          addNotification({
+            title: t('common:notifications.successTitle'),
+            message: t('settingsPromoCodeManager.promoCreated'),
+            type: 'success',
+          });
+        }
+
         handleCloseModal();
-      }
-    };
-
-    const handleTabTrap = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab') {
-        return;
-      }
-
-      const root = modalRef.current;
-      if (!root) {
-        return;
-      }
-
-      const focusable = Array.from(
-        root.querySelectorAll<HTMLElement>(
-          'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
-        ),
-      ).filter(el => !el.hasAttribute('aria-hidden'));
-
-      if (focusable.length === 0) {
-        return;
-      }
-
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      const active = document.activeElement;
-
-      if (e.shiftKey && active === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && active === last) {
-        e.preventDefault();
-        first.focus();
-      }
-    };
-
-    document.addEventListener('keydown', handleEscape);
-    document.addEventListener('keydown', handleTabTrap);
-    window.setTimeout(() => (firstInputRef.current ?? modalRef.current)?.focus?.(), 0);
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.removeEventListener('keydown', handleTabTrap);
-    };
-  }, [isModalOpen, handleCloseModal]);
-
-  const getExpiryEndOfDayUtcIso = useCallback((dateString: string) => {
-    const parts = dateString.split('-').map(Number);
-    if (parts.length !== 3) {
-      return null;
-    }
-
-    const [year, month, day] = parts;
-    if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day)) {
-      return null;
-    }
-
-    const utcMillis = Date.UTC(year, month - 1, day, 23, 59, 59);
-    if (!Number.isFinite(utcMillis)) {
-      return null;
-    }
-
-    return new Date(utcMillis).toISOString();
-  }, []);
-
-  const handleSavePromo = useCallback(async () => {
-    if (!isOwnProfile) {
-      return;
-    }
-
-    if (!formData.code.trim() || !formData.expiryDate) {
-      addNotification({
-        title: t('common:errors.validationError'),
-        message: t('settingsPromoCodeManager.validation.required'),
-        type: 'error',
-      });
-      return;
-    }
-
-    const valueNumber = Number(formData.value);
-    if (!Number.isFinite(valueNumber) || valueNumber <= 0) {
-      addNotification({
-        title: t('common:errors.validationError'),
-        message: 'Please enter a value greater than 0.',
-        type: 'error',
-      });
-      return;
-    }
-
-    if (formData.discountType === 'Percentage' && valueNumber > 100) {
-      addNotification({
-        title: t('common:errors.validationError'),
-        message: 'Percentage discounts cannot exceed 100.',
-        type: 'error',
-      });
-      return;
-    }
-
-    const maxUsageTrimmed = formData.maxUsage.trim();
-    if (maxUsageTrimmed && !/^\d+$/.test(maxUsageTrimmed)) {
-      addNotification({
-        title: t('common:errors.validationError'),
-        message: 'Max usage must be a positive whole number.',
-        type: 'error',
-      });
-      return;
-    }
-
-    const expiryIsoUtc = getExpiryEndOfDayUtcIso(formData.expiryDate);
-    if (!expiryIsoUtc) {
-      addNotification({
-        title: t('common:errors.validationError'),
-        message: 'Please provide a valid expiry date.',
-        type: 'error',
-      });
-      return;
-    }
-
-    if (Date.parse(expiryIsoUtc) <= Date.now()) {
-      addNotification({
-        title: t('common:errors.validationError'),
-        message: 'Expiry date must be in the future.',
-        type: 'error',
-      });
-      return;
-    }
-
-    setIsSaving(true);
-    try {
-      const payload = {
-        code: formData.code.toUpperCase(),
-        discountType: formData.discountType,
-        value: valueNumber,
-        expiryDate: expiryIsoUtc,
-        description: formData.description || undefined,
-        maxUsage: maxUsageTrimmed ? parseInt(maxUsageTrimmed, 10) : undefined,
-        ...(editingPromo && { status: formData.status }),
-      };
-
-      if (editingPromo) {
-        await request(`/promo-codes/${editingPromo.id}`, {
-          method: 'PATCH',
-          body: JSON.stringify(payload),
-        });
+        await loadPromoCodes();
+      } catch (saveError: any) {
+        console.error('Failed to save promo code:', saveError);
         addNotification({
-          title: t('common:notifications.successTitle'),
-          message: t('settingsPromoCodeManager.promoUpdated'),
-          type: 'success',
+          title: t('common:errors.genericErrorTitle'),
+          message: saveError?.message || t('common:errors.genericErrorMessage'),
+          type: 'error',
         });
-      } else {
-        await request('/promo-codes', {
-          method: 'POST',
-          body: JSON.stringify(payload),
-        });
-        addNotification({
-          title: t('common:notifications.successTitle'),
-          message: t('settingsPromoCodeManager.promoCreated'),
-          type: 'success',
-        });
+      } finally {
+        setIsSaving(false);
       }
-
-      handleCloseModal();
-      loadPromoCodes();
-    } catch (saveError) {
-      console.error('Failed to save promo code:', saveError);
-      const resolvedMessage =
-        typeof (saveError as any)?.message === 'string' && (saveError as any).message
-          ? (saveError as any).message
-          : t('common:errors.genericErrorMessage');
-      addNotification({
-        title: t('common:errors.genericErrorTitle'),
-        message: resolvedMessage,
-        type: 'error',
-      });
-    } finally {
-      setIsSaving(false);
-    }
-  }, [isOwnProfile, formData, editingPromo, addNotification, t, getExpiryEndOfDayUtcIso, request, handleCloseModal, loadPromoCodes]);
+    },
+    [editingPromo, request, addNotification, t, handleCloseModal, loadPromoCodes],
+  );
 
   const handleDeletePromo = useCallback(async (promoId: string) => {
     if (!isOwnProfile) {
@@ -395,7 +215,7 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
     }
   }, []);
 
-  const getDiscountText = useCallback((promo: PromoCode) => {
+  const getDiscountText = useCallback((promo: PromoCodeData) => {
     switch (promo.discountType) {
       case 'Percentage':
         return t('settingsPromoCodeManager.discountTypes.percentage', { value: promo.value });
@@ -408,7 +228,7 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
     }
   }, [t]);
 
-  const getStatusLabel = useCallback((status: PromoCode['status']) => {
+  const getStatusLabel = useCallback((status: PromoCodeData['status']) => {
     switch (status) {
       case 'Active':
         return t('settingsPromoCodeManager.status.active');
@@ -606,144 +426,14 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
       </div>
 
       {/* Add/Edit Modal (owners only) */}
-      {isOwnProfile && isModalOpen && (
-        <div
-          className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="promo-code-modal-title"
-          onClick={handleCloseModal}
-        >
-          <div
-            ref={modalRef}
-            className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto"
-            role="document"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold" id="promo-code-modal-title">
-                {editingPromo
-                  ? t('settingsPromoCodeManager.addEditModal.editTitle')
-                  : t('settingsPromoCodeManager.addEditModal.addTitle')}
-              </h3>
-              <button onClick={handleCloseModal} className="text-gray-400 hover:text-gray-600">
-                <XMarkIcon className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('settingsPromoCodeManager.form.code')} *
-                </label>
-                <input
-                  type="text"
-                  ref={firstInputRef}
-                  value={formData.code}
-                  onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-swiss-mint font-mono"
-                  placeholder={t('settingsPromoCodeManager.form.codePlaceholder')}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('settingsPromoCodeManager.form.discountType')} *
-                </label>
-                <select
-                  value={formData.discountType}
-                  onChange={(e) => setFormData({ ...formData, discountType: e.target.value as any })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-swiss-mint"
-                >
-                  <option value="Percentage">{t('settingsPromoCodeManager.form.percentage')}</option>
-                  <option value="FixedAmount">{t('settingsPromoCodeManager.form.fixedAmount')}</option>
-                  <option value="FreeMinutes">{t('settingsPromoCodeManager.form.freeMinutes')}</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('settingsPromoCodeManager.form.value')} *
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  value={formData.value}
-                  onChange={(e) => {
-                    const parsed = parseFloat(e.target.value);
-                    setFormData({ ...formData, value: Number.isNaN(parsed) ? 0 : parsed });
-                  }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-swiss-mint"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('settingsPromoCodeManager.form.expiryDate')} *
-                </label>
-                <input
-                  type="date"
-                  value={formData.expiryDate}
-                  onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-swiss-mint"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('settingsPromoCodeManager.form.description')}
-                </label>
-                <input
-                  type="text"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-swiss-mint"
-                  placeholder={t('settingsPromoCodeManager.form.descriptionPlaceholder')}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('settingsPromoCodeManager.form.maxUsage')}
-                </label>
-                <input
-                  type="number"
-                  min="1"
-                  value={formData.maxUsage}
-                  onChange={(e) => setFormData({ ...formData, maxUsage: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-swiss-mint"
-                  placeholder={t('settingsPromoCodeManager.form.maxUsagePlaceholder')}
-                />
-              </div>
-
-              {editingPromo && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t('settingsPromoCodeManager.form.status')}
-                  </label>
-                  <select
-                    value={formData.status}
-                    onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-swiss-mint"
-                  >
-                    <option value="Active">{t('settingsPromoCodeManager.status.active')}</option>
-                    <option value="Disabled">{t('settingsPromoCodeManager.status.disabled')}</option>
-                    <option value="Expired">{t('settingsPromoCodeManager.status.expired')}</option>
-                  </select>
-                </div>
-              )}
-            </div>
-
-            <div className="flex justify-end space-x-2 mt-6">
-              <Button variant="light" onClick={handleCloseModal} disabled={isSaving}>
-                {t('common:buttons.cancel')}
-              </Button>
-              <Button variant="primary" onClick={handleSavePromo} disabled={isSaving}>
-                {isSaving ? t('settingsPromoCodeManager.addEditModal.saving') : t('settingsPromoCodeManager.addEditModal.save')}
-              </Button>
-            </div>
-          </div>
-        </div>
+      {isOwnProfile && (
+        <AddPromoCodeModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onSave={handleSavePromo}
+          editingPromo={editingPromo}
+          isSaving={isSaving}
+        />
       )}
     </Card>
   );

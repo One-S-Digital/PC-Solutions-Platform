@@ -685,6 +685,11 @@ export interface Order {
   supplierId: string;
   supplierName: string;
   items: LineItem[];
+  subtotalAmount?: number;
+  promoCodeCode?: string;
+  discountType?: string;
+  discountValue?: number;
+  discountAmount?: number;
   totalAmount: number;
   notes?: string;
   status: OrderRequestStatus;

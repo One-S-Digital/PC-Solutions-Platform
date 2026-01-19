@@ -81,7 +81,9 @@
     "nameAsc": "Nom (A-Z)"
   },
   "cart": {
-    "notesPlaceholder": "par exemple, délais de livraison préférentiels, emballages spécifiques..."
+    "notesPlaceholder": "par exemple, délais de livraison préférentiels, emballages spécifiques...",
+    "confirmSwitchSupplier": "Votre panier contient actuellement des articles de {{currentSupplier}}. Voulez-vous le vider et ajouter des articles de {{newSupplier}} ?",
+    "outOfStock": "Désolé, {{productName}} est en rupture de stock."
   },
   "labels": {
     "categoryFilter": "Filtrer par catégorie",

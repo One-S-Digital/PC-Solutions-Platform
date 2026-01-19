@@ -89,6 +89,7 @@
     "back": "Retour",
     "cancel": "Annuler",
     "close": "Fermer",
+    "continue": "Continuer",
     "confirm": "Confirmer",
     "copy": "Copier",
     "copied": "Copié !",
@@ -109,6 +110,7 @@
     "remove": "Retirer",
     "reply": "Répondre",
     "sending": "Envoi en cours...",
+    "resetPassword": "Réinitialiser le mot de passe",
     "resetFilters": "Réinitialiser les filtres",
     "retry": "Réessayer",
     "save": "Enregistrer",
@@ -1196,17 +1198,48 @@
   "orderSummaryDrawer": {
     "closePanel": "Fermer le panneau",
     "continueShopping": "Continuer les achats",
-    "emptyCart": "Vider le panier",
+    "emptyCart": "Votre panier est vide",
     "itemsFrom": "Articles de",
-    "notesPlaceholder": "Enter notes",
-    "orderError": "order Error",
-    "orderSuccess": "order Success",
-    "shippingNote": "Note d'expédition",
+    "notesPlaceholder": "Saisir des notes",
+    "orderError": "Impossible d'envoyer la commande. Veuillez réessayer.",
+    "orderSuccess": "Commande envoyée à {{supplierName}} ! ID de commande : {{orderId}}",
+    "shippingNote": "L’expédition sera organisée directement avec le fournisseur.",
     "specialInstructions": "Instructions spéciales",
-    "submitTo": "Soumettre to",
-    "submitting": "submitting",
+    "submitTo": "Envoyer la commande à",
+    "submitting": "Envoi...",
     "subtotal": "Sous-total",
-    "title": "Titre"
+    "title": "Récapitulatif de commande"
+  },
+  "promoCodes": {
+    "modal": {
+      "title": "Code promo",
+      "subtitle": "Appliquer un code promo pour {{organizationName}}",
+      "codeLabel": "Code promo",
+      "codePlaceholder": "Saisir un code promo",
+      "validate": "Vérifier",
+      "validating": "Vérification...",
+      "apply": "Appliquer",
+      "remove": "Retirer"
+    },
+    "messages": {
+      "valid": "Le code promo est valide.",
+      "invalid": "Code promo invalide ou expiré.",
+      "error": "Impossible de vérifier le code promo. Veuillez réessayer."
+    },
+    "discount": {
+      "percentage": "{{value}} % de réduction",
+      "fixedAmount": "CHF {{value}} de réduction",
+      "freeMinutes": "{{value}} minutes gratuites"
+    },
+    "cart": {
+      "title": "Code promo",
+      "noneApplied": "Aucun code promo appliqué",
+      "add": "Ajouter",
+      "change": "Modifier",
+      "remove": "Retirer",
+      "discount": "Réduction",
+      "total": "Total"
+    }
   },
   "organizationName": "Nom de l'organisation",
   "organizationProfileForm": {

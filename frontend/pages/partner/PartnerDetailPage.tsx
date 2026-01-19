@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Organization, Product, Service, UserRole, StockStatus, ServiceRequest, ServiceRequestStatus, OrganizationType } from '../../types';
-import { STANDARD_INPUT_FIELD } from '../../constants';
 import { useAppContext } from '../../contexts/AppContext';
 import { useCart } from '../../contexts/CartContext';
 import Card from '../../components/ui/Card';
@@ -33,8 +32,7 @@ import OrganizationDocumentsList from '../../components/profile/OrganizationDocu
 import { formatServiceCategory, formatServiceDeliveryType, formatCategory } from '../../utils/serviceFormatting';
 import { openExternalUrl, toExternalUrl } from '../../utils/url';
 import { organizationService } from '../../services/organizationService';
-import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
-import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/solid';
+import ApplyPromoCodeModal from '../../components/shared/ApplyPromoCodeModal';
 
 interface ProductItemProps {
   product: Product;
@@ -116,128 +114,6 @@ const ProductItemCard: React.FC<ProductItemProps> = ({ product, partner, isFound
   );
 };
 
-// Promo Code Input Component
-interface PromoCodeInputProps {
-  partnerId: string;
-}
-
-const PromoCodeInput: React.FC<PromoCodeInputProps> = ({ partnerId }) => {
-  const { t } = useTranslation(['dashboard', 'common']);
-  const { request } = useAuthenticatedApi();
-  const [promoCode, setPromoCode] = useState('');
-  const [isValidating, setIsValidating] = useState(false);
-  const [validationResult, setValidationResult] = useState<{
-    valid: boolean;
-    message: string;
-    discount?: string;
-  } | null>(null);
-
-  const handleApplyPromoCode = async () => {
-    if (!promoCode.trim()) return;
-
-    setIsValidating(true);
-    setValidationResult(null);
-
-    try {
-      const response = await request<{
-        success: boolean;
-        valid: boolean;
-        data?: {
-          discountType: string;
-          value: number;
-          description?: string;
-        };
-      }>(`/promo-codes/validate/${partnerId}?code=${encodeURIComponent(promoCode.trim())}`);
-
-      const res = response as any;
-      if (res.success && res.valid && res.data) {
-        let discountText = '';
-        switch (res.data.discountType) {
-          case 'Percentage':
-            discountText = `${res.data.value}% off`;
-            break;
-          case 'FixedAmount':
-            discountText = `CHF ${res.data.value} off`;
-            break;
-          case 'FreeMinutes':
-            discountText = `${res.data.value} free minutes`;
-            break;
-          default:
-            discountText = `${res.data.value}`;
-        }
-
-        setValidationResult({
-          valid: true,
-          message: t('partnerDetailPage.promoCodeValid', 'Promo code applied!'),
-          discount: discountText,
-        });
-      } else {
-        setValidationResult({
-          valid: false,
-          message: t('partnerDetailPage.promoCodeInvalid', 'Invalid or expired promo code'),
-        });
-      }
-    } catch (error) {
-      console.error('Failed to validate promo code:', error);
-      setValidationResult({
-        valid: false,
-        message: t('partnerDetailPage.promoCodeError', 'Failed to validate promo code'),
-      });
-    } finally {
-      setIsValidating(false);
-    }
-  };
-
-  return (
-    <Card className="mt-6 p-4 bg-gray-50">
-      <h3 className="text-md font-semibold text-swiss-charcoal mb-2 flex items-center gap-2">
-        <TagIcon className="w-5 h-5 text-swiss-mint" />
-        {t('partnerDetailPage.promoCodeTitle')}
-      </h3>
-      <div className="flex gap-2">
-        <input
-          type="text"
-          value={promoCode}
-          onChange={(e) => {
-            setPromoCode(e.target.value.toUpperCase());
-            setValidationResult(null);
-          }}
-          placeholder={t('partnerDetailPage.promoCodePlaceholder')}
-          className={`${STANDARD_INPUT_FIELD} flex-grow`}
-          onKeyDown={(e) => e.key === 'Enter' && handleApplyPromoCode()}
-        />
-        <Button
-          variant="outline"
-          size="md"
-          onClick={handleApplyPromoCode}
-          disabled={isValidating || !promoCode.trim()}
-        >
-          {isValidating ? '...' : t('partnerDetailPage.applyPromoButton')}
-        </Button>
-      </div>
-      {validationResult && (
-        <div
-          className={`mt-2 flex items-center gap-2 text-sm ${
-            validationResult.valid ? 'text-green-600' : 'text-red-600'
-          }`}
-        >
-          {validationResult.valid ? (
-            <CheckCircleIcon className="w-5 h-5" />
-          ) : (
-            <ExclamationCircleIcon className="w-5 h-5" />
-          )}
-          <span>
-            {validationResult.message}
-            {validationResult.discount && (
-              <span className="font-semibold ml-1">({validationResult.discount})</span>
-            )}
-          </span>
-        </div>
-      )}
-    </Card>
-  );
-};
-
 // Loading skeleton for products/services
 const ItemSkeleton: React.FC = () => (
   <Card className="p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 animate-pulse">
@@ -269,6 +145,7 @@ const PartnerDetailPage: React.FC = () => {
   const [selectedServiceForRequest, setSelectedServiceForRequest] = useState<Service | null>(null);
   
   const [serviceRequests, setServiceRequests] = useState<ServiceRequest[]>([]);
+  const [isPromoModalOpen, setIsPromoModalOpen] = useState(false);
 
   // Fetch partner data from API
   const fetchPartnerData = useCallback(async () => {
@@ -306,6 +183,10 @@ const PartnerDetailPage: React.FC = () => {
   
   const isSupplier = partner?.type === OrganizationType.PRODUCT_SUPPLIER;
   const isServiceProvider = partner?.type === OrganizationType.SERVICE_PROVIDER;
+  const appliedPromoForPartner =
+    cart.appliedPromoCode && cart.appliedPromoCode.supplierId === partner?.id
+      ? cart.appliedPromoCode
+      : null;
 
   const handleSendMessage = async () => {
     if (!partner || !currentUser) return;
@@ -642,7 +523,45 @@ const PartnerDetailPage: React.FC = () => {
             )}
             
             {isFoundationUser && (isSupplier || isServiceProvider) && (products.length > 0 || services.length > 0) && (
-              <PromoCodeInput partnerId={partner.id} />
+              <Card className="mt-6 p-4 bg-gray-50">
+                <h3 className="text-md font-semibold text-swiss-charcoal mb-2 flex items-center gap-2">
+                  <TagIcon className="w-5 h-5 text-swiss-mint" />
+                  {t('partnerDetailPage.promoCodeTitle')}
+                </h3>
+
+                <div className="flex items-center justify-between gap-3">
+                  <div className="text-sm text-gray-600">
+                    {appliedPromoForPartner ? (
+                      <span className="font-mono font-semibold text-swiss-charcoal">
+                        {appliedPromoForPartner.code}
+                      </span>
+                    ) : (
+                      <span>{t('common:promoCodes.cart.noneApplied', 'No promo code applied')}</span>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    {appliedPromoForPartner ? (
+                      <Button
+                        variant="light"
+                        size="sm"
+                        onClick={() => cart.clearPromoCode()}
+                      >
+                        {t('common:promoCodes.cart.remove', 'Remove')}
+                      </Button>
+                    ) : null}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsPromoModalOpen(true)}
+                    >
+                      {appliedPromoForPartner
+                        ? t('common:promoCodes.cart.change', 'Change')
+                        : t('partnerDetailPage.applyPromoButton')}
+                    </Button>
+                  </div>
+                </div>
+              </Card>
             )}
           </Card>
 
@@ -659,6 +578,31 @@ const PartnerDetailPage: React.FC = () => {
         service={selectedServiceForRequest}
         onSubmitRequest={handleSubmitServiceRequest}
       />
+
+      {partner && (
+        <ApplyPromoCodeModal
+          isOpen={isPromoModalOpen}
+          onClose={() => setIsPromoModalOpen(false)}
+          organizationId={partner.id}
+          organizationName={partner.name}
+          initialCode={appliedPromoForPartner?.code}
+          showRemove={Boolean(appliedPromoForPartner)}
+          onRemove={() => {
+            cart.clearPromoCode();
+            setIsPromoModalOpen(false);
+          }}
+          onApply={(promo) =>
+            cart.applyPromoCode({
+              supplierId: partner.id,
+              supplierName: partner.name,
+              code: promo.code,
+              discountType: promo.discountType,
+              value: promo.value,
+              description: promo.description,
+            })
+          }
+        />
+      )}
     </div>
   );
 };

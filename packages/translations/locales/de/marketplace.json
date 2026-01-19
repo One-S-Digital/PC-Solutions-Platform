@@ -81,7 +81,9 @@
     "nameAsc": "Name (A-Z)"
   },
   "cart": {
-    "notesPlaceholder": "z.B. bevorzugte Lieferzeiten, spezielle Verpackungen..."
+    "notesPlaceholder": "z.B. bevorzugte Lieferzeiten, spezielle Verpackungen...",
+    "confirmSwitchSupplier": "Dein Warenkorb enthält aktuell Artikel von {{currentSupplier}}. Möchtest du ihn leeren und Artikel von {{newSupplier}} hinzufügen?",
+    "outOfStock": "Entschuldigung, {{productName}} ist nicht auf Lager."
   },
   "labels": {
     "categoryFilter": "Nach Kategorie filtern",
