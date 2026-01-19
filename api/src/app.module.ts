@@ -53,6 +53,8 @@ import { VendorClientsModule } from './vendor-clients/vendor-clients.module';
 import { CrawlerModule } from './crawler/crawler.module';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
+import { BuildInfoMiddleware } from './common/middleware/build-info.middleware';
+import { RenderDebugLoggerMiddleware } from './common/middleware/render-debug-logger.middleware';
 import { MaintenanceModeMiddleware } from './common/middleware/maintenance-mode.middleware';
 import { MaintenanceModule } from './maintenance/maintenance.module';
 
@@ -163,7 +165,7 @@ import {
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(RequestIdMiddleware, RequestLoggerMiddleware)
+      .apply(RequestIdMiddleware, BuildInfoMiddleware, RenderDebugLoggerMiddleware, RequestLoggerMiddleware)
       .forRoutes('*');
     
     // Apply RoleContextMiddleware to all routes after auth
