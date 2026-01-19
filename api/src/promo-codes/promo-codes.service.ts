@@ -6,7 +6,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { UserRole, OrganizationType } from '@prisma/client';
+import { UserRole, OrganizationType, Prisma } from '@prisma/client';
 import {
   CreatePromoCodeDto,
   UpdatePromoCodeDto,
@@ -382,6 +382,70 @@ export class PromoCodesService {
       status: promoCode.status,
       description: promoCode.description || undefined,
       usageCount: promoCode.usageCount,
+      maxUsage: promoCode.maxUsage || undefined,
+      organizationId: promoCode.organizationId,
+      createdAt: promoCode.createdAt,
+      updatedAt: promoCode.updatedAt,
+    };
+  }
+
+  /**
+   * Redeem a promo code by incrementing usageCount.
+   * Returns null if the code is invalid/expired/disabled/maxed out.
+   *
+   * This is intentionally separate from validatePromoCode so "validation"
+   * doesn't consume usage, but order placement can.
+   */
+  async redeemPromoCode(
+    code: string,
+    organizationId: string,
+    tx?: Prisma.TransactionClient,
+  ): Promise<PromoCodeResponseDto | null> {
+    const client = tx ?? this.prisma;
+    const now = new Date();
+
+    const promoCode = await client.promoCode.findFirst({
+      where: {
+        code: code.toUpperCase(),
+        organizationId,
+        status: 'Active',
+        expiryDate: { gte: now },
+      },
+    });
+
+    if (!promoCode) {
+      return null;
+    }
+
+    if (promoCode.maxUsage && promoCode.usageCount >= promoCode.maxUsage) {
+      return null;
+    }
+
+    const updateWhere: Prisma.PromoCodeWhereInput = {
+      id: promoCode.id,
+      status: 'Active',
+      expiryDate: { gte: now },
+      ...(promoCode.maxUsage ? { usageCount: { lt: promoCode.maxUsage } } : {}),
+    };
+
+    const updated = await client.promoCode.updateMany({
+      where: updateWhere,
+      data: { usageCount: { increment: 1 } },
+    });
+
+    if (updated.count !== 1) {
+      return null;
+    }
+
+    return {
+      id: promoCode.id,
+      code: promoCode.code,
+      discountType: promoCode.discountType,
+      value: promoCode.value,
+      expiryDate: promoCode.expiryDate,
+      status: promoCode.status,
+      description: promoCode.description || undefined,
+      usageCount: promoCode.usageCount + 1,
       maxUsage: promoCode.maxUsage || undefined,
       organizationId: promoCode.organizationId,
       createdAt: promoCode.createdAt,

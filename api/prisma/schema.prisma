@@ -451,6 +451,7 @@ model PromoCode {
 
   // Relations
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  orders       Order[]      @relation("OrderPromoCode")
 
   @@unique([code, organizationId])
   @@index([organizationId])
@@ -896,6 +897,12 @@ model Subscription {
 model Order {
   id             String   @id @default(uuid())
   organizationId String
+  subtotalAmount Float?
+  promoCodeId    String?
+  promoCodeCode  String?  @map("promoCode")
+  discountType   String?
+  discountValue  Float?
+  discountAmount Float    @default(0)
   totalAmount    Float
   status         String   @default("PENDING")
   createdAt      DateTime @default(now())
@@ -903,6 +910,7 @@ model Order {
 
   // Relations
   organization Organization @relation(fields: [organizationId], references: [id])
+  appliedPromoCode PromoCode? @relation("OrderPromoCode", fields: [promoCodeId], references: [id], onDelete: SetNull)
   items        OrderItem[]
 
   @@map("orders")

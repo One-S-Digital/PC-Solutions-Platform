@@ -1212,17 +1212,48 @@
   "orderSummaryDrawer": {
     "closePanel": "Panel schließen",
     "continueShopping": "Weiter einkaufen",
-    "emptyCart": "Warenkorb leeren",
+    "emptyCart": "Dein Warenkorb ist leer",
     "itemsFrom": "Artikel von",
-    "notesPlaceholder": "Enter notes",
-    "orderError": "order Error",
-    "orderSuccess": "order Success",
-    "shippingNote": "Versandhinweis",
+    "notesPlaceholder": "Notizen eingeben",
+    "orderError": "Bestellung konnte nicht gesendet werden. Bitte versuche es erneut.",
+    "orderSuccess": "Bestellung erfolgreich an {{supplierName}} gesendet! Bestell-ID: {{orderId}}",
+    "shippingNote": "Der Versand wird direkt mit dem Anbieter vereinbart.",
     "specialInstructions": "Besondere Anweisungen",
-    "submitTo": "Absenden to",
-    "submitting": "submitting",
+    "submitTo": "Bestellung senden an",
+    "submitting": "Wird gesendet...",
     "subtotal": "Zwischensumme",
-    "title": "Titel"
+    "title": "Bestellübersicht"
+  },
+  "promoCodes": {
+    "modal": {
+      "title": "Promo-Code",
+      "subtitle": "Promo-Code für {{organizationName}} anwenden",
+      "codeLabel": "Promo-Code",
+      "codePlaceholder": "Promo-Code eingeben",
+      "validate": "Prüfen",
+      "validating": "Wird geprüft...",
+      "apply": "Anwenden",
+      "remove": "Entfernen"
+    },
+    "messages": {
+      "valid": "Promo-Code ist gültig.",
+      "invalid": "Ungültiger oder abgelaufener Promo-Code.",
+      "error": "Promo-Code konnte nicht geprüft werden. Bitte versuche es erneut."
+    },
+    "discount": {
+      "percentage": "{{value}}% Rabatt",
+      "fixedAmount": "CHF {{value}} Rabatt",
+      "freeMinutes": "{{value}} kostenlose Minuten"
+    },
+    "cart": {
+      "title": "Promo-Code",
+      "noneApplied": "Kein Promo-Code angewendet",
+      "add": "Hinzufügen",
+      "change": "Ändern",
+      "remove": "Entfernen",
+      "discount": "Rabatt",
+      "total": "Total"
+    }
   },
   "organizationName": "Organisationsname",
   "organizationProfileForm": {

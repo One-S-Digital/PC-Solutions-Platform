@@ -1228,17 +1228,48 @@
   "orderSummaryDrawer": {
     "closePanel": "Close Panel",
     "continueShopping": "Continue Shopping",
-    "emptyCart": "Empty Cart",
+    "emptyCart": "Your cart is empty",
     "itemsFrom": "Items From",
     "notesPlaceholder": "Enter notes",
-    "orderError": "order Error",
-    "orderSuccess": "order Success",
-    "shippingNote": "Shipping Note",
+    "orderError": "Failed to submit order. Please try again.",
+    "orderSuccess": "Order successfully submitted to {{supplierName}}! Order ID: {{orderId}}",
+    "shippingNote": "Shipping will be arranged directly with the supplier.",
     "specialInstructions": "Special Instructions",
-    "submitTo": "submit To",
-    "submitting": "submitting",
+    "submitTo": "Submit Order to",
+    "submitting": "Submitting...",
     "subtotal": "Subtotal",
-    "title": "Title"
+    "title": "Order Summary"
+  },
+  "promoCodes": {
+    "modal": {
+      "title": "Promo code",
+      "subtitle": "Apply a promo code for {{organizationName}}",
+      "codeLabel": "Promo code",
+      "codePlaceholder": "Enter promo code",
+      "validate": "Validate",
+      "validating": "Validating...",
+      "apply": "Apply",
+      "remove": "Remove"
+    },
+    "messages": {
+      "valid": "Promo code is valid.",
+      "invalid": "Invalid or expired promo code.",
+      "error": "Could not validate promo code. Please try again."
+    },
+    "discount": {
+      "percentage": "{{value}}% off",
+      "fixedAmount": "CHF {{value}} off",
+      "freeMinutes": "{{value}} free minutes"
+    },
+    "cart": {
+      "title": "Promo code",
+      "noneApplied": "No promo code applied",
+      "add": "Add",
+      "change": "Change",
+      "remove": "Remove",
+      "discount": "Discount",
+      "total": "Total"
+    }
   },
   "organizationName": "Organization Name",
   "organizationProfileForm": {

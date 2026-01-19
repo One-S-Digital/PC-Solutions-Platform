@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -10,6 +10,7 @@ import { CsvProcessingService } from './csv-processing.service';
 import { Prisma, $Enums } from '@prisma/client';
 import { TranslationService } from '../translation/translation.service';
 import { FIELDS_BY_ENTITY } from '../translation/translation.config';
+import { PromoCodesService } from '../promo-codes/promo-codes.service';
 
 @Injectable()
 export class MarketplaceService {
@@ -17,6 +18,7 @@ export class MarketplaceService {
     private prisma: PrismaService,
     private csvProcessingService: CsvProcessingService,
     private translationService: TranslationService,
+    private promoCodesService: PromoCodesService,
   ) {}
 
   // Product Management
@@ -427,7 +429,7 @@ export class MarketplaceService {
 
   // Order Management
   async createOrder(createOrderDto: CreateOrderDto, organizationId: string) {
-    const { items, ...orderData } = createOrderDto;
+    const { items, promoCode, ...orderData } = createOrderDto;
 
     const products = await this.prisma.product.findMany({
       where: {
@@ -435,37 +437,106 @@ export class MarketplaceService {
       },
     });
 
+    if (products.length === 0) {
+      throw new BadRequestException('No valid products found for this order');
+    }
+
+    // Ensure all items are from the same supplier (frontend enforces this, but we validate server-side).
+    const supplierId = products[0]?.supplierId;
+    if (!supplierId) {
+      throw new BadRequestException('Unable to determine supplier for this order');
+    }
+    const supplierMismatch = products.some((p) => p.supplierId !== supplierId);
+    if (supplierMismatch) {
+      throw new BadRequestException('All order items must belong to the same supplier');
+    }
+
     const totalAmount = items.reduce((total, item) => {
       const product = products.find((p) => p.id === item.productId);
       return total + (product?.price || 0) * item.quantity;
     }, 0);
 
-    return this.prisma.order.create({
-      data: {
-        ...orderData,
-        organizationId,
-        totalAmount,
-        items: {
-          create: items.map((item) => ({
-            productId: item.productId,
-            quantity: item.quantity,
-            price: products.find((p) => p.id === item.productId)?.price || 0,
-          })),
+    // Apply promo code (optional) against the supplier organization.
+    const normalizedPromoCode = promoCode?.trim() ? promoCode.trim().toUpperCase() : undefined;
+
+    return this.prisma.$transaction(async (tx) => {
+      let discountAmount = 0;
+      let discountType: string | undefined;
+      let discountValue: number | undefined;
+      let promoCodeId: string | undefined;
+      let promoCodeCode: string | undefined;
+
+      if (normalizedPromoCode) {
+        const redeemed = await this.promoCodesService.redeemPromoCode(
+          normalizedPromoCode,
+          supplierId,
+          tx,
+        );
+
+        if (!redeemed) {
+          throw new BadRequestException('Invalid or expired promo code');
+        }
+
+        promoCodeId = redeemed.id;
+        promoCodeCode = redeemed.code;
+        discountType = redeemed.discountType;
+        discountValue = redeemed.value;
+
+        if (redeemed.discountType === 'Percentage') {
+          discountAmount = (totalAmount * redeemed.value) / 100;
+        } else if (redeemed.discountType === 'FixedAmount') {
+          discountAmount = redeemed.value;
+        } else {
+          // FreeMinutes or other types do not affect marketplace product pricing.
+          discountAmount = 0;
+        }
+
+        // Guardrails
+        if (!Number.isFinite(discountAmount) || discountAmount < 0) {
+          discountAmount = 0;
+        }
+        if (discountAmount > totalAmount) {
+          discountAmount = totalAmount;
+        }
+      }
+
+      const finalTotal = Math.max(0, totalAmount - discountAmount);
+
+      const order = await tx.order.create({
+        data: {
+          ...orderData,
+          organizationId,
+          subtotalAmount: totalAmount,
+          promoCodeId: promoCodeId ?? null,
+          promoCodeCode: promoCodeCode ?? null,
+          discountType: discountType ?? null,
+          discountValue: discountValue ?? null,
+          discountAmount,
+          totalAmount: finalTotal,
+          items: {
+            create: items.map((item) => ({
+              productId: item.productId,
+              quantity: item.quantity,
+              price: products.find((p) => p.id === item.productId)?.price || 0,
+            })),
+          },
         },
-      },
-      include: {
-        organization: true,
-        items: {
-          include: {
-            product: {
-              include: {
-                supplier: true,
-                imageAsset: true,
+        include: {
+          organization: true,
+          items: {
+            include: {
+              product: {
+                include: {
+                  supplier: true,
+                  imageAsset: true,
+                },
               },
             },
           },
         },
-      },
+      });
+
+      return order;
     });
   }
 
