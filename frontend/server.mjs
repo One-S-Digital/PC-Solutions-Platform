@@ -9,11 +9,21 @@ const host = process.env.HOST ?? '0.0.0.0';
 // `/index.html` (no redirects), so deep links like `/login` work reliably.
 const serve = sirv('dist', {
   etag: true,
-  maxAge: 31536000,
-  immutable: true,
   setHeaders(res, pathname) {
-    // Don't cache the SPA entrypoint; cache-busting is handled by hashed assets.
+    // Cache-busting is handled by hashed filenames, so cache built assets
+    // aggressively. Never cache the SPA entrypoint.
     if (pathname === '/index.html') {
+      res.setHeader('Cache-Control', 'no-cache');
+      return;
+    }
+
+    const isAsset =
+      pathname.startsWith('/assets/') ||
+      /\.(?:js|mjs|css|map|png|jpg|jpeg|gif|svg|ico|woff2?|ttf|eot)$/.test(pathname);
+
+    if (isAsset) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    } else {
       res.setHeader('Cache-Control', 'no-cache');
     }
   },
@@ -28,6 +38,8 @@ createServer((req, res) => {
   const looksLikeFile = pathname.split('/').pop()?.includes('.') ?? false;
   if (!looksLikeFile) {
     req.url = '/index.html';
+    // Ensure SPA routes (e.g. /login) aren't cached.
+    res.setHeader('Cache-Control', 'no-cache');
   }
 
   return serve(req, res);
