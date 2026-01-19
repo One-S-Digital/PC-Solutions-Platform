@@ -21,6 +21,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { EnsureProfileInterceptor } from '../principal/ensure-profile.interceptor';
 import { PromoCodesService } from './promo-codes.service';
+import { PromoCodeDebugInterceptor } from './promo-code-debug.interceptor';
 import {
   CreatePromoCodeDto,
   UpdatePromoCodeDto,
@@ -30,7 +31,7 @@ import {
 @ApiTags('promo-codes')
 @Controller('promo-codes')
 @UseGuards(ClerkAuthGuard, RolesGuard)
-@UseInterceptors(EnsureProfileInterceptor)
+@UseInterceptors(EnsureProfileInterceptor, PromoCodeDebugInterceptor)
 @ApiBearerAuth()
 export class PromoCodesController {
   constructor(private readonly promoCodesService: PromoCodesService) {}
