@@ -9,7 +9,7 @@
     "build": "pnpm run prebuild && vite build",
     "build:render": "pnpm run prebuild && vite build",
     "preview": "vite preview",
-    "start": "serve -s dist -l 3000",
+    "start": "node server.mjs",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
     "test:e2e": "playwright test --reporter=list",
@@ -30,7 +30,7 @@
     "react-dom": "^19.1.0",
     "react-i18next": "^15.5.3",
     "react-router-dom": "^7.6.2",
-    "serve": "^14.2.1",
+    "sirv": "^3.0.1",
     "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
