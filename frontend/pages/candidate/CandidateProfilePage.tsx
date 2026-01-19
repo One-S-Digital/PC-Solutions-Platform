@@ -166,20 +166,26 @@ const CandidateProfilePage: React.FC = () => {
             <h1 className="text-3xl font-bold text-swiss-charcoal">{name}</h1>
             <p className="text-xl text-swiss-teal mt-1">{roleDisplay}</p>
             <div className="mt-2 space-y-1 text-sm text-gray-600">
-              <p className="flex items-center justify-center sm:justify-start">
-                <MapPinIcon className="w-5 h-5 mr-2 text-gray-400" /> {locationDisplay}
+              <p className="flex items-start justify-center sm:justify-start gap-2">
+                <MapPinIcon className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
+                <span className="min-w-0 whitespace-normal break-words">{locationDisplay}</span>
               </p>
-              <p className="flex items-center justify-center sm:justify-start">
-                <CalendarDaysIcon className="w-5 h-5 mr-2 text-gray-400" /> {availabilityStatus ?? t('candidateProfile.availabilityNotProvided')}
+              <p className="flex items-start justify-center sm:justify-start gap-2">
+                <CalendarDaysIcon className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
+                <span className="min-w-0 whitespace-normal break-words">
+                  {availabilityStatus ?? t('candidateProfile.availabilityNotProvided')}
+                </span>
               </p>
               {email && (
-                <p className="flex items-center justify-center sm:justify-start">
-                  <EnvelopeIcon className="w-5 h-5 mr-2 text-gray-400" /> {email}
+                <p className="flex items-start justify-center sm:justify-start gap-2">
+                  <EnvelopeIcon className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
+                  <span className="min-w-0 whitespace-normal break-words">{email}</span>
                 </p>
               )}
               {phone && (
-                <p className="flex items-center justify-center sm:justify-start">
-                  <PhoneIcon className="w-5 h-5 mr-2 text-gray-400" /> {phone}
+                <p className="flex items-start justify-center sm:justify-start gap-2">
+                  <PhoneIcon className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
+                  <span className="min-w-0 whitespace-normal break-words">{phone}</span>
                 </p>
               )}
             </div>

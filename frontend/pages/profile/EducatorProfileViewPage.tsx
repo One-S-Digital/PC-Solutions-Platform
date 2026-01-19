@@ -198,13 +198,15 @@ const EducatorProfileViewPage: React.FC = () => {
               )}
               <div className="mt-3 space-y-1 text-sm text-gray-600">
                 {location && (
-                  <p className="flex items-center">
-                    <MapPinIcon className="w-5 h-5 mr-2 text-gray-400" /> {location}
+                  <p className="flex items-start gap-2">
+                    <MapPinIcon className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
+                    <span className="min-w-0 whitespace-normal break-words">{location}</span>
                   </p>
                 )}
                 {availabilityStatus && (
-                  <p className="flex items-center">
-                    <CalendarDaysIcon className="w-5 h-5 mr-2 text-gray-400" /> {availabilityStatus}
+                  <p className="flex items-start gap-2">
+                    <CalendarDaysIcon className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
+                    <span className="min-w-0 whitespace-normal break-words">{availabilityStatus}</span>
                   </p>
                 )}
               </div>
