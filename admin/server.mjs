@@ -9,6 +9,9 @@ const host = process.env.HOST ?? '0.0.0.0';
 // `/index.html` (no redirects), so deep links like `/login` work reliably.
 const serve = sirv('dist', {
   etag: true,
+  dev: false,
+  maxAge: 0,
+  immutable: false,
   setHeaders(res, pathname) {
     const p = pathname.startsWith('/') ? pathname : `/${pathname}`;
 
