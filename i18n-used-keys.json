@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-01-14T17:51:49.945Z",
-  "totalKeys": 2037,
+  "timestamp": "2026-01-19T08:17:15.394Z",
+  "totalKeys": 2067,
   "byNamespace": {
-    "common": 2944,
+    "common": 2948,
     "settings": 578,
     "content": 54,
     "signup": 120,
@@ -13,7 +13,7 @@
     "profile": 228,
     "parentLeadForm": 56,
     "messages": 52,
-    "marketplace": 12,
+    "marketplace": 18,
     "subscription": 146
   },
   "keys": [
@@ -100,6 +100,30 @@
       "file": "SettingsPage.tsx",
       "line": 197,
       "context": "{t('common:buttons.saveChanges')}"
+    },
+    {
+      "key": "common:serviceCategories.OTHER",
+      "file": "utils/serviceFormatting.ts",
+      "line": 22,
+      "context": "return t('common:serviceCategories.OTHER', humanize('OTHER'));"
+    },
+    {
+      "key": "common:serviceCategories.OTHER",
+      "file": "utils/serviceFormatting.ts",
+      "line": 22,
+      "context": "return t('common:serviceCategories.OTHER', humanize('OTHER'));"
+    },
+    {
+      "key": "common:notAvailable",
+      "file": "utils/serviceFormatting.ts",
+      "line": 34,
+      "context": "return t('common:notAvailable', 'N/A');"
+    },
+    {
+      "key": "common:notAvailable",
+      "file": "utils/serviceFormatting.ts",
+      "line": 34,
+      "context": "return t('common:notAvailable', 'N/A');"
     },
     {
       "key": "common:marketplace.contactForPricing",
@@ -8250,9 +8274,45 @@
       "context": "throw new Error(t('messagingContext.useMessagingError'));"
     },
     {
+      "key": "marketplace:cart.confirmSwitchSupplier",
+      "file": "contexts/CartContext.tsx",
+      "line": 81,
+      "context": "t('marketplace:cart.confirmSwitchSupplier', {"
+    },
+    {
+      "key": "marketplace:cart.confirmSwitchSupplier",
+      "file": "contexts/CartContext.tsx",
+      "line": 81,
+      "context": "t('marketplace:cart.confirmSwitchSupplier', {"
+    },
+    {
+      "key": "marketplace:cart.outOfStock",
+      "file": "contexts/CartContext.tsx",
+      "line": 111,
+      "context": "t('marketplace:cart.outOfStock', {"
+    },
+    {
+      "key": "marketplace:cart.outOfStock",
+      "file": "contexts/CartContext.tsx",
+      "line": 111,
+      "context": "t('marketplace:cart.outOfStock', {"
+    },
+    {
+      "key": "marketplace:cart.outOfStock",
+      "file": "contexts/CartContext.tsx",
+      "line": 124,
+      "context": "t('marketplace:cart.outOfStock', {"
+    },
+    {
+      "key": "marketplace:cart.outOfStock",
+      "file": "contexts/CartContext.tsx",
+      "line": 124,
+      "context": "t('marketplace:cart.outOfStock', {"
+    },
+    {
       "key": "cartContext.useCartError",
       "file": "contexts/CartContext.tsx",
-      "line": 136,
+      "line": 228,
       "context": "throw new Error(t('cartContext.useCartError'));"
     },
     {
@@ -11888,272 +11948,284 @@
     {
       "key": "stockStatus.instock",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 58,
+      "line": 56,
       "context": "if (status === 'ACTIVE' || !status) return t('stockStatus.instock', 'In Stock');"
     },
     {
       "key": "partnerDetailPage.productOutOfStock",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 65,
+      "line": 63,
       "context": "alert(t('partnerDetailPage.productOutOfStock', { productName: product.title }));"
     },
     {
       "key": "partnerDetailPage.productAddedToOrder",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 69,
+      "line": 67,
       "context": "alert(t('partnerDetailPage.productAddedToOrder', { quantity, productName: product.title }));"
     },
     {
       "key": "partnerDetailPage.addToOrderButton",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 111,
+      "line": 109,
       "context": "{t('partnerDetailPage.addToOrderButton')}"
-    },
-    {
-      "key": "partnerDetailPage.promoCodeValid",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 171,
-      "context": "message: t('partnerDetailPage.promoCodeValid', 'Promo code applied!'),"
-    },
-    {
-      "key": "partnerDetailPage.promoCodeInvalid",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 177,
-      "context": "message: t('partnerDetailPage.promoCodeInvalid', 'Invalid or expired promo code'),"
-    },
-    {
-      "key": "partnerDetailPage.promoCodeError",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 184,
-      "context": "message: t('partnerDetailPage.promoCodeError', 'Failed to validate promo code'),"
-    },
-    {
-      "key": "partnerDetailPage.promoCodeTitle",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 195,
-      "context": "{t('partnerDetailPage.promoCodeTitle')}"
-    },
-    {
-      "key": "partnerDetailPage.promoCodePlaceholder",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 205,
-      "context": "placeholder={t('partnerDetailPage.promoCodePlaceholder')}"
-    },
-    {
-      "key": "partnerDetailPage.applyPromoButton",
-      "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 215,
-      "context": "{isValidating ? '...' : t('partnerDetailPage.applyPromoButton')}"
     },
     {
       "key": "partnerDetailPage.onlyFoundationsRequestService",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 318,
+      "line": 199,
       "context": "alert(t('partnerDetailPage.onlyFoundationsRequestService'));"
     },
     {
       "key": "partnerDetailPage.requestSubmittedAlert",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 340,
+      "line": 221,
       "context": "alert(t('partnerDetailPage.requestSubmittedAlert', { serviceName: newRequest.serviceName }));"
     },
     {
       "key": "common:buttons.goBack",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 348,
+      "line": 229,
       "context": "{t('common:buttons.goBack')}"
     },
     {
       "key": "common:buttons.goBack",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 348,
+      "line": 229,
       "context": "{t('common:buttons.goBack')}"
     },
     {
       "key": "common:buttons.goBack",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 394,
+      "line": 275,
       "context": "{t('common:buttons.goBack')}"
     },
     {
       "key": "common:buttons.goBack",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 394,
+      "line": 275,
       "context": "{t('common:buttons.goBack')}"
     },
     {
       "key": "partnerDetailPage.invalidPartnerIdMessage",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 399,
+      "line": 280,
       "context": "<p className=\"mt-4 text-gray-600\">{error || t('partnerDetailPage.invalidPartnerIdMessage')}</p>"
     },
     {
       "key": "common:buttons.retry",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 406,
+      "line": 287,
       "context": "{t('common:buttons.retry', 'Retry')}"
     },
     {
       "key": "common:buttons.retry",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 406,
+      "line": 287,
       "context": "{t('common:buttons.retry', 'Retry')}"
     },
     {
       "key": "common:userRoles.Product Supplier",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 414,
+      "line": 295,
       "context": "? t('common:userRoles.Product Supplier')"
     },
     {
       "key": "common:userRoles.Product Supplier",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 414,
+      "line": 295,
       "context": "? t('common:userRoles.Product Supplier')"
     },
     {
       "key": "common:userRoles.Service Provider",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 416,
+      "line": 297,
       "context": "? t('common:userRoles.Service Provider')"
     },
     {
       "key": "common:userRoles.Service Provider",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 416,
+      "line": 297,
       "context": "? t('common:userRoles.Service Provider')"
     },
     {
       "key": "common:userRoles.Foundation",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 417,
+      "line": 298,
       "context": ": t('common:userRoles.Foundation');"
     },
     {
       "key": "common:userRoles.Foundation",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 417,
+      "line": 298,
       "context": ": t('common:userRoles.Foundation');"
     },
     {
       "key": "common:buttons.goBack",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 425,
+      "line": 306,
       "context": "{t('common:buttons.goBack')}"
     },
     {
       "key": "common:buttons.goBack",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 425,
+      "line": 306,
       "context": "{t('common:buttons.goBack')}"
     },
     {
       "key": "common:buttons.sendMessage",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 467,
+      "line": 348,
       "context": "{t('common:buttons.sendMessage')}"
     },
     {
       "key": "common:buttons.sendMessage",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 467,
+      "line": 348,
       "context": "{t('common:buttons.sendMessage')}"
     },
     {
       "key": "partnerDetailPage.contactInfoTitle",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 482,
+      "line": 363,
       "context": "{t('partnerDetailPage.contactInfoTitle')}"
     },
     {
       "key": "partnerDetailPage.directOrderButton",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 526,
+      "line": 407,
       "context": "{t('partnerDetailPage.directOrderButton')}"
     },
     {
       "key": "partnerDetailPage.aboutTitle",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 534,
+      "line": 415,
       "context": "{t('partnerDetailPage.aboutTitle', { partnerName: partner.name })}"
     },
     {
       "key": "partnerDetailPage.ratingsReviewsTitle",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 542,
+      "line": 423,
       "context": "{t('partnerDetailPage.ratingsReviewsTitle')}"
     },
     {
       "key": "partnerDetailPage.ratingText",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 553,
+      "line": 434,
       "context": "{t('partnerDetailPage.ratingText', { rating: partner.rating.toFixed(1) })}"
     },
     {
       "key": "dashboard:partnerDetailPage.reviewsPlaceholder",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 557,
+      "line": 438,
       "context": "<p className=\"text-sm text-gray-500\">{t('dashboard:partnerDetailPage.reviewsPlaceholder', 'No reviews yet')}</p>"
     },
     {
       "key": "dashboard:partnerDetailPage.reviewsPlaceholder",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 557,
+      "line": 438,
       "context": "<p className=\"text-sm text-gray-500\">{t('dashboard:partnerDetailPage.reviewsPlaceholder', 'No reviews yet')}</p>"
     },
     {
       "key": "dashboard:sidebar.products",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 569,
+      "line": 450,
       "context": "{isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}"
     },
     {
       "key": "dashboard:sidebar.services",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 569,
+      "line": 450,
       "context": "{isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}"
     },
     {
       "key": "dashboard:sidebar.products",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 569,
+      "line": 450,
       "context": "{isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}"
     },
     {
       "key": "dashboard:sidebar.services",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 569,
+      "line": 450,
       "context": "{isSupplier ? t('dashboard:sidebar.products') : t('dashboard:sidebar.services')}"
     },
     {
       "key": "dashboard:partnerDetailPage.noProductsListed",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 588,
+      "line": 469,
       "context": "<p className=\"text-gray-500\">{t('dashboard:partnerDetailPage.noProductsListed', 'No products listed')}</p>"
     },
     {
       "key": "dashboard:partnerDetailPage.noProductsListed",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 588,
+      "line": 469,
       "context": "<p className=\"text-gray-500\">{t('dashboard:partnerDetailPage.noProductsListed', 'No products listed')}</p>"
     },
     {
       "key": "partnerDetailPage.requestServiceButton",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 630,
+      "line": 511,
       "context": "{t('partnerDetailPage.requestServiceButton')}"
     },
     {
       "key": "dashboard:partnerDetailPage.noServicesListed",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 639,
+      "line": 520,
       "context": "<p className=\"text-gray-500\">{t('dashboard:partnerDetailPage.noServicesListed', 'No services listed')}</p>"
     },
     {
       "key": "dashboard:partnerDetailPage.noServicesListed",
       "file": "pages/partner/PartnerDetailPage.tsx",
-      "line": 639,
+      "line": 520,
       "context": "<p className=\"text-gray-500\">{t('dashboard:partnerDetailPage.noServicesListed', 'No services listed')}</p>"
+    },
+    {
+      "key": "partnerDetailPage.promoCodeTitle",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 529,
+      "context": "{t('partnerDetailPage.promoCodeTitle')}"
+    },
+    {
+      "key": "common:promoCodes.cart.noneApplied",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 539,
+      "context": "<span>{t('common:promoCodes.cart.noneApplied', 'No promo code applied')}</span>"
+    },
+    {
+      "key": "common:promoCodes.cart.noneApplied",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 539,
+      "context": "<span>{t('common:promoCodes.cart.noneApplied', 'No promo code applied')}</span>"
+    },
+    {
+      "key": "common:promoCodes.cart.remove",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 550,
+      "context": "{t('common:promoCodes.cart.remove', 'Remove')}"
+    },
+    {
+      "key": "common:promoCodes.cart.remove",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 550,
+      "context": "{t('common:promoCodes.cart.remove', 'Remove')}"
+    },
+    {
+      "key": "common:promoCodes.cart.change",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 559,
+      "context": "? t('common:promoCodes.cart.change', 'Change')"
+    },
+    {
+      "key": "common:promoCodes.cart.change",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 559,
+      "context": "? t('common:promoCodes.cart.change', 'Change')"
+    },
+    {
+      "key": "partnerDetailPage.applyPromoButton",
+      "file": "pages/partner/PartnerDetailPage.tsx",
+      "line": 560,
+      "context": ": t('partnerDetailPage.applyPromoButton')}"
     },
     {
       "key": "common:errors.fetchFailed",
@@ -16974,30 +17046,6 @@
       "context": "{t('adminSystemMonitoringPage.rawLogConsole.title')}"
     },
     {
-      "key": "common:serviceCategories.OTHER",
-      "file": "utils/serviceFormatting.ts",
-      "line": 22,
-      "context": "return t('common:serviceCategories.OTHER', humanize('OTHER'));"
-    },
-    {
-      "key": "common:serviceCategories.OTHER",
-      "file": "utils/serviceFormatting.ts",
-      "line": 22,
-      "context": "return t('common:serviceCategories.OTHER', humanize('OTHER'));"
-    },
-    {
-      "key": "common:notAvailable",
-      "file": "utils/serviceFormatting.ts",
-      "line": 34,
-      "context": "return t('common:notAvailable', 'N/A');"
-    },
-    {
-      "key": "common:notAvailable",
-      "file": "utils/serviceFormatting.ts",
-      "line": 34,
-      "context": "return t('common:notAvailable', 'N/A');"
-    },
-    {
       "key": "common:messages.maxQuantityReached",
       "file": "components/ui/QuantityInput.tsx",
       "line": 33,
@@ -17176,6 +17224,792 @@
       "file": "components/support/SupportReplyComposer.tsx",
       "line": 138,
       "context": "{sending ? t('common:buttons.sending', { defaultValue: 'Sending...' }) : t('common:buttons.reply', { defaultValue: 'Reply' })}"
+    },
+    {
+      "key": "dashboard:productUploadModal.editTitle",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 185,
+      "context": "? t('dashboard:productUploadModal.editTitle', 'Edit Product')"
+    },
+    {
+      "key": "dashboard:productUploadModal.editTitle",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 185,
+      "context": "? t('dashboard:productUploadModal.editTitle', 'Edit Product')"
+    },
+    {
+      "key": "dashboard:productUploadModal.addTitle",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 186,
+      "context": ": t('dashboard:productUploadModal.addTitle', 'Add Product');"
+    },
+    {
+      "key": "dashboard:productUploadModal.addTitle",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 186,
+      "context": ": t('dashboard:productUploadModal.addTitle', 'Add Product');"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 429,
+      "context": "aria-label={t('common:buttons.close', 'Close')}"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 429,
+      "context": "aria-label={t('common:buttons.close', 'Close')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 815,
+      "context": "{t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 815,
+      "context": "{t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.delete",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 877,
+      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
+    },
+    {
+      "key": "common:buttons.delete",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 877,
+      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 903,
+      "context": "{t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 903,
+      "context": "{t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.delete",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1039,
+      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
+    },
+    {
+      "key": "common:buttons.delete",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1039,
+      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1136,
+      "context": "{t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1136,
+      "context": "{t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.delete",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1202,
+      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
+    },
+    {
+      "key": "common:buttons.delete",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1202,
+      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
+    },
+    {
+      "key": "common:buttons.remove",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1280,
+      "context": "{t('common:buttons.remove', 'Remove')}"
+    },
+    {
+      "key": "common:buttons.remove",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1280,
+      "context": "{t('common:buttons.remove', 'Remove')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1398,
+      "context": "{t('common:buttons.cancel', 'Cancel')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1398,
+      "context": "{t('common:buttons.cancel', 'Cancel')}"
+    },
+    {
+      "key": "common:buttons.saving",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1402,
+      "context": "? t('common:buttons.saving', 'Saving...')"
+    },
+    {
+      "key": "common:buttons.saving",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1402,
+      "context": "? t('common:buttons.saving', 'Saving...')"
+    },
+    {
+      "key": "common:buttons.saveChanges",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1404,
+      "context": "? t('common:buttons.saveChanges', 'Save changes')"
+    },
+    {
+      "key": "common:buttons.saveChanges",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1404,
+      "context": "? t('common:buttons.saveChanges', 'Save changes')"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1405,
+      "context": ": t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1405,
+      "context": ": t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "dashboard:supplierDashboard.recentOrdersActions.decline",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 34,
+      "context": "<Button variant=\"danger\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.DECLINED)}>{t('dashboard:supplierDashboard.recentOrdersActions.decline')}</Button>"
+    },
+    {
+      "key": "dashboard:supplierDashboard.recentOrdersActions.decline",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 34,
+      "context": "<Button variant=\"danger\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.DECLINED)}>{t('dashboard:supplierDashboard.recentOrdersActions.decline')}</Button>"
+    },
+    {
+      "key": "dashboard:supplierDashboard.recentOrdersActions.accept",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 35,
+      "context": "<Button variant=\"primary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.ACCEPTED)}>{t('dashboard:supplierDashboard.recentOrdersActions.accept')}</Button>"
+    },
+    {
+      "key": "dashboard:supplierDashboard.recentOrdersActions.accept",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 35,
+      "context": "<Button variant=\"primary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.ACCEPTED)}>{t('dashboard:supplierDashboard.recentOrdersActions.accept')}</Button>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.markAsProcessing",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 39,
+      "context": "return <Button variant=\"secondary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.PROCESSING)}>{t(\"dashboard:orderRequestDetailModal.markAsProcessing\")}</Button>;"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.markAsProcessing",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 39,
+      "context": "return <Button variant=\"secondary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.PROCESSING)}>{t(\"dashboard:orderRequestDetailModal.markAsProcessing\")}</Button>;"
+    },
+    {
+      "key": "dashboard:supplierOrdersPage.actions.ship",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 41,
+      "context": "return <Button variant=\"secondary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.SHIPPED)}>{t('dashboard:supplierOrdersPage.actions.ship')}</Button>;"
+    },
+    {
+      "key": "dashboard:supplierOrdersPage.actions.ship",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 41,
+      "context": "return <Button variant=\"secondary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.SHIPPED)}>{t('dashboard:supplierOrdersPage.actions.ship')}</Button>;"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.title",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 51,
+      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('dashboard:orderRequestDetailModal.title')}</h2>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.title",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 51,
+      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('dashboard:orderRequestDetailModal.title')}</h2>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.orderId",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 56,
+      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.orderId')}</span><span className=\"font-semibold\">{order.id}</span></div>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.orderId",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 56,
+      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.orderId')}</span><span className=\"font-semibold\">{order.id}</span></div>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.date",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 57,
+      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.date')}</span><span className=\"font-semibold\">{new Date(order.requestDate).toLocaleDateString(i18n.language)}</span></div>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.date",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 57,
+      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.date')}</span><span className=\"font-semibold\">{new Date(order.requestDate).toLocaleDateString(i18n.language)}</span></div>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.status",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 58,
+      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.status')}</span><span className=\"font-semibold\">{t(`common:orderStatus.${order.status.toLowerCase().replace(/\\s/g, '')}` as const, order.status)}</span></div>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.status",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 58,
+      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.status')}</span><span className=\"font-semibold\">{t(`common:orderStatus.${order.status.toLowerCase().replace(/\\s/g, '')}` as const, order.status)}</span></div>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.total",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 59,
+      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.total')}</span><span className=\"font-semibold\">CHF {order.totalAmount.toFixed(2)}</span></div>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.total",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 59,
+      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.total')}</span><span className=\"font-semibold\">CHF {order.totalAmount.toFixed(2)}</span></div>"
+    },
+    {
+      "key": "dashboard:supplierOrdersPage.table.foundation",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 63,
+      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:supplierOrdersPage.table.foundation')}</h3>"
+    },
+    {
+      "key": "dashboard:supplierOrdersPage.table.foundation",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 63,
+      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:supplierOrdersPage.table.foundation')}</h3>"
+    },
+    {
+      "key": "common:unknown",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 67,
+      "context": "<p className=\"font-medium\">{daycare?.name || t('common:unknown', 'Unknown')}</p>"
+    },
+    {
+      "key": "common:unknown",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 67,
+      "context": "<p className=\"font-medium\">{daycare?.name || t('common:unknown', 'Unknown')}</p>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.viewDaycareProfile",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 72,
+      "context": "{t('dashboard:orderRequestDetailModal.viewDaycareProfile', t('orderRequestDetailModal.viewDaycareProfile'))}"
+    },
+    {
+      "key": "orderRequestDetailModal.viewDaycareProfile",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 72,
+      "context": "{t('dashboard:orderRequestDetailModal.viewDaycareProfile', t('orderRequestDetailModal.viewDaycareProfile'))}"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.viewDaycareProfile",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 72,
+      "context": "{t('dashboard:orderRequestDetailModal.viewDaycareProfile', t('orderRequestDetailModal.viewDaycareProfile'))}"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.lineItems",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 78,
+      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:orderRequestDetailModal.lineItems')}</h3>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.lineItems",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 78,
+      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:orderRequestDetailModal.lineItems')}</h3>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.product",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 83,
+      "context": "<th className=\"px-4 py-2 text-left font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.product')}</th>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.product",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 83,
+      "context": "<th className=\"px-4 py-2 text-left font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.product')}</th>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.quantity",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 84,
+      "context": "<th className=\"px-4 py-2 text-center font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.quantity')}</th>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.quantity",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 84,
+      "context": "<th className=\"px-4 py-2 text-center font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.quantity')}</th>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.price",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 85,
+      "context": "<th className=\"px-4 py-2 text-right font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.price')}</th>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.price",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 85,
+      "context": "<th className=\"px-4 py-2 text-right font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.price')}</th>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.notes",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 105,
+      "context": "<h3 className=\"font-semibold mb-1\">{t('dashboard:orderRequestDetailModal.notes')}</h3>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.notes",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 105,
+      "context": "<h3 className=\"font-semibold mb-1\">{t('dashboard:orderRequestDetailModal.notes')}</h3>"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 111,
+      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close')}</Button>"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 111,
+      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close')}</Button>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.quoteAmount",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 95,
+      "context": "? t('dashboard:inquiryDetailModal.quoteAmount', 'Quote Amount (CHF)')"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.quoteAmount",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 95,
+      "context": "? t('dashboard:inquiryDetailModal.quoteAmount', 'Quote Amount (CHF)')"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.responseMessage",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 96,
+      "context": ": t('dashboard:inquiryDetailModal.responseMessage', 'Response Message')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.responseMessage",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 96,
+      "context": ": t('dashboard:inquiryDetailModal.responseMessage', 'Response Message')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.responsePlaceholder",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 111,
+      "context": "placeholder={t('dashboard:inquiryDetailModal.responsePlaceholder', 'Enter your response to the customer...')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.responsePlaceholder",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 111,
+      "context": "placeholder={t('dashboard:inquiryDetailModal.responsePlaceholder', 'Enter your response to the customer...')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 118,
+      "context": "{t('common:buttons.cancel', 'Cancel')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 118,
+      "context": "{t('common:buttons.cancel', 'Cancel')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.sendResponse",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 121,
+      "context": "{t('dashboard:inquiryDetailModal.sendResponse', 'Send Response')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.sendResponse",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 121,
+      "context": "{t('dashboard:inquiryDetailModal.sendResponse', 'Send Response')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.decline",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 133,
+      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.decline",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 133,
+      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.markPending",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 136,
+      "context": "{t('dashboard:inquiryDetailModal.actions.markPending', 'Mark as Pending')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.markPending",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 136,
+      "context": "{t('dashboard:inquiryDetailModal.actions.markPending', 'Mark as Pending')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.contacted",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 139,
+      "context": "{t('dashboard:inquiryDetailModal.actions.contacted', 'Mark as Contacted')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.contacted",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 139,
+      "context": "{t('dashboard:inquiryDetailModal.actions.contacted', 'Mark as Contacted')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.decline",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 148,
+      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.decline",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 148,
+      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.sendQuote",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 151,
+      "context": "{t('dashboard:inquiryDetailModal.actions.sendQuote', 'Send Quote')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.sendQuote",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 151,
+      "context": "{t('dashboard:inquiryDetailModal.actions.sendQuote', 'Send Quote')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.markFulfilled",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 154,
+      "context": "{t('dashboard:inquiryDetailModal.actions.markFulfilled', 'Mark as Fulfilled')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.markFulfilled",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 154,
+      "context": "{t('dashboard:inquiryDetailModal.actions.markFulfilled', 'Mark as Fulfilled')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.decline",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 162,
+      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.decline",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 162,
+      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.markFulfilled",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 165,
+      "context": "{t('dashboard:inquiryDetailModal.actions.markFulfilled', 'Mark as Fulfilled')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.markFulfilled",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 165,
+      "context": "{t('dashboard:inquiryDetailModal.actions.markFulfilled', 'Mark as Fulfilled')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.title",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 178,
+      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('dashboard:inquiryDetailModal.title', 'Inquiry Details')}</h2>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.title",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 178,
+      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('dashboard:inquiryDetailModal.title', 'Inquiry Details')}</h2>"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 179,
+      "context": "<button onClick={onClose} className=\"p-1 rounded-full text-gray-400 hover:text-gray-600\" aria-label={t('common:buttons.close', 'Close')}>"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 179,
+      "context": "<button onClick={onClose} className=\"p-1 rounded-full text-gray-400 hover:text-gray-600\" aria-label={t('common:buttons.close', 'Close')}>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.inquiryId",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 188,
+      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.inquiryId', 'Inquiry ID')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.inquiryId",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 188,
+      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.inquiryId', 'Inquiry ID')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.date",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 192,
+      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.date', 'Date')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.date",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 192,
+      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.date', 'Date')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.status",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 196,
+      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.status', 'Status')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.status",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 196,
+      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.status', 'Status')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.urgency",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 202,
+      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.urgency', 'Urgency')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.urgency",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 202,
+      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.urgency', 'Urgency')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.from",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 215,
+      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:inquiryDetailModal.from', 'From')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.from",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 215,
+      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:inquiryDetailModal.from', 'From')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.viewProfile",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 225,
+      "context": "{t('dashboard:inquiryDetailModal.viewProfile', 'View Profile')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.viewProfile",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 225,
+      "context": "{t('dashboard:inquiryDetailModal.viewProfile', 'View Profile')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.contactInfo",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 233,
+      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:inquiryDetailModal.contactInfo', 'Contact Information')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.contactInfo",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 233,
+      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:inquiryDetailModal.contactInfo', 'Contact Information')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.preferredContact",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 250,
+      "context": "{t('dashboard:inquiryDetailModal.preferredContact', 'Preferred')}: {t(`preferredContactMethod.${inquiry.preferredContactMethod.toLowerCase()}` as const, inquiry.preferredContactMethod)}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.preferredContact",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 250,
+      "context": "{t('dashboard:inquiryDetailModal.preferredContact', 'Preferred')}: {t(`preferredContactMethod.${inquiry.preferredContactMethod.toLowerCase()}` as const, inquiry.preferredContactMethod)}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.message",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 259,
+      "context": "<h3 className=\"font-semibold mb-2\">{inquiry.subject || t('dashboard:inquiryDetailModal.message', 'Message')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.message",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 259,
+      "context": "<h3 className=\"font-semibold mb-2\">{inquiry.subject || t('dashboard:inquiryDetailModal.message', 'Message')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.productInterest",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 269,
+      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.productInterest', 'Product Interest')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.productInterest",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 269,
+      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.productInterest', 'Product Interest')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.quantity",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 275,
+      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.quantity', 'Est. Quantity')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.quantity",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 275,
+      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.quantity', 'Est. Quantity')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.budget",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 281,
+      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.budget', 'Budget')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.budget",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 281,
+      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.budget', 'Budget')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.yourResponse",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 290,
+      "context": "<h3 className=\"font-semibold mb-2 text-purple-700\">{t('dashboard:inquiryDetailModal.yourResponse', 'Your Response')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.yourResponse",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 290,
+      "context": "<h3 className=\"font-semibold mb-2 text-purple-700\">{t('dashboard:inquiryDetailModal.yourResponse', 'Your Response')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.quotedAmount",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 293,
+      "context": "{t('dashboard:inquiryDetailModal.quotedAmount', 'Quoted Amount')}: CHF {inquiry.quotedAmount.toFixed(2)}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.quotedAmount",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 293,
+      "context": "{t('dashboard:inquiryDetailModal.quotedAmount', 'Quoted Amount')}: CHF {inquiry.quotedAmount.toFixed(2)}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.internalNotes",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 305,
+      "context": "<h3 className=\"font-semibold mb-1\">{t('dashboard:inquiryDetailModal.internalNotes', 'Internal Notes')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.internalNotes",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 305,
+      "context": "<h3 className=\"font-semibold mb-1\">{t('dashboard:inquiryDetailModal.internalNotes', 'Internal Notes')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.respondedAt",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 313,
+      "context": "<p>{t('dashboard:inquiryDetailModal.respondedAt', 'First responded')}: {new Date(inquiry.respondedAt).toLocaleString(i18n.language)}</p>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.respondedAt",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 313,
+      "context": "<p>{t('dashboard:inquiryDetailModal.respondedAt', 'First responded')}: {new Date(inquiry.respondedAt).toLocaleString(i18n.language)}</p>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.fulfilledAt",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 316,
+      "context": "<p>{t('dashboard:inquiryDetailModal.fulfilledAt', 'Fulfilled')}: {new Date(inquiry.fulfilledAt).toLocaleString(i18n.language)}</p>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.fulfilledAt",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 316,
+      "context": "<p>{t('dashboard:inquiryDetailModal.fulfilledAt', 'Fulfilled')}: {new Date(inquiry.fulfilledAt).toLocaleString(i18n.language)}</p>"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 322,
+      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close', 'Close')}</Button>"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 322,
+      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close', 'Close')}</Button>"
     },
     {
       "key": "subscription:requestForm.validation.required",
@@ -18354,6 +19188,198 @@
       "context": "{t('content:statePolicies.updatedShort', 'Updated')} {format(new Date(lastUpdated), 'MMM d')}"
     },
     {
+      "key": "common:promoCodes.discount.percentage",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 32,
+      "context": "return t('common:promoCodes.discount.percentage', { value: promo.value });"
+    },
+    {
+      "key": "common:promoCodes.discount.percentage",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 32,
+      "context": "return t('common:promoCodes.discount.percentage', { value: promo.value });"
+    },
+    {
+      "key": "common:promoCodes.discount.fixedAmount",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 34,
+      "context": "return t('common:promoCodes.discount.fixedAmount', { value: promo.value });"
+    },
+    {
+      "key": "common:promoCodes.discount.fixedAmount",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 34,
+      "context": "return t('common:promoCodes.discount.fixedAmount', { value: promo.value });"
+    },
+    {
+      "key": "common:promoCodes.discount.freeMinutes",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 36,
+      "context": "return t('common:promoCodes.discount.freeMinutes', { value: promo.value });"
+    },
+    {
+      "key": "common:promoCodes.discount.freeMinutes",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 36,
+      "context": "return t('common:promoCodes.discount.freeMinutes', { value: promo.value });"
+    },
+    {
+      "key": "common:promoCodes.messages.invalid",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 104,
+      "context": "setErrorMessage(t('common:promoCodes.messages.invalid'));"
+    },
+    {
+      "key": "common:promoCodes.messages.invalid",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 104,
+      "context": "setErrorMessage(t('common:promoCodes.messages.invalid'));"
+    },
+    {
+      "key": "common:promoCodes.messages.error",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 107,
+      "context": "setErrorMessage(t('common:promoCodes.messages.error'));"
+    },
+    {
+      "key": "common:promoCodes.messages.error",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 107,
+      "context": "setErrorMessage(t('common:promoCodes.messages.error'));"
+    },
+    {
+      "key": "common:promoCodes.modal.title",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 139,
+      "context": "{t('common:promoCodes.modal.title')}"
+    },
+    {
+      "key": "common:promoCodes.modal.title",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 139,
+      "context": "{t('common:promoCodes.modal.title')}"
+    },
+    {
+      "key": "common:promoCodes.modal.subtitle",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 143,
+      "context": "{t('common:promoCodes.modal.subtitle', { organizationName })}"
+    },
+    {
+      "key": "common:promoCodes.modal.subtitle",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 143,
+      "context": "{t('common:promoCodes.modal.subtitle', { organizationName })}"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 152,
+      "context": "aria-label={t('common:buttons.close', 'Close')}"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 152,
+      "context": "aria-label={t('common:buttons.close', 'Close')}"
+    },
+    {
+      "key": "common:promoCodes.modal.codeLabel",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 161,
+      "context": "{t('common:promoCodes.modal.codeLabel')}"
+    },
+    {
+      "key": "common:promoCodes.modal.codeLabel",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 161,
+      "context": "{t('common:promoCodes.modal.codeLabel')}"
+    },
+    {
+      "key": "common:promoCodes.modal.codePlaceholder",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 172,
+      "context": "placeholder={t('common:promoCodes.modal.codePlaceholder')}"
+    },
+    {
+      "key": "common:promoCodes.modal.codePlaceholder",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 172,
+      "context": "placeholder={t('common:promoCodes.modal.codePlaceholder')}"
+    },
+    {
+      "key": "common:promoCodes.modal.validating",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 182,
+      "context": "{isValidating ? t('common:promoCodes.modal.validating') : t('common:promoCodes.modal.validate')}"
+    },
+    {
+      "key": "common:promoCodes.modal.validate",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 182,
+      "context": "{isValidating ? t('common:promoCodes.modal.validating') : t('common:promoCodes.modal.validate')}"
+    },
+    {
+      "key": "common:promoCodes.modal.validating",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 182,
+      "context": "{isValidating ? t('common:promoCodes.modal.validating') : t('common:promoCodes.modal.validate')}"
+    },
+    {
+      "key": "common:promoCodes.modal.validate",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 182,
+      "context": "{isValidating ? t('common:promoCodes.modal.validating') : t('common:promoCodes.modal.validate')}"
+    },
+    {
+      "key": "common:promoCodes.messages.valid",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 192,
+      "context": "{t('common:promoCodes.messages.valid')}"
+    },
+    {
+      "key": "common:promoCodes.messages.valid",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 192,
+      "context": "{t('common:promoCodes.messages.valid')}"
+    },
+    {
+      "key": "common:promoCodes.modal.remove",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 214,
+      "context": "{t('common:promoCodes.modal.remove')}"
+    },
+    {
+      "key": "common:promoCodes.modal.remove",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 214,
+      "context": "{t('common:promoCodes.modal.remove')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 220,
+      "context": "{t('common:buttons.cancel', 'Cancel')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 220,
+      "context": "{t('common:buttons.cancel', 'Cancel')}"
+    },
+    {
+      "key": "common:promoCodes.modal.apply",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 223,
+      "context": "{t('common:promoCodes.modal.apply')}"
+    },
+    {
+      "key": "common:promoCodes.modal.apply",
+      "file": "components/shared/ApplyPromoCodeModal.tsx",
+      "line": 223,
+      "context": "{t('common:promoCodes.modal.apply')}"
+    },
+    {
       "key": "activeClientToggle.confirmSave",
       "file": "components/shared/ActiveClientToggle.tsx",
       "line": 35,
@@ -18424,792 +19450,6 @@
       "file": "components/shared/ActiveClientToggle.tsx",
       "line": 87,
       "context": "{t('common:buttons.saveChanges')}"
-    },
-    {
-      "key": "dashboard:productUploadModal.editTitle",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 185,
-      "context": "? t('dashboard:productUploadModal.editTitle', 'Edit Product')"
-    },
-    {
-      "key": "dashboard:productUploadModal.editTitle",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 185,
-      "context": "? t('dashboard:productUploadModal.editTitle', 'Edit Product')"
-    },
-    {
-      "key": "dashboard:productUploadModal.addTitle",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 186,
-      "context": ": t('dashboard:productUploadModal.addTitle', 'Add Product');"
-    },
-    {
-      "key": "dashboard:productUploadModal.addTitle",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 186,
-      "context": ": t('dashboard:productUploadModal.addTitle', 'Add Product');"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 429,
-      "context": "aria-label={t('common:buttons.close', 'Close')}"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 429,
-      "context": "aria-label={t('common:buttons.close', 'Close')}"
-    },
-    {
-      "key": "common:buttons.add",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 815,
-      "context": "{t('common:buttons.add', 'Add')}"
-    },
-    {
-      "key": "common:buttons.add",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 815,
-      "context": "{t('common:buttons.add', 'Add')}"
-    },
-    {
-      "key": "common:buttons.delete",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 877,
-      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
-    },
-    {
-      "key": "common:buttons.delete",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 877,
-      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
-    },
-    {
-      "key": "common:buttons.add",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 903,
-      "context": "{t('common:buttons.add', 'Add')}"
-    },
-    {
-      "key": "common:buttons.add",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 903,
-      "context": "{t('common:buttons.add', 'Add')}"
-    },
-    {
-      "key": "common:buttons.delete",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1039,
-      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
-    },
-    {
-      "key": "common:buttons.delete",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1039,
-      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
-    },
-    {
-      "key": "common:buttons.add",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1136,
-      "context": "{t('common:buttons.add', 'Add')}"
-    },
-    {
-      "key": "common:buttons.add",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1136,
-      "context": "{t('common:buttons.add', 'Add')}"
-    },
-    {
-      "key": "common:buttons.delete",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1202,
-      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
-    },
-    {
-      "key": "common:buttons.delete",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1202,
-      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
-    },
-    {
-      "key": "common:buttons.remove",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1280,
-      "context": "{t('common:buttons.remove', 'Remove')}"
-    },
-    {
-      "key": "common:buttons.remove",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1280,
-      "context": "{t('common:buttons.remove', 'Remove')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1398,
-      "context": "{t('common:buttons.cancel', 'Cancel')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1398,
-      "context": "{t('common:buttons.cancel', 'Cancel')}"
-    },
-    {
-      "key": "common:buttons.saving",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1402,
-      "context": "? t('common:buttons.saving', 'Saving...')"
-    },
-    {
-      "key": "common:buttons.saving",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1402,
-      "context": "? t('common:buttons.saving', 'Saving...')"
-    },
-    {
-      "key": "common:buttons.saveChanges",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1404,
-      "context": "? t('common:buttons.saveChanges', 'Save changes')"
-    },
-    {
-      "key": "common:buttons.saveChanges",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1404,
-      "context": "? t('common:buttons.saveChanges', 'Save changes')"
-    },
-    {
-      "key": "common:buttons.add",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1405,
-      "context": ": t('common:buttons.add', 'Add')}"
-    },
-    {
-      "key": "common:buttons.add",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1405,
-      "context": ": t('common:buttons.add', 'Add')}"
-    },
-    {
-      "key": "dashboard:supplierDashboard.recentOrdersActions.decline",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 34,
-      "context": "<Button variant=\"danger\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.DECLINED)}>{t('dashboard:supplierDashboard.recentOrdersActions.decline')}</Button>"
-    },
-    {
-      "key": "dashboard:supplierDashboard.recentOrdersActions.decline",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 34,
-      "context": "<Button variant=\"danger\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.DECLINED)}>{t('dashboard:supplierDashboard.recentOrdersActions.decline')}</Button>"
-    },
-    {
-      "key": "dashboard:supplierDashboard.recentOrdersActions.accept",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 35,
-      "context": "<Button variant=\"primary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.ACCEPTED)}>{t('dashboard:supplierDashboard.recentOrdersActions.accept')}</Button>"
-    },
-    {
-      "key": "dashboard:supplierDashboard.recentOrdersActions.accept",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 35,
-      "context": "<Button variant=\"primary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.ACCEPTED)}>{t('dashboard:supplierDashboard.recentOrdersActions.accept')}</Button>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.markAsProcessing",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 39,
-      "context": "return <Button variant=\"secondary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.PROCESSING)}>{t(\"dashboard:orderRequestDetailModal.markAsProcessing\")}</Button>;"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.markAsProcessing",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 39,
-      "context": "return <Button variant=\"secondary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.PROCESSING)}>{t(\"dashboard:orderRequestDetailModal.markAsProcessing\")}</Button>;"
-    },
-    {
-      "key": "dashboard:supplierOrdersPage.actions.ship",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 41,
-      "context": "return <Button variant=\"secondary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.SHIPPED)}>{t('dashboard:supplierOrdersPage.actions.ship')}</Button>;"
-    },
-    {
-      "key": "dashboard:supplierOrdersPage.actions.ship",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 41,
-      "context": "return <Button variant=\"secondary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.SHIPPED)}>{t('dashboard:supplierOrdersPage.actions.ship')}</Button>;"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.title",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 51,
-      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('dashboard:orderRequestDetailModal.title')}</h2>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.title",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 51,
-      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('dashboard:orderRequestDetailModal.title')}</h2>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.orderId",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 56,
-      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.orderId')}</span><span className=\"font-semibold\">{order.id}</span></div>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.orderId",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 56,
-      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.orderId')}</span><span className=\"font-semibold\">{order.id}</span></div>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.date",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 57,
-      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.date')}</span><span className=\"font-semibold\">{new Date(order.requestDate).toLocaleDateString(i18n.language)}</span></div>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.date",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 57,
-      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.date')}</span><span className=\"font-semibold\">{new Date(order.requestDate).toLocaleDateString(i18n.language)}</span></div>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.status",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 58,
-      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.status')}</span><span className=\"font-semibold\">{t(`common:orderStatus.${order.status.toLowerCase().replace(/\\s/g, '')}` as const, order.status)}</span></div>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.status",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 58,
-      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.status')}</span><span className=\"font-semibold\">{t(`common:orderStatus.${order.status.toLowerCase().replace(/\\s/g, '')}` as const, order.status)}</span></div>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.total",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 59,
-      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.total')}</span><span className=\"font-semibold\">CHF {order.totalAmount.toFixed(2)}</span></div>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.total",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 59,
-      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.total')}</span><span className=\"font-semibold\">CHF {order.totalAmount.toFixed(2)}</span></div>"
-    },
-    {
-      "key": "dashboard:supplierOrdersPage.table.foundation",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 63,
-      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:supplierOrdersPage.table.foundation')}</h3>"
-    },
-    {
-      "key": "dashboard:supplierOrdersPage.table.foundation",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 63,
-      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:supplierOrdersPage.table.foundation')}</h3>"
-    },
-    {
-      "key": "common:unknown",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 67,
-      "context": "<p className=\"font-medium\">{daycare?.name || t('common:unknown', 'Unknown')}</p>"
-    },
-    {
-      "key": "common:unknown",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 67,
-      "context": "<p className=\"font-medium\">{daycare?.name || t('common:unknown', 'Unknown')}</p>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.viewDaycareProfile",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 72,
-      "context": "{t('dashboard:orderRequestDetailModal.viewDaycareProfile', t('orderRequestDetailModal.viewDaycareProfile'))}"
-    },
-    {
-      "key": "orderRequestDetailModal.viewDaycareProfile",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 72,
-      "context": "{t('dashboard:orderRequestDetailModal.viewDaycareProfile', t('orderRequestDetailModal.viewDaycareProfile'))}"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.viewDaycareProfile",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 72,
-      "context": "{t('dashboard:orderRequestDetailModal.viewDaycareProfile', t('orderRequestDetailModal.viewDaycareProfile'))}"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.lineItems",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 78,
-      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:orderRequestDetailModal.lineItems')}</h3>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.lineItems",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 78,
-      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:orderRequestDetailModal.lineItems')}</h3>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.product",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 83,
-      "context": "<th className=\"px-4 py-2 text-left font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.product')}</th>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.product",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 83,
-      "context": "<th className=\"px-4 py-2 text-left font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.product')}</th>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.quantity",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 84,
-      "context": "<th className=\"px-4 py-2 text-center font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.quantity')}</th>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.quantity",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 84,
-      "context": "<th className=\"px-4 py-2 text-center font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.quantity')}</th>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.price",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 85,
-      "context": "<th className=\"px-4 py-2 text-right font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.price')}</th>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.price",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 85,
-      "context": "<th className=\"px-4 py-2 text-right font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.price')}</th>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.notes",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 105,
-      "context": "<h3 className=\"font-semibold mb-1\">{t('dashboard:orderRequestDetailModal.notes')}</h3>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.notes",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 105,
-      "context": "<h3 className=\"font-semibold mb-1\">{t('dashboard:orderRequestDetailModal.notes')}</h3>"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 111,
-      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close')}</Button>"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 111,
-      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close')}</Button>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.quoteAmount",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 95,
-      "context": "? t('dashboard:inquiryDetailModal.quoteAmount', 'Quote Amount (CHF)')"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.quoteAmount",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 95,
-      "context": "? t('dashboard:inquiryDetailModal.quoteAmount', 'Quote Amount (CHF)')"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.responseMessage",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 96,
-      "context": ": t('dashboard:inquiryDetailModal.responseMessage', 'Response Message')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.responseMessage",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 96,
-      "context": ": t('dashboard:inquiryDetailModal.responseMessage', 'Response Message')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.responsePlaceholder",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 111,
-      "context": "placeholder={t('dashboard:inquiryDetailModal.responsePlaceholder', 'Enter your response to the customer...')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.responsePlaceholder",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 111,
-      "context": "placeholder={t('dashboard:inquiryDetailModal.responsePlaceholder', 'Enter your response to the customer...')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 118,
-      "context": "{t('common:buttons.cancel', 'Cancel')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 118,
-      "context": "{t('common:buttons.cancel', 'Cancel')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.sendResponse",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 121,
-      "context": "{t('dashboard:inquiryDetailModal.sendResponse', 'Send Response')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.sendResponse",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 121,
-      "context": "{t('dashboard:inquiryDetailModal.sendResponse', 'Send Response')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.decline",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 133,
-      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.decline",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 133,
-      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.markPending",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 136,
-      "context": "{t('dashboard:inquiryDetailModal.actions.markPending', 'Mark as Pending')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.markPending",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 136,
-      "context": "{t('dashboard:inquiryDetailModal.actions.markPending', 'Mark as Pending')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.contacted",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 139,
-      "context": "{t('dashboard:inquiryDetailModal.actions.contacted', 'Mark as Contacted')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.contacted",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 139,
-      "context": "{t('dashboard:inquiryDetailModal.actions.contacted', 'Mark as Contacted')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.decline",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 148,
-      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.decline",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 148,
-      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.sendQuote",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 151,
-      "context": "{t('dashboard:inquiryDetailModal.actions.sendQuote', 'Send Quote')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.sendQuote",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 151,
-      "context": "{t('dashboard:inquiryDetailModal.actions.sendQuote', 'Send Quote')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.markFulfilled",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 154,
-      "context": "{t('dashboard:inquiryDetailModal.actions.markFulfilled', 'Mark as Fulfilled')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.markFulfilled",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 154,
-      "context": "{t('dashboard:inquiryDetailModal.actions.markFulfilled', 'Mark as Fulfilled')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.decline",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 162,
-      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.decline",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 162,
-      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.markFulfilled",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 165,
-      "context": "{t('dashboard:inquiryDetailModal.actions.markFulfilled', 'Mark as Fulfilled')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.markFulfilled",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 165,
-      "context": "{t('dashboard:inquiryDetailModal.actions.markFulfilled', 'Mark as Fulfilled')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.title",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 178,
-      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('dashboard:inquiryDetailModal.title', 'Inquiry Details')}</h2>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.title",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 178,
-      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('dashboard:inquiryDetailModal.title', 'Inquiry Details')}</h2>"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 179,
-      "context": "<button onClick={onClose} className=\"p-1 rounded-full text-gray-400 hover:text-gray-600\" aria-label={t('common:buttons.close', 'Close')}>"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 179,
-      "context": "<button onClick={onClose} className=\"p-1 rounded-full text-gray-400 hover:text-gray-600\" aria-label={t('common:buttons.close', 'Close')}>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.inquiryId",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 188,
-      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.inquiryId', 'Inquiry ID')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.inquiryId",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 188,
-      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.inquiryId', 'Inquiry ID')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.date",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 192,
-      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.date', 'Date')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.date",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 192,
-      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.date', 'Date')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.status",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 196,
-      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.status', 'Status')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.status",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 196,
-      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.status', 'Status')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.urgency",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 202,
-      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.urgency', 'Urgency')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.urgency",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 202,
-      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.urgency', 'Urgency')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.from",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 215,
-      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:inquiryDetailModal.from', 'From')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.from",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 215,
-      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:inquiryDetailModal.from', 'From')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.viewProfile",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 225,
-      "context": "{t('dashboard:inquiryDetailModal.viewProfile', 'View Profile')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.viewProfile",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 225,
-      "context": "{t('dashboard:inquiryDetailModal.viewProfile', 'View Profile')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.contactInfo",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 233,
-      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:inquiryDetailModal.contactInfo', 'Contact Information')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.contactInfo",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 233,
-      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:inquiryDetailModal.contactInfo', 'Contact Information')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.preferredContact",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 250,
-      "context": "{t('dashboard:inquiryDetailModal.preferredContact', 'Preferred')}: {t(`preferredContactMethod.${inquiry.preferredContactMethod.toLowerCase()}` as const, inquiry.preferredContactMethod)}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.preferredContact",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 250,
-      "context": "{t('dashboard:inquiryDetailModal.preferredContact', 'Preferred')}: {t(`preferredContactMethod.${inquiry.preferredContactMethod.toLowerCase()}` as const, inquiry.preferredContactMethod)}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.message",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 259,
-      "context": "<h3 className=\"font-semibold mb-2\">{inquiry.subject || t('dashboard:inquiryDetailModal.message', 'Message')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.message",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 259,
-      "context": "<h3 className=\"font-semibold mb-2\">{inquiry.subject || t('dashboard:inquiryDetailModal.message', 'Message')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.productInterest",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 269,
-      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.productInterest', 'Product Interest')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.productInterest",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 269,
-      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.productInterest', 'Product Interest')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.quantity",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 275,
-      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.quantity', 'Est. Quantity')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.quantity",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 275,
-      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.quantity', 'Est. Quantity')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.budget",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 281,
-      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.budget', 'Budget')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.budget",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 281,
-      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.budget', 'Budget')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.yourResponse",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 290,
-      "context": "<h3 className=\"font-semibold mb-2 text-purple-700\">{t('dashboard:inquiryDetailModal.yourResponse', 'Your Response')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.yourResponse",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 290,
-      "context": "<h3 className=\"font-semibold mb-2 text-purple-700\">{t('dashboard:inquiryDetailModal.yourResponse', 'Your Response')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.quotedAmount",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 293,
-      "context": "{t('dashboard:inquiryDetailModal.quotedAmount', 'Quoted Amount')}: CHF {inquiry.quotedAmount.toFixed(2)}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.quotedAmount",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 293,
-      "context": "{t('dashboard:inquiryDetailModal.quotedAmount', 'Quoted Amount')}: CHF {inquiry.quotedAmount.toFixed(2)}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.internalNotes",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 305,
-      "context": "<h3 className=\"font-semibold mb-1\">{t('dashboard:inquiryDetailModal.internalNotes', 'Internal Notes')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.internalNotes",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 305,
-      "context": "<h3 className=\"font-semibold mb-1\">{t('dashboard:inquiryDetailModal.internalNotes', 'Internal Notes')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.respondedAt",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 313,
-      "context": "<p>{t('dashboard:inquiryDetailModal.respondedAt', 'First responded')}: {new Date(inquiry.respondedAt).toLocaleString(i18n.language)}</p>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.respondedAt",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 313,
-      "context": "<p>{t('dashboard:inquiryDetailModal.respondedAt', 'First responded')}: {new Date(inquiry.respondedAt).toLocaleString(i18n.language)}</p>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.fulfilledAt",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 316,
-      "context": "<p>{t('dashboard:inquiryDetailModal.fulfilledAt', 'Fulfilled')}: {new Date(inquiry.fulfilledAt).toLocaleString(i18n.language)}</p>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.fulfilledAt",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 316,
-      "context": "<p>{t('dashboard:inquiryDetailModal.fulfilledAt', 'Fulfilled')}: {new Date(inquiry.fulfilledAt).toLocaleString(i18n.language)}</p>"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 322,
-      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close', 'Close')}</Button>"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 322,
-      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close', 'Close')}</Button>"
     },
     {
       "key": "common:errors.genericErrorTitle",
@@ -19452,10 +19692,178 @@
       "context": "const finalConfirmButtonText = confirmButtonText || t('common:buttons.confirm');"
     },
     {
-      "key": "addPromoCodeModal.placeholder",
+      "key": "forms.required",
       "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 12,
-      "context": "<p>{t(\"addPromoCodeModal.placeholder\")}</p>"
+      "line": 86,
+      "context": "newErrors.code = t('forms.required');"
+    },
+    {
+      "key": "settingsPromoCodeManager.validation.codeMinLength",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 88,
+      "context": "newErrors.code = t('settingsPromoCodeManager.validation.codeMinLength');"
+    },
+    {
+      "key": "forms.required",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 92,
+      "context": "newErrors.expiryDate = t('forms.required');"
+    },
+    {
+      "key": "settingsPromoCodeManager.validation.expiryFuture",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 98,
+      "context": "newErrors.expiryDate = t('settingsPromoCodeManager.validation.expiryFuture');"
+    },
+    {
+      "key": "settingsPromoCodeManager.validation.valuePositive",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 103,
+      "context": "newErrors.value = t('settingsPromoCodeManager.validation.valuePositive');"
+    },
+    {
+      "key": "settingsPromoCodeManager.validation.percentageMax",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 107,
+      "context": "newErrors.value = t('settingsPromoCodeManager.validation.percentageMax');"
+    },
+    {
+      "key": "settingsPromoCodeManager.validation.maxUsageMin",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 111,
+      "context": "newErrors.maxUsage = t('settingsPromoCodeManager.validation.maxUsageMin');"
+    },
+    {
+      "key": "settingsPromoCodeManager.addEditModal.editTitle",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 159,
+      "context": "? t('settingsPromoCodeManager.addEditModal.editTitle')"
+    },
+    {
+      "key": "settingsPromoCodeManager.addEditModal.addTitle",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 160,
+      "context": ": t('settingsPromoCodeManager.addEditModal.addTitle')}"
+    },
+    {
+      "key": "buttons.close",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 166,
+      "context": "aria-label={t('buttons.close')}"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.code",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 177,
+      "context": "{t('settingsPromoCodeManager.form.code')} <span className=\"text-red-500\">*</span>"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.codePlaceholder",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 186,
+      "context": "placeholder={t('settingsPromoCodeManager.form.codePlaceholder')}"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.discountType",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 195,
+      "context": "{t('settingsPromoCodeManager.form.discountType')} <span className=\"text-red-500\">*</span>"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.percentage",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 202,
+      "context": "<option value=\"Percentage\">{t('settingsPromoCodeManager.form.percentage')}</option>"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.fixedAmount",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 203,
+      "context": "<option value=\"FixedAmount\">{t('settingsPromoCodeManager.form.fixedAmount')}</option>"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.freeMinutes",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 204,
+      "context": "<option value=\"FreeMinutes\">{t('settingsPromoCodeManager.form.freeMinutes')}</option>"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.value",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 211,
+      "context": "{t('settingsPromoCodeManager.form.value')} <span className=\"text-red-500\">*</span>"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.expiryDate",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 233,
+      "context": "{t('settingsPromoCodeManager.form.expiryDate')} <span className=\"text-red-500\">*</span>"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.description",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 250,
+      "context": "{t('settingsPromoCodeManager.form.description')}"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.descriptionPlaceholder",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 257,
+      "context": "placeholder={t('settingsPromoCodeManager.form.descriptionPlaceholder')}"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.maxUsage",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 265,
+      "context": "{t('settingsPromoCodeManager.form.maxUsage')}"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.maxUsagePlaceholder",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 275,
+      "context": "placeholder={t('settingsPromoCodeManager.form.maxUsagePlaceholder')}"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.status",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 284,
+      "context": "{t('settingsPromoCodeManager.form.status')}"
+    },
+    {
+      "key": "settingsPromoCodeManager.status.active",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 291,
+      "context": "<option value=\"Active\">{t('settingsPromoCodeManager.status.active')}</option>"
+    },
+    {
+      "key": "settingsPromoCodeManager.status.disabled",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 292,
+      "context": "<option value=\"Disabled\">{t('settingsPromoCodeManager.status.disabled')}</option>"
+    },
+    {
+      "key": "settingsPromoCodeManager.status.expired",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 293,
+      "context": "<option value=\"Expired\">{t('settingsPromoCodeManager.status.expired')}</option>"
+    },
+    {
+      "key": "buttons.cancel",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 306,
+      "context": "{t('buttons.cancel')}"
+    },
+    {
+      "key": "settingsPromoCodeManager.addEditModal.saving",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 314,
+      "context": "? t('settingsPromoCodeManager.addEditModal.saving')"
+    },
+    {
+      "key": "settingsPromoCodeManager.addEditModal.save",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 315,
+      "context": ": t('settingsPromoCodeManager.addEditModal.save')}"
     },
     {
       "key": "common:serviceUploadModal.editTitle",
@@ -20582,548 +20990,338 @@
     {
       "key": "common:errors.genericErrorMessage",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 116,
+      "line": 92,
       "context": "setError(t('common:errors.genericErrorMessage', 'Failed to load promo codes'));"
     },
     {
       "key": "common:errors.genericErrorMessage",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 116,
+      "line": 92,
       "context": "setError(t('common:errors.genericErrorMessage', 'Failed to load promo codes'));"
-    },
-    {
-      "key": "common:errors.validationError",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 254,
-      "context": "title: t('common:errors.validationError'),"
-    },
-    {
-      "key": "common:errors.validationError",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 254,
-      "context": "title: t('common:errors.validationError'),"
-    },
-    {
-      "key": "settingsPromoCodeManager.validation.required",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 255,
-      "context": "message: t('settingsPromoCodeManager.validation.required'),"
-    },
-    {
-      "key": "common:errors.validationError",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 264,
-      "context": "title: t('common:errors.validationError'),"
-    },
-    {
-      "key": "common:errors.validationError",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 264,
-      "context": "title: t('common:errors.validationError'),"
-    },
-    {
-      "key": "common:errors.validationError",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 273,
-      "context": "title: t('common:errors.validationError'),"
-    },
-    {
-      "key": "common:errors.validationError",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 273,
-      "context": "title: t('common:errors.validationError'),"
-    },
-    {
-      "key": "common:errors.validationError",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 283,
-      "context": "title: t('common:errors.validationError'),"
-    },
-    {
-      "key": "common:errors.validationError",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 283,
-      "context": "title: t('common:errors.validationError'),"
-    },
-    {
-      "key": "common:errors.validationError",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 293,
-      "context": "title: t('common:errors.validationError'),"
-    },
-    {
-      "key": "common:errors.validationError",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 293,
-      "context": "title: t('common:errors.validationError'),"
-    },
-    {
-      "key": "common:errors.validationError",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 302,
-      "context": "title: t('common:errors.validationError'),"
-    },
-    {
-      "key": "common:errors.validationError",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 302,
-      "context": "title: t('common:errors.validationError'),"
     },
     {
       "key": "common:notifications.successTitle",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 327,
+      "line": 149,
       "context": "title: t('common:notifications.successTitle'),"
     },
     {
       "key": "common:notifications.successTitle",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 327,
+      "line": 149,
       "context": "title: t('common:notifications.successTitle'),"
     },
     {
       "key": "settingsPromoCodeManager.promoUpdated",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 328,
+      "line": 150,
       "context": "message: t('settingsPromoCodeManager.promoUpdated'),"
     },
     {
       "key": "common:notifications.successTitle",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 337,
+      "line": 159,
       "context": "title: t('common:notifications.successTitle'),"
     },
     {
       "key": "common:notifications.successTitle",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 337,
+      "line": 159,
       "context": "title: t('common:notifications.successTitle'),"
     },
     {
       "key": "settingsPromoCodeManager.promoCreated",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 338,
+      "line": 160,
       "context": "message: t('settingsPromoCodeManager.promoCreated'),"
     },
     {
-      "key": "common:errors.genericErrorMessage",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 350,
-      "context": ": t('common:errors.genericErrorMessage');"
-    },
-    {
-      "key": "common:errors.genericErrorMessage",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 350,
-      "context": ": t('common:errors.genericErrorMessage');"
-    },
-    {
       "key": "common:errors.genericErrorTitle",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 352,
+      "line": 170,
       "context": "title: t('common:errors.genericErrorTitle'),"
     },
     {
       "key": "common:errors.genericErrorTitle",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 352,
+      "line": 170,
       "context": "title: t('common:errors.genericErrorTitle'),"
+    },
+    {
+      "key": "common:errors.genericErrorMessage",
+      "file": "components/profile/PromoCodesDisplaySection.tsx",
+      "line": 171,
+      "context": "message: saveError?.message || t('common:errors.genericErrorMessage'),"
+    },
+    {
+      "key": "common:errors.genericErrorMessage",
+      "file": "components/profile/PromoCodesDisplaySection.tsx",
+      "line": 171,
+      "context": "message: saveError?.message || t('common:errors.genericErrorMessage'),"
     },
     {
       "key": "settingsPromoCodeManager.confirmDelete",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 366,
+      "line": 186,
       "context": "if (!window.confirm(t('settingsPromoCodeManager.confirmDelete'))) {"
     },
     {
       "key": "common:notifications.successTitle",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 373,
+      "line": 193,
       "context": "title: t('common:notifications.successTitle'),"
     },
     {
       "key": "common:notifications.successTitle",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 373,
+      "line": 193,
       "context": "title: t('common:notifications.successTitle'),"
     },
     {
       "key": "settingsPromoCodeManager.promoDeleted",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 374,
+      "line": 194,
       "context": "message: t('settingsPromoCodeManager.promoDeleted'),"
     },
     {
       "key": "common:errors.genericErrorTitle",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 381,
+      "line": 201,
       "context": "title: t('common:errors.genericErrorTitle'),"
     },
     {
       "key": "common:errors.genericErrorTitle",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 381,
+      "line": 201,
       "context": "title: t('common:errors.genericErrorTitle'),"
     },
     {
       "key": "common:errors.genericErrorMessage",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 382,
+      "line": 202,
       "context": "message: t('common:errors.genericErrorMessage'),"
     },
     {
       "key": "common:errors.genericErrorMessage",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 382,
+      "line": 202,
       "context": "message: t('common:errors.genericErrorMessage'),"
     },
     {
       "key": "settingsPromoCodeManager.discountTypes.percentage",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 401,
+      "line": 221,
       "context": "return t('settingsPromoCodeManager.discountTypes.percentage', { value: promo.value });"
     },
     {
       "key": "settingsPromoCodeManager.discountTypes.fixedAmount",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 403,
+      "line": 223,
       "context": "return t('settingsPromoCodeManager.discountTypes.fixedAmount', { value: promo.value });"
     },
     {
       "key": "settingsPromoCodeManager.discountTypes.freeMinutes",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 405,
+      "line": 225,
       "context": "return t('settingsPromoCodeManager.discountTypes.freeMinutes', { value: promo.value });"
     },
     {
       "key": "settingsPromoCodeManager.status.active",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 414,
+      "line": 234,
       "context": "return t('settingsPromoCodeManager.status.active');"
     },
     {
       "key": "settingsPromoCodeManager.status.disabled",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 416,
+      "line": 236,
       "context": "return t('settingsPromoCodeManager.status.disabled');"
     },
     {
       "key": "settingsPromoCodeManager.status.expired",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 418,
+      "line": 238,
       "context": "return t('settingsPromoCodeManager.status.expired');"
     },
     {
       "key": "settings:page.promoCodeManager",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 457,
+      "line": 277,
       "context": "{t('settings:page.promoCodeManager')}"
     },
     {
       "key": "settings:page.promoCodeManager",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 457,
+      "line": 277,
       "context": "{t('settings:page.promoCodeManager')}"
     },
     {
       "key": "common:loading",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 460,
+      "line": 280,
       "context": "<LoadingSpinner text={t('common:loading')} />"
     },
     {
       "key": "common:loading",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 460,
+      "line": 280,
       "context": "<LoadingSpinner text={t('common:loading')} />"
     },
     {
       "key": "settings:page.promoCodeManager",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 471,
+      "line": 291,
       "context": "{t('settings:page.promoCodeManager')}"
     },
     {
       "key": "settings:page.promoCodeManager",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 471,
+      "line": 291,
       "context": "{t('settings:page.promoCodeManager')}"
     },
     {
       "key": "common:buttons.retry",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 477,
+      "line": 297,
       "context": "{t('common:buttons.retry')}"
     },
     {
       "key": "common:buttons.retry",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 477,
+      "line": 297,
       "context": "{t('common:buttons.retry')}"
     },
     {
       "key": "settings:page.promoCodeManager",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 490,
+      "line": 310,
       "context": "{t('settings:page.promoCodeManager')}"
     },
     {
       "key": "settings:page.promoCodeManager",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 490,
+      "line": 310,
       "context": "{t('settings:page.promoCodeManager')}"
     },
     {
       "key": "settingsPromoCodeManager.noCodesYet",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 496,
+      "line": 316,
       "context": "? t('settingsPromoCodeManager.noCodesYet')"
     },
     {
       "key": "promoCodesDisplay.noActivePromoCodes",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 497,
+      "line": 317,
       "context": ": t('promoCodesDisplay.noActivePromoCodes')}"
     },
     {
       "key": "common:buttons.refresh",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 502,
+      "line": 322,
       "context": "{t('common:buttons.refresh')}"
     },
     {
       "key": "common:buttons.refresh",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 502,
+      "line": 322,
       "context": "{t('common:buttons.refresh')}"
     },
     {
       "key": "settingsPromoCodeManager.addNewCode",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 510,
+      "line": 330,
       "context": "{t('settingsPromoCodeManager.addNewCode')}"
     },
     {
       "key": "settings:page.promoCodeManager",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 525,
+      "line": 345,
       "context": "{t('settings:page.promoCodeManager')}"
     },
     {
       "key": "settings:page.promoCodeManager",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 525,
+      "line": 345,
       "context": "{t('settings:page.promoCodeManager')}"
     },
     {
       "key": "common:buttons.refresh",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 531,
+      "line": 351,
       "context": "{t('common:buttons.refresh')}"
     },
     {
       "key": "common:buttons.refresh",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 531,
+      "line": 351,
       "context": "{t('common:buttons.refresh')}"
     },
     {
       "key": "settingsPromoCodeManager.addNewCode",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 539,
+      "line": 359,
       "context": "{t('settingsPromoCodeManager.addNewCode')}"
     },
     {
       "key": "promoCodesDisplay.expiresOn",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 563,
+      "line": 383,
       "context": "{t('promoCodesDisplay.expiresOn')}: {formatDate(promo.expiryDate)}"
     },
     {
       "key": "promoCodesDisplay.usageCount",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 570,
+      "line": 390,
       "context": "{t('promoCodesDisplay.usageCount')}: {promo.usageCount}/{promo.maxUsage}"
     },
     {
       "key": "common:buttons.copied",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 584,
+      "line": 404,
       "context": "? t('common:buttons.copied')"
     },
     {
       "key": "common:buttons.copied",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 584,
+      "line": 404,
       "context": "? t('common:buttons.copied')"
     },
     {
       "key": "common:buttons.copy",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 585,
+      "line": 405,
       "context": ": t('common:buttons.copy')}"
     },
     {
       "key": "common:buttons.copy",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 585,
+      "line": 405,
       "context": ": t('common:buttons.copy')}"
     },
     {
       "key": "common:buttons.edit",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 590,
+      "line": 410,
       "context": "{t('common:buttons.edit')}"
     },
     {
       "key": "common:buttons.edit",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 590,
+      "line": 410,
       "context": "{t('common:buttons.edit')}"
     },
     {
       "key": "common:buttons.delete",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 599,
+      "line": 419,
       "context": "{t('common:buttons.delete')}"
     },
     {
       "key": "common:buttons.delete",
       "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 599,
+      "line": 419,
       "context": "{t('common:buttons.delete')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.addEditModal.editTitle",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 626,
-      "context": "? t('settingsPromoCodeManager.addEditModal.editTitle')"
-    },
-    {
-      "key": "settingsPromoCodeManager.addEditModal.addTitle",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 627,
-      "context": ": t('settingsPromoCodeManager.addEditModal.addTitle')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.code",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 637,
-      "context": "{t('settingsPromoCodeManager.form.code')} *"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.codePlaceholder",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 645,
-      "context": "placeholder={t('settingsPromoCodeManager.form.codePlaceholder')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.discountType",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 651,
-      "context": "{t('settingsPromoCodeManager.form.discountType')} *"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.percentage",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 658,
-      "context": "<option value=\"Percentage\">{t('settingsPromoCodeManager.form.percentage')}</option>"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.fixedAmount",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 659,
-      "context": "<option value=\"FixedAmount\">{t('settingsPromoCodeManager.form.fixedAmount')}</option>"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.freeMinutes",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 660,
-      "context": "<option value=\"FreeMinutes\">{t('settingsPromoCodeManager.form.freeMinutes')}</option>"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.value",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 666,
-      "context": "{t('settingsPromoCodeManager.form.value')} *"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.expiryDate",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 682,
-      "context": "{t('settingsPromoCodeManager.form.expiryDate')} *"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.description",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 694,
-      "context": "{t('settingsPromoCodeManager.form.description')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.descriptionPlaceholder",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 701,
-      "context": "placeholder={t('settingsPromoCodeManager.form.descriptionPlaceholder')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.maxUsage",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 707,
-      "context": "{t('settingsPromoCodeManager.form.maxUsage')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.maxUsagePlaceholder",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 715,
-      "context": "placeholder={t('settingsPromoCodeManager.form.maxUsagePlaceholder')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.status",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 722,
-      "context": "{t('settingsPromoCodeManager.form.status')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.status.active",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 729,
-      "context": "<option value=\"Active\">{t('settingsPromoCodeManager.status.active')}</option>"
-    },
-    {
-      "key": "settingsPromoCodeManager.status.disabled",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 730,
-      "context": "<option value=\"Disabled\">{t('settingsPromoCodeManager.status.disabled')}</option>"
-    },
-    {
-      "key": "settingsPromoCodeManager.status.expired",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 731,
-      "context": "<option value=\"Expired\">{t('settingsPromoCodeManager.status.expired')}</option>"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 739,
-      "context": "{t('common:buttons.cancel')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 739,
-      "context": "{t('common:buttons.cancel')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.addEditModal.saving",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 742,
-      "context": "{isSaving ? t('settingsPromoCodeManager.addEditModal.saving') : t('settingsPromoCodeManager.addEditModal.save')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.addEditModal.save",
-      "file": "components/profile/PromoCodesDisplaySection.tsx",
-      "line": 742,
-      "context": "{isSaving ? t('settingsPromoCodeManager.addEditModal.saving') : t('settingsPromoCodeManager.addEditModal.save')}"
     },
     {
       "key": "profile:empty.organization",
@@ -23138,115 +23336,199 @@
     {
       "key": "orderSummaryDrawer.orderSuccess",
       "file": "components/cart/OrderSummaryDrawer.tsx",
-      "line": 74,
-      "context": "alert(t('orderSummaryDrawer.orderSuccess',"
+      "line": 72,
+      "context": "t('orderSummaryDrawer.orderSuccess', {"
     },
     {
       "key": "orderSummaryDrawer.orderError",
       "file": "components/cart/OrderSummaryDrawer.tsx",
-      "line": 81,
+      "line": 82,
       "context": "setError(t('orderSummaryDrawer.orderError', 'Failed to submit order. Please try again.'));"
     },
     {
       "key": "orderSummaryDrawer.title",
       "file": "components/cart/OrderSummaryDrawer.tsx",
-      "line": 102,
+      "line": 103,
       "context": "{t(\"orderSummaryDrawer.title\")}"
     },
     {
       "key": "orderSummaryDrawer.closePanel",
       "file": "components/cart/OrderSummaryDrawer.tsx",
-      "line": 110,
+      "line": 111,
       "context": "<span className=\"sr-only\">{t(\"orderSummaryDrawer.closePanel\")}</span>"
     },
     {
       "key": "orderSummaryDrawer.emptyCart",
       "file": "components/cart/OrderSummaryDrawer.tsx",
-      "line": 125,
+      "line": 126,
       "context": "<p className=\"text-gray-500\">{t(\"orderSummaryDrawer.emptyCart\")}</p>"
     },
     {
       "key": "orderSummaryDrawer.itemsFrom",
       "file": "components/cart/OrderSummaryDrawer.tsx",
-      "line": 130,
+      "line": 131,
       "context": "<p className=\"text-sm text-gray-600 mb-2\">{t(\"orderSummaryDrawer.itemsFrom\")}: <span className=\"font-medium text-swiss-teal\">{cartSupplierInfo?.name || 'Supplier'}</span></p>"
     },
     {
       "key": "common:buttons.remove",
       "file": "components/cart/OrderSummaryDrawer.tsx",
-      "line": 163,
+      "line": 164,
       "context": "<TrashIcon className=\"h-4 w-4 mr-1\" /> {t('common:buttons.remove', 'Remove')}"
     },
     {
       "key": "common:buttons.remove",
       "file": "components/cart/OrderSummaryDrawer.tsx",
-      "line": 163,
+      "line": 164,
       "context": "<TrashIcon className=\"h-4 w-4 mr-1\" /> {t('common:buttons.remove', 'Remove')}"
+    },
+    {
+      "key": "common:promoCodes.cart.title",
+      "file": "components/cart/OrderSummaryDrawer.tsx",
+      "line": 186,
+      "context": "{t('common:promoCodes.cart.title', 'Promo code')}"
+    },
+    {
+      "key": "common:promoCodes.cart.title",
+      "file": "components/cart/OrderSummaryDrawer.tsx",
+      "line": 186,
+      "context": "{t('common:promoCodes.cart.title', 'Promo code')}"
+    },
+    {
+      "key": "common:promoCodes.cart.noneApplied",
+      "file": "components/cart/OrderSummaryDrawer.tsx",
+      "line": 194,
+      "context": "{t('common:promoCodes.cart.noneApplied', 'No promo code applied')}"
+    },
+    {
+      "key": "common:promoCodes.cart.noneApplied",
+      "file": "components/cart/OrderSummaryDrawer.tsx",
+      "line": 194,
+      "context": "{t('common:promoCodes.cart.noneApplied', 'No promo code applied')}"
+    },
+    {
+      "key": "common:promoCodes.cart.remove",
+      "file": "components/cart/OrderSummaryDrawer.tsx",
+      "line": 207,
+      "context": "{t('common:promoCodes.cart.remove', 'Remove')}"
+    },
+    {
+      "key": "common:promoCodes.cart.remove",
+      "file": "components/cart/OrderSummaryDrawer.tsx",
+      "line": 207,
+      "context": "{t('common:promoCodes.cart.remove', 'Remove')}"
+    },
+    {
+      "key": "common:promoCodes.cart.change",
+      "file": "components/cart/OrderSummaryDrawer.tsx",
+      "line": 217,
+      "context": "? t('common:promoCodes.cart.change', 'Change')"
+    },
+    {
+      "key": "common:promoCodes.cart.change",
+      "file": "components/cart/OrderSummaryDrawer.tsx",
+      "line": 217,
+      "context": "? t('common:promoCodes.cart.change', 'Change')"
+    },
+    {
+      "key": "common:promoCodes.cart.add",
+      "file": "components/cart/OrderSummaryDrawer.tsx",
+      "line": 218,
+      "context": ": t('common:promoCodes.cart.add', 'Add')}"
+    },
+    {
+      "key": "common:promoCodes.cart.add",
+      "file": "components/cart/OrderSummaryDrawer.tsx",
+      "line": 218,
+      "context": ": t('common:promoCodes.cart.add', 'Add')}"
     },
     {
       "key": "orderSummaryDrawer.specialInstructions",
       "file": "components/cart/OrderSummaryDrawer.tsx",
-      "line": 179,
+      "line": 227,
       "context": "{t(\"orderSummaryDrawer.specialInstructions\")}"
     },
     {
       "key": "marketplace:cart.notesPlaceholder",
       "file": "components/cart/OrderSummaryDrawer.tsx",
-      "line": 188,
+      "line": 236,
       "context": "placeholder={t('marketplace:cart.notesPlaceholder', t('orderSummaryDrawer.notesPlaceholder', 'e.g., Preferred delivery times, specific packaging...'))}"
     },
     {
       "key": "orderSummaryDrawer.notesPlaceholder",
       "file": "components/cart/OrderSummaryDrawer.tsx",
-      "line": 188,
+      "line": 236,
       "context": "placeholder={t('marketplace:cart.notesPlaceholder', t('orderSummaryDrawer.notesPlaceholder', 'e.g., Preferred delivery times, specific packaging...'))}"
     },
     {
       "key": "marketplace:cart.notesPlaceholder",
       "file": "components/cart/OrderSummaryDrawer.tsx",
-      "line": 188,
+      "line": 236,
       "context": "placeholder={t('marketplace:cart.notesPlaceholder', t('orderSummaryDrawer.notesPlaceholder', 'e.g., Preferred delivery times, specific packaging...'))}"
     },
     {
       "key": "orderSummaryDrawer.subtotal",
       "file": "components/cart/OrderSummaryDrawer.tsx",
-      "line": 192,
+      "line": 241,
       "context": "<p>{t(\"orderSummaryDrawer.subtotal\")}</p>"
+    },
+    {
+      "key": "common:promoCodes.cart.discount",
+      "file": "components/cart/OrderSummaryDrawer.tsx",
+      "line": 246,
+      "context": "<p>{t('common:promoCodes.cart.discount', 'Discount')}</p>"
+    },
+    {
+      "key": "common:promoCodes.cart.discount",
+      "file": "components/cart/OrderSummaryDrawer.tsx",
+      "line": 246,
+      "context": "<p>{t('common:promoCodes.cart.discount', 'Discount')}</p>"
+    },
+    {
+      "key": "common:promoCodes.cart.total",
+      "file": "components/cart/OrderSummaryDrawer.tsx",
+      "line": 251,
+      "context": "<p>{t('common:promoCodes.cart.total', 'Total')}</p>"
+    },
+    {
+      "key": "common:promoCodes.cart.total",
+      "file": "components/cart/OrderSummaryDrawer.tsx",
+      "line": 251,
+      "context": "<p>{t('common:promoCodes.cart.total', 'Total')}</p>"
     },
     {
       "key": "orderSummaryDrawer.shippingNote",
       "file": "components/cart/OrderSummaryDrawer.tsx",
-      "line": 195,
+      "line": 255,
       "context": "<p className=\"mt-0.5 text-sm text-gray-500\">{t(\"orderSummaryDrawer.shippingNote\")}</p>"
     },
     {
       "key": "orderSummaryDrawer.submitting",
       "file": "components/cart/OrderSummaryDrawer.tsx",
-      "line": 205,
+      "line": 265,
       "context": "? t('orderSummaryDrawer.submitting', 'Submitting...')"
     },
     {
       "key": "orderSummaryDrawer.submitTo",
       "file": "components/cart/OrderSummaryDrawer.tsx",
-      "line": 206,
+      "line": 266,
       "context": ": `${t('orderSummaryDrawer.submitTo', 'Submit Order to')} ${cartSupplierInfo?.name || 'Supplier'}`}"
     },
     {
       "key": "common:or",
       "file": "components/cart/OrderSummaryDrawer.tsx",
-      "line": 211,
+      "line": 271,
       "context": "{t('common:or', 'or')}{' '}"
     },
     {
       "key": "common:or",
       "file": "components/cart/OrderSummaryDrawer.tsx",
-      "line": 211,
+      "line": 271,
       "context": "{t('common:or', 'or')}{' '}"
     },
     {
       "key": "orderSummaryDrawer.continueShopping",
       "file": "components/cart/OrderSummaryDrawer.tsx",
-      "line": 217,
+      "line": 277,
       "context": "{t(\"orderSummaryDrawer.continueShopping\")} <span aria-hidden=\"true\"> &rarr;</span>"
     },
     {
@@ -24312,436 +24594,214 @@
       "context": "<Button variant=\"ghost\" size=\"xs\" className=\"text-swiss-coral\" onClick={() => handleRemoveMember(member.id)} title={t('settingsTeamPermissions.removeMemberTooltip')}>"
     },
     {
-      "key": "common:errors.genericErrorTitle",
+      "key": "errors.genericErrorTitle",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 73,
-      "context": "title: t('common:errors.genericErrorTitle'),"
+      "line": 62,
+      "context": "title: t('errors.genericErrorTitle'),"
     },
     {
-      "key": "common:errors.genericErrorTitle",
+      "key": "errors.genericErrorMessage",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 73,
-      "context": "title: t('common:errors.genericErrorTitle'),"
+      "line": 63,
+      "context": "message: t('errors.genericErrorMessage'),"
     },
     {
-      "key": "common:errors.genericErrorMessage",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 74,
-      "context": "message: t('common:errors.genericErrorMessage'),"
-    },
-    {
-      "key": "common:errors.genericErrorMessage",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 74,
-      "context": "message: t('common:errors.genericErrorMessage'),"
-    },
-    {
-      "key": "common:errors.validationError",
+      "key": "notifications.successTitle",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
       "line": 122,
-      "context": "title: t('common:errors.validationError'),"
-    },
-    {
-      "key": "common:errors.validationError",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 122,
-      "context": "title: t('common:errors.validationError'),"
-    },
-    {
-      "key": "settingsPromoCodeManager.validation.required",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 123,
-      "context": "message: t('settingsPromoCodeManager.validation.required'),"
-    },
-    {
-      "key": "common:notifications.successTitle",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 147,
-      "context": "title: t('common:notifications.successTitle'),"
-    },
-    {
-      "key": "common:notifications.successTitle",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 147,
-      "context": "title: t('common:notifications.successTitle'),"
+      "context": "title: t('notifications.successTitle'),"
     },
     {
       "key": "settingsPromoCodeManager.promoUpdated",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 148,
+      "line": 123,
       "context": "message: t('settingsPromoCodeManager.promoUpdated'),"
     },
     {
-      "key": "common:notifications.successTitle",
+      "key": "notifications.successTitle",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 157,
-      "context": "title: t('common:notifications.successTitle'),"
-    },
-    {
-      "key": "common:notifications.successTitle",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 157,
-      "context": "title: t('common:notifications.successTitle'),"
+      "line": 134,
+      "context": "title: t('notifications.successTitle'),"
     },
     {
       "key": "settingsPromoCodeManager.promoCreated",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 158,
+      "line": 135,
       "context": "message: t('settingsPromoCodeManager.promoCreated'),"
     },
     {
-      "key": "common:errors.genericErrorMessage",
+      "key": "errors.genericErrorMessage",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 170,
-      "context": ": t('common:errors.genericErrorMessage');"
+      "line": 147,
+      "context": "const errorMessage = error?.message || t('errors.genericErrorMessage');"
     },
     {
-      "key": "common:errors.genericErrorMessage",
+      "key": "errors.genericErrorTitle",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 170,
-      "context": ": t('common:errors.genericErrorMessage');"
-    },
-    {
-      "key": "common:errors.genericErrorTitle",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 172,
-      "context": "title: t('common:errors.genericErrorTitle'),"
-    },
-    {
-      "key": "common:errors.genericErrorTitle",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 172,
-      "context": "title: t('common:errors.genericErrorTitle'),"
+      "line": 150,
+      "context": "title: t('errors.genericErrorTitle'),"
     },
     {
       "key": "settingsPromoCodeManager.confirmDelete",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 182,
-      "context": "if (!window.confirm(t('settingsPromoCodeManager.confirmDelete'))) {"
+      "line": 161,
+      "context": "const confirmed = window.confirm(t('settingsPromoCodeManager.confirmDelete'));"
     },
     {
-      "key": "common:notifications.successTitle",
+      "key": "notifications.successTitle",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 189,
-      "context": "title: t('common:notifications.successTitle'),"
-    },
-    {
-      "key": "common:notifications.successTitle",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 189,
-      "context": "title: t('common:notifications.successTitle'),"
+      "line": 171,
+      "context": "title: t('notifications.successTitle'),"
     },
     {
       "key": "settingsPromoCodeManager.promoDeleted",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 190,
+      "line": 172,
       "context": "message: t('settingsPromoCodeManager.promoDeleted'),"
     },
     {
-      "key": "common:errors.genericErrorTitle",
+      "key": "errors.genericErrorTitle",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 197,
-      "context": "title: t('common:errors.genericErrorTitle'),"
+      "line": 181,
+      "context": "title: t('errors.genericErrorTitle'),"
     },
     {
-      "key": "common:errors.genericErrorTitle",
+      "key": "errors.genericErrorMessage",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 197,
-      "context": "title: t('common:errors.genericErrorTitle'),"
-    },
-    {
-      "key": "common:errors.genericErrorMessage",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 198,
-      "context": "message: t('common:errors.genericErrorMessage'),"
-    },
-    {
-      "key": "common:errors.genericErrorMessage",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 198,
-      "context": "message: t('common:errors.genericErrorMessage'),"
+      "line": 182,
+      "context": "message: t('errors.genericErrorMessage'),"
     },
     {
       "key": "settingsPromoCodeManager.discountTypes.percentage",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 207,
+      "line": 192,
       "context": "return t('settingsPromoCodeManager.discountTypes.percentage', { value: promo.value });"
     },
     {
       "key": "settingsPromoCodeManager.discountTypes.fixedAmount",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 209,
+      "line": 194,
       "context": "return t('settingsPromoCodeManager.discountTypes.fixedAmount', { value: promo.value });"
     },
     {
       "key": "settingsPromoCodeManager.discountTypes.freeMinutes",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 211,
+      "line": 196,
       "context": "return t('settingsPromoCodeManager.discountTypes.freeMinutes', { value: promo.value });"
     },
     {
       "key": "settingsPromoCodeManager.status.active",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 220,
+      "line": 206,
       "context": "return t('settingsPromoCodeManager.status.active');"
     },
     {
       "key": "settingsPromoCodeManager.status.disabled",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 222,
+      "line": 208,
       "context": "return t('settingsPromoCodeManager.status.disabled');"
     },
     {
       "key": "settingsPromoCodeManager.status.expired",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 224,
+      "line": 210,
       "context": "return t('settingsPromoCodeManager.status.expired');"
     },
     {
       "key": "settings:page.promoCodeManager",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 232,
+      "line": 233,
       "context": "<SettingsSectionWrapper title={t('settings:page.promoCodeManager')} icon={TagIcon}>"
     },
     {
       "key": "settings:page.promoCodeManager",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 232,
-      "context": "<SettingsSectionWrapper title={t('settings:page.promoCodeManager')} icon={TagIcon}>"
-    },
-    {
-      "key": "common:loading",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
       "line": 233,
-      "context": "<LoadingSpinner text={t('common:loading')} />"
+      "context": "<SettingsSectionWrapper title={t('settings:page.promoCodeManager')} icon={TagIcon}>"
     },
     {
-      "key": "common:loading",
+      "key": "loading",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 233,
-      "context": "<LoadingSpinner text={t('common:loading')} />"
+      "line": 234,
+      "context": "<LoadingSpinner text={t('loading')} />"
     },
     {
       "key": "settings:page.promoCodeManager",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 239,
+      "line": 240,
       "context": "<SettingsSectionWrapper title={t('settings:page.promoCodeManager')} icon={TagIcon}>"
     },
     {
       "key": "settings:page.promoCodeManager",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 239,
+      "line": 240,
       "context": "<SettingsSectionWrapper title={t('settings:page.promoCodeManager')} icon={TagIcon}>"
     },
     {
-      "key": "common:buttons.refresh",
+      "key": "buttons.refresh",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 242,
-      "context": "{t('common:buttons.refresh')}"
-    },
-    {
-      "key": "common:buttons.refresh",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 242,
-      "context": "{t('common:buttons.refresh')}"
+      "line": 249,
+      "context": "{t('buttons.refresh')}"
     },
     {
       "key": "settingsPromoCodeManager.addNewCode",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 245,
+      "line": 256,
       "context": "{t('settingsPromoCodeManager.addNewCode')}"
     },
     {
       "key": "settingsPromoCodeManager.noCodesYet",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 250,
-      "context": "<p className=\"text-gray-500 text-center py-4\">{t('settingsPromoCodeManager.noCodesYet')}</p>"
+      "line": 264,
+      "context": "<p className=\"text-gray-500\">{t('settingsPromoCodeManager.noCodesYet')}</p>"
+    },
+    {
+      "key": "settingsPromoCodeManager.addNewCode",
+      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
+      "line": 272,
+      "context": "{t('settingsPromoCodeManager.addNewCode')}"
     },
     {
       "key": "settingsPromoCodeManager.table.code",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 256,
-      "context": "<th className=\"px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">{t('settingsPromoCodeManager.table.code')}</th>"
+      "line": 282,
+      "context": "{t('settingsPromoCodeManager.table.code')}"
     },
     {
       "key": "settingsPromoCodeManager.table.discountOffer",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 257,
-      "context": "<th className=\"px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">{t('settingsPromoCodeManager.table.discountOffer')}</th>"
+      "line": 285,
+      "context": "{t('settingsPromoCodeManager.table.discountOffer')}"
     },
     {
       "key": "settingsPromoCodeManager.table.expiry",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 258,
-      "context": "<th className=\"px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">{t('settingsPromoCodeManager.table.expiry')}</th>"
+      "line": 288,
+      "context": "{t('settingsPromoCodeManager.table.expiry')}"
     },
     {
       "key": "settingsPromoCodeManager.table.status",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 259,
-      "context": "<th className=\"px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">{t('settingsPromoCodeManager.table.status')}</th>"
+      "line": 291,
+      "context": "{t('settingsPromoCodeManager.table.status')}"
     },
     {
       "key": "settingsPromoCodeManager.table.actions",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 260,
-      "context": "<th className=\"px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">{t('settingsPromoCodeManager.table.actions')}</th>"
+      "line": 294,
+      "context": "{t('settingsPromoCodeManager.table.actions')}"
     },
     {
-      "key": "common:buttons.edit",
+      "key": "buttons.edit",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 283,
-      "context": "<PencilSquareIcon className=\"w-4 h-4\"/> {t('common:buttons.edit')}"
+      "line": 331,
+      "context": "{t('buttons.edit')}"
     },
     {
-      "key": "common:buttons.edit",
+      "key": "buttons.delete",
       "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 283,
-      "context": "<PencilSquareIcon className=\"w-4 h-4\"/> {t('common:buttons.edit')}"
-    },
-    {
-      "key": "common:buttons.delete",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 286,
-      "context": "<TrashIcon className=\"w-4 h-4\"/> {t('common:buttons.delete')}"
-    },
-    {
-      "key": "common:buttons.delete",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 286,
-      "context": "<TrashIcon className=\"w-4 h-4\"/> {t('common:buttons.delete')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.addEditModal.editTitle",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 303,
-      "context": "? t('settingsPromoCodeManager.addEditModal.editTitle')"
-    },
-    {
-      "key": "settingsPromoCodeManager.addEditModal.addTitle",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 304,
-      "context": ": t('settingsPromoCodeManager.addEditModal.addTitle')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.code",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 314,
-      "context": "{t('settingsPromoCodeManager.form.code')} *"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.codePlaceholder",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 321,
-      "context": "placeholder={t('settingsPromoCodeManager.form.codePlaceholder')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.discountType",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 327,
-      "context": "{t('settingsPromoCodeManager.form.discountType')} *"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.percentage",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 334,
-      "context": "<option value=\"Percentage\">{t('settingsPromoCodeManager.form.percentage')}</option>"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.fixedAmount",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 335,
-      "context": "<option value=\"FixedAmount\">{t('settingsPromoCodeManager.form.fixedAmount')}</option>"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.freeMinutes",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 336,
-      "context": "<option value=\"FreeMinutes\">{t('settingsPromoCodeManager.form.freeMinutes')}</option>"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.value",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 342,
-      "context": "{t('settingsPromoCodeManager.form.value')} *"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.expiryDate",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 355,
-      "context": "{t('settingsPromoCodeManager.form.expiryDate')} *"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.description",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 367,
-      "context": "{t('settingsPromoCodeManager.form.description')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.descriptionPlaceholder",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 374,
-      "context": "placeholder={t('settingsPromoCodeManager.form.descriptionPlaceholder')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.maxUsage",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 380,
-      "context": "{t('settingsPromoCodeManager.form.maxUsage')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.maxUsagePlaceholder",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 388,
-      "context": "placeholder={t('settingsPromoCodeManager.form.maxUsagePlaceholder')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.status",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 395,
-      "context": "{t('settingsPromoCodeManager.form.status')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.status.active",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 402,
-      "context": "<option value=\"Active\">{t('settingsPromoCodeManager.status.active')}</option>"
-    },
-    {
-      "key": "settingsPromoCodeManager.status.disabled",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 403,
-      "context": "<option value=\"Disabled\">{t('settingsPromoCodeManager.status.disabled')}</option>"
-    },
-    {
-      "key": "settingsPromoCodeManager.status.expired",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 404,
-      "context": "<option value=\"Expired\">{t('settingsPromoCodeManager.status.expired')}</option>"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 412,
-      "context": "{t('common:buttons.cancel')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 412,
-      "context": "{t('common:buttons.cancel')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.addEditModal.saving",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 415,
-      "context": "{isSaving ? t('settingsPromoCodeManager.addEditModal.saving') : t('settingsPromoCodeManager.addEditModal.save')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.addEditModal.save",
-      "file": "components/settings/sections/PromoCodeManagerSettings.tsx",
-      "line": 415,
-      "context": "{isSaving ? t('settingsPromoCodeManager.addEditModal.saving') : t('settingsPromoCodeManager.addEditModal.save')}"
+      "line": 340,
+      "context": "{t('buttons.delete')}"
     },
     {
       "key": "settings:profileDocuments.unknownSize",
