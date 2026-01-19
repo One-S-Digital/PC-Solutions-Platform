@@ -12,7 +12,7 @@
     "postinstall": "prisma generate",
     "prebuild": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
     "copy:locales": "node scripts/copy-locales.mjs",
-    "build": "nest build && pnpm run copy:locales",
+    "build": "node scripts/prebuild-complete-db-setup.mjs && nest build && pnpm run copy:locales",
     "build:render": "SKIP_SEED=true ./scripts/render-build-with-recovery.sh && node ./scripts/seed-once.js && pnpm run build",
     "build:render:legacy": "SKIP_SEED=true ./scripts/render-build.sh && node ./scripts/seed-once.js && pnpm run build",
     "build:render:optimized": "SKIP_SEED=true ./scripts/render-build-optimized.sh && node ./scripts/seed-once.js && pnpm run build",
