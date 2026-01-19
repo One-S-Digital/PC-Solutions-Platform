@@ -122,8 +122,10 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
     async (formData: PromoCodeFormData) => {
       setIsSaving(true);
       try {
+        // Manual promo codes may omit expiry; default to far-future.
+        const rawExpiry = formData.expiryDate?.trim() ? formData.expiryDate : '2099-12-31';
         // Create UTC end-of-day timestamp to avoid timezone issues
-        const [year, month, day] = formData.expiryDate.split('-').map(Number);
+        const [year, month, day] = rawExpiry.split('-').map(Number);
         const expiryDateUtc = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
 
         const payload = {
@@ -255,6 +257,12 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
     }).format(date);
   }, [i18n.language]);
 
+  const isNoExpiry = useCallback((dateString: string) => {
+    const d = new Date(dateString);
+    // Treat far-future defaults as "no expiry" for manual promo codes.
+    return Number.isFinite(d.getTime()) && d.getUTCFullYear() >= 2099;
+  }, []);
+
   const getStatusBadgeClasses = useCallback((status: string) => {
     switch (status) {
       case 'Active':
@@ -384,9 +392,11 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
               </div>
               <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600">
                 <span className="font-medium text-swiss-mint">{getDiscountText(promo)}</span>
-                <span>
-                  {t('promoCodesDisplay.expiresOn')}: {formatDate(promo.expiryDate)}
-                </span>
+                {!isNoExpiry(promo.expiryDate) ? (
+                  <span>
+                    {t('promoCodesDisplay.expiresOn')}: {formatDate(promo.expiryDate)}
+                  </span>
+                ) : null}
                 {promo.description && (
                   <span className="text-gray-500">{promo.description}</span>
                 )}

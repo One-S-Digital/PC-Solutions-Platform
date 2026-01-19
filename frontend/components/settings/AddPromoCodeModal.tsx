@@ -40,7 +40,8 @@ const initialFormData: PromoCodeFormData = {
   code: '',
   discountType: 'Percentage',
   value: 0,
-  expiryDate: '',
+  // Manual promo codes: default to far-future (treated as "no expiry")
+  expiryDate: '2099-12-31',
   description: '',
   maxUsage: '',
   status: 'Active',
@@ -86,17 +87,6 @@ const AddPromoCodeModal: React.FC<AddPromoCodeModalProps> = ({
       newErrors.code = t('forms.required');
     } else if (formData.code.trim().length < 3) {
       newErrors.code = t('settingsPromoCodeManager.validation.codeMinLength');
-    }
-
-    if (!formData.expiryDate) {
-      newErrors.expiryDate = t('forms.required');
-    } else {
-      const expiryDate = new Date(formData.expiryDate);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      if (expiryDate < today && !editingPromo) {
-        newErrors.expiryDate = t('settingsPromoCodeManager.validation.expiryFuture');
-      }
     }
 
     if (formData.value <= 0) {
@@ -225,23 +215,6 @@ const AddPromoCodeModal: React.FC<AddPromoCodeModalProps> = ({
               }`}
             />
             {errors.value && <p className="mt-1 text-sm text-red-500">{errors.value}</p>}
-          </div>
-
-          {/* Expiry Date */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('settingsPromoCodeManager.form.expiryDate')} <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="date"
-              value={formData.expiryDate}
-              onChange={(e) => handleInputChange('expiryDate', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-swiss-mint ${
-                errors.expiryDate ? 'border-red-500' : 'border-gray-300'
-              }`}
-              min={!editingPromo ? new Date().toISOString().split('T')[0] : undefined}
-            />
-            {errors.expiryDate && <p className="mt-1 text-sm text-red-500">{errors.expiryDate}</p>}
           </div>
 
           {/* Description */}

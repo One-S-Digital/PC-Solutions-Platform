@@ -32,9 +32,14 @@ export class CreatePromoCodeDto {
   @Min(0)
   value: number;
 
-  @ApiProperty({ description: 'Expiry date in ISO format', example: '2025-12-31T23:59:59.000Z' })
+  @ApiPropertyOptional({
+    description:
+      'Expiry date in ISO format. Optional for manual promo codes; if omitted, the backend will set a far-future expiry.',
+    example: '2025-12-31T23:59:59.000Z',
+  })
   @IsDateString()
-  expiryDate: string;
+  @IsOptional()
+  expiryDate?: string;
 
   @ApiPropertyOptional({ description: 'Description of the promo code', example: 'First-time customer discount' })
   @IsString()
