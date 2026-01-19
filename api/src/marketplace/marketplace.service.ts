@@ -431,14 +431,25 @@ export class MarketplaceService {
   async createOrder(createOrderDto: CreateOrderDto, organizationId: string) {
     const { items, promoCode, ...orderData } = createOrderDto;
 
+    const requestedProductIds = items.map((item) => item.productId);
+    const uniqueRequestedProductIds = Array.from(new Set(requestedProductIds));
+
     const products = await this.prisma.product.findMany({
       where: {
-        id: { in: items.map((item) => item.productId) },
+        id: { in: uniqueRequestedProductIds },
       },
     });
 
     if (products.length === 0) {
       throw new BadRequestException('No valid products found for this order');
+    }
+
+    const foundIds = new Set(products.map((p) => p.id));
+    const missingIds = uniqueRequestedProductIds.filter((id) => !foundIds.has(id));
+    if (missingIds.length > 0) {
+      const preview = missingIds.slice(0, 5);
+      const suffix = missingIds.length > preview.length ? ` (+${missingIds.length - preview.length} more)` : '';
+      throw new BadRequestException(`Products not found: ${preview.join(', ')}${suffix}`);
     }
 
     // Ensure all items are from the same supplier (frontend enforces this, but we validate server-side).

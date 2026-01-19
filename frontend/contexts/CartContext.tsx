@@ -38,17 +38,39 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // Load cart from localStorage on initial render
   useEffect(() => {
-    const storedCartItems = localStorage.getItem('cartItems');
-    const storedSupplierInfo = localStorage.getItem('cartSupplierInfo');
-    const storedPromo = localStorage.getItem('cartPromoCode');
-    if (storedCartItems) {
-      setCartItems(JSON.parse(storedCartItems));
+    const safeParse = <T,>(key: string): T | null => {
+      const value = localStorage.getItem(key);
+      if (!value) return null;
+      try {
+        return JSON.parse(value) as T;
+      } catch (err) {
+        console.error(`Failed to parse ${key} from localStorage:`, err);
+        localStorage.removeItem(key);
+        return null;
+      }
+    };
+
+    const parsedItems = safeParse<CartItem[]>('cartItems');
+    if (Array.isArray(parsedItems)) {
+      setCartItems(parsedItems);
     }
-    if (storedSupplierInfo) {
-      setCartSupplierInfo(JSON.parse(storedSupplierInfo));
+
+    const parsedSupplier = safeParse<{ id: string; name: string }>('cartSupplierInfo');
+    if (parsedSupplier && typeof parsedSupplier.id === 'string' && typeof parsedSupplier.name === 'string') {
+      setCartSupplierInfo(parsedSupplier);
     }
-    if (storedPromo) {
-      setAppliedPromoCode(JSON.parse(storedPromo));
+
+    const parsedPromo = safeParse<AppliedPromoCode>('cartPromoCode');
+    if (
+      parsedPromo &&
+      typeof parsedPromo.supplierId === 'string' &&
+      typeof parsedPromo.code === 'string' &&
+      (parsedPromo.discountType === 'Percentage' ||
+        parsedPromo.discountType === 'FixedAmount' ||
+        parsedPromo.discountType === 'FreeMinutes') &&
+      typeof parsedPromo.value === 'number'
+    ) {
+      setAppliedPromoCode(parsedPromo);
     }
   }, []);
 
