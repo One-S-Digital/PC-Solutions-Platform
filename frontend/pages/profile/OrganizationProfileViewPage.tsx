@@ -6,6 +6,7 @@ import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import LoadingSpinner from '../../components/shared/LoadingSpinner';
 import OrganizationPublicProfile from '../../components/profile/OrganizationPublicProfile';
+import PromoCodesDisplaySection from '../../components/profile/PromoCodesDisplaySection';
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
 import { Organization, UserRole } from '../../types';
 import { useAppContext } from '../../contexts/AppContext';
@@ -234,6 +235,11 @@ const OrganizationProfileViewPage: React.FC = () => {
           </Card>
         )}
       </div>
+
+      {/* Promo Codes (display-only for foundations/visitors) */}
+      {(organization.type === 'PRODUCT_SUPPLIER' || organization.type === 'SERVICE_PROVIDER') && id ? (
+        <PromoCodesDisplaySection organizationId={id} isOwnProfile={false} />
+      ) : null}
     </div>
   );
 };

@@ -320,7 +320,7 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
         <div className="flex items-center gap-2 mb-4">
           <TagIcon className="h-5 w-5 text-swiss-mint" />
           <h3 className="text-lg font-semibold text-swiss-charcoal">
-            {t('settings:page.promoCodeManager')}
+            {isOwnProfile ? t('settings:page.promoCodeManager') : t('promoCodes.cart.title', 'Promo code')}
           </h3>
         </div>
         <div className="text-center py-4 space-y-3">
@@ -355,7 +355,7 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
         <div className="flex items-center gap-2">
           <TagIcon className="h-5 w-5 text-swiss-mint" />
           <h3 className="text-lg font-semibold text-swiss-charcoal">
-            {t('settings:page.promoCodeManager')}
+            {isOwnProfile ? t('settings:page.promoCodeManager') : t('promoCodes.cart.title', 'Promo code')}
           </h3>
         </div>
         {isOwnProfile && (
