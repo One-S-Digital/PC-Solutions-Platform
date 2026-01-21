@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { SettingsFormData, UserRole } from '../../../types';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
 import Button from '../../ui/Button';
-import { TagIcon, PlusCircleIcon, PencilSquareIcon, TrashIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
+import { TagIcon, PlusCircleIcon, PencilSquareIcon, TrashIcon, ArrowPathIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { useAuthenticatedApi } from '../../../hooks/useAuthenticatedApi';
 import { useNotifications } from '../../../contexts/NotificationContext';
@@ -33,7 +33,7 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({
   onChange, 
   userRole 
 }) => {
-  const { t, i18n } = useTranslation(['common', 'settings']);
+  const { t } = useTranslation(['common', 'settings']);
   const { request } = useAuthenticatedApi();
   const { addNotification } = useNotifications();
   
@@ -97,20 +97,11 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({
     setIsSaving(true);
     
     try {
-      // Manual promo codes may omit expiry; default to far-future.
-      const rawExpiry = formData.expiryDate?.trim() ? formData.expiryDate : '2099-12-31';
-      // Create UTC end-of-day timestamp to avoid timezone issues
-      const [year, month, day] = rawExpiry.split('-').map(Number);
-      const expiryDateUtc = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
-      
       const payload = {
         code: formData.code.toUpperCase().trim(),
-        discountType: formData.discountType,
-        value: Number(formData.value),
-        expiryDate: expiryDateUtc.toISOString(),
         description: formData.description.trim() || null,
-        maxUsage: formData.maxUsage ? parseInt(formData.maxUsage, 10) : undefined,
-        ...(editingPromo && { status: formData.status }),
+        discount: formData.discount.trim(),
+        isActive: formData.isActive,
       };
 
       if (editingPromo) {
@@ -196,48 +187,6 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({
     }
   }, [t, request, addNotification, loadPromoCodes]);
 
-  // Format discount display text
-  const getDiscountText = useCallback((promo: PromoCodeData) => {
-    switch (promo.discountType) {
-      case 'Percentage':
-        return t('settingsPromoCodeManager.discountTypes.percentage', { value: promo.value });
-      case 'FixedAmount':
-        return t('settingsPromoCodeManager.discountTypes.fixedAmount', { value: promo.value });
-      case 'FreeMinutes':
-        return t('settingsPromoCodeManager.discountTypes.freeMinutes', { value: promo.value });
-      default:
-        return promo.description || `${promo.value}`;
-    }
-  }, [t]);
-
-  // Get status label
-  const getStatusLabel = useCallback((status: PromoCodeData['status']) => {
-    switch (status) {
-      case 'Active':
-        return t('settingsPromoCodeManager.status.active');
-      case 'Disabled':
-        return t('settingsPromoCodeManager.status.disabled');
-      case 'Expired':
-        return t('settingsPromoCodeManager.status.expired');
-      default:
-        return status;
-    }
-  }, [t]);
-
-  // Get status badge styles
-  const getStatusBadgeClass = useCallback((status: PromoCodeData['status']) => {
-    switch (status) {
-      case 'Active':
-        return 'bg-green-100 text-green-700';
-      case 'Expired':
-        return 'bg-red-100 text-red-700';
-      case 'Disabled':
-        return 'bg-gray-100 text-gray-700';
-      default:
-        return 'bg-gray-100 text-gray-700';
-    }
-  }, []);
-
   // Loading state
   if (isLoading) {
     return (
@@ -249,6 +198,11 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({
 
   return (
     <SettingsSectionWrapper title={t('settings:page.promoCodeManager')} icon={TagIcon}>
+      {/* Description */}
+      <p className="text-sm text-gray-600 mb-4">
+        {t('settingsPromoCodeManager.description', 'Create promo codes to display on your public profile. Customers can see these codes and use them when making purchases.')}
+      </p>
+
       {/* Action buttons */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
         <Button 
@@ -293,10 +247,7 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({
                   {t('settingsPromoCodeManager.table.code')}
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {t('settingsPromoCodeManager.table.discountOffer')}
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {t('settingsPromoCodeManager.table.expiry')}
+                  {t('settingsPromoCodeManager.table.discount', 'Discount')}
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   {t('settingsPromoCodeManager.table.status')}
@@ -314,25 +265,31 @@ const PromoCodeManagerSettings: React.FC<PromoCodeManagerSettingsProps> = ({
                       {promo.code}
                     </span>
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
-                    {getDiscountText(promo)}
+                  <td className="px-4 py-3">
+                    <div className="text-sm text-gray-900 font-medium">{promo.discount}</div>
                     {promo.description && (
-                      <span className="block text-xs text-gray-400 mt-0.5">
+                      <div className="text-xs text-gray-500 mt-0.5 max-w-xs truncate">
                         {promo.description}
-                      </span>
+                      </div>
                     )}
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
-                    {(() => {
-                      const d = new Date(promo.expiryDate);
-                      const isNoExpiry = Number.isFinite(d.getTime()) && d.getUTCFullYear() >= 2099;
-                      if (isNoExpiry) return '—';
-                      return d.toLocaleDateString(i18n.language);
-                    })()}
-                  </td>
                   <td className="px-4 py-3 whitespace-nowrap">
-                    <span className={`px-2 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClass(promo.status)}`}>
-                      {getStatusLabel(promo.status)}
+                    <span className={`px-2 py-0.5 inline-flex items-center gap-1 text-xs leading-5 font-semibold rounded-full ${
+                      promo.isActive 
+                        ? 'bg-green-100 text-green-700' 
+                        : 'bg-gray-100 text-gray-700'
+                    }`}>
+                      {promo.isActive ? (
+                        <>
+                          <EyeIcon className="w-3 h-3" />
+                          {t('settingsPromoCodeManager.status.active')}
+                        </>
+                      ) : (
+                        <>
+                          <EyeSlashIcon className="w-3 h-3" />
+                          {t('settingsPromoCodeManager.status.hidden', 'Hidden')}
+                        </>
+                      )}
                     </span>
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm font-medium">

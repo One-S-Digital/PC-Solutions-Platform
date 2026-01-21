@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Organization, Product, Service, UserRole, StockStatus, ServiceRequest, ServiceRequestStatus, OrganizationType } from '../../types';
 import { useAppContext } from '../../contexts/AppContext';
@@ -9,10 +9,8 @@ import ServiceRequestModal from '../../components/marketplace/ServiceRequestModa
 import QuantityInput from '../../components/ui/QuantityInput';
 import { 
   ArrowLeftIcon, 
-  BuildingStorefrontIcon, 
   CogIcon, 
   ShoppingCartIcon, 
-  TagIcon, 
   StarIcon, 
   PhoneIcon, 
   EnvelopeIcon, 
@@ -29,10 +27,10 @@ import { useTranslation } from 'react-i18next';
 import { useOrganizationMessaging } from '../../hooks/useOrganizationMessaging';
 import ActiveClientToggle from '../../components/shared/ActiveClientToggle';
 import OrganizationDocumentsList from '../../components/profile/OrganizationDocumentsList';
+import PromoCodesDisplaySection from '../../components/profile/PromoCodesDisplaySection';
 import { formatServiceCategory, formatServiceDeliveryType, formatCategory } from '../../utils/serviceFormatting';
 import { openExternalUrl, toExternalUrl } from '../../utils/url';
 import { organizationService } from '../../services/organizationService';
-import ApplyPromoCodeModal from '../../components/shared/ApplyPromoCodeModal';
 
 interface ProductItemProps {
   product: Product;
@@ -145,7 +143,6 @@ const PartnerDetailPage: React.FC = () => {
   const [selectedServiceForRequest, setSelectedServiceForRequest] = useState<Service | null>(null);
   
   const [serviceRequests, setServiceRequests] = useState<ServiceRequest[]>([]);
-  const [isPromoModalOpen, setIsPromoModalOpen] = useState(false);
 
   // Fetch partner data from API
   const fetchPartnerData = useCallback(async () => {
@@ -183,10 +180,6 @@ const PartnerDetailPage: React.FC = () => {
   
   const isSupplier = partner?.type === OrganizationType.PRODUCT_SUPPLIER;
   const isServiceProvider = partner?.type === OrganizationType.SERVICE_PROVIDER;
-  const appliedPromoForPartner =
-    cart.appliedPromoCode && cart.appliedPromoCode.supplierId === partner?.id
-      ? cart.appliedPromoCode
-      : null;
 
   const handleSendMessage = async () => {
     if (!partner || !currentUser) return;
@@ -417,6 +410,11 @@ const PartnerDetailPage: React.FC = () => {
               <p className="text-sm text-gray-600 whitespace-pre-line">{partner.description}</p>
             </Card>
           )}
+
+          {/* Promo Codes Section - Display available promo codes */}
+          {(isSupplier || isServiceProvider) && (
+            <PromoCodesDisplaySection organizationId={partner.id} isOwnProfile={false} />
+          )}
           
           <Card className="p-6">
             <h2 className="text-xl font-semibold text-swiss-charcoal mb-3">
@@ -521,48 +519,6 @@ const PartnerDetailPage: React.FC = () => {
                 </div>
               )
             )}
-            
-            {isFoundationUser && (isSupplier || isServiceProvider) && (products.length > 0 || services.length > 0) && (
-              <Card className="mt-6 p-4 bg-gray-50">
-                <h3 className="text-md font-semibold text-swiss-charcoal mb-2 flex items-center gap-2">
-                  <TagIcon className="w-5 h-5 text-swiss-mint" />
-                  {t('partnerDetailPage.promoCodeTitle')}
-                </h3>
-
-                <div className="flex items-center justify-between gap-3">
-                  <div className="text-sm text-gray-600">
-                    {appliedPromoForPartner ? (
-                      <span className="font-mono font-semibold text-swiss-charcoal">
-                        {appliedPromoForPartner.code}
-                      </span>
-                    ) : (
-                      <span>{t('common:promoCodes.cart.noneApplied', 'No promo code applied')}</span>
-                    )}
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    {appliedPromoForPartner ? (
-                      <Button
-                        variant="light"
-                        size="sm"
-                        onClick={() => cart.clearPromoCode()}
-                      >
-                        {t('common:promoCodes.cart.remove', 'Remove')}
-                      </Button>
-                    ) : null}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setIsPromoModalOpen(true)}
-                    >
-                      {appliedPromoForPartner
-                        ? t('common:promoCodes.cart.change', 'Change')
-                        : t('partnerDetailPage.applyPromoButton')}
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-            )}
           </Card>
 
           {/* Documents Section - For Suppliers and Service Providers */}
@@ -578,31 +534,6 @@ const PartnerDetailPage: React.FC = () => {
         service={selectedServiceForRequest}
         onSubmitRequest={handleSubmitServiceRequest}
       />
-
-      {partner && (
-        <ApplyPromoCodeModal
-          isOpen={isPromoModalOpen}
-          onClose={() => setIsPromoModalOpen(false)}
-          organizationId={partner.id}
-          organizationName={partner.name}
-          initialCode={appliedPromoForPartner?.code}
-          showRemove={Boolean(appliedPromoForPartner)}
-          onRemove={() => {
-            cart.clearPromoCode();
-            setIsPromoModalOpen(false);
-          }}
-          onApply={(promo) =>
-            cart.applyPromoCode({
-              supplierId: partner.id,
-              supplierName: partner.name,
-              code: promo.code,
-              discountType: promo.discountType,
-              value: promo.value,
-              description: promo.description,
-            })
-          }
-        />
-      )}
     </div>
   );
 };

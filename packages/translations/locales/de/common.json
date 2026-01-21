@@ -2000,55 +2000,42 @@
     },
     "addNewCode": "Neuen Code hinzufügen",
     "confirmDelete": "Möchten Sie diesen Promo-Code wirklich löschen?",
+    "description": "Erstellen Sie Promo-Codes zur Anzeige auf Ihrem öffentlichen Profil.",
     "noCodesYet": "Noch keine Promo-Codes. Fügen Sie Ihren ersten hinzu!",
     "promoCreated": "Promo-Code erfolgreich erstellt",
     "promoUpdated": "Promo-Code erfolgreich aktualisiert",
     "promoDeleted": "Promo-Code erfolgreich gelöscht",
     "validation": {
-      "required": "Code und Ablaufdatum sind erforderlich",
-      "codeMinLength": "Der Code muss mindestens 3 Zeichen lang sein",
-      "expiryFuture": "Das Ablaufdatum muss in der Zukunft liegen",
-      "valuePositive": "Der Wert muss größer als Null sein",
-      "percentageMax": "Der Prozentsatz darf 100% nicht überschreiten",
-      "maxUsageMin": "Die maximale Nutzung muss mindestens 1 betragen"
+      "required": "Code und Rabatt sind erforderlich",
+      "codeMinLength": "Der Code muss mindestens 2 Zeichen lang sein"
     },
     "form": {
-      "code": "Code",
-      "codePlaceholder": "z. B. SAVE20",
-      "discountType": "Rabattart",
-      "percentage": "Prozentual",
-      "fixedAmount": "Fester Betrag (CHF)",
-      "freeMinutes": "Gratis-Minuten",
-      "value": "Wert",
-      "expiryDate": "Ablaufdatum",
+      "code": "Promo-Code",
+      "codePlaceholder": "z. B. SAVE20, VERSANDFREI",
+      "codeHelpText": "Der Code den Kunden verwenden werden",
+      "discount": "Rabatt",
+      "discountPlaceholder": "z. B. 20% Rabatt, Gratis Versand, CHF 10 Rabatt",
+      "discountHelpText": "Beschreiben Sie den Rabatt für Kunden",
       "description": "Beschreibung (optional)",
-      "descriptionPlaceholder": "z. B. Rabatt für Neukunden",
-      "maxUsage": "Max. Nutzung (optional)",
-      "maxUsagePlaceholder": "Leer lassen für unbegrenzt",
-      "status": "Status"
+      "descriptionPlaceholder": "z. B. Nur für Neukunden gültig",
+      "descriptionHelpText": "Optionale Details zu Bedingungen",
+      "isActive": "Auf Profil anzeigen"
     },
     "status": {
-      "active": "Aktiv",
-      "disabled": "Deaktiviert",
-      "expired": "Abgelaufen"
-    },
-    "discountTypes": {
-      "percentage": "{{value}}% Rabatt",
-      "fixedAmount": "CHF {{value}} Rabatt",
-      "freeMinutes": "{{value}} Gratis-Minuten"
+      "active": "Sichtbar",
+      "hidden": "Verborgen"
     },
     "table": {
       "actions": "Aktionen",
       "code": "Code",
-      "discountOffer": "Rabatt",
-      "expiry": "Ablauf",
+      "discount": "Rabatt",
       "status": "Status"
     }
   },
   "promoCodesDisplay": {
-    "noActivePromoCodes": "Keine aktiven Promo-Codes verfügbar.",
-    "expiresOn": "Gültig bis",
-    "usageCount": "Verwendet"
+    "title": "Promo-Codes",
+    "subtitle": "Verwenden Sie diese Codes bei Ihrem Einkauf für Rabatte.",
+    "noActivePromoCodes": "Keine aktiven Promo-Codes verfügbar."
   },
   "settingsTeamPermissions": {
     "confirmRemoveMember": "Mitglied entfernen bestätigen",
