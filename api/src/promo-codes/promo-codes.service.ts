@@ -5,7 +5,7 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { UserRole, OrganizationType, PromoCode } from '@prisma/client';
+import { UserRole, OrganizationType, PromoCode, Prisma } from '@prisma/client';
 import {
   CreatePromoCodeDto,
   UpdatePromoCodeDto,
@@ -269,5 +269,103 @@ export class PromoCodesService {
     });
 
     return promoCodes.map(code => this.mapToResponse(code));
+  }
+
+  /**
+   * Redeem a promo code - validates and returns discount info for order processing.
+   * Since promo codes are now display-only (free text discount descriptions),
+   * this method parses the discount text to extract type and value when possible.
+   * 
+   * @param code - The promo code string
+   * @param organizationId - The supplier/organization ID the code belongs to
+   * @param tx - Optional Prisma transaction client
+   * @returns Promo code with parsed discount info, or null if invalid/not found
+   */
+  async redeemPromoCode(
+    code: string,
+    organizationId: string,
+    tx?: Prisma.TransactionClient,
+  ): Promise<{ id: string; code: string; discountType: string; value: number } | null> {
+    const prismaClient = tx || this.prisma;
+
+    const promoCode = await prismaClient.promoCode.findFirst({
+      where: {
+        code: code.toUpperCase(),
+        organizationId,
+        isActive: true,
+      },
+    });
+
+    if (!promoCode) {
+      this.logger.warn(
+        `Promo code "${code}" not found or inactive for organization ${organizationId}`,
+      );
+      return null;
+    }
+
+    // Parse the free-text discount field to extract type and value
+    // Examples: "20% off" -> Percentage/20, "CHF 10 off" -> FixedAmount/10
+    const parsed = this.parseDiscountText(promoCode.discount);
+
+    this.logger.log(
+      `Promo code ${promoCode.code} redeemed for organization ${organizationId} - ` +
+      `parsed as ${parsed.discountType}/${parsed.value}`,
+    );
+
+    return {
+      id: promoCode.id,
+      code: promoCode.code,
+      discountType: parsed.discountType,
+      value: parsed.value,
+    };
+  }
+
+  /**
+   * Parse free-text discount description into structured type and value.
+   * Handles formats like:
+   * - "20% off" -> { discountType: 'Percentage', value: 20 }
+   * - "CHF 10 off" -> { discountType: 'FixedAmount', value: 10 }
+   * - "10 free minutes" -> { discountType: 'FreeMinutes', value: 10 }
+   * - Other formats -> { discountType: 'Other', value: 0 } (no auto discount)
+   */
+  private parseDiscountText(discount: string): { discountType: string; value: number } {
+    if (!discount) {
+      return { discountType: 'Other', value: 0 };
+    }
+
+    const normalizedDiscount = discount.toLowerCase().trim();
+
+    // Match percentage: "20% off", "20%", "20 percent", "20 per cent"
+    const percentMatch = normalizedDiscount.match(/^(\d+(?:\.\d+)?)\s*(?:%|percent|per\s*cent)/);
+    if (percentMatch) {
+      return { discountType: 'Percentage', value: parseFloat(percentMatch[1]) };
+    }
+
+    // Match fixed amount: "CHF 10 off", "CHF 10", "$10 off", "10 CHF off"
+    const fixedMatchPrefix = normalizedDiscount.match(/^(?:chf|usd|\$|€|eur)\s*(\d+(?:\.\d+)?)/);
+    if (fixedMatchPrefix) {
+      return { discountType: 'FixedAmount', value: parseFloat(fixedMatchPrefix[1]) };
+    }
+
+    const fixedMatchSuffix = normalizedDiscount.match(/^(\d+(?:\.\d+)?)\s*(?:chf|usd|\$|€|eur)/);
+    if (fixedMatchSuffix) {
+      return { discountType: 'FixedAmount', value: parseFloat(fixedMatchSuffix[1]) };
+    }
+
+    // Match free minutes: "10 free minutes", "10 minutes free"
+    const minutesMatch = normalizedDiscount.match(/(\d+)\s*(?:free\s*)?minutes?/);
+    if (minutesMatch) {
+      return { discountType: 'FreeMinutes', value: parseInt(minutesMatch[1], 10) };
+    }
+
+    // Fallback: try to extract any number as a percentage
+    const anyNumberMatch = normalizedDiscount.match(/(\d+(?:\.\d+)?)/);
+    if (anyNumberMatch && normalizedDiscount.includes('%')) {
+      return { discountType: 'Percentage', value: parseFloat(anyNumberMatch[1]) };
+    }
+
+    // Unknown format - promo code is display-only, no automatic discount
+    this.logger.warn(`Could not parse discount format: "${discount}" - treating as display-only`);
+    return { discountType: 'Other', value: 0 };
   }
 }
