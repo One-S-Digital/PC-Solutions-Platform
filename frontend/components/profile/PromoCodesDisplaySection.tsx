@@ -255,36 +255,48 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
 
   if (displayCodes.length === 0) {
     return (
-      <Card className="p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <TagIcon className="h-5 w-5 text-swiss-mint" />
-          <h3 className="text-lg font-semibold text-swiss-charcoal">
-            {t('promoCodesDisplay.title', 'Promo Codes')}
-          </h3>
-        </div>
-        <div className="text-center py-4 space-y-3">
-          <p className="text-sm text-gray-500">
-            {isOwnProfile
-              ? t('settingsPromoCodeManager.noCodesYet')
-              : t('promoCodesDisplay.noActivePromoCodes')}
-          </p>
-          {isOwnProfile && (
-            <div className="flex items-center justify-center gap-2">
-              <Button variant="light" size="sm" leftIcon={ArrowPathIcon} onClick={loadPromoCodes}>
-                {t('common:buttons.refresh')}
-              </Button>
-              <Button
-                variant="primary"
-                size="sm"
-                leftIcon={PlusCircleIcon}
-                onClick={() => handleOpenModal()}
-              >
-                {t('settingsPromoCodeManager.addNewCode')}
-              </Button>
-            </div>
-          )}
-        </div>
-      </Card>
+      <>
+        <Card className="p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <TagIcon className="h-5 w-5 text-swiss-mint" />
+            <h3 className="text-lg font-semibold text-swiss-charcoal">
+              {t('promoCodesDisplay.title', 'Promo Codes')}
+            </h3>
+          </div>
+          <div className="text-center py-4 space-y-3">
+            <p className="text-sm text-gray-500">
+              {isOwnProfile
+                ? t('settingsPromoCodeManager.noCodesYet')
+                : t('promoCodesDisplay.noActivePromoCodes')}
+            </p>
+            {isOwnProfile && (
+              <div className="flex items-center justify-center gap-2">
+                <Button variant="light" size="sm" leftIcon={ArrowPathIcon} onClick={loadPromoCodes}>
+                  {t('common:buttons.refresh')}
+                </Button>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  leftIcon={PlusCircleIcon}
+                  onClick={() => handleOpenModal()}
+                >
+                  {t('settingsPromoCodeManager.addNewCode')}
+                </Button>
+              </div>
+            )}
+          </div>
+        </Card>
+        {/* Add/Edit Modal (owners only) - must be outside Card for empty state */}
+        {isOwnProfile && (
+          <AddPromoCodeModal
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+            onSave={handleSavePromo}
+            editingPromo={editingPromo}
+            isSaving={isSaving}
+          />
+        )}
+      </>
     );
   }
 
