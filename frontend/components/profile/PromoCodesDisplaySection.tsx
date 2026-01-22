@@ -8,6 +8,8 @@ import {
   PlusCircleIcon,
   PencilSquareIcon,
   TrashIcon,
+  EyeIcon,
+  EyeSlashIcon,
 } from '@heroicons/react/24/outline';
 import Card from '../ui/Card';
 import Button from '../ui/Button';
@@ -33,7 +35,7 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
   isOwnProfile = false,
 }) => {
   // Keep `common` first so un-namespaced keys resolve correctly.
-  const { t, i18n } = useTranslation(['common', 'settings']);
+  const { t } = useTranslation(['common', 'settings']);
   const { request } = useAuthenticatedApi();
   const { addNotification } = useNotifications();
   const [promoCodes, setPromoCodes] = useState<PromoCodeData[]>([]);
@@ -122,20 +124,11 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
     async (formData: PromoCodeFormData) => {
       setIsSaving(true);
       try {
-        // Manual promo codes may omit expiry; default to far-future.
-        const rawExpiry = formData.expiryDate?.trim() ? formData.expiryDate : '2099-12-31';
-        // Create UTC end-of-day timestamp to avoid timezone issues
-        const [year, month, day] = rawExpiry.split('-').map(Number);
-        const expiryDateUtc = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
-
         const payload = {
           code: formData.code.toUpperCase().trim(),
-          discountType: formData.discountType,
-          value: Number(formData.value),
-          expiryDate: expiryDateUtc.toISOString(),
           description: formData.description.trim() || null,
-          maxUsage: formData.maxUsage ? parseInt(formData.maxUsage, 10) : undefined,
-          ...(editingPromo && { status: formData.status }),
+          discount: formData.discount.trim(),
+          isActive: formData.isActive,
         };
 
         if (editingPromo) {
@@ -222,64 +215,10 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
     }
   }, []);
 
-  const getDiscountText = useCallback((promo: PromoCodeData) => {
-    switch (promo.discountType) {
-      case 'Percentage':
-        return t('settingsPromoCodeManager.discountTypes.percentage', { value: promo.value });
-      case 'FixedAmount':
-        return t('settingsPromoCodeManager.discountTypes.fixedAmount', { value: promo.value });
-      case 'FreeMinutes':
-        return t('settingsPromoCodeManager.discountTypes.freeMinutes', { value: promo.value });
-      default:
-        return `${promo.value}`;
-    }
-  }, [t]);
-
-  const getStatusLabel = useCallback((status: PromoCodeData['status']) => {
-    switch (status) {
-      case 'Active':
-        return t('settingsPromoCodeManager.status.active');
-      case 'Disabled':
-        return t('settingsPromoCodeManager.status.disabled');
-      case 'Expired':
-        return t('settingsPromoCodeManager.status.expired');
-      default:
-        return status;
-    }
-  }, [t]);
-
-  const formatDate = useCallback((dateString: string) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat(i18n.language || 'en', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    }).format(date);
-  }, [i18n.language]);
-
-  const isNoExpiry = useCallback((dateString: string) => {
-    const d = new Date(dateString);
-    // Treat far-future defaults as "no expiry" for manual promo codes.
-    return Number.isFinite(d.getTime()) && d.getUTCFullYear() >= 2099;
-  }, []);
-
-  const getStatusBadgeClasses = useCallback((status: string) => {
-    switch (status) {
-      case 'Active':
-        return 'bg-green-100 text-green-700';
-      case 'Expired':
-        return 'bg-red-100 text-red-700';
-      case 'Disabled':
-        return 'bg-gray-100 text-gray-700';
-      default:
-        return 'bg-gray-100 text-gray-700';
-    }
-  }, []);
-
   // Filter to show only active codes for non-owners
   const displayCodes = isOwnProfile 
     ? promoCodes 
-    : promoCodes.filter(code => code.status === 'Active');
+    : promoCodes.filter(code => code.isActive);
 
   if (isLoading) {
     return (
@@ -287,7 +226,7 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
         <div className="flex items-center gap-2 mb-4">
           <TagIcon className="h-5 w-5 text-swiss-mint" />
           <h3 className="text-lg font-semibold text-swiss-charcoal">
-            {t('settings:page.promoCodeManager')}
+            {t('promoCodesDisplay.title', 'Promo Codes')}
           </h3>
         </div>
         <LoadingSpinner text={t('common:loading')} />
@@ -301,7 +240,7 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
         <div className="flex items-center gap-2 mb-4">
           <TagIcon className="h-5 w-5 text-swiss-mint" />
           <h3 className="text-lg font-semibold text-swiss-charcoal">
-            {t('settings:page.promoCodeManager')}
+            {t('promoCodesDisplay.title', 'Promo Codes')}
           </h3>
         </div>
         <div className="text-center py-4">
@@ -320,7 +259,7 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
         <div className="flex items-center gap-2 mb-4">
           <TagIcon className="h-5 w-5 text-swiss-mint" />
           <h3 className="text-lg font-semibold text-swiss-charcoal">
-            {t('settings:page.promoCodeManager')}
+            {t('promoCodesDisplay.title', 'Promo Codes')}
           </h3>
         </div>
         <div className="text-center py-4 space-y-3">
@@ -355,7 +294,7 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
         <div className="flex items-center gap-2">
           <TagIcon className="h-5 w-5 text-swiss-mint" />
           <h3 className="text-lg font-semibold text-swiss-charcoal">
-            {t('settings:page.promoCodeManager')}
+            {t('promoCodesDisplay.title', 'Promo Codes')}
           </h3>
         </div>
         {isOwnProfile && (
@@ -375,6 +314,12 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
         )}
       </div>
 
+      {!isOwnProfile && (
+        <p className="text-sm text-gray-600 mb-4">
+          {t('promoCodesDisplay.subtitle', 'Use these codes when making your purchase to receive discounts.')}
+        </p>
+      )}
+
       <div className="space-y-3">
         {displayCodes.map((promo) => (
           <div
@@ -386,24 +331,34 @@ const PromoCodesDisplaySection: React.FC<PromoCodesDisplaySectionProps> = ({
                 <span className="font-mono font-bold text-swiss-charcoal bg-white px-3 py-1 rounded border border-gray-200">
                   {promo.code}
                 </span>
-                <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${getStatusBadgeClasses(promo.status)}`}>
-                  {getStatusLabel(promo.status)}
-                </span>
-              </div>
-              <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600">
-                <span className="font-medium text-swiss-mint">{getDiscountText(promo)}</span>
-                {!isNoExpiry(promo.expiryDate) ? (
-                  <span>
-                    {t('promoCodesDisplay.expiresOn')}: {formatDate(promo.expiryDate)}
+                {isOwnProfile && (
+                  <span className={`px-2 py-0.5 text-xs font-semibold rounded-full flex items-center gap-1 ${
+                    promo.isActive 
+                      ? 'bg-green-100 text-green-700' 
+                      : 'bg-gray-100 text-gray-700'
+                  }`}>
+                    {promo.isActive ? (
+                      <>
+                        <EyeIcon className="w-3 h-3" />
+                        {t('settingsPromoCodeManager.status.active')}
+                      </>
+                    ) : (
+                      <>
+                        <EyeSlashIcon className="w-3 h-3" />
+                        {t('settingsPromoCodeManager.status.hidden', 'Hidden')}
+                      </>
+                    )}
                   </span>
-                ) : null}
-                {promo.description && (
-                  <span className="text-gray-500">{promo.description}</span>
                 )}
-                {isOwnProfile && promo.maxUsage && (
-                  <span className="text-gray-500">
-                    {t('promoCodesDisplay.usageCount')}: {promo.usageCount}/{promo.maxUsage}
-                  </span>
+              </div>
+              <div className="mt-2 space-y-1">
+                <div className="text-sm font-medium text-swiss-mint">
+                  {promo.discount}
+                </div>
+                {promo.description && (
+                  <div className="text-sm text-gray-500">
+                    {promo.description}
+                  </div>
                 )}
               </div>
             </div>

@@ -435,16 +435,13 @@ model VendorClient {
 }
 
 // Promo Codes for Product Suppliers and Service Providers
+// Display-only promo codes shown on supplier/provider profiles
 model PromoCode {
   id             String   @id @default(uuid())
-  code           String
-  discountType   String   // 'Percentage' | 'FixedAmount' | 'FreeMinutes'
-  value          Float
-  expiryDate     DateTime
-  status         String   @default("Active") // 'Active' | 'Expired' | 'Disabled'
-  description    String?
-  usageCount     Int      @default(0)
-  maxUsage       Int?     // Optional max usage limit
+  code           String   // The promo code string (e.g., "SAVE20")
+  description    String?  // Optional description of the promo
+  discount       String   // Free text discount (e.g., "20% off", "Free shipping", "CHF 10 off")
+  isActive       Boolean  @default(true) // Whether the promo code is displayed
   organizationId String
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -455,7 +452,7 @@ model PromoCode {
 
   @@unique([code, organizationId])
   @@index([organizationId])
-  @@index([status])
+  @@index([isActive])
   @@map("promo_codes")
 }
 

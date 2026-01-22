@@ -1238,7 +1238,8 @@
     "submitTo": "Submit Order to",
     "submitting": "Submitting...",
     "subtotal": "Subtotal",
-    "title": "Order Summary"
+    "title": "Order Summary",
+    "total": "Total"
   },
   "promoCodes": {
     "modal": {
@@ -2002,55 +2003,42 @@
     },
     "addNewCode": "Add New Code",
     "confirmDelete": "Are you sure you want to delete this promo code?",
+    "description": "Create promo codes to display on your public profile. Customers can see these codes and use them when making purchases.",
     "noCodesYet": "No promo codes yet. Add your first one!",
     "promoCreated": "Promo code created successfully",
     "promoUpdated": "Promo code updated successfully",
     "promoDeleted": "Promo code deleted successfully",
     "validation": {
-      "required": "Code and expiry date are required",
-      "codeMinLength": "Code must be at least 3 characters",
-      "expiryFuture": "Expiry date must be in the future",
-      "valuePositive": "Value must be greater than zero",
-      "percentageMax": "Percentage cannot exceed 100%",
-      "maxUsageMin": "Max usage must be at least 1"
+      "required": "Code and discount are required",
+      "codeMinLength": "Code must be at least 2 characters"
     },
     "form": {
-      "code": "Code",
-      "codePlaceholder": "e.g., SAVE20",
-      "discountType": "Discount Type",
-      "percentage": "Percentage Off",
-      "fixedAmount": "Fixed Amount Off (CHF)",
-      "freeMinutes": "Free Minutes",
-      "value": "Value",
-      "expiryDate": "Expiry Date",
+      "code": "Promo Code",
+      "codePlaceholder": "e.g., SAVE20, FREESHIP",
+      "codeHelpText": "The code customers will use (e.g., SAVE20, FREESHIP)",
+      "discount": "Discount",
+      "discountPlaceholder": "e.g., 20% off, Free shipping, CHF 10 off",
+      "discountHelpText": "Describe the discount customers will receive",
       "description": "Description (Optional)",
-      "descriptionPlaceholder": "e.g., First-time customer discount",
-      "maxUsage": "Max Usage (Optional)",
-      "maxUsagePlaceholder": "Leave empty for unlimited",
-      "status": "Status"
+      "descriptionPlaceholder": "e.g., Valid for first-time customers only",
+      "descriptionHelpText": "Optional details about terms or conditions",
+      "isActive": "Show on profile"
     },
     "status": {
-      "active": "Active",
-      "disabled": "Disabled",
-      "expired": "Expired"
-    },
-    "discountTypes": {
-      "percentage": "{{value}}% off",
-      "fixedAmount": "CHF {{value}} off",
-      "freeMinutes": "{{value}} free minutes"
+      "active": "Visible",
+      "hidden": "Hidden"
     },
     "table": {
       "actions": "Actions",
       "code": "Code",
-      "discountOffer": "Discount Offer",
-      "expiry": "Expiry",
+      "discount": "Discount",
       "status": "Status"
     }
   },
   "promoCodesDisplay": {
-    "noActivePromoCodes": "No active promo codes available.",
-    "expiresOn": "Expires",
-    "usageCount": "Used"
+    "title": "Promo Codes",
+    "subtitle": "Use these codes when making your purchase to receive discounts.",
+    "noActivePromoCodes": "No active promo codes available."
   },
   "settingsTeamPermissions": {
     "confirmRemoveMember": "Confirm Remove Member",

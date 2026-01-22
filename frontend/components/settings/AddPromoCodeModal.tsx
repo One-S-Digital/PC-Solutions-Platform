@@ -3,29 +3,19 @@ import { useTranslation } from 'react-i18next';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import Button from '../ui/Button';
 
-export type DiscountType = 'Percentage' | 'FixedAmount' | 'FreeMinutes';
-export type PromoCodeStatus = 'Active' | 'Expired' | 'Disabled';
-
 export interface PromoCodeFormData {
   code: string;
-  discountType: DiscountType;
-  value: number;
-  expiryDate: string;
   description: string;
-  maxUsage: string;
-  status: PromoCodeStatus;
+  discount: string;
+  isActive: boolean;
 }
 
 export interface PromoCodeData {
   id: string;
   code: string;
-  discountType: DiscountType;
-  value: number;
-  expiryDate: string;
-  status: PromoCodeStatus;
   description?: string;
-  usageCount: number;
-  maxUsage?: number;
+  discount: string;
+  isActive: boolean;
 }
 
 interface AddPromoCodeModalProps {
@@ -38,13 +28,9 @@ interface AddPromoCodeModalProps {
 
 const initialFormData: PromoCodeFormData = {
   code: '',
-  discountType: 'Percentage',
-  value: 0,
-  // Manual promo codes: default to far-future (treated as "no expiry")
-  expiryDate: '2099-12-31',
   description: '',
-  maxUsage: '',
-  status: 'Active',
+  discount: '',
+  isActive: true,
 };
 
 const AddPromoCodeModal: React.FC<AddPromoCodeModalProps> = ({
@@ -65,12 +51,9 @@ const AddPromoCodeModal: React.FC<AddPromoCodeModalProps> = ({
         // Populate form with existing promo code data
         setFormData({
           code: editingPromo.code,
-          discountType: editingPromo.discountType,
-          value: editingPromo.value,
-          expiryDate: editingPromo.expiryDate.split('T')[0], // Convert to date input format
           description: editingPromo.description || '',
-          maxUsage: editingPromo.maxUsage?.toString() || '',
-          status: editingPromo.status,
+          discount: editingPromo.discount,
+          isActive: editingPromo.isActive,
         });
       } else {
         // Reset to initial state for new promo code
@@ -85,20 +68,12 @@ const AddPromoCodeModal: React.FC<AddPromoCodeModalProps> = ({
 
     if (!formData.code.trim()) {
       newErrors.code = t('forms.required');
-    } else if (formData.code.trim().length < 3) {
+    } else if (formData.code.trim().length < 2) {
       newErrors.code = t('settingsPromoCodeManager.validation.codeMinLength');
     }
 
-    if (formData.value <= 0) {
-      newErrors.value = t('settingsPromoCodeManager.validation.valuePositive');
-    }
-
-    if (formData.discountType === 'Percentage' && formData.value > 100) {
-      newErrors.value = t('settingsPromoCodeManager.validation.percentageMax');
-    }
-
-    if (formData.maxUsage && parseInt(formData.maxUsage, 10) < 1) {
-      newErrors.maxUsage = t('settingsPromoCodeManager.validation.maxUsageMin');
+    if (!formData.discount.trim()) {
+      newErrors.discount = t('forms.required');
     }
 
     setErrors(newErrors);
@@ -120,7 +95,7 @@ const AddPromoCodeModal: React.FC<AddPromoCodeModalProps> = ({
     }
   };
 
-  const handleInputChange = (field: keyof PromoCodeFormData, value: string | number) => {
+  const handleInputChange = (field: keyof PromoCodeFormData, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     // Clear error when field is modified
     if (errors[field]) {
@@ -177,44 +152,30 @@ const AddPromoCodeModal: React.FC<AddPromoCodeModalProps> = ({
               maxLength={50}
             />
             {errors.code && <p className="mt-1 text-sm text-red-500">{errors.code}</p>}
+            <p className="mt-1 text-xs text-gray-500">
+              {t('settingsPromoCodeManager.form.codeHelpText', 'The code customers will use (e.g., SAVE20, FREESHIP)')}
+            </p>
           </div>
 
-          {/* Discount Type */}
+          {/* Discount */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('settingsPromoCodeManager.form.discountType')} <span className="text-red-500">*</span>
-            </label>
-            <select
-              value={formData.discountType}
-              onChange={(e) => handleInputChange('discountType', e.target.value as DiscountType)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-swiss-mint"
-            >
-              <option value="Percentage">{t('settingsPromoCodeManager.form.percentage')}</option>
-              <option value="FixedAmount">{t('settingsPromoCodeManager.form.fixedAmount')}</option>
-              <option value="FreeMinutes">{t('settingsPromoCodeManager.form.freeMinutes')}</option>
-            </select>
-          </div>
-
-          {/* Value */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('settingsPromoCodeManager.form.value')} <span className="text-red-500">*</span>
-              {formData.discountType === 'Percentage' && ' (%)'}
-              {formData.discountType === 'FixedAmount' && ' (CHF)'}
-              {formData.discountType === 'FreeMinutes' && ' (minutes)'}
+              {t('settingsPromoCodeManager.form.discount')} <span className="text-red-500">*</span>
             </label>
             <input
-              type="number"
-              min="0"
-              max={formData.discountType === 'Percentage' ? 100 : undefined}
-              step={formData.discountType === 'FixedAmount' ? '0.01' : '1'}
-              value={formData.value}
-              onChange={(e) => handleInputChange('value', parseFloat(e.target.value) || 0)}
+              type="text"
+              value={formData.discount}
+              onChange={(e) => handleInputChange('discount', e.target.value)}
               className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-swiss-mint ${
-                errors.value ? 'border-red-500' : 'border-gray-300'
+                errors.discount ? 'border-red-500' : 'border-gray-300'
               }`}
+              placeholder={t('settingsPromoCodeManager.form.discountPlaceholder', 'e.g., 20% off, Free shipping, CHF 10 off')}
+              maxLength={100}
             />
-            {errors.value && <p className="mt-1 text-sm text-red-500">{errors.value}</p>}
+            {errors.discount && <p className="mt-1 text-sm text-red-500">{errors.discount}</p>}
+            <p className="mt-1 text-xs text-gray-500">
+              {t('settingsPromoCodeManager.form.discountHelpText', 'Describe the discount customers will receive')}
+            </p>
           </div>
 
           {/* Description */}
@@ -222,51 +183,32 @@ const AddPromoCodeModal: React.FC<AddPromoCodeModalProps> = ({
             <label className="block text-sm font-medium text-gray-700 mb-1">
               {t('settingsPromoCodeManager.form.description')}
             </label>
-            <input
-              type="text"
+            <textarea
               value={formData.description}
               onChange={(e) => handleInputChange('description', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-swiss-mint"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-swiss-mint resize-none"
               placeholder={t('settingsPromoCodeManager.form.descriptionPlaceholder')}
-              maxLength={255}
+              maxLength={500}
+              rows={3}
             />
+            <p className="mt-1 text-xs text-gray-500">
+              {t('settingsPromoCodeManager.form.descriptionHelpText', 'Optional details about terms or conditions')}
+            </p>
           </div>
 
-          {/* Max Usage */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('settingsPromoCodeManager.form.maxUsage')}
-            </label>
+          {/* Active Status */}
+          <div className="flex items-center gap-2">
             <input
-              type="number"
-              min="1"
-              value={formData.maxUsage}
-              onChange={(e) => handleInputChange('maxUsage', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-swiss-mint ${
-                errors.maxUsage ? 'border-red-500' : 'border-gray-300'
-              }`}
-              placeholder={t('settingsPromoCodeManager.form.maxUsagePlaceholder')}
+              type="checkbox"
+              id="isActive"
+              checked={formData.isActive}
+              onChange={(e) => handleInputChange('isActive', e.target.checked)}
+              className="w-4 h-4 text-swiss-mint border-gray-300 rounded focus:ring-swiss-mint"
             />
-            {errors.maxUsage && <p className="mt-1 text-sm text-red-500">{errors.maxUsage}</p>}
+            <label htmlFor="isActive" className="text-sm font-medium text-gray-700">
+              {t('settingsPromoCodeManager.form.isActive', 'Show on profile')}
+            </label>
           </div>
-
-          {/* Status (only for editing) */}
-          {editingPromo && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t('settingsPromoCodeManager.form.status')}
-              </label>
-              <select
-                value={formData.status}
-                onChange={(e) => handleInputChange('status', e.target.value as PromoCodeStatus)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-swiss-mint"
-              >
-                <option value="Active">{t('settingsPromoCodeManager.status.active')}</option>
-                <option value="Disabled">{t('settingsPromoCodeManager.status.disabled')}</option>
-                <option value="Expired">{t('settingsPromoCodeManager.status.expired')}</option>
-              </select>
-            </div>
-          )}
 
           {/* Actions */}
           <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">

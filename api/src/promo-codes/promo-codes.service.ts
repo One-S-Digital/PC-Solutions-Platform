@@ -3,10 +3,9 @@ import {
   Logger,
   NotFoundException,
   ConflictException,
-  BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { UserRole, OrganizationType, Prisma } from '@prisma/client';
+import { UserRole, OrganizationType, PromoCode } from '@prisma/client';
 import {
   CreatePromoCodeDto,
   UpdatePromoCodeDto,
@@ -103,6 +102,22 @@ export class PromoCodesService {
   }
 
   /**
+   * Map database record to response DTO
+   */
+  private mapToResponse(promoCode: PromoCode): PromoCodeResponseDto {
+    return {
+      id: promoCode.id,
+      code: promoCode.code,
+      description: promoCode.description || undefined,
+      discount: promoCode.discount,
+      isActive: promoCode.isActive,
+      organizationId: promoCode.organizationId,
+      createdAt: promoCode.createdAt,
+      updatedAt: promoCode.updatedAt,
+    };
+  }
+
+  /**
    * Get all promo codes for an organization
    */
   async getPromoCodes(organizationId: string): Promise<PromoCodeResponseDto[]> {
@@ -111,37 +126,7 @@ export class PromoCodesService {
       orderBy: { createdAt: 'desc' },
     });
 
-    // Auto-update expired statuses
-    const now = new Date();
-    const expiredIds: string[] = [];
-    
-    for (const code of promoCodes) {
-      if (code.status === 'Active' && new Date(code.expiryDate) < now) {
-        expiredIds.push(code.id);
-      }
-    }
-
-    if (expiredIds.length > 0) {
-      await this.prisma.promoCode.updateMany({
-        where: { id: { in: expiredIds } },
-        data: { status: 'Expired' },
-      });
-    }
-
-    return promoCodes.map((code) => ({
-      id: code.id,
-      code: code.code,
-      discountType: code.discountType,
-      value: code.value,
-      expiryDate: code.expiryDate,
-      status: expiredIds.includes(code.id) ? 'Expired' : code.status,
-      description: code.description || undefined,
-      usageCount: code.usageCount,
-      maxUsage: code.maxUsage || undefined,
-      organizationId: code.organizationId,
-      createdAt: code.createdAt,
-      updatedAt: code.updatedAt,
-    }));
+    return promoCodes.map(code => this.mapToResponse(code));
   }
 
   /**
@@ -159,20 +144,7 @@ export class PromoCodesService {
       throw new NotFoundException('Promo code not found');
     }
 
-    return {
-      id: promoCode.id,
-      code: promoCode.code,
-      discountType: promoCode.discountType,
-      value: promoCode.value,
-      expiryDate: promoCode.expiryDate,
-      status: promoCode.status,
-      description: promoCode.description || undefined,
-      usageCount: promoCode.usageCount,
-      maxUsage: promoCode.maxUsage || undefined,
-      organizationId: promoCode.organizationId,
-      createdAt: promoCode.createdAt,
-      updatedAt: promoCode.updatedAt,
-    };
+    return this.mapToResponse(promoCode);
   }
 
   /**
@@ -194,16 +166,12 @@ export class PromoCodesService {
       throw new ConflictException('A promo code with this code already exists');
     }
 
-    // Manual promo codes may omit expiry; default to far-future.
-    const defaultNoExpiry = new Date(Date.UTC(2099, 11, 31, 23, 59, 59, 999));
     const promoCode = await this.prisma.promoCode.create({
       data: {
         code: dto.code.toUpperCase(),
-        discountType: dto.discountType,
-        value: dto.value,
-        expiryDate: dto.expiryDate ? new Date(dto.expiryDate) : defaultNoExpiry,
-        description: dto.description,
-        maxUsage: dto.maxUsage,
+        description: dto.description || null,
+        discount: dto.discount,
+        isActive: dto.isActive ?? true,
         organizationId,
       },
     });
@@ -212,20 +180,7 @@ export class PromoCodesService {
       `Created promo code ${promoCode.code} for organization ${organizationId}`,
     );
 
-    return {
-      id: promoCode.id,
-      code: promoCode.code,
-      discountType: promoCode.discountType,
-      value: promoCode.value,
-      expiryDate: promoCode.expiryDate,
-      status: promoCode.status,
-      description: promoCode.description || undefined,
-      usageCount: promoCode.usageCount,
-      maxUsage: promoCode.maxUsage || undefined,
-      organizationId: promoCode.organizationId,
-      createdAt: promoCode.createdAt,
-      updatedAt: promoCode.updatedAt,
-    };
+    return this.mapToResponse(promoCode);
   }
 
   /**
@@ -267,31 +222,15 @@ export class PromoCodesService {
       where: { id: promoCodeId },
       data: {
         ...(dto.code !== undefined && { code: dto.code.toUpperCase() }),
-        ...(dto.discountType !== undefined && { discountType: dto.discountType }),
-        ...(dto.value !== undefined && { value: dto.value }),
-        ...(dto.expiryDate !== undefined && { expiryDate: new Date(dto.expiryDate) }),
-        ...(dto.status !== undefined && { status: dto.status }),
         ...(dto.description !== undefined && { description: dto.description }),
-        ...(dto.maxUsage !== undefined && { maxUsage: dto.maxUsage }),
+        ...(dto.discount !== undefined && { discount: dto.discount }),
+        ...(dto.isActive !== undefined && { isActive: dto.isActive }),
       },
     });
 
     this.logger.log(`Updated promo code ${promoCodeId}`);
 
-    return {
-      id: promoCode.id,
-      code: promoCode.code,
-      discountType: promoCode.discountType,
-      value: promoCode.value,
-      expiryDate: promoCode.expiryDate,
-      status: promoCode.status,
-      description: promoCode.description || undefined,
-      usageCount: promoCode.usageCount,
-      maxUsage: promoCode.maxUsage || undefined,
-      organizationId: promoCode.organizationId,
-      createdAt: promoCode.createdAt,
-      updatedAt: promoCode.updatedAt,
-    };
+    return this.mapToResponse(promoCode);
   }
 
   /**
@@ -321,137 +260,14 @@ export class PromoCodesService {
    * Get public/active promo codes for an organization (for profile viewing)
    */
   async getPublicPromoCodes(organizationId: string): Promise<PromoCodeResponseDto[]> {
-    const now = new Date();
-    
     const promoCodes = await this.prisma.promoCode.findMany({
       where: {
         organizationId,
-        status: 'Active',
-        expiryDate: { gte: now },
+        isActive: true,
       },
       orderBy: { createdAt: 'desc' },
     });
 
-    return promoCodes.map((code) => ({
-      id: code.id,
-      code: code.code,
-      discountType: code.discountType,
-      value: code.value,
-      expiryDate: code.expiryDate,
-      status: code.status,
-      description: code.description || undefined,
-      usageCount: code.usageCount,
-      maxUsage: code.maxUsage || undefined,
-      organizationId: code.organizationId,
-      createdAt: code.createdAt,
-      updatedAt: code.updatedAt,
-    }));
-  }
-
-  /**
-   * Validate and apply a promo code (for use by foundations/buyers)
-   */
-  async validatePromoCode(
-    code: string,
-    organizationId: string,
-  ): Promise<PromoCodeResponseDto | null> {
-    const now = new Date();
-
-    const promoCode = await this.prisma.promoCode.findFirst({
-      where: {
-        code: code.toUpperCase(),
-        organizationId,
-        status: 'Active',
-        expiryDate: { gte: now },
-      },
-    });
-
-    if (!promoCode) {
-      return null;
-    }
-
-    // Check max usage
-    if (promoCode.maxUsage && promoCode.usageCount >= promoCode.maxUsage) {
-      return null;
-    }
-
-    return {
-      id: promoCode.id,
-      code: promoCode.code,
-      discountType: promoCode.discountType,
-      value: promoCode.value,
-      expiryDate: promoCode.expiryDate,
-      status: promoCode.status,
-      description: promoCode.description || undefined,
-      usageCount: promoCode.usageCount,
-      maxUsage: promoCode.maxUsage || undefined,
-      organizationId: promoCode.organizationId,
-      createdAt: promoCode.createdAt,
-      updatedAt: promoCode.updatedAt,
-    };
-  }
-
-  /**
-   * Redeem a promo code by incrementing usageCount.
-   * Returns null if the code is invalid/expired/disabled/maxed out.
-   *
-   * This is intentionally separate from validatePromoCode so "validation"
-   * doesn't consume usage, but order placement can.
-   */
-  async redeemPromoCode(
-    code: string,
-    organizationId: string,
-    tx?: Prisma.TransactionClient,
-  ): Promise<PromoCodeResponseDto | null> {
-    const client = tx ?? this.prisma;
-    const now = new Date();
-
-    const promoCode = await client.promoCode.findFirst({
-      where: {
-        code: code.toUpperCase(),
-        organizationId,
-        status: 'Active',
-        expiryDate: { gte: now },
-      },
-    });
-
-    if (!promoCode) {
-      return null;
-    }
-
-    if (promoCode.maxUsage && promoCode.usageCount >= promoCode.maxUsage) {
-      return null;
-    }
-
-    const updateWhere: Prisma.PromoCodeWhereInput = {
-      id: promoCode.id,
-      status: 'Active',
-      expiryDate: { gte: now },
-      ...(promoCode.maxUsage ? { usageCount: { lt: promoCode.maxUsage } } : {}),
-    };
-
-    const updated = await client.promoCode.updateMany({
-      where: updateWhere,
-      data: { usageCount: { increment: 1 } },
-    });
-
-    if (updated.count !== 1) {
-      return null;
-    }
-
-    return {
-      id: promoCode.id,
-      code: promoCode.code,
-      discountType: promoCode.discountType,
-      value: promoCode.value,
-      expiryDate: promoCode.expiryDate,
-      status: promoCode.status,
-      description: promoCode.description || undefined,
-      usageCount: promoCode.usageCount + 1,
-      maxUsage: promoCode.maxUsage || undefined,
-      organizationId: promoCode.organizationId,
-      createdAt: promoCode.createdAt,
-      updatedAt: promoCode.updatedAt,
-    };
+    return promoCodes.map(code => this.mapToResponse(code));
   }
 }
