@@ -5,7 +5,7 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { UserRole, OrganizationType, PromoCode } from '@prisma/client';
+import { UserRole, OrganizationType, PromoCode, Prisma } from '@prisma/client';
 import {
   CreatePromoCodeDto,
   UpdatePromoCodeDto,
@@ -284,7 +284,7 @@ export class PromoCodesService {
   async redeemPromoCode(
     code: string,
     organizationId: string,
-    tx?: any,
+    tx?: Prisma.TransactionClient,
   ): Promise<{ id: string; code: string; discountType: string; value: number } | null> {
     const prismaClient = tx || this.prisma;
 
@@ -335,8 +335,8 @@ export class PromoCodesService {
 
     const normalizedDiscount = discount.toLowerCase().trim();
 
-    // Match percentage: "20% off", "20%", "20 percent"
-    const percentMatch = normalizedDiscount.match(/^(\d+(?:\.\d+)?)\s*%/);
+    // Match percentage: "20% off", "20%", "20 percent", "20 per cent"
+    const percentMatch = normalizedDiscount.match(/^(\d+(?:\.\d+)?)\s*(?:%|percent|per\s*cent)/);
     if (percentMatch) {
       return { discountType: 'Percentage', value: parseFloat(percentMatch[1]) };
     }
@@ -347,7 +347,7 @@ export class PromoCodesService {
       return { discountType: 'FixedAmount', value: parseFloat(fixedMatchPrefix[1]) };
     }
 
-    const fixedMatchSuffix = normalizedDiscount.match(/^(\d+(?:\.\d+)?)\s*(?:chf|usd|€|eur)/);
+    const fixedMatchSuffix = normalizedDiscount.match(/^(\d+(?:\.\d+)?)\s*(?:chf|usd|\$|€|eur)/);
     if (fixedMatchSuffix) {
       return { discountType: 'FixedAmount', value: parseFloat(fixedMatchSuffix[1]) };
     }
