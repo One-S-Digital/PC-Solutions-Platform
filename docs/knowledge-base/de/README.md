@@ -1,44 +1,94 @@
-# ProCrèche Solutions - Wissensdatenbank
+# 📚 ProCrèche Solutions Wissensdatenbank
 
-Willkommen im ProCrèche Solutions Hilfezentrum! Hier finden Sie Schritt-für-Schritt-Anleitungen, Guides und Antworten, um das Beste aus der Plattform herauszuholen.
-
----
-
-## 🚧 Übersetzung in Arbeit
-
-Diese Dokumentation wird derzeit ins Deutsche übersetzt.
-
-**Dokumentation auf Englisch verfügbar:** [English Documentation](../en/)
+Willkommen in der ProCrèche Solutions Wissensdatenbank! Hier finden Sie Tutorials, Anleitungen und Referenzen, die Ihnen bei der Nutzung der Plattform helfen.
 
 ---
 
-## 📚 Dokumentationsstruktur
+## 🌐 Sprache wählen
 
-### Tutorials
-- [Erste Schritte](./tutorials/1-getting-started.md) - Kontoerstellung und Verifizierung
-
-### Rollenspezifische Anleitungen
-- [Kita-Anleitung (Stiftung)](./guides/2-foundation-daycare-guide.md)
-- [Produktlieferanten-Anleitung](./guides/3-product-supplier-guide.md)
-- [Dienstleister-Anleitung](./guides/4-service-provider-guide.md)
-- [Erzieher-Anleitung (Bewerber)](./guides/5-educator-candidate-guide.md)
-- [Eltern-Anleitung](./guides/6-parent-guide.md)
-
-### Gemeinsame Funktionen
-- [Gemeinsame Funktionen](./guides/8-common-features.md)
-- [Abrechnung und Abonnements](./guides/9-billing-and-subscriptions.md)
-
-### Referenz
-- [Fehlerbehebung und FAQ](./reference/10-troubleshooting-faq.md)
-- [Glossar](./reference/glossary.md)
-- [Einstellungsanleitung](./reference/settings-guide.md)
+| Sprache | Link |
+|---------|------|
+| 🇬🇧 English | [English Documentation](../en/README.md) |
+| 🇫🇷 Français | [Documentation française](../fr/README.md) |
+| 🇩🇪 **Deutsch** | Sie sind hier |
 
 ---
 
-## 📞 Support
+## 🚀 Schnellstart
 
-Brauchen Sie Hilfe? Erstellen Sie ein Support-Ticket über Ihr Dashboard.
+Neu bei ProCrèche Solutions? Beginnen Sie hier:
+
+1. 📝 [Erste Schritte](./tutorials/1-getting-started.md) - Konto erstellen und anmelden
+2. 👤 Wählen Sie Ihren Rollen-Guide unten
+3. ⚙️ [Einstellungs-Guide](./reference/settings-guide.md) - Ihr Konto konfigurieren
 
 ---
 
-*Letzte Aktualisierung: Januar 2025*
+## 📚 Wählen Sie Ihre Rolle
+
+### 🏫 Stiftung (Kindertagesstätte)
+Verwalten Sie eine Kita oder Kinderbetreuungsorganisation?
+- [Stiftungs-Benutzerhandbuch](./guides/2-foundation-daycare-guide.md)
+
+### 📦 Produktlieferant
+Verkaufen Sie Produkte an Kindertagesstätten?
+- [Produktlieferanten-Guide](./guides/3-product-supplier-guide.md)
+
+### 🔧 Dienstleister
+Bieten Sie Dienstleistungen für Kindertagesstätten an?
+- [Dienstleister-Guide](./guides/4-service-provider-guide.md)
+
+### 👩‍🏫 Erzieher / Kandidat
+Suchen Sie eine Stelle in der frühkindlichen Bildung?
+- [Erzieher-Guide](./guides/5-educator-candidate-guide.md)
+
+### 👨‍👩‍👧 Eltern
+Suchen Sie Betreuung für Ihr Kind?
+- [Eltern-Guide](./guides/6-parent-guide.md)
+
+---
+
+## 🔧 Funktionen und Einstellungen
+
+- [Allgemeine Funktionen](./guides/8-common-features.md) - Nachrichten, Benachrichtigungen, Dateien
+- [Abrechnung und Abonnements](./guides/9-billing-and-subscriptions.md) - Pläne und Zahlungen
+- [Einstellungs-Guide](./reference/settings-guide.md) - Alle Einstellungen erklärt
+
+---
+
+## ❓ Hilfe und Support
+
+- [Fehlerbehebung und FAQ](./reference/10-troubleshooting-faq.md) - Häufige Probleme und Lösungen
+- [Glossar](./reference/glossary.md) - Begriffsdefinitionen
+- [Unterstützte Browser](./reference/supported-browsers.md) - Technische Anforderungen
+- [Sicherheit und Compliance](./reference/security-and-compliance.md) - Datenschutz
+
+---
+
+## 🔍 Suche nach Thema
+
+| Thema | Guide |
+|-------|-------|
+| Konto erstellen | [Erste Schritte](./tutorials/1-getting-started.md) |
+| E-Mail-Verifizierung | [Erste Schritte - Verifizierung](./tutorials/1-getting-started.md#schritt-5-e-mail-verifizieren) |
+| Passwort ändern | [Einstellungs-Guide](./reference/settings-guide.md#passwort-ändern) |
+| Promo-Codes | [Lieferant](./guides/3-product-supplier-guide.md#promo-codes) / [Dienstleister](./guides/4-service-provider-guide.md#promo-codes) |
+| Nachrichten | [Allgemeine Funktionen](./guides/8-common-features.md#nachrichtensystem) |
+| Benachrichtigungen | [Allgemeine Funktionen](./guides/8-common-features.md#benachrichtigungen) |
+| Abrechnung | [Abrechnung und Abonnements](./guides/9-billing-and-subscriptions.md) |
+| Anmeldeprobleme | [Fehlerbehebung](./reference/10-troubleshooting-faq.md#ich-kann-mich-nicht-anmelden) |
+
+---
+
+## 📞 Support kontaktieren
+
+Benötigen Sie weitere Hilfe?
+
+1. Melden Sie sich bei Ihrem Konto an
+2. Klicken Sie auf **Support** in der Seitenleiste
+3. Erstellen Sie ein **Support-Ticket**
+4. Unser Team wird Ihnen schnell antworten
+
+---
+
+*Zuletzt aktualisiert: Januar 2025*
