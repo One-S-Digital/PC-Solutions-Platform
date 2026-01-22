@@ -1224,7 +1224,8 @@
     "submitTo": "Bestellung senden an",
     "submitting": "Wird gesendet...",
     "subtotal": "Zwischensumme",
-    "title": "Bestellübersicht"
+    "title": "Bestellübersicht",
+    "total": "Gesamt"
   },
   "promoCodes": {
     "modal": {

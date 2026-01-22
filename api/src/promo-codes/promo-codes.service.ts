@@ -5,7 +5,7 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { UserRole, OrganizationType } from '@prisma/client';
+import { UserRole, OrganizationType, PromoCode } from '@prisma/client';
 import {
   CreatePromoCodeDto,
   UpdatePromoCodeDto,
@@ -104,7 +104,7 @@ export class PromoCodesService {
   /**
    * Map database record to response DTO
    */
-  private mapToResponse(promoCode: any): PromoCodeResponseDto {
+  private mapToResponse(promoCode: PromoCode): PromoCodeResponseDto {
     return {
       id: promoCode.id,
       code: promoCode.code,

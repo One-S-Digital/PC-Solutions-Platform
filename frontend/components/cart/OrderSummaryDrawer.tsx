@@ -183,7 +183,7 @@ const OrderSummaryDrawer: React.FC<OrderSummaryDrawerProps> = ({ isOpen, onClose
                   </div>
                   <div className="mt-6 space-y-1 text-sm">
                     <div className="flex justify-between text-base font-medium text-gray-900 pt-2 border-t border-gray-200">
-                      <p>{t('orderSummaryDrawer.subtotal', 'Total')}</p>
+                      <p>{t('orderSummaryDrawer.total', 'Total')}</p>
                       <p>CHF {getCartTotal().toFixed(2)}</p>
                     </div>
                   </div>

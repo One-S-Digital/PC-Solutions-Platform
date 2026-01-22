@@ -6,11 +6,12 @@ ALTER TABLE "promo_codes" ADD COLUMN IF NOT EXISTS "discount" TEXT;
 ALTER TABLE "promo_codes" ADD COLUMN IF NOT EXISTS "isActive" BOOLEAN NOT NULL DEFAULT true;
 
 -- Step 2: Migrate existing data - convert discountType + value to discount text
+-- Use LOWER() for case-insensitive matching to handle any unexpected casing
 UPDATE "promo_codes" 
 SET "discount" = CASE 
-    WHEN "discountType" = 'Percentage' THEN CONCAT(CAST("value" AS TEXT), '% off')
-    WHEN "discountType" = 'FixedAmount' THEN CONCAT('CHF ', CAST("value" AS TEXT), ' off')
-    WHEN "discountType" = 'FreeMinutes' THEN CONCAT(CAST("value" AS TEXT), ' free minutes')
+    WHEN LOWER("discountType") = 'percentage' THEN CONCAT(CAST("value" AS TEXT), '% off')
+    WHEN LOWER("discountType") IN ('fixedamount', 'fixed_amount') THEN CONCAT('CHF ', CAST("value" AS TEXT), ' off')
+    WHEN LOWER("discountType") IN ('freeminutes', 'free_minutes') THEN CONCAT(CAST("value" AS TEXT), ' free minutes')
     ELSE CONCAT(CAST("value" AS TEXT), ' off')
 END
 WHERE "discount" IS NULL;

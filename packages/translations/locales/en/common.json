@@ -1238,7 +1238,8 @@
     "submitTo": "Submit Order to",
     "submitting": "Submitting...",
     "subtotal": "Subtotal",
-    "title": "Order Summary"
+    "title": "Order Summary",
+    "total": "Total"
   },
   "promoCodes": {
     "modal": {

@@ -196,21 +196,19 @@ const AddPromoCodeModal: React.FC<AddPromoCodeModalProps> = ({
             </p>
           </div>
 
-          {/* Active Status (only for editing) */}
-          {editingPromo && (
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="isActive"
-                checked={formData.isActive}
-                onChange={(e) => handleInputChange('isActive', e.target.checked)}
-                className="w-4 h-4 text-swiss-mint border-gray-300 rounded focus:ring-swiss-mint"
-              />
-              <label htmlFor="isActive" className="text-sm font-medium text-gray-700">
-                {t('settingsPromoCodeManager.form.isActive', 'Show on profile')}
-              </label>
-            </div>
-          )}
+          {/* Active Status */}
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="isActive"
+              checked={formData.isActive}
+              onChange={(e) => handleInputChange('isActive', e.target.checked)}
+              className="w-4 h-4 text-swiss-mint border-gray-300 rounded focus:ring-swiss-mint"
+            />
+            <label htmlFor="isActive" className="text-sm font-medium text-gray-700">
+              {t('settingsPromoCodeManager.form.isActive', 'Show on profile')}
+            </label>
+          </div>
 
           {/* Actions */}
           <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
