@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import DOMPurify from 'dompurify';
 import {
   XMarkIcon,
   MagnifyingGlassIcon,
@@ -139,7 +140,7 @@ const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
             </p>
             <div 
               className="text-gray-700 leading-relaxed whitespace-pre-line"
-              dangerouslySetInnerHTML={{ __html: t(selectedArticle.contentKey) }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(t(selectedArticle.contentKey)) }}
             />
           </div>
         </div>
