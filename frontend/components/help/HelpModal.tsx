@@ -60,6 +60,12 @@ const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
     return articles;
   }, [availableArticles, selectedCategory, searchQuery, t]);
 
+  // Memoize sanitized HTML to avoid re-sanitizing on unrelated re-renders
+  const sanitizedArticleHtml = useMemo(() => {
+    if (!selectedArticle) return '';
+    return DOMPurify.sanitize(t(selectedArticle.contentKey));
+  }, [selectedArticle, t]);
+
   // Reset state when modal closes
   useEffect(() => {
     if (!isOpen) {
@@ -70,10 +76,11 @@ const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
     }
   }, [isOpen]);
 
-  // Handle escape key
+  // Handle escape key - only attach listener while modal is open
   useEffect(() => {
+    if (!isOpen) return;
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
+      if (e.key === 'Escape') {
         if (selectedArticle) {
           setSelectedArticle(null);
         } else {
@@ -140,7 +147,7 @@ const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
             </p>
             <div 
               className="text-gray-700 leading-relaxed whitespace-pre-line"
-              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(t(selectedArticle.contentKey)) }}
+              dangerouslySetInnerHTML={{ __html: sanitizedArticleHtml }}
             />
           </div>
         </div>
