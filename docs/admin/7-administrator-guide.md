@@ -564,6 +564,44 @@ Navigate to **Dashboard** or **Analytics** section.
 - `admin/src/pages/Cantons.tsx`
 - `admin/src/pages/CantonDetail.tsx`
 
+### Policy Crawler (Setup & Enablement)
+
+The Admin UI pages are always visible, but the crawler is **disabled by default** on the API.
+
+**Enable the crawler (API):**
+
+- Set:
+  - `CRAWLER_ENABLED=true` (enables `/api/admin/crawler/*` endpoints and crawling)
+  - `CRAWLER_SCHEDULER_ENABLED=true` (enables scheduled crawls at 03:00 + stale checks at 06:00)
+- These variables live in `api/.env` (local) or your production environment.
+  - See `api/.env.example` for the full list.
+
+**Database setup:**
+
+- Run migrations (must include the canton crawler migration):
+
+  - `pnpm -C api db:migrate`
+
+- Seed cantons (creates `cantons` records; required for the UI):
+
+  - `pnpm -C api db:seed:cantons`
+
+**Add sources (Admin UI):**
+
+- Go to **Policy Crawler** → **Cantons** → select a canton → **Add Source**
+- Each source URL must be **HTTPS** and on an **allowlisted domain** (SSRF protection in `api/src/crawler/crawler.service.ts`).
+- Prefer `renderType=static`. `renderType=dynamic` is best-effort and only fully works if Playwright is installed/configured.
+
+**Run it:**
+
+- Manual: in the canton detail page click **Crawl now** (calls `POST /api/admin/crawler/trigger/:sourceId`)
+- Scheduled: daily at **03:00** (requires `CRAWLER_SCHEDULER_ENABLED=true` and an always-on API process)
+
+**Review results:**
+
+- New/changed documents are created/flagged as `crawlStatus=pending_review`
+- Review in **Policy Crawler** → **Policy Review**
+
 ---
 
 ## Under the Hood
