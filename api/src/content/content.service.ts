@@ -47,6 +47,22 @@ export interface PaginatedResponse<T> {
 export class ContentService {
   private readonly logger = new Logger(ContentService.name);
   private readonly fileSizeLimits: typeof FILE_SIZE_LIMITS;
+  private static readonly UPLOAD_TITLE_MAX_LENGTH = 100;
+
+  private buildSuffixedTitle(baseTitle: string, suffixNumber: number) {
+    const trimmedBase = (baseTitle || '').trim();
+    if (!trimmedBase) return trimmedBase;
+    if (suffixNumber <= 1) return trimmedBase;
+
+    const suffix = ` (${suffixNumber})`;
+    const maxBaseLength = ContentService.UPLOAD_TITLE_MAX_LENGTH - suffix.length;
+    const safeBase =
+      maxBaseLength > 0
+        ? trimmedBase.slice(0, maxBaseLength).trimEnd()
+        : '';
+
+    return `${safeBase}${suffix}`.slice(0, ContentService.UPLOAD_TITLE_MAX_LENGTH);
+  }
 
   constructor(
     private prisma: PrismaService,
@@ -142,7 +158,7 @@ export class ContentService {
           if (!Number.isNaN(n) && n >= maxSuffix) maxSuffix = n + 1;
         }
       }
-      if (maxSuffix > 1) dto.title = `${elBaseTitle} (${maxSuffix})`;
+      if (maxSuffix > 1) dto.title = this.buildSuffixedTitle(elBaseTitle, maxSuffix);
     }
 
     let uploadResult: { url: string; key: string } | undefined;
@@ -566,7 +582,7 @@ export class ContentService {
       }
 
       if (maxSuffix > 1) {
-        dto.title = `${baseTitle} (${maxSuffix})`;
+        dto.title = this.buildSuffixedTitle(baseTitle, maxSuffix);
       }
     }
 
@@ -967,7 +983,7 @@ export class ContentService {
           if (!Number.isNaN(n) && n >= maxSuffix) maxSuffix = n + 1;
         }
       }
-      if (maxSuffix > 1) dto.title = `${spBaseTitle} (${maxSuffix})`;
+      if (maxSuffix > 1) dto.title = this.buildSuffixedTitle(spBaseTitle, maxSuffix);
     }
 
     let uploadResult: { url: string; key: string } | undefined;

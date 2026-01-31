@@ -45,7 +45,7 @@ export class UploadStatePolicyDto {
     example: 'Childcare Licensing Requirements 2025',
   })
   @IsString()
-  @MaxLength(200)
+  @MaxLength(100)
   title!: string;
 
   @ApiProperty({

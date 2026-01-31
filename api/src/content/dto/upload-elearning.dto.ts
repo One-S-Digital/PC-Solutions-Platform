@@ -41,7 +41,7 @@ export class UploadElearningDto {
     example: 'Introduction to Early Childhood Education',
   })
   @IsString()
-  @MaxLength(200)
+  @MaxLength(100)
   title!: string;
 
   @ApiProperty({

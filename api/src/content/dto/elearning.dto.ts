@@ -23,7 +23,7 @@ import {
 export class UploadElearningDto {
   @IsString()
   @MinLength(3, { message: 'Title must be at least 3 characters long' })
-  @MaxLength(200, { message: 'Title must not exceed 200 characters' })
+  @MaxLength(100, { message: 'Title must not exceed 100 characters' })
   title: string;
 
   @IsOptional()
@@ -139,7 +139,7 @@ export class UpdateElearningDto {
   @IsOptional()
   @IsString()
   @MinLength(3, { message: 'Title must be at least 3 characters long' })
-  @MaxLength(200, { message: 'Title must not exceed 200 characters' })
+  @MaxLength(100, { message: 'Title must not exceed 100 characters' })
   title?: string;
 
   @IsOptional()

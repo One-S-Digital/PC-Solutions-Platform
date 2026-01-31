@@ -20,7 +20,7 @@ import {
 export class UploadHrDocumentDto {
   @IsString()
   @MinLength(3, { message: 'Document title must be at least 3 characters long' })
-  @MaxLength(200, { message: 'Document title must not exceed 200 characters' })
+  @MaxLength(100, { message: 'Document title must not exceed 100 characters' })
   title: string;
 
   @IsOptional()
@@ -118,7 +118,7 @@ export class UpdateHrDocumentDto {
   @IsOptional()
   @IsString()
   @MinLength(3, { message: 'Document title must be at least 3 characters long' })
-  @MaxLength(200, { message: 'Document title must not exceed 200 characters' })
+  @MaxLength(100, { message: 'Document title must not exceed 100 characters' })
   title?: string;
 
   @IsOptional()
