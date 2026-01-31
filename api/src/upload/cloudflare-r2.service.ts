@@ -246,6 +246,9 @@ export class CloudflareR2Service {
    * Validate file type and size based on asset kind
    */
   validateFile(file: Express.Multer.File, assetKind: AssetKind): void {
+    // Use UPLOAD_MAX_MB env var for e-learning (videos can be large), default to 500MB
+    const uploadMaxMb = Number(this.configService.get<string>('UPLOAD_MAX_MB') || '500');
+    
     const maxSizes = {
       AVATAR: 5 * 1024 * 1024, // 5MB
       LOGO: 5 * 1024 * 1024, // 5MB
@@ -261,7 +264,7 @@ export class CloudflareR2Service {
       ADMIN_LOGO: 5 * 1024 * 1024, // 5MB
       ADMIN_FAVICON: 1 * 1024 * 1024, // 1MB
       SIDEBAR_LOGO: 5 * 1024 * 1024, // 5MB
-      ELEARNING: 500 * 1024 * 1024, // 500MB - increased for large video uploads
+      ELEARNING: uploadMaxMb * 1024 * 1024, // Use env var - for large video uploads
       COMPANY_PROFILE_DOC: 50 * 1024 * 1024, // 50MB - for catalogs, company profiles
     };
 
