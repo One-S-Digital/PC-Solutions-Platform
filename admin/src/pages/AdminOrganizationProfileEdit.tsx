@@ -536,6 +536,19 @@ const AdminOrganizationProfileEdit: React.FC = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('admin:orgProfile.minimumOrderQuantity', 'Minimum Order Quantity')}
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={formData.minimumOrderQuantity || ''}
+                  onChange={(e) => handleChange('minimumOrderQuantity', e.target.value ? parseInt(e.target.value, 10) : 0)}
+                  className={STANDARD_INPUT_FIELD}
+                  placeholder="0"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   {t('admin:orgProfile.directOrderLink', 'Direct Order Link')}
                 </label>
                 <input
