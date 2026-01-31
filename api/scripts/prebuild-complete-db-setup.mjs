@@ -192,6 +192,10 @@ const verifyCriticalTables = () => {
     'organizations',
     'organization_contact_infos',
     'assets',
+    // Policy crawler (feature-flagged, but schema must exist once migrations run)
+    'cantons',
+    'canton_sources',
+    'policy_crawl_history',
     'products',
     'services',
     'job_listings',
