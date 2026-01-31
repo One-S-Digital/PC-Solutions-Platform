@@ -4,6 +4,7 @@ import {
   NotFoundException,
   Logger,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { CloudflareR2Service } from '../upload/cloudflare-r2.service';
 import { AssetKind } from '@prisma/client';
@@ -45,12 +46,32 @@ export interface PaginatedResponse<T> {
 @Injectable()
 export class ContentService {
   private readonly logger = new Logger(ContentService.name);
+  private readonly fileSizeLimits: typeof FILE_SIZE_LIMITS;
 
   constructor(
     private prisma: PrismaService,
     private r2Service: CloudflareR2Service,
     private translationService: TranslationService,
-  ) {}
+    private configService: ConfigService,
+  ) {
+    // Use environment variable UPLOAD_MAX_MB for e-learning (videos can be large)
+    // Fall back to hardcoded defaults if not set or invalid
+    const rawUploadMaxMb = this.configService.get<string>('UPLOAD_MAX_MB');
+    const uploadMaxMb = Number(rawUploadMaxMb);
+    const effectiveUploadMaxMb =
+      Number.isFinite(uploadMaxMb) && uploadMaxMb > 0 ? uploadMaxMb : 500;
+    
+    if (rawUploadMaxMb && (!Number.isFinite(uploadMaxMb) || uploadMaxMb <= 0)) {
+      this.logger.warn(`Invalid UPLOAD_MAX_MB="${rawUploadMaxMb}". Falling back to 500MB.`);
+    }
+    
+    this.fileSizeLimits = {
+      ELEARNING: effectiveUploadMaxMb * 1024 * 1024, // Use env var for e-learning
+      HR_DOCUMENT: FILE_SIZE_LIMITS.HR_DOCUMENT,
+      STATE_POLICY: FILE_SIZE_LIMITS.STATE_POLICY,
+    };
+    this.logger.log(`Content service initialized with e-learning max file size: ${effectiveUploadMaxMb}MB`);
+  }
 
   /**
    * ========================================
@@ -72,9 +93,9 @@ export class ContentService {
       }
 
       // Validate file size
-      if (file.size > FILE_SIZE_LIMITS.ELEARNING) {
+      if (file.size > this.fileSizeLimits.ELEARNING) {
         throw new BadRequestException(
-          `File size exceeds maximum allowed (${FILE_SIZE_LIMITS.ELEARNING / 1024 / 1024}MB)`,
+          `File size exceeds maximum allowed (${this.fileSizeLimits.ELEARNING / 1024 / 1024}MB)`,
         );
       }
 
@@ -486,9 +507,9 @@ export class ContentService {
     }
 
     // Validate file size
-    if (file.size > FILE_SIZE_LIMITS.HR_DOCUMENT) {
+    if (file.size > this.fileSizeLimits.HR_DOCUMENT) {
       throw new BadRequestException(
-        `File size exceeds maximum allowed (${FILE_SIZE_LIMITS.HR_DOCUMENT / 1024 / 1024}MB)`,
+        `File size exceeds maximum allowed (${this.fileSizeLimits.HR_DOCUMENT / 1024 / 1024}MB)`,
       );
     }
 
@@ -896,9 +917,9 @@ export class ContentService {
 
     if (file) {
       // Validate file size
-      if (file.size > FILE_SIZE_LIMITS.STATE_POLICY) {
+      if (file.size > this.fileSizeLimits.STATE_POLICY) {
         throw new BadRequestException(
-          `File size exceeds maximum allowed (${FILE_SIZE_LIMITS.STATE_POLICY / 1024 / 1024}MB)`,
+          `File size exceeds maximum allowed (${this.fileSizeLimits.STATE_POLICY / 1024 / 1024}MB)`,
         );
       }
 
