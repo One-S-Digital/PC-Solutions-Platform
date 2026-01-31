@@ -19,6 +19,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { randomUUID } from 'crypto';
 import { ContentService } from './content.service';
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -66,8 +67,8 @@ export class ContentController {
     storage: diskStorage({
       destination: '/tmp', // Use /tmp for temporary storage (works on Render)
       filename: (req, file, cb) => {
-        // Generate unique filename to avoid collisions
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        // Generate unique filename using UUID for collision resistance
+        const uniqueSuffix = Date.now() + '-' + randomUUID();
         const ext = extname(file.originalname);
         cb(null, `upload-${uniqueSuffix}${ext}`);
       },

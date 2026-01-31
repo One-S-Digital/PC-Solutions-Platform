@@ -4,6 +4,7 @@ import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand, Head
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { AssetKind } from '@prisma/client';
 import { createHash } from 'crypto';
+import * as fs from 'fs';
 
 export interface UploadResult {
   key: string;
@@ -105,11 +106,6 @@ export class CloudflareR2Service {
     subcategory?: string,
     conversationId?: string,
   ): Promise<UploadResult> {
-    // Import fs for reading files from disk
-    const fs = await import('fs');
-    const fsPromises = fs.promises;
-    const crypto = await import('crypto');
-    
     try {
       // Validate file first
       this.validateFile(file, assetKind);
@@ -140,7 +136,7 @@ export class CloudflareR2Service {
         this.logger.log(`Using disk storage for ${file.originalname} (${(file.size / 1024 / 1024).toFixed(2)}MB), streaming from ${file.path}`);
         
         // Calculate checksum by streaming (memory efficient)
-        const hash = crypto.createHash('sha256');
+        const hash = createHash('sha256');
         const checksumStream = fs.createReadStream(file.path);
         for await (const chunk of checksumStream) {
           hash.update(chunk);
@@ -175,7 +171,7 @@ export class CloudflareR2Service {
       // Clean up temp file if using disk storage
       if (file.path) {
         try {
-          await fsPromises.unlink(file.path);
+          await fs.promises.unlink(file.path);
           this.logger.log(`Cleaned up temp file: ${file.path}`);
         } catch (cleanupError) {
           this.logger.warn(`Failed to clean up temp file ${file.path}:`, cleanupError);
@@ -208,7 +204,6 @@ export class CloudflareR2Service {
       // Clean up temp file on error if using disk storage
       if (file.path) {
         try {
-          const fs = await import('fs');
           await fs.promises.unlink(file.path);
         } catch (cleanupError) {
           this.logger.warn(`Failed to clean up temp file on error:`, cleanupError);
