@@ -284,7 +284,8 @@ export class CloudflareR2Service {
         'application/pdf',
         'video/mp4',
         'video/quicktime',
-        'video/x-msvideo', // AVI
+        'video/x-msvideo', // AVI (legacy MIME type)
+        'video/vnd.avi', // AVI (detected by file-type library v21+)
         'video/webm',
         'application/vnd.ms-powerpoint',
         'application/vnd.openxmlformats-officedocument.presentationml.presentation',

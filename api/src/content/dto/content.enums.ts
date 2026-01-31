@@ -132,6 +132,9 @@ export const ALLOWED_MIME_TYPES = {
     'application/pdf',
     'video/mp4',
     'video/quicktime',
+    'video/webm',
+    'video/x-msvideo', // AVI format (legacy MIME type)
+    'video/vnd.avi', // AVI format (detected by file-type library v21+)
     'application/vnd.ms-powerpoint',
     'application/vnd.openxmlformats-officedocument.presentationml.presentation',
   ],
