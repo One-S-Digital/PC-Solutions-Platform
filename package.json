@@ -14,6 +14,8 @@
     "precommit:guard": "node scripts/check-no-raw-imports.mjs",
     "prebuild:render": "node scripts/prebuild-lock-check.mjs",
     "prebuild:db": "cd api && node scripts/prebuild-complete-db-setup.mjs",
+    "prebuild:docs": "node scripts/prebuild-knowledge-base.mjs",
+    "validate:docs": "node scripts/prebuild-knowledge-base.mjs",
     "db:setup": "cd api && node scripts/prebuild-complete-db-setup.mjs",
     "db:migrate": "cd api && npx prisma migrate deploy --schema prisma/schema.prisma",
     "db:status": "cd api && npx prisma migrate status --schema prisma/schema.prisma",
