@@ -28,7 +28,8 @@ export class MimeValidationService {
       .filter(Boolean);
     
     // Default MIME types include video formats for e-learning content
-    const defaultMimeTypes = 'application/pdf,image/png,image/jpeg,image/webp,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,video/mp4,video/quicktime,video/webm,video/x-msvideo,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    // Note: AVI files can be detected as either video/x-msvideo or video/vnd.avi depending on the file-type library version
+    const defaultMimeTypes = 'application/pdf,image/png,image/jpeg,image/webp,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,video/mp4,video/quicktime,video/webm,video/x-msvideo,video/vnd.avi,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
     this.allowedMimeTypes = (this.configService.get<string>('UPLOAD_ALLOWED_MIME') || defaultMimeTypes)
       .split(',')
       .map(mime => mime.trim().toLowerCase())
