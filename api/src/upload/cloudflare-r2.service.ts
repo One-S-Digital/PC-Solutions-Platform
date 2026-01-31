@@ -247,7 +247,15 @@ export class CloudflareR2Service {
    */
   validateFile(file: Express.Multer.File, assetKind: AssetKind): void {
     // Use UPLOAD_MAX_MB env var for e-learning (videos can be large), default to 500MB
-    const uploadMaxMb = Number(this.configService.get<string>('UPLOAD_MAX_MB') || '500');
+    // Validate to avoid NaN or invalid values disabling size checks
+    const rawUploadMaxMb = this.configService.get<string>('UPLOAD_MAX_MB');
+    const uploadMaxMb = Number(rawUploadMaxMb);
+    const effectiveUploadMaxMb =
+      Number.isFinite(uploadMaxMb) && uploadMaxMb > 0 ? uploadMaxMb : 500;
+    
+    if (rawUploadMaxMb && (!Number.isFinite(uploadMaxMb) || uploadMaxMb <= 0)) {
+      this.logger.warn(`Invalid UPLOAD_MAX_MB="${rawUploadMaxMb}". Falling back to 500MB.`);
+    }
     
     const maxSizes = {
       AVATAR: 5 * 1024 * 1024, // 5MB
@@ -264,7 +272,7 @@ export class CloudflareR2Service {
       ADMIN_LOGO: 5 * 1024 * 1024, // 5MB
       ADMIN_FAVICON: 1 * 1024 * 1024, // 1MB
       SIDEBAR_LOGO: 5 * 1024 * 1024, // 5MB
-      ELEARNING: uploadMaxMb * 1024 * 1024, // Use env var - for large video uploads
+      ELEARNING: effectiveUploadMaxMb * 1024 * 1024, // Use env var - for large video uploads
       COMPANY_PROFILE_DOC: 50 * 1024 * 1024, // 50MB - for catalogs, company profiles
     };
 

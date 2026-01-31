@@ -55,14 +55,22 @@ export class ContentService {
     private configService: ConfigService,
   ) {
     // Use environment variable UPLOAD_MAX_MB for e-learning (videos can be large)
-    // Fall back to hardcoded defaults if not set
-    const uploadMaxMb = Number(this.configService.get<string>('UPLOAD_MAX_MB') || '500');
+    // Fall back to hardcoded defaults if not set or invalid
+    const rawUploadMaxMb = this.configService.get<string>('UPLOAD_MAX_MB');
+    const uploadMaxMb = Number(rawUploadMaxMb);
+    const effectiveUploadMaxMb =
+      Number.isFinite(uploadMaxMb) && uploadMaxMb > 0 ? uploadMaxMb : 500;
+    
+    if (rawUploadMaxMb && (!Number.isFinite(uploadMaxMb) || uploadMaxMb <= 0)) {
+      this.logger.warn(`Invalid UPLOAD_MAX_MB="${rawUploadMaxMb}". Falling back to 500MB.`);
+    }
+    
     this.fileSizeLimits = {
-      ELEARNING: uploadMaxMb * 1024 * 1024, // Use env var for e-learning
+      ELEARNING: effectiveUploadMaxMb * 1024 * 1024, // Use env var for e-learning
       HR_DOCUMENT: FILE_SIZE_LIMITS.HR_DOCUMENT,
       STATE_POLICY: FILE_SIZE_LIMITS.STATE_POLICY,
     };
-    this.logger.log(`Content service initialized with e-learning max file size: ${uploadMaxMb}MB`);
+    this.logger.log(`Content service initialized with e-learning max file size: ${effectiveUploadMaxMb}MB`);
   }
 
   /**
