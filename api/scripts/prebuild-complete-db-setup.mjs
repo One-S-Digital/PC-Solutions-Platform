@@ -180,80 +180,6 @@ const deployMigrations = () => {
 };
 
 /**
- * Seed Swiss cantons (idempotent).
- *
- * Rationale:
- * - Admin Policy Crawler UI depends on canton rows existing.
- * - This is safe to run multiple times (upsert by code).
- *
- * Env flags:
- * - SKIP_CANTON_SEED=true to skip this step.
- */
-const seedCantons = () => {
-  if (envFlag(process.env.SKIP_CANTON_SEED)) {
-    log('SKIP_CANTON_SEED is set. Skipping canton seed.');
-    return;
-  }
-
-  log('Seeding cantons (policy crawler prerequisite)...');
-
-  // IMPORTANT: keep this SQL self-contained and idempotent.
-  const sql = `
-INSERT INTO "public"."cantons" ("code", "name", "nameDe", "nameFr", "nameIt", "defaultLang", "isActive", "createdAt", "updatedAt")
-VALUES
-  ('AG','Aargau','Aargau',NULL,NULL,'de',true,NOW(),NOW()),
-  ('AR','Appenzell Ausserrhoden','Appenzell Ausserrhoden',NULL,NULL,'de',true,NOW(),NOW()),
-  ('AI','Appenzell Innerrhoden','Appenzell Innerrhoden',NULL,NULL,'de',true,NOW(),NOW()),
-  ('BL','Basel-Landschaft','Basel-Landschaft',NULL,NULL,'de',true,NOW(),NOW()),
-  ('BS','Basel-Stadt','Basel-Stadt',NULL,NULL,'de',true,NOW(),NOW()),
-  ('BE','Bern','Bern','Berne',NULL,'de',true,NOW(),NOW()),
-  ('GL','Glarus','Glarus',NULL,NULL,'de',true,NOW(),NOW()),
-  ('LU','Lucerne','Luzern',NULL,NULL,'de',true,NOW(),NOW()),
-  ('NW','Nidwalden','Nidwalden',NULL,NULL,'de',true,NOW(),NOW()),
-  ('OW','Obwalden','Obwalden',NULL,NULL,'de',true,NOW(),NOW()),
-  ('SH','Schaffhausen','Schaffhausen',NULL,NULL,'de',true,NOW(),NOW()),
-  ('SZ','Schwyz','Schwyz',NULL,NULL,'de',true,NOW(),NOW()),
-  ('SO','Solothurn','Solothurn',NULL,NULL,'de',true,NOW(),NOW()),
-  ('SG','St. Gallen','St. Gallen',NULL,NULL,'de',true,NOW(),NOW()),
-  ('TG','Thurgau','Thurgau',NULL,NULL,'de',true,NOW(),NOW()),
-  ('UR','Uri','Uri',NULL,NULL,'de',true,NOW(),NOW()),
-  ('ZG','Zug','Zug',NULL,NULL,'de',true,NOW(),NOW()),
-  ('ZH','Zurich','Zürich',NULL,NULL,'de',true,NOW(),NOW()),
-  ('GR','Grisons','Graubünden',NULL,'Grigioni','de',true,NOW(),NOW()),
-
-  ('FR','Fribourg','Freiburg','Fribourg',NULL,'fr',true,NOW(),NOW()),
-  ('GE','Geneva','Genf','Genève',NULL,'fr',true,NOW(),NOW()),
-  ('JU','Jura','Jura','Jura',NULL,'fr',true,NOW(),NOW()),
-  ('NE','Neuchâtel','Neuenburg','Neuchâtel',NULL,'fr',true,NOW(),NOW()),
-  ('VD','Vaud','Waadt','Vaud',NULL,'fr',true,NOW(),NOW()),
-  ('VS','Valais','Wallis','Valais',NULL,'fr',true,NOW(),NOW()),
-
-  ('TI','Ticino','Tessin',NULL,'Ticino','it',true,NOW(),NOW()),
-
-  ('CH','Federal (Switzerland)','Bund (Schweiz)','Fédéral (Suisse)','Federale (Svizzera)','de',true,NOW(),NOW())
-ON CONFLICT ("code") DO UPDATE SET
-  "name"        = EXCLUDED."name",
-  "nameDe"      = EXCLUDED."nameDe",
-  "nameFr"      = EXCLUDED."nameFr",
-  "nameIt"      = EXCLUDED."nameIt",
-  "defaultLang" = EXCLUDED."defaultLang",
-  "isActive"    = EXCLUDED."isActive",
-  "updatedAt"   = NOW();
-`;
-
-  const result = runPrisma(['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'], {
-    silent: true,
-    input: sql,
-  });
-
-  if (!result.success) {
-    throw new Error('Failed to seed cantons');
-  }
-
-  success('Cantons seeded');
-};
-
-/**
  * Verify critical tables exist
  */
 const verifyCriticalTables = () => {
@@ -427,9 +353,6 @@ const main = async () => {
     
     // Step 4: Deploy migrations
     deployMigrations();
-
-    // Step 4b: Seed required reference data
-    seedCantons();
     
     // Step 5: Verify tables
     verifyCriticalTables();
