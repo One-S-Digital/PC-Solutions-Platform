@@ -84,7 +84,13 @@ export class ContentService {
     dto: UploadElearningDto,
     userId: string,
   ) {
-    this.logger.log(`Uploading e-learning content: ${dto.title}`);
+    const startTime = Date.now();
+    this.logger.log(`📤 [UPLOAD START] E-learning content: ${dto.title}`);
+    this.logger.log(`📤 [UPLOAD CONFIG] Max file size: ${this.fileSizeLimits.ELEARNING / 1024 / 1024}MB`);
+    
+    if (file) {
+      this.logger.log(`📤 [UPLOAD FILE] Name: ${file.originalname}, Size: ${(file.size / 1024 / 1024).toFixed(2)}MB, Type: ${file.mimetype}`);
+    }
 
     // Validate file based on content type
     if (dto.type !== ELearningContentType.LINK && dto.videoSourceType !== 'url') {
@@ -93,18 +99,23 @@ export class ContentService {
       }
 
       // Validate file size
+      this.logger.log(`📤 [VALIDATION] Checking file size: ${file.size} bytes vs limit: ${this.fileSizeLimits.ELEARNING} bytes`);
       if (file.size > this.fileSizeLimits.ELEARNING) {
+        this.logger.error(`📤 [VALIDATION FAILED] File size ${file.size} exceeds limit ${this.fileSizeLimits.ELEARNING}`);
         throw new BadRequestException(
           `File size exceeds maximum allowed (${this.fileSizeLimits.ELEARNING / 1024 / 1024}MB)`,
         );
       }
+      this.logger.log(`📤 [VALIDATION] File size OK`);
 
       // Validate MIME type
       if (!ALLOWED_MIME_TYPES.ELEARNING.includes(file.mimetype)) {
+        this.logger.error(`📤 [VALIDATION FAILED] Invalid MIME type: ${file.mimetype}`);
         throw new BadRequestException(
           `Invalid file type. Allowed types: ${ALLOWED_MIME_TYPES.ELEARNING.join(', ')}`,
         );
       }
+      this.logger.log(`📤 [VALIDATION] MIME type OK`);
     }
 
     // Ensure unique title by auto-suffixing duplicates for e-learning

@@ -60,7 +60,11 @@ export class ContentController {
 
   @Post('elearning')
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', {
+    limits: {
+      fileSize: 500 * 1024 * 1024, // 500MB max for video uploads
+    },
+  }))
   @UsePipes(new ValidationPipe({ 
     transform: true, 
     whitelist: true,
@@ -78,6 +82,7 @@ export class ContentController {
     @Body() dto: UploadElearningDto,
     @Request() req,
   ) {
+    console.log('📥 E-Learning Upload Request received at:', new Date().toISOString());
     console.log('📥 E-Learning Upload Request:', {
       file: file ? { name: file.originalname, size: file.size, mimetype: file.mimetype } : null,
       body: req.body,
