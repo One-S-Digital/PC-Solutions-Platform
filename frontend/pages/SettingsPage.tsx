@@ -112,9 +112,11 @@ const SettingsPage: React.FC = () => {
             productCategory: data.productCategory || org?.productCategory || '',
             serviceType: data.serviceType || org?.serviceType || '',
             minimumOrderQuantity:
-              typeof data.minimumOrderQuantity === 'number'
+              Number.isFinite(data.minimumOrderQuantity)
                 ? data.minimumOrderQuantity
-                : org?.minimumOrderQuantity ?? undefined,
+                : Number.isFinite(org?.minimumOrderQuantity)
+                  ? org?.minimumOrderQuantity
+                  : undefined,
             directOrderLink: data.directOrderLink || org?.directOrderLink || '',
             catalogUrl: data.catalogUrl || org?.catalogUrl || '',
           } as Partial<SettingsFormData>;
@@ -311,7 +313,7 @@ const SettingsPage: React.FC = () => {
               serviceType: payload.serviceType || '',
               minimumOrderQuantity: Number.isFinite(payload.minimumOrderQuantity)
                 ? Number(payload.minimumOrderQuantity)
-                : undefined,
+                : null,
               directOrderLink: payload.directOrderLink || '',
               catalogUrl: payload.catalogUrl || '',
               ...(payload.logoAssetId !== undefined && { logoAssetId: payload.logoAssetId || null }),

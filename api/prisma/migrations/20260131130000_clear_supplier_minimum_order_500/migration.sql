@@ -4,5 +4,7 @@
 UPDATE "public"."organizations"
 SET "minimumOrderQuantity" = NULL
 WHERE "type" = 'PRODUCT_SUPPLIER'
-  AND "minimumOrderQuantity" = 500;
+  AND "minimumOrderQuantity" = 500
+  -- Safeguard: only clear rows that were never updated after creation.
+  AND "updatedAt" = "createdAt";
 

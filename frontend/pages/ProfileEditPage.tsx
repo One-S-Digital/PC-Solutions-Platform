@@ -262,7 +262,7 @@ const ProfileEditPage: React.FC = () => {
             serviceType: payload.serviceType || '',
             minimumOrderQuantity: Number.isFinite(payload.minimumOrderQuantity)
               ? Number(payload.minimumOrderQuantity)
-              : undefined,
+            : null,
             directOrderLink: payload.directOrderLink || '',
             catalogUrl: payload.catalogUrl || '',
             ...(payload.logoAssetId !== undefined && { logoAssetId: payload.logoAssetId || null }),
