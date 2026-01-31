@@ -261,7 +261,7 @@ export class CloudflareR2Service {
       ADMIN_LOGO: 5 * 1024 * 1024, // 5MB
       ADMIN_FAVICON: 1 * 1024 * 1024, // 1MB
       SIDEBAR_LOGO: 5 * 1024 * 1024, // 5MB
-      ELEARNING: 100 * 1024 * 1024, // 100MB - for videos, PDFs, courses
+      ELEARNING: 500 * 1024 * 1024, // 500MB - increased for large video uploads
       COMPANY_PROFILE_DOC: 50 * 1024 * 1024, // 50MB - for catalogs, company profiles
     };
 

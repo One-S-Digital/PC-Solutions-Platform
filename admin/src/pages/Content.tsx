@@ -385,13 +385,12 @@ export default function Content() {
             return e.field ? `${e.field}: invalid` : JSON.stringify(e);
           });
           message = errorMessages.join('; ');
-        } else if (responseData.message) {
-          // Standard error message
-          if (Array.isArray(responseData.message)) {
-            message = responseData.message.join('; ');
-          } else {
-            message = responseData.message;
-          }
+        } else if (typeof responseData.message === 'string') {
+          // Standard error message (string)
+          message = responseData.message;
+        } else if (Array.isArray(responseData.message)) {
+          // Array of error messages
+          message = responseData.message.join('; ');
         } else if (responseData.errors) {
           // Validation errors object
           const errorMessages = responseData.errors.map((e: any) => {
@@ -401,9 +400,17 @@ export default function Content() {
             return e.field ? `${e.field}: invalid` : JSON.stringify(e);
           });
           message = errorMessages.join('; ');
+        } else if (typeof responseData === 'string') {
+          // Response is just a string
+          message = responseData;
         }
       } else if (error.message) {
         message = error.message;
+      }
+      
+      // Ensure message is always a string
+      if (typeof message !== 'string') {
+        message = JSON.stringify(message);
       }
       
       console.error('Parsed error message:', message);

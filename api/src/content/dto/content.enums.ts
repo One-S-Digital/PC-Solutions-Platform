@@ -121,7 +121,7 @@ export const REGIONS_BY_COUNTRY: Record<Country, readonly string[]> = {
 
 // File size limits (in bytes)
 export const FILE_SIZE_LIMITS = {
-  ELEARNING: 100 * 1024 * 1024, // 100 MB
+  ELEARNING: 500 * 1024 * 1024, // 500 MB - increased for video uploads
   HR_DOCUMENT: 50 * 1024 * 1024, // 50 MB
   STATE_POLICY: 50 * 1024 * 1024, // 50 MB
 };
