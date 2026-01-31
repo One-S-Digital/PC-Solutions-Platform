@@ -76,7 +76,7 @@ An online education module offering courses, videos, and training materials for 
 ### Educator
 A childcare professional seeking employment. Also called a "Candidate."
 
-### Enquiry
+### Parent Inquiry
 A request from a parent seeking daycare services. Also called a "Lead."
 
 ### Enterprise Plan
@@ -119,7 +119,7 @@ Human Resources documents and templates available to subscribed Foundations.
 ### Inactive (Status)
 A status indicating that an item is not currently visible or available.
 
-### Inquiry
+### Supplier Inquiry
 A question or request for information sent to a supplier or service provider before placing an order.
 
 ---
@@ -317,4 +317,8 @@ A technical mechanism for automatic data synchronization (used behind the scenes
 
 ---
 
-*Last Updated: January 2025*
+---
+
+## Last Updated
+
+January 2026

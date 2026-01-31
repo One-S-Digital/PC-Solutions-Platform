@@ -124,7 +124,7 @@ Quand vous soumettez une demande, vous fournissez :
 
 | Champ | Description | Exemple |
 |-------|-------------|---------|
-| **Date de début** | Quand vous avez besoin de la garde | 1er septembre 2025 |
+| **Date de début** | Quand vous avez besoin de la garde | 1er septembre 20XX |
 | **Type de garde** | Temps plein, partiel | Temps plein |
 | **Jours souhaités** | Jours de la semaine | Lundi à vendredi |
 | **Horaires** | Heures souhaitées | 8h00 - 18h00 |
@@ -393,4 +393,8 @@ R : Soumettez une demande. La crèche vous informera de sa disponibilité.
 
 ---
 
-*Dernière mise à jour : Janvier 2025*
+---
+
+## Dernière mise à jour
+
+Janvier 2026

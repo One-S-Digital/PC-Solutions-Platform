@@ -427,4 +427,8 @@ Rabattkündigungen sind spezielle Vereinbarungen, bei denen Aktionspreise oder R
 
 ---
 
-*Zuletzt aktualisiert: Januar 2025*
+---
+
+## Zuletzt aktualisiert
+
+Januar 2026

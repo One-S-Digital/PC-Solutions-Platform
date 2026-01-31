@@ -633,4 +633,8 @@ Discount terminations are special arrangements where promotional pricing or disc
 
 ---
 
-*Last Updated: January 2025*
+---
+
+## Last Updated
+
+January 2026

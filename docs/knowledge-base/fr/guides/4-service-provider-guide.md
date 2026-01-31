@@ -319,7 +319,7 @@ Allez dans **Paramètres** → **Gestionnaire de codes promo**
 1. Cliquez sur **"Ajouter un nouveau code"**
 2. Remplissez les détails :
 
-```
+```text
 ┌─────────────────────────────────────────────────────┐
 │        Ajouter un nouveau code promo            [X] │
 ├─────────────────────────────────────────────────────┤
@@ -370,7 +370,7 @@ Allez dans **Paramètres** → **Gestionnaire de codes promo**
 
 Sur votre profil, les clients voient :
 
-```
+```text
 ┌─────────────────────────────────────────────────────┐
 │  🏷️ Codes promo disponibles                        │
 ├─────────────────────────────────────────────────────┤
@@ -534,4 +534,8 @@ Les résiliations de remises sont des arrangements où les tarifs promotionnels 
 
 ---
 
-*Dernière mise à jour : Janvier 2025*
+---
+
+## Dernière mise à jour
+
+Janvier 2026

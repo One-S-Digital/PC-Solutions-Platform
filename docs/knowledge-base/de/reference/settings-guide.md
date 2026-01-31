@@ -14,6 +14,8 @@ Dieses Handbuch beschreibt alle auf ProCrèche Solutions verfügbaren Einstellun
 6. [Datenschutz und Daten](#datenschutz-und-daten)
 7. [Kontakt und Buchung](#kontakt-und-buchung)
 8. [Analytik-Einstellungen](#analytik-einstellungen)
+9. [Konfigurationstipps](#konfigurationstipps)
+10. [Benötigen Sie mehr Hilfe?](#benötigen-sie-mehr-hilfe)
 
 ---
 
@@ -318,4 +320,8 @@ Passen Sie Ihre Analytik-Ansicht an.
 
 ---
 
-*Zuletzt aktualisiert: Januar 2025*
+---
+
+## Zuletzt aktualisiert
+
+Januar 2026

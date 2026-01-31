@@ -248,4 +248,8 @@ R : Nous vous notifierons dans les 72 heures conformément au RGPD.
 
 ---
 
-*Dernière mise à jour : Janvier 2025*
+---
+
+## Dernière mise à jour
+
+Janvier 2026

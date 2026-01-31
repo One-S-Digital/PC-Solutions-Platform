@@ -543,4 +543,8 @@ A: You'll see it in **My Applications** with a "Pending" status.
 
 ---
 
-*Last Updated: January 2025*
+---
+
+## Last Updated
+
+January 2026

@@ -507,4 +507,8 @@ R : Le support se fait principalement par ticket. Les clients Enterprise ont acc
 
 ---
 
-*Dernière mise à jour : Janvier 2025*
+---
+
+## Dernière mise à jour
+
+Janvier 2026

@@ -181,4 +181,8 @@ Si vous ne trouvez pas un terme, consultez :
 
 ---
 
-*Dernière mise à jour : Janvier 2025*
+---
+
+## Dernière mise à jour
+
+Janvier 2026

@@ -133,4 +133,8 @@ Versuchen Sie, diese vorübergehend zu deaktivieren, wenn Sie Probleme haben.
 
 ---
 
-*Zuletzt aktualisiert: Januar 2025*
+---
+
+## Zuletzt aktualisiert
+
+Januar 2026

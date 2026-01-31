@@ -232,4 +232,8 @@ For privacy or security questions:
 
 ---
 
-*Last Updated: January 2025*
+---
+
+## Last Updated
+
+January 2026

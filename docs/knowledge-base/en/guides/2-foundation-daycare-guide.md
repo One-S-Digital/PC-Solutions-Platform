@@ -10,7 +10,7 @@ Welcome, Foundation users! This guide covers everything you need to manage your 
 |--------------|------------|
 | See my dashboard | [Dashboard Overview](#dashboard-overview) |
 | Edit my organization profile | [Organization Profile](#organization-profile) |
-| Respond to parent enquiries | [Parent Leads Management](#parent-leads-enquiries) |
+| Respond to parent inquiries | [Parent Leads Management](#parent-leads-inquiries) |
 | Browse products/services | [Marketplace Access](#marketplace-access) |
 | Post a job | [Recruitment Module](#recruitment-module) |
 | Access training | [E-Learning Module](#e-learning-module) |
@@ -23,7 +23,7 @@ Welcome, Foundation users! This guide covers everything you need to manage your 
 
 1. [Dashboard Overview](#dashboard-overview)
 2. [Organization Profile](#organization-profile)
-3. [Parent Leads (Enquiries)](#parent-leads-enquiries)
+3. [Parent Leads (Inquiries)](#parent-leads-inquiries)
 4. [Marketplace Access](#marketplace-access)
 5. [Orders & Appointments](#orders--appointments)
 6. [Recruitment Module](#recruitment-module)
@@ -156,9 +156,9 @@ Your organization profile is visible to parents, educators, and vendors. Keep it
 
 ---
 
-## Parent Leads (Enquiries)
+## Parent Leads (Inquiries)
 
-Parent leads are enquiries from parents looking for daycare services. Responding quickly increases enrollment.
+Parent leads are inquiries from parents looking for daycare services. Responding quickly increases enrollment.
 
 > 📋 **Requires:** Essential plan or higher
 
@@ -676,4 +676,8 @@ See [Settings Guide](../reference/settings-guide.md) for detailed instructions.
 
 ---
 
-*Last Updated: January 2025*
+---
+
+## Last Updated
+
+January 2026

@@ -426,4 +426,8 @@ Having trouble with settings?
 
 ---
 
-*Last Updated: January 2025*
+---
+
+## Last Updated
+
+January 2026

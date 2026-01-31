@@ -76,8 +76,14 @@ function checkFile(filePath, isRequired = true) {
 
   const stats = statSync(filePath);
   if (stats.size < MIN_CONTENT_LENGTH) {
-    warn(`File appears to be a placeholder (< ${MIN_CONTENT_LENGTH} chars): ${filePath}`);
-    hasWarnings = true;
+    const message = `File appears to be a placeholder (< ${MIN_CONTENT_LENGTH} chars): ${filePath}`;
+    if (isRequired) {
+      error(message);
+      hasErrors = true;
+    } else {
+      warn(message);
+      hasWarnings = true;
+    }
     return false;
   }
 

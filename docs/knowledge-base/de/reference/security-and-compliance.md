@@ -248,4 +248,8 @@ A: Wir benachrichtigen Sie innerhalb von 72 Stunden gemäß DSGVO.
 
 ---
 
-*Zuletzt aktualisiert: Januar 2025*
+---
+
+## Zuletzt aktualisiert
+
+Januar 2026

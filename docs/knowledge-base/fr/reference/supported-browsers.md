@@ -133,4 +133,8 @@ Essayez de les désactiver temporairement si vous rencontrez des problèmes.
 
 ---
 
-*Dernière mise à jour : Janvier 2025*
+---
+
+## Dernière mise à jour
+
+Janvier 2026

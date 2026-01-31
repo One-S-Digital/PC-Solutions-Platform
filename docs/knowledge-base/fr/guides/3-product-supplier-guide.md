@@ -290,7 +290,7 @@ Cliquez sur une commande pour voir :
 
 ### Exemple de workflow
 
-```
+```text
 Nouvelle commande reçue
        ↓
    [Accepter la commande]
@@ -371,7 +371,7 @@ Les codes promo vous permettent d'offrir des réductions aux clients. Ils appara
 1. Cliquez sur **"Ajouter un nouveau code"**
 2. Une fenêtre modale s'ouvre avec ces champs :
 
-```
+```text
 ┌─────────────────────────────────────────────────────┐
 │         Ajouter un nouveau code promo           [X] │
 ├─────────────────────────────────────────────────────┤
@@ -449,7 +449,7 @@ Vos codes promo sont affichés dans un tableau :
 
 Quand les fondations consultent votre profil, elles voient vos codes promo actifs dans une section dédiée :
 
-```
+```text
 ┌─────────────────────────────────────────────────────┐
 │  🏷️ Codes promo disponibles                        │
 ├─────────────────────────────────────────────────────┤
@@ -633,4 +633,8 @@ Les résiliations de remises sont des arrangements spéciaux où les tarifs prom
 
 ---
 
-*Dernière mise à jour : Janvier 2025*
+---
+
+## Dernière mise à jour
+
+Janvier 2026

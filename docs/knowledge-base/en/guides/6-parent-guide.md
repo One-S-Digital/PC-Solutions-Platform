@@ -146,7 +146,7 @@ To find a daycare, submit an enquiry with your needs.
 │  Preferences                                        │
 │  ───────────                                        │
 │  Location:    Zurich                                │
-│  Start Date:  March 2025                            │
+│  Start Date:  March 20XX                            │
 │  Languages:   German, English                       │
 │                                                     │
 │  Special Requirements                               │
@@ -432,4 +432,8 @@ A: Try expanding your search area or adjusting your requirements. You can also s
 
 ---
 
-*Last Updated: January 2025*
+---
+
+## Last Updated
+
+January 2026

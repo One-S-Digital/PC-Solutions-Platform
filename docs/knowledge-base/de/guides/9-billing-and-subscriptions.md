@@ -88,7 +88,7 @@ Alle Benutzer haben Zugang zu:
 
 ### Was Sie sehen
 
-```
+```text
 ┌─────────────────────────────────────────────────────┐
 │  Abrechnung und Abonnement                          │
 ├─────────────────────────────────────────────────────┤
@@ -98,7 +98,7 @@ Alle Benutzer haben Zugang zu:
 │  │  📦 Professional                             │   │
 │  │  CHF 49/Monat                                │   │
 │  │  Status: ✅ Aktiv                            │   │
-│  │  Nächste Verlängerung: 1. Februar 2025      │   │
+│  │  Nächste Verlängerung: 1. Februar 20XX      │   │
 │  └─────────────────────────────────────────────┘   │
 │                                                     │
 │  [Planänderung anfordern]                          │
@@ -350,4 +350,8 @@ A: Daten werden 30 Tage aufbewahrt und dann gelöscht, sofern nicht anders gewü
 
 ---
 
-*Zuletzt aktualisiert: Januar 2025*
+---
+
+## Zuletzt aktualisiert
+
+Januar 2026

@@ -101,7 +101,7 @@ Tous les utilisateurs ont accès à :
 
 ### Ce que vous verrez
 
-```
+```text
 ┌─────────────────────────────────────────────────────┐
 │  Facturation et abonnement                          │
 ├─────────────────────────────────────────────────────┤
@@ -111,7 +111,7 @@ Tous les utilisateurs ont accès à :
 │  │  📦 Professional                             │   │
 │  │  CHF 49/mois                                 │   │
 │  │  Statut: ✅ Actif                            │   │
-│  │  Prochain renouvellement: 1er février 2025  │   │
+│  │  Prochain renouvellement: 1er février 20XX  │   │
 │  └─────────────────────────────────────────────┘   │
 │                                                     │
 │  [Demander un changement de plan]                  │
@@ -369,4 +369,8 @@ R : Les données sont conservées 30 jours, puis supprimées sauf demande contra
 
 ---
 
-*Dernière mise à jour : Janvier 2025*
+---
+
+## Dernière mise à jour
+
+Janvier 2026

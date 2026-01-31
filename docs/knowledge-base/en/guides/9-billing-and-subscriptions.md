@@ -68,8 +68,8 @@ This guide explains subscription plans, pricing, and how to manage your subscrip
 | ✅ Everything in Basic |
 | ✅ Parent leads inbox + auto-matching |
 | ✅ HR & compliance document library |
-| ✅ Parent enquiry tracker |
-| ✅ Limited parent enquiries (e.g., 15/month) |
+| ✅ Parent inquiry tracker |
+| ✅ Limited parent inquiries (e.g., 15/month) |
 
 ---
 
@@ -80,7 +80,7 @@ This guide explains subscription plans, pricing, and how to manage your subscrip
 | Features |
 |----------|
 | ✅ Everything in Essential |
-| ✅ **Unlimited** parent enquiries |
+| ✅ **Unlimited** parent inquiries |
 | ✅ Recruitment module (post jobs, view candidates) |
 | ✅ E-Learning platform access |
 | ✅ Analytics dashboard |
@@ -197,7 +197,7 @@ When you try to access a feature not included in your plan:
 │  Plan: 🌿 Essential                                │
 │  Status: Active ✅                                  │
 │                                                     │
-│  Current Period: Jan 1 - Jan 31, 2025              │
+│  Current Period: Jan 1 - Jan 31, 20XX              │
 │  Cancel at Period End: No                          │
 │                                                     │
 └─────────────────────────────────────────────────────┘
@@ -409,7 +409,7 @@ If you need to cancel your subscription:
 │  ⚠️ Are you sure you want to cancel?               │
 │                                                     │
 │  Your subscription will remain active until:        │
-│  January 31, 2025                                   │
+│  January 31, 20XX                                   │
 │                                                     │
 │  After this date, you will lose access to:          │
 │  • Parent Leads                                     │
@@ -484,4 +484,8 @@ Having billing or subscription issues?
 
 ---
 
-*Last Updated: January 2025*
+---
+
+## Last Updated
+
+January 2026

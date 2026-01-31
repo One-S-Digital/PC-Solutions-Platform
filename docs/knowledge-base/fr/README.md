@@ -91,4 +91,8 @@ Besoin d'aide supplémentaire ?
 
 ---
 
-*Dernière mise à jour : Janvier 2025*
+---
+
+## Dernière mise à jour
+
+Janvier 2026

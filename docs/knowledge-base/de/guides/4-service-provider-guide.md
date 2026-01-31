@@ -270,7 +270,7 @@ Gehen Sie zu **Einstellungen** → **Promo-Code-Manager**
 1. Klicken Sie auf **"Neuen Code hinzufügen"**
 2. Details ausfüllen:
 
-```
+```text
 ┌─────────────────────────────────────────────────────┐
 │        Neuen Promo-Code hinzufügen              [X] │
 ├─────────────────────────────────────────────────────┤
@@ -438,4 +438,8 @@ Rabattkündigungen sind Vereinbarungen, bei denen Aktionspreise oder Rabatte for
 
 ---
 
-*Zuletzt aktualisiert: Januar 2025*
+---
+
+## Zuletzt aktualisiert
+
+Januar 2026

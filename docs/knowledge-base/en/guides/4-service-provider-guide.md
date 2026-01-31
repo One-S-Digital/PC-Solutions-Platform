@@ -511,4 +511,8 @@ Discount terminations are formal endings of promotional pricing or special disco
 
 ---
 
-*Last Updated: January 2025*
+---
+
+## Last Updated
+
+January 2026

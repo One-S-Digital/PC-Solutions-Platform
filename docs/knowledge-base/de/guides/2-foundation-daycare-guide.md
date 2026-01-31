@@ -540,4 +540,8 @@ Siehe [Einstellungs-Guide](../reference/settings-guide.md) für detaillierte Anw
 
 ---
 
-*Zuletzt aktualisiert: Januar 2025*
+---
+
+## Zuletzt aktualisiert
+
+Januar 2026

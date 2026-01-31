@@ -577,4 +577,8 @@ If you've tried these solutions and still have issues:
 
 ---
 
-*Last Updated: January 2025*
+---
+
+## Last Updated
+
+January 2026

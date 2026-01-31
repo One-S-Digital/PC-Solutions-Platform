@@ -162,5 +162,9 @@ To change your platform language, see [Language Settings](./en/guides/8-common-f
 
 ---
 
-*Last Updated: January 2025*
+---
+
+## Last Updated
+
+January 2026
 *Version: 2.0*

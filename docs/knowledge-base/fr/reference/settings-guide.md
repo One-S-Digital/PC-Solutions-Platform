@@ -406,4 +406,8 @@ Personnalisez votre vue analytique.
 
 ---
 
-*Dernière mise à jour : Janvier 2025*
+---
+
+## Dernière mise à jour
+
+Janvier 2026

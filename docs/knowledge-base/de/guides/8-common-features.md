@@ -353,4 +353,8 @@ Wenn Sie Schwierigkeiten haben:
 
 ---
 
-*Zuletzt aktualisiert: Januar 2025*
+---
+
+## Zuletzt aktualisiert
+
+Januar 2026

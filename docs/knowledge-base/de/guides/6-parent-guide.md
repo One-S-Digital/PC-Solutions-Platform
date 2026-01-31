@@ -124,7 +124,7 @@ Wenn Sie eine Anfrage stellen, geben Sie an:
 
 | Feld | Beschreibung | Beispiel |
 |------|--------------|----------|
-| **Startdatum** | Wann Sie Betreuung benötigen | 1. September 2025 |
+| **Startdatum** | Wann Sie Betreuung benötigen | 1. September 20XX |
 | **Betreuungsart** | Vollzeit, Teilzeit | Vollzeit |
 | **Gewünschte Tage** | Wochentage | Montag bis Freitag |
 | **Uhrzeiten** | Gewünschte Stunden | 8:00 - 18:00 |
@@ -378,4 +378,8 @@ A: Sie können eine gesendete Anfrage nicht ändern, aber Sie können der Kita e
 
 ---
 
-*Zuletzt aktualisiert: Januar 2025*
+---
+
+## Zuletzt aktualisiert
+
+Januar 2026
