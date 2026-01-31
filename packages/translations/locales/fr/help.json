@@ -1,0 +1,219 @@
+{
+  "modal": {
+    "title": "Aide et Base de connaissances",
+    "categories": "Catégories",
+    "searchPlaceholder": "Rechercher de l'aide...",
+    "allCategories": "Toutes les catégories",
+    "noResults": "Aucun article trouvé",
+    "tryDifferentSearch": "Essayez un autre terme de recherche ou parcourez les catégories",
+    "needMoreHelp": "Besoin de plus d'aide ?",
+    "contactSupport": "Contacter le support",
+    "supportEmail": "Email",
+    "goToSupport": "Aller à la page de support",
+    "toggleMenu": "Basculer le menu"
+  },
+  "categories": {
+    "gettingStarted": "Pour commencer",
+    "account": "Compte",
+    "foundation": "Fondation / Crèche",
+    "supplier": "Fournisseur de produits",
+    "serviceProvider": "Prestataire de services",
+    "educator": "Éducateur",
+    "parent": "Parent",
+    "settings": "Paramètres",
+    "billing": "Facturation et abonnement",
+    "troubleshooting": "Dépannage"
+  },
+  "articles": {
+    "platformOverview": {
+      "title": "Aperçu de la plateforme",
+      "description": "Découvrez ce qu'est ProCrèche Solutions et comment elle connecte l'écosystème suisse de la petite enfance.",
+      "content": "<strong>Qu'est-ce que ProCrèche Solutions ?</strong><br/><br/>ProCrèche Solutions est une plateforme tout-en-un connectant l'écosystème suisse de la petite enfance :<br/><br/>• <strong>Crèches (Fondations)</strong> - Trouvez des produits, services, personnel et gérez les demandes des parents<br/>• <strong>Fournisseurs de produits</strong> - Vendez des produits de puériculture aux crèches<br/>• <strong>Prestataires de services</strong> - Offrez des services professionnels aux crèches<br/>• <strong>Éducateurs</strong> - Trouvez des opportunités d'emploi dans les crèches<br/>• <strong>Parents</strong> - Trouvez une garde d'enfants de qualité<br/><br/><strong>Langues disponibles</strong><br/><br/>La plateforme est disponible en trois langues :<br/>• Anglais<br/>• Français<br/>• Allemand<br/><br/>Vous pouvez changer de langue à tout moment via le sélecteur dans la barre de navigation."
+    },
+    "createAccount": {
+      "title": "Créer votre compte",
+      "description": "Guide étape par étape pour créer un nouveau compte sur ProCrèche Solutions.",
+      "content": "<strong>Étape 1 : Accéder à l'inscription</strong><br/>Cliquez sur le bouton « S'inscrire » dans la barre de navigation.<br/><br/><strong>Étape 2 : Choisir votre rôle</strong><br/>Sélectionnez le type de compte correspondant à vos besoins :<br/>• 🏫 Fondation - Crèches<br/>• 📦 Fournisseur - Entreprises vendant des produits<br/>• 🔧 Prestataire de services - Entreprises offrant des services<br/>• 👩‍🏫 Éducateur - Professionnels de la petite enfance<br/>• 👨‍👩‍👧 Parent - Parents cherchant une crèche<br/><br/><strong>Étape 3 : Remplir vos informations</strong><br/>Complétez le formulaire d'inscription.<br/><br/><strong>Étape 4 : Accepter les conditions et CAPTCHA</strong><br/>Acceptez les conditions d'utilisation et complétez le CAPTCHA.<br/><br/><strong>Étape 5 : Vérifier votre email</strong><br/>Entrez le code à 6 chiffres envoyé à votre email.<br/><br/><strong>Alternative : S'inscrire avec Google</strong><br/>Vous pouvez aussi cliquer sur « Continuer avec Google » pour une inscription plus rapide."
+    },
+    "emailVerification": {
+      "title": "Vérification de l'email",
+      "description": "Comment vérifier votre email avec le code de vérification à 6 chiffres.",
+      "content": "<strong>Processus de vérification</strong><br/><br/>Après la création de votre compte, vous recevrez un code à 6 chiffres :<br/><br/>1. Vérifiez votre boîte de réception (et le dossier spam)<br/>2. Trouvez l'email de ProCrèche Solutions<br/>3. Copiez le code à 6 chiffres<br/>4. Entrez-le dans le champ de vérification<br/>5. Cliquez sur « Vérifier l'email »<br/><br/><strong>Code non reçu ?</strong><br/>• Attendez 30 secondes pour l'option de renvoi<br/>• Cliquez sur « Renvoyer le code »<br/>• Vérifiez votre dossier spam<br/><br/><strong>Code expiré ?</strong><br/>Les codes expirent après environ 10 minutes. Cliquez sur « Renvoyer le code » pour en obtenir un nouveau.<br/><br/><strong>Conseil :</strong> Entrez le code dès que vous le recevez."
+    },
+    "signIn": {
+      "title": "Se connecter",
+      "description": "Comment vous connecter à votre compte ProCrèche Solutions.",
+      "content": "<strong>Connexion standard</strong><br/><br/>1. Allez sur la page de connexion<br/>2. Entrez votre adresse email<br/>3. Entrez votre mot de passe<br/>4. Cliquez sur « Se connecter »<br/><br/><strong>Connexion avec Google</strong><br/><br/>1. Cliquez sur « Continuer avec Google »<br/>2. Sélectionnez votre compte Google<br/>3. Vous serez connecté automatiquement<br/><br/><strong>Rester connecté</strong><br/>Votre session reste active pendant votre navigation. Vous serez déconnecté automatiquement après une période d'inactivité pour des raisons de sécurité."
+    },
+    "navigation": {
+      "title": "Navigation sur la plateforme",
+      "description": "Apprenez à naviguer sur ProCrèche Solutions avec la barre latérale et les menus.",
+      "content": "<strong>Navigation par barre latérale</strong><br/><br/>Après connexion, la barre latérale à gauche affiche vos options de navigation principales. Les éléments du menu varient selon votre rôle.<br/><br/><strong>Barre de navigation supérieure</strong><br/>• 🔔 Notifications - Icône de cloche pour les alertes<br/>• 🌐 Langue - Basculer entre FR/EN/DE<br/>• 👤 Menu profil - Cliquez sur votre avatar<br/><br/><strong>Options du menu profil</strong><br/>• Voir le profil - Voir votre profil public<br/>• Modifier le profil - Mettre à jour vos informations<br/>• Paramètres - Accéder aux paramètres du compte<br/>• Se déconnecter - Quitter votre compte"
+    },
+    "changePassword": {
+      "title": "Changer votre mot de passe",
+      "description": "Comment mettre à jour votre mot de passe pour une meilleure sécurité.",
+      "content": "<strong>Pour changer votre mot de passe :</strong><br/><br/>1. Allez dans Paramètres → Sécurité du compte<br/>2. Trouvez la section « Changer le mot de passe »<br/>3. Entrez votre mot de passe actuel<br/>4. Entrez votre nouveau mot de passe<br/>5. Confirmez votre nouveau mot de passe<br/>6. Cliquez sur « Mettre à jour le mot de passe »<br/><br/><strong>Exigences du mot de passe :</strong><br/>• Au moins 8 caractères<br/>• Pas un mot de passe couramment utilisé<br/>• Non exposé dans des fuites de données<br/><br/><strong>Bonnes pratiques :</strong><br/>• Utilisez un mot de passe unique<br/>• Ne le partagez pas<br/>• Mettez-le à jour régulièrement"
+    },
+    "changeEmail": {
+      "title": "Changer votre email",
+      "description": "Comment mettre à jour l'adresse email associée à votre compte.",
+      "content": "<strong>Pour changer votre email :</strong><br/><br/>1. Allez dans Paramètres → Sécurité du compte<br/>2. Trouvez « Changer l'adresse email »<br/>3. Entrez votre nouvelle adresse email<br/>4. Cliquez sur « Envoyer le code de vérification »<br/>5. Vérifiez votre NOUVEL email pour le code<br/>6. Entrez le code de vérification à 6 chiffres<br/>7. Cliquez sur « Vérifier et changer l'email »<br/><br/><strong>Important :</strong> Vous devez vérifier le nouvel email avant que le changement ne prenne effet. Votre ancien email ne fonctionnera plus pour la connexion."
+    },
+    "forgotPassword": {
+      "title": "Mot de passe oublié",
+      "description": "Comment réinitialiser votre mot de passe si vous l'avez oublié.",
+      "content": "<strong>Réinitialiser votre mot de passe :</strong><br/><br/>1. Sur la page de connexion, cliquez sur « Mot de passe oublié ? »<br/>2. Entrez votre adresse email<br/>3. Cliquez sur « Envoyer le lien de réinitialisation »<br/>4. Vérifiez votre email pour le lien<br/>5. Cliquez sur le lien pour ouvrir la page de réinitialisation<br/>6. Entrez votre nouveau mot de passe<br/>7. Confirmez votre nouveau mot de passe<br/>8. Cliquez sur « Réinitialiser le mot de passe »<br/><br/><strong>Note :</strong> Les liens de réinitialisation expirent rapidement pour des raisons de sécurité. Demandez-en un nouveau si le vôtre a expiré."
+    },
+    "profileSetup": {
+      "title": "Configuration de votre profil",
+      "description": "Comment compléter et optimiser votre profil pour une meilleure expérience.",
+      "content": "<strong>Pourquoi compléter votre profil ?</strong><br/>• Fondations : Apparaître dans les recherches des parents<br/>• Fournisseurs/Prestataires : Être découvert par les clients<br/>• Éducateurs : Se démarquer auprès des employeurs<br/>• Parents : Obtenir de meilleures correspondances de crèches<br/><br/><strong>Pour compléter votre profil :</strong><br/><br/>1. Cliquez sur votre photo de profil (en haut à droite)<br/>2. Sélectionnez « Modifier le profil »<br/>3. Remplissez toutes les sections<br/>4. Téléchargez une photo de profil<br/>5. Cliquez sur « Enregistrer »"
+    },
+    "foundationDashboard": {
+      "title": "Tableau de bord Fondation",
+      "description": "Aperçu du tableau de bord Fondation (Crèche) et de ses fonctionnalités.",
+      "content": "<strong>Aperçu du tableau de bord</strong><br/><br/>Votre tableau de bord Fondation affiche les statistiques clés et l'activité récente :<br/><br/>• Demandes actives des parents<br/>• Commandes et rendez-vous en attente<br/>• Candidatures du personnel<br/>• Messages et notifications<br/><br/><strong>Fonctionnalités principales :</strong><br/>• Accès au marketplace pour produits et services<br/>• Gestion des leads parents<br/>• Outils de recrutement<br/>• Ressources e-learning et RH<br/>• Analyses et rapports"
+    },
+    "parentLeads": {
+      "title": "Gestion des demandes parents",
+      "description": "Comment voir, répondre et gérer les demandes des parents.",
+      "content": "<strong>Aperçu des leads parents</strong><br/><br/>Les leads parents sont les demandes de parents cherchant une crèche.<br/><br/><strong>Types de statut :</strong><br/>• Nouveau - Demandes non lues<br/>• En cours - En cours de traitement<br/>• Contacté - Premier contact établi<br/>• En liste d'attente - Sur votre liste d'attente<br/>• Inscrit - Inscription réussie<br/>• Refusé - Demandes refusées<br/><br/><strong>Pour répondre à un lead :</strong><br/>1. Cliquez sur le lead pour voir les détails<br/>2. Examinez les informations du parent<br/>3. Mettez à jour le statut si nécessaire<br/>4. Envoyez un message via le système de messagerie"
+    },
+    "marketplaceOrdering": {
+      "title": "Commander sur le Marketplace",
+      "description": "Comment parcourir, commander des produits et demander des services.",
+      "content": "<strong>Parcourir le Marketplace</strong><br/><br/>Accédez au Marketplace depuis votre barre latérale pour trouver :<br/>• Produits - Fournitures et équipements pour crèches<br/>• Services - Services professionnels pour crèches<br/><br/><strong>Pour commander des produits :</strong><br/>1. Parcourez ou recherchez des produits<br/>2. Cliquez sur un produit pour les détails<br/>3. Sélectionnez quantité et options<br/>4. Ajoutez au panier<br/>5. Vérifiez le panier et passez commande<br/>6. Finalisez votre commande<br/><br/><strong>Pour demander des services :</strong><br/>1. Parcourez les prestataires de services<br/>2. Consultez les détails du service<br/>3. Cliquez sur « Demander le service »<br/>4. Remplissez le formulaire de demande<br/>5. Soumettez votre demande"
+    },
+    "recruitmentJobs": {
+      "title": "Recrutement et offres d'emploi",
+      "description": "Comment publier des offres d'emploi et gérer les candidats en tant que Fondation.",
+      "content": "<strong>Publier une offre d'emploi</strong><br/><br/>1. Allez dans Recrutement → Offres d'emploi<br/>2. Cliquez sur « Créer une offre d'emploi »<br/>3. Remplissez les détails du poste<br/>4. Définissez les exigences et qualifications<br/>5. Publiez l'annonce<br/><br/><strong>Gestion des candidats</strong><br/>• Voir les candidatures des éducateurs<br/>• Examiner les profils des candidats<br/>• Planifier des entretiens<br/>• Envoyer des messages aux candidats<br/>• Mettre à jour le statut des candidatures<br/><br/><strong>Vivier de candidats</strong><br/>Parcourez le vivier de candidats pour trouver des éducateurs en recherche active de poste."
+    },
+    "supplierDashboard": {
+      "title": "Tableau de bord Fournisseur",
+      "description": "Aperçu du tableau de bord Fournisseur de produits et des métriques clés.",
+      "content": "<strong>Aperçu du tableau de bord</strong><br/><br/>Votre tableau de bord Fournisseur affiche :<br/>• Fiches produits actives<br/>• Commandes récentes<br/>• Demandes en attente<br/>• Indicateurs de performance<br/><br/><strong>Actions principales :</strong><br/>• Ajouter de nouveaux produits<br/>• Gérer les commandes<br/>• Répondre aux demandes<br/>• Voir les analyses<br/>• Mettre à jour le profil entreprise"
+    },
+    "productListings": {
+      "title": "Gestion des fiches produits",
+      "description": "Comment ajouter, modifier et gérer votre catalogue de produits.",
+      "content": "<strong>Ajouter un nouveau produit</strong><br/><br/>1. Allez dans Fiches produits<br/>2. Cliquez sur « Ajouter un produit »<br/>3. Remplissez les détails du produit :<br/>   • Nom et description<br/>   • Prix et disponibilité<br/>   • Catégories et tags<br/>   • Images et médias<br/>   • Informations de livraison<br/>4. Enregistrez en brouillon ou publiez<br/><br/><strong>Modifier les produits</strong><br/>Cliquez sur n'importe quel produit pour modifier ses détails, mettre à jour les prix ou changer la disponibilité.<br/><br/><strong>Statut du produit :</strong><br/>• Brouillon - Non visible<br/>• Publié - En ligne sur le marketplace<br/>• Rupture de stock - Visible mais indisponible"
+    },
+    "supplierOrders": {
+      "title": "Gestion des commandes",
+      "description": "Comment voir, traiter et exécuter les commandes en tant que fournisseur.",
+      "content": "<strong>Gestion des commandes</strong><br/><br/>1. Allez dans Commandes depuis la barre latérale<br/>2. Voir les commandes entrantes<br/>3. Mettez à jour le statut de la commande :<br/>   • En attente → En traitement<br/>   • En traitement → Expédiée<br/>   • Expédiée → Livrée<br/><br/><strong>Détails de la commande</strong><br/>Cliquez sur une commande pour voir :<br/>• Informations client<br/>• Détails du produit<br/>• Adresse de livraison<br/>• Notes de commande<br/><br/><strong>Communication</strong><br/>Utilisez le système de messagerie pour contacter les clients concernant leurs commandes."
+    },
+    "promoCodes": {
+      "title": "Codes promo",
+      "description": "Comment créer et gérer des codes de réduction promotionnels.",
+      "content": "<strong>Créer un code promo</strong><br/><br/>1. Allez dans Paramètres → Gestionnaire de codes promo<br/>2. Cliquez sur « Ajouter un code promo »<br/>3. Remplissez les détails :<br/><br/><strong>Champs du code promo :</strong><br/>• <strong>Code</strong> - Le code que les clients entrent (ex : SAVE20)<br/>• <strong>Description de la réduction</strong> - La réduction qu'ils reçoivent (ex : « 20% sur toutes les commandes »)<br/>• <strong>Description</strong> (optionnel) - Conditions ou termes<br/>• <strong>Actif</strong> - Basculer pour activer/désactiver<br/><br/>4. Cliquez sur « Enregistrer le code promo »<br/><br/><strong>Gestion des codes</strong><br/>• Modifier les codes pour mettre à jour les détails<br/>• Basculer le statut actif on/off<br/>• Supprimer les codes obsolètes"
+    },
+    "serviceProviderDashboard": {
+      "title": "Tableau de bord Prestataire de services",
+      "description": "Aperçu du tableau de bord Prestataire de services et fonctionnalités.",
+      "content": "<strong>Aperçu du tableau de bord</strong><br/><br/>Votre tableau de bord Prestataire de services affiche :<br/>• Fiches de services actives<br/>• Demandes de services entrantes<br/>• Rendez-vous à venir<br/>• Indicateurs de performance<br/><br/><strong>Fonctionnalités principales :</strong><br/>• Gérer les offres de services<br/>• Répondre aux demandes<br/>• Intégration de réservation externe<br/>• Analyses et rapports"
+    },
+    "serviceListings": {
+      "title": "Gestion des fiches de services",
+      "description": "Comment ajouter et gérer vos offres de services.",
+      "content": "<strong>Ajouter un nouveau service</strong><br/><br/>1. Allez dans Fiches de services<br/>2. Cliquez sur « Ajouter un service »<br/>3. Remplissez les détails du service :<br/>   • Nom et description du service<br/>   • Catégories<br/>   • Informations tarifaires<br/>   • Zone de service/cantons<br/>   • Images<br/>4. Publiez votre service<br/><br/><strong>Statut du service :</strong><br/>• Actif - Visible par les crèches<br/>• Inactif - Masqué du marketplace"
+    },
+    "serviceRequests": {
+      "title": "Gestion des demandes de services",
+      "description": "Comment voir et répondre aux demandes de services des crèches.",
+      "content": "<strong>Demandes de services</strong><br/><br/>Quand une crèche demande votre service :<br/><br/>1. Vous recevrez une notification<br/>2. Allez dans « Mes demandes »<br/>3. Examinez les détails de la demande<br/>4. Répondez avec vos disponibilités<br/>5. Mettez à jour le statut de la demande<br/><br/><strong>Statuts des demandes :</strong><br/>• Nouveau - Demande non lue<br/>• En cours - En traitement<br/>• Planifié - Rendez-vous fixé<br/>• Terminé - Service effectué<br/>• Annulé - Demande annulée"
+    },
+    "bookingLink": {
+      "title": "Intégration du lien de réservation",
+      "description": "Comment configurer un lien de réservation externe (Calendly, etc.).",
+      "content": "<strong>Ajouter un lien de réservation</strong><br/><br/>Vous pouvez ajouter un lien de réservation externe pour permettre aux crèches de planifier directement :<br/><br/>1. Allez dans Paramètres → Contact et réservation<br/>2. Trouvez la section « Lien de réservation »<br/>3. Entrez votre URL de réservation (ex : Calendly)<br/>4. Enregistrez vos paramètres<br/><br/><strong>Comment ça marche :</strong><br/>• Votre lien de réservation apparaît sur votre profil<br/>• Les crèches peuvent cliquer pour planifier directement<br/>• Compatible avec Calendly, Acuity et autres outils de réservation"
+    },
+    "educatorProfile": {
+      "title": "Profil Éducateur",
+      "description": "Comment configurer et optimiser votre profil d'éducateur.",
+      "content": "<strong>Sections du profil :</strong><br/><br/>• <strong>Infos de base</strong> - Nom, photo, contact<br/>• <strong>Qualifications</strong> - Formation, certifications<br/>• <strong>Expérience</strong> - Historique professionnel<br/>• <strong>Disponibilité</strong> - Quand vous pouvez travailler<br/>• <strong>Documents</strong> - CV, certificats<br/><br/><strong>Conseils pour réussir :</strong><br/>• Téléchargez une photo professionnelle<br/>• Listez toutes les qualifications pertinentes<br/>• Gardez vos disponibilités à jour<br/>• Écrivez une biographie convaincante"
+    },
+    "jobBoard": {
+      "title": "Tableau d'offres d'emploi",
+      "description": "Comment rechercher et postuler à des emplois en tant qu'éducateur.",
+      "content": "<strong>Trouver des emplois</strong><br/><br/>1. Allez au Tableau d'offres d'emploi depuis la barre latérale<br/>2. Utilisez les filtres pour affiner les résultats :<br/>   • Lieu/Canton<br/>   • Type d'emploi (temps plein, temps partiel)<br/>   • Niveau d'expérience<br/>3. Cliquez sur un emploi pour les détails<br/><br/><strong>Postuler aux emplois</strong><br/><br/>1. Examinez les exigences du poste<br/>2. Cliquez sur « Postuler »<br/>3. Soumettez votre candidature<br/>4. Suivez le statut dans « Mes candidatures »"
+    },
+    "availabilitySettings": {
+      "title": "Paramètres de disponibilité",
+      "description": "Comment définir vos disponibilités hebdomadaires et exceptions de dates.",
+      "content": "<strong>Disponibilité hebdomadaire</strong><br/><br/>Définissez votre emploi du temps hebdomadaire régulier :<br/>1. Allez dans Profil → Disponibilité<br/>2. Activez/désactivez chaque jour<br/>3. Définissez les heures de début et de fin<br/>4. Enregistrez les modifications<br/><br/><strong>Exceptions de dates</strong><br/><br/>Pour des dates spécifiques avec une disponibilité différente :<br/>1. Cliquez sur « Ajouter une exception de date »<br/>2. Sélectionnez la date<br/>3. Marquez comme indisponible ou définissez des horaires personnalisés<br/>4. Ajoutez une raison (optionnel)<br/>5. Enregistrez l'exception"
+    },
+    "findDaycare": {
+      "title": "Trouver une crèche",
+      "description": "Comment rechercher et parcourir les options de crèches.",
+      "content": "<strong>Parcourir les fondations</strong><br/><br/>1. Allez dans « Parcourir les fondations »<br/>2. Utilisez les filtres :<br/>   • Lieu/Canton<br/>   • Langues disponibles<br/>   • Disponibilité<br/>3. Voir les profils des crèches<br/>4. Vérifiez les services et la capacité<br/><br/><strong>Ce qu'il faut rechercher :</strong><br/>• Commodité de l'emplacement<br/>• Horaires d'ouverture<br/>• Langues proposées<br/>• Places disponibles<br/>• Photos et avis"
+    },
+    "submitInquiry": {
+      "title": "Soumettre une demande",
+      "description": "Comment soumettre une demande de crèche en tant que parent.",
+      "content": "<strong>Soumettre votre demande</strong><br/><br/>1. Allez dans « Trouver une crèche »<br/>2. Remplissez le formulaire :<br/>   • Informations sur l'enfant<br/>   • Date de début souhaitée<br/>   • Emploi du temps de garde nécessaire<br/>   • Lieux préférés<br/>   • Exigences supplémentaires<br/>3. Soumettez votre demande<br/><br/><strong>Que se passe-t-il ensuite :</strong><br/>• Les crèches reçoivent votre demande<br/>• Elles répondront via la plateforme<br/>• Suivez les réponses dans « Mes demandes »"
+    },
+    "trackInquiries": {
+      "title": "Suivre vos demandes",
+      "description": "Comment voir et suivre le statut de vos demandes de crèche.",
+      "content": "<strong>Voir vos demandes</strong><br/><br/>1. Allez dans « Mes demandes » depuis la barre latérale<br/>2. Voir toutes les demandes soumises<br/>3. Vérifiez le statut de chacune :<br/>   • En attente - En attente de réponse<br/>   • Répondu - La crèche a répondu<br/>   • En liste d'attente - Sur liste d'attente<br/>   • Inscrit - Place confirmée<br/><br/><strong>Communication</strong><br/>Utilisez le système de messagerie pour communiquer avec les crèches concernant votre demande."
+    },
+    "accountSecurity": {
+      "title": "Paramètres de sécurité du compte",
+      "description": "Comment gérer la sécurité et l'authentification de votre compte.",
+      "content": "<strong>Paramètres de sécurité</strong><br/><br/>Allez dans Paramètres → Sécurité du compte pour gérer :<br/><br/>• <strong>Changer le mot de passe</strong> - Mettre à jour votre mot de passe<br/>• <strong>Changer l'email</strong> - Mettre à jour votre adresse email<br/>• <strong>Comptes connectés</strong> - Gérer la connexion Google<br/><br/><strong>Bonnes pratiques :</strong><br/>• Utilisez un mot de passe fort et unique<br/>• Gardez votre adresse email à jour<br/>• Déconnectez-vous sur les appareils partagés"
+    },
+    "notificationSettings": {
+      "title": "Paramètres de notifications",
+      "description": "Comment gérer vos notifications par email et sur la plateforme.",
+      "content": "<strong>Préférences de notification</strong><br/><br/>Allez dans Paramètres → Notifications pour gérer :<br/><br/>• <strong>Notifications par email</strong><br/>   - Mises à jour de commandes<br/>   - Nouveaux messages<br/>   - Notifications de leads<br/>   - Emails marketing<br/><br/>• <strong>Notifications plateforme</strong><br/>   - Alertes dans l'application<br/>   - Notifications icône cloche<br/><br/>Basculez chaque type on/off selon vos préférences."
+    },
+    "privacySettings": {
+      "title": "Paramètres de confidentialité et données",
+      "description": "Comment gérer vos paramètres de confidentialité et vos données.",
+      "content": "<strong>Options de confidentialité</strong><br/><br/>Allez dans Paramètres → Confidentialité et données :<br/><br/>• <strong>Visibilité du profil</strong> - Contrôlez ce qui est public<br/>• <strong>Export des données</strong> - Téléchargez vos données<br/>• <strong>Suppression du compte</strong> - Demandez la suppression du compte<br/><br/><strong>Droits RGPD :</strong><br/>• Accéder à vos données personnelles<br/>• Demander la correction des données<br/>• Demander la suppression des données<br/>• Portabilité des données"
+    },
+    "languageSettings": {
+      "title": "Paramètres de langue",
+      "description": "Comment changer la langue de la plateforme.",
+      "content": "<strong>Changer de langue</strong><br/><br/>La plateforme prend en charge trois langues :<br/>• 🇬🇧 Anglais<br/>• 🇫🇷 Français<br/>• 🇩🇪 Allemand<br/><br/><strong>Pour changer de langue :</strong><br/>1. Cliquez sur le sélecteur de langue dans la navigation supérieure<br/>2. Sélectionnez votre langue préférée<br/>3. La plateforme se met à jour immédiatement<br/><br/>Votre préférence de langue est enregistrée automatiquement."
+    },
+    "subscriptionPlans": {
+      "title": "Plans d'abonnement",
+      "description": "Aperçu des plans d'abonnement disponibles et tarifs.",
+      "content": "<strong>Plans disponibles</strong><br/><br/><strong>Plans Fondation :</strong><br/>• Starter - Fonctionnalités de base<br/>• Professionnel - Fonctionnalités complètes<br/>• Entreprise - Solutions personnalisées<br/><br/><strong>Plans Fournisseur/Prestataire :</strong><br/>• Contactez-nous pour des tarifs personnalisés<br/><br/><strong>Options de facturation :</strong><br/>• Facturation mensuelle<br/>• Facturation annuelle (économisez jusqu'à 20%)"
+    },
+    "manageSubscription": {
+      "title": "Gérer votre abonnement",
+      "description": "Comment voir, mettre à niveau ou annuler votre abonnement.",
+      "content": "<strong>Gestion de l'abonnement</strong><br/><br/>Allez dans Paramètres → Facturation et abonnement :<br/><br/>• <strong>Voir le plan actuel</strong> - Voir votre abonnement actif<br/>• <strong>Mettre à niveau</strong> - Passer à un niveau supérieur<br/>• <strong>Changer la facturation</strong> - Mensuel ↔ Annuel<br/>• <strong>Annuler l'abonnement</strong> - Mettre fin à votre abonnement<br/><br/><strong>Pour demander des modifications :</strong><br/>1. Cliquez sur « Gérer l'abonnement »<br/>2. Sélectionnez l'action souhaitée<br/>3. Complétez le formulaire de demande<br/>4. Notre équipe traitera votre demande"
+    },
+    "invoices": {
+      "title": "Factures et historique de paiement",
+      "description": "Comment voir et télécharger vos factures.",
+      "content": "<strong>Voir les factures</strong><br/><br/>Allez dans Paramètres → Facturation et abonnement :<br/><br/>• Voir toutes les factures passées<br/>• Télécharger les factures en PDF<br/>• Voir le statut des paiements<br/><br/><strong>Détails de la facture :</strong><br/>• Numéro et date de facture<br/>• Période de service<br/>• Montant et taxes<br/>• Statut du paiement"
+    },
+    "loginIssues": {
+      "title": "Problèmes de connexion",
+      "description": "Dépannage des problèmes de connexion courants.",
+      "content": "<strong>Impossible de se connecter ?</strong><br/><br/><strong>Vérifiez ces points :</strong><br/>• L'adresse email est correcte<br/>• Le mot de passe est correct (vérifiez les majuscules)<br/>• Le compte est vérifié<br/><br/><strong>Solutions :</strong><br/>• Utilisez « Mot de passe oublié » pour réinitialiser<br/>• Essayez la connexion Google si disponible<br/>• Videz le cache et les cookies du navigateur<br/>• Essayez un autre navigateur<br/><br/><strong>Compte verrouillé ?</strong><br/>Contactez le support si vous êtes bloqué après plusieurs tentatives."
+    },
+    "verificationIssues": {
+      "title": "Problèmes de vérification",
+      "description": "Dépannage des problèmes de vérification par email.",
+      "content": "<strong>Code de vérification non reçu ?</strong><br/><br/>1. Vérifiez le dossier spam/indésirables<br/>2. Attendez 30 secondes, cliquez sur « Renvoyer le code »<br/>3. Vérifiez que l'adresse email est correcte<br/>4. Ajoutez notre email à vos contacts<br/><br/><strong>Code expiré ?</strong><br/>Les codes expirent après ~10 minutes. Cliquez sur « Renvoyer le code » pour en obtenir un nouveau.<br/><br/><strong>Code ne fonctionne pas ?</strong><br/>• Entrez exactement 6 chiffres<br/>• Pas d'espaces<br/>• Utilisez le code le plus récent"
+    },
+    "browserCompatibility": {
+      "title": "Compatibilité des navigateurs",
+      "description": "Navigateurs pris en charge et exigences techniques.",
+      "content": "<strong>Navigateurs pris en charge :</strong><br/><br/>• Google Chrome (recommandé)<br/>• Mozilla Firefox<br/>• Microsoft Edge<br/>• Safari<br/><br/><strong>Exigences :</strong><br/>• Gardez le navigateur à jour<br/>• Activez JavaScript<br/>• Activez les cookies<br/><br/><strong>Problèmes ?</strong><br/>• Videz le cache et les cookies<br/>• Désactivez les extensions du navigateur<br/>• Essayez le mode incognito/privé"
+    },
+    "contactSupport": {
+      "title": "Contacter le support",
+      "description": "Comment obtenir de l'aide de notre équipe de support.",
+      "content": "<strong>Moyens d'obtenir de l'aide :</strong><br/><br/>1. <strong>Page de support</strong><br/>   Allez sur Support depuis votre barre latérale pour :<br/>   • Parcourir les FAQ<br/>   • Soumettre un ticket de support<br/>   • Voir l'historique des tickets<br/><br/>2. <strong>Support par email</strong><br/>   support@procrechesolutions.com<br/><br/><strong>Lors du contact avec le support :</strong><br/>• Décrivez clairement votre problème<br/>• Incluez les messages d'erreur éventuels<br/>• Mentionnez votre navigateur/appareil<br/>• Joignez des captures d'écran si utile"
+    }
+  }
+}

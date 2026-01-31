@@ -1097,6 +1097,7 @@
   },
   "navbar": {
     "goBackPreviousPage": "Retourner à la page précédente",
+    "help": "Aide et base de connaissances",
     "newMessages": "Nouveaux messages",
     "noNewNotifications": "Aucune nouvelle notification",
     "notifications": "Notifications",

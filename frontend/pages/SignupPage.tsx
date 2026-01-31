@@ -9,8 +9,9 @@ import Card from '../components/ui/Card';
 import Captcha from '../components/ui/Captcha';
 import { useWebhookStatus } from '../src/hooks/useWebhookStatus';
 import VerificationProgress from '../src/components/verification/VerificationProgress';
-import { BuildingOffice2Icon, UserIcon, CogIcon, UsersIcon, CheckCircleIcon, EyeIcon, EyeSlashIcon, ArrowLeftIcon, SquaresPlusIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
+import { BuildingOffice2Icon, UserIcon, CogIcon, UsersIcon, CheckCircleIcon, EyeIcon, EyeSlashIcon, ArrowLeftIcon, SquaresPlusIcon, ArrowRightOnRectangleIcon, QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
 import { useFrontendSettings } from '../hooks/useFrontendSettings';
+import HelpModal from '../components/help/HelpModal';
 import { useAuthContext } from '../providers/AuthProvider';
 import { apiService } from '../services/api';
 import { API_ENDPOINTS } from '../services/api-endpoints';
@@ -147,6 +148,7 @@ const SignupPage: React.FC = () => {
   const [isVerifying, setIsVerifying] = useState(false);
   const [webhookStatus, setWebhookStatus] = useState<'pending' | 'processing' | 'ready' | 'error'>('pending');
   const [webhookError, setWebhookError] = useState<string | null>(null);
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
 
   const getSuccessRedirectForRole = () => ({ path: '/dashboard' });
 
@@ -1104,9 +1106,22 @@ const SignupPage: React.FC = () => {
                 </Button>
               </div>
             )}
+
+            {/* Help button */}
+            <div className="mt-4 flex justify-center">
+              <button
+                onClick={() => setIsHelpModalOpen(true)}
+                className="p-2 rounded-full text-gray-500 hover:text-swiss-teal hover:bg-gray-100 transition-colors"
+                aria-label={t('common:navbar.help')}
+                title={t('common:navbar.help')}
+              >
+                <QuestionMarkCircleIcon className="h-5 w-5" />
+              </button>
+            </div>
           </>
         )}
       </Card>
+      <HelpModal isOpen={isHelpModalOpen} onClose={() => setIsHelpModalOpen(false)} />
     </div>
   );
 };
