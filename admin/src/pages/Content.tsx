@@ -279,8 +279,14 @@ export default function Content() {
                 throw new Error('Invalid content type');
               };
 
+              // Use video upload preset for e-learning (which may include videos)
+              // Use regular upload preset for other content types
+              const retryPreset = modalContentType === 'e-learning' 
+                ? RetryPresets.videoUpload 
+                : RetryPresets.upload;
+
               const result = await retryWithBackoff(uploadPromise, {
-                ...RetryPresets.upload,
+                ...retryPreset,
                 onRetry: (error, attempt, delay) => {
                   console.log(`Content upload retry attempt ${attempt} after ${delay}ms:`, error.message);
                   showToast(`Upload failed. Retrying (attempt ${attempt})...`, 'info');
@@ -425,12 +431,11 @@ export default function Content() {
     }
   };
 
-  const showToast = (message: string, type: 'success' | 'error') => {
+  const showToast = (message: string, type: 'success' | 'error' | 'info') => {
     // Simple toast implementation - you can replace with a proper toast library
     const toast = document.createElement('div');
-    toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg ${
-      type === 'success' ? 'bg-green-500' : 'bg-red-500'
-    } text-white z-50 transition-opacity duration-300`;
+    const bgColor = type === 'success' ? 'bg-green-500' : type === 'info' ? 'bg-blue-500' : 'bg-red-500';
+    toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg ${bgColor} text-white z-50 transition-opacity duration-300`;
     toast.textContent = message;
     document.body.appendChild(toast);
     setTimeout(() => {

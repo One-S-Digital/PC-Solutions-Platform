@@ -435,6 +435,7 @@ export const apiService = {
     onProgress?: (progress: number) => void
   ) => apiClient.post<ApiResponse<any>>('/content/elearning', data, {
     headers: { 'Content-Type': 'multipart/form-data' },
+    timeout: 600000, // 10 minutes timeout for large video uploads
     onUploadProgress: (progressEvent) => {
       if (onProgress && progressEvent.total) {
         const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
@@ -469,6 +470,7 @@ export const apiService = {
     onProgress?: (progress: number) => void
   ) => apiClient.post<ApiResponse<HrDocument>>('/content/hr-documents/upload', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
+    timeout: 300000, // 5 minutes timeout for large document uploads
     onUploadProgress: (progressEvent) => {
       if (onProgress && progressEvent.total) {
         const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
@@ -506,6 +508,7 @@ export const apiService = {
     onProgress?: (progress: number) => void
   ) => apiClient.post<ApiResponse<PolicyDocument>>('/content/state-policies/upload', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
+    timeout: 300000, // 5 minutes timeout for large policy document uploads
     onUploadProgress: (progressEvent) => {
       if (onProgress && progressEvent.total) {
         const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
