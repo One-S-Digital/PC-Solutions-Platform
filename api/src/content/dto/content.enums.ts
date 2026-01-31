@@ -135,6 +135,13 @@ export const ALLOWED_MIME_TYPES = {
     'video/webm',
     'video/x-msvideo', // AVI format (legacy MIME type)
     'video/vnd.avi', // AVI format (detected by file-type library v21+)
+    'video/x-m4v', // M4V files
+    'video/3gpp', // 3GP files
+    'video/ogg', // OGG video
+    'video/x-matroska', // MKV files
+    'video/mpeg', // MPEG files
+    'video/x-flv', // FLV files
+    'application/octet-stream', // Generic binary (some browsers report video files this way)
     'application/vnd.ms-powerpoint',
     'application/vnd.openxmlformats-officedocument.presentationml.presentation',
   ],

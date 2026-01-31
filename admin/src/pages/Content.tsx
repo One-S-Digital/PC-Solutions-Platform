@@ -218,6 +218,11 @@ export default function Content() {
       
       if (file) {
         formData.append('file', file);
+        console.log('📎 File attached:', {
+          name: file.name,
+          type: file.type,
+          size: `${(file.size / (1024 * 1024)).toFixed(2)} MB`,
+        });
       }
 
       // Append all form fields
@@ -230,6 +235,16 @@ export default function Content() {
           }
         }
       });
+
+      // Log FormData contents for debugging
+      console.log('📤 FormData contents:');
+      for (const [key, value] of formData.entries()) {
+        if (value instanceof File) {
+          console.log(`  ${key}: [File] ${value.name} (${value.type}, ${value.size} bytes)`);
+        } else {
+          console.log(`  ${key}: ${value}`);
+        }
+      }
 
       let response;
       
@@ -354,7 +369,44 @@ export default function Content() {
         responseData: error.response?.data,
         status: error.response?.status,
       });
-      const message = error.response?.data?.message || error.message || 'Failed to submit content';
+      
+      // Extract detailed validation errors from backend response
+      let message = 'Failed to submit content';
+      const responseData = error.response?.data;
+      
+      if (responseData) {
+        // Check for validation errors array
+        if (Array.isArray(responseData)) {
+          // Backend returns array of validation errors
+          const errorMessages = responseData.map((e: any) => {
+            if (e.constraints) {
+              return Object.values(e.constraints).join(', ');
+            }
+            return e.field ? `${e.field}: invalid` : JSON.stringify(e);
+          });
+          message = errorMessages.join('; ');
+        } else if (responseData.message) {
+          // Standard error message
+          if (Array.isArray(responseData.message)) {
+            message = responseData.message.join('; ');
+          } else {
+            message = responseData.message;
+          }
+        } else if (responseData.errors) {
+          // Validation errors object
+          const errorMessages = responseData.errors.map((e: any) => {
+            if (e.constraints) {
+              return `${e.field}: ${Object.values(e.constraints).join(', ')}`;
+            }
+            return e.field ? `${e.field}: invalid` : JSON.stringify(e);
+          });
+          message = errorMessages.join('; ');
+        }
+      } else if (error.message) {
+        message = error.message;
+      }
+      
+      console.error('Parsed error message:', message);
       showToast(message, 'error');
       throw error; // Re-throw to let modal handle it
     }
