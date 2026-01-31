@@ -284,7 +284,6 @@ const SupplierOrganisationProfilePage: React.FC = () => {
     ? supplierSettings.languages
     : organizationDetails?.languages ?? [];
   const productCategory = supplierSettings?.productCategory || organizationDetails?.productCategory || notProvidedLabel;
-  const minimumOrderQuantity = supplierSettings?.minimumOrderQuantity ?? organizationDetails?.minimumOrderQuantity ?? notProvidedLabel;
   const statusLabel =
     organizationDetails?.isActive === false
       ? t('common:status.inactive', 'Inactive')
@@ -406,7 +405,7 @@ const SupplierOrganisationProfilePage: React.FC = () => {
           </Card>
 
           {/* Quick Stats */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <Card className="p-4">
               <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
                 {t('settings:companyProfile.productCategory', 'Product Category')}
@@ -414,14 +413,6 @@ const SupplierOrganisationProfilePage: React.FC = () => {
               <div className="mt-2 flex items-center gap-2 text-lg font-semibold text-swiss-charcoal">
                 <ShoppingCartIcon className="h-5 w-5 text-swiss-mint" />
                 {productCategory}
-              </div>
-            </Card>
-            <Card className="p-4">
-              <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
-                {t('settings:companyProfile.minimumOrderQuantity', 'Minimum Order Quantity')}
-              </p>
-              <div className="mt-2 text-lg font-semibold text-swiss-charcoal">
-                {minimumOrderQuantity}
               </div>
             </Card>
             <Card className="p-4">

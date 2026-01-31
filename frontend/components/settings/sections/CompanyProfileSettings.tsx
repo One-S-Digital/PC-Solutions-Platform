@@ -558,21 +558,6 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                   </p>
                 </div>
 
-                <label htmlFor="minimumOrderQuantity" className="form-label md:pt-2">
-                  {t('settings:companyProfile.minimumOrderQuantity', 'Minimum Order Quantity')}
-                </label>
-                <div className="form-input-container">
-                  <input
-                    type="number"
-                    id="minimumOrderQuantity"
-                    min="0"
-                    value={settings.minimumOrderQuantity || ''}
-                    onChange={(e) => onChange('minimumOrderQuantity', e.target.value ? parseInt(e.target.value, 10) : 0)}
-                    className={STANDARD_INPUT_FIELD}
-                    placeholder={t('settings:companyProfile.minimumOrderQuantityPlaceholder', 'Enter minimum order quantity')}
-                  />
-                </div>
-
                 <label htmlFor="directOrderLink" className="form-label md:pt-2">
                   {t('settings:companyProfile.directOrderLink', 'Direct Order Link')}
                 </label>

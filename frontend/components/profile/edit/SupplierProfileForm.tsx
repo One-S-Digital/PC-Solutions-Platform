@@ -226,21 +226,6 @@ const SupplierProfileForm: React.FC<SupplierProfileFormProps> = ({ formData, onC
           </div>
 
           <div>
-            <label htmlFor="minimumOrderQuantity" className="block text-sm font-medium text-gray-700 mb-1">
-              {t('settings:companyProfile.minimumOrderQuantity', 'Minimum Order Quantity')}
-            </label>
-            <input
-              type="number"
-              id="minimumOrderQuantity"
-              min="0"
-              value={formData.minimumOrderQuantity || ''}
-              onChange={(e) => onChange('minimumOrderQuantity', e.target.value ? parseInt(e.target.value, 10) : 0)}
-              className={STANDARD_INPUT_FIELD}
-              placeholder="0"
-            />
-          </div>
-
-          <div>
             <label htmlFor="directOrderLink" className="block text-sm font-medium text-gray-700 mb-1">
               {t('settings:companyProfile.directOrderLink', 'Direct Order Link')}
             </label>

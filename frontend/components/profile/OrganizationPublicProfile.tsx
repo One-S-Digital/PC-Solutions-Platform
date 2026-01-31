@@ -354,17 +354,6 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                         {organization.productCategory ? formatCategory(organization.productCategory) : <span className="text-gray-400 italic text-xs">{t('profile:organization.notSpecified', { defaultValue: 'Not specified' })}</span>}
                       </p>
                     </div>
-
-                    <div>
-                      <p className="text-xs text-gray-500 mb-1 font-medium">
-                        {t('profile:organization.minOrderQty', { defaultValue: 'Minimum Order Quantity' })}
-                      </p>
-                      <p className="text-gray-700">
-                        {typeof organization.minimumOrderQuantity === 'number' 
-                          ? organization.minimumOrderQuantity 
-                          : <span className="text-gray-400 italic text-xs">{t('profile:organization.notSpecified', { defaultValue: 'Not specified' })}</span>}
-                      </p>
-                    </div>
                   </>
                 )}
 
