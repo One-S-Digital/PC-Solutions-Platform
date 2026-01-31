@@ -402,6 +402,57 @@ export class CrawlerService {
   // ==========================================
 
   /**
+   * Fetch with redirect validation.
+   *
+   * Security: validates *every* redirect hop against the SSRF allowlist.
+   * This prevents an allowed URL from redirecting to a disallowed domain/IP.
+   */
+  private async fetchWithValidatedRedirects(
+    url: string,
+    init: RequestInit,
+    timeoutMs: number,
+    maxRedirects = 5,
+  ): Promise<Response> {
+    let currentUrl = url;
+
+    for (let i = 0; i <= maxRedirects; i++) {
+      // SSRF prevention: validate URL before making request (and before each redirect hop)
+      this.validateUrl(currentUrl);
+
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+      try {
+        const response = await fetch(currentUrl, {
+          ...init,
+          signal: controller.signal,
+          redirect: 'manual',
+        });
+
+        // Handle redirects manually so we can validate each hop.
+        if (response.status >= 300 && response.status < 400) {
+          const location = response.headers.get('location');
+          if (location) {
+            if (i === maxRedirects) {
+              throw new Error(`Too many redirects (>${maxRedirects}) for URL: ${url}`);
+            }
+
+            const nextUrl = new URL(location, currentUrl).toString();
+            currentUrl = nextUrl;
+            continue;
+          }
+        }
+
+        return response;
+      } finally {
+        clearTimeout(timeout);
+      }
+    }
+
+    throw new Error(`Too many redirects (>${maxRedirects}) for URL: ${url}`);
+  }
+
+  /**
    * Validates URL against whitelist to prevent SSRF attacks.
    * Only allows requests to official cantonal and federal domains.
    * @throws Error if domain is not whitelisted
@@ -425,20 +476,17 @@ export class CrawlerService {
   }
 
   private async fetchHeaders(url: string): Promise<HttpHeaders> {
-    // SSRF prevention: validate URL before making request
-    this.validateUrl(url);
-
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10000);
-
     try {
-      const response = await fetch(url, { 
-        method: 'HEAD',
-        signal: controller.signal,
-        headers: {
-          'User-Agent': 'ProCreche-PolicyCrawler/1.0 (policy-updates@procreche.ch)',
+      const response = await this.fetchWithValidatedRedirects(
+        url,
+        {
+          method: 'HEAD',
+          headers: {
+            'User-Agent': 'ProCreche-PolicyCrawler/1.0 (policy-updates@procreche.ch)',
+          },
         },
-      });
+        10000,
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -450,7 +498,7 @@ export class CrawlerService {
         contentLength: response.headers.get('content-length') || '0',
       };
     } finally {
-      clearTimeout(timeout);
+      // no-op: timeout handled inside fetchWithValidatedRedirects
     }
   }
 
@@ -466,27 +514,23 @@ export class CrawlerService {
   }
 
   private async fetchPage(url: string, useDynamic: boolean): Promise<string> {
-    // SSRF prevention: validate URL before making request
-    this.validateUrl(url);
-
     if (useDynamic) {
       // Use Playwright for JS-heavy pages (implement separately)
       return this.playwrightRenderer.fetchWithPlaywright(url);
     }
 
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 30000); // 30 second timeout
-
     try {
       this.logger.debug(`Fetching URL: ${url}`);
-      const response = await fetch(url, {
-        headers: {
-          'User-Agent': 'ProCreche-PolicyCrawler/1.0 (policy-updates@procreche.ch)',
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      const response = await this.fetchWithValidatedRedirects(
+        url,
+        {
+          headers: {
+            'User-Agent': 'ProCreche-PolicyCrawler/1.0 (policy-updates@procreche.ch)',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          },
         },
-        signal: controller.signal,
-        redirect: 'follow', // Follow redirects but validate each step
-      });
+        30000,
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -506,24 +550,21 @@ export class CrawlerService {
       this.logger.error(`Unexpected error fetching ${url}: ${error.message}`, error.stack);
       throw error;
     } finally {
-      clearTimeout(timeout);
+      // no-op: timeout handled inside fetchWithValidatedRedirects
     }
   }
 
   private async fetchBuffer(url: string): Promise<Buffer> {
-    // SSRF prevention: validate URL before making request
-    this.validateUrl(url);
-
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 60000); // 60 second timeout for file downloads
-
     try {
-      const response = await fetch(url, {
-        headers: {
-          'User-Agent': 'ProCreche-PolicyCrawler/1.0 (policy-updates@procreche.ch)',
+      const response = await this.fetchWithValidatedRedirects(
+        url,
+        {
+          headers: {
+            'User-Agent': 'ProCreche-PolicyCrawler/1.0 (policy-updates@procreche.ch)',
+          },
         },
-        signal: controller.signal,
-      });
+        60000,
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -552,7 +593,7 @@ export class CrawlerService {
       }
       throw error;
     } finally {
-      clearTimeout(timeout);
+      // no-op: timeout handled inside fetchWithValidatedRedirects
     }
   }
 
