@@ -5,6 +5,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { AssetKind } from '@prisma/client';
 import { createHash } from 'crypto';
 import * as fs from 'fs';
+import { Readable } from 'stream';
 
 export interface UploadResult {
   key: string;
@@ -123,7 +124,7 @@ export class CloudflareR2Service {
 
       const key = this.generateStorageKey(file.originalname, assetKind, appUserId, subcategory, conversationId);
       
-      let fileBody: Buffer | NodeJS.ReadableStream;
+      let fileBody: Buffer | Readable;
       let checksum: string;
       
       if (file.buffer) {
