@@ -5,8 +5,9 @@ import { useTranslation } from 'react-i18next';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import { STANDARD_INPUT_FIELD, APP_NAME } from '../constants';
-import { EyeIcon, EyeSlashIcon, SquaresPlusIcon } from '@heroicons/react/24/outline';
+import { EyeIcon, EyeSlashIcon, SquaresPlusIcon, QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
 import LanguageSwitcher from '../components/ui/LanguageSwitcher';
+import HelpModal from '../components/help/HelpModal';
 import LogoLink from '../components/shared/LogoLink';
 import { useFrontendSettings } from '../hooks/useFrontendSettings';
 
@@ -46,6 +47,7 @@ const ResetPasswordPage: React.FC = () => {
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
 
   const logoUrl = settings?.logoAsset?.publicUrl;
   const showLogoFallback = !settingsLoading && !logoUrl;
@@ -344,10 +346,19 @@ const ResetPasswordPage: React.FC = () => {
           </form>
         )}
 
-        <div className="mt-3 sm:mt-4 flex justify-center">
+        <div className="mt-3 sm:mt-4 flex justify-center items-center gap-3">
           <LanguageSwitcher />
+          <button
+            onClick={() => setIsHelpModalOpen(true)}
+            className="p-2 rounded-full text-gray-500 hover:text-swiss-teal hover:bg-gray-100 transition-colors"
+            aria-label={t('common:navbar.help')}
+            title={t('common:navbar.help')}
+          >
+            <QuestionMarkCircleIcon className="h-5 w-5" />
+          </button>
         </div>
       </Card>
+      <HelpModal isOpen={isHelpModalOpen} onClose={() => setIsHelpModalOpen(false)} />
     </div>
   );
 };
