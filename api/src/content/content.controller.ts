@@ -17,6 +17,8 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 import { ContentService } from './content.service';
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -61,6 +63,15 @@ export class ContentController {
   @Post('elearning')
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @UseInterceptors(FileInterceptor('file', {
+    storage: diskStorage({
+      destination: '/tmp', // Use /tmp for temporary storage (works on Render)
+      filename: (req, file, cb) => {
+        // Generate unique filename to avoid collisions
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const ext = extname(file.originalname);
+        cb(null, `upload-${uniqueSuffix}${ext}`);
+      },
+    }),
     limits: {
       fileSize: 500 * 1024 * 1024, // 500MB max for video uploads
     },
