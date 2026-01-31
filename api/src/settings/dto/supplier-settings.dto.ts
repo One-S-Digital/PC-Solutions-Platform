@@ -8,6 +8,7 @@ import {
   IsUUID,
   Min,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class UpdateSupplierSettingsDto {
   @IsOptional()
@@ -69,10 +70,11 @@ export class UpdateSupplierSettingsDto {
   serviceType?: string;
 
   @IsOptional()
+  @Transform(({ value }) => (value === '' ? null : value))
   @Type(() => Number)
   @IsInt()
-  @Min(0)
-  minimumOrderQuantity?: number;
+  @Min(1)
+  minimumOrderQuantity?: number | null;
 
   @IsOptional()
   @IsString()
