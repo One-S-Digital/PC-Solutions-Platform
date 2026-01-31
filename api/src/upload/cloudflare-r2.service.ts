@@ -4,6 +4,7 @@ import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand, Head
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { AssetKind } from '@prisma/client';
 import { createHash } from 'crypto';
+import * as fs from 'fs';
 
 export interface UploadResult {
   key: string;
@@ -95,6 +96,8 @@ export class CloudflareR2Service {
 
   /**
    * Upload file directly from server with checksum verification
+   * Supports both memory storage (file.buffer) and disk storage (file.path)
+   * Uses streaming for disk storage to avoid loading large files into memory
    */
   async uploadFile(
     file: Express.Multer.File,
@@ -120,14 +123,38 @@ export class CloudflareR2Service {
 
       const key = this.generateStorageKey(file.originalname, assetKind, appUserId, subcategory, conversationId);
       
-      // Calculate SHA-256 checksum
-      const checksum = this.calculateChecksum(file.buffer);
+      let fileBody: Buffer | NodeJS.ReadableStream;
+      let checksum: string;
+      
+      if (file.buffer) {
+        // Memory storage - file is already in memory (small files)
+        fileBody = file.buffer;
+        checksum = this.calculateChecksum(file.buffer);
+        this.logger.log(`Using memory storage for ${file.originalname} (${(file.size / 1024 / 1024).toFixed(2)}MB)`);
+      } else if (file.path) {
+        // Disk storage - stream file directly to R2 (large files)
+        this.logger.log(`Using disk storage for ${file.originalname} (${(file.size / 1024 / 1024).toFixed(2)}MB), streaming from ${file.path}`);
+        
+        // Calculate checksum by streaming (memory efficient)
+        const hash = createHash('sha256');
+        const checksumStream = fs.createReadStream(file.path);
+        for await (const chunk of checksumStream) {
+          hash.update(chunk);
+        }
+        checksum = hash.digest('base64');
+        
+        // Create fresh read stream for upload
+        fileBody = fs.createReadStream(file.path);
+      } else {
+        throw new BadRequestException('File data not available');
+      }
       
       const command = new PutObjectCommand({
         Bucket: this.bucketName,
         Key: key,
-        Body: file.buffer,
+        Body: fileBody,
         ContentType: file.mimetype,
+        ContentLength: file.size, // Required for streaming
         ChecksumSHA256: checksum, // S3-compatible checksum
         Metadata: {
           'uploaded-by': appUserId,
@@ -140,6 +167,16 @@ export class CloudflareR2Service {
       this.logger.log(`Uploading file: ${file.originalname} (${assetKind}) to ${key} with checksum: ${checksum.substring(0, 16)}...`);
       
       await this.s3Client.send(command);
+      
+      // Clean up temp file if using disk storage
+      if (file.path) {
+        try {
+          await fs.promises.unlink(file.path);
+          this.logger.log(`Cleaned up temp file: ${file.path}`);
+        } catch (cleanupError) {
+          this.logger.warn(`Failed to clean up temp file ${file.path}:`, cleanupError);
+        }
+      }
       
       // Verify upload by fetching ETag
       const headCommand = new HeadObjectCommand({
@@ -164,6 +201,15 @@ export class CloudflareR2Service {
         checksum,
       };
     } catch (error) {
+      // Clean up temp file on error if using disk storage
+      if (file.path) {
+        try {
+          await fs.promises.unlink(file.path);
+        } catch (cleanupError) {
+          this.logger.warn(`Failed to clean up temp file on error:`, cleanupError);
+        }
+      }
+      
       this.logger.error('Failed to upload file', {
         error: error.message,
         filename: file?.originalname,
