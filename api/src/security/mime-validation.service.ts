@@ -20,17 +20,22 @@ export class MimeValidationService {
   private readonly maxFileSize: number;
 
   constructor(private configService: ConfigService) {
-    this.allowedExtensions = (this.configService.get<string>('UPLOAD_ALLOWED_EXT') || 'pdf,png,jpg,jpeg,webp,doc,docx')
+    // Default extensions include video formats for e-learning content
+    const defaultExtensions = 'pdf,png,jpg,jpeg,webp,doc,docx,mp4,mov,webm,avi,ppt,pptx,xls,xlsx';
+    this.allowedExtensions = (this.configService.get<string>('UPLOAD_ALLOWED_EXT') || defaultExtensions)
       .split(',')
       .map(ext => ext.trim().toLowerCase())
       .filter(Boolean);
     
-    this.allowedMimeTypes = (this.configService.get<string>('UPLOAD_ALLOWED_MIME') || 'application/pdf,image/png,image/jpeg,image/webp,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+    // Default MIME types include video formats for e-learning content
+    const defaultMimeTypes = 'application/pdf,image/png,image/jpeg,image/webp,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,video/mp4,video/quicktime,video/webm,video/x-msvideo,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    this.allowedMimeTypes = (this.configService.get<string>('UPLOAD_ALLOWED_MIME') || defaultMimeTypes)
       .split(',')
       .map(mime => mime.trim().toLowerCase())
       .filter(Boolean);
     
-    this.maxFileSize = Number(this.configService.get<string>('UPLOAD_MAX_MB') || '20') * 1024 * 1024;
+    // Default max file size is 100MB to support video uploads
+    this.maxFileSize = Number(this.configService.get<string>('UPLOAD_MAX_MB') || '100') * 1024 * 1024;
     
     this.logger.log(`MIME validation configured: ${this.allowedExtensions.length} extensions, ${this.allowedMimeTypes.length} MIME types, max ${this.maxFileSize / (1024 * 1024)}MB`);
   }

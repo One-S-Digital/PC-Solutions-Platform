@@ -132,6 +132,8 @@ export const ALLOWED_MIME_TYPES = {
     'application/pdf',
     'video/mp4',
     'video/quicktime',
+    'video/webm',
+    'video/x-msvideo', // AVI format
     'application/vnd.ms-powerpoint',
     'application/vnd.openxmlformats-officedocument.presentationml.presentation',
   ],
