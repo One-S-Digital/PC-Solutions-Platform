@@ -303,7 +303,7 @@ const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Modal Content */}
-        <div className="flex flex-1 min-h-0">
+        <div className="flex flex-1 min-h-0 relative">
           {/* Sidebar - Desktop */}
           <div className="hidden md:flex md:w-64 border-r border-gray-200 bg-gray-50 flex-shrink-0">
             {renderCategoryList()}
