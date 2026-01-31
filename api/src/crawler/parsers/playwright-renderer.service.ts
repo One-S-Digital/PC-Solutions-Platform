@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { createRequire } from 'node:module';
 
 /**
  * Playwright renderer for JS-heavy sites
@@ -19,9 +20,13 @@ export class PlaywrightRendererService {
    */
   async fetchWithPlaywright(url: string): Promise<string> {
     try {
-      // Keep this dependency optional. If it isn't installed, the import will throw.
+      // Keep this dependency optional.
+      // IMPORTANT: do not use `import('playwright')` here because TypeScript will fail the build
+      // when `playwright` is not installed (which is the default on Render).
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const playwright: any = await import('playwright');
+      const require: any = createRequire(__filename);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const playwright: any = require('playwright');
       const chromium = playwright?.chromium;
 
       if (!chromium) {
