@@ -803,6 +803,7 @@
   },
   "navbar": {
     "goBackPreviousPage": "Go back to previous page",
+    "help": "Help & Knowledge Base",
     "newMessages": "New messages",
     "noNewNotifications": "No new notifications",
     "notifications": "Notifications",

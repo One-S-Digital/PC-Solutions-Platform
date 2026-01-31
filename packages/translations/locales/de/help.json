@@ -1,0 +1,219 @@
+{
+  "modal": {
+    "title": "Hilfe und Wissensdatenbank",
+    "categories": "Kategorien",
+    "searchPlaceholder": "Nach Hilfe suchen...",
+    "allCategories": "Alle Kategorien",
+    "noResults": "Keine Artikel gefunden",
+    "tryDifferentSearch": "Versuchen Sie einen anderen Suchbegriff oder durchsuchen Sie die Kategorien",
+    "needMoreHelp": "Brauchen Sie mehr Hilfe?",
+    "contactSupport": "Support kontaktieren",
+    "supportEmail": "E-Mail",
+    "goToSupport": "Zur Support-Seite",
+    "toggleMenu": "Menü umschalten"
+  },
+  "categories": {
+    "gettingStarted": "Erste Schritte",
+    "account": "Konto",
+    "foundation": "Stiftung / Krippe",
+    "supplier": "Produktlieferant",
+    "serviceProvider": "Dienstleister",
+    "educator": "Erzieher",
+    "parent": "Eltern",
+    "settings": "Einstellungen",
+    "billing": "Abrechnung und Abonnement",
+    "troubleshooting": "Fehlerbehebung"
+  },
+  "articles": {
+    "platformOverview": {
+      "title": "Plattformübersicht",
+      "description": "Erfahren Sie, was ProCrèche Solutions ist und wie es das Schweizer Kinderbetreuungs-Ökosystem verbindet.",
+      "content": "<strong>Was ist ProCrèche Solutions?</strong><br/><br/>ProCrèche Solutions ist eine All-in-One-Plattform, die das Schweizer Kinderbetreuungs-Ökosystem verbindet:<br/><br/>• <strong>Krippen (Stiftungen)</strong> - Finden Sie Produkte, Dienstleistungen, Personal und verwalten Sie Elternanfragen<br/>• <strong>Produktlieferanten</strong> - Verkaufen Sie Kinderbetreuungsprodukte an Krippen<br/>• <strong>Dienstleister</strong> - Bieten Sie professionelle Dienstleistungen für Krippen an<br/>• <strong>Erzieher</strong> - Finden Sie Stellenangebote bei Krippen<br/>• <strong>Eltern</strong> - Finden Sie qualitativ hochwertige Kinderbetreuung<br/><br/><strong>Unterstützte Sprachen</strong><br/><br/>Die Plattform ist in drei Sprachen verfügbar:<br/>• Englisch<br/>• Französisch<br/>• Deutsch<br/><br/>Sie können die Sprache jederzeit über den Sprachschalter in der Navigationsleiste ändern."
+    },
+    "createAccount": {
+      "title": "Konto erstellen",
+      "description": "Schritt-für-Schritt-Anleitung zum Erstellen eines neuen Kontos bei ProCrèche Solutions.",
+      "content": "<strong>Schritt 1: Zur Registrierung gehen</strong><br/>Klicken Sie auf die Schaltfläche „Registrieren" in der Navigationsleiste.<br/><br/><strong>Schritt 2: Rolle wählen</strong><br/>Wählen Sie den Kontotyp, der Ihren Bedürfnissen entspricht:<br/>• 🏫 Stiftung - Krippen<br/>• 📦 Produktlieferant - Unternehmen, die Produkte verkaufen<br/>• 🔧 Dienstleister - Unternehmen, die Dienstleistungen anbieten<br/>• 👩‍🏫 Erzieher - Fachkräfte für Kinderbetreuung<br/>• 👨‍👩‍👧 Eltern - Eltern, die eine Krippe suchen<br/><br/><strong>Schritt 3: Details eingeben</strong><br/>Füllen Sie das Registrierungsformular aus.<br/><br/><strong>Schritt 4: Bedingungen akzeptieren und CAPTCHA</strong><br/>Akzeptieren Sie die Nutzungsbedingungen und füllen Sie das CAPTCHA aus.<br/><br/><strong>Schritt 5: E-Mail verifizieren</strong><br/>Geben Sie den 6-stelligen Code ein, der an Ihre E-Mail gesendet wurde.<br/><br/><strong>Alternative: Mit Google registrieren</strong><br/>Sie können auch auf „Mit Google fortfahren" klicken für eine schnellere Registrierung."
+    },
+    "emailVerification": {
+      "title": "E-Mail-Verifizierung",
+      "description": "Wie Sie Ihre E-Mail mit dem 6-stelligen Verifizierungscode verifizieren.",
+      "content": "<strong>Verifizierungsprozess</strong><br/><br/>Nach der Kontoerstellung erhalten Sie einen 6-stelligen Verifizierungscode:<br/><br/>1. Überprüfen Sie Ihren Posteingang (und Spam-Ordner)<br/>2. Finden Sie die E-Mail von ProCrèche Solutions<br/>3. Kopieren Sie den 6-stelligen Code<br/>4. Geben Sie ihn in das Verifizierungsfeld ein<br/>5. Klicken Sie auf „E-Mail verifizieren"<br/><br/><strong>Code nicht erhalten?</strong><br/>• Warten Sie 30 Sekunden auf die Erneut-Senden-Option<br/>• Klicken Sie auf „Code erneut senden"<br/>• Überprüfen Sie Ihren Spam-Ordner<br/><br/><strong>Code abgelaufen?</strong><br/>Codes laufen nach etwa 10 Minuten ab. Klicken Sie auf „Code erneut senden" für einen neuen.<br/><br/><strong>Tipp:</strong> Geben Sie den Code ein, sobald Sie ihn erhalten."
+    },
+    "signIn": {
+      "title": "Anmelden",
+      "description": "Wie Sie sich bei Ihrem ProCrèche Solutions-Konto anmelden.",
+      "content": "<strong>Standard-Anmeldung</strong><br/><br/>1. Gehen Sie zur Anmeldeseite<br/>2. Geben Sie Ihre E-Mail-Adresse ein<br/>3. Geben Sie Ihr Passwort ein<br/>4. Klicken Sie auf „Anmelden"<br/><br/><strong>Mit Google anmelden</strong><br/><br/>1. Klicken Sie auf „Mit Google fortfahren"<br/>2. Wählen Sie Ihr Google-Konto<br/>3. Sie werden automatisch angemeldet<br/><br/><strong>Angemeldet bleiben</strong><br/>Ihre Sitzung bleibt aktiv, während Sie navigieren. Sie werden aus Sicherheitsgründen nach einer Zeit der Inaktivität automatisch abgemeldet."
+    },
+    "navigation": {
+      "title": "Auf der Plattform navigieren",
+      "description": "Lernen Sie, wie Sie mit der Seitenleiste und den Menüs auf ProCrèche Solutions navigieren.",
+      "content": "<strong>Seitenleisten-Navigation</strong><br/><br/>Nach der Anmeldung zeigt die Seitenleiste links Ihre Hauptnavigationsoptionen. Die Menüpunkte variieren je nach Rolle.<br/><br/><strong>Obere Navigationsleiste</strong><br/>• 🔔 Benachrichtigungen - Glockensymbol für Warnungen<br/>• 🌐 Sprache - Wechseln zwischen DE/EN/FR<br/>• 👤 Profilmenü - Klicken Sie auf Ihr Avatar<br/><br/><strong>Profilmenü-Optionen</strong><br/>• Profil ansehen - Ihr öffentliches Profil anzeigen<br/>• Profil bearbeiten - Ihre Informationen aktualisieren<br/>• Einstellungen - Kontoeinstellungen aufrufen<br/>• Abmelden - Vom Konto abmelden"
+    },
+    "changePassword": {
+      "title": "Passwort ändern",
+      "description": "Wie Sie Ihr Kontopasswort für mehr Sicherheit aktualisieren.",
+      "content": "<strong>So ändern Sie Ihr Passwort:</strong><br/><br/>1. Gehen Sie zu Einstellungen → Kontosicherheit<br/>2. Finden Sie den Abschnitt „Passwort ändern"<br/>3. Geben Sie Ihr aktuelles Passwort ein<br/>4. Geben Sie Ihr neues Passwort ein<br/>5. Bestätigen Sie Ihr neues Passwort<br/>6. Klicken Sie auf „Passwort aktualisieren"<br/><br/><strong>Passwortanforderungen:</strong><br/>• Mindestens 8 Zeichen<br/>• Kein häufig verwendetes Passwort<br/>• Nicht in Datenlecks enthalten<br/><br/><strong>Best Practices:</strong><br/>• Verwenden Sie ein einzigartiges Passwort<br/>• Teilen Sie es nicht<br/>• Aktualisieren Sie es regelmäßig"
+    },
+    "changeEmail": {
+      "title": "E-Mail ändern",
+      "description": "Wie Sie die mit Ihrem Konto verknüpfte E-Mail-Adresse aktualisieren.",
+      "content": "<strong>So ändern Sie Ihre E-Mail:</strong><br/><br/>1. Gehen Sie zu Einstellungen → Kontosicherheit<br/>2. Finden Sie „E-Mail-Adresse ändern"<br/>3. Geben Sie Ihre neue E-Mail-Adresse ein<br/>4. Klicken Sie auf „Verifizierungscode senden"<br/>5. Überprüfen Sie Ihre NEUE E-Mail auf den Code<br/>6. Geben Sie den 6-stelligen Verifizierungscode ein<br/>7. Klicken Sie auf „Verifizieren und E-Mail ändern"<br/><br/><strong>Wichtig:</strong> Sie müssen die neue E-Mail verifizieren, bevor die Änderung wirksam wird. Ihre alte E-Mail funktioniert danach nicht mehr für die Anmeldung."
+    },
+    "forgotPassword": {
+      "title": "Passwort vergessen",
+      "description": "Wie Sie Ihr Passwort zurücksetzen, wenn Sie es vergessen haben.",
+      "content": "<strong>Passwort zurücksetzen:</strong><br/><br/>1. Klicken Sie auf der Anmeldeseite auf „Passwort vergessen?"<br/>2. Geben Sie Ihre E-Mail-Adresse ein<br/>3. Klicken Sie auf „Zurücksetzungslink senden"<br/>4. Überprüfen Sie Ihre E-Mail auf den Zurücksetzungslink<br/>5. Klicken Sie auf den Link, um die Zurücksetzungsseite zu öffnen<br/>6. Geben Sie Ihr neues Passwort ein<br/>7. Bestätigen Sie Ihr neues Passwort<br/>8. Klicken Sie auf „Passwort zurücksetzen"<br/><br/><strong>Hinweis:</strong> Zurücksetzungslinks laufen aus Sicherheitsgründen schnell ab. Fordern Sie einen neuen an, wenn Ihrer abgelaufen ist."
+    },
+    "profileSetup": {
+      "title": "Profil einrichten",
+      "description": "Wie Sie Ihr Profil vervollständigen und optimieren für die beste Erfahrung.",
+      "content": "<strong>Warum Profil vervollständigen?</strong><br/>• Stiftungen: In Elternsuchen erscheinen<br/>• Lieferanten/Anbieter: Von Kunden entdeckt werden<br/>• Erzieher: Bei Arbeitgebern hervorstechen<br/>• Eltern: Bessere Krippen-Matches erhalten<br/><br/><strong>So vervollständigen Sie Ihr Profil:</strong><br/><br/>1. Klicken Sie auf Ihr Profilbild (oben rechts)<br/>2. Wählen Sie „Profil bearbeiten"<br/>3. Füllen Sie alle Abschnitte aus<br/>4. Laden Sie ein Profilfoto hoch<br/>5. Klicken Sie auf „Speichern""
+    },
+    "foundationDashboard": {
+      "title": "Stiftungs-Dashboard",
+      "description": "Übersicht über das Stiftungs-Dashboard (Krippe) und seine Funktionen.",
+      "content": "<strong>Dashboard-Übersicht</strong><br/><br/>Ihr Stiftungs-Dashboard zeigt wichtige Statistiken und aktuelle Aktivitäten:<br/><br/>• Aktive Elternanfragen<br/>• Ausstehende Bestellungen und Termine<br/>• Personalbewerbungen<br/>• Nachrichten und Benachrichtigungen<br/><br/><strong>Hauptfunktionen:</strong><br/>• Marktplatz-Zugang für Produkte und Dienstleistungen<br/>• Eltern-Lead-Management<br/>• Rekrutierungstools<br/>• E-Learning- und HR-Ressourcen<br/>• Analysen und Berichte"
+    },
+    "parentLeads": {
+      "title": "Elternanfragen verwalten",
+      "description": "Wie Sie Elternanfragen ansehen, beantworten und verwalten.",
+      "content": "<strong>Eltern-Leads Übersicht</strong><br/><br/>Eltern-Leads sind Anfragen von Eltern, die eine Krippe suchen.<br/><br/><strong>Statustypen:</strong><br/>• Neu - Ungelesene Anfragen<br/>• In Bearbeitung - Wird bearbeitet<br/>• Kontaktiert - Erster Kontakt hergestellt<br/>• Warteliste - Auf Ihrer Warteliste<br/>• Eingeschrieben - Erfolgreich eingeschrieben<br/>• Abgelehnt - Abgelehnte Anfragen<br/><br/><strong>So antworten Sie auf einen Lead:</strong><br/>1. Klicken Sie auf den Lead für Details<br/>2. Überprüfen Sie die Elterninformationen<br/>3. Aktualisieren Sie den Status bei Bedarf<br/>4. Senden Sie eine Nachricht über das Nachrichtensystem"
+    },
+    "marketplaceOrdering": {
+      "title": "Im Marktplatz bestellen",
+      "description": "Wie Sie Produkte durchsuchen, bestellen und Dienstleistungen anfragen.",
+      "content": "<strong>Den Marktplatz durchsuchen</strong><br/><br/>Greifen Sie über Ihre Seitenleiste auf den Marktplatz zu:<br/>• Produkte - Kinderbetreuungsbedarf und Ausrüstung<br/>• Dienstleistungen - Professionelle Dienstleistungen für Krippen<br/><br/><strong>So bestellen Sie Produkte:</strong><br/>1. Durchsuchen oder suchen Sie nach Produkten<br/>2. Klicken Sie auf ein Produkt für Details<br/>3. Wählen Sie Menge und Optionen<br/>4. In den Warenkorb legen<br/>5. Warenkorb überprüfen und zur Kasse<br/>6. Bestellung abschließen<br/><br/><strong>So fordern Sie Dienstleistungen an:</strong><br/>1. Durchsuchen Sie Dienstleister<br/>2. Dienstleistungsdetails ansehen<br/>3. Klicken Sie auf „Dienstleistung anfragen"<br/>4. Füllen Sie das Anfrageformular aus<br/>5. Anfrage absenden"
+    },
+    "recruitmentJobs": {
+      "title": "Rekrutierung und Stellenangebote",
+      "description": "Wie Sie als Stiftung Stellen ausschreiben und Kandidaten verwalten.",
+      "content": "<strong>Eine Stelle ausschreiben</strong><br/><br/>1. Gehen Sie zu Rekrutierung → Stellenangebote<br/>2. Klicken Sie auf „Stellenausschreibung erstellen"<br/>3. Füllen Sie die Stellendetails aus<br/>4. Legen Sie Anforderungen und Qualifikationen fest<br/>5. Veröffentlichen Sie die Ausschreibung<br/><br/><strong>Kandidaten verwalten</strong><br/>• Bewerbungen von Erziehern ansehen<br/>• Kandidatenprofile überprüfen<br/>• Vorstellungsgespräche planen<br/>• Nachrichten an Kandidaten senden<br/>• Bewerbungsstatus aktualisieren<br/><br/><strong>Kandidatenpool</strong><br/>Durchsuchen Sie den Kandidatenpool, um Erzieher zu finden, die aktiv nach Stellen suchen."
+    },
+    "supplierDashboard": {
+      "title": "Lieferanten-Dashboard",
+      "description": "Übersicht über das Produktlieferanten-Dashboard und wichtige Kennzahlen.",
+      "content": "<strong>Dashboard-Übersicht</strong><br/><br/>Ihr Lieferanten-Dashboard zeigt:<br/>• Aktive Produktlistings<br/>• Aktuelle Bestellungen<br/>• Ausstehende Anfragen<br/>• Leistungskennzahlen<br/><br/><strong>Hauptaktionen:</strong><br/>• Neue Produkte hinzufügen<br/>• Bestellungen verwalten<br/>• Auf Anfragen antworten<br/>• Analysen ansehen<br/>• Unternehmensprofil aktualisieren"
+    },
+    "productListings": {
+      "title": "Produktlistings verwalten",
+      "description": "Wie Sie Ihren Produktkatalog hinzufügen, bearbeiten und verwalten.",
+      "content": "<strong>Ein neues Produkt hinzufügen</strong><br/><br/>1. Gehen Sie zu Produktlistings<br/>2. Klicken Sie auf „Produkt hinzufügen"<br/>3. Füllen Sie die Produktdetails aus:<br/>   • Name und Beschreibung<br/>   • Preis und Verfügbarkeit<br/>   • Kategorien und Tags<br/>   • Bilder und Medien<br/>   • Versandinformationen<br/>4. Als Entwurf speichern oder veröffentlichen<br/><br/><strong>Produkte bearbeiten</strong><br/>Klicken Sie auf ein Produkt, um Details zu bearbeiten, Preise zu aktualisieren oder die Verfügbarkeit zu ändern.<br/><br/><strong>Produktstatus:</strong><br/>• Entwurf - Nicht sichtbar<br/>• Veröffentlicht - Live auf dem Marktplatz<br/>• Nicht vorrätig - Sichtbar aber nicht verfügbar"
+    },
+    "supplierOrders": {
+      "title": "Bestellungen verwalten",
+      "description": "Wie Sie als Lieferant Bestellungen ansehen, bearbeiten und ausführen.",
+      "content": "<strong>Bestellungsverwaltung</strong><br/><br/>1. Gehen Sie zu Bestellungen in der Seitenleiste<br/>2. Eingehende Bestellungen ansehen<br/>3. Bestellstatus aktualisieren:<br/>   • Ausstehend → In Bearbeitung<br/>   • In Bearbeitung → Versendet<br/>   • Versendet → Geliefert<br/><br/><strong>Bestelldetails</strong><br/>Klicken Sie auf eine Bestellung, um zu sehen:<br/>• Kundeninformationen<br/>• Produktdetails<br/>• Lieferadresse<br/>• Bestellnotizen<br/><br/><strong>Kommunikation</strong><br/>Nutzen Sie das Nachrichtensystem, um Kunden zu ihren Bestellungen zu kontaktieren."
+    },
+    "promoCodes": {
+      "title": "Promo-Codes",
+      "description": "Wie Sie Werbe-Rabattcodes erstellen und verwalten.",
+      "content": "<strong>Einen Promo-Code erstellen</strong><br/><br/>1. Gehen Sie zu Einstellungen → Promo-Code-Manager<br/>2. Klicken Sie auf „Promo-Code hinzufügen"<br/>3. Füllen Sie die Details aus:<br/><br/><strong>Promo-Code-Felder:</strong><br/>• <strong>Code</strong> - Der Code, den Kunden eingeben (z.B. SPARE20)<br/>• <strong>Rabattbeschreibung</strong> - Welchen Rabatt sie erhalten (z.B. „20% auf alle Bestellungen")<br/>• <strong>Beschreibung</strong> (optional) - Bedingungen oder Konditionen<br/>• <strong>Aktiv</strong> - Ein-/ausschalten<br/><br/>4. Klicken Sie auf „Promo-Code speichern"<br/><br/><strong>Codes verwalten</strong><br/>• Codes bearbeiten, um Details zu aktualisieren<br/>• Aktiv-Status ein-/ausschalten<br/>• Nicht mehr benötigte Codes löschen"
+    },
+    "serviceProviderDashboard": {
+      "title": "Dienstleister-Dashboard",
+      "description": "Übersicht über das Dienstleister-Dashboard und Funktionen.",
+      "content": "<strong>Dashboard-Übersicht</strong><br/><br/>Ihr Dienstleister-Dashboard zeigt:<br/>• Aktive Dienstleistungslistings<br/>• Eingehende Dienstleistungsanfragen<br/>• Bevorstehende Termine<br/>• Leistungskennzahlen<br/><br/><strong>Hauptfunktionen:</strong><br/>• Dienstleistungsangebote verwalten<br/>• Auf Anfragen antworten<br/>• Externe Buchungsintegration<br/>• Analysen und Berichte"
+    },
+    "serviceListings": {
+      "title": "Dienstleistungslistings verwalten",
+      "description": "Wie Sie Ihre Dienstleistungsangebote hinzufügen und verwalten.",
+      "content": "<strong>Eine neue Dienstleistung hinzufügen</strong><br/><br/>1. Gehen Sie zu Dienstleistungslistings<br/>2. Klicken Sie auf „Dienstleistung hinzufügen"<br/>3. Füllen Sie die Dienstleistungsdetails aus:<br/>   • Name und Beschreibung der Dienstleistung<br/>   • Kategorien<br/>   • Preisinformationen<br/>   • Servicegebiet/Kantone<br/>   • Bilder<br/>4. Ihre Dienstleistung veröffentlichen<br/><br/><strong>Dienstleistungsstatus:</strong><br/>• Aktiv - Für Krippen sichtbar<br/>• Inaktiv - Vom Marktplatz verborgen"
+    },
+    "serviceRequests": {
+      "title": "Dienstleistungsanfragen bearbeiten",
+      "description": "Wie Sie Dienstleistungsanfragen von Krippen ansehen und beantworten.",
+      "content": "<strong>Dienstleistungsanfragen</strong><br/><br/>Wenn eine Krippe Ihre Dienstleistung anfragt:<br/><br/>1. Sie erhalten eine Benachrichtigung<br/>2. Gehen Sie zu „Meine Anfragen"<br/>3. Überprüfen Sie die Anfragedetails<br/>4. Antworten Sie mit Ihrer Verfügbarkeit<br/>5. Aktualisieren Sie den Anfragestatus<br/><br/><strong>Anfragestatus:</strong><br/>• Neu - Ungelesene Anfrage<br/>• In Bearbeitung - Wird bearbeitet<br/>• Geplant - Termin festgelegt<br/>• Abgeschlossen - Dienstleistung erbracht<br/>• Storniert - Anfrage storniert"
+    },
+    "bookingLink": {
+      "title": "Buchungslink-Integration",
+      "description": "Wie Sie einen externen Buchungslink (Calendly, etc.) einrichten.",
+      "content": "<strong>Einen Buchungslink hinzufügen</strong><br/><br/>Sie können einen externen Buchungslink hinzufügen, damit Krippen direkt Termine vereinbaren können:<br/><br/>1. Gehen Sie zu Einstellungen → Kontakt und Buchung<br/>2. Finden Sie den Abschnitt „Buchungslink"<br/>3. Geben Sie Ihre Buchungs-URL ein (z.B. Calendly)<br/>4. Speichern Sie Ihre Einstellungen<br/><br/><strong>Wie es funktioniert:</strong><br/>• Ihr Buchungslink erscheint auf Ihrem Profil<br/>• Krippen können klicken, um direkt zu buchen<br/>• Unterstützt Calendly, Acuity und andere Buchungstools"
+    },
+    "educatorProfile": {
+      "title": "Erzieher-Profil",
+      "description": "Wie Sie Ihr Erzieher-Profil einrichten und optimieren.",
+      "content": "<strong>Profilabschnitte:</strong><br/><br/>• <strong>Grundinfo</strong> - Name, Foto, Kontakt<br/>• <strong>Qualifikationen</strong> - Ausbildung, Zertifikate<br/>• <strong>Erfahrung</strong> - Berufserfahrung<br/>• <strong>Verfügbarkeit</strong> - Wann Sie arbeiten können<br/>• <strong>Dokumente</strong> - Lebenslauf, Zertifikate<br/><br/><strong>Tipps für Erfolg:</strong><br/>• Laden Sie ein professionelles Foto hoch<br/>• Listen Sie alle relevanten Qualifikationen auf<br/>• Halten Sie Ihre Verfügbarkeit aktuell<br/>• Schreiben Sie eine überzeugende Biografie"
+    },
+    "jobBoard": {
+      "title": "Jobbörse",
+      "description": "Wie Sie als Erzieher nach Jobs suchen und sich bewerben.",
+      "content": "<strong>Jobs finden</strong><br/><br/>1. Gehen Sie zur Jobbörse in der Seitenleiste<br/>2. Nutzen Sie Filter, um Ergebnisse einzugrenzen:<br/>   • Ort/Kanton<br/>   • Jobtyp (Vollzeit, Teilzeit)<br/>   • Erfahrungslevel<br/>3. Klicken Sie auf einen Job für Details<br/><br/><strong>Sich auf Jobs bewerben</strong><br/><br/>1. Überprüfen Sie die Stellenanforderungen<br/>2. Klicken Sie auf „Bewerben"<br/>3. Senden Sie Ihre Bewerbung ab<br/>4. Verfolgen Sie den Status unter „Meine Bewerbungen""
+    },
+    "availabilitySettings": {
+      "title": "Verfügbarkeitseinstellungen",
+      "description": "Wie Sie Ihre wöchentliche Verfügbarkeit und Datums-Ausnahmen festlegen.",
+      "content": "<strong>Wöchentliche Verfügbarkeit</strong><br/><br/>Legen Sie Ihren regelmäßigen Wochenplan fest:<br/>1. Gehen Sie zu Profil → Verfügbarkeit<br/>2. Aktivieren/deaktivieren Sie jeden Tag<br/>3. Legen Sie Start- und Endzeiten fest<br/>4. Änderungen speichern<br/><br/><strong>Datums-Ausnahmen</strong><br/><br/>Für bestimmte Daten mit anderer Verfügbarkeit:<br/>1. Klicken Sie auf „Datums-Ausnahme hinzufügen"<br/>2. Wählen Sie das Datum<br/>3. Als nicht verfügbar markieren oder eigene Zeiten festlegen<br/>4. Grund hinzufügen (optional)<br/>5. Ausnahme speichern"
+    },
+    "findDaycare": {
+      "title": "Krippe finden",
+      "description": "Wie Sie Krippenoptionen suchen und durchsuchen.",
+      "content": "<strong>Stiftungen durchsuchen</strong><br/><br/>1. Gehen Sie zu „Stiftungen durchsuchen"<br/>2. Nutzen Sie Filter:<br/>   • Ort/Kanton<br/>   • Unterstützte Sprachen<br/>   • Verfügbarkeit<br/>3. Krippenprofile ansehen<br/>4. Dienstleistungen und Kapazität prüfen<br/><br/><strong>Worauf Sie achten sollten:</strong><br/>• Standortkomfort<br/>• Öffnungszeiten<br/>• Sprachangebot<br/>• Verfügbare Plätze<br/>• Fotos und Bewertungen"
+    },
+    "submitInquiry": {
+      "title": "Anfrage einreichen",
+      "description": "Wie Sie als Eltern eine Krippenanfrage einreichen.",
+      "content": "<strong>Ihre Anfrage einreichen</strong><br/><br/>1. Gehen Sie zu „Krippe finden"<br/>2. Füllen Sie das Formular aus:<br/>   • Kindesinformationen<br/>   • Gewünschtes Startdatum<br/>   • Benötigter Betreuungsplan<br/>   • Bevorzugte Standorte<br/>   • Zusätzliche Anforderungen<br/>3. Anfrage absenden<br/><br/><strong>Was als nächstes passiert:</strong><br/>• Krippen erhalten Ihre Anfrage<br/>• Sie antworten über die Plattform<br/>• Verfolgen Sie Antworten unter „Meine Anfragen""
+    },
+    "trackInquiries": {
+      "title": "Ihre Anfragen verfolgen",
+      "description": "Wie Sie den Status Ihrer Krippenanfragen ansehen und verfolgen.",
+      "content": "<strong>Ihre Anfragen ansehen</strong><br/><br/>1. Gehen Sie zu „Meine Anfragen" in der Seitenleiste<br/>2. Alle eingereichten Anfragen ansehen<br/>3. Status jeder Anfrage prüfen:<br/>   • Ausstehend - Wartet auf Antwort<br/>   • Beantwortet - Krippe hat geantwortet<br/>   • Warteliste - Auf Warteliste<br/>   • Eingeschrieben - Platz bestätigt<br/><br/><strong>Kommunikation</strong><br/>Nutzen Sie das Nachrichtensystem, um mit Krippen über Ihre Anfrage zu kommunizieren."
+    },
+    "accountSecurity": {
+      "title": "Kontosicherheitseinstellungen",
+      "description": "Wie Sie Ihre Kontosicherheit und Authentifizierung verwalten.",
+      "content": "<strong>Sicherheitseinstellungen</strong><br/><br/>Gehen Sie zu Einstellungen → Kontosicherheit, um zu verwalten:<br/><br/>• <strong>Passwort ändern</strong> - Ihr Passwort aktualisieren<br/>• <strong>E-Mail ändern</strong> - Ihre E-Mail-Adresse aktualisieren<br/>• <strong>Verbundene Konten</strong> - Google-Anmeldung verwalten<br/><br/><strong>Best Practices:</strong><br/>• Verwenden Sie ein starkes, einzigartiges Passwort<br/>• Halten Sie Ihre E-Mail-Adresse aktuell<br/>• Melden Sie sich auf gemeinsam genutzten Geräten ab"
+    },
+    "notificationSettings": {
+      "title": "Benachrichtigungseinstellungen",
+      "description": "Wie Sie Ihre E-Mail- und Plattformbenachrichtigungen verwalten.",
+      "content": "<strong>Benachrichtigungseinstellungen</strong><br/><br/>Gehen Sie zu Einstellungen → Benachrichtigungen, um zu verwalten:<br/><br/>• <strong>E-Mail-Benachrichtigungen</strong><br/>   - Bestellaktualisierungen<br/>   - Neue Nachrichten<br/>   - Lead-Benachrichtigungen<br/>   - Marketing-E-Mails<br/><br/>• <strong>Plattformbenachrichtigungen</strong><br/>   - In-App-Warnungen<br/>   - Glockensymbol-Benachrichtigungen<br/><br/>Schalten Sie jeden Typ nach Ihren Vorlieben ein/aus."
+    },
+    "privacySettings": {
+      "title": "Datenschutz- und Dateneinstellungen",
+      "description": "Wie Sie Ihre Datenschutzeinstellungen und Daten verwalten.",
+      "content": "<strong>Datenschutzoptionen</strong><br/><br/>Gehen Sie zu Einstellungen → Datenschutz und Daten:<br/><br/>• <strong>Profilsichtbarkeit</strong> - Kontrollieren, was öffentlich ist<br/>• <strong>Datenexport</strong> - Ihre Daten herunterladen<br/>• <strong>Kontolöschung</strong> - Kontolöschung anfordern<br/><br/><strong>DSGVO-Rechte:</strong><br/>• Auf Ihre persönlichen Daten zugreifen<br/>• Datenkorrektur anfordern<br/>• Datenlöschung anfordern<br/>• Datenübertragbarkeit"
+    },
+    "languageSettings": {
+      "title": "Spracheinstellungen",
+      "description": "Wie Sie die Plattformsprache ändern.",
+      "content": "<strong>Sprache ändern</strong><br/><br/>Die Plattform unterstützt drei Sprachen:<br/>• 🇬🇧 Englisch<br/>• 🇫🇷 Französisch<br/>• 🇩🇪 Deutsch<br/><br/><strong>So ändern Sie die Sprache:</strong><br/>1. Klicken Sie auf den Sprachschalter in der oberen Navigation<br/>2. Wählen Sie Ihre bevorzugte Sprache<br/>3. Die Plattform aktualisiert sich sofort<br/><br/>Ihre Spracheinstellung wird automatisch gespeichert."
+    },
+    "subscriptionPlans": {
+      "title": "Abonnementpläne",
+      "description": "Übersicht über verfügbare Abonnementpläne und Preise.",
+      "content": "<strong>Verfügbare Pläne</strong><br/><br/><strong>Stiftungspläne:</strong><br/>• Starter - Grundfunktionen<br/>• Professional - Alle Funktionen<br/>• Enterprise - Maßgeschneiderte Lösungen<br/><br/><strong>Lieferanten-/Anbieterpläne:</strong><br/>• Kontaktieren Sie uns für individuelle Preise<br/><br/><strong>Abrechnungsoptionen:</strong><br/>• Monatliche Abrechnung<br/>• Jährliche Abrechnung (bis zu 20% sparen)"
+    },
+    "manageSubscription": {
+      "title": "Ihr Abonnement verwalten",
+      "description": "Wie Sie Ihr Abonnement ansehen, upgraden oder kündigen.",
+      "content": "<strong>Abonnementverwaltung</strong><br/><br/>Gehen Sie zu Einstellungen → Abrechnung und Abonnement:<br/><br/>• <strong>Aktuellen Plan ansehen</strong> - Ihr aktives Abonnement sehen<br/>• <strong>Plan upgraden</strong> - Zu einer höheren Stufe wechseln<br/>• <strong>Abrechnung ändern</strong> - Monatlich ↔ Jährlich<br/>• <strong>Abonnement kündigen</strong> - Ihr Abonnement beenden<br/><br/><strong>So fordern Sie Änderungen an:</strong><br/>1. Klicken Sie auf „Abonnement verwalten"<br/>2. Wählen Sie die gewünschte Aktion<br/>3. Füllen Sie das Anfrageformular aus<br/>4. Unser Team bearbeitet es"
+    },
+    "invoices": {
+      "title": "Rechnungen und Zahlungshistorie",
+      "description": "Wie Sie Ihre Rechnungen ansehen und herunterladen.",
+      "content": "<strong>Rechnungen ansehen</strong><br/><br/>Gehen Sie zu Einstellungen → Abrechnung und Abonnement:<br/><br/>• Alle vergangenen Rechnungen ansehen<br/>• PDF-Rechnungen herunterladen<br/>• Zahlungsstatus sehen<br/><br/><strong>Rechnungsdetails umfassen:</strong><br/>• Rechnungsnummer und -datum<br/>• Servicezeitraum<br/>• Betrag und Steuern<br/>• Zahlungsstatus"
+    },
+    "loginIssues": {
+      "title": "Anmeldeprobleme",
+      "description": "Fehlerbehebung bei häufigen Anmeldeproblemen.",
+      "content": "<strong>Können Sie sich nicht anmelden?</strong><br/><br/><strong>Überprüfen Sie diese Punkte:</strong><br/>• E-Mail-Adresse ist korrekt<br/>• Passwort ist korrekt (Feststelltaste prüfen)<br/>• Konto ist verifiziert<br/><br/><strong>Lösungen:</strong><br/>• Nutzen Sie „Passwort vergessen" zum Zurücksetzen<br/>• Versuchen Sie Google-Anmeldung wenn verfügbar<br/>• Löschen Sie Browser-Cache und Cookies<br/>• Versuchen Sie einen anderen Browser<br/><br/><strong>Konto gesperrt?</strong><br/>Kontaktieren Sie den Support, wenn Sie nach mehreren Versuchen ausgesperrt sind."
+    },
+    "verificationIssues": {
+      "title": "Verifizierungsprobleme",
+      "description": "Fehlerbehebung bei E-Mail-Verifizierungsproblemen.",
+      "content": "<strong>Verifizierungscode nicht erhalten?</strong><br/><br/>1. Spam-/Junk-Ordner prüfen<br/>2. 30 Sekunden warten, auf „Code erneut senden" klicken<br/>3. Prüfen, ob E-Mail-Adresse korrekt ist<br/>4. Unsere E-Mail zu Kontakten hinzufügen<br/><br/><strong>Code abgelaufen?</strong><br/>Codes laufen nach ~10 Minuten ab. Klicken Sie auf „Code erneut senden" für einen neuen.<br/><br/><strong>Code funktioniert nicht?</strong><br/>• Genau 6 Ziffern eingeben<br/>• Keine Leerzeichen<br/>• Den neuesten Code verwenden"
+    },
+    "browserCompatibility": {
+      "title": "Browserkompatibilität",
+      "description": "Unterstützte Browser und technische Anforderungen.",
+      "content": "<strong>Unterstützte Browser:</strong><br/><br/>• Google Chrome (empfohlen)<br/>• Mozilla Firefox<br/>• Microsoft Edge<br/>• Safari<br/><br/><strong>Anforderungen:</strong><br/>• Browser aktuell halten<br/>• JavaScript aktivieren<br/>• Cookies aktivieren<br/><br/><strong>Probleme?</strong><br/>• Cache und Cookies löschen<br/>• Browser-Erweiterungen deaktivieren<br/>• Inkognito-/Privat-Modus versuchen"
+    },
+    "contactSupport": {
+      "title": "Support kontaktieren",
+      "description": "Wie Sie Hilfe von unserem Support-Team erhalten.",
+      "content": "<strong>Wege zur Hilfe:</strong><br/><br/>1. <strong>Support-Seite</strong><br/>   Gehen Sie zu Support in Ihrer Seitenleiste, um:<br/>   • FAQs zu durchsuchen<br/>   • Ein Support-Ticket einzureichen<br/>   • Ticket-Verlauf anzusehen<br/><br/>2. <strong>E-Mail-Support</strong><br/>   support@procrechesolutions.com<br/><br/><strong>Beim Kontaktieren des Supports:</strong><br/>• Beschreiben Sie Ihr Problem klar<br/>• Fügen Sie Fehlermeldungen bei<br/>• Nennen Sie Ihren Browser/Gerät<br/>• Hängen Sie Screenshots an wenn hilfreich"
+    }
+  }
+}

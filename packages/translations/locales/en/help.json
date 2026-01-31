@@ -1,0 +1,219 @@
+{
+  "modal": {
+    "title": "Help & Knowledge Base",
+    "categories": "Categories",
+    "searchPlaceholder": "Search for help...",
+    "allCategories": "All Categories",
+    "noResults": "No articles found",
+    "tryDifferentSearch": "Try a different search term or browse categories",
+    "needMoreHelp": "Need more help?",
+    "contactSupport": "Contact Support",
+    "supportEmail": "Email",
+    "goToSupport": "Go to Support Page",
+    "toggleMenu": "Toggle menu"
+  },
+  "categories": {
+    "gettingStarted": "Getting Started",
+    "account": "Account",
+    "foundation": "Foundation / Daycare",
+    "supplier": "Product Supplier",
+    "serviceProvider": "Service Provider",
+    "educator": "Educator",
+    "parent": "Parent",
+    "settings": "Settings",
+    "billing": "Billing & Subscription",
+    "troubleshooting": "Troubleshooting"
+  },
+  "articles": {
+    "platformOverview": {
+      "title": "Platform Overview",
+      "description": "Learn what ProCrèche Solutions is and how it connects the Swiss childcare ecosystem.",
+      "content": "<strong>What is ProCrèche Solutions?</strong><br/><br/>ProCrèche Solutions is an all-in-one platform connecting the Swiss childcare ecosystem:<br/><br/>• <strong>Daycares (Foundations)</strong> - Find products, services, staff, and manage parent enquiries<br/>• <strong>Product Suppliers</strong> - Sell childcare products to daycares<br/>• <strong>Service Providers</strong> - Offer professional services to daycares<br/>• <strong>Educators</strong> - Find job opportunities at daycares<br/>• <strong>Parents</strong> - Find quality daycare for their children<br/><br/><strong>Supported Languages</strong><br/><br/>The platform is available in three languages:<br/>• English<br/>• Français (French)<br/>• Deutsch (German)<br/><br/>You can change your language at any time using the language switcher in the navigation bar."
+    },
+    "createAccount": {
+      "title": "Creating Your Account",
+      "description": "Step-by-step guide to creating a new account on ProCrèche Solutions.",
+      "content": "<strong>Step 1: Go to Sign Up</strong><br/>Click the 'Sign Up' button in the top navigation bar.<br/><br/><strong>Step 2: Choose Your Role</strong><br/>Select the account type that matches your needs:<br/>• 🏫 Foundation - Daycare centers<br/>• 📦 Product Supplier - Companies selling products<br/>• 🔧 Service Provider - Companies offering services<br/>• 👩‍🏫 Educator - Childcare professionals<br/>• 👨‍👩‍👧 Parent - Parents seeking daycare<br/><br/><strong>Step 3: Fill in Your Details</strong><br/>Complete the registration form with your information.<br/><br/><strong>Step 4: Accept Terms & CAPTCHA</strong><br/>Accept the Terms of Service and complete the CAPTCHA verification.<br/><br/><strong>Step 5: Verify Your Email</strong><br/>Enter the 6-digit code sent to your email.<br/><br/><strong>Alternative: Sign Up with Google</strong><br/>You can also click 'Continue with Google' for faster registration."
+    },
+    "emailVerification": {
+      "title": "Email Verification",
+      "description": "How to verify your email with the 6-digit verification code.",
+      "content": "<strong>Verification Process</strong><br/><br/>After creating your account, you'll receive a 6-digit verification code:<br/><br/>1. Check your email inbox (and spam/junk folder)<br/>2. Find the email from ProCrèche Solutions<br/>3. Copy the 6-digit code<br/>4. Enter it in the verification field<br/>5. Click 'Verify Email'<br/><br/><strong>Didn't Receive the Code?</strong><br/>• Wait 30 seconds for the resend option<br/>• Click 'Resend code' to get a new one<br/>• Check your spam/junk folder<br/><br/><strong>Code Expired?</strong><br/>Codes expire after about 10 minutes. Simply click 'Resend code' to get a fresh one.<br/><br/><strong>Tip:</strong> Enter the code as soon as you receive it for the best experience."
+    },
+    "signIn": {
+      "title": "Signing In",
+      "description": "How to log in to your ProCrèche Solutions account.",
+      "content": "<strong>Standard Login</strong><br/><br/>1. Go to the login page<br/>2. Enter your email address<br/>3. Enter your password<br/>4. Click 'Sign In'<br/><br/><strong>Login with Google</strong><br/><br/>1. Click 'Continue with Google'<br/>2. Select your Google account<br/>3. You'll be signed in automatically<br/><br/><strong>Stay Signed In</strong><br/>Your session remains active as you navigate. You'll be automatically signed out after inactivity for security."
+    },
+    "navigation": {
+      "title": "Navigating the Platform",
+      "description": "Learn how to navigate around ProCrèche Solutions using the sidebar and menus.",
+      "content": "<strong>Sidebar Navigation</strong><br/><br/>After signing in, the sidebar on the left shows your main navigation options. Menu items vary by role.<br/><br/><strong>Top Navigation Bar</strong><br/>• 🔔 Notifications - Bell icon for alerts<br/>• 🌐 Language - Switch between EN/FR/DE<br/>• 👤 Profile Menu - Click your avatar<br/><br/><strong>Profile Menu Options</strong><br/>• View Profile - See your public profile<br/>• Edit Profile - Update your information<br/>• Settings - Access account settings<br/>• Sign Out - Log out of your account"
+    },
+    "changePassword": {
+      "title": "Changing Your Password",
+      "description": "How to update your account password for better security.",
+      "content": "<strong>To Change Your Password:</strong><br/><br/>1. Go to Settings → Account Security<br/>2. Find the 'Change Password' section<br/>3. Enter your current password<br/>4. Enter your new password<br/>5. Confirm your new password<br/>6. Click 'Update Password'<br/><br/><strong>Password Requirements:</strong><br/>• At least 8 characters long<br/>• Not a commonly used password<br/>• Not exposed in data breaches<br/><br/><strong>Best Practices:</strong><br/>• Use a unique password<br/>• Don't share with others<br/>• Update regularly"
+    },
+    "changeEmail": {
+      "title": "Changing Your Email",
+      "description": "How to update the email address associated with your account.",
+      "content": "<strong>To Change Your Email:</strong><br/><br/>1. Go to Settings → Account Security<br/>2. Find 'Change Email Address'<br/>3. Enter your new email address<br/>4. Click 'Send Verification Code'<br/>5. Check your NEW email for the code<br/>6. Enter the 6-digit verification code<br/>7. Click 'Verify & Change Email'<br/><br/><strong>Important:</strong> You must verify the new email before the change takes effect. Your old email will no longer work for login after the change."
+    },
+    "forgotPassword": {
+      "title": "Forgot Password",
+      "description": "How to reset your password if you've forgotten it.",
+      "content": "<strong>Reset Your Password:</strong><br/><br/>1. On the login page, click 'Forgot Password?'<br/>2. Enter your email address<br/>3. Click 'Send Reset Link'<br/>4. Check your email for the reset link<br/>5. Click the link to open the reset page<br/>6. Enter your new password<br/>7. Confirm your new password<br/>8. Click 'Reset Password'<br/><br/><strong>Note:</strong> Reset links expire quickly for security. Request a new one if yours has expired."
+    },
+    "profileSetup": {
+      "title": "Setting Up Your Profile",
+      "description": "How to complete and optimize your profile for the best experience.",
+      "content": "<strong>Why Complete Your Profile?</strong><br/>• Foundations: Appear in parent searches<br/>• Suppliers/Providers: Get discovered by customers<br/>• Educators: Stand out to employers<br/>• Parents: Get better daycare matches<br/><br/><strong>To Complete Your Profile:</strong><br/><br/>1. Click your profile picture (top right)<br/>2. Select 'Edit Profile'<br/>3. Fill in all sections<br/>4. Upload a profile photo<br/>5. Click 'Save'"
+    },
+    "foundationDashboard": {
+      "title": "Foundation Dashboard",
+      "description": "Overview of the Foundation (Daycare) dashboard and its features.",
+      "content": "<strong>Dashboard Overview</strong><br/><br/>Your Foundation dashboard shows key statistics and recent activity:<br/><br/>• Active parent leads/enquiries<br/>• Pending orders and appointments<br/>• Staff applications<br/>• Messages and notifications<br/><br/><strong>Key Features:</strong><br/>• Marketplace access for products and services<br/>• Parent lead management<br/>• Recruitment tools<br/>• E-Learning and HR resources<br/>• Analytics and reporting"
+    },
+    "parentLeads": {
+      "title": "Managing Parent Leads",
+      "description": "How to view, respond to, and manage parent enquiries.",
+      "content": "<strong>Parent Leads Overview</strong><br/><br/>Parent leads are enquiries from parents looking for daycare.<br/><br/><strong>Lead Status Types:</strong><br/>• New - Unread enquiries<br/>• In Progress - Being processed<br/>• Contacted - Initial contact made<br/>• Waitlisted - On your waiting list<br/>• Enrolled - Successfully enrolled<br/>• Declined - Declined enquiries<br/><br/><strong>To Respond to a Lead:</strong><br/>1. Click on the lead to view details<br/>2. Review parent information<br/>3. Update the status as needed<br/>4. Send a message via the messaging system"
+    },
+    "marketplaceOrdering": {
+      "title": "Ordering from the Marketplace",
+      "description": "How to browse, order products, and request services.",
+      "content": "<strong>Browsing the Marketplace</strong><br/><br/>Access the Marketplace from your sidebar to find:<br/>• Products - Childcare supplies and equipment<br/>• Services - Professional services for daycares<br/><br/><strong>To Order Products:</strong><br/>1. Browse or search for products<br/>2. Click on a product for details<br/>3. Select quantity and options<br/>4. Add to cart<br/>5. Review cart and checkout<br/>6. Complete your order<br/><br/><strong>To Request Services:</strong><br/>1. Browse service providers<br/>2. View service details<br/>3. Click 'Request Service'<br/>4. Fill in the request form<br/>5. Submit your request"
+    },
+    "recruitmentJobs": {
+      "title": "Recruitment & Job Posting",
+      "description": "How to post jobs and manage candidates as a Foundation.",
+      "content": "<strong>Posting a Job</strong><br/><br/>1. Go to Recruitment → Job Listings<br/>2. Click 'Create Job Posting'<br/>3. Fill in job details<br/>4. Set requirements and qualifications<br/>5. Publish the listing<br/><br/><strong>Managing Candidates</strong><br/>• View applications from educators<br/>• Review candidate profiles<br/>• Schedule interviews<br/>• Send messages to candidates<br/>• Update application status<br/><br/><strong>Candidate Pool</strong><br/>Browse the candidate pool to find educators actively seeking positions."
+    },
+    "supplierDashboard": {
+      "title": "Supplier Dashboard",
+      "description": "Overview of the Product Supplier dashboard and key metrics.",
+      "content": "<strong>Dashboard Overview</strong><br/><br/>Your Supplier dashboard shows:<br/>• Active product listings<br/>• Recent orders<br/>• Pending inquiries<br/>• Performance metrics<br/><br/><strong>Key Actions:</strong><br/>• Add new products<br/>• Manage orders<br/>• Respond to inquiries<br/>• View analytics<br/>• Update business profile"
+    },
+    "productListings": {
+      "title": "Managing Product Listings",
+      "description": "How to add, edit, and manage your product catalog.",
+      "content": "<strong>Adding a New Product</strong><br/><br/>1. Go to Product Listings<br/>2. Click 'Add Product'<br/>3. Fill in product details:<br/>   • Name and description<br/>   • Price and availability<br/>   • Categories and tags<br/>   • Images and media<br/>   • Shipping information<br/>4. Save as draft or publish<br/><br/><strong>Editing Products</strong><br/>Click on any product to edit its details, update pricing, or change availability.<br/><br/><strong>Product Status:</strong><br/>• Draft - Not visible<br/>• Published - Live on marketplace<br/>• Out of Stock - Visible but unavailable"
+    },
+    "supplierOrders": {
+      "title": "Managing Orders",
+      "description": "How to view, process, and fulfill orders as a supplier.",
+      "content": "<strong>Order Management</strong><br/><br/>1. Go to Orders from the sidebar<br/>2. View incoming orders<br/>3. Update order status:<br/>   • Pending → Processing<br/>   • Processing → Shipped<br/>   • Shipped → Delivered<br/><br/><strong>Order Details</strong><br/>Click on an order to see:<br/>• Customer information<br/>• Product details<br/>• Shipping address<br/>• Order notes<br/><br/><strong>Communication</strong><br/>Use the messaging system to contact customers about their orders."
+    },
+    "promoCodes": {
+      "title": "Promo Codes",
+      "description": "How to create and manage promotional discount codes.",
+      "content": "<strong>Creating a Promo Code</strong><br/><br/>1. Go to Settings → Promo Code Manager<br/>2. Click 'Add Promo Code'<br/>3. Fill in the details:<br/><br/><strong>Promo Code Fields:</strong><br/>• <strong>Code</strong> - The code customers enter (e.g., SAVE20)<br/>• <strong>Discount Description</strong> - What discount they receive (e.g., '20% off all orders')<br/>• <strong>Description</strong> (optional) - Terms or conditions<br/>• <strong>Active</strong> - Toggle to enable/disable<br/><br/>4. Click 'Save Promo Code'<br/><br/><strong>Managing Codes</strong><br/>• Edit codes to update details<br/>• Toggle active status on/off<br/>• Delete codes no longer needed"
+    },
+    "serviceProviderDashboard": {
+      "title": "Service Provider Dashboard",
+      "description": "Overview of the Service Provider dashboard and features.",
+      "content": "<strong>Dashboard Overview</strong><br/><br/>Your Service Provider dashboard shows:<br/>• Active service listings<br/>• Incoming service requests<br/>• Upcoming appointments<br/>• Performance metrics<br/><br/><strong>Key Features:</strong><br/>• Manage service offerings<br/>• Respond to requests<br/>• External booking integration<br/>• Analytics and reporting"
+    },
+    "serviceListings": {
+      "title": "Managing Service Listings",
+      "description": "How to add and manage your service offerings.",
+      "content": "<strong>Adding a New Service</strong><br/><br/>1. Go to Service Listings<br/>2. Click 'Add Service'<br/>3. Fill in service details:<br/>   • Service name and description<br/>   • Categories<br/>   • Pricing information<br/>   • Service area/cantons<br/>   • Images<br/>4. Publish your service<br/><br/><strong>Service Status:</strong><br/>• Active - Visible to daycares<br/>• Inactive - Hidden from marketplace"
+    },
+    "serviceRequests": {
+      "title": "Handling Service Requests",
+      "description": "How to view and respond to service requests from daycares.",
+      "content": "<strong>Service Requests</strong><br/><br/>When a daycare requests your service:<br/><br/>1. You'll receive a notification<br/>2. Go to 'My Requests'<br/>3. Review the request details<br/>4. Respond with availability<br/>5. Update request status<br/><br/><strong>Request Statuses:</strong><br/>• New - Unread request<br/>• In Progress - Being handled<br/>• Scheduled - Appointment set<br/>• Completed - Service delivered<br/>• Cancelled - Request cancelled"
+    },
+    "bookingLink": {
+      "title": "Booking Link Integration",
+      "description": "How to set up an external booking link (Calendly, etc.).",
+      "content": "<strong>Adding a Booking Link</strong><br/><br/>You can add an external booking link to let daycares schedule directly:<br/><br/>1. Go to Settings → Contact & Booking<br/>2. Find 'Booking Link' section<br/>3. Enter your booking URL (e.g., Calendly)<br/>4. Save your settings<br/><br/><strong>How it Works:</strong><br/>• Your booking link appears on your profile<br/>• Daycares can click to schedule directly<br/>• Supports Calendly, Acuity, and other booking tools"
+    },
+    "educatorProfile": {
+      "title": "Educator Profile",
+      "description": "How to set up and optimize your educator profile.",
+      "content": "<strong>Profile Sections:</strong><br/><br/>• <strong>Basic Info</strong> - Name, photo, contact<br/>• <strong>Qualifications</strong> - Education, certifications<br/>• <strong>Experience</strong> - Work history<br/>• <strong>Availability</strong> - When you can work<br/>• <strong>Documents</strong> - CV, certificates<br/><br/><strong>Tips for Success:</strong><br/>• Upload a professional photo<br/>• List all relevant qualifications<br/>• Keep availability up to date<br/>• Write a compelling bio"
+    },
+    "jobBoard": {
+      "title": "Job Board",
+      "description": "How to search and apply for jobs as an educator.",
+      "content": "<strong>Finding Jobs</strong><br/><br/>1. Go to Job Board from sidebar<br/>2. Use filters to narrow results:<br/>   • Location/Canton<br/>   • Job type (full-time, part-time)<br/>   • Experience level<br/>3. Click on a job for details<br/><br/><strong>Applying for Jobs</strong><br/><br/>1. Review job requirements<br/>2. Click 'Apply'<br/>3. Submit your application<br/>4. Track status in 'My Applications'"
+    },
+    "availabilitySettings": {
+      "title": "Availability Settings",
+      "description": "How to set your weekly availability and date overrides.",
+      "content": "<strong>Weekly Availability</strong><br/><br/>Set your regular weekly schedule:<br/>1. Go to Profile → Availability<br/>2. Enable/disable each day<br/>3. Set start and end times<br/>4. Save changes<br/><br/><strong>Date Overrides</strong><br/><br/>For specific dates with different availability:<br/>1. Click 'Add Date Override'<br/>2. Select the date<br/>3. Mark as unavailable or set custom hours<br/>4. Add a reason (optional)<br/>5. Save the override"
+    },
+    "findDaycare": {
+      "title": "Finding Daycare",
+      "description": "How to search for and browse daycare options.",
+      "content": "<strong>Browse Foundations</strong><br/><br/>1. Go to 'Browse Foundations'<br/>2. Use filters:<br/>   • Location/Canton<br/>   • Languages supported<br/>   • Availability<br/>3. View daycare profiles<br/>4. Check services and capacity<br/><br/><strong>What to Look For:</strong><br/>• Location convenience<br/>• Opening hours<br/>• Language support<br/>• Available spots<br/>• Photos and reviews"
+    },
+    "submitInquiry": {
+      "title": "Submitting an Inquiry",
+      "description": "How to submit a daycare inquiry as a parent.",
+      "content": "<strong>Submit Your Inquiry</strong><br/><br/>1. Go to 'Find a Crèche'<br/>2. Fill in the form:<br/>   • Child's information<br/>   • Preferred start date<br/>   • Care schedule needed<br/>   • Preferred locations<br/>   • Additional requirements<br/>3. Submit your inquiry<br/><br/><strong>What Happens Next:</strong><br/>• Daycares receive your inquiry<br/>• They'll respond via the platform<br/>• Track responses in 'My Enquiries'"
+    },
+    "trackInquiries": {
+      "title": "Tracking Your Inquiries",
+      "description": "How to view and track your daycare inquiry status.",
+      "content": "<strong>View Your Inquiries</strong><br/><br/>1. Go to 'My Enquiries' from sidebar<br/>2. See all submitted inquiries<br/>3. Check status of each:<br/>   • Pending - Awaiting response<br/>   • Responded - Daycare replied<br/>   • Waitlisted - On waiting list<br/>   • Enrolled - Spot confirmed<br/><br/><strong>Communication</strong><br/>Use the messaging system to communicate with daycares about your inquiry."
+    },
+    "accountSecurity": {
+      "title": "Account Security Settings",
+      "description": "How to manage your account security and authentication.",
+      "content": "<strong>Security Settings</strong><br/><br/>Go to Settings → Account Security to manage:<br/><br/>• <strong>Change Password</strong> - Update your password<br/>• <strong>Change Email</strong> - Update your email address<br/>• <strong>Connected Accounts</strong> - Manage Google login<br/><br/><strong>Best Practices:</strong><br/>• Use a strong, unique password<br/>• Keep email address current<br/>• Sign out on shared devices"
+    },
+    "notificationSettings": {
+      "title": "Notification Settings",
+      "description": "How to manage your email and platform notifications.",
+      "content": "<strong>Notification Preferences</strong><br/><br/>Go to Settings → Notifications to manage:<br/><br/>• <strong>Email Notifications</strong><br/>   - Order updates<br/>   - New messages<br/>   - Lead notifications<br/>   - Marketing emails<br/><br/>• <strong>Platform Notifications</strong><br/>   - In-app alerts<br/>   - Bell icon notifications<br/><br/>Toggle each type on/off based on your preferences."
+    },
+    "privacySettings": {
+      "title": "Privacy & Data Settings",
+      "description": "How to manage your privacy settings and data.",
+      "content": "<strong>Privacy Options</strong><br/><br/>Go to Settings → Privacy & Data:<br/><br/>• <strong>Profile Visibility</strong> - Control what's public<br/>• <strong>Data Export</strong> - Download your data<br/>• <strong>Account Deletion</strong> - Request account deletion<br/><br/><strong>GDPR Rights:</strong><br/>• Access your personal data<br/>• Request data correction<br/>• Request data deletion<br/>• Data portability"
+    },
+    "languageSettings": {
+      "title": "Language Settings",
+      "description": "How to change the platform language.",
+      "content": "<strong>Changing Language</strong><br/><br/>The platform supports three languages:<br/>• 🇬🇧 English<br/>• 🇫🇷 Français (French)<br/>• 🇩🇪 Deutsch (German)<br/><br/><strong>To Change Language:</strong><br/>1. Click the language switcher in the top navigation<br/>2. Select your preferred language<br/>3. The platform updates immediately<br/><br/>Your language preference is saved automatically."
+    },
+    "subscriptionPlans": {
+      "title": "Subscription Plans",
+      "description": "Overview of available subscription plans and pricing.",
+      "content": "<strong>Available Plans</strong><br/><br/><strong>Foundation Plans:</strong><br/>• Starter - Basic features<br/>• Professional - Full features<br/>• Enterprise - Custom solutions<br/><br/><strong>Supplier/Provider Plans:</strong><br/>• Contact us for custom pricing<br/><br/><strong>Billing Options:</strong><br/>• Monthly billing<br/>• Annual billing (save up to 20%)"
+    },
+    "manageSubscription": {
+      "title": "Managing Your Subscription",
+      "description": "How to view, upgrade, or cancel your subscription.",
+      "content": "<strong>Subscription Management</strong><br/><br/>Go to Settings → Billing & Subscription:<br/><br/>• <strong>View Current Plan</strong> - See your active subscription<br/>• <strong>Upgrade Plan</strong> - Move to a higher tier<br/>• <strong>Change Billing</strong> - Monthly ↔ Annual<br/>• <strong>Cancel Subscription</strong> - End your subscription<br/><br/><strong>To Request Changes:</strong><br/>1. Click 'Manage Subscription'<br/>2. Select your desired action<br/>3. Complete the request form<br/>4. Our team will process it"
+    },
+    "invoices": {
+      "title": "Invoices & Payment History",
+      "description": "How to view and download your invoices.",
+      "content": "<strong>Viewing Invoices</strong><br/><br/>Go to Settings → Billing & Subscription:<br/><br/>• View all past invoices<br/>• Download PDF invoices<br/>• See payment status<br/><br/><strong>Invoice Details Include:</strong><br/>• Invoice number and date<br/>• Service period<br/>• Amount and taxes<br/>• Payment status"
+    },
+    "loginIssues": {
+      "title": "Login Issues",
+      "description": "Troubleshooting common login problems.",
+      "content": "<strong>Can't Log In?</strong><br/><br/><strong>Check These:</strong><br/>• Email address is correct<br/>• Password is correct (check caps lock)<br/>• Account is verified<br/><br/><strong>Solutions:</strong><br/>• Use 'Forgot Password' to reset<br/>• Try Google login if available<br/>• Clear browser cache and cookies<br/>• Try a different browser<br/><br/><strong>Account Locked?</strong><br/>Contact support if you're locked out after multiple attempts."
+    },
+    "verificationIssues": {
+      "title": "Verification Issues",
+      "description": "Troubleshooting email verification problems.",
+      "content": "<strong>Verification Code Not Received?</strong><br/><br/>1. Check spam/junk folder<br/>2. Wait 30 seconds, click 'Resend code'<br/>3. Check email address is correct<br/>4. Add our email to contacts<br/><br/><strong>Code Expired?</strong><br/>Codes expire after ~10 minutes. Click 'Resend code' for a new one.<br/><br/><strong>Code Not Working?</strong><br/>• Enter exactly 6 digits<br/>• No spaces<br/>• Use the most recent code"
+    },
+    "browserCompatibility": {
+      "title": "Browser Compatibility",
+      "description": "Supported browsers and technical requirements.",
+      "content": "<strong>Supported Browsers:</strong><br/><br/>• Google Chrome (recommended)<br/>• Mozilla Firefox<br/>• Microsoft Edge<br/>• Safari<br/><br/><strong>Requirements:</strong><br/>• Keep browser updated<br/>• Enable JavaScript<br/>• Enable cookies<br/><br/><strong>Issues?</strong><br/>• Clear cache and cookies<br/>• Disable browser extensions<br/>• Try incognito/private mode"
+    },
+    "contactSupport": {
+      "title": "Contact Support",
+      "description": "How to get help from our support team.",
+      "content": "<strong>Ways to Get Help:</strong><br/><br/>1. <strong>Support Page</strong><br/>   Go to Support from your sidebar to:<br/>   • Browse FAQs<br/>   • Submit a support ticket<br/>   • View ticket history<br/><br/>2. <strong>Email Support</strong><br/>   support@procrechesolutions.com<br/><br/><strong>When Contacting Support:</strong><br/>• Describe your issue clearly<br/>• Include any error messages<br/>• Mention your browser/device<br/>• Attach screenshots if helpful"
+    }
+  }
+}
