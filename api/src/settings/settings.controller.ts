@@ -465,7 +465,8 @@ export class SettingsController {
         languages: organization.languages ?? [],
         productCategory: organization.productCategory ?? '',
         serviceType: organization.serviceType ?? '',
-        minimumOrderQuantity: organization.minimumOrderQuantity ?? 0,
+        // Optional: when unset, return null (no default minimum).
+        minimumOrderQuantity: organization.minimumOrderQuantity ?? null,
         directOrderLink: organization.directOrderLink ?? '',
         catalogUrl: organization.catalogUrl ?? '',
         logoUrl: (organization as any).logoAsset?.publicUrl ?? null,
@@ -537,7 +538,9 @@ export class SettingsController {
             languages: settings.languages ?? [],
             productCategory: settings.productCategory,
             serviceType: settings.serviceType,
-            minimumOrderQuantity: settings.minimumOrderQuantity,
+            ...(settings.minimumOrderQuantity !== undefined && {
+              minimumOrderQuantity: settings.minimumOrderQuantity,
+            }),
             directOrderLink: settings.directOrderLink,
             catalogUrl: settings.catalogUrl,
             ...(settings.logoAssetId !== undefined && { logoAssetId: settings.logoAssetId || null }),
@@ -562,7 +565,9 @@ export class SettingsController {
             languages: settings.languages ?? [],
             productCategory: settings.productCategory,
             serviceType: settings.serviceType,
-            minimumOrderQuantity: settings.minimumOrderQuantity,
+            ...(settings.minimumOrderQuantity !== undefined && {
+              minimumOrderQuantity: settings.minimumOrderQuantity,
+            }),
             directOrderLink: settings.directOrderLink,
             catalogUrl: settings.catalogUrl,
             isActive: true,

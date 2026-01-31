@@ -119,7 +119,10 @@ const ProfileEditPage: React.FC = () => {
           coverImageUrl: data.coverImageUrl || org?.coverImageUrl || null,
           productCategory: data.productCategory || org?.productCategory || '',
           serviceType: data.serviceType || org?.serviceType || '',
-          minimumOrderQuantity: typeof data.minimumOrderQuantity === 'number' ? data.minimumOrderQuantity : (org?.minimumOrderQuantity || 0),
+          minimumOrderQuantity:
+            typeof data.minimumOrderQuantity === 'number'
+              ? data.minimumOrderQuantity
+              : org?.minimumOrderQuantity ?? undefined,
           directOrderLink: data.directOrderLink || org?.directOrderLink || '',
           catalogUrl: data.catalogUrl || org?.catalogUrl || '',
         } as Partial<SettingsFormData>;
@@ -257,7 +260,9 @@ const ProfileEditPage: React.FC = () => {
             languages: Array.isArray(payload.languagesSpoken) ? payload.languagesSpoken : [],
             productCategory: payload.productCategory || '',
             serviceType: payload.serviceType || '',
-            minimumOrderQuantity: Number.isFinite(payload.minimumOrderQuantity) ? Number(payload.minimumOrderQuantity) : 0,
+            minimumOrderQuantity: Number.isFinite(payload.minimumOrderQuantity)
+              ? Number(payload.minimumOrderQuantity)
+            : null,
             directOrderLink: payload.directOrderLink || '',
             catalogUrl: payload.catalogUrl || '',
             ...(payload.logoAssetId !== undefined && { logoAssetId: payload.logoAssetId || null }),

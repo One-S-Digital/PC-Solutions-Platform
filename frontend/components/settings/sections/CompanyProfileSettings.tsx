@@ -565,9 +565,14 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                   <input
                     type="number"
                     id="minimumOrderQuantity"
-                    min="0"
-                    value={settings.minimumOrderQuantity || ''}
-                    onChange={(e) => onChange('minimumOrderQuantity', e.target.value ? parseInt(e.target.value, 10) : 0)}
+                    min="1"
+                    value={settings.minimumOrderQuantity ?? ''}
+                    onChange={(e) =>
+                      onChange(
+                        'minimumOrderQuantity',
+                        e.target.value ? parseInt(e.target.value, 10) : undefined,
+                      )
+                    }
                     className={STANDARD_INPUT_FIELD}
                     placeholder={t('settings:companyProfile.minimumOrderQuantityPlaceholder', 'Enter minimum order quantity')}
                   />
