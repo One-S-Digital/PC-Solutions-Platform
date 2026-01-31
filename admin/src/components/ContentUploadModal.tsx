@@ -349,7 +349,8 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
     : t('adminContentManagementDashboardPage.addContent', `Add ${contentType === 'e-learning' ? 'E-Learning' : contentType === 'hr' ? 'HR Document' : 'Policy'} Content`);
 
   const descriptionLabel = contentType === 'policy' ? 'Description/Preview' : 'Description';
-  const descriptionMaxLength = contentType === 'policy' ? 300 : (contentType === 'e-learning' ? 300 : undefined);
+  const titleMaxLength = 100;
+  const descriptionMaxLength = 1000;
 
   const languageOptions: { value: LanguageCode; label: string }[] = [
     { value: 'EN', label: 'EN' },
@@ -390,7 +391,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div>
           <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">{t('common.title','Title')} <span className="text-red-500 ml-0.5">*</span></label>
-          <input type="text" name="title" id="title" value={formData.title || ''} onChange={handleInputChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" maxLength={60} />
+          <input type="text" name="title" id="title" value={formData.title || ''} onChange={handleInputChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" maxLength={titleMaxLength} />
         </div>
         <div>
           <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">{t('eLearningPage.categoryLabel','Category')} <span className="text-red-500 ml-0.5">*</span></label>
@@ -401,8 +402,8 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
       </div>
       <div>
         <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">{t('common.description', descriptionLabel)}</label>
-        <textarea name="description" id="description" value={formData.description || ''} onChange={handleInputChange} rows={3} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" maxLength={300}></textarea>
-        {formData.description && <p className="text-xs text-gray-400 text-right mt-0.5">{formData.description.length}/300</p>}
+        <textarea name="description" id="description" value={formData.description || ''} onChange={handleInputChange} rows={3} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" maxLength={descriptionMaxLength}></textarea>
+        {formData.description && <p className="text-xs text-gray-400 text-right mt-0.5">{formData.description.length}/{descriptionMaxLength}</p>}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         {renderButtonSelect('type', formData.type, Object.values(ELearningContentType).map(v => ({value: v, label: v})), t('content.type','Content Type'), true)}
@@ -499,7 +500,8 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
       </div>
       <div>
         <label htmlFor="contentPreview" className="block text-sm font-medium text-gray-700 mb-1">{t('content.preview','Content Preview')}</label>
-        <textarea name="contentPreview" id="contentPreview" value={formData.contentPreview || ''} onChange={handleInputChange} rows={3} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="Outline the key objectives or provide a brief summary"></textarea>
+        <textarea name="contentPreview" id="contentPreview" value={formData.contentPreview || ''} onChange={handleInputChange} rows={3} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" maxLength={descriptionMaxLength} placeholder="Outline the key objectives or provide a brief summary"></textarea>
+        {formData.contentPreview && <p className="text-xs text-gray-400 text-right mt-0.5">{formData.contentPreview.length}/{descriptionMaxLength}</p>}
       </div>
     </>
   );
@@ -508,7 +510,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
     <>
       <div>
         <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">{t('content.documentTitle','Document Title')} <span className="text-red-500 ml-0.5">*</span></label>
-        <input type="text" name="title" id="title" value={formData.title || ''} onChange={handleInputChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+        <input type="text" name="title" id="title" value={formData.title || ''} onChange={handleInputChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" maxLength={titleMaxLength} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div>
@@ -553,7 +555,8 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
       </div>
       <div>
         <label htmlFor="contentPreview" className="block text-sm font-medium text-gray-700 mb-1">{t('content.preview','Description / Content Preview')}</label>
-        <textarea name="contentPreview" id="contentPreview" value={formData.contentPreview || ''} onChange={handleInputChange} rows={3} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="Provide a short overview for employees"></textarea>
+        <textarea name="contentPreview" id="contentPreview" value={formData.contentPreview || ''} onChange={handleInputChange} rows={3} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" maxLength={descriptionMaxLength} placeholder="Provide a short overview for employees"></textarea>
+        {formData.contentPreview && <p className="text-xs text-gray-400 text-right mt-0.5">{formData.contentPreview.length}/{descriptionMaxLength}</p>}
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">{t('content.accessRoles','Access Roles')}</label>
@@ -573,7 +576,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
     <>
       <div>
         <label htmlFor="policyTitle" className="block text-sm font-medium text-gray-700 mb-1">{t('common.title','Title')} <span className="text-red-500 ml-0.5">*</span></label>
-        <input type="text" name="title" id="policyTitle" value={formData.title} onChange={handleInputChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+        <input type="text" name="title" id="policyTitle" value={formData.title} onChange={handleInputChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" maxLength={titleMaxLength} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div>
@@ -652,7 +655,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
       <div>
         <label htmlFor="policyDescription" className="block text-sm font-medium text-gray-700 mb-1">{t('content.preview','Description / Content Preview')}</label>
         <textarea name="description" id="policyDescription" value={formData.description} onChange={handleInputChange} rows={3} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" maxLength={descriptionMaxLength} placeholder="Add notes or an executive summary for this policy"></textarea>
-        {formData.description && descriptionMaxLength && <p className="text-xs text-gray-400 text-right mt-0.5">{formData.description.length}/{descriptionMaxLength}</p>}
+        {formData.description && <p className="text-xs text-gray-400 text-right mt-0.5">{formData.description.length}/{descriptionMaxLength}</p>}
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">{t('content.accessRoles','Access Roles')}</label>
