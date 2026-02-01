@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-02-01T12:46:35.595Z",
+  "timestamp": "2026-02-01T13:44:52.843Z",
   "totalKeys": 2049,
   "byNamespace": {
     "common": 2917,
@@ -17143,6 +17143,42 @@
       "context": "{t('adminSystemMonitoringPage.rawLogConsole.title')}"
     },
     {
+      "key": "common:supportPage.ticketForm.responsePlaceholder",
+      "file": "components/support/SupportReplyComposer.tsx",
+      "line": 47,
+      "context": "const displayPlaceholder = placeholder || t('common:supportPage.ticketForm.responsePlaceholder', { defaultValue: 'Type your reply...' });"
+    },
+    {
+      "key": "common:supportPage.ticketForm.responsePlaceholder",
+      "file": "components/support/SupportReplyComposer.tsx",
+      "line": 47,
+      "context": "const displayPlaceholder = placeholder || t('common:supportPage.ticketForm.responsePlaceholder', { defaultValue: 'Type your reply...' });"
+    },
+    {
+      "key": "common:buttons.sending",
+      "file": "components/support/SupportReplyComposer.tsx",
+      "line": 138,
+      "context": "{sending ? t('common:buttons.sending', { defaultValue: 'Sending...' }) : t('common:buttons.reply', { defaultValue: 'Reply' })}"
+    },
+    {
+      "key": "common:buttons.reply",
+      "file": "components/support/SupportReplyComposer.tsx",
+      "line": 138,
+      "context": "{sending ? t('common:buttons.sending', { defaultValue: 'Sending...' }) : t('common:buttons.reply', { defaultValue: 'Reply' })}"
+    },
+    {
+      "key": "common:buttons.sending",
+      "file": "components/support/SupportReplyComposer.tsx",
+      "line": 138,
+      "context": "{sending ? t('common:buttons.sending', { defaultValue: 'Sending...' }) : t('common:buttons.reply', { defaultValue: 'Reply' })}"
+    },
+    {
+      "key": "common:buttons.reply",
+      "file": "components/support/SupportReplyComposer.tsx",
+      "line": 138,
+      "context": "{sending ? t('common:buttons.sending', { defaultValue: 'Sending...' }) : t('common:buttons.reply', { defaultValue: 'Reply' })}"
+    },
+    {
       "key": "common:messages.maxQuantityReached",
       "file": "components/ui/QuantityInput.tsx",
       "line": 33,
@@ -17285,42 +17321,6 @@
       "file": "components/ui/ChipInput.tsx",
       "line": 30,
       "context": "const placeholderText = placeholder || t('common:placeholders.typeorselect');"
-    },
-    {
-      "key": "common:supportPage.ticketForm.responsePlaceholder",
-      "file": "components/support/SupportReplyComposer.tsx",
-      "line": 47,
-      "context": "const displayPlaceholder = placeholder || t('common:supportPage.ticketForm.responsePlaceholder', { defaultValue: 'Type your reply...' });"
-    },
-    {
-      "key": "common:supportPage.ticketForm.responsePlaceholder",
-      "file": "components/support/SupportReplyComposer.tsx",
-      "line": 47,
-      "context": "const displayPlaceholder = placeholder || t('common:supportPage.ticketForm.responsePlaceholder', { defaultValue: 'Type your reply...' });"
-    },
-    {
-      "key": "common:buttons.sending",
-      "file": "components/support/SupportReplyComposer.tsx",
-      "line": 138,
-      "context": "{sending ? t('common:buttons.sending', { defaultValue: 'Sending...' }) : t('common:buttons.reply', { defaultValue: 'Reply' })}"
-    },
-    {
-      "key": "common:buttons.reply",
-      "file": "components/support/SupportReplyComposer.tsx",
-      "line": 138,
-      "context": "{sending ? t('common:buttons.sending', { defaultValue: 'Sending...' }) : t('common:buttons.reply', { defaultValue: 'Reply' })}"
-    },
-    {
-      "key": "common:buttons.sending",
-      "file": "components/support/SupportReplyComposer.tsx",
-      "line": 138,
-      "context": "{sending ? t('common:buttons.sending', { defaultValue: 'Sending...' }) : t('common:buttons.reply', { defaultValue: 'Reply' })}"
-    },
-    {
-      "key": "common:buttons.reply",
-      "file": "components/support/SupportReplyComposer.tsx",
-      "line": 138,
-      "context": "{sending ? t('common:buttons.sending', { defaultValue: 'Sending...' }) : t('common:buttons.reply', { defaultValue: 'Reply' })}"
     },
     {
       "key": "dashboard:productUploadModal.editTitle",
@@ -19795,6 +19795,360 @@
       "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close')}</Button>"
     },
     {
+      "key": "common:errors.genericErrorTitle",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 80,
+      "context": "title: t('common:errors.genericErrorTitle'),"
+    },
+    {
+      "key": "common:errors.genericErrorTitle",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 80,
+      "context": "title: t('common:errors.genericErrorTitle'),"
+    },
+    {
+      "key": "common:errors.genericErrorMessage",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 81,
+      "context": "message: t('common:errors.genericErrorMessage'),"
+    },
+    {
+      "key": "common:errors.genericErrorMessage",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 81,
+      "context": "message: t('common:errors.genericErrorMessage'),"
+    },
+    {
+      "key": "notifications.successTitle",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 157,
+      "context": "title: t('notifications.successTitle', 'Success'),"
+    },
+    {
+      "key": "notifications.settingsUpdated",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 158,
+      "context": "message: t('notifications.settingsUpdated', 'Settings updated successfully'),"
+    },
+    {
+      "key": "common:errors.genericErrorTitle",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 164,
+      "context": "title: t('common:errors.genericErrorTitle', 'Error'),"
+    },
+    {
+      "key": "common:errors.genericErrorTitle",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 164,
+      "context": "title: t('common:errors.genericErrorTitle', 'Error'),"
+    },
+    {
+      "key": "common:errors.genericErrorMessage",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 165,
+      "context": "message: error instanceof Error ? error.message : t('common:errors.genericErrorMessage', 'An error occurred'),"
+    },
+    {
+      "key": "common:errors.genericErrorMessage",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 165,
+      "context": "message: error instanceof Error ? error.message : t('common:errors.genericErrorMessage', 'An error occurred'),"
+    },
+    {
+      "key": "common:organizationProfileForm.accessDenied",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 175,
+      "context": "return <p>{t('common:organizationProfileForm.accessDenied')}</p>;"
+    },
+    {
+      "key": "common:organizationProfileForm.accessDenied",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 175,
+      "context": "return <p>{t('common:organizationProfileForm.accessDenied')}</p>;"
+    },
+    {
+      "key": "common:loading",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 181,
+      "context": "<p>{t('common:loading')}</p>"
+    },
+    {
+      "key": "common:loading",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 181,
+      "context": "<p>{t('common:loading')}</p>"
+    },
+    {
+      "key": "common:organizationProfileForm.title",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 188,
+      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal mb-1\">{t('common:organizationProfileForm.title')}</h2>"
+    },
+    {
+      "key": "common:organizationProfileForm.title",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 188,
+      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal mb-1\">{t('common:organizationProfileForm.title')}</h2>"
+    },
+    {
+      "key": "common:organizationProfileForm.subtitle",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 189,
+      "context": "<p className=\"text-sm text-gray-500 mb-6\">{t('common:organizationProfileForm.subtitle')}</p>"
+    },
+    {
+      "key": "common:organizationProfileForm.subtitle",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 189,
+      "context": "<p className=\"text-sm text-gray-500 mb-6\">{t('common:organizationProfileForm.subtitle')}</p>"
+    },
+    {
+      "key": "dashboard:organizationProfileForm.saveSuccess",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 193,
+      "context": "{t('dashboard:organizationProfileForm.saveSuccess')}"
+    },
+    {
+      "key": "dashboard:organizationProfileForm.saveSuccess",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 193,
+      "context": "{t('dashboard:organizationProfileForm.saveSuccess')}"
+    },
+    {
+      "key": "common:organizationProfileForm.labels.capacity",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 200,
+      "context": "{t('common:organizationProfileForm.labels.capacity')}"
+    },
+    {
+      "key": "common:organizationProfileForm.labels.capacity",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 200,
+      "context": "{t('common:organizationProfileForm.labels.capacity')}"
+    },
+    {
+      "key": "common:organizationProfileForm.labels.pedagogy",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 215,
+      "context": "{t('common:organizationProfileForm.labels.pedagogy')}"
+    },
+    {
+      "key": "common:organizationProfileForm.labels.pedagogy",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 215,
+      "context": "{t('common:organizationProfileForm.labels.pedagogy')}"
+    },
+    {
+      "key": "common:organizationProfileForm.placeholders.pedagogy",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 224,
+      "context": "placeholder={t('common:organizationProfileForm.placeholders.pedagogy')}"
+    },
+    {
+      "key": "common:organizationProfileForm.placeholders.pedagogy",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 224,
+      "context": "placeholder={t('common:organizationProfileForm.placeholders.pedagogy')}"
+    },
+    {
+      "key": "common:organizationProfileForm.helpText.commaSeparated",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 226,
+      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
+    },
+    {
+      "key": "common:organizationProfileForm.helpText.commaSeparated",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 226,
+      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
+    },
+    {
+      "key": "common:organizationProfileForm.labels.languages",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 231,
+      "context": "{t('common:organizationProfileForm.labels.languages')}"
+    },
+    {
+      "key": "common:organizationProfileForm.labels.languages",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 231,
+      "context": "{t('common:organizationProfileForm.labels.languages')}"
+    },
+    {
+      "key": "common:organizationProfileForm.placeholders.languages",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 240,
+      "context": "placeholder={t('common:organizationProfileForm.placeholders.languages')}"
+    },
+    {
+      "key": "common:organizationProfileForm.placeholders.languages",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 240,
+      "context": "placeholder={t('common:organizationProfileForm.placeholders.languages')}"
+    },
+    {
+      "key": "common:organizationProfileForm.helpText.commaSeparated",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 242,
+      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
+    },
+    {
+      "key": "common:organizationProfileForm.helpText.commaSeparated",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 242,
+      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
+    },
+    {
+      "key": "common:buttons.saveChanges",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 247,
+      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
+    },
+    {
+      "key": "common:organizationProfileForm.saveButton",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 247,
+      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
+    },
+    {
+      "key": "common:buttons.saveChanges",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 247,
+      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
+    },
+    {
+      "key": "common:organizationProfileForm.saveButton",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 247,
+      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
+    },
+    {
+      "key": "common:buttons.confirm",
+      "file": "components/settings/ConfirmDestructiveActionModal.tsx",
+      "line": 25,
+      "context": "const finalConfirmButtonText = confirmButtonText || t('common:buttons.confirm');"
+    },
+    {
+      "key": "common:buttons.confirm",
+      "file": "components/settings/ConfirmDestructiveActionModal.tsx",
+      "line": 25,
+      "context": "const finalConfirmButtonText = confirmButtonText || t('common:buttons.confirm');"
+    },
+    {
+      "key": "forms.required",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 70,
+      "context": "newErrors.code = t('forms.required');"
+    },
+    {
+      "key": "settingsPromoCodeManager.validation.codeMinLength",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 72,
+      "context": "newErrors.code = t('settingsPromoCodeManager.validation.codeMinLength');"
+    },
+    {
+      "key": "forms.required",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 76,
+      "context": "newErrors.discount = t('forms.required');"
+    },
+    {
+      "key": "settingsPromoCodeManager.addEditModal.editTitle",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 124,
+      "context": "? t('settingsPromoCodeManager.addEditModal.editTitle')"
+    },
+    {
+      "key": "settingsPromoCodeManager.addEditModal.addTitle",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 125,
+      "context": ": t('settingsPromoCodeManager.addEditModal.addTitle')}"
+    },
+    {
+      "key": "buttons.close",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 131,
+      "context": "aria-label={t('buttons.close')}"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.code",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 142,
+      "context": "{t('settingsPromoCodeManager.form.code')} <span className=\"text-red-500\">*</span>"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.codePlaceholder",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 151,
+      "context": "placeholder={t('settingsPromoCodeManager.form.codePlaceholder')}"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.codeHelpText",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 156,
+      "context": "{t('settingsPromoCodeManager.form.codeHelpText', 'The code customers will use (e.g., SAVE20, FREESHIP)')}"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.discount",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 163,
+      "context": "{t('settingsPromoCodeManager.form.discount')} <span className=\"text-red-500\">*</span>"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.discountPlaceholder",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 172,
+      "context": "placeholder={t('settingsPromoCodeManager.form.discountPlaceholder', 'e.g., 20% off, Free shipping, CHF 10 off')}"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.discountHelpText",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 177,
+      "context": "{t('settingsPromoCodeManager.form.discountHelpText', 'Describe the discount customers will receive')}"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.description",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 184,
+      "context": "{t('settingsPromoCodeManager.form.description')}"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.descriptionPlaceholder",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 190,
+      "context": "placeholder={t('settingsPromoCodeManager.form.descriptionPlaceholder')}"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.descriptionHelpText",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 195,
+      "context": "{t('settingsPromoCodeManager.form.descriptionHelpText', 'Optional details about terms or conditions')}"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.isActive",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 209,
+      "context": "{t('settingsPromoCodeManager.form.isActive', 'Show on profile')}"
+    },
+    {
+      "key": "buttons.cancel",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 221,
+      "context": "{t('buttons.cancel')}"
+    },
+    {
+      "key": "settingsPromoCodeManager.addEditModal.saving",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 229,
+      "context": "? t('settingsPromoCodeManager.addEditModal.saving')"
+    },
+    {
+      "key": "settingsPromoCodeManager.addEditModal.save",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 230,
+      "context": ": t('settingsPromoCodeManager.addEditModal.save')}"
+    },
+    {
       "key": "recruitment:jobPostModal.workSchedule.title",
       "file": "components/recruitment/WorkScheduleSelector.tsx",
       "line": 52,
@@ -21565,360 +21919,6 @@
       "context": "title={t('profile:documents.previewIframeTitle', 'Document preview')}"
     },
     {
-      "key": "common:errors.genericErrorTitle",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 80,
-      "context": "title: t('common:errors.genericErrorTitle'),"
-    },
-    {
-      "key": "common:errors.genericErrorTitle",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 80,
-      "context": "title: t('common:errors.genericErrorTitle'),"
-    },
-    {
-      "key": "common:errors.genericErrorMessage",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 81,
-      "context": "message: t('common:errors.genericErrorMessage'),"
-    },
-    {
-      "key": "common:errors.genericErrorMessage",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 81,
-      "context": "message: t('common:errors.genericErrorMessage'),"
-    },
-    {
-      "key": "notifications.successTitle",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 157,
-      "context": "title: t('notifications.successTitle', 'Success'),"
-    },
-    {
-      "key": "notifications.settingsUpdated",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 158,
-      "context": "message: t('notifications.settingsUpdated', 'Settings updated successfully'),"
-    },
-    {
-      "key": "common:errors.genericErrorTitle",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 164,
-      "context": "title: t('common:errors.genericErrorTitle', 'Error'),"
-    },
-    {
-      "key": "common:errors.genericErrorTitle",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 164,
-      "context": "title: t('common:errors.genericErrorTitle', 'Error'),"
-    },
-    {
-      "key": "common:errors.genericErrorMessage",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 165,
-      "context": "message: error instanceof Error ? error.message : t('common:errors.genericErrorMessage', 'An error occurred'),"
-    },
-    {
-      "key": "common:errors.genericErrorMessage",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 165,
-      "context": "message: error instanceof Error ? error.message : t('common:errors.genericErrorMessage', 'An error occurred'),"
-    },
-    {
-      "key": "common:organizationProfileForm.accessDenied",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 175,
-      "context": "return <p>{t('common:organizationProfileForm.accessDenied')}</p>;"
-    },
-    {
-      "key": "common:organizationProfileForm.accessDenied",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 175,
-      "context": "return <p>{t('common:organizationProfileForm.accessDenied')}</p>;"
-    },
-    {
-      "key": "common:loading",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 181,
-      "context": "<p>{t('common:loading')}</p>"
-    },
-    {
-      "key": "common:loading",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 181,
-      "context": "<p>{t('common:loading')}</p>"
-    },
-    {
-      "key": "common:organizationProfileForm.title",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 188,
-      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal mb-1\">{t('common:organizationProfileForm.title')}</h2>"
-    },
-    {
-      "key": "common:organizationProfileForm.title",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 188,
-      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal mb-1\">{t('common:organizationProfileForm.title')}</h2>"
-    },
-    {
-      "key": "common:organizationProfileForm.subtitle",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 189,
-      "context": "<p className=\"text-sm text-gray-500 mb-6\">{t('common:organizationProfileForm.subtitle')}</p>"
-    },
-    {
-      "key": "common:organizationProfileForm.subtitle",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 189,
-      "context": "<p className=\"text-sm text-gray-500 mb-6\">{t('common:organizationProfileForm.subtitle')}</p>"
-    },
-    {
-      "key": "dashboard:organizationProfileForm.saveSuccess",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 193,
-      "context": "{t('dashboard:organizationProfileForm.saveSuccess')}"
-    },
-    {
-      "key": "dashboard:organizationProfileForm.saveSuccess",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 193,
-      "context": "{t('dashboard:organizationProfileForm.saveSuccess')}"
-    },
-    {
-      "key": "common:organizationProfileForm.labels.capacity",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 200,
-      "context": "{t('common:organizationProfileForm.labels.capacity')}"
-    },
-    {
-      "key": "common:organizationProfileForm.labels.capacity",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 200,
-      "context": "{t('common:organizationProfileForm.labels.capacity')}"
-    },
-    {
-      "key": "common:organizationProfileForm.labels.pedagogy",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 215,
-      "context": "{t('common:organizationProfileForm.labels.pedagogy')}"
-    },
-    {
-      "key": "common:organizationProfileForm.labels.pedagogy",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 215,
-      "context": "{t('common:organizationProfileForm.labels.pedagogy')}"
-    },
-    {
-      "key": "common:organizationProfileForm.placeholders.pedagogy",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 224,
-      "context": "placeholder={t('common:organizationProfileForm.placeholders.pedagogy')}"
-    },
-    {
-      "key": "common:organizationProfileForm.placeholders.pedagogy",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 224,
-      "context": "placeholder={t('common:organizationProfileForm.placeholders.pedagogy')}"
-    },
-    {
-      "key": "common:organizationProfileForm.helpText.commaSeparated",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 226,
-      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
-    },
-    {
-      "key": "common:organizationProfileForm.helpText.commaSeparated",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 226,
-      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
-    },
-    {
-      "key": "common:organizationProfileForm.labels.languages",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 231,
-      "context": "{t('common:organizationProfileForm.labels.languages')}"
-    },
-    {
-      "key": "common:organizationProfileForm.labels.languages",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 231,
-      "context": "{t('common:organizationProfileForm.labels.languages')}"
-    },
-    {
-      "key": "common:organizationProfileForm.placeholders.languages",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 240,
-      "context": "placeholder={t('common:organizationProfileForm.placeholders.languages')}"
-    },
-    {
-      "key": "common:organizationProfileForm.placeholders.languages",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 240,
-      "context": "placeholder={t('common:organizationProfileForm.placeholders.languages')}"
-    },
-    {
-      "key": "common:organizationProfileForm.helpText.commaSeparated",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 242,
-      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
-    },
-    {
-      "key": "common:organizationProfileForm.helpText.commaSeparated",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 242,
-      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
-    },
-    {
-      "key": "common:buttons.saveChanges",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 247,
-      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
-    },
-    {
-      "key": "common:organizationProfileForm.saveButton",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 247,
-      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
-    },
-    {
-      "key": "common:buttons.saveChanges",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 247,
-      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
-    },
-    {
-      "key": "common:organizationProfileForm.saveButton",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 247,
-      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
-    },
-    {
-      "key": "common:buttons.confirm",
-      "file": "components/settings/ConfirmDestructiveActionModal.tsx",
-      "line": 25,
-      "context": "const finalConfirmButtonText = confirmButtonText || t('common:buttons.confirm');"
-    },
-    {
-      "key": "common:buttons.confirm",
-      "file": "components/settings/ConfirmDestructiveActionModal.tsx",
-      "line": 25,
-      "context": "const finalConfirmButtonText = confirmButtonText || t('common:buttons.confirm');"
-    },
-    {
-      "key": "forms.required",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 70,
-      "context": "newErrors.code = t('forms.required');"
-    },
-    {
-      "key": "settingsPromoCodeManager.validation.codeMinLength",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 72,
-      "context": "newErrors.code = t('settingsPromoCodeManager.validation.codeMinLength');"
-    },
-    {
-      "key": "forms.required",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 76,
-      "context": "newErrors.discount = t('forms.required');"
-    },
-    {
-      "key": "settingsPromoCodeManager.addEditModal.editTitle",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 124,
-      "context": "? t('settingsPromoCodeManager.addEditModal.editTitle')"
-    },
-    {
-      "key": "settingsPromoCodeManager.addEditModal.addTitle",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 125,
-      "context": ": t('settingsPromoCodeManager.addEditModal.addTitle')}"
-    },
-    {
-      "key": "buttons.close",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 131,
-      "context": "aria-label={t('buttons.close')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.code",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 142,
-      "context": "{t('settingsPromoCodeManager.form.code')} <span className=\"text-red-500\">*</span>"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.codePlaceholder",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 151,
-      "context": "placeholder={t('settingsPromoCodeManager.form.codePlaceholder')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.codeHelpText",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 156,
-      "context": "{t('settingsPromoCodeManager.form.codeHelpText', 'The code customers will use (e.g., SAVE20, FREESHIP)')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.discount",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 163,
-      "context": "{t('settingsPromoCodeManager.form.discount')} <span className=\"text-red-500\">*</span>"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.discountPlaceholder",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 172,
-      "context": "placeholder={t('settingsPromoCodeManager.form.discountPlaceholder', 'e.g., 20% off, Free shipping, CHF 10 off')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.discountHelpText",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 177,
-      "context": "{t('settingsPromoCodeManager.form.discountHelpText', 'Describe the discount customers will receive')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.description",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 184,
-      "context": "{t('settingsPromoCodeManager.form.description')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.descriptionPlaceholder",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 190,
-      "context": "placeholder={t('settingsPromoCodeManager.form.descriptionPlaceholder')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.descriptionHelpText",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 195,
-      "context": "{t('settingsPromoCodeManager.form.descriptionHelpText', 'Optional details about terms or conditions')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.isActive",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 209,
-      "context": "{t('settingsPromoCodeManager.form.isActive', 'Show on profile')}"
-    },
-    {
-      "key": "buttons.cancel",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 221,
-      "context": "{t('buttons.cancel')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.addEditModal.saving",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 229,
-      "context": "? t('settingsPromoCodeManager.addEditModal.saving')"
-    },
-    {
-      "key": "settingsPromoCodeManager.addEditModal.save",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 230,
-      "context": ": t('settingsPromoCodeManager.addEditModal.save')}"
-    },
-    {
       "key": "common:errors.updateFailed",
       "file": "components/messaging/MessageBubble.tsx",
       "line": 72,
@@ -22879,6 +22879,162 @@
       "context": "aria-label={t('common:labels.closesidebar')}"
     },
     {
+      "key": "common:buttons.back",
+      "file": "components/help/HelpModal.tsx",
+      "line": 128,
+      "context": "aria-label={t('common:buttons.back')}"
+    },
+    {
+      "key": "common:buttons.back",
+      "file": "components/help/HelpModal.tsx",
+      "line": 128,
+      "context": "aria-label={t('common:buttons.back')}"
+    },
+    {
+      "key": "help:modal.needMoreHelp",
+      "file": "components/help/HelpModal.tsx",
+      "line": 158,
+      "context": "{t('help:modal.needMoreHelp')}{' '}"
+    },
+    {
+      "key": "help:modal.needMoreHelp",
+      "file": "components/help/HelpModal.tsx",
+      "line": 158,
+      "context": "{t('help:modal.needMoreHelp')}{' '}"
+    },
+    {
+      "key": "help:modal.contactSupport",
+      "file": "components/help/HelpModal.tsx",
+      "line": 163,
+      "context": "{t('help:modal.contactSupport')}"
+    },
+    {
+      "key": "help:modal.contactSupport",
+      "file": "components/help/HelpModal.tsx",
+      "line": 163,
+      "context": "{t('help:modal.contactSupport')}"
+    },
+    {
+      "key": "help:modal.categories",
+      "file": "components/help/HelpModal.tsx",
+      "line": 175,
+      "context": "<h3 className=\"font-semibold text-gray-900\">{t('help:modal.categories')}</h3>"
+    },
+    {
+      "key": "help:modal.categories",
+      "file": "components/help/HelpModal.tsx",
+      "line": 175,
+      "context": "<h3 className=\"font-semibold text-gray-900\">{t('help:modal.categories')}</h3>"
+    },
+    {
+      "key": "help:modal.searchPlaceholder",
+      "file": "components/help/HelpModal.tsx",
+      "line": 215,
+      "context": "placeholder={t('help:modal.searchPlaceholder')}"
+    },
+    {
+      "key": "help:modal.searchPlaceholder",
+      "file": "components/help/HelpModal.tsx",
+      "line": 215,
+      "context": "placeholder={t('help:modal.searchPlaceholder')}"
+    },
+    {
+      "key": "help:modal.allCategories",
+      "file": "components/help/HelpModal.tsx",
+      "line": 225,
+      "context": "{t('help:modal.allCategories')}"
+    },
+    {
+      "key": "help:modal.allCategories",
+      "file": "components/help/HelpModal.tsx",
+      "line": 225,
+      "context": "{t('help:modal.allCategories')}"
+    },
+    {
+      "key": "help:modal.noResults",
+      "file": "components/help/HelpModal.tsx",
+      "line": 240,
+      "context": "<p className=\"text-gray-500 mb-2\">{t('help:modal.noResults')}</p>"
+    },
+    {
+      "key": "help:modal.noResults",
+      "file": "components/help/HelpModal.tsx",
+      "line": 240,
+      "context": "<p className=\"text-gray-500 mb-2\">{t('help:modal.noResults')}</p>"
+    },
+    {
+      "key": "help:modal.tryDifferentSearch",
+      "file": "components/help/HelpModal.tsx",
+      "line": 241,
+      "context": "<p className=\"text-sm text-gray-400\">{t('help:modal.tryDifferentSearch')}</p>"
+    },
+    {
+      "key": "help:modal.tryDifferentSearch",
+      "file": "components/help/HelpModal.tsx",
+      "line": 241,
+      "context": "<p className=\"text-sm text-gray-400\">{t('help:modal.tryDifferentSearch')}</p>"
+    },
+    {
+      "key": "help:modal.title",
+      "file": "components/help/HelpModal.tsx",
+      "line": 289,
+      "context": "{t('help:modal.title')}"
+    },
+    {
+      "key": "help:modal.title",
+      "file": "components/help/HelpModal.tsx",
+      "line": 289,
+      "context": "{t('help:modal.title')}"
+    },
+    {
+      "key": "help:modal.toggleMenu",
+      "file": "components/help/HelpModal.tsx",
+      "line": 297,
+      "context": "aria-label={t('help:modal.toggleMenu')}"
+    },
+    {
+      "key": "help:modal.toggleMenu",
+      "file": "components/help/HelpModal.tsx",
+      "line": 297,
+      "context": "aria-label={t('help:modal.toggleMenu')}"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/help/HelpModal.tsx",
+      "line": 306,
+      "context": "aria-label={t('common:buttons.close')}"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/help/HelpModal.tsx",
+      "line": 306,
+      "context": "aria-label={t('common:buttons.close')}"
+    },
+    {
+      "key": "help:modal.supportEmail",
+      "file": "components/help/HelpModal.tsx",
+      "line": 336,
+      "context": "{t('help:modal.supportEmail')}:{' '}"
+    },
+    {
+      "key": "help:modal.supportEmail",
+      "file": "components/help/HelpModal.tsx",
+      "line": 336,
+      "context": "{t('help:modal.supportEmail')}:{' '}"
+    },
+    {
+      "key": "help:modal.goToSupport",
+      "file": "components/help/HelpModal.tsx",
+      "line": 346,
+      "context": "{t('help:modal.goToSupport')}"
+    },
+    {
+      "key": "help:modal.goToSupport",
+      "file": "components/help/HelpModal.tsx",
+      "line": 346,
+      "context": "{t('help:modal.goToSupport')}"
+    },
+    {
       "key": "common:leadCard.alert.missingParentInfo",
       "file": "components/foundation/LeadCard.tsx",
       "line": 58,
@@ -23189,162 +23345,6 @@
       "file": "components/foundation/LeadCard.tsx",
       "line": 193,
       "context": "{t('common:leadCard.buttons.markEnrolled')}"
-    },
-    {
-      "key": "common:buttons.back",
-      "file": "components/help/HelpModal.tsx",
-      "line": 128,
-      "context": "aria-label={t('common:buttons.back')}"
-    },
-    {
-      "key": "common:buttons.back",
-      "file": "components/help/HelpModal.tsx",
-      "line": 128,
-      "context": "aria-label={t('common:buttons.back')}"
-    },
-    {
-      "key": "help:modal.needMoreHelp",
-      "file": "components/help/HelpModal.tsx",
-      "line": 158,
-      "context": "{t('help:modal.needMoreHelp')}{' '}"
-    },
-    {
-      "key": "help:modal.needMoreHelp",
-      "file": "components/help/HelpModal.tsx",
-      "line": 158,
-      "context": "{t('help:modal.needMoreHelp')}{' '}"
-    },
-    {
-      "key": "help:modal.contactSupport",
-      "file": "components/help/HelpModal.tsx",
-      "line": 163,
-      "context": "{t('help:modal.contactSupport')}"
-    },
-    {
-      "key": "help:modal.contactSupport",
-      "file": "components/help/HelpModal.tsx",
-      "line": 163,
-      "context": "{t('help:modal.contactSupport')}"
-    },
-    {
-      "key": "help:modal.categories",
-      "file": "components/help/HelpModal.tsx",
-      "line": 175,
-      "context": "<h3 className=\"font-semibold text-gray-900\">{t('help:modal.categories')}</h3>"
-    },
-    {
-      "key": "help:modal.categories",
-      "file": "components/help/HelpModal.tsx",
-      "line": 175,
-      "context": "<h3 className=\"font-semibold text-gray-900\">{t('help:modal.categories')}</h3>"
-    },
-    {
-      "key": "help:modal.searchPlaceholder",
-      "file": "components/help/HelpModal.tsx",
-      "line": 215,
-      "context": "placeholder={t('help:modal.searchPlaceholder')}"
-    },
-    {
-      "key": "help:modal.searchPlaceholder",
-      "file": "components/help/HelpModal.tsx",
-      "line": 215,
-      "context": "placeholder={t('help:modal.searchPlaceholder')}"
-    },
-    {
-      "key": "help:modal.allCategories",
-      "file": "components/help/HelpModal.tsx",
-      "line": 225,
-      "context": "{t('help:modal.allCategories')}"
-    },
-    {
-      "key": "help:modal.allCategories",
-      "file": "components/help/HelpModal.tsx",
-      "line": 225,
-      "context": "{t('help:modal.allCategories')}"
-    },
-    {
-      "key": "help:modal.noResults",
-      "file": "components/help/HelpModal.tsx",
-      "line": 240,
-      "context": "<p className=\"text-gray-500 mb-2\">{t('help:modal.noResults')}</p>"
-    },
-    {
-      "key": "help:modal.noResults",
-      "file": "components/help/HelpModal.tsx",
-      "line": 240,
-      "context": "<p className=\"text-gray-500 mb-2\">{t('help:modal.noResults')}</p>"
-    },
-    {
-      "key": "help:modal.tryDifferentSearch",
-      "file": "components/help/HelpModal.tsx",
-      "line": 241,
-      "context": "<p className=\"text-sm text-gray-400\">{t('help:modal.tryDifferentSearch')}</p>"
-    },
-    {
-      "key": "help:modal.tryDifferentSearch",
-      "file": "components/help/HelpModal.tsx",
-      "line": 241,
-      "context": "<p className=\"text-sm text-gray-400\">{t('help:modal.tryDifferentSearch')}</p>"
-    },
-    {
-      "key": "help:modal.title",
-      "file": "components/help/HelpModal.tsx",
-      "line": 289,
-      "context": "{t('help:modal.title')}"
-    },
-    {
-      "key": "help:modal.title",
-      "file": "components/help/HelpModal.tsx",
-      "line": 289,
-      "context": "{t('help:modal.title')}"
-    },
-    {
-      "key": "help:modal.toggleMenu",
-      "file": "components/help/HelpModal.tsx",
-      "line": 297,
-      "context": "aria-label={t('help:modal.toggleMenu')}"
-    },
-    {
-      "key": "help:modal.toggleMenu",
-      "file": "components/help/HelpModal.tsx",
-      "line": 297,
-      "context": "aria-label={t('help:modal.toggleMenu')}"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/help/HelpModal.tsx",
-      "line": 306,
-      "context": "aria-label={t('common:buttons.close')}"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/help/HelpModal.tsx",
-      "line": 306,
-      "context": "aria-label={t('common:buttons.close')}"
-    },
-    {
-      "key": "help:modal.supportEmail",
-      "file": "components/help/HelpModal.tsx",
-      "line": 336,
-      "context": "{t('help:modal.supportEmail')}:{' '}"
-    },
-    {
-      "key": "help:modal.supportEmail",
-      "file": "components/help/HelpModal.tsx",
-      "line": 336,
-      "context": "{t('help:modal.supportEmail')}:{' '}"
-    },
-    {
-      "key": "help:modal.goToSupport",
-      "file": "components/help/HelpModal.tsx",
-      "line": 346,
-      "context": "{t('help:modal.goToSupport')}"
-    },
-    {
-      "key": "help:modal.goToSupport",
-      "file": "components/help/HelpModal.tsx",
-      "line": 346,
-      "context": "{t('help:modal.goToSupport')}"
     },
     {
       "key": "orderSummaryDrawer.orderSuccess",
@@ -24407,1326 +24407,6 @@
       "file": "src/components/verification/VerificationProgress.tsx",
       "line": 113,
       "context": "{t('verificationProgress.messages.redirectingToDashboard')}"
-    },
-    {
-      "key": "settings:companyProfile.supplier",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 83,
-      "context": "{formData.companyName || t('settings:companyProfile.supplier', 'Product Supplier')}"
-    },
-    {
-      "key": "settings:companyProfile.supplier",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 83,
-      "context": "{formData.companyName || t('settings:companyProfile.supplier', 'Product Supplier')}"
-    },
-    {
-      "key": "settings:companyProfile.productSupplier",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 86,
-      "context": "{t('settings:companyProfile.productSupplier', 'Product Supplier')}"
-    },
-    {
-      "key": "settings:companyProfile.productSupplier",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 86,
-      "context": "{t('settings:companyProfile.productSupplier', 'Product Supplier')}"
-    },
-    {
-      "key": "settings:companyProfile.basicInfo",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 97,
-      "context": "{t('settings:companyProfile.basicInfo', 'Basic Information')}"
-    },
-    {
-      "key": "settings:companyProfile.basicInfo",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 97,
-      "context": "{t('settings:companyProfile.basicInfo', 'Basic Information')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.companyName",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 102,
-      "context": "{t('common:settingsCompanyProfile.companyName', 'Organization Name')} <span className=\"text-swiss-coral\">*</span>"
-    },
-    {
-      "key": "common:settingsCompanyProfile.companyName",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 102,
-      "context": "{t('common:settingsCompanyProfile.companyName', 'Organization Name')} <span className=\"text-swiss-coral\">*</span>"
-    },
-    {
-      "key": "settings:companyProfile.companyNamePlaceholder",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 111,
-      "context": "placeholder={t('settings:companyProfile.companyNamePlaceholder', 'Enter your organization name')}"
-    },
-    {
-      "key": "settings:companyProfile.companyNamePlaceholder",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 111,
-      "context": "placeholder={t('settings:companyProfile.companyNamePlaceholder', 'Enter your organization name')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.aboutText",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 117,
-      "context": "{t('common:settingsCompanyProfile.aboutText', 'Description / About')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.aboutText",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 117,
-      "context": "{t('common:settingsCompanyProfile.aboutText', 'Description / About')}"
-    },
-    {
-      "key": "settings:companyProfile.descriptionPlaceholder",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 126,
-      "context": "placeholder={t('settings:companyProfile.descriptionPlaceholder', 'Describe your organization...')}"
-    },
-    {
-      "key": "settings:companyProfile.descriptionPlaceholder",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 126,
-      "context": "placeholder={t('settings:companyProfile.descriptionPlaceholder', 'Describe your organization...')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.vatNumber",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 135,
-      "context": "{t('common:settingsCompanyProfile.vatNumber', 'VAT Number')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.vatNumber",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 135,
-      "context": "{t('common:settingsCompanyProfile.vatNumber', 'VAT Number')}"
-    },
-    {
-      "key": "common:placeholders.vatNumber",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 143,
-      "context": "placeholder={t('common:placeholders.vatNumber')}"
-    },
-    {
-      "key": "common:placeholders.vatNumber",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 143,
-      "context": "placeholder={t('common:placeholders.vatNumber')}"
-    },
-    {
-      "key": "settings:companyProfile.location",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 156,
-      "context": "{t('settings:companyProfile.location', 'Location')}"
-    },
-    {
-      "key": "settings:companyProfile.location",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 156,
-      "context": "{t('settings:companyProfile.location', 'Location')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.regionsServed",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 161,
-      "context": "{t('common:settingsCompanyProfile.regionsServed', 'Regions Served (Cantons)')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.regionsServed",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 161,
-      "context": "{t('common:settingsCompanyProfile.regionsServed', 'Regions Served (Cantons)')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.cantonsHelpText",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 163,
-      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('common:settingsCompanyProfile.cantonsHelpText', 'Select all cantons where your organization operates')}</p>"
-    },
-    {
-      "key": "common:settingsCompanyProfile.cantonsHelpText",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 163,
-      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('common:settingsCompanyProfile.cantonsHelpText', 'Select all cantons where your organization operates')}</p>"
-    },
-    {
-      "key": "common:settingsCompanyProfile.languagesSpoken",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 184,
-      "context": "{t('common:settingsCompanyProfile.languagesSpoken', 'Languages Spoken')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.languagesSpoken",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 184,
-      "context": "{t('common:settingsCompanyProfile.languagesSpoken', 'Languages Spoken')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.languagesHelpText",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 186,
-      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('common:settingsCompanyProfile.languagesHelpText', 'Select all languages your organization supports')}</p>"
-    },
-    {
-      "key": "common:settingsCompanyProfile.languagesHelpText",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 186,
-      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('common:settingsCompanyProfile.languagesHelpText', 'Select all languages your organization supports')}</p>"
-    },
-    {
-      "key": "settings:companyProfile.supplierInfo",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 211,
-      "context": "{t('settings:companyProfile.supplierInfo', 'Supplier Information')}"
-    },
-    {
-      "key": "settings:companyProfile.supplierInfo",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 211,
-      "context": "{t('settings:companyProfile.supplierInfo', 'Supplier Information')}"
-    },
-    {
-      "key": "settings:companyProfile.productCategory",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 216,
-      "context": "{t('settings:companyProfile.productCategory', 'Product Category')}"
-    },
-    {
-      "key": "settings:companyProfile.productCategory",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 216,
-      "context": "{t('settings:companyProfile.productCategory', 'Product Category')}"
-    },
-    {
-      "key": "settings:companyProfile.productCategoryPlaceholder",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 224,
-      "context": "placeholder={t('settings:companyProfile.productCategoryPlaceholder', 'e.g., Educational Toys, Furniture')}"
-    },
-    {
-      "key": "settings:companyProfile.productCategoryPlaceholder",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 224,
-      "context": "placeholder={t('settings:companyProfile.productCategoryPlaceholder', 'e.g., Educational Toys, Furniture')}"
-    },
-    {
-      "key": "settings:companyProfile.minimumOrderQuantity",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 230,
-      "context": "{t('settings:companyProfile.minimumOrderQuantity', 'Minimum Order Quantity')}"
-    },
-    {
-      "key": "settings:companyProfile.minimumOrderQuantity",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 230,
-      "context": "{t('settings:companyProfile.minimumOrderQuantity', 'Minimum Order Quantity')}"
-    },
-    {
-      "key": "settings:companyProfile.directOrderLink",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 250,
-      "context": "{t('settings:companyProfile.directOrderLink', 'Direct Order Link')}"
-    },
-    {
-      "key": "settings:companyProfile.directOrderLink",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 250,
-      "context": "{t('settings:companyProfile.directOrderLink', 'Direct Order Link')}"
-    },
-    {
-      "key": "common:placeholders.url",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 258,
-      "context": "placeholder={t('common:placeholders.url')}"
-    },
-    {
-      "key": "common:placeholders.url",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 258,
-      "context": "placeholder={t('common:placeholders.url')}"
-    },
-    {
-      "key": "settings:companyProfile.catalogUrl",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 264,
-      "context": "{t('settings:companyProfile.catalogUrl', 'Catalog URL')}"
-    },
-    {
-      "key": "settings:companyProfile.catalogUrl",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 264,
-      "context": "{t('settings:companyProfile.catalogUrl', 'Catalog URL')}"
-    },
-    {
-      "key": "common:placeholders.url",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 272,
-      "context": "placeholder={t('common:placeholders.url')}"
-    },
-    {
-      "key": "common:placeholders.url",
-      "file": "components/profile/edit/SupplierProfileForm.tsx",
-      "line": 272,
-      "context": "placeholder={t('common:placeholders.url')}"
-    },
-    {
-      "key": "settings:companyProfile.serviceProvider",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 98,
-      "context": "{formData.companyName || t('settings:companyProfile.serviceProvider', 'Service Provider')}"
-    },
-    {
-      "key": "settings:companyProfile.serviceProvider",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 98,
-      "context": "{formData.companyName || t('settings:companyProfile.serviceProvider', 'Service Provider')}"
-    },
-    {
-      "key": "settings:companyProfile.serviceProvider",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 101,
-      "context": "{t('settings:companyProfile.serviceProvider', 'Service Provider')}"
-    },
-    {
-      "key": "settings:companyProfile.serviceProvider",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 101,
-      "context": "{t('settings:companyProfile.serviceProvider', 'Service Provider')}"
-    },
-    {
-      "key": "settings:companyProfile.basicInfo",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 112,
-      "context": "{t('settings:companyProfile.basicInfo', 'Basic Information')}"
-    },
-    {
-      "key": "settings:companyProfile.basicInfo",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 112,
-      "context": "{t('settings:companyProfile.basicInfo', 'Basic Information')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.companyName",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 117,
-      "context": "{t('common:settingsCompanyProfile.companyName', 'Organization Name')} <span className=\"text-swiss-coral\">*</span>"
-    },
-    {
-      "key": "common:settingsCompanyProfile.companyName",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 117,
-      "context": "{t('common:settingsCompanyProfile.companyName', 'Organization Name')} <span className=\"text-swiss-coral\">*</span>"
-    },
-    {
-      "key": "settings:companyProfile.companyNamePlaceholder",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 126,
-      "context": "placeholder={t('settings:companyProfile.companyNamePlaceholder', 'Enter your organization name')}"
-    },
-    {
-      "key": "settings:companyProfile.companyNamePlaceholder",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 126,
-      "context": "placeholder={t('settings:companyProfile.companyNamePlaceholder', 'Enter your organization name')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.aboutText",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 132,
-      "context": "{t('common:settingsCompanyProfile.aboutText', 'Description / About')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.aboutText",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 132,
-      "context": "{t('common:settingsCompanyProfile.aboutText', 'Description / About')}"
-    },
-    {
-      "key": "settings:companyProfile.descriptionPlaceholder",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 141,
-      "context": "placeholder={t('settings:companyProfile.descriptionPlaceholder', 'Describe your organization...')}"
-    },
-    {
-      "key": "settings:companyProfile.descriptionPlaceholder",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 141,
-      "context": "placeholder={t('settings:companyProfile.descriptionPlaceholder', 'Describe your organization...')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.vatNumber",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 150,
-      "context": "{t('common:settingsCompanyProfile.vatNumber', 'VAT Number')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.vatNumber",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 150,
-      "context": "{t('common:settingsCompanyProfile.vatNumber', 'VAT Number')}"
-    },
-    {
-      "key": "common:placeholders.vatNumber",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 158,
-      "context": "placeholder={t('common:placeholders.vatNumber')}"
-    },
-    {
-      "key": "common:placeholders.vatNumber",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 158,
-      "context": "placeholder={t('common:placeholders.vatNumber')}"
-    },
-    {
-      "key": "settings:companyProfile.location",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 171,
-      "context": "{t('settings:companyProfile.location', 'Location')}"
-    },
-    {
-      "key": "settings:companyProfile.location",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 171,
-      "context": "{t('settings:companyProfile.location', 'Location')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.regionsServed",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 176,
-      "context": "{t('common:settingsCompanyProfile.regionsServed', 'Regions Served (Cantons)')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.regionsServed",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 176,
-      "context": "{t('common:settingsCompanyProfile.regionsServed', 'Regions Served (Cantons)')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.cantonsHelpText",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 178,
-      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('common:settingsCompanyProfile.cantonsHelpText', 'Select all cantons where your organization operates')}</p>"
-    },
-    {
-      "key": "common:settingsCompanyProfile.cantonsHelpText",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 178,
-      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('common:settingsCompanyProfile.cantonsHelpText', 'Select all cantons where your organization operates')}</p>"
-    },
-    {
-      "key": "common:settingsCompanyProfile.languagesSpoken",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 199,
-      "context": "{t('common:settingsCompanyProfile.languagesSpoken', 'Languages Spoken')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.languagesSpoken",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 199,
-      "context": "{t('common:settingsCompanyProfile.languagesSpoken', 'Languages Spoken')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.languagesHelpText",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 201,
-      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('common:settingsCompanyProfile.languagesHelpText', 'Select all languages your organization supports')}</p>"
-    },
-    {
-      "key": "common:settingsCompanyProfile.languagesHelpText",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 201,
-      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('common:settingsCompanyProfile.languagesHelpText', 'Select all languages your organization supports')}</p>"
-    },
-    {
-      "key": "settings:companyProfile.serviceProviderInfo",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 226,
-      "context": "{t('settings:companyProfile.serviceProviderInfo', 'Service Provider Information')}"
-    },
-    {
-      "key": "settings:companyProfile.serviceProviderInfo",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 226,
-      "context": "{t('settings:companyProfile.serviceProviderInfo', 'Service Provider Information')}"
-    },
-    {
-      "key": "settings:companyProfile.serviceType",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 231,
-      "context": "{t('settings:companyProfile.serviceType', 'Service Type')}"
-    },
-    {
-      "key": "settings:companyProfile.serviceType",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 231,
-      "context": "{t('settings:companyProfile.serviceType', 'Service Type')}"
-    },
-    {
-      "key": "settings:companyProfile.serviceTypePlaceholder",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 239,
-      "context": "placeholder={t('settings:companyProfile.serviceTypePlaceholder', 'e.g., IT Support, Cleaning Services')}"
-    },
-    {
-      "key": "settings:companyProfile.serviceTypePlaceholder",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 239,
-      "context": "placeholder={t('settings:companyProfile.serviceTypePlaceholder', 'e.g., IT Support, Cleaning Services')}"
-    },
-    {
-      "key": "settings:companyProfile.serviceCategories",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 245,
-      "context": "{t('settings:companyProfile.serviceCategories', 'Service Categories')}"
-    },
-    {
-      "key": "settings:companyProfile.serviceCategories",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 245,
-      "context": "{t('settings:companyProfile.serviceCategories', 'Service Categories')}"
-    },
-    {
-      "key": "settings:companyProfile.serviceCategoriesHint",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 247,
-      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('settings:companyProfile.serviceCategoriesHint', 'Select all that apply')}</p>"
-    },
-    {
-      "key": "settings:companyProfile.serviceCategoriesHint",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 247,
-      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('settings:companyProfile.serviceCategoriesHint', 'Select all that apply')}</p>"
-    },
-    {
-      "key": "settings:companyProfile.deliveryType",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 268,
-      "context": "{t('settings:companyProfile.deliveryType', 'Delivery Type')}"
-    },
-    {
-      "key": "settings:companyProfile.deliveryType",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 268,
-      "context": "{t('settings:companyProfile.deliveryType', 'Delivery Type')}"
-    },
-    {
-      "key": "settings:companyProfile.selectDeliveryType",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 276,
-      "context": "<option value=\"\">{t('settings:companyProfile.selectDeliveryType', 'Select Delivery Type')}</option>"
-    },
-    {
-      "key": "settings:companyProfile.selectDeliveryType",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 276,
-      "context": "<option value=\"\">{t('settings:companyProfile.selectDeliveryType', 'Select Delivery Type')}</option>"
-    },
-    {
-      "key": "settings:companyProfile.bookingLink",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 285,
-      "context": "{t('settings:companyProfile.bookingLink', 'Booking Link')}"
-    },
-    {
-      "key": "settings:companyProfile.bookingLink",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 285,
-      "context": "{t('settings:companyProfile.bookingLink', 'Booking Link')}"
-    },
-    {
-      "key": "common:placeholders.url",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 293,
-      "context": "placeholder={t('common:placeholders.url')}"
-    },
-    {
-      "key": "common:placeholders.url",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 293,
-      "context": "placeholder={t('common:placeholders.url')}"
-    },
-    {
-      "key": "settings:companyProfile.bookingLinkHint",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 296,
-      "context": "{t('settings:companyProfile.bookingLinkHint', 'You can enter it without https://')}"
-    },
-    {
-      "key": "settings:companyProfile.bookingLinkHint",
-      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 296,
-      "context": "{t('settings:companyProfile.bookingLinkHint', 'You can enter it without https://')}"
-    },
-    {
-      "key": "settings:companyProfile.organizationName",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 83,
-      "context": "{formData.companyName || t('settings:companyProfile.organizationName', 'Organization Name')}"
-    },
-    {
-      "key": "settings:companyProfile.organizationName",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 83,
-      "context": "{formData.companyName || t('settings:companyProfile.organizationName', 'Organization Name')}"
-    },
-    {
-      "key": "settings:companyProfile.foundation",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 86,
-      "context": "{t('settings:companyProfile.foundation', 'Foundation / Daycare')}"
-    },
-    {
-      "key": "settings:companyProfile.foundation",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 86,
-      "context": "{t('settings:companyProfile.foundation', 'Foundation / Daycare')}"
-    },
-    {
-      "key": "settings:companyProfile.basicInfo",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 97,
-      "context": "{t('settings:companyProfile.basicInfo', 'Basic Information')}"
-    },
-    {
-      "key": "settings:companyProfile.basicInfo",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 97,
-      "context": "{t('settings:companyProfile.basicInfo', 'Basic Information')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.companyName",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 102,
-      "context": "{t('common:settingsCompanyProfile.companyName', 'Organization Name')} <span className=\"text-swiss-coral\">*</span>"
-    },
-    {
-      "key": "common:settingsCompanyProfile.companyName",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 102,
-      "context": "{t('common:settingsCompanyProfile.companyName', 'Organization Name')} <span className=\"text-swiss-coral\">*</span>"
-    },
-    {
-      "key": "settings:companyProfile.companyNamePlaceholder",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 111,
-      "context": "placeholder={t('settings:companyProfile.companyNamePlaceholder', 'Enter your organization name')}"
-    },
-    {
-      "key": "settings:companyProfile.companyNamePlaceholder",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 111,
-      "context": "placeholder={t('settings:companyProfile.companyNamePlaceholder', 'Enter your organization name')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.aboutText",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 117,
-      "context": "{t('common:settingsCompanyProfile.aboutText', 'Description / About')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.aboutText",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 117,
-      "context": "{t('common:settingsCompanyProfile.aboutText', 'Description / About')}"
-    },
-    {
-      "key": "settings:companyProfile.descriptionPlaceholder",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 126,
-      "context": "placeholder={t('settings:companyProfile.descriptionPlaceholder', 'Describe your organization...')}"
-    },
-    {
-      "key": "settings:companyProfile.descriptionPlaceholder",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 126,
-      "context": "placeholder={t('settings:companyProfile.descriptionPlaceholder', 'Describe your organization...')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.vatNumber",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 135,
-      "context": "{t('common:settingsCompanyProfile.vatNumber', 'VAT Number')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.vatNumber",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 135,
-      "context": "{t('common:settingsCompanyProfile.vatNumber', 'VAT Number')}"
-    },
-    {
-      "key": "common:placeholders.vatNumber",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 143,
-      "context": "placeholder={t('common:placeholders.vatNumber')}"
-    },
-    {
-      "key": "common:placeholders.vatNumber",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 143,
-      "context": "placeholder={t('common:placeholders.vatNumber')}"
-    },
-    {
-      "key": "settings:companyProfile.location",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 156,
-      "context": "{t('settings:companyProfile.location', 'Location')}"
-    },
-    {
-      "key": "settings:companyProfile.location",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 156,
-      "context": "{t('settings:companyProfile.location', 'Location')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.regionsServed",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 161,
-      "context": "{t('common:settingsCompanyProfile.regionsServed', 'Regions Served (Cantons)')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.regionsServed",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 161,
-      "context": "{t('common:settingsCompanyProfile.regionsServed', 'Regions Served (Cantons)')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.cantonsHelpText",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 163,
-      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('common:settingsCompanyProfile.cantonsHelpText', 'Select all cantons where your organization operates')}</p>"
-    },
-    {
-      "key": "common:settingsCompanyProfile.cantonsHelpText",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 163,
-      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('common:settingsCompanyProfile.cantonsHelpText', 'Select all cantons where your organization operates')}</p>"
-    },
-    {
-      "key": "common:settingsCompanyProfile.city",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 184,
-      "context": "{t('common:settingsCompanyProfile.city', 'City')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.city",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 184,
-      "context": "{t('common:settingsCompanyProfile.city', 'City')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.cityHelpText",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 186,
-      "context": "<p className=\"text-xs text-gray-500 mb-2\">{t('common:settingsCompanyProfile.cityHelpText', 'Enter the city where your organization is located')}</p>"
-    },
-    {
-      "key": "common:settingsCompanyProfile.cityHelpText",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 186,
-      "context": "<p className=\"text-xs text-gray-500 mb-2\">{t('common:settingsCompanyProfile.cityHelpText', 'Enter the city where your organization is located')}</p>"
-    },
-    {
-      "key": "common:settingsCompanyProfile.cityPlaceholder",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 193,
-      "context": "placeholder={t('common:settingsCompanyProfile.cityPlaceholder', 'Enter city name')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.cityPlaceholder",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 193,
-      "context": "placeholder={t('common:settingsCompanyProfile.cityPlaceholder', 'Enter city name')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.languagesSpoken",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 199,
-      "context": "{t('common:settingsCompanyProfile.languagesSpoken', 'Languages Spoken')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.languagesSpoken",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 199,
-      "context": "{t('common:settingsCompanyProfile.languagesSpoken', 'Languages Spoken')}"
-    },
-    {
-      "key": "common:settingsCompanyProfile.languagesHelpText",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 201,
-      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('common:settingsCompanyProfile.languagesHelpText', 'Select all languages your organization supports')}</p>"
-    },
-    {
-      "key": "common:settingsCompanyProfile.languagesHelpText",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 201,
-      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('common:settingsCompanyProfile.languagesHelpText', 'Select all languages your organization supports')}</p>"
-    },
-    {
-      "key": "settings:companyProfile.foundationInfo",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 226,
-      "context": "{t('settings:companyProfile.foundationInfo', 'Foundation Information')}"
-    },
-    {
-      "key": "settings:companyProfile.foundationInfo",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 226,
-      "context": "{t('settings:companyProfile.foundationInfo', 'Foundation Information')}"
-    },
-    {
-      "key": "settings:companyProfile.capacity",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 231,
-      "context": "{t('settings:companyProfile.capacity', 'Capacity (Number of Children)')}"
-    },
-    {
-      "key": "settings:companyProfile.capacity",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 231,
-      "context": "{t('settings:companyProfile.capacity', 'Capacity (Number of Children)')}"
-    },
-    {
-      "key": "settings:companyProfile.pedagogy",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 246,
-      "context": "{t('settings:companyProfile.pedagogy', 'Pedagogical Approaches')}"
-    },
-    {
-      "key": "settings:companyProfile.pedagogy",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 246,
-      "context": "{t('settings:companyProfile.pedagogy', 'Pedagogical Approaches')}"
-    },
-    {
-      "key": "settings:companyProfile.pedagogyHint",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 248,
-      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('settings:companyProfile.pedagogyHint', 'Select all that apply')}</p>"
-    },
-    {
-      "key": "settings:companyProfile.pedagogyHint",
-      "file": "components/profile/edit/FoundationProfileForm.tsx",
-      "line": 248,
-      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('settings:companyProfile.pedagogyHint', 'Select all that apply')}</p>"
-    },
-    {
-      "key": "settings:educatorProfile.educator",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 70,
-      "context": "const fullName = `${formData.firstName || ''} ${formData.lastName || ''}`.trim() || t('settings:educatorProfile.educator', 'Educator');"
-    },
-    {
-      "key": "settings:educatorProfile.educator",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 70,
-      "context": "const fullName = `${formData.firstName || ''} ${formData.lastName || ''}`.trim() || t('settings:educatorProfile.educator', 'Educator');"
-    },
-    {
-      "key": "settings:educatorProfile.educator",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 108,
-      "context": "{t('settings:educatorProfile.educator', 'Educator / Candidate')}"
-    },
-    {
-      "key": "settings:educatorProfile.educator",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 108,
-      "context": "{t('settings:educatorProfile.educator', 'Educator / Candidate')}"
-    },
-    {
-      "key": "settings:educatorProfile.basicInfo",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 117,
-      "context": "<h3 className=\"text-lg font-semibold text-gray-900 mb-4\">{t('settings:educatorProfile.basicInfo', 'Basic Information')}</h3>"
-    },
-    {
-      "key": "settings:educatorProfile.basicInfo",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 117,
-      "context": "<h3 className=\"text-lg font-semibold text-gray-900 mb-4\">{t('settings:educatorProfile.basicInfo', 'Basic Information')}</h3>"
-    },
-    {
-      "key": "settings:educatorProfile.firstName",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 121,
-      "context": "{t('settings:educatorProfile.firstName', 'First Name')}"
-    },
-    {
-      "key": "settings:educatorProfile.firstName",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 121,
-      "context": "{t('settings:educatorProfile.firstName', 'First Name')}"
-    },
-    {
-      "key": "settings:educatorProfile.firstNamePlaceholder",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 129,
-      "context": "placeholder={t('settings:educatorProfile.firstNamePlaceholder', 'Enter your first name')}"
-    },
-    {
-      "key": "settings:educatorProfile.firstNamePlaceholder",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 129,
-      "context": "placeholder={t('settings:educatorProfile.firstNamePlaceholder', 'Enter your first name')}"
-    },
-    {
-      "key": "settings:educatorProfile.lastName",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 135,
-      "context": "{t('settings:educatorProfile.lastName', 'Last Name')}"
-    },
-    {
-      "key": "settings:educatorProfile.lastName",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 135,
-      "context": "{t('settings:educatorProfile.lastName', 'Last Name')}"
-    },
-    {
-      "key": "settings:educatorProfile.lastNamePlaceholder",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 143,
-      "context": "placeholder={t('settings:educatorProfile.lastNamePlaceholder', 'Enter your last name')}"
-    },
-    {
-      "key": "settings:educatorProfile.lastNamePlaceholder",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 143,
-      "context": "placeholder={t('settings:educatorProfile.lastNamePlaceholder', 'Enter your last name')}"
-    },
-    {
-      "key": "settings:educatorProfile.professionalDetails",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 153,
-      "context": "{t('settings:educatorProfile.professionalDetails', 'Professional Details')}"
-    },
-    {
-      "key": "settings:educatorProfile.professionalDetails",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 153,
-      "context": "{t('settings:educatorProfile.professionalDetails', 'Professional Details')}"
-    },
-    {
-      "key": "settings:educatorProfile.role",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 158,
-      "context": "{t('settings:educatorProfile.role', 'Role')} <span className=\"text-swiss-coral\">*</span>"
-    },
-    {
-      "key": "settings:educatorProfile.role",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 158,
-      "context": "{t('settings:educatorProfile.role', 'Role')} <span className=\"text-swiss-coral\">*</span>"
-    },
-    {
-      "key": "settings:educatorProfile.rolePlaceholder",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 166,
-      "context": "placeholder={t('settings:educatorProfile.rolePlaceholder', 'e.g., Educator, Assistant')}"
-    },
-    {
-      "key": "settings:educatorProfile.rolePlaceholder",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 166,
-      "context": "placeholder={t('settings:educatorProfile.rolePlaceholder', 'e.g., Educator, Assistant')}"
-    },
-    {
-      "key": "settings:educatorProfile.roleHint",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 171,
-      "context": "{t('settings:educatorProfile.roleHint', 'Add one or more roles to improve matching.')}"
-    },
-    {
-      "key": "settings:educatorProfile.roleHint",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 171,
-      "context": "{t('settings:educatorProfile.roleHint', 'Add one or more roles to improve matching.')}"
-    },
-    {
-      "key": "settings:educatorProfile.location",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 186,
-      "context": "{t('settings:educatorProfile.location', 'Location')} <span className=\"text-swiss-coral\">*</span>"
-    },
-    {
-      "key": "settings:educatorProfile.location",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 186,
-      "context": "{t('settings:educatorProfile.location', 'Location')} <span className=\"text-swiss-coral\">*</span>"
-    },
-    {
-      "key": "settings:educatorProfile.locationPlaceholder",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 195,
-      "context": "<option value=\"\">{t('settings:educatorProfile.locationPlaceholder', 'Select a canton')}</option>"
-    },
-    {
-      "key": "settings:educatorProfile.locationPlaceholder",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 195,
-      "context": "<option value=\"\">{t('settings:educatorProfile.locationPlaceholder', 'Select a canton')}</option>"
-    },
-    {
-      "key": "settings:educatorProfile.cities",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 204,
-      "context": "{t('settings:educatorProfile.cities', 'Cities')}"
-    },
-    {
-      "key": "settings:educatorProfile.cities",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 204,
-      "context": "{t('settings:educatorProfile.cities', 'Cities')}"
-    },
-    {
-      "key": "settings:educatorProfile.citiesPlaceholder",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 209,
-      "context": "placeholder={t('settings:educatorProfile.citiesPlaceholder', 'Add one or more cities')}"
-    },
-    {
-      "key": "settings:educatorProfile.citiesPlaceholder",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 209,
-      "context": "placeholder={t('settings:educatorProfile.citiesPlaceholder', 'Add one or more cities')}"
-    },
-    {
-      "key": "settings:educatorProfile.citiesHint",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 214,
-      "context": "{t('settings:educatorProfile.citiesHint', 'Add multiple cities to increase your visibility.')}"
-    },
-    {
-      "key": "settings:educatorProfile.citiesHint",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 214,
-      "context": "{t('settings:educatorProfile.citiesHint', 'Add multiple cities to increase your visibility.')}"
-    },
-    {
-      "key": "settings:educatorProfile.bio",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 247,
-      "context": "{t('settings:educatorProfile.bio', 'Bio')}"
-    },
-    {
-      "key": "settings:educatorProfile.bio",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 247,
-      "context": "{t('settings:educatorProfile.bio', 'Bio')}"
-    },
-    {
-      "key": "settings:educatorProfile.shortBio",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 251,
-      "context": "{t('settings:educatorProfile.shortBio', 'Short Bio / About Me')}"
-    },
-    {
-      "key": "settings:educatorProfile.shortBio",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 251,
-      "context": "{t('settings:educatorProfile.shortBio', 'Short Bio / About Me')}"
-    },
-    {
-      "key": "settings:educatorProfile.shortBioPlaceholder",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 259,
-      "context": "placeholder={t('settings:educatorProfile.shortBioPlaceholder', 'Tell others about yourself, your experience, and what makes you unique...')}"
-    },
-    {
-      "key": "settings:educatorProfile.shortBioPlaceholder",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 259,
-      "context": "placeholder={t('settings:educatorProfile.shortBioPlaceholder', 'Tell others about yourself, your experience, and what makes you unique...')}"
-    },
-    {
-      "key": "settings:educatorProfile.bioHint",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 262,
-      "context": "{t('settings:educatorProfile.bioHint', 'This will appear on your public profile')}"
-    },
-    {
-      "key": "settings:educatorProfile.bioHint",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 262,
-      "context": "{t('settings:educatorProfile.bioHint', 'This will appear on your public profile')}"
-    },
-    {
-      "key": "settings:educatorProfile.skills",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 271,
-      "context": "{t('settings:educatorProfile.skills', 'Skills & Specialties')}"
-    },
-    {
-      "key": "settings:educatorProfile.skills",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 271,
-      "context": "{t('settings:educatorProfile.skills', 'Skills & Specialties')}"
-    },
-    {
-      "key": "settings:educatorProfile.skillsLabel",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 275,
-      "context": "{t('settings:educatorProfile.skillsLabel', 'Skills')}"
-    },
-    {
-      "key": "settings:educatorProfile.skillsLabel",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 275,
-      "context": "{t('settings:educatorProfile.skillsLabel', 'Skills')}"
-    },
-    {
-      "key": "settings:educatorProfile.skillsPlaceholder",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 280,
-      "context": "placeholder={t('settings:educatorProfile.skillsPlaceholder', 'e.g., Early Childhood Education, Special Needs, Bilingual')}"
-    },
-    {
-      "key": "settings:educatorProfile.skillsPlaceholder",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 280,
-      "context": "placeholder={t('settings:educatorProfile.skillsPlaceholder', 'e.g., Early Childhood Education, Special Needs, Bilingual')}"
-    },
-    {
-      "key": "settings:educatorProfile.skillsHint",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 284,
-      "context": "{t('settings:educatorProfile.skillsHint', 'Type and press Enter to add skills')}"
-    },
-    {
-      "key": "settings:educatorProfile.skillsHint",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 284,
-      "context": "{t('settings:educatorProfile.skillsHint', 'Type and press Enter to add skills')}"
-    },
-    {
-      "key": "settings:educatorProfile.workExperience",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 293,
-      "context": "{t('settings:educatorProfile.workExperience', 'Work Experience')}"
-    },
-    {
-      "key": "settings:educatorProfile.workExperience",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 293,
-      "context": "{t('settings:educatorProfile.workExperience', 'Work Experience')}"
-    },
-    {
-      "key": "settings:educatorProfile.workExperienceLabel",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 297,
-      "context": "{t('settings:educatorProfile.workExperienceLabel', 'Work Experience')}"
-    },
-    {
-      "key": "settings:educatorProfile.workExperienceLabel",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 297,
-      "context": "{t('settings:educatorProfile.workExperienceLabel', 'Work Experience')}"
-    },
-    {
-      "key": "settings:educatorProfile.workExperiencePlaceholder",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 305,
-      "context": "placeholder={t('settings:educatorProfile.workExperiencePlaceholder', 'Describe your work experience...')}"
-    },
-    {
-      "key": "settings:educatorProfile.workExperiencePlaceholder",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 305,
-      "context": "placeholder={t('settings:educatorProfile.workExperiencePlaceholder', 'Describe your work experience...')}"
-    },
-    {
-      "key": "settings:educatorProfile.workExperienceHint",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 308,
-      "context": "{t('settings:educatorProfile.workExperienceHint', 'You can use JSON format or plain text')}"
-    },
-    {
-      "key": "settings:educatorProfile.workExperienceHint",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 308,
-      "context": "{t('settings:educatorProfile.workExperienceHint', 'You can use JSON format or plain text')}"
-    },
-    {
-      "key": "settings:educatorProfile.education",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 317,
-      "context": "{t('settings:educatorProfile.education', 'Education')}"
-    },
-    {
-      "key": "settings:educatorProfile.education",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 317,
-      "context": "{t('settings:educatorProfile.education', 'Education')}"
-    },
-    {
-      "key": "settings:educatorProfile.educationLabel",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 321,
-      "context": "{t('settings:educatorProfile.educationLabel', 'Education')}"
-    },
-    {
-      "key": "settings:educatorProfile.educationLabel",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 321,
-      "context": "{t('settings:educatorProfile.educationLabel', 'Education')}"
-    },
-    {
-      "key": "settings:educatorProfile.educationPlaceholder",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 329,
-      "context": "placeholder={t('settings:educatorProfile.educationPlaceholder', 'List your educational background...')}"
-    },
-    {
-      "key": "settings:educatorProfile.educationPlaceholder",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 329,
-      "context": "placeholder={t('settings:educatorProfile.educationPlaceholder', 'List your educational background...')}"
-    },
-    {
-      "key": "settings:educatorProfile.educationHint",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 332,
-      "context": "{t('settings:educatorProfile.educationHint', 'You can use JSON format or plain text')}"
-    },
-    {
-      "key": "settings:educatorProfile.educationHint",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 332,
-      "context": "{t('settings:educatorProfile.educationHint', 'You can use JSON format or plain text')}"
-    },
-    {
-      "key": "settings:educatorProfile.certifications",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 341,
-      "context": "{t('settings:educatorProfile.certifications', 'Certifications')}"
-    },
-    {
-      "key": "settings:educatorProfile.certifications",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 341,
-      "context": "{t('settings:educatorProfile.certifications', 'Certifications')}"
-    },
-    {
-      "key": "settings:educatorProfile.certificationsLabel",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 345,
-      "context": "{t('settings:educatorProfile.certificationsLabel', 'Certifications')}"
-    },
-    {
-      "key": "settings:educatorProfile.certificationsLabel",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 345,
-      "context": "{t('settings:educatorProfile.certificationsLabel', 'Certifications')}"
-    },
-    {
-      "key": "settings:educatorProfile.certificationsPlaceholder",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 350,
-      "context": "placeholder={t('settings:educatorProfile.certificationsPlaceholder', 'e.g., CPR Certified, Early Childhood Education Certificate')}"
-    },
-    {
-      "key": "settings:educatorProfile.certificationsPlaceholder",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 350,
-      "context": "placeholder={t('settings:educatorProfile.certificationsPlaceholder', 'e.g., CPR Certified, Early Childhood Education Certificate')}"
-    },
-    {
-      "key": "settings:educatorProfile.certificationsHint",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 354,
-      "context": "{t('settings:educatorProfile.certificationsHint', 'Type and press Enter to add certifications')}"
-    },
-    {
-      "key": "settings:educatorProfile.certificationsHint",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 354,
-      "context": "{t('settings:educatorProfile.certificationsHint', 'Type and press Enter to add certifications')}"
-    },
-    {
-      "key": "settings:educatorProfile.cv",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 363,
-      "context": "{t('settings:educatorProfile.cv', 'CV / Resume')}"
-    },
-    {
-      "key": "settings:educatorProfile.cv",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 363,
-      "context": "{t('settings:educatorProfile.cv', 'CV / Resume')}"
-    },
-    {
-      "key": "settings:educatorProfile.cvUpload",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 367,
-      "context": "{t('settings:educatorProfile.cvUpload', 'Upload CV')}"
-    },
-    {
-      "key": "settings:educatorProfile.cvUpload",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 367,
-      "context": "{t('settings:educatorProfile.cvUpload', 'Upload CV')}"
-    },
-    {
-      "key": "settings:educatorProfile.cvDocument",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 377,
-      "context": "{formData.cvUrl.split('/').pop() || t('settings:educatorProfile.cvDocument', 'CV document')}"
-    },
-    {
-      "key": "settings:educatorProfile.cvDocument",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 377,
-      "context": "{formData.cvUrl.split('/').pop() || t('settings:educatorProfile.cvDocument', 'CV document')}"
-    },
-    {
-      "key": "settings:educatorProfile.viewDocument",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 385,
-      "context": "{t('settings:educatorProfile.viewDocument', 'View document')}"
-    },
-    {
-      "key": "settings:educatorProfile.viewDocument",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 385,
-      "context": "{t('settings:educatorProfile.viewDocument', 'View document')}"
-    },
-    {
-      "key": "common:buttons.remove",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 396,
-      "context": "{t('common:buttons.remove', 'Remove')}"
-    },
-    {
-      "key": "common:buttons.remove",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 396,
-      "context": "{t('common:buttons.remove', 'Remove')}"
-    },
-    {
-      "key": "settings:educatorProfile.cvDragDrop",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 401,
-      "context": "label={t('settings:educatorProfile.cvDragDrop', 'Drag & drop your CV here')}"
-    },
-    {
-      "key": "settings:educatorProfile.cvDragDrop",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 401,
-      "context": "label={t('settings:educatorProfile.cvDragDrop', 'Drag & drop your CV here')}"
-    },
-    {
-      "key": "settings:educatorProfile.cvHint",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 410,
-      "context": "{t('settings:educatorProfile.cvHint', 'Accepted formats: PDF, DOC, DOCX (Max 5MB). This will be shared with foundations when you apply for jobs.')}"
-    },
-    {
-      "key": "settings:educatorProfile.cvHint",
-      "file": "components/profile/edit/EducatorProfileForm.tsx",
-      "line": 410,
-      "context": "{t('settings:educatorProfile.cvHint', 'Accepted formats: PDF, DOC, DOCX (Max 5MB). This will be shared with foundations when you apply for jobs.')}"
     },
     {
       "key": "settingsTeamPermissions.confirmRemoveMember",
@@ -29591,6 +28271,1326 @@
       "file": "components/settings/sections/AccountSecuritySettings.tsx",
       "line": 535,
       "context": "<Button variant=\"danger\" onClick={handleAccountDeletion}>{t('common:settingsAccountSecurity.dangerZone.deleteAccountButton')}</Button>"
+    },
+    {
+      "key": "settings:companyProfile.supplier",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 83,
+      "context": "{formData.companyName || t('settings:companyProfile.supplier', 'Product Supplier')}"
+    },
+    {
+      "key": "settings:companyProfile.supplier",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 83,
+      "context": "{formData.companyName || t('settings:companyProfile.supplier', 'Product Supplier')}"
+    },
+    {
+      "key": "settings:companyProfile.productSupplier",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 86,
+      "context": "{t('settings:companyProfile.productSupplier', 'Product Supplier')}"
+    },
+    {
+      "key": "settings:companyProfile.productSupplier",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 86,
+      "context": "{t('settings:companyProfile.productSupplier', 'Product Supplier')}"
+    },
+    {
+      "key": "settings:companyProfile.basicInfo",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 97,
+      "context": "{t('settings:companyProfile.basicInfo', 'Basic Information')}"
+    },
+    {
+      "key": "settings:companyProfile.basicInfo",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 97,
+      "context": "{t('settings:companyProfile.basicInfo', 'Basic Information')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.companyName",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 102,
+      "context": "{t('common:settingsCompanyProfile.companyName', 'Organization Name')} <span className=\"text-swiss-coral\">*</span>"
+    },
+    {
+      "key": "common:settingsCompanyProfile.companyName",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 102,
+      "context": "{t('common:settingsCompanyProfile.companyName', 'Organization Name')} <span className=\"text-swiss-coral\">*</span>"
+    },
+    {
+      "key": "settings:companyProfile.companyNamePlaceholder",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 111,
+      "context": "placeholder={t('settings:companyProfile.companyNamePlaceholder', 'Enter your organization name')}"
+    },
+    {
+      "key": "settings:companyProfile.companyNamePlaceholder",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 111,
+      "context": "placeholder={t('settings:companyProfile.companyNamePlaceholder', 'Enter your organization name')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.aboutText",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 117,
+      "context": "{t('common:settingsCompanyProfile.aboutText', 'Description / About')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.aboutText",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 117,
+      "context": "{t('common:settingsCompanyProfile.aboutText', 'Description / About')}"
+    },
+    {
+      "key": "settings:companyProfile.descriptionPlaceholder",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 126,
+      "context": "placeholder={t('settings:companyProfile.descriptionPlaceholder', 'Describe your organization...')}"
+    },
+    {
+      "key": "settings:companyProfile.descriptionPlaceholder",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 126,
+      "context": "placeholder={t('settings:companyProfile.descriptionPlaceholder', 'Describe your organization...')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.vatNumber",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 135,
+      "context": "{t('common:settingsCompanyProfile.vatNumber', 'VAT Number')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.vatNumber",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 135,
+      "context": "{t('common:settingsCompanyProfile.vatNumber', 'VAT Number')}"
+    },
+    {
+      "key": "common:placeholders.vatNumber",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 143,
+      "context": "placeholder={t('common:placeholders.vatNumber')}"
+    },
+    {
+      "key": "common:placeholders.vatNumber",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 143,
+      "context": "placeholder={t('common:placeholders.vatNumber')}"
+    },
+    {
+      "key": "settings:companyProfile.location",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 156,
+      "context": "{t('settings:companyProfile.location', 'Location')}"
+    },
+    {
+      "key": "settings:companyProfile.location",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 156,
+      "context": "{t('settings:companyProfile.location', 'Location')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.regionsServed",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 161,
+      "context": "{t('common:settingsCompanyProfile.regionsServed', 'Regions Served (Cantons)')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.regionsServed",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 161,
+      "context": "{t('common:settingsCompanyProfile.regionsServed', 'Regions Served (Cantons)')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.cantonsHelpText",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 163,
+      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('common:settingsCompanyProfile.cantonsHelpText', 'Select all cantons where your organization operates')}</p>"
+    },
+    {
+      "key": "common:settingsCompanyProfile.cantonsHelpText",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 163,
+      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('common:settingsCompanyProfile.cantonsHelpText', 'Select all cantons where your organization operates')}</p>"
+    },
+    {
+      "key": "common:settingsCompanyProfile.languagesSpoken",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 184,
+      "context": "{t('common:settingsCompanyProfile.languagesSpoken', 'Languages Spoken')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.languagesSpoken",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 184,
+      "context": "{t('common:settingsCompanyProfile.languagesSpoken', 'Languages Spoken')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.languagesHelpText",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 186,
+      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('common:settingsCompanyProfile.languagesHelpText', 'Select all languages your organization supports')}</p>"
+    },
+    {
+      "key": "common:settingsCompanyProfile.languagesHelpText",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 186,
+      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('common:settingsCompanyProfile.languagesHelpText', 'Select all languages your organization supports')}</p>"
+    },
+    {
+      "key": "settings:companyProfile.supplierInfo",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 211,
+      "context": "{t('settings:companyProfile.supplierInfo', 'Supplier Information')}"
+    },
+    {
+      "key": "settings:companyProfile.supplierInfo",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 211,
+      "context": "{t('settings:companyProfile.supplierInfo', 'Supplier Information')}"
+    },
+    {
+      "key": "settings:companyProfile.productCategory",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 216,
+      "context": "{t('settings:companyProfile.productCategory', 'Product Category')}"
+    },
+    {
+      "key": "settings:companyProfile.productCategory",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 216,
+      "context": "{t('settings:companyProfile.productCategory', 'Product Category')}"
+    },
+    {
+      "key": "settings:companyProfile.productCategoryPlaceholder",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 224,
+      "context": "placeholder={t('settings:companyProfile.productCategoryPlaceholder', 'e.g., Educational Toys, Furniture')}"
+    },
+    {
+      "key": "settings:companyProfile.productCategoryPlaceholder",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 224,
+      "context": "placeholder={t('settings:companyProfile.productCategoryPlaceholder', 'e.g., Educational Toys, Furniture')}"
+    },
+    {
+      "key": "settings:companyProfile.minimumOrderQuantity",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 230,
+      "context": "{t('settings:companyProfile.minimumOrderQuantity', 'Minimum Order Quantity')}"
+    },
+    {
+      "key": "settings:companyProfile.minimumOrderQuantity",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 230,
+      "context": "{t('settings:companyProfile.minimumOrderQuantity', 'Minimum Order Quantity')}"
+    },
+    {
+      "key": "settings:companyProfile.directOrderLink",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 250,
+      "context": "{t('settings:companyProfile.directOrderLink', 'Direct Order Link')}"
+    },
+    {
+      "key": "settings:companyProfile.directOrderLink",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 250,
+      "context": "{t('settings:companyProfile.directOrderLink', 'Direct Order Link')}"
+    },
+    {
+      "key": "common:placeholders.url",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 258,
+      "context": "placeholder={t('common:placeholders.url')}"
+    },
+    {
+      "key": "common:placeholders.url",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 258,
+      "context": "placeholder={t('common:placeholders.url')}"
+    },
+    {
+      "key": "settings:companyProfile.catalogUrl",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 264,
+      "context": "{t('settings:companyProfile.catalogUrl', 'Catalog URL')}"
+    },
+    {
+      "key": "settings:companyProfile.catalogUrl",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 264,
+      "context": "{t('settings:companyProfile.catalogUrl', 'Catalog URL')}"
+    },
+    {
+      "key": "common:placeholders.url",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 272,
+      "context": "placeholder={t('common:placeholders.url')}"
+    },
+    {
+      "key": "common:placeholders.url",
+      "file": "components/profile/edit/SupplierProfileForm.tsx",
+      "line": 272,
+      "context": "placeholder={t('common:placeholders.url')}"
+    },
+    {
+      "key": "settings:companyProfile.serviceProvider",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 98,
+      "context": "{formData.companyName || t('settings:companyProfile.serviceProvider', 'Service Provider')}"
+    },
+    {
+      "key": "settings:companyProfile.serviceProvider",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 98,
+      "context": "{formData.companyName || t('settings:companyProfile.serviceProvider', 'Service Provider')}"
+    },
+    {
+      "key": "settings:companyProfile.serviceProvider",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 101,
+      "context": "{t('settings:companyProfile.serviceProvider', 'Service Provider')}"
+    },
+    {
+      "key": "settings:companyProfile.serviceProvider",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 101,
+      "context": "{t('settings:companyProfile.serviceProvider', 'Service Provider')}"
+    },
+    {
+      "key": "settings:companyProfile.basicInfo",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 112,
+      "context": "{t('settings:companyProfile.basicInfo', 'Basic Information')}"
+    },
+    {
+      "key": "settings:companyProfile.basicInfo",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 112,
+      "context": "{t('settings:companyProfile.basicInfo', 'Basic Information')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.companyName",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 117,
+      "context": "{t('common:settingsCompanyProfile.companyName', 'Organization Name')} <span className=\"text-swiss-coral\">*</span>"
+    },
+    {
+      "key": "common:settingsCompanyProfile.companyName",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 117,
+      "context": "{t('common:settingsCompanyProfile.companyName', 'Organization Name')} <span className=\"text-swiss-coral\">*</span>"
+    },
+    {
+      "key": "settings:companyProfile.companyNamePlaceholder",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 126,
+      "context": "placeholder={t('settings:companyProfile.companyNamePlaceholder', 'Enter your organization name')}"
+    },
+    {
+      "key": "settings:companyProfile.companyNamePlaceholder",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 126,
+      "context": "placeholder={t('settings:companyProfile.companyNamePlaceholder', 'Enter your organization name')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.aboutText",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 132,
+      "context": "{t('common:settingsCompanyProfile.aboutText', 'Description / About')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.aboutText",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 132,
+      "context": "{t('common:settingsCompanyProfile.aboutText', 'Description / About')}"
+    },
+    {
+      "key": "settings:companyProfile.descriptionPlaceholder",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 141,
+      "context": "placeholder={t('settings:companyProfile.descriptionPlaceholder', 'Describe your organization...')}"
+    },
+    {
+      "key": "settings:companyProfile.descriptionPlaceholder",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 141,
+      "context": "placeholder={t('settings:companyProfile.descriptionPlaceholder', 'Describe your organization...')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.vatNumber",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 150,
+      "context": "{t('common:settingsCompanyProfile.vatNumber', 'VAT Number')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.vatNumber",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 150,
+      "context": "{t('common:settingsCompanyProfile.vatNumber', 'VAT Number')}"
+    },
+    {
+      "key": "common:placeholders.vatNumber",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 158,
+      "context": "placeholder={t('common:placeholders.vatNumber')}"
+    },
+    {
+      "key": "common:placeholders.vatNumber",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 158,
+      "context": "placeholder={t('common:placeholders.vatNumber')}"
+    },
+    {
+      "key": "settings:companyProfile.location",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 171,
+      "context": "{t('settings:companyProfile.location', 'Location')}"
+    },
+    {
+      "key": "settings:companyProfile.location",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 171,
+      "context": "{t('settings:companyProfile.location', 'Location')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.regionsServed",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 176,
+      "context": "{t('common:settingsCompanyProfile.regionsServed', 'Regions Served (Cantons)')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.regionsServed",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 176,
+      "context": "{t('common:settingsCompanyProfile.regionsServed', 'Regions Served (Cantons)')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.cantonsHelpText",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 178,
+      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('common:settingsCompanyProfile.cantonsHelpText', 'Select all cantons where your organization operates')}</p>"
+    },
+    {
+      "key": "common:settingsCompanyProfile.cantonsHelpText",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 178,
+      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('common:settingsCompanyProfile.cantonsHelpText', 'Select all cantons where your organization operates')}</p>"
+    },
+    {
+      "key": "common:settingsCompanyProfile.languagesSpoken",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 199,
+      "context": "{t('common:settingsCompanyProfile.languagesSpoken', 'Languages Spoken')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.languagesSpoken",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 199,
+      "context": "{t('common:settingsCompanyProfile.languagesSpoken', 'Languages Spoken')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.languagesHelpText",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 201,
+      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('common:settingsCompanyProfile.languagesHelpText', 'Select all languages your organization supports')}</p>"
+    },
+    {
+      "key": "common:settingsCompanyProfile.languagesHelpText",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 201,
+      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('common:settingsCompanyProfile.languagesHelpText', 'Select all languages your organization supports')}</p>"
+    },
+    {
+      "key": "settings:companyProfile.serviceProviderInfo",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 226,
+      "context": "{t('settings:companyProfile.serviceProviderInfo', 'Service Provider Information')}"
+    },
+    {
+      "key": "settings:companyProfile.serviceProviderInfo",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 226,
+      "context": "{t('settings:companyProfile.serviceProviderInfo', 'Service Provider Information')}"
+    },
+    {
+      "key": "settings:companyProfile.serviceType",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 231,
+      "context": "{t('settings:companyProfile.serviceType', 'Service Type')}"
+    },
+    {
+      "key": "settings:companyProfile.serviceType",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 231,
+      "context": "{t('settings:companyProfile.serviceType', 'Service Type')}"
+    },
+    {
+      "key": "settings:companyProfile.serviceTypePlaceholder",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 239,
+      "context": "placeholder={t('settings:companyProfile.serviceTypePlaceholder', 'e.g., IT Support, Cleaning Services')}"
+    },
+    {
+      "key": "settings:companyProfile.serviceTypePlaceholder",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 239,
+      "context": "placeholder={t('settings:companyProfile.serviceTypePlaceholder', 'e.g., IT Support, Cleaning Services')}"
+    },
+    {
+      "key": "settings:companyProfile.serviceCategories",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 245,
+      "context": "{t('settings:companyProfile.serviceCategories', 'Service Categories')}"
+    },
+    {
+      "key": "settings:companyProfile.serviceCategories",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 245,
+      "context": "{t('settings:companyProfile.serviceCategories', 'Service Categories')}"
+    },
+    {
+      "key": "settings:companyProfile.serviceCategoriesHint",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 247,
+      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('settings:companyProfile.serviceCategoriesHint', 'Select all that apply')}</p>"
+    },
+    {
+      "key": "settings:companyProfile.serviceCategoriesHint",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 247,
+      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('settings:companyProfile.serviceCategoriesHint', 'Select all that apply')}</p>"
+    },
+    {
+      "key": "settings:companyProfile.deliveryType",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 268,
+      "context": "{t('settings:companyProfile.deliveryType', 'Delivery Type')}"
+    },
+    {
+      "key": "settings:companyProfile.deliveryType",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 268,
+      "context": "{t('settings:companyProfile.deliveryType', 'Delivery Type')}"
+    },
+    {
+      "key": "settings:companyProfile.selectDeliveryType",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 276,
+      "context": "<option value=\"\">{t('settings:companyProfile.selectDeliveryType', 'Select Delivery Type')}</option>"
+    },
+    {
+      "key": "settings:companyProfile.selectDeliveryType",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 276,
+      "context": "<option value=\"\">{t('settings:companyProfile.selectDeliveryType', 'Select Delivery Type')}</option>"
+    },
+    {
+      "key": "settings:companyProfile.bookingLink",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 285,
+      "context": "{t('settings:companyProfile.bookingLink', 'Booking Link')}"
+    },
+    {
+      "key": "settings:companyProfile.bookingLink",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 285,
+      "context": "{t('settings:companyProfile.bookingLink', 'Booking Link')}"
+    },
+    {
+      "key": "common:placeholders.url",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 293,
+      "context": "placeholder={t('common:placeholders.url')}"
+    },
+    {
+      "key": "common:placeholders.url",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 293,
+      "context": "placeholder={t('common:placeholders.url')}"
+    },
+    {
+      "key": "settings:companyProfile.bookingLinkHint",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 296,
+      "context": "{t('settings:companyProfile.bookingLinkHint', 'You can enter it without https://')}"
+    },
+    {
+      "key": "settings:companyProfile.bookingLinkHint",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 296,
+      "context": "{t('settings:companyProfile.bookingLinkHint', 'You can enter it without https://')}"
+    },
+    {
+      "key": "settings:companyProfile.organizationName",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 83,
+      "context": "{formData.companyName || t('settings:companyProfile.organizationName', 'Organization Name')}"
+    },
+    {
+      "key": "settings:companyProfile.organizationName",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 83,
+      "context": "{formData.companyName || t('settings:companyProfile.organizationName', 'Organization Name')}"
+    },
+    {
+      "key": "settings:companyProfile.foundation",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 86,
+      "context": "{t('settings:companyProfile.foundation', 'Foundation / Daycare')}"
+    },
+    {
+      "key": "settings:companyProfile.foundation",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 86,
+      "context": "{t('settings:companyProfile.foundation', 'Foundation / Daycare')}"
+    },
+    {
+      "key": "settings:companyProfile.basicInfo",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 97,
+      "context": "{t('settings:companyProfile.basicInfo', 'Basic Information')}"
+    },
+    {
+      "key": "settings:companyProfile.basicInfo",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 97,
+      "context": "{t('settings:companyProfile.basicInfo', 'Basic Information')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.companyName",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 102,
+      "context": "{t('common:settingsCompanyProfile.companyName', 'Organization Name')} <span className=\"text-swiss-coral\">*</span>"
+    },
+    {
+      "key": "common:settingsCompanyProfile.companyName",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 102,
+      "context": "{t('common:settingsCompanyProfile.companyName', 'Organization Name')} <span className=\"text-swiss-coral\">*</span>"
+    },
+    {
+      "key": "settings:companyProfile.companyNamePlaceholder",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 111,
+      "context": "placeholder={t('settings:companyProfile.companyNamePlaceholder', 'Enter your organization name')}"
+    },
+    {
+      "key": "settings:companyProfile.companyNamePlaceholder",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 111,
+      "context": "placeholder={t('settings:companyProfile.companyNamePlaceholder', 'Enter your organization name')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.aboutText",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 117,
+      "context": "{t('common:settingsCompanyProfile.aboutText', 'Description / About')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.aboutText",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 117,
+      "context": "{t('common:settingsCompanyProfile.aboutText', 'Description / About')}"
+    },
+    {
+      "key": "settings:companyProfile.descriptionPlaceholder",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 126,
+      "context": "placeholder={t('settings:companyProfile.descriptionPlaceholder', 'Describe your organization...')}"
+    },
+    {
+      "key": "settings:companyProfile.descriptionPlaceholder",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 126,
+      "context": "placeholder={t('settings:companyProfile.descriptionPlaceholder', 'Describe your organization...')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.vatNumber",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 135,
+      "context": "{t('common:settingsCompanyProfile.vatNumber', 'VAT Number')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.vatNumber",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 135,
+      "context": "{t('common:settingsCompanyProfile.vatNumber', 'VAT Number')}"
+    },
+    {
+      "key": "common:placeholders.vatNumber",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 143,
+      "context": "placeholder={t('common:placeholders.vatNumber')}"
+    },
+    {
+      "key": "common:placeholders.vatNumber",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 143,
+      "context": "placeholder={t('common:placeholders.vatNumber')}"
+    },
+    {
+      "key": "settings:companyProfile.location",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 156,
+      "context": "{t('settings:companyProfile.location', 'Location')}"
+    },
+    {
+      "key": "settings:companyProfile.location",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 156,
+      "context": "{t('settings:companyProfile.location', 'Location')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.regionsServed",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 161,
+      "context": "{t('common:settingsCompanyProfile.regionsServed', 'Regions Served (Cantons)')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.regionsServed",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 161,
+      "context": "{t('common:settingsCompanyProfile.regionsServed', 'Regions Served (Cantons)')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.cantonsHelpText",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 163,
+      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('common:settingsCompanyProfile.cantonsHelpText', 'Select all cantons where your organization operates')}</p>"
+    },
+    {
+      "key": "common:settingsCompanyProfile.cantonsHelpText",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 163,
+      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('common:settingsCompanyProfile.cantonsHelpText', 'Select all cantons where your organization operates')}</p>"
+    },
+    {
+      "key": "common:settingsCompanyProfile.city",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 184,
+      "context": "{t('common:settingsCompanyProfile.city', 'City')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.city",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 184,
+      "context": "{t('common:settingsCompanyProfile.city', 'City')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.cityHelpText",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 186,
+      "context": "<p className=\"text-xs text-gray-500 mb-2\">{t('common:settingsCompanyProfile.cityHelpText', 'Enter the city where your organization is located')}</p>"
+    },
+    {
+      "key": "common:settingsCompanyProfile.cityHelpText",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 186,
+      "context": "<p className=\"text-xs text-gray-500 mb-2\">{t('common:settingsCompanyProfile.cityHelpText', 'Enter the city where your organization is located')}</p>"
+    },
+    {
+      "key": "common:settingsCompanyProfile.cityPlaceholder",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 193,
+      "context": "placeholder={t('common:settingsCompanyProfile.cityPlaceholder', 'Enter city name')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.cityPlaceholder",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 193,
+      "context": "placeholder={t('common:settingsCompanyProfile.cityPlaceholder', 'Enter city name')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.languagesSpoken",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 199,
+      "context": "{t('common:settingsCompanyProfile.languagesSpoken', 'Languages Spoken')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.languagesSpoken",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 199,
+      "context": "{t('common:settingsCompanyProfile.languagesSpoken', 'Languages Spoken')}"
+    },
+    {
+      "key": "common:settingsCompanyProfile.languagesHelpText",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 201,
+      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('common:settingsCompanyProfile.languagesHelpText', 'Select all languages your organization supports')}</p>"
+    },
+    {
+      "key": "common:settingsCompanyProfile.languagesHelpText",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 201,
+      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('common:settingsCompanyProfile.languagesHelpText', 'Select all languages your organization supports')}</p>"
+    },
+    {
+      "key": "settings:companyProfile.foundationInfo",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 226,
+      "context": "{t('settings:companyProfile.foundationInfo', 'Foundation Information')}"
+    },
+    {
+      "key": "settings:companyProfile.foundationInfo",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 226,
+      "context": "{t('settings:companyProfile.foundationInfo', 'Foundation Information')}"
+    },
+    {
+      "key": "settings:companyProfile.capacity",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 231,
+      "context": "{t('settings:companyProfile.capacity', 'Capacity (Number of Children)')}"
+    },
+    {
+      "key": "settings:companyProfile.capacity",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 231,
+      "context": "{t('settings:companyProfile.capacity', 'Capacity (Number of Children)')}"
+    },
+    {
+      "key": "settings:companyProfile.pedagogy",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 246,
+      "context": "{t('settings:companyProfile.pedagogy', 'Pedagogical Approaches')}"
+    },
+    {
+      "key": "settings:companyProfile.pedagogy",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 246,
+      "context": "{t('settings:companyProfile.pedagogy', 'Pedagogical Approaches')}"
+    },
+    {
+      "key": "settings:companyProfile.pedagogyHint",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 248,
+      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('settings:companyProfile.pedagogyHint', 'Select all that apply')}</p>"
+    },
+    {
+      "key": "settings:companyProfile.pedagogyHint",
+      "file": "components/profile/edit/FoundationProfileForm.tsx",
+      "line": 248,
+      "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('settings:companyProfile.pedagogyHint', 'Select all that apply')}</p>"
+    },
+    {
+      "key": "settings:educatorProfile.educator",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 70,
+      "context": "const fullName = `${formData.firstName || ''} ${formData.lastName || ''}`.trim() || t('settings:educatorProfile.educator', 'Educator');"
+    },
+    {
+      "key": "settings:educatorProfile.educator",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 70,
+      "context": "const fullName = `${formData.firstName || ''} ${formData.lastName || ''}`.trim() || t('settings:educatorProfile.educator', 'Educator');"
+    },
+    {
+      "key": "settings:educatorProfile.educator",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 108,
+      "context": "{t('settings:educatorProfile.educator', 'Educator / Candidate')}"
+    },
+    {
+      "key": "settings:educatorProfile.educator",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 108,
+      "context": "{t('settings:educatorProfile.educator', 'Educator / Candidate')}"
+    },
+    {
+      "key": "settings:educatorProfile.basicInfo",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 117,
+      "context": "<h3 className=\"text-lg font-semibold text-gray-900 mb-4\">{t('settings:educatorProfile.basicInfo', 'Basic Information')}</h3>"
+    },
+    {
+      "key": "settings:educatorProfile.basicInfo",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 117,
+      "context": "<h3 className=\"text-lg font-semibold text-gray-900 mb-4\">{t('settings:educatorProfile.basicInfo', 'Basic Information')}</h3>"
+    },
+    {
+      "key": "settings:educatorProfile.firstName",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 121,
+      "context": "{t('settings:educatorProfile.firstName', 'First Name')}"
+    },
+    {
+      "key": "settings:educatorProfile.firstName",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 121,
+      "context": "{t('settings:educatorProfile.firstName', 'First Name')}"
+    },
+    {
+      "key": "settings:educatorProfile.firstNamePlaceholder",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 129,
+      "context": "placeholder={t('settings:educatorProfile.firstNamePlaceholder', 'Enter your first name')}"
+    },
+    {
+      "key": "settings:educatorProfile.firstNamePlaceholder",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 129,
+      "context": "placeholder={t('settings:educatorProfile.firstNamePlaceholder', 'Enter your first name')}"
+    },
+    {
+      "key": "settings:educatorProfile.lastName",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 135,
+      "context": "{t('settings:educatorProfile.lastName', 'Last Name')}"
+    },
+    {
+      "key": "settings:educatorProfile.lastName",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 135,
+      "context": "{t('settings:educatorProfile.lastName', 'Last Name')}"
+    },
+    {
+      "key": "settings:educatorProfile.lastNamePlaceholder",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 143,
+      "context": "placeholder={t('settings:educatorProfile.lastNamePlaceholder', 'Enter your last name')}"
+    },
+    {
+      "key": "settings:educatorProfile.lastNamePlaceholder",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 143,
+      "context": "placeholder={t('settings:educatorProfile.lastNamePlaceholder', 'Enter your last name')}"
+    },
+    {
+      "key": "settings:educatorProfile.professionalDetails",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 153,
+      "context": "{t('settings:educatorProfile.professionalDetails', 'Professional Details')}"
+    },
+    {
+      "key": "settings:educatorProfile.professionalDetails",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 153,
+      "context": "{t('settings:educatorProfile.professionalDetails', 'Professional Details')}"
+    },
+    {
+      "key": "settings:educatorProfile.role",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 158,
+      "context": "{t('settings:educatorProfile.role', 'Role')} <span className=\"text-swiss-coral\">*</span>"
+    },
+    {
+      "key": "settings:educatorProfile.role",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 158,
+      "context": "{t('settings:educatorProfile.role', 'Role')} <span className=\"text-swiss-coral\">*</span>"
+    },
+    {
+      "key": "settings:educatorProfile.rolePlaceholder",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 166,
+      "context": "placeholder={t('settings:educatorProfile.rolePlaceholder', 'e.g., Educator, Assistant')}"
+    },
+    {
+      "key": "settings:educatorProfile.rolePlaceholder",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 166,
+      "context": "placeholder={t('settings:educatorProfile.rolePlaceholder', 'e.g., Educator, Assistant')}"
+    },
+    {
+      "key": "settings:educatorProfile.roleHint",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 171,
+      "context": "{t('settings:educatorProfile.roleHint', 'Add one or more roles to improve matching.')}"
+    },
+    {
+      "key": "settings:educatorProfile.roleHint",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 171,
+      "context": "{t('settings:educatorProfile.roleHint', 'Add one or more roles to improve matching.')}"
+    },
+    {
+      "key": "settings:educatorProfile.location",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 186,
+      "context": "{t('settings:educatorProfile.location', 'Location')} <span className=\"text-swiss-coral\">*</span>"
+    },
+    {
+      "key": "settings:educatorProfile.location",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 186,
+      "context": "{t('settings:educatorProfile.location', 'Location')} <span className=\"text-swiss-coral\">*</span>"
+    },
+    {
+      "key": "settings:educatorProfile.locationPlaceholder",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 195,
+      "context": "<option value=\"\">{t('settings:educatorProfile.locationPlaceholder', 'Select a canton')}</option>"
+    },
+    {
+      "key": "settings:educatorProfile.locationPlaceholder",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 195,
+      "context": "<option value=\"\">{t('settings:educatorProfile.locationPlaceholder', 'Select a canton')}</option>"
+    },
+    {
+      "key": "settings:educatorProfile.cities",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 204,
+      "context": "{t('settings:educatorProfile.cities', 'Cities')}"
+    },
+    {
+      "key": "settings:educatorProfile.cities",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 204,
+      "context": "{t('settings:educatorProfile.cities', 'Cities')}"
+    },
+    {
+      "key": "settings:educatorProfile.citiesPlaceholder",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 209,
+      "context": "placeholder={t('settings:educatorProfile.citiesPlaceholder', 'Add one or more cities')}"
+    },
+    {
+      "key": "settings:educatorProfile.citiesPlaceholder",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 209,
+      "context": "placeholder={t('settings:educatorProfile.citiesPlaceholder', 'Add one or more cities')}"
+    },
+    {
+      "key": "settings:educatorProfile.citiesHint",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 214,
+      "context": "{t('settings:educatorProfile.citiesHint', 'Add multiple cities to increase your visibility.')}"
+    },
+    {
+      "key": "settings:educatorProfile.citiesHint",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 214,
+      "context": "{t('settings:educatorProfile.citiesHint', 'Add multiple cities to increase your visibility.')}"
+    },
+    {
+      "key": "settings:educatorProfile.bio",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 247,
+      "context": "{t('settings:educatorProfile.bio', 'Bio')}"
+    },
+    {
+      "key": "settings:educatorProfile.bio",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 247,
+      "context": "{t('settings:educatorProfile.bio', 'Bio')}"
+    },
+    {
+      "key": "settings:educatorProfile.shortBio",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 251,
+      "context": "{t('settings:educatorProfile.shortBio', 'Short Bio / About Me')}"
+    },
+    {
+      "key": "settings:educatorProfile.shortBio",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 251,
+      "context": "{t('settings:educatorProfile.shortBio', 'Short Bio / About Me')}"
+    },
+    {
+      "key": "settings:educatorProfile.shortBioPlaceholder",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 259,
+      "context": "placeholder={t('settings:educatorProfile.shortBioPlaceholder', 'Tell others about yourself, your experience, and what makes you unique...')}"
+    },
+    {
+      "key": "settings:educatorProfile.shortBioPlaceholder",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 259,
+      "context": "placeholder={t('settings:educatorProfile.shortBioPlaceholder', 'Tell others about yourself, your experience, and what makes you unique...')}"
+    },
+    {
+      "key": "settings:educatorProfile.bioHint",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 262,
+      "context": "{t('settings:educatorProfile.bioHint', 'This will appear on your public profile')}"
+    },
+    {
+      "key": "settings:educatorProfile.bioHint",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 262,
+      "context": "{t('settings:educatorProfile.bioHint', 'This will appear on your public profile')}"
+    },
+    {
+      "key": "settings:educatorProfile.skills",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 271,
+      "context": "{t('settings:educatorProfile.skills', 'Skills & Specialties')}"
+    },
+    {
+      "key": "settings:educatorProfile.skills",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 271,
+      "context": "{t('settings:educatorProfile.skills', 'Skills & Specialties')}"
+    },
+    {
+      "key": "settings:educatorProfile.skillsLabel",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 275,
+      "context": "{t('settings:educatorProfile.skillsLabel', 'Skills')}"
+    },
+    {
+      "key": "settings:educatorProfile.skillsLabel",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 275,
+      "context": "{t('settings:educatorProfile.skillsLabel', 'Skills')}"
+    },
+    {
+      "key": "settings:educatorProfile.skillsPlaceholder",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 280,
+      "context": "placeholder={t('settings:educatorProfile.skillsPlaceholder', 'e.g., Early Childhood Education, Special Needs, Bilingual')}"
+    },
+    {
+      "key": "settings:educatorProfile.skillsPlaceholder",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 280,
+      "context": "placeholder={t('settings:educatorProfile.skillsPlaceholder', 'e.g., Early Childhood Education, Special Needs, Bilingual')}"
+    },
+    {
+      "key": "settings:educatorProfile.skillsHint",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 284,
+      "context": "{t('settings:educatorProfile.skillsHint', 'Type and press Enter to add skills')}"
+    },
+    {
+      "key": "settings:educatorProfile.skillsHint",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 284,
+      "context": "{t('settings:educatorProfile.skillsHint', 'Type and press Enter to add skills')}"
+    },
+    {
+      "key": "settings:educatorProfile.workExperience",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 293,
+      "context": "{t('settings:educatorProfile.workExperience', 'Work Experience')}"
+    },
+    {
+      "key": "settings:educatorProfile.workExperience",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 293,
+      "context": "{t('settings:educatorProfile.workExperience', 'Work Experience')}"
+    },
+    {
+      "key": "settings:educatorProfile.workExperienceLabel",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 297,
+      "context": "{t('settings:educatorProfile.workExperienceLabel', 'Work Experience')}"
+    },
+    {
+      "key": "settings:educatorProfile.workExperienceLabel",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 297,
+      "context": "{t('settings:educatorProfile.workExperienceLabel', 'Work Experience')}"
+    },
+    {
+      "key": "settings:educatorProfile.workExperiencePlaceholder",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 305,
+      "context": "placeholder={t('settings:educatorProfile.workExperiencePlaceholder', 'Describe your work experience...')}"
+    },
+    {
+      "key": "settings:educatorProfile.workExperiencePlaceholder",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 305,
+      "context": "placeholder={t('settings:educatorProfile.workExperiencePlaceholder', 'Describe your work experience...')}"
+    },
+    {
+      "key": "settings:educatorProfile.workExperienceHint",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 308,
+      "context": "{t('settings:educatorProfile.workExperienceHint', 'You can use JSON format or plain text')}"
+    },
+    {
+      "key": "settings:educatorProfile.workExperienceHint",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 308,
+      "context": "{t('settings:educatorProfile.workExperienceHint', 'You can use JSON format or plain text')}"
+    },
+    {
+      "key": "settings:educatorProfile.education",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 317,
+      "context": "{t('settings:educatorProfile.education', 'Education')}"
+    },
+    {
+      "key": "settings:educatorProfile.education",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 317,
+      "context": "{t('settings:educatorProfile.education', 'Education')}"
+    },
+    {
+      "key": "settings:educatorProfile.educationLabel",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 321,
+      "context": "{t('settings:educatorProfile.educationLabel', 'Education')}"
+    },
+    {
+      "key": "settings:educatorProfile.educationLabel",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 321,
+      "context": "{t('settings:educatorProfile.educationLabel', 'Education')}"
+    },
+    {
+      "key": "settings:educatorProfile.educationPlaceholder",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 329,
+      "context": "placeholder={t('settings:educatorProfile.educationPlaceholder', 'List your educational background...')}"
+    },
+    {
+      "key": "settings:educatorProfile.educationPlaceholder",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 329,
+      "context": "placeholder={t('settings:educatorProfile.educationPlaceholder', 'List your educational background...')}"
+    },
+    {
+      "key": "settings:educatorProfile.educationHint",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 332,
+      "context": "{t('settings:educatorProfile.educationHint', 'You can use JSON format or plain text')}"
+    },
+    {
+      "key": "settings:educatorProfile.educationHint",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 332,
+      "context": "{t('settings:educatorProfile.educationHint', 'You can use JSON format or plain text')}"
+    },
+    {
+      "key": "settings:educatorProfile.certifications",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 341,
+      "context": "{t('settings:educatorProfile.certifications', 'Certifications')}"
+    },
+    {
+      "key": "settings:educatorProfile.certifications",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 341,
+      "context": "{t('settings:educatorProfile.certifications', 'Certifications')}"
+    },
+    {
+      "key": "settings:educatorProfile.certificationsLabel",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 345,
+      "context": "{t('settings:educatorProfile.certificationsLabel', 'Certifications')}"
+    },
+    {
+      "key": "settings:educatorProfile.certificationsLabel",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 345,
+      "context": "{t('settings:educatorProfile.certificationsLabel', 'Certifications')}"
+    },
+    {
+      "key": "settings:educatorProfile.certificationsPlaceholder",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 350,
+      "context": "placeholder={t('settings:educatorProfile.certificationsPlaceholder', 'e.g., CPR Certified, Early Childhood Education Certificate')}"
+    },
+    {
+      "key": "settings:educatorProfile.certificationsPlaceholder",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 350,
+      "context": "placeholder={t('settings:educatorProfile.certificationsPlaceholder', 'e.g., CPR Certified, Early Childhood Education Certificate')}"
+    },
+    {
+      "key": "settings:educatorProfile.certificationsHint",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 354,
+      "context": "{t('settings:educatorProfile.certificationsHint', 'Type and press Enter to add certifications')}"
+    },
+    {
+      "key": "settings:educatorProfile.certificationsHint",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 354,
+      "context": "{t('settings:educatorProfile.certificationsHint', 'Type and press Enter to add certifications')}"
+    },
+    {
+      "key": "settings:educatorProfile.cv",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 363,
+      "context": "{t('settings:educatorProfile.cv', 'CV / Resume')}"
+    },
+    {
+      "key": "settings:educatorProfile.cv",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 363,
+      "context": "{t('settings:educatorProfile.cv', 'CV / Resume')}"
+    },
+    {
+      "key": "settings:educatorProfile.cvUpload",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 367,
+      "context": "{t('settings:educatorProfile.cvUpload', 'Upload CV')}"
+    },
+    {
+      "key": "settings:educatorProfile.cvUpload",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 367,
+      "context": "{t('settings:educatorProfile.cvUpload', 'Upload CV')}"
+    },
+    {
+      "key": "settings:educatorProfile.cvDocument",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 377,
+      "context": "{formData.cvUrl.split('/').pop() || t('settings:educatorProfile.cvDocument', 'CV document')}"
+    },
+    {
+      "key": "settings:educatorProfile.cvDocument",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 377,
+      "context": "{formData.cvUrl.split('/').pop() || t('settings:educatorProfile.cvDocument', 'CV document')}"
+    },
+    {
+      "key": "settings:educatorProfile.viewDocument",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 385,
+      "context": "{t('settings:educatorProfile.viewDocument', 'View document')}"
+    },
+    {
+      "key": "settings:educatorProfile.viewDocument",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 385,
+      "context": "{t('settings:educatorProfile.viewDocument', 'View document')}"
+    },
+    {
+      "key": "common:buttons.remove",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 396,
+      "context": "{t('common:buttons.remove', 'Remove')}"
+    },
+    {
+      "key": "common:buttons.remove",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 396,
+      "context": "{t('common:buttons.remove', 'Remove')}"
+    },
+    {
+      "key": "settings:educatorProfile.cvDragDrop",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 401,
+      "context": "label={t('settings:educatorProfile.cvDragDrop', 'Drag & drop your CV here')}"
+    },
+    {
+      "key": "settings:educatorProfile.cvDragDrop",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 401,
+      "context": "label={t('settings:educatorProfile.cvDragDrop', 'Drag & drop your CV here')}"
+    },
+    {
+      "key": "settings:educatorProfile.cvHint",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 410,
+      "context": "{t('settings:educatorProfile.cvHint', 'Accepted formats: PDF, DOC, DOCX (Max 5MB). This will be shared with foundations when you apply for jobs.')}"
+    },
+    {
+      "key": "settings:educatorProfile.cvHint",
+      "file": "components/profile/edit/EducatorProfileForm.tsx",
+      "line": 410,
+      "context": "{t('settings:educatorProfile.cvHint', 'Accepted formats: PDF, DOC, DOCX (Max 5MB). This will be shared with foundations when you apply for jobs.')}"
     },
     {
       "key": "settings:coverSection.invalidType",
