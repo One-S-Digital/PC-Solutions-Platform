@@ -1237,7 +1237,10 @@ export class ContentService {
     }
 
     try {
-      const effectiveCategory = dto.category || (dto as any).contentCategory;
+      if (dto.category && dto.contentCategory && dto.category !== dto.contentCategory) {
+        throw new BadRequestException('category and contentCategory must match');
+      }
+      const effectiveCategory = dto.category ?? dto.contentCategory;
       const updatedAsset = await this.prisma.asset.update({
         where: { id },
         data: {
