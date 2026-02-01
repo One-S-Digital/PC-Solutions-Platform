@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useApiClient } from '../services/api';
@@ -33,6 +33,48 @@ interface CantonSource {
   lastCrawlStatus?: string;
   lastCrawlError?: string;
   nextCrawlAt?: string;
+}
+
+interface CandidateScanResult {
+  url: string;
+  title: string;
+  anchorText: string;
+  sectionHeading?: string;
+  isPdf: boolean;
+  whitelisted: boolean;
+  whitelistError?: string;
+  classification?: {
+    isDaycareRelated: boolean;
+    confidence: number;
+    category: string;
+    docType: string;
+    language: 'fr' | 'de' | 'en';
+    topics: string[];
+  };
+  classifierSkipReason?: string;
+}
+
+interface ScanResult {
+  sourceId: number;
+  sourceLabel: string;
+  sourceUrl: string;
+  discovered: number;
+  whitelisted: number;
+  nonWhitelisted: number;
+  pdfCount: number;
+  daycareRelated: number;
+  classifierSkipped: number;
+  candidates: CandidateScanResult[];
+}
+
+interface IngestResult {
+  requested: number;
+  created: number;
+  updated: number;
+  unchanged: number;
+  skipped: number;
+  errors: Array<{ url: string; error: string }>;
+  results: Array<{ url: string; outcome: 'created' | 'updated' | 'unchanged' | 'skipped' | 'error' }>;
 }
 
 interface AddSourceModalProps {
@@ -364,6 +406,308 @@ const EditSourceModal: React.FC<EditSourceModalProps> = ({ source, onClose, onSu
   );
 };
 
+const CrawlResultsModal: React.FC<{
+  source: CantonSource;
+  cantonName: string;
+  onClose: () => void;
+  onAfterIngest: () => Promise<void>;
+}> = ({ source, cantonName, onClose, onAfterIngest }) => {
+  const apiClient = useApiClient();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [scan, setScan] = useState<ScanResult | null>(null);
+  const [selected, setSelected] = useState<Record<string, boolean>>({});
+  const [onlyPdf, setOnlyPdf] = useState(false);
+  const [onlyWhitelisted, setOnlyWhitelisted] = useState(true);
+  const [force, setForce] = useState(false);
+  const [ingesting, setIngesting] = useState(false);
+  const [ingestResult, setIngestResult] = useState<IngestResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const selectAllRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const run = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        setIngestResult(null);
+
+        const resp = await apiClient.post(
+          `/admin/crawler/scan/${source.id}`,
+          undefined,
+          { signal: controller.signal } as any,
+        );
+        const data: ScanResult = resp.data?.data || resp.data;
+        setScan(data);
+
+        // Default-select all whitelisted links
+        const initial: Record<string, boolean> = {};
+        for (const c of data.candidates || []) {
+          if (c.whitelisted) initial[c.url] = true;
+        }
+        setSelected(initial);
+      } catch (e: any) {
+        // Axios uses ERR_CANCELED for aborted requests
+        if (controller.signal.aborted || e?.code === 'ERR_CANCELED') return;
+        setError(e.response?.data?.message || e.message || 'Failed to scan source');
+      } finally {
+        setLoading(false);
+      }
+    };
+    run();
+    return () => controller.abort();
+  }, [apiClient, source.id]);
+
+  // Close on Escape for keyboard users
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [onClose]);
+
+  const visibleCandidates = (scan?.candidates || []).filter(c => {
+    if (onlyWhitelisted && !c.whitelisted) return false;
+    if (onlyPdf && !c.isPdf) return false;
+    return true;
+  });
+
+  useEffect(() => {
+    if (!selectAllRef.current) return;
+    const allSelected = visibleCandidates.length > 0 && visibleCandidates.every(c => selected[c.url]);
+    const someSelected = visibleCandidates.some(c => selected[c.url]);
+    selectAllRef.current.indeterminate = someSelected && !allSelected;
+  }, [visibleCandidates, selected]);
+
+  const selectedUrls = Object.entries(selected)
+    .filter(([, v]) => v)
+    .map(([k]) => k);
+
+  const toggleAllVisible = (value: boolean) => {
+    const next = { ...selected };
+    for (const c of visibleCandidates) {
+      next[c.url] = value;
+    }
+    setSelected(next);
+  };
+
+  const ingestSelected = async () => {
+    if (selectedUrls.length === 0) {
+      setError('Select at least one link to ingest.');
+      return;
+    }
+    setIngesting(true);
+    setError(null);
+    try {
+      const resp = await apiClient.post(`/admin/crawler/ingest/${source.id}`, {
+        urls: selectedUrls,
+        force,
+      });
+      const data: IngestResult = resp.data?.data || resp.data;
+      setIngestResult(data);
+      await onAfterIngest();
+    } catch (e: any) {
+      setError(e.response?.data?.message || e.message || 'Failed to ingest URLs');
+    } finally {
+      setIngesting(false);
+    }
+  };
+
+  return (
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      onClick={onClose}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="crawl-results-title"
+        className="bg-white rounded-lg p-6 w-full max-w-5xl mx-4 max-h-[90vh] overflow-y-auto"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h2 id="crawl-results-title" className="text-xl font-bold">Crawl results</h2>
+            <p className="text-sm text-gray-600 mt-1">
+              {source.label} — <span className="break-all">{source.url}</span>
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            aria-label="Close crawl results"
+            className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+          >
+            ×
+          </button>
+        </div>
+
+        {error ? (
+          <div className="mt-4 bg-red-50 border border-red-200 rounded p-3">
+            <p className="text-red-800 text-sm">{error}</p>
+          </div>
+        ) : null}
+
+        {loading ? (
+          <div className="mt-6 flex items-center justify-center h-40">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600" />
+          </div>
+        ) : scan ? (
+          <>
+            <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="rounded border bg-gray-50 p-3">
+                <div className="text-xs text-gray-500">Discovered</div>
+                <div className="text-lg font-semibold">{scan.discovered}</div>
+              </div>
+              <div className="rounded border bg-gray-50 p-3">
+                <div className="text-xs text-gray-500">Whitelisted</div>
+                <div className="text-lg font-semibold">{scan.whitelisted}</div>
+              </div>
+              <div className="rounded border bg-gray-50 p-3">
+                <div className="text-xs text-gray-500">PDFs</div>
+                <div className="text-lg font-semibold">{scan.pdfCount}</div>
+              </div>
+              <div className="rounded border bg-gray-50 p-3">
+                <div className="text-xs text-gray-500">Classifier skipped</div>
+                <div className="text-lg font-semibold">{scan.classifierSkipped}</div>
+              </div>
+            </div>
+
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-4">
+                <label className="flex items-center gap-2 text-sm">
+                  <input type="checkbox" checked={onlyWhitelisted} onChange={e => setOnlyWhitelisted(e.target.checked)} />
+                  Only whitelisted
+                </label>
+                <label className="flex items-center gap-2 text-sm">
+                  <input type="checkbox" checked={onlyPdf} onChange={e => setOnlyPdf(e.target.checked)} />
+                  Only PDFs
+                </label>
+                <button
+                  type="button"
+                  className="text-sm text-blue-600 hover:underline"
+                  onClick={() => toggleAllVisible(true)}
+                >
+                  Select all visible
+                </button>
+                <button
+                  type="button"
+                  className="text-sm text-blue-600 hover:underline"
+                  onClick={() => toggleAllVisible(false)}
+                >
+                  Clear visible
+                </button>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <label className="flex items-center gap-2 text-sm">
+                  <input type="checkbox" checked={force} onChange={e => setForce(e.target.checked)} />
+                  Force ingest (ignore classifier)
+                </label>
+                <button
+                  type="button"
+                  disabled={ingesting || selectedUrls.length === 0}
+                  onClick={ingestSelected}
+                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                >
+                  {ingesting ? 'Ingesting…' : `Ingest selected (${selectedUrls.length})`}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate(`/policy-crawler/review?canton=${encodeURIComponent(cantonName)}`)}
+                  className="px-4 py-2 border rounded hover:bg-gray-50"
+                >
+                  Open Policy Review
+                </button>
+              </div>
+            </div>
+
+            {ingestResult ? (
+              <div className="mt-4 rounded border border-green-200 bg-green-50 p-3 text-sm text-green-900">
+                Ingest completed. Created: {ingestResult.created}, Updated: {ingestResult.updated}, Unchanged:{' '}
+                {ingestResult.unchanged}, Skipped: {ingestResult.skipped}, Errors: {ingestResult.errors?.length || 0}.
+              </div>
+            ) : null}
+
+            <div className="mt-4 overflow-x-auto border rounded">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                      <input
+                        type="checkbox"
+                        ref={selectAllRef}
+                        checked={visibleCandidates.length > 0 && visibleCandidates.every(c => selected[c.url])}
+                        onChange={e => toggleAllVisible(e.target.checked)}
+                      />
+                    </th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">URL</th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Whitelisted</th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Classifier</th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Reason</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {visibleCandidates.map(c => (
+                    <tr key={c.url} className="hover:bg-gray-50">
+                      <td className="px-3 py-2">
+                        <input
+                          type="checkbox"
+                          checked={Boolean(selected[c.url])}
+                          onChange={e => setSelected(prev => ({ ...prev, [c.url]: e.target.checked }))}
+                        />
+                      </td>
+                      <td className="px-3 py-2 text-xs">
+                        <span className={`px-2 py-1 rounded ${c.isPdf ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-700'}`}>
+                          {c.isPdf ? 'PDF' : 'HTML'}
+                        </span>
+                      </td>
+                      <td className="px-3 py-2 text-sm">
+                        <a href={c.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline break-all">
+                          {c.url}
+                        </a>
+                        <div className="text-xs text-gray-500 mt-1 line-clamp-1">{c.anchorText}</div>
+                      </td>
+                      <td className="px-3 py-2 text-sm">
+                        {c.whitelisted ? (
+                          <span className="text-green-700">Yes</span>
+                        ) : (
+                          <span className="text-red-700" title={c.whitelistError}>
+                            No
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-3 py-2 text-sm">
+                        {c.classification ? (
+                          c.classification.isDaycareRelated ? (
+                            <span className="text-green-700">Match ({Math.round(c.classification.confidence * 100)}%)</span>
+                          ) : (
+                            <span className="text-amber-700">Skipped</span>
+                          )
+                        ) : (
+                          <span className="text-gray-400">—</span>
+                        )}
+                      </td>
+                      <td className="px-3 py-2 text-xs text-gray-600">
+                        {!c.whitelisted ? c.whitelistError : c.classifierSkipReason || '—'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {visibleCandidates.length === 0 ? (
+                <div className="p-6 text-center text-sm text-gray-500">No links match the current filters.</div>
+              ) : null}
+            </div>
+          </>
+        ) : null}
+      </div>
+    </div>
+  );
+};
+
 export default function CantonDetailPage() {
   const { t } = useTranslation(['admin']);
   const { code } = useParams<{ code: string }>();
@@ -374,7 +718,7 @@ export default function CantonDetailPage() {
   const [loading, setLoading] = useState(true);
   const [showAddSource, setShowAddSource] = useState(false);
   const [editingSource, setEditingSource] = useState<CantonSource | null>(null);
-  const [triggeringCrawl, setTriggeringCrawl] = useState<number | null>(null);
+  const [crawlModalSource, setCrawlModalSource] = useState<CantonSource | null>(null);
   const [deletingSource, setDeletingSource] = useState<number | null>(null);
 
   useEffect(() => {
@@ -401,61 +745,8 @@ export default function CantonDetailPage() {
     }
   };
 
-  const handleTriggerCrawl = async (sourceId: number) => {
-    if (!confirm(t('admin:cantons.detail.actions.crawlNow'))) return;
-    
-    setTriggeringCrawl(sourceId);
-    try {
-      const response = await apiClient.post(`/admin/crawler/trigger/${sourceId}?debug=1`);
-      const results = response.data?.data || response.data;
-      
-      const discovered = results?.discovered || 0;
-      const whitelisted = results?.whitelisted;
-      const nonWhitelisted = results?.nonWhitelisted;
-      const created = results?.created || 0;
-      const updated = results?.updated || 0;
-      const unchanged = results?.unchanged || 0;
-      const skipped = results?.skipped || 0;
-      const errorsCount = results?.errors?.length || 0;
-      const needsReview = created + updated;
-      const debug = results?.debug;
-
-      // Show detailed results
-      const message = results 
-        ? `Crawl completed!\n\n` +
-          `Discovered: ${discovered} links\n` +
-          (typeof whitelisted === 'number' ? `Whitelisted: ${whitelisted} links\n` : '') +
-          (typeof nonWhitelisted === 'number' ? `Non-whitelisted (SSRF blocked): ${nonWhitelisted} links\n` : '') +
-          `Created: ${created} new documents\n` +
-          `Updated: ${updated} changed documents\n` +
-          `Unchanged: ${unchanged} documents\n` +
-          `Skipped (classifier): ${skipped} documents\n` +
-          (errorsCount > 0 ? `\nErrors: ${errorsCount}` : '') +
-          (needsReview > 0 ? `\n\nNext step: review ${needsReview} document(s) in the Policy Review tab.` : '') +
-          (needsReview === 0 && debug ? (
-            `\n\nWhy nothing shows in Policy Review:\n` +
-            (debug.nonWhitelistedSamples?.length ? `- Non-whitelisted examples:\n${debug.nonWhitelistedSamples.slice(0, 5).map((s: any) => `  • ${s.url} (${s.reason})`).join('\n')}\n` : '') +
-            (debug.classifierSkippedSamples?.length ? `- Classifier-skipped examples:\n${debug.classifierSkippedSamples.slice(0, 5).map((s: any) => `  • ${s.url} (${s.reason})`).join('\n')}\n` : '')
-          ) : '')
-        : t('admin:cantons.detail.crawlSuccess');
-      
-      alert(message);
-
-      // Refresh source status after crawl
-      await fetchData();
-
-      // Offer to jump straight to review queue if there is anything to review
-      if (needsReview > 0 && canton?.name) {
-        const openReview = confirm(`Open Policy Review now to review ${needsReview} document(s)?`);
-        if (openReview) {
-          navigate(`/policy-crawler/review?canton=${encodeURIComponent(canton.name)}`);
-        }
-      }
-    } catch (err: any) {
-      alert(`${t('admin:cantons.detail.crawlError')}: ${err.response?.data?.message || err.message}`);
-    } finally {
-      setTriggeringCrawl(null);
-    }
+  const handleOpenCrawlResults = (source: CantonSource) => {
+    setCrawlModalSource(source);
   };
 
   const handleDeleteSource = async (sourceId: number) => {
@@ -561,12 +852,11 @@ export default function CantonDetailPage() {
                 <td className="px-4 py-3 text-sm">
                   <div className="flex space-x-2">
                     <button 
-                      onClick={() => handleTriggerCrawl(source.id)}
-                      disabled={triggeringCrawl === source.id}
+                      onClick={() => handleOpenCrawlResults(source)}
                       className="text-blue-600 hover:underline text-sm disabled:opacity-50 flex items-center gap-1"
                     >
                       <Play className="h-4 w-4" />
-                      {triggeringCrawl === source.id ? t('admin:cantons.detail.status.crawling') : t('admin:cantons.detail.actions.crawlNow')}
+                      {t('admin:cantons.detail.actions.crawlNow')}
                     </button>
                     <button 
                       onClick={() => setEditingSource(source)}
@@ -612,6 +902,15 @@ export default function CantonDetailPage() {
           onSuccess={fetchData}
         />
       )}
+
+      {crawlModalSource && canton ? (
+        <CrawlResultsModal
+          source={crawlModalSource}
+          cantonName={canton.name}
+          onClose={() => setCrawlModalSource(null)}
+          onAfterIngest={fetchData}
+        />
+      ) : null}
     </div>
   );
 }

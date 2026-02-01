@@ -6,7 +6,7 @@ import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '@prisma/client';
-import { CreateSourceDto, UpdateSourceDto, ReviewQueueQueryDto } from './dto/crawler.dto';
+import { CreateSourceDto, UpdateSourceDto, ReviewQueueQueryDto, IngestUrlsDto } from './dto/crawler.dto';
 
 @Controller('admin/crawler')
 @UseGuards(ClerkAuthGuard, RolesGuard)
@@ -46,6 +46,49 @@ export class CrawlerController {
       if (error.message?.includes('Network error') || error.message?.includes('ETIMEDOUT')) {
         throw new BadRequestException(
           `Failed to crawl source: ${error.message}. This may be due to network connectivity issues or the target URL being unreachable.`
+        );
+      }
+      throw error;
+    }
+  }
+
+  // Scan a source page and return discovered links + classification (no DB writes)
+  @Post('scan/:sourceId')
+  async scanSource(@Param('sourceId') sourceId: string) {
+    if (!this.isCrawlerEnabled()) {
+      throw new BadRequestException('Crawler is disabled');
+    }
+
+    const id = parseInt(sourceId, 10);
+    if (isNaN(id) || id <= 0) {
+      throw new BadRequestException(`Invalid sourceId: '${sourceId}'. Must be a positive integer.`);
+    }
+
+    const results = await this.crawlerService.scanSource(id);
+    return { success: true, data: results };
+  }
+
+  // Ingest selected URLs into the review queue (creates/updates assets)
+  @Post('ingest/:sourceId')
+  async ingestUrls(@Param('sourceId') sourceId: string, @Body() dto: IngestUrlsDto) {
+    if (!this.isCrawlerEnabled()) {
+      throw new BadRequestException('Crawler is disabled');
+    }
+
+    const id = parseInt(sourceId, 10);
+    if (isNaN(id) || id <= 0) {
+      throw new BadRequestException(`Invalid sourceId: '${sourceId}'. Must be a positive integer.`);
+    }
+
+    try {
+      const results = await this.crawlerService.ingestUrlsFromSource(id, dto.urls, {
+        force: Boolean(dto.force),
+      });
+      return { success: true, data: results };
+    } catch (error: any) {
+      if (error.message?.includes('Network error') || error.message?.includes('ETIMEDOUT')) {
+        throw new BadRequestException(
+          `Failed to ingest URLs: ${error.message}. This may be due to network connectivity issues or the target URL being unreachable.`
         );
       }
       throw error;
