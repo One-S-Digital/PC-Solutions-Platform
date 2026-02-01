@@ -53,6 +53,8 @@ export class HtmlParserService {
             return;
           }
 
+          const isPdf = urlLower.endsWith('.pdf') || urlLower.includes('.pdf?');
+
           // Skip URLs with navigation hash fragments (e.g., #nav-primary, #menu, #top)
           const urlHash = new URL(absoluteUrl).hash.toLowerCase();
           if (urlHash && (urlHash.includes('#nav') || urlHash.includes('#menu') || urlHash.includes('#top') || 
@@ -63,9 +65,21 @@ export class HtmlParserService {
           // Filter out common navigation/footer links (not policy content)
           const anchorText = $link.text().trim() || $link.attr('title') || '';
           const anchorLower = anchorText.toLowerCase();
+          const normalizedAnchor = anchorLower.replace(/\s+/g, ' ').trim();
+
+          // If link is inside nav/header/footer chrome, treat it as navigation unless it is a PDF.
+          // This prevents overly broad keyword-based filters from dropping real policy PDFs
+          // that happen to contain common words (e.g. "accueil") in their titles.
+          const inNavChrome =
+            $link.parents('nav, header, footer').length > 0 ||
+            $link.parents('[class*="nav"], [class*="menu"], [id*="nav"], [id*="menu"]').length > 0;
+          if (inNavChrome && !isPdf) {
+            return;
+          }
           
           // Common navigation/footer link patterns to skip (multi-language: FR, DE, EN)
-          const navigationPatterns = [
+          // IMPORTANT: avoid single generic words like "accueil" or "structure" which are common in childcare policy titles.
+          const navigationContainsPatterns = [
             // Legal/Privacy pages
             'mentions légales', 'legal notice', 'legal notices', 'impressum', 'datenschutz', 'privacy', 'privacy policy',
             'disclaimer', 'terms of service', 'terms and conditions',
@@ -75,13 +89,9 @@ export class HtmlParserService {
             'contact', 'kontakt', 'contact us', 'get in touch',
             // Navigation
             'retour', 'back', 'zurück', 'back to', 'return to',
-            'accueil', 'home', 'startseite', 'homepage', 'home page',
-            'haut', 'top', 'nach oben', 'go to top', 'scroll to top',
-            'menu', 'navigation', 'nav', 'menü',
             // Organizational charts (not policies)
-            'autorités', 'autorites', 'authorities', 'behörden', 'authority',
             'organigramme', 'organigram', 'organigramm', 'organizational chart', 'org chart',
-            'structure', 'organizational structure', 'organigramme détaillé', 'organigramme simplifié',
+            'organizational structure', 'organigramme détaillé', 'organigramme simplifié',
             // Job listings
             'offres d\'emploi', 'offres emploi', 'job offers', 'job offer', 'stellenangebote', 'stellenangebot',
             'careers', 'recruitment', 'recrutement', 'rekrutierung',
@@ -94,8 +104,18 @@ export class HtmlParserService {
             'news', 'newsletter', 'actualités', 'aktuelles',
             'help', 'aide', 'hilfe', 'support',
           ];
+
+          // Short/ambiguous navigation labels must match exactly.
+          // This avoids filtering titles like "accueil de jour" or "structures d'accueil".
+          const navigationExactLabels = new Set([
+            // Navigation
+            'accueil', 'home', 'startseite', 'homepage', 'home page',
+            'menu', 'navigation', 'nav', 'menü',
+            'haut', 'top', 'nach oben', 'go to top', 'scroll to top',
+            'retour', 'back', 'zurück',
+          ]);
           
-          if (navigationPatterns.some(pattern => anchorLower.includes(pattern))) {
+          if (!isPdf && (navigationExactLabels.has(normalizedAnchor) || navigationContainsPatterns.some(pattern => anchorLower.includes(pattern)))) {
             return; // Skip navigation/footer links
           }
 
@@ -110,9 +130,8 @@ export class HtmlParserService {
             // Sitemap
             '/plan-du-site', '/sitemap', '/site-map', '/seitenverzeichnis',
             // Organizational pages (not policies)
-            '/autorites', '/authorities', '/behoerden', '/authority',
             '/organigramme', '/organigram', '/organigramm', '/org-chart',
-            '/organizational-chart', '/structure', '/organizational-structure',
+            '/organizational-chart', '/organizational-structure',
             // Job listings
             '/offres-emploi', '/offres-d-emploi', '/jobs', '/stellenangebote', '/careers',
             '/recruitment', '/recrutement', '/rekrutierung',
@@ -129,8 +148,6 @@ export class HtmlParserService {
           if (excludedPaths.some(path => urlPath === path || urlPath.startsWith(path + '/'))) {
             return; // Skip administrative/navigation pages
           }
-
-          const isPdf = urlLower.endsWith('.pdf') || urlLower.includes('.pdf?');
           
           if (!anchorText && !isPdf) {
             // Skip links without text unless they're PDFs (PDFs might not have descriptive text)
