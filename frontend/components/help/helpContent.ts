@@ -391,7 +391,9 @@ export const HELP_ARTICLES: HelpArticle[] = [
 
 // Helper function to filter articles by user role
 export function getArticlesForRole(userRole?: UserRole): HelpArticle[] {
-  if (!userRole) return HELP_ARTICLES.filter(a => !a.roles);
+  // If role isn't resolved yet (e.g., during initial app load), show all articles
+  // so the Help modal still has complete category coverage.
+  if (!userRole) return HELP_ARTICLES;
   
   return HELP_ARTICLES.filter(article => {
     if (!article.roles) return true;
@@ -401,7 +403,9 @@ export function getArticlesForRole(userRole?: UserRole): HelpArticle[] {
 
 // Helper function to filter categories by user role
 export function getCategoriesForRole(userRole?: UserRole): HelpCategoryInfo[] {
-  if (!userRole) return HELP_CATEGORIES.filter(c => !c.roles);
+  // If role isn't resolved yet (e.g., during initial app load), show all categories
+  // so users can still browse the full knowledge base.
+  if (!userRole) return HELP_CATEGORIES;
   
   return HELP_CATEGORIES.filter(category => {
     if (!category.roles) return true;
