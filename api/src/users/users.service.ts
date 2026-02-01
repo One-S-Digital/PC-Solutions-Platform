@@ -1410,46 +1410,81 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    // Delete both User profile and AppUser in a transaction for data consistency
-    const deletedAppUser = await this.prisma.$transaction(async (tx) => {
-      // Try to delete the User profile table first (if it exists)
-      // Using deleteMany to avoid errors if profile doesn't exist
-      const deleteResult = await tx.user.deleteMany({
-        where: { clerkId: appUser.clerkId },
-      });
-      
-      if (deleteResult.count > 0) {
-        console.log(`Deleted User profile for clerkId: ${appUser.clerkId}`);
-      } else {
-        console.log(`User profile not found for clerkId: ${appUser.clerkId}`);
+    // IMPORTANT:
+    // Hard-deleting a user/profile is frequently blocked by foreign key constraints
+    // (messages, subscriptions, job applications, support tickets, etc.) and by
+    // AppUser-owned assets (onDelete: Restrict).
+    //
+    // For admin "Delete user", we perform a safe **soft delete**:
+    // - Deactivate the profile (blocks login via ClerkAuthGuard)
+    // - Remove org memberships
+    // - Scrub PII (email/name/phone) while retaining referential integrity
+    //
+    // This prevents 500s and keeps historical records intact.
+    const now = new Date();
+
+    const { updatedAppUser, updatedProfile } = await this.prisma.$transaction(async (tx) => {
+      const profile = await tx.user.findUnique({ where: { clerkId: appUser.clerkId } });
+
+      if (profile) {
+        // Remove memberships so the user stops appearing as an org member.
+        await tx.userOrganization.deleteMany({ where: { userId: profile.id } });
+
+        // Remove contact info (PII) if present.
+        await tx.userContactInfo.deleteMany({ where: { userId: profile.id } });
       }
 
-      // Delete AppUser
-      return await tx.appUser.delete({
-        where: { id },
+      const updatedProfile = profile
+        ? await tx.user.update({
+            where: { id: profile.id },
+            data: {
+              isActive: false,
+              deactivatedAt: now,
+              deactivatedReasonCode: 'ADMIN_DELETED',
+              deactivatedReasonText: 'User deleted by admin',
+              // Scrub PII (keep clerkId + id stable for FKs)
+              email: null,
+              firstName: null,
+              lastName: null,
+              phoneNumber: null,
+              stripeCustomerId: null,
+              // Leave avatar/cover assets in place; assets may be shared and have their own lifecycle.
+            },
+          })
+        : null;
+
+      // Demote account role + scrub auth email (optional but reduces risk if other systems read AppUser).
+      const updatedAppUser = await tx.appUser.update({
+        where: { id: appUser.id },
+        data: {
+          email: null,
+          role: UserRole.PARENT,
+        },
       });
+
+      return { updatedAppUser, updatedProfile };
     });
 
     // Return in User format for compatibility
     return {
-      id: deletedAppUser.id,
-      clerkId: deletedAppUser.clerkId,
-      email: deletedAppUser.email,
-      firstName: null,
-      lastName: null,
-      role: deletedAppUser.role,
-      phoneNumber: null,
-      workExperience: null,
-      education: null,
-      certifications: [],
-      skills: [],
-      availability: null,
-      cvUrl: null,
-      stripeCustomerId: null,
-      lastActiveAt: null,
-      isActive: true,
-      createdAt: deletedAppUser.createdAt,
-      updatedAt: deletedAppUser.updatedAt,
+      id: updatedAppUser.id,
+      clerkId: updatedAppUser.clerkId,
+      email: updatedAppUser.email,
+      firstName: updatedProfile?.firstName ?? null,
+      lastName: updatedProfile?.lastName ?? null,
+      role: updatedAppUser.role,
+      phoneNumber: updatedProfile?.phoneNumber ?? null,
+      workExperience: updatedProfile?.workExperience ?? null,
+      education: updatedProfile?.education ?? null,
+      certifications: updatedProfile?.certifications ?? [],
+      skills: updatedProfile?.skills ?? [],
+      availability: updatedProfile?.availability ?? null,
+      cvUrl: updatedProfile?.cvUrl ?? null,
+      stripeCustomerId: updatedProfile?.stripeCustomerId ?? null,
+      lastActiveAt: updatedProfile?.lastActiveAt ?? null,
+      isActive: updatedProfile?.isActive ?? false,
+      createdAt: updatedAppUser.createdAt,
+      updatedAt: updatedAppUser.updatedAt,
       organizations: [],
     };
   }
