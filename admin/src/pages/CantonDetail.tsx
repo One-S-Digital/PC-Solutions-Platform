@@ -420,6 +420,7 @@ const CrawlResultsModal: React.FC<{
   const [onlyPdf, setOnlyPdf] = useState(false);
   const [onlyWhitelisted, setOnlyWhitelisted] = useState(true);
   const [force, setForce] = useState(false);
+  const [queueUnchanged, setQueueUnchanged] = useState(false);
   const [ingesting, setIngesting] = useState(false);
   const [ingestResult, setIngestResult] = useState<IngestResult | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -504,6 +505,7 @@ const CrawlResultsModal: React.FC<{
       const resp = await apiClient.post(`/admin/crawler/ingest/${source.id}`, {
         urls: selectedUrls,
         force,
+        queueUnchanged,
       });
       const data: IngestResult = resp.data?.data || resp.data;
       setIngestResult(data);
@@ -555,6 +557,11 @@ const CrawlResultsModal: React.FC<{
           </div>
         ) : scan ? (
           <>
+            <div className="mt-4 rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+              <strong>Note:</strong> Scanning does not add anything to Policy Review. You must click <strong>Ingest selected</strong> to
+              create review items.
+            </div>
+
             <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
               <div className="rounded border bg-gray-50 p-3">
                 <div className="text-xs text-gray-500">Discovered</div>
@@ -605,6 +612,14 @@ const CrawlResultsModal: React.FC<{
                   <input type="checkbox" checked={force} onChange={e => setForce(e.target.checked)} />
                   Force ingest (ignore classifier)
                 </label>
+                <label className="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={queueUnchanged}
+                    onChange={e => setQueueUnchanged(e.target.checked)}
+                  />
+                  Send unchanged/existing to review
+                </label>
                 <button
                   type="button"
                   disabled={ingesting || selectedUrls.length === 0}
@@ -615,7 +630,13 @@ const CrawlResultsModal: React.FC<{
                 </button>
                 <button
                   type="button"
-                  onClick={() => navigate(`/policy-crawler/review?canton=${encodeURIComponent(cantonName)}`)}
+                  onClick={() => {
+                    if (!ingestResult) {
+                      setError('Policy Review will be empty until you ingest at least one link.');
+                      return;
+                    }
+                    navigate(`/policy-crawler/review?canton=${encodeURIComponent(cantonName)}`);
+                  }}
                   className="px-4 py-2 border rounded hover:bg-gray-50"
                 >
                   Open Policy Review

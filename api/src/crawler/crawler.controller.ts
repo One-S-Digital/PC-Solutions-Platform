@@ -83,6 +83,7 @@ export class CrawlerController {
     try {
       const results = await this.crawlerService.ingestUrlsFromSource(id, dto.urls, {
         force: Boolean(dto.force),
+        queueUnchanged: Boolean(dto.queueUnchanged),
       });
       return { success: true, data: results };
     } catch (error: any) {
