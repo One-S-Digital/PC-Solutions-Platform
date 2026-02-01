@@ -37,6 +37,25 @@ interface CantonSourceWithCanton {
   };
 }
 
+interface CandidateScanResult {
+  url: string;
+  title: string;
+  anchorText: string;
+  sectionHeading?: string;
+  isPdf: boolean;
+  whitelisted: boolean;
+  whitelistError?: string;
+  classification?: {
+    isDaycareRelated: boolean;
+    confidence: number;
+    category: string;
+    docType: string;
+    language: 'fr' | 'de' | 'en';
+    topics: string[];
+  };
+  classifierSkipReason?: string;
+}
+
 /** Maximum file size for PDF downloads (50MB) */
 const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024;
 
@@ -68,6 +87,186 @@ export class CrawlerService {
     private playwrightRenderer: PlaywrightRendererService,
     private classifier: ClassifierService,
   ) {}
+
+  private classifierSkipReason(classification: any): string {
+    const debug = classification?._debug || {};
+    return debug.negativePattern
+      ? `negative pattern: "${debug.negativePattern}"`
+      : `score ${debug.rawScore?.toFixed?.(1) || '0'} < threshold ${debug.threshold || CLASSIFIER_CONFIG.threshold}`;
+  }
+
+  /**
+   * Scan a source page and return discovered candidate links + classification results.
+   * This does NOT create/update any assets.
+   */
+  async scanSource(sourceId: number): Promise<{
+    sourceId: number;
+    sourceLabel: string;
+    sourceUrl: string;
+    discovered: number;
+    whitelisted: number;
+    nonWhitelisted: number;
+    pdfCount: number;
+    daycareRelated: number;
+    classifierSkipped: number;
+    candidates: CandidateScanResult[];
+  }> {
+    const source = await this.prisma.cantonSource.findUnique({
+      where: { id: sourceId },
+      include: { canton: true },
+    });
+
+    if (!source || !source.isActive) {
+      throw new Error(`Source ${sourceId} not found or inactive`);
+    }
+
+    this.logger.log(`Scanning source: ${source.label} (${source.url})`);
+    this.validateUrl(source.url);
+
+    const html = await this.fetchPage(source.url, source.renderType === 'dynamic');
+    const extracted = this.htmlParser.extractLinks(html, source.url, source.cssSelector);
+
+    const candidates: CandidateScanResult[] = extracted.map(candidate => {
+      let whitelisted = true;
+      let whitelistError: string | undefined;
+      try {
+        this.validateUrl(candidate.url);
+      } catch (e: any) {
+        whitelisted = false;
+        whitelistError = e?.message || 'Not whitelisted';
+      }
+
+      if (!whitelisted) {
+        return {
+          url: candidate.url,
+          title: candidate.title,
+          anchorText: candidate.anchorText,
+          sectionHeading: candidate.sectionHeading,
+          isPdf: candidate.isPdf,
+          whitelisted,
+          whitelistError,
+        };
+      }
+
+      const classification: any = this.classifier.classifyFromMetadata({
+        anchorText: candidate.anchorText,
+        url: candidate.url,
+        sectionHeading: candidate.sectionHeading,
+        defaultLang: source.canton.defaultLang,
+      });
+
+      const isDaycareRelated = Boolean(classification.isDaycareRelated);
+
+      return {
+        url: candidate.url,
+        title: candidate.title,
+        anchorText: candidate.anchorText,
+        sectionHeading: candidate.sectionHeading,
+        isPdf: candidate.isPdf,
+        whitelisted,
+        classification: {
+          isDaycareRelated,
+          confidence: classification.confidence,
+          category: classification.category,
+          docType: classification.docType,
+          language: classification.language,
+          topics: classification.topics,
+        },
+        classifierSkipReason: isDaycareRelated ? undefined : this.classifierSkipReason(classification),
+      };
+    });
+
+    const whitelistedCount = candidates.filter(c => c.whitelisted).length;
+    const nonWhitelistedCount = candidates.length - whitelistedCount;
+    const pdfCount = candidates.filter(c => c.isPdf).length;
+    const classifierSkipped = candidates.filter(c => c.whitelisted && c.classification && !c.classification.isDaycareRelated).length;
+    const daycareRelated = candidates.filter(c => c.whitelisted && c.classification && c.classification.isDaycareRelated).length;
+
+    return {
+      sourceId: source.id,
+      sourceLabel: source.label,
+      sourceUrl: source.url,
+      discovered: candidates.length,
+      whitelisted: whitelistedCount,
+      nonWhitelisted: nonWhitelistedCount,
+      pdfCount,
+      daycareRelated,
+      classifierSkipped,
+      candidates,
+    };
+  }
+
+  /**
+   * Ingest a list of URLs from a given source page into the review queue.
+   * Fetches the source page to get consistent metadata (anchor text / PDF flag).
+   */
+  async ingestUrlsFromSource(
+    sourceId: number,
+    urls: string[],
+    options?: { force?: boolean },
+  ): Promise<{
+    requested: number;
+    created: number;
+    updated: number;
+    unchanged: number;
+    skipped: number;
+    errors: Array<{ url: string; error: string }>;
+    results: Array<{ url: string; outcome: 'created' | 'updated' | 'unchanged' | 'skipped' | 'error' }>;
+  }> {
+    const source = await this.prisma.cantonSource.findUnique({
+      where: { id: sourceId },
+      include: { canton: true },
+    });
+
+    if (!source || !source.isActive) {
+      throw new Error(`Source ${sourceId} not found or inactive`);
+    }
+
+    // Fetch source page to get anchor text / pdf flag for requested URLs
+    this.validateUrl(source.url);
+    const html = await this.fetchPage(source.url, source.renderType === 'dynamic');
+    const extracted = this.htmlParser.extractLinks(html, source.url, source.cssSelector);
+    const byUrl = new Map<string, CandidateDocument>(extracted.map(c => [c.url, c]));
+
+    const summary = {
+      requested: urls.length,
+      created: 0,
+      updated: 0,
+      unchanged: 0,
+      skipped: 0,
+      errors: [] as Array<{ url: string; error: string }>,
+      results: [] as Array<{ url: string; outcome: 'created' | 'updated' | 'unchanged' | 'skipped' | 'error' }>,
+    };
+
+    for (const url of urls) {
+      try {
+        const candidate =
+          byUrl.get(url) ||
+          ({
+            url,
+            title: this.extractFilename(url),
+            anchorText: this.extractFilename(url),
+            isPdf: url.toLowerCase().endsWith('.pdf') || url.toLowerCase().includes('.pdf?'),
+          } as CandidateDocument);
+
+        // SSRF prevention
+        this.validateUrl(candidate.url);
+
+        const outcome = await this.processCandidate(candidate, source as any, {
+          force: Boolean(options?.force),
+        });
+
+        summary[outcome]++;
+        summary.results.push({ url, outcome });
+      } catch (e: any) {
+        const error = e?.message || 'Unknown error';
+        summary.errors.push({ url, error });
+        summary.results.push({ url, outcome: 'error' });
+      }
+    }
+
+    return summary;
+  }
 
   /**
    * Get or create system user for crawler operations
@@ -285,10 +484,11 @@ export class CrawlerService {
   private async processCandidate(
     candidate: CandidateDocument,
     source: CantonSourceWithCanton,
-    debug?: {
-      debugEnabled: boolean;
-      debugLimit: number;
-      onClassifierSkip: (info: {
+    options?: {
+      force?: boolean;
+      debugEnabled?: boolean;
+      debugLimit?: number;
+      onClassifierSkip?: (info: {
         url: string;
         reason: string;
         anchorText: string;
@@ -307,28 +507,32 @@ export class CrawlerService {
       defaultLang: source.canton.defaultLang,
     });
 
-    // Skip if NOT daycare-related (regardless of confidence - if score is below threshold, skip)
+    // Skip if NOT daycare-related (unless forced)
     if (!classification.isDaycareRelated) {
-      const debug = (classification as any)._debug || {};
-      const reason = debug.negativePattern 
-        ? `negative pattern: "${debug.negativePattern}"`
-        : `score ${debug.rawScore?.toFixed(1) || '0'} < threshold ${debug.threshold || CLASSIFIER_CONFIG.threshold}`;
-      const topicsInfo = debug.topicsFound && debug.topicsFound.length > 0 
-        ? ` (topics: ${debug.topicsFound.join(', ')})`
+      const classifierReason = this.classifierSkipReason(classification as any);
+      const topicsInfo = (classification as any)?._debug?.topicsFound?.length
+        ? ` (topics: ${(classification as any)._debug.topicsFound.join(', ')})`
         : '';
-      this.logger.debug(
-        `Skipping ${candidate.url} - not daycare-related (${reason}, confidence: ${classification.confidence.toFixed(2)}${topicsInfo}, anchor: "${candidate.anchorText}")`
-      );
 
-      if (debug?.debugEnabled) {
-        debug.onClassifierSkip({
-          url: candidate.url,
-          reason: `not daycare-related (${reason})`,
-          anchorText: candidate.anchorText,
-          confidence: classification.confidence,
-        });
+      if (!options?.force) {
+        this.logger.debug(
+          `Skipping ${candidate.url} - not daycare-related (${classifierReason}, confidence: ${classification.confidence.toFixed(2)}${topicsInfo}, anchor: "${candidate.anchorText}")`
+        );
+
+        if (options?.debugEnabled && options.onClassifierSkip) {
+          options.onClassifierSkip({
+            url: candidate.url,
+            reason: `not daycare-related (${classifierReason})`,
+            anchorText: candidate.anchorText,
+            confidence: classification.confidence,
+          });
+        }
+        return 'skipped';
       }
-      return 'skipped';
+
+      this.logger.warn(
+        `FORCING ingest for ${candidate.url} despite classifier (${classifierReason}, confidence: ${classification.confidence.toFixed(2)}${topicsInfo})`
+      );
     }
 
     // ==========================================
@@ -401,10 +605,10 @@ export class CrawlerService {
           source.canton.defaultLang,
         );
 
-        if (!finalClassification.isDaycareRelated) {
+        if (!finalClassification.isDaycareRelated && !options?.force) {
           this.logger.debug(`After parsing, ${candidate.url} still not daycare-related - skipping`);
-          if (debug?.debugEnabled) {
-            debug.onClassifierSkip({
+          if (options?.debugEnabled && options.onClassifierSkip) {
+            options.onClassifierSkip({
               url: candidate.url,
               reason: 'not daycare-related after PDF parse',
               anchorText: candidate.anchorText,

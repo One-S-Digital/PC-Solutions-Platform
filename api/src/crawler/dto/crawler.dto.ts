@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsInt, IsBoolean, IsEnum, Min, Max } from 'class-validator';
+import { IsString, IsOptional, IsInt, IsBoolean, IsEnum, Min, Max, IsArray, ArrayMinSize } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 
 export enum SourceType {
@@ -98,5 +98,21 @@ export class ReviewQueueQueryDto {
   @IsOptional()
   @Type(() => Number)
   limit?: number = 100;
+}
+
+export class IngestUrlsDto {
+  @IsArray()
+  @ArrayMinSize(1)
+  @IsString({ each: true })
+  urls!: string[];
+
+  @IsBoolean()
+  @IsOptional()
+  @Transform(({ value }) => {
+    if (value === 'true' || value === true) return true;
+    if (value === 'false' || value === false) return false;
+    return undefined;
+  })
+  force?: boolean;
 }
 
