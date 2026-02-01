@@ -89,11 +89,14 @@ const Navbar: React.FC<NavbarProps> = ({ onMobileMenuToggle }) => {
           {/* Help Button */}
           <button
             onClick={() => setIsHelpModalOpen(true)}
-            className="relative p-1.5 sm:p-2 rounded-full text-gray-500 hover:text-swiss-teal hover:bg-gray-100 focus:outline-none transition-colors"
+            className="relative flex items-center gap-1.5 px-2 py-1.5 sm:px-3 sm:py-2 rounded-full text-gray-500 hover:text-swiss-teal hover:bg-gray-100 focus:outline-none transition-colors"
             aria-label={t('navbar.help')}
             title={t('navbar.help')}
           >
             <QuestionMarkCircleIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+            <span className="text-xs sm:text-sm font-medium">
+              {t('navbar.helpShort', 'Help')}
+            </span>
           </button>
 
           {currentUser?.role === UserRole.FOUNDATION && (
