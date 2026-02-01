@@ -1210,6 +1210,7 @@
     "submitTo": "Envoyer la commande à",
     "submitting": "Envoi...",
     "subtotal": "Sous-total",
+    "total": "Total",
     "title": "Récapitulatif de commande"
   },
   "promoCodes": {
@@ -1979,6 +1980,7 @@
     },
     "addNewCode": "Ajouter un nouveau code",
     "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce code promo ?",
+    "description": "Créez des codes promo pour les afficher sur votre profil public. Les clients peuvent voir ces codes et les utiliser lors de leurs achats.",
     "noCodesYet": "Aucun code promo pour le moment. Ajoutez le premier !",
     "promoCreated": "Code promo créé avec succès",
     "promoUpdated": "Code promo mis à jour avec succès",
@@ -1994,6 +1996,8 @@
     "form": {
       "code": "Code",
       "codePlaceholder": "ex. SAVE20",
+      "codeHelpText": "Le code que les clients utiliseront (ex. SAVE20, FREESHIP)",
+      "discount": "Réduction",
       "discountType": "Type de réduction",
       "percentage": "Pourcentage",
       "fixedAmount": "Montant fixe (CHF)",
@@ -2002,12 +2006,17 @@
       "expiryDate": "Date d’expiration",
       "description": "Description (facultatif)",
       "descriptionPlaceholder": "ex. Réduction pour les nouveaux clients",
+      "discountPlaceholder": "ex. 20% de réduction, Livraison gratuite, CHF 10 de réduction",
+      "discountHelpText": "Décrivez la réduction que les clients recevront",
+      "descriptionHelpText": "Détails optionnels sur les conditions ou restrictions",
       "maxUsage": "Utilisation max (facultatif)",
       "maxUsagePlaceholder": "Laissez vide pour illimité",
+      "isActive": "Afficher sur le profil",
       "status": "Statut"
     },
     "status": {
       "active": "Actif",
+      "hidden": "Masqué",
       "disabled": "Désactivé",
       "expired": "Expiré"
     },
@@ -2019,12 +2028,15 @@
     "table": {
       "actions": "Actions",
       "code": "Code",
+      "discount": "Réduction",
       "discountOffer": "Réduction",
       "expiry": "Expiration",
       "status": "Statut"
     }
   },
   "promoCodesDisplay": {
+    "title": "Codes promo",
+    "subtitle": "Utilisez ces codes lors de votre achat pour bénéficier de réductions.",
     "noActivePromoCodes": "Aucun code promo actif disponible.",
     "expiresOn": "Expire",
     "usageCount": "Utilisé"
