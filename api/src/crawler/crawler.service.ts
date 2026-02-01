@@ -205,7 +205,7 @@ export class CrawlerService {
   async ingestUrlsFromSource(
     sourceId: number,
     urls: string[],
-    options?: { force?: boolean },
+    options?: { force?: boolean; queueUnchanged?: boolean },
   ): Promise<{
     requested: number;
     created: number;
@@ -256,6 +256,7 @@ export class CrawlerService {
 
         const outcome = await this.processCandidate(candidate, source as any, {
           force: Boolean(options?.force),
+          queueUnchanged: Boolean(options?.queueUnchanged),
         });
 
         summary[outcome]++;
@@ -512,6 +513,7 @@ export class CrawlerService {
     source: CantonSourceWithCanton,
     options?: {
       force?: boolean;
+      queueUnchanged?: boolean;
       debugEnabled?: boolean;
       debugLimit?: number;
       onClassifierSkip?: (info: {
@@ -593,8 +595,22 @@ export class CrawlerService {
         // No change - just update lastCrawledAt
         await this.prisma.asset.update({
           where: { id: existingAsset.id },
-          data: { lastCrawledAt: new Date() },
+          data: {
+            lastCrawledAt: new Date(),
+            ...(options?.queueUnchanged ? { crawlStatus: 'pending_review' } : {}),
+          },
         });
+
+        if (options?.queueUnchanged) {
+          await this.prisma.policyCrawlHistory.create({
+            data: {
+              assetId: existingAsset.id,
+              sourceId: source.id,
+              contentHash: changeHash,
+              changeType: 'unchanged',
+            },
+          });
+        }
         return 'unchanged';
       }
 

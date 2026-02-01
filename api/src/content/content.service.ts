@@ -1253,13 +1253,17 @@ export class ContentService {
     }
 
     try {
+      if (dto.category && dto.contentCategory && dto.category !== dto.contentCategory) {
+        throw new BadRequestException('category and contentCategory must match');
+      }
+      const effectiveCategory = dto.category ?? dto.contentCategory;
       const updatedAsset = await this.prisma.asset.update({
         where: { id },
         data: {
           ...(dto.title && { title: dto.title }),
           ...(dto.description && { description: dto.description }),
           ...(dto.contentPreview && { contentPreview: dto.contentPreview }),
-          ...(dto.category && { contentCategory: dto.category }),
+          ...(effectiveCategory && { contentCategory: effectiveCategory }),
           ...(dto.language && { language: dto.language }),
           ...(dto.country && { country: dto.country }),
           ...(dto.region && { region: dto.region }),
@@ -1273,6 +1277,7 @@ export class ContentService {
           ...(dto.effectiveDate && { effectiveDate: new Date(dto.effectiveDate) }),
           ...(dto.expirationDate && { expirationDate: new Date(dto.expirationDate) }),
           ...(dto.externalLink && { externalLink: dto.externalLink }),
+          ...(dto.crawlStatus !== undefined && { crawlStatus: dto.crawlStatus }),
         },
         include: {
           uploader: {
