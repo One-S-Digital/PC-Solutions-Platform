@@ -359,7 +359,10 @@ export class UsersController {
 
   @Delete(':id')
   @Roles(UserRole.SUPER_ADMIN)
-  remove(@Param('id', ParseUUIDPipe) id: string) {
+  remove(@Param('id', ParseUUIDPipe) id: string, @Query('hard') hard?: string) {
+    if ((hard || '').toLowerCase() === 'true') {
+      return this.usersService.hardRemove(id);
+    }
     return this.usersService.remove(id);
   }
 

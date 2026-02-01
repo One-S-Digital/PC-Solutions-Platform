@@ -1489,6 +1489,91 @@ export class UsersService {
     };
   }
 
+  /**
+   * Hard delete (best-effort) — only allowed when it is safe.
+   *
+   * This is intentionally strict: if the user has dependent records that would
+   * break referential integrity (messages, subscriptions, uploaded assets, etc.),
+   * we refuse with a 409 and provide counts so an admin can decide what to do.
+   */
+  async hardRemove(id: string) {
+    const appUser = await this.prisma.appUser.findUnique({ where: { id } });
+    if (!appUser) {
+      throw new NotFoundException('User not found');
+    }
+
+    const profile = await this.prisma.user.findUnique({ where: { clerkId: appUser.clerkId } });
+
+    // Preflight dependency counts. We only allow hard-delete for "clean" users
+    // (typically newly created accounts) to avoid blowing away important history.
+    const [
+      assetCount,
+      orgMembershipCount,
+      contactInfoCount,
+      messageCount,
+      conversationParticipantCount,
+      subscriptionCount,
+      jobApplicationCount,
+      supportTicketCount,
+      ticketResponseCount,
+    ] = await Promise.all([
+      this.prisma.asset.count({ where: { uploadedById: appUser.id } }),
+      profile ? this.prisma.userOrganization.count({ where: { userId: profile.id } }) : Promise.resolve(0),
+      profile ? this.prisma.userContactInfo.count({ where: { userId: profile.id } }) : Promise.resolve(0),
+      profile
+        ? this.prisma.message.count({
+            where: { OR: [{ senderId: profile.id }, { receiverId: profile.id }] },
+          })
+        : Promise.resolve(0),
+      profile ? this.prisma.conversationParticipant.count({ where: { userId: profile.id } }) : Promise.resolve(0),
+      profile ? this.prisma.subscription.count({ where: { userId: profile.id } }) : Promise.resolve(0),
+      profile ? this.prisma.jobApplication.count({ where: { candidateId: profile.id } }) : Promise.resolve(0),
+      profile ? this.prisma.supportTicket.count({ where: { OR: [{ userId: profile.id }, { assignedTo: profile.id }] } }) : Promise.resolve(0),
+      profile ? this.prisma.ticketResponse.count({ where: { userId: profile.id } }) : Promise.resolve(0),
+    ]);
+
+    // Allow deleting trivial link tables (memberships/contact) automatically,
+    // but refuse when the user has any "real" dependent data.
+    const blocking: Record<string, number> = {
+      assetsUploaded: assetCount,
+      messages: messageCount,
+      conversationParticipants: conversationParticipantCount,
+      subscriptions: subscriptionCount,
+      jobApplications: jobApplicationCount,
+      supportTickets: supportTicketCount,
+      ticketResponses: ticketResponseCount,
+    };
+
+    const hasBlocking = Object.values(blocking).some((n) => n > 0);
+    if (hasBlocking) {
+      throw new ConflictException({
+        message:
+          'User cannot be hard-deleted because dependent records exist. Use soft delete, or manually purge dependent data first.',
+        code: 'HARD_DELETE_BLOCKED',
+        blocking,
+        nonBlocking: {
+          orgMemberships: orgMembershipCount,
+          contactInfo: contactInfoCount,
+        },
+      });
+    }
+
+    await this.prisma.$transaction(async (tx) => {
+      if (profile) {
+        await tx.userOrganization.deleteMany({ where: { userId: profile.id } });
+        await tx.userContactInfo.deleteMany({ where: { userId: profile.id } });
+        await tx.user.delete({ where: { id: profile.id } });
+      } else {
+        // Fall back to clerkId-based cleanup if profile row doesn't exist.
+        await tx.user.deleteMany({ where: { clerkId: appUser.clerkId } });
+      }
+
+      await tx.appUser.delete({ where: { id: appUser.id } });
+    });
+
+    return { success: true };
+  }
+
   // Sync user with Clerk webhook
   async syncWithClerk(clerkData: {
     id: string;
