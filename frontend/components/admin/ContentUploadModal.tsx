@@ -293,7 +293,8 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
     : t(`common:contentUploadModal.title.add.${contentType}`);
   
   const descriptionLabel = contentType === 'policy' ? t('common:contentUploadModal.labels.descriptionPreview') : t('common:contentUploadModal.labels.description');
-  const descriptionMaxLength = contentType === 'policy' ? 300 : (contentType === 'e-learning' ? 300 : undefined);
+  const titleMaxLength = 100;
+  const descriptionMaxLength = 1000;
   const policySpecificInputClass = `${STANDARD_INPUT_FIELD} mt-1`;
 
 
@@ -336,7 +337,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div>
           <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.title')} <span className="text-red-500 ml-0.5">*</span></label>
-          <input type="text" name="title" id="title" value={formData.title} onChange={handleInputChange} required className={`${STANDARD_INPUT_FIELD} mt-1`} maxLength={60} />
+          <input type="text" name="title" id="title" value={formData.title} onChange={handleInputChange} required className={`${STANDARD_INPUT_FIELD} mt-1`} maxLength={titleMaxLength} />
         </div>
         <div>
           <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.category')} <span className="text-red-500 ml-0.5">*</span></label>
@@ -347,8 +348,8 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
       </div>
       <div>
         <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">{descriptionLabel}</label>
-        <textarea name="description" id="description" value={formData.description} onChange={handleInputChange} rows={3} className={`${STANDARD_INPUT_FIELD} mt-1`} maxLength={300}></textarea>
-        {formData.description && <p className="text-xs text-gray-400 text-right mt-0.5">{formData.description.length}/{300}</p>}
+        <textarea name="description" id="description" value={formData.description} onChange={handleInputChange} rows={3} className={`${STANDARD_INPUT_FIELD} mt-1`} maxLength={descriptionMaxLength}></textarea>
+        {formData.description && <p className="text-xs text-gray-400 text-right mt-0.5">{formData.description.length}/{descriptionMaxLength}</p>}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         {renderButtonSelect('type', formData.type, Object.values(ELearningContentType).map(v => ({ value: v, label: ELearningContentTypeLabels[v] })), t('common:contentUploadModal.labels.contentType'), true)}
@@ -447,7 +448,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
     <>
       <div>
         <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.documentTitle')} <span className="text-red-500 ml-0.5">*</span></label>
-        <input type="text" name="title" id="title" value={formData.title} onChange={handleInputChange} required className={`${STANDARD_INPUT_FIELD} mt-1`} />
+        <input type="text" name="title" id="title" value={formData.title} onChange={handleInputChange} required className={`${STANDARD_INPUT_FIELD} mt-1`} maxLength={titleMaxLength} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div>
@@ -485,7 +486,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
     <>
       <div>
         <label htmlFor="policyTitle" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.title')} <span className="text-red-500 ml-0.5">*</span></label>
-        <input type="text" name="title" id="policyTitle" value={formData.title} onChange={handleInputChange} required className={policySpecificInputClass} />
+        <input type="text" name="title" id="policyTitle" value={formData.title} onChange={handleInputChange} required className={policySpecificInputClass} maxLength={titleMaxLength} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div>
@@ -551,7 +552,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
       <div>
         <label htmlFor="policyDescription" className="block text-sm font-medium text-gray-700 mb-1">{descriptionLabel}</label>
         <textarea name="description" id="policyDescription" value={formData.description} onChange={handleInputChange} rows={3} className={policySpecificInputClass} maxLength={descriptionMaxLength}></textarea>
-        {formData.description && descriptionMaxLength && <p className="text-xs text-gray-400 text-right mt-0.5">{formData.description.length}/{descriptionMaxLength}</p>}
+        {formData.description && <p className="text-xs text-gray-400 text-right mt-0.5">{formData.description.length}/{descriptionMaxLength}</p>}
       </div>
     </>
   );

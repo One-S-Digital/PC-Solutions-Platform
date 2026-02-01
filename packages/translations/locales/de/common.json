@@ -1113,6 +1113,7 @@
   "navbar": {
     "goBackPreviousPage": "Zurück zur vorherigen Seite",
     "help": "Hilfe und Wissensdatenbank",
+    "helpShort": "Hilfe",
     "newMessages": "Neue Nachrichten",
     "noNewNotifications": "Keine neuen Benachrichtigungen",
     "notifications": "Benachrichtigungen",

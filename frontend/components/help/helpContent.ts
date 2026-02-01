@@ -191,7 +191,7 @@ export const HELP_ARTICLES: HelpArticle[] = [
     descriptionKey: 'help:articles.promoCodes.description',
     contentKey: 'help:articles.promoCodes.content',
     category: 'supplier',
-    roles: [UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.ADMIN, UserRole.SUPER_ADMIN],
+    roles: [UserRole.PRODUCT_SUPPLIER, UserRole.ADMIN, UserRole.SUPER_ADMIN],
     keywords: ['promo', 'code', 'discount', 'coupon', 'offer', 'promotion'],
   },
 

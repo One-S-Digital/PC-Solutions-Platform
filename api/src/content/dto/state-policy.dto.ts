@@ -26,7 +26,7 @@ import {
 export class UploadStatePolicyDto {
   @IsString()
   @MinLength(3, { message: 'Policy title must be at least 3 characters long' })
-  @MaxLength(200, { message: 'Policy title must not exceed 200 characters' })
+  @MaxLength(100, { message: 'Policy title must not exceed 100 characters' })
   title: string;
 
   @IsOptional()
@@ -36,7 +36,7 @@ export class UploadStatePolicyDto {
 
   @IsOptional()
   @IsString()
-  @MaxLength(300, { message: 'Content preview must not exceed 300 characters' })
+  @MaxLength(1000, { message: 'Content preview must not exceed 1000 characters' })
   contentPreview?: string;
 
   @Transform(({ value }) => {
@@ -162,7 +162,7 @@ export class UpdateStatePolicyDto {
   @IsOptional()
   @IsString()
   @MinLength(3, { message: 'Policy title must be at least 3 characters long' })
-  @MaxLength(200, { message: 'Policy title must not exceed 200 characters' })
+  @MaxLength(100, { message: 'Policy title must not exceed 100 characters' })
   title?: string;
 
   @IsOptional()
@@ -172,7 +172,7 @@ export class UpdateStatePolicyDto {
 
   @IsOptional()
   @IsString()
-  @MaxLength(300, { message: 'Content preview must not exceed 300 characters' })
+  @MaxLength(1000, { message: 'Content preview must not exceed 1000 characters' })
   contentPreview?: string;
 
   @IsOptional()

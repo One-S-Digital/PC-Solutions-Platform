@@ -66,6 +66,14 @@ Navigate to `/service-provider/dashboard`.
 
 Navigate to `/service-provider/service-listings`.
 
+### Shortcut from Edit Profile (new)
+
+You can also jump to Service Listings from the profile editor:
+
+1. Go to **Settings** → **Edit Profile**
+2. Click **My Services** (next to **Save Changes**)
+3. You’ll land on `/service-provider/service-listings`, where you can click **Create Service**
+
 **File Reference:**
 - `frontend/pages/service-provider/ServiceProviderListingsPage.tsx`
 

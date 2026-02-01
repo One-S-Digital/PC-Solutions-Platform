@@ -1,22 +1,22 @@
 # i18n Legacy Backlog
 
-> **Last Updated:** 12/29/2025, 6:51:54 PM
+> **Last Updated:** 2/1/2026, 1:44:54 PM
 > 
 > **Purpose:** Tracking document only - these issues do NOT block commits or releases.
 > Fix them incrementally when working in affected files.
 
 ## Summary
 
-- **Total Legacy Issues:** 108
+- **Total Legacy Issues:** 109
 - **High Confidence:** 31
-- **Medium Confidence:** 77
+- **Medium Confidence:** 78
 
 ### By Area
 
 | Area | High | Medium | Total |
 |------|------|--------|-------|
 | Frontend | 8 | 48 | 56 |
-| Admin | 0 | 23 | 23 |
+| Admin | 0 | 24 | 24 |
 | UI Package | 0 | 0 | 0 |
 | Translations | 23 | 6 | 29 |
 | Other | 0 | 0 | 0 |
@@ -33,19 +33,19 @@
 
 **High Confidence:**
 
-- Line 497: `"Education Policy"`
-- Line 497: `"Education Policy"`
-- Line 501: `"Data Privacy"`
-- Line 501: `"Data Privacy"`
+- Line 502: `"Education Policy"`
+- Line 502: `"Education Policy"`
+- Line 506: `"Data Privacy"`
+- Line 506: `"Data Privacy"`
 
 **Medium Confidence:**
 
-- Line 428: `"Child Development"`
-- Line 428: `"Child Development"`
-- Line 435: `"Other Content"`
-- Line 500: `"Child Protection"`
-- Line 500: `"Child Protection"`
-- Line 1118: `"New Client"`
+- Line 433: `"Child Development"`
+- Line 433: `"Child Development"`
+- Line 440: `"Other Content"`
+- Line 505: `"Child Protection"`
+- Line 505: `"Child Protection"`
+- Line 1133: `"New Client"`
 
 ---
 
@@ -131,12 +131,12 @@
 **Medium Confidence:**
 
 - Line 29: `"Authentication token not available"`
-- Line 66: `"An unexpected error occurred"`
-- Line 84: `"Authentication token not available"`
-- Line 129: `"An unexpected error occurred"`
-- Line 146: `"Authentication token not available"`
-- Line 158: `"An unexpected error occurred"`
-- Line 172: `"Authentication token not available"`
+- Line 69: `"An unexpected error occurred"`
+- Line 87: `"Authentication token not available"`
+- Line 132: `"An unexpected error occurred"`
+- Line 149: `"Authentication token not available"`
+- Line 161: `"An unexpected error occurred"`
+- Line 175: `"Authentication token not available"`
 
 ---
 
@@ -289,7 +289,7 @@
 
 **Medium Confidence:**
 
-- Line 640: `"In Review"`
+- Line 643: `"In Review"`
 
 ---
 
@@ -320,6 +320,16 @@
 **Medium Confidence:**
 
 - Line 295: `"Organization Name"`
+
+---
+
+#### `admin/src/pages/AdminOrganizationProfileEdit.tsx`
+
+**Total:** 1 (0 high, 1 medium)
+
+**Medium Confidence:**
+
+- Line 75: `"Reggio Emilia"`
 
 ---
 

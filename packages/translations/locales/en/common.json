@@ -1128,6 +1128,7 @@
   "navbar": {
     "goBackPreviousPage": "Go back to previous page",
     "help": "Help & Knowledge Base",
+    "helpShort": "Help",
     "newMessages": "New messages",
     "noNewNotifications": "No new notifications",
     "notifications": "Notifications",

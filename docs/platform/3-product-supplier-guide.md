@@ -96,6 +96,14 @@ Navigate to `/supplier/dashboard` or click **Dashboard** in the menu.
 
 Navigate to `/supplier/product-listings` or click **Product Listings** in the supplier menu.
 
+### Shortcut from Edit Profile (new)
+
+You can also jump to Product Listings from the profile editor:
+
+1. Go to **Settings** → **Edit Profile**
+2. Click **My Products** (next to **Save Changes**)
+3. You’ll land on `/supplier/product-listings`, where you can click **Create Product**
+
 **File Reference:**
 - `frontend/pages/supplier/SupplierProductListingsPage.tsx`
 
