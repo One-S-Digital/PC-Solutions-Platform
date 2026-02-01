@@ -33,12 +33,25 @@ interface PolicyReviewFormData {
 }
 
 const getPolicyCategories = (t: (key: string) => string) => [
-  { value: 'EducationPolicy', label: t('content:policyCategories.EducationPolicy') },
-  { value: 'Health&Safety', label: t('content:policyCategories.Health&Safety') },
-  { value: 'Labor&Employment', label: t('content:policyCategories.Labor&Employment') },
-  { value: 'ChildProtection', label: t('content:policyCategories.ChildProtection') },
+  // Values must match API POLICY_CATEGORIES exactly (see api/src/content/dto/content.enums.ts)
+  { value: 'Education Policy', label: t('content:policyCategories.EducationPolicy') },
+  { value: 'Health & Safety', label: t('content:policyCategories.Health&Safety') },
+  { value: 'Labor & Employment', label: t('content:policyCategories.Labor&Employment') },
+  { value: 'Child Protection', label: t('content:policyCategories.ChildProtection') },
+  { value: 'Data Privacy', label: t('content:policyCategories.DataPrivacy', 'Data Privacy') },
+  { value: 'Environmental', label: t('content:policyCategories.Environmental', 'Environmental') },
   { value: 'Other', label: t('content:policyCategories.Other') },
 ];
+
+function formatApiError(error: any): string {
+  const msg = error?.response?.data?.message ?? error?.message;
+  if (typeof msg === 'string') return msg;
+  try {
+    return JSON.stringify(error?.response?.data ?? msg);
+  } catch {
+    return String(msg);
+  }
+}
 
 const PolicyCard: React.FC<{
   policy: StatePolicyAsset;
@@ -299,7 +312,11 @@ export default function PolicyReviewPage() {
   const handleApprove = async (assetId: string, updates: PolicyReviewFormData) => {
     try {
       await apiClient.patch(`/content/state-policies/${assetId}`, {
-        ...updates,
+        title: updates.title,
+        category: updates.contentCategory,
+        policyType: updates.policyType,
+        tags: updates.tags,
+        contentPreview: updates.contentPreview,
         status: 'Published',
         crawlStatus: 'approved',
       });
@@ -307,7 +324,7 @@ export default function PolicyReviewPage() {
       fetchPolicies();
       setSelectedPolicy(null);
     } catch (error: any) {
-      alert(`${t('admin:policyReview.panel.approveError')}: ${error.response?.data?.message || error.message}`);
+      alert(`${t('admin:policyReview.panel.approveError')}: ${formatApiError(error)}`);
     }
   };
 
@@ -321,7 +338,7 @@ export default function PolicyReviewPage() {
       fetchPolicies();
       setSelectedPolicy(null);
     } catch (error: any) {
-      alert(`${t('admin:policyReview.panel.rejectError')}: ${error.response?.data?.message || error.message}`);
+      alert(`${t('admin:policyReview.panel.rejectError')}: ${formatApiError(error)}`);
     }
   };
 

@@ -185,6 +185,20 @@ export class UpdateStatePolicyDto {
   @IsString()
   category?: PolicyCategory;
 
+  /**
+   * Backwards-compatible alias for `category`.
+   * Some clients historically send `contentCategory`; we store it as `Asset.contentCategory`.
+   */
+  @IsOptional()
+  @Transform(({ value }) => {
+    if (typeof value === 'string' && POLICY_CATEGORIES.includes(value as any)) {
+      return value;
+    }
+    return undefined;
+  })
+  @IsString()
+  contentCategory?: PolicyCategory;
+
   @IsOptional()
   @Transform(({ value }) => {
     if (typeof value === 'string') {
@@ -264,6 +278,15 @@ export class UpdateStatePolicyDto {
   })
   @IsEnum(ContentStatus, { message: 'Invalid status value' })
   status?: ContentStatus;
+
+  /**
+   * Crawler workflow status for STATE_POLICY assets (e.g. pending_review, approved, rejected).
+   * This is stored as `Asset.crawlStatus`.
+   */
+  @IsOptional()
+  @IsString()
+  @MaxLength(50, { message: 'crawlStatus must not exceed 50 characters' })
+  crawlStatus?: string;
 
   @IsOptional()
   @IsString()
