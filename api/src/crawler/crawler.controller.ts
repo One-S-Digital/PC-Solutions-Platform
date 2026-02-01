@@ -24,7 +24,7 @@ export class CrawlerController {
 
   // Trigger manual crawl with input validation
   @Post('trigger/:sourceId')
-  async triggerCrawl(@Param('sourceId') sourceId: string) {
+  async triggerCrawl(@Param('sourceId') sourceId: string, @Query('debug') debug?: string) {
     if (!this.isCrawlerEnabled()) {
       throw new BadRequestException('Crawler is disabled');
     }
@@ -36,7 +36,10 @@ export class CrawlerController {
     }
 
     try {
-      const results = await this.crawlerScheduler.triggerCrawl(id);
+      const debugEnabled = debug === '1' || debug === 'true';
+      const results = await this.crawlerScheduler.triggerCrawl(id, {
+        debug: debugEnabled,
+      });
       return { success: true, data: results };
     } catch (error: any) {
       // Provide user-friendly error messages

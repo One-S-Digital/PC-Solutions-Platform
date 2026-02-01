@@ -77,11 +77,14 @@ export class CrawlerScheduler implements OnModuleInit {
   }
 
   // Manual trigger for admin
-  async triggerCrawl(sourceId: number): Promise<any> {
+  async triggerCrawl(
+    sourceId: number,
+    options?: { debug?: boolean; debugLimit?: number },
+  ): Promise<any> {
     if (!this.isCrawlerEnabled()) {
       throw new Error('Crawler is disabled (set CRAWLER_ENABLED=true to enable).');
     }
-    return this.crawler.crawlSource(sourceId);
+    return this.crawler.crawlSource(sourceId, options);
   }
 
   // Check for stale sources daily

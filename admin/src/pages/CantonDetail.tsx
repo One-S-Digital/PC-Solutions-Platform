@@ -406,7 +406,7 @@ export default function CantonDetailPage() {
     
     setTriggeringCrawl(sourceId);
     try {
-      const response = await apiClient.post(`/admin/crawler/trigger/${sourceId}`);
+      const response = await apiClient.post(`/admin/crawler/trigger/${sourceId}?debug=1`);
       const results = response.data?.data || response.data;
       
       const discovered = results?.discovered || 0;
@@ -418,6 +418,7 @@ export default function CantonDetailPage() {
       const skipped = results?.skipped || 0;
       const errorsCount = results?.errors?.length || 0;
       const needsReview = created + updated;
+      const debug = results?.debug;
 
       // Show detailed results
       const message = results 
@@ -430,7 +431,12 @@ export default function CantonDetailPage() {
           `Unchanged: ${unchanged} documents\n` +
           `Skipped (classifier): ${skipped} documents\n` +
           (errorsCount > 0 ? `\nErrors: ${errorsCount}` : '') +
-          (needsReview > 0 ? `\n\nNext step: review ${needsReview} document(s) in the Policy Review tab.` : '')
+          (needsReview > 0 ? `\n\nNext step: review ${needsReview} document(s) in the Policy Review tab.` : '') +
+          (needsReview === 0 && debug ? (
+            `\n\nWhy nothing shows in Policy Review:\n` +
+            (debug.nonWhitelistedSamples?.length ? `- Non-whitelisted examples:\n${debug.nonWhitelistedSamples.slice(0, 5).map((s: any) => `  • ${s.url} (${s.reason})`).join('\n')}\n` : '') +
+            (debug.classifierSkippedSamples?.length ? `- Classifier-skipped examples:\n${debug.classifierSkippedSamples.slice(0, 5).map((s: any) => `  • ${s.url} (${s.reason})`).join('\n')}\n` : '')
+          ) : '')
         : t('admin:cantons.detail.crawlSuccess');
       
       alert(message);
