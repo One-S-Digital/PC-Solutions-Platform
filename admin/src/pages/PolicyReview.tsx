@@ -249,6 +249,13 @@ const PolicyReviewPanel: React.FC<{
   );
 };
 
+/**
+ * Renders the admin policy review interface for browsing, filtering, and moderating state policies.
+ *
+ * The component syncs the canton filter from the URL query parameter `?canton=...`, fetches the review queue applying the current filters (canton and changed-only), and displays a two-column layout with a selectable policy list and a review panel. It also provides handlers to approve or reject a selected policy and refreshes the list after those actions.
+ *
+ * @returns The page UI as a React element.
+ */
 export default function PolicyReviewPage() {
   const { t } = useTranslation(['admin', 'content']);
   const apiClient = useApiClient();
@@ -399,4 +406,3 @@ export default function PolicyReviewPage() {
     </div>
   );
 }
-

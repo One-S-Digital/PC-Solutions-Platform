@@ -364,6 +364,14 @@ const EditSourceModal: React.FC<EditSourceModalProps> = ({ source, onClose, onSu
   );
 };
 
+/**
+ * Renders the admin detail page for a canton, showing its crawler sources and management actions.
+ *
+ * Displays canton header information and a sources table with actions to trigger a crawl, edit, or delete each source.
+ * Manages fetching canton and source data, per-action loading states, opening Add/Edit modals, triggering crawls (shows crawl results and can navigate to the Policy Review queue), and deleting sources.
+ *
+ * @returns The React element for the canton detail admin page.
+ */
 export default function CantonDetailPage() {
   const { t } = useTranslation(['admin']);
   const { code } = useParams<{ code: string }>();
@@ -609,4 +617,3 @@ export default function CantonDetailPage() {
     </div>
   );
 }
-
