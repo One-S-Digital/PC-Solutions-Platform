@@ -104,6 +104,15 @@ Your company profile is visible to foundations browsing the marketplace. A compl
 1. Click **Organization Profile** in the sidebar, OR
 2. Go to **Settings** → **Edit Profile**
 
+### Quick shortcut to manage products (new)
+
+From the **Edit Profile** page, you can now jump directly to your product management area:
+
+1. Open your **Organization Profile**
+2. Click **Edit Profile**
+3. Click **My Products** (next to **Save Changes**)
+4. You will be taken to **Product Listings**, where you can add and manage products
+
 ### Profile Information
 
 #### Basic Company Details
@@ -158,12 +167,39 @@ Manage your products that appear in the marketplace.
 
 ### Accessing Products
 
-Click **Product Listings** in the sidebar.
+You can access Product Listings in either of these ways:
+
+1. Click **Product Listings** in the sidebar, or
+2. Go to **Settings** → **Edit Profile** → **My Products**
 
 ### Creating Products
 
-1. Click **"Create Product"**
+1. Click **"Create Product"** / **"Add Product"**
 2. Fill in product details:
+
+#### Full “Add Product” form walkthrough (recommended)
+
+When the **Add Product** modal opens, complete it in this order:
+
+1. **Product basics**
+   - **Product name (Title)** (required): clear, specific name
+   - **Short subtitle** (optional): one-line benefit
+   - **Description** (required): what it is, who it’s for, what’s included, and key specs
+2. **Categories & compliance**
+   - **Primary category** (recommended): e.g., “Educational Toys”
+   - **Additional categories** (optional): add extra categories to help search/discovery
+   - **Compliance tags / age ranges / delivery methods** (optional): add where relevant
+3. **Pricing & availability**
+   - **Price** and **currency** (recommended)
+   - **Availability status** (ACTIVE/INACTIVE/DRAFT/OUT_OF_STOCK) and visibility toggle
+4. **Inventory**
+   - **Stock status** (In Stock / Low Stock / Out of Stock / On Demand)
+   - **SKU / Vendor SKU / EAN** (optional but helpful for fulfillment)
+   - **Min/Max order quantity** (optional)
+5. **Media & documents**
+   - **Product image** (recommended)
+   - Optional: **gallery images**, **spec sheet**, **MSDS** (if applicable)
+6. Click **Save** to publish/update your listing
 
 #### Basic Information
 

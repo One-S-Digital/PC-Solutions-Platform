@@ -91,6 +91,15 @@ Your company profile showcases your services to potential customers.
 1. Click **Organization Profile** in the sidebar, OR
 2. Go to **Settings** → **Edit Profile**
 
+### Quick shortcut to manage services (new)
+
+From the **Edit Profile** page, you can now jump directly to your service management area:
+
+1. Open your **Organization Profile**
+2. Click **Edit Profile**
+3. Click **My Services** (next to **Save Changes**)
+4. You will be taken to **Service Listings**, where you can add and manage services
+
 ### Profile Information
 
 #### Basic Company Details
@@ -139,11 +148,14 @@ Manage your services that appear in the marketplace.
 
 ### Accessing Services
 
-Click **Service Listings** in the sidebar.
+You can access Service Listings in either of these ways:
+
+1. Click **Service Listings** in the sidebar, or
+2. Go to **Settings** → **Edit Profile** → **My Services**
 
 ### Creating Services
 
-1. Click **"Create Service"**
+1. Click **"Create Service"** / **"Add New Service"**
 2. Fill in service details:
 
 #### Basic Information
@@ -152,17 +164,26 @@ Click **Service Listings** in the sidebar.
 |-------|-------------|----------|
 | **Title** | Service name | ✅ Yes |
 | **Description** | Full service description | ✅ Yes |
-| **Category** | Service category | ✅ Yes |
-| **Price** | Service pricing | ✅ Yes |
-| **Duration** | How long the service takes | ✅ Yes |
+| **Service Categories** | One or more categories (you can add custom) | ✅ Yes |
+| **Delivery Type** | On-site, Remote, or Hybrid | ✅ Recommended |
+| **Availability** | When you can deliver the service | ✅ Yes |
+| **Pricing details** | e.g., CHF 150/hour or Contact for quote | ❌ Optional |
+| **Tags** | Comma-separated keywords | ❌ Optional |
+| **Service image** | Image shown on the marketplace card | ❌ Optional |
 
-#### Service Details
+#### Full “Add New Service” form walkthrough (recommended)
 
-| Field | Description |
-|-------|-------------|
-| **Delivery Type** | On-site, Remote, or Hybrid |
-| **Minimum Booking Notice** | Advance notice required |
-| **Service Highlights** | Key benefits and features |
+When the **Add New Service** modal opens, complete it like this:
+
+1. **Service title** (required): short and clear (e.g., “Deep Cleaning for Daycares”)
+2. **Description** (required): what’s included, what’s not included, and typical duration
+3. **Service categories** (required): pick from suggestions or type your own and press Enter
+4. **Delivery type**: choose On-site / Remote / Hybrid
+5. **Availability & schedule** (required): e.g., “Weekdays 9:00–18:00” or “By appointment”
+6. **Pricing details** (optional): e.g., “CHF 150/hour” or “Contact for quote”
+7. **Tags** (optional): e.g., “cleaning, eco, bilingual”
+8. **Service image** (optional): upload a JPG/PNG so your listing looks professional
+9. Click **Add** (or **Save Changes** when editing)
 
 #### Service Image
 
