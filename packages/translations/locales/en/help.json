@@ -96,8 +96,8 @@
       "content": "<strong>How to open the Supplier Dashboard</strong><br/><br/>1. In the sidebar, click <strong>Dashboard</strong><br/><br/><strong>Key areas (exact click paths)</strong><br/><br/>• <strong>Orders</strong>: manage <strong>Direct Orders</strong> and <strong>Inquiries</strong><br/>• <strong>Product Marketplace</strong>: add/edit your product listings<br/>• <strong>Analytics</strong>: view product performance metrics<br/>• <strong>Organization Profile</strong>: review your public supplier profile<br/>• <strong>Settings</strong>: update account/company settings"
     },
     "productListings": {
-      "title": "Managing Product Listings",
-      "description": "How to add, edit, and manage your product catalog.",
+      "title": "Add & Manage Products",
+      "description": "How to add new products and manage your product listings.",
       "content": "<strong>Quick navigation (from your organization profile)</strong><br/><br/>1. Open your Organization Profile<br/>2. Click <strong>Edit Profile</strong><br/>3. Click <strong>My Products</strong> (next to <strong>Save Changes</strong>)<br/>4. You’ll land on <strong>Product Listings</strong><br/><br/><strong>Adding a New Product</strong><br/><br/>1. Click <strong>Add Product</strong> / <strong>Create Product</strong><br/>2. Complete the form (recommended order):<br/>   • <strong>Basics</strong>: Product name (required), subtitle (optional), description (required)<br/>   • <strong>Categories</strong>: primary category + additional categories (optional) + tags (optional)<br/>   • <strong>Pricing & availability</strong>: price/currency, availability status (draft/active/out of stock), visibility<br/>   • <strong>Inventory</strong>: stock status, SKU/vendor SKU/EAN, min/max order quantity (as needed)<br/>   • <strong>Media & documents</strong>: product image (recommended), optional gallery/spec sheet/MSDS<br/>3. Click <strong>Save</strong> to publish/update your listing<br/><br/><strong>Editing Products</strong><br/>Open any product from your list to edit details, update pricing, or change visibility."
     },
     "supplierOrders": {
@@ -116,8 +116,8 @@
       "content": "<strong>How to open the Service Provider Dashboard</strong><br/><br/>1. In the sidebar, click <strong>Dashboard</strong><br/><br/><strong>Key areas (exact click paths)</strong><br/><br/>• <strong>My Requests</strong>: review and update incoming service requests<br/>• <strong>Service Marketplace</strong>: add/edit your services<br/>• <strong>Analytics</strong>: view performance metrics<br/>• <strong>Organization Profile</strong>: review your public provider profile<br/>• <strong>Settings</strong>: update account/company settings"
     },
     "serviceListings": {
-      "title": "Managing Service Listings",
-      "description": "How to add and manage your service offerings.",
+      "title": "Add & Manage Services",
+      "description": "How to add new services and manage your service listings.",
       "content": "<strong>Quick navigation (from your organization profile)</strong><br/><br/>1. Open your Organization Profile<br/>2. Click <strong>Edit Profile</strong><br/>3. Click <strong>My Services</strong> (next to <strong>Save Changes</strong>)<br/>4. You’ll land on <strong>Service Listings</strong><br/><br/><strong>Adding a New Service</strong><br/><br/>1. Click <strong>Add New Service</strong><br/>2. Complete the form:<br/>   • <strong>Service title</strong> (required)<br/>   • <strong>Description</strong> (required)<br/>   • <strong>Service categories</strong> (required) – select suggestions or type your own and press Enter<br/>   • <strong>Delivery type</strong> (recommended) – On-site / Remote / Hybrid<br/>   • <strong>Availability</strong> (required) – e.g., “Weekdays 9:00–18:00” or “By appointment”<br/>   • <strong>Pricing details</strong> (optional) – e.g., “CHF 150/hour”<br/>   • <strong>Tags</strong> (optional) – comma-separated keywords<br/>   • <strong>Service image</strong> (optional) – upload a JPG/PNG for the marketplace card<br/>3. Click <strong>Add</strong> (or <strong>Save Changes</strong> when editing) to publish/update the service<br/><br/><strong>Service Visibility</strong><br/>If you need to temporarily hide a service, edit it and adjust its visibility/status from your listings view."
     },
     "serviceRequests": {

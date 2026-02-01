@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-02-01T13:44:52.843Z",
+  "timestamp": "2026-02-01T15:02:02.954Z",
   "totalKeys": 2049,
   "byNamespace": {
     "common": 2917,
@@ -101,6 +101,30 @@
       "file": "SettingsPage.tsx",
       "line": 197,
       "context": "{t('common:buttons.saveChanges')}"
+    },
+    {
+      "key": "common:serviceCategories.OTHER",
+      "file": "utils/serviceFormatting.ts",
+      "line": 22,
+      "context": "return t('common:serviceCategories.OTHER', humanize('OTHER'));"
+    },
+    {
+      "key": "common:serviceCategories.OTHER",
+      "file": "utils/serviceFormatting.ts",
+      "line": 22,
+      "context": "return t('common:serviceCategories.OTHER', humanize('OTHER'));"
+    },
+    {
+      "key": "common:notAvailable",
+      "file": "utils/serviceFormatting.ts",
+      "line": 34,
+      "context": "return t('common:notAvailable', 'N/A');"
+    },
+    {
+      "key": "common:notAvailable",
+      "file": "utils/serviceFormatting.ts",
+      "line": 34,
+      "context": "return t('common:notAvailable', 'N/A');"
     },
     {
       "key": "common:marketplace.contactForPricing",
@@ -8653,30 +8677,6 @@
       "context": "<p className=\"text-gray-600 text-sm\">{t('common:loading', 'Loading preview...')}</p>"
     },
     {
-      "key": "common:serviceCategories.OTHER",
-      "file": "utils/serviceFormatting.ts",
-      "line": 22,
-      "context": "return t('common:serviceCategories.OTHER', humanize('OTHER'));"
-    },
-    {
-      "key": "common:serviceCategories.OTHER",
-      "file": "utils/serviceFormatting.ts",
-      "line": 22,
-      "context": "return t('common:serviceCategories.OTHER', humanize('OTHER'));"
-    },
-    {
-      "key": "common:notAvailable",
-      "file": "utils/serviceFormatting.ts",
-      "line": 34,
-      "context": "return t('common:notAvailable', 'N/A');"
-    },
-    {
-      "key": "common:notAvailable",
-      "file": "utils/serviceFormatting.ts",
-      "line": 34,
-      "context": "return t('common:notAvailable', 'N/A');"
-    },
-    {
       "key": "common:errors.fetchFailed",
       "file": "pages/supplier/SupplierSupportPage.tsx",
       "line": 96,
@@ -17143,42 +17143,6 @@
       "context": "{t('adminSystemMonitoringPage.rawLogConsole.title')}"
     },
     {
-      "key": "common:supportPage.ticketForm.responsePlaceholder",
-      "file": "components/support/SupportReplyComposer.tsx",
-      "line": 47,
-      "context": "const displayPlaceholder = placeholder || t('common:supportPage.ticketForm.responsePlaceholder', { defaultValue: 'Type your reply...' });"
-    },
-    {
-      "key": "common:supportPage.ticketForm.responsePlaceholder",
-      "file": "components/support/SupportReplyComposer.tsx",
-      "line": 47,
-      "context": "const displayPlaceholder = placeholder || t('common:supportPage.ticketForm.responsePlaceholder', { defaultValue: 'Type your reply...' });"
-    },
-    {
-      "key": "common:buttons.sending",
-      "file": "components/support/SupportReplyComposer.tsx",
-      "line": 138,
-      "context": "{sending ? t('common:buttons.sending', { defaultValue: 'Sending...' }) : t('common:buttons.reply', { defaultValue: 'Reply' })}"
-    },
-    {
-      "key": "common:buttons.reply",
-      "file": "components/support/SupportReplyComposer.tsx",
-      "line": 138,
-      "context": "{sending ? t('common:buttons.sending', { defaultValue: 'Sending...' }) : t('common:buttons.reply', { defaultValue: 'Reply' })}"
-    },
-    {
-      "key": "common:buttons.sending",
-      "file": "components/support/SupportReplyComposer.tsx",
-      "line": 138,
-      "context": "{sending ? t('common:buttons.sending', { defaultValue: 'Sending...' }) : t('common:buttons.reply', { defaultValue: 'Reply' })}"
-    },
-    {
-      "key": "common:buttons.reply",
-      "file": "components/support/SupportReplyComposer.tsx",
-      "line": 138,
-      "context": "{sending ? t('common:buttons.sending', { defaultValue: 'Sending...' }) : t('common:buttons.reply', { defaultValue: 'Reply' })}"
-    },
-    {
       "key": "common:messages.maxQuantityReached",
       "file": "components/ui/QuantityInput.tsx",
       "line": 33,
@@ -17321,792 +17285,6 @@
       "file": "components/ui/ChipInput.tsx",
       "line": 30,
       "context": "const placeholderText = placeholder || t('common:placeholders.typeorselect');"
-    },
-    {
-      "key": "dashboard:productUploadModal.editTitle",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 185,
-      "context": "? t('dashboard:productUploadModal.editTitle', 'Edit Product')"
-    },
-    {
-      "key": "dashboard:productUploadModal.editTitle",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 185,
-      "context": "? t('dashboard:productUploadModal.editTitle', 'Edit Product')"
-    },
-    {
-      "key": "dashboard:productUploadModal.addTitle",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 186,
-      "context": ": t('dashboard:productUploadModal.addTitle', 'Add Product');"
-    },
-    {
-      "key": "dashboard:productUploadModal.addTitle",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 186,
-      "context": ": t('dashboard:productUploadModal.addTitle', 'Add Product');"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 429,
-      "context": "aria-label={t('common:buttons.close', 'Close')}"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 429,
-      "context": "aria-label={t('common:buttons.close', 'Close')}"
-    },
-    {
-      "key": "common:buttons.add",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 815,
-      "context": "{t('common:buttons.add', 'Add')}"
-    },
-    {
-      "key": "common:buttons.add",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 815,
-      "context": "{t('common:buttons.add', 'Add')}"
-    },
-    {
-      "key": "common:buttons.delete",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 877,
-      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
-    },
-    {
-      "key": "common:buttons.delete",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 877,
-      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
-    },
-    {
-      "key": "common:buttons.add",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 903,
-      "context": "{t('common:buttons.add', 'Add')}"
-    },
-    {
-      "key": "common:buttons.add",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 903,
-      "context": "{t('common:buttons.add', 'Add')}"
-    },
-    {
-      "key": "common:buttons.delete",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1039,
-      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
-    },
-    {
-      "key": "common:buttons.delete",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1039,
-      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
-    },
-    {
-      "key": "common:buttons.add",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1136,
-      "context": "{t('common:buttons.add', 'Add')}"
-    },
-    {
-      "key": "common:buttons.add",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1136,
-      "context": "{t('common:buttons.add', 'Add')}"
-    },
-    {
-      "key": "common:buttons.delete",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1202,
-      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
-    },
-    {
-      "key": "common:buttons.delete",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1202,
-      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
-    },
-    {
-      "key": "common:buttons.remove",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1280,
-      "context": "{t('common:buttons.remove', 'Remove')}"
-    },
-    {
-      "key": "common:buttons.remove",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1280,
-      "context": "{t('common:buttons.remove', 'Remove')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1398,
-      "context": "{t('common:buttons.cancel', 'Cancel')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1398,
-      "context": "{t('common:buttons.cancel', 'Cancel')}"
-    },
-    {
-      "key": "common:buttons.saving",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1402,
-      "context": "? t('common:buttons.saving', 'Saving...')"
-    },
-    {
-      "key": "common:buttons.saving",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1402,
-      "context": "? t('common:buttons.saving', 'Saving...')"
-    },
-    {
-      "key": "common:buttons.saveChanges",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1404,
-      "context": "? t('common:buttons.saveChanges', 'Save changes')"
-    },
-    {
-      "key": "common:buttons.saveChanges",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1404,
-      "context": "? t('common:buttons.saveChanges', 'Save changes')"
-    },
-    {
-      "key": "common:buttons.add",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1405,
-      "context": ": t('common:buttons.add', 'Add')}"
-    },
-    {
-      "key": "common:buttons.add",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1405,
-      "context": ": t('common:buttons.add', 'Add')}"
-    },
-    {
-      "key": "dashboard:supplierDashboard.recentOrdersActions.decline",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 34,
-      "context": "<Button variant=\"danger\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.DECLINED)}>{t('dashboard:supplierDashboard.recentOrdersActions.decline')}</Button>"
-    },
-    {
-      "key": "dashboard:supplierDashboard.recentOrdersActions.decline",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 34,
-      "context": "<Button variant=\"danger\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.DECLINED)}>{t('dashboard:supplierDashboard.recentOrdersActions.decline')}</Button>"
-    },
-    {
-      "key": "dashboard:supplierDashboard.recentOrdersActions.accept",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 35,
-      "context": "<Button variant=\"primary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.ACCEPTED)}>{t('dashboard:supplierDashboard.recentOrdersActions.accept')}</Button>"
-    },
-    {
-      "key": "dashboard:supplierDashboard.recentOrdersActions.accept",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 35,
-      "context": "<Button variant=\"primary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.ACCEPTED)}>{t('dashboard:supplierDashboard.recentOrdersActions.accept')}</Button>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.markAsProcessing",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 39,
-      "context": "return <Button variant=\"secondary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.PROCESSING)}>{t(\"dashboard:orderRequestDetailModal.markAsProcessing\")}</Button>;"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.markAsProcessing",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 39,
-      "context": "return <Button variant=\"secondary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.PROCESSING)}>{t(\"dashboard:orderRequestDetailModal.markAsProcessing\")}</Button>;"
-    },
-    {
-      "key": "dashboard:supplierOrdersPage.actions.ship",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 41,
-      "context": "return <Button variant=\"secondary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.SHIPPED)}>{t('dashboard:supplierOrdersPage.actions.ship')}</Button>;"
-    },
-    {
-      "key": "dashboard:supplierOrdersPage.actions.ship",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 41,
-      "context": "return <Button variant=\"secondary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.SHIPPED)}>{t('dashboard:supplierOrdersPage.actions.ship')}</Button>;"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.title",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 51,
-      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('dashboard:orderRequestDetailModal.title')}</h2>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.title",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 51,
-      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('dashboard:orderRequestDetailModal.title')}</h2>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.orderId",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 56,
-      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.orderId')}</span><span className=\"font-semibold\">{order.id}</span></div>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.orderId",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 56,
-      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.orderId')}</span><span className=\"font-semibold\">{order.id}</span></div>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.date",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 57,
-      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.date')}</span><span className=\"font-semibold\">{new Date(order.requestDate).toLocaleDateString(i18n.language)}</span></div>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.date",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 57,
-      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.date')}</span><span className=\"font-semibold\">{new Date(order.requestDate).toLocaleDateString(i18n.language)}</span></div>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.status",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 58,
-      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.status')}</span><span className=\"font-semibold\">{t(`common:orderStatus.${order.status.toLowerCase().replace(/\\s/g, '')}` as const, order.status)}</span></div>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.status",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 58,
-      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.status')}</span><span className=\"font-semibold\">{t(`common:orderStatus.${order.status.toLowerCase().replace(/\\s/g, '')}` as const, order.status)}</span></div>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.total",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 59,
-      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.total')}</span><span className=\"font-semibold\">CHF {order.totalAmount.toFixed(2)}</span></div>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.total",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 59,
-      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.total')}</span><span className=\"font-semibold\">CHF {order.totalAmount.toFixed(2)}</span></div>"
-    },
-    {
-      "key": "dashboard:supplierOrdersPage.table.foundation",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 63,
-      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:supplierOrdersPage.table.foundation')}</h3>"
-    },
-    {
-      "key": "dashboard:supplierOrdersPage.table.foundation",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 63,
-      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:supplierOrdersPage.table.foundation')}</h3>"
-    },
-    {
-      "key": "common:unknown",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 67,
-      "context": "<p className=\"font-medium\">{daycare?.name || t('common:unknown', 'Unknown')}</p>"
-    },
-    {
-      "key": "common:unknown",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 67,
-      "context": "<p className=\"font-medium\">{daycare?.name || t('common:unknown', 'Unknown')}</p>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.viewDaycareProfile",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 72,
-      "context": "{t('dashboard:orderRequestDetailModal.viewDaycareProfile', t('orderRequestDetailModal.viewDaycareProfile'))}"
-    },
-    {
-      "key": "orderRequestDetailModal.viewDaycareProfile",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 72,
-      "context": "{t('dashboard:orderRequestDetailModal.viewDaycareProfile', t('orderRequestDetailModal.viewDaycareProfile'))}"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.viewDaycareProfile",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 72,
-      "context": "{t('dashboard:orderRequestDetailModal.viewDaycareProfile', t('orderRequestDetailModal.viewDaycareProfile'))}"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.lineItems",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 78,
-      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:orderRequestDetailModal.lineItems')}</h3>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.lineItems",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 78,
-      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:orderRequestDetailModal.lineItems')}</h3>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.product",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 83,
-      "context": "<th className=\"px-4 py-2 text-left font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.product')}</th>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.product",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 83,
-      "context": "<th className=\"px-4 py-2 text-left font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.product')}</th>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.quantity",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 84,
-      "context": "<th className=\"px-4 py-2 text-center font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.quantity')}</th>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.quantity",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 84,
-      "context": "<th className=\"px-4 py-2 text-center font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.quantity')}</th>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.price",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 85,
-      "context": "<th className=\"px-4 py-2 text-right font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.price')}</th>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.price",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 85,
-      "context": "<th className=\"px-4 py-2 text-right font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.price')}</th>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.notes",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 105,
-      "context": "<h3 className=\"font-semibold mb-1\">{t('dashboard:orderRequestDetailModal.notes')}</h3>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.notes",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 105,
-      "context": "<h3 className=\"font-semibold mb-1\">{t('dashboard:orderRequestDetailModal.notes')}</h3>"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 111,
-      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close')}</Button>"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 111,
-      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close')}</Button>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.quoteAmount",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 95,
-      "context": "? t('dashboard:inquiryDetailModal.quoteAmount', 'Quote Amount (CHF)')"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.quoteAmount",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 95,
-      "context": "? t('dashboard:inquiryDetailModal.quoteAmount', 'Quote Amount (CHF)')"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.responseMessage",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 96,
-      "context": ": t('dashboard:inquiryDetailModal.responseMessage', 'Response Message')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.responseMessage",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 96,
-      "context": ": t('dashboard:inquiryDetailModal.responseMessage', 'Response Message')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.responsePlaceholder",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 111,
-      "context": "placeholder={t('dashboard:inquiryDetailModal.responsePlaceholder', 'Enter your response to the customer...')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.responsePlaceholder",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 111,
-      "context": "placeholder={t('dashboard:inquiryDetailModal.responsePlaceholder', 'Enter your response to the customer...')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 118,
-      "context": "{t('common:buttons.cancel', 'Cancel')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 118,
-      "context": "{t('common:buttons.cancel', 'Cancel')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.sendResponse",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 121,
-      "context": "{t('dashboard:inquiryDetailModal.sendResponse', 'Send Response')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.sendResponse",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 121,
-      "context": "{t('dashboard:inquiryDetailModal.sendResponse', 'Send Response')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.decline",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 133,
-      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.decline",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 133,
-      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.markPending",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 136,
-      "context": "{t('dashboard:inquiryDetailModal.actions.markPending', 'Mark as Pending')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.markPending",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 136,
-      "context": "{t('dashboard:inquiryDetailModal.actions.markPending', 'Mark as Pending')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.contacted",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 139,
-      "context": "{t('dashboard:inquiryDetailModal.actions.contacted', 'Mark as Contacted')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.contacted",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 139,
-      "context": "{t('dashboard:inquiryDetailModal.actions.contacted', 'Mark as Contacted')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.decline",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 148,
-      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.decline",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 148,
-      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.sendQuote",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 151,
-      "context": "{t('dashboard:inquiryDetailModal.actions.sendQuote', 'Send Quote')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.sendQuote",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 151,
-      "context": "{t('dashboard:inquiryDetailModal.actions.sendQuote', 'Send Quote')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.markFulfilled",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 154,
-      "context": "{t('dashboard:inquiryDetailModal.actions.markFulfilled', 'Mark as Fulfilled')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.markFulfilled",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 154,
-      "context": "{t('dashboard:inquiryDetailModal.actions.markFulfilled', 'Mark as Fulfilled')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.decline",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 162,
-      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.decline",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 162,
-      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.markFulfilled",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 165,
-      "context": "{t('dashboard:inquiryDetailModal.actions.markFulfilled', 'Mark as Fulfilled')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.markFulfilled",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 165,
-      "context": "{t('dashboard:inquiryDetailModal.actions.markFulfilled', 'Mark as Fulfilled')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.title",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 178,
-      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('dashboard:inquiryDetailModal.title', 'Inquiry Details')}</h2>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.title",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 178,
-      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('dashboard:inquiryDetailModal.title', 'Inquiry Details')}</h2>"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 179,
-      "context": "<button onClick={onClose} className=\"p-1 rounded-full text-gray-400 hover:text-gray-600\" aria-label={t('common:buttons.close', 'Close')}>"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 179,
-      "context": "<button onClick={onClose} className=\"p-1 rounded-full text-gray-400 hover:text-gray-600\" aria-label={t('common:buttons.close', 'Close')}>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.inquiryId",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 188,
-      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.inquiryId', 'Inquiry ID')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.inquiryId",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 188,
-      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.inquiryId', 'Inquiry ID')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.date",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 192,
-      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.date', 'Date')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.date",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 192,
-      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.date', 'Date')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.status",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 196,
-      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.status', 'Status')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.status",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 196,
-      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.status', 'Status')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.urgency",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 202,
-      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.urgency', 'Urgency')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.urgency",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 202,
-      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.urgency', 'Urgency')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.from",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 215,
-      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:inquiryDetailModal.from', 'From')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.from",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 215,
-      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:inquiryDetailModal.from', 'From')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.viewProfile",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 225,
-      "context": "{t('dashboard:inquiryDetailModal.viewProfile', 'View Profile')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.viewProfile",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 225,
-      "context": "{t('dashboard:inquiryDetailModal.viewProfile', 'View Profile')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.contactInfo",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 233,
-      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:inquiryDetailModal.contactInfo', 'Contact Information')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.contactInfo",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 233,
-      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:inquiryDetailModal.contactInfo', 'Contact Information')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.preferredContact",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 250,
-      "context": "{t('dashboard:inquiryDetailModal.preferredContact', 'Preferred')}: {t(`preferredContactMethod.${inquiry.preferredContactMethod.toLowerCase()}` as const, inquiry.preferredContactMethod)}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.preferredContact",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 250,
-      "context": "{t('dashboard:inquiryDetailModal.preferredContact', 'Preferred')}: {t(`preferredContactMethod.${inquiry.preferredContactMethod.toLowerCase()}` as const, inquiry.preferredContactMethod)}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.message",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 259,
-      "context": "<h3 className=\"font-semibold mb-2\">{inquiry.subject || t('dashboard:inquiryDetailModal.message', 'Message')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.message",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 259,
-      "context": "<h3 className=\"font-semibold mb-2\">{inquiry.subject || t('dashboard:inquiryDetailModal.message', 'Message')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.productInterest",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 269,
-      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.productInterest', 'Product Interest')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.productInterest",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 269,
-      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.productInterest', 'Product Interest')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.quantity",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 275,
-      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.quantity', 'Est. Quantity')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.quantity",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 275,
-      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.quantity', 'Est. Quantity')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.budget",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 281,
-      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.budget', 'Budget')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.budget",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 281,
-      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.budget', 'Budget')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.yourResponse",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 290,
-      "context": "<h3 className=\"font-semibold mb-2 text-purple-700\">{t('dashboard:inquiryDetailModal.yourResponse', 'Your Response')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.yourResponse",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 290,
-      "context": "<h3 className=\"font-semibold mb-2 text-purple-700\">{t('dashboard:inquiryDetailModal.yourResponse', 'Your Response')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.quotedAmount",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 293,
-      "context": "{t('dashboard:inquiryDetailModal.quotedAmount', 'Quoted Amount')}: CHF {inquiry.quotedAmount.toFixed(2)}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.quotedAmount",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 293,
-      "context": "{t('dashboard:inquiryDetailModal.quotedAmount', 'Quoted Amount')}: CHF {inquiry.quotedAmount.toFixed(2)}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.internalNotes",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 305,
-      "context": "<h3 className=\"font-semibold mb-1\">{t('dashboard:inquiryDetailModal.internalNotes', 'Internal Notes')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.internalNotes",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 305,
-      "context": "<h3 className=\"font-semibold mb-1\">{t('dashboard:inquiryDetailModal.internalNotes', 'Internal Notes')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.respondedAt",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 313,
-      "context": "<p>{t('dashboard:inquiryDetailModal.respondedAt', 'First responded')}: {new Date(inquiry.respondedAt).toLocaleString(i18n.language)}</p>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.respondedAt",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 313,
-      "context": "<p>{t('dashboard:inquiryDetailModal.respondedAt', 'First responded')}: {new Date(inquiry.respondedAt).toLocaleString(i18n.language)}</p>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.fulfilledAt",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 316,
-      "context": "<p>{t('dashboard:inquiryDetailModal.fulfilledAt', 'Fulfilled')}: {new Date(inquiry.fulfilledAt).toLocaleString(i18n.language)}</p>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.fulfilledAt",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 316,
-      "context": "<p>{t('dashboard:inquiryDetailModal.fulfilledAt', 'Fulfilled')}: {new Date(inquiry.fulfilledAt).toLocaleString(i18n.language)}</p>"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 322,
-      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close', 'Close')}</Button>"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 322,
-      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close', 'Close')}</Button>"
     },
     {
       "key": "subscription:requestForm.validation.required",
@@ -19357,6 +18535,1182 @@
       "context": "{t('common:buttons.saveChanges')}"
     },
     {
+      "key": "dashboard:productUploadModal.editTitle",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 185,
+      "context": "? t('dashboard:productUploadModal.editTitle', 'Edit Product')"
+    },
+    {
+      "key": "dashboard:productUploadModal.editTitle",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 185,
+      "context": "? t('dashboard:productUploadModal.editTitle', 'Edit Product')"
+    },
+    {
+      "key": "dashboard:productUploadModal.addTitle",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 186,
+      "context": ": t('dashboard:productUploadModal.addTitle', 'Add Product');"
+    },
+    {
+      "key": "dashboard:productUploadModal.addTitle",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 186,
+      "context": ": t('dashboard:productUploadModal.addTitle', 'Add Product');"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 429,
+      "context": "aria-label={t('common:buttons.close', 'Close')}"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 429,
+      "context": "aria-label={t('common:buttons.close', 'Close')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 815,
+      "context": "{t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 815,
+      "context": "{t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.delete",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 877,
+      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
+    },
+    {
+      "key": "common:buttons.delete",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 877,
+      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 903,
+      "context": "{t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 903,
+      "context": "{t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.delete",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1039,
+      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
+    },
+    {
+      "key": "common:buttons.delete",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1039,
+      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1136,
+      "context": "{t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1136,
+      "context": "{t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.delete",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1202,
+      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
+    },
+    {
+      "key": "common:buttons.delete",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1202,
+      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
+    },
+    {
+      "key": "common:buttons.remove",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1280,
+      "context": "{t('common:buttons.remove', 'Remove')}"
+    },
+    {
+      "key": "common:buttons.remove",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1280,
+      "context": "{t('common:buttons.remove', 'Remove')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1398,
+      "context": "{t('common:buttons.cancel', 'Cancel')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1398,
+      "context": "{t('common:buttons.cancel', 'Cancel')}"
+    },
+    {
+      "key": "common:buttons.saving",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1402,
+      "context": "? t('common:buttons.saving', 'Saving...')"
+    },
+    {
+      "key": "common:buttons.saving",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1402,
+      "context": "? t('common:buttons.saving', 'Saving...')"
+    },
+    {
+      "key": "common:buttons.saveChanges",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1404,
+      "context": "? t('common:buttons.saveChanges', 'Save changes')"
+    },
+    {
+      "key": "common:buttons.saveChanges",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1404,
+      "context": "? t('common:buttons.saveChanges', 'Save changes')"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1405,
+      "context": ": t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1405,
+      "context": ": t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "dashboard:supplierDashboard.recentOrdersActions.decline",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 34,
+      "context": "<Button variant=\"danger\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.DECLINED)}>{t('dashboard:supplierDashboard.recentOrdersActions.decline')}</Button>"
+    },
+    {
+      "key": "dashboard:supplierDashboard.recentOrdersActions.decline",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 34,
+      "context": "<Button variant=\"danger\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.DECLINED)}>{t('dashboard:supplierDashboard.recentOrdersActions.decline')}</Button>"
+    },
+    {
+      "key": "dashboard:supplierDashboard.recentOrdersActions.accept",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 35,
+      "context": "<Button variant=\"primary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.ACCEPTED)}>{t('dashboard:supplierDashboard.recentOrdersActions.accept')}</Button>"
+    },
+    {
+      "key": "dashboard:supplierDashboard.recentOrdersActions.accept",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 35,
+      "context": "<Button variant=\"primary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.ACCEPTED)}>{t('dashboard:supplierDashboard.recentOrdersActions.accept')}</Button>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.markAsProcessing",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 39,
+      "context": "return <Button variant=\"secondary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.PROCESSING)}>{t(\"dashboard:orderRequestDetailModal.markAsProcessing\")}</Button>;"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.markAsProcessing",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 39,
+      "context": "return <Button variant=\"secondary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.PROCESSING)}>{t(\"dashboard:orderRequestDetailModal.markAsProcessing\")}</Button>;"
+    },
+    {
+      "key": "dashboard:supplierOrdersPage.actions.ship",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 41,
+      "context": "return <Button variant=\"secondary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.SHIPPED)}>{t('dashboard:supplierOrdersPage.actions.ship')}</Button>;"
+    },
+    {
+      "key": "dashboard:supplierOrdersPage.actions.ship",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 41,
+      "context": "return <Button variant=\"secondary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.SHIPPED)}>{t('dashboard:supplierOrdersPage.actions.ship')}</Button>;"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.title",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 51,
+      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('dashboard:orderRequestDetailModal.title')}</h2>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.title",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 51,
+      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('dashboard:orderRequestDetailModal.title')}</h2>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.orderId",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 56,
+      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.orderId')}</span><span className=\"font-semibold\">{order.id}</span></div>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.orderId",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 56,
+      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.orderId')}</span><span className=\"font-semibold\">{order.id}</span></div>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.date",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 57,
+      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.date')}</span><span className=\"font-semibold\">{new Date(order.requestDate).toLocaleDateString(i18n.language)}</span></div>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.date",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 57,
+      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.date')}</span><span className=\"font-semibold\">{new Date(order.requestDate).toLocaleDateString(i18n.language)}</span></div>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.status",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 58,
+      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.status')}</span><span className=\"font-semibold\">{t(`common:orderStatus.${order.status.toLowerCase().replace(/\\s/g, '')}` as const, order.status)}</span></div>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.status",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 58,
+      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.status')}</span><span className=\"font-semibold\">{t(`common:orderStatus.${order.status.toLowerCase().replace(/\\s/g, '')}` as const, order.status)}</span></div>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.total",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 59,
+      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.total')}</span><span className=\"font-semibold\">CHF {order.totalAmount.toFixed(2)}</span></div>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.total",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 59,
+      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.total')}</span><span className=\"font-semibold\">CHF {order.totalAmount.toFixed(2)}</span></div>"
+    },
+    {
+      "key": "dashboard:supplierOrdersPage.table.foundation",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 63,
+      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:supplierOrdersPage.table.foundation')}</h3>"
+    },
+    {
+      "key": "dashboard:supplierOrdersPage.table.foundation",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 63,
+      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:supplierOrdersPage.table.foundation')}</h3>"
+    },
+    {
+      "key": "common:unknown",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 67,
+      "context": "<p className=\"font-medium\">{daycare?.name || t('common:unknown', 'Unknown')}</p>"
+    },
+    {
+      "key": "common:unknown",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 67,
+      "context": "<p className=\"font-medium\">{daycare?.name || t('common:unknown', 'Unknown')}</p>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.viewDaycareProfile",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 72,
+      "context": "{t('dashboard:orderRequestDetailModal.viewDaycareProfile', t('orderRequestDetailModal.viewDaycareProfile'))}"
+    },
+    {
+      "key": "orderRequestDetailModal.viewDaycareProfile",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 72,
+      "context": "{t('dashboard:orderRequestDetailModal.viewDaycareProfile', t('orderRequestDetailModal.viewDaycareProfile'))}"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.viewDaycareProfile",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 72,
+      "context": "{t('dashboard:orderRequestDetailModal.viewDaycareProfile', t('orderRequestDetailModal.viewDaycareProfile'))}"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.lineItems",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 78,
+      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:orderRequestDetailModal.lineItems')}</h3>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.lineItems",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 78,
+      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:orderRequestDetailModal.lineItems')}</h3>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.product",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 83,
+      "context": "<th className=\"px-4 py-2 text-left font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.product')}</th>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.product",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 83,
+      "context": "<th className=\"px-4 py-2 text-left font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.product')}</th>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.quantity",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 84,
+      "context": "<th className=\"px-4 py-2 text-center font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.quantity')}</th>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.quantity",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 84,
+      "context": "<th className=\"px-4 py-2 text-center font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.quantity')}</th>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.price",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 85,
+      "context": "<th className=\"px-4 py-2 text-right font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.price')}</th>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.price",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 85,
+      "context": "<th className=\"px-4 py-2 text-right font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.price')}</th>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.notes",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 105,
+      "context": "<h3 className=\"font-semibold mb-1\">{t('dashboard:orderRequestDetailModal.notes')}</h3>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.notes",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 105,
+      "context": "<h3 className=\"font-semibold mb-1\">{t('dashboard:orderRequestDetailModal.notes')}</h3>"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 111,
+      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close')}</Button>"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 111,
+      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close')}</Button>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.quoteAmount",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 95,
+      "context": "? t('dashboard:inquiryDetailModal.quoteAmount', 'Quote Amount (CHF)')"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.quoteAmount",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 95,
+      "context": "? t('dashboard:inquiryDetailModal.quoteAmount', 'Quote Amount (CHF)')"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.responseMessage",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 96,
+      "context": ": t('dashboard:inquiryDetailModal.responseMessage', 'Response Message')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.responseMessage",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 96,
+      "context": ": t('dashboard:inquiryDetailModal.responseMessage', 'Response Message')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.responsePlaceholder",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 111,
+      "context": "placeholder={t('dashboard:inquiryDetailModal.responsePlaceholder', 'Enter your response to the customer...')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.responsePlaceholder",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 111,
+      "context": "placeholder={t('dashboard:inquiryDetailModal.responsePlaceholder', 'Enter your response to the customer...')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 118,
+      "context": "{t('common:buttons.cancel', 'Cancel')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 118,
+      "context": "{t('common:buttons.cancel', 'Cancel')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.sendResponse",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 121,
+      "context": "{t('dashboard:inquiryDetailModal.sendResponse', 'Send Response')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.sendResponse",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 121,
+      "context": "{t('dashboard:inquiryDetailModal.sendResponse', 'Send Response')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.decline",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 133,
+      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.decline",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 133,
+      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.markPending",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 136,
+      "context": "{t('dashboard:inquiryDetailModal.actions.markPending', 'Mark as Pending')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.markPending",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 136,
+      "context": "{t('dashboard:inquiryDetailModal.actions.markPending', 'Mark as Pending')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.contacted",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 139,
+      "context": "{t('dashboard:inquiryDetailModal.actions.contacted', 'Mark as Contacted')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.contacted",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 139,
+      "context": "{t('dashboard:inquiryDetailModal.actions.contacted', 'Mark as Contacted')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.decline",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 148,
+      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.decline",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 148,
+      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.sendQuote",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 151,
+      "context": "{t('dashboard:inquiryDetailModal.actions.sendQuote', 'Send Quote')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.sendQuote",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 151,
+      "context": "{t('dashboard:inquiryDetailModal.actions.sendQuote', 'Send Quote')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.markFulfilled",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 154,
+      "context": "{t('dashboard:inquiryDetailModal.actions.markFulfilled', 'Mark as Fulfilled')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.markFulfilled",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 154,
+      "context": "{t('dashboard:inquiryDetailModal.actions.markFulfilled', 'Mark as Fulfilled')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.decline",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 162,
+      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.decline",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 162,
+      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.markFulfilled",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 165,
+      "context": "{t('dashboard:inquiryDetailModal.actions.markFulfilled', 'Mark as Fulfilled')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.markFulfilled",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 165,
+      "context": "{t('dashboard:inquiryDetailModal.actions.markFulfilled', 'Mark as Fulfilled')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.title",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 178,
+      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('dashboard:inquiryDetailModal.title', 'Inquiry Details')}</h2>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.title",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 178,
+      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('dashboard:inquiryDetailModal.title', 'Inquiry Details')}</h2>"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 179,
+      "context": "<button onClick={onClose} className=\"p-1 rounded-full text-gray-400 hover:text-gray-600\" aria-label={t('common:buttons.close', 'Close')}>"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 179,
+      "context": "<button onClick={onClose} className=\"p-1 rounded-full text-gray-400 hover:text-gray-600\" aria-label={t('common:buttons.close', 'Close')}>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.inquiryId",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 188,
+      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.inquiryId', 'Inquiry ID')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.inquiryId",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 188,
+      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.inquiryId', 'Inquiry ID')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.date",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 192,
+      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.date', 'Date')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.date",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 192,
+      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.date', 'Date')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.status",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 196,
+      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.status', 'Status')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.status",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 196,
+      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.status', 'Status')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.urgency",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 202,
+      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.urgency', 'Urgency')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.urgency",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 202,
+      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.urgency', 'Urgency')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.from",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 215,
+      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:inquiryDetailModal.from', 'From')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.from",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 215,
+      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:inquiryDetailModal.from', 'From')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.viewProfile",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 225,
+      "context": "{t('dashboard:inquiryDetailModal.viewProfile', 'View Profile')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.viewProfile",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 225,
+      "context": "{t('dashboard:inquiryDetailModal.viewProfile', 'View Profile')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.contactInfo",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 233,
+      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:inquiryDetailModal.contactInfo', 'Contact Information')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.contactInfo",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 233,
+      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:inquiryDetailModal.contactInfo', 'Contact Information')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.preferredContact",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 250,
+      "context": "{t('dashboard:inquiryDetailModal.preferredContact', 'Preferred')}: {t(`preferredContactMethod.${inquiry.preferredContactMethod.toLowerCase()}` as const, inquiry.preferredContactMethod)}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.preferredContact",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 250,
+      "context": "{t('dashboard:inquiryDetailModal.preferredContact', 'Preferred')}: {t(`preferredContactMethod.${inquiry.preferredContactMethod.toLowerCase()}` as const, inquiry.preferredContactMethod)}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.message",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 259,
+      "context": "<h3 className=\"font-semibold mb-2\">{inquiry.subject || t('dashboard:inquiryDetailModal.message', 'Message')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.message",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 259,
+      "context": "<h3 className=\"font-semibold mb-2\">{inquiry.subject || t('dashboard:inquiryDetailModal.message', 'Message')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.productInterest",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 269,
+      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.productInterest', 'Product Interest')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.productInterest",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 269,
+      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.productInterest', 'Product Interest')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.quantity",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 275,
+      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.quantity', 'Est. Quantity')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.quantity",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 275,
+      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.quantity', 'Est. Quantity')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.budget",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 281,
+      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.budget', 'Budget')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.budget",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 281,
+      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.budget', 'Budget')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.yourResponse",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 290,
+      "context": "<h3 className=\"font-semibold mb-2 text-purple-700\">{t('dashboard:inquiryDetailModal.yourResponse', 'Your Response')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.yourResponse",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 290,
+      "context": "<h3 className=\"font-semibold mb-2 text-purple-700\">{t('dashboard:inquiryDetailModal.yourResponse', 'Your Response')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.quotedAmount",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 293,
+      "context": "{t('dashboard:inquiryDetailModal.quotedAmount', 'Quoted Amount')}: CHF {inquiry.quotedAmount.toFixed(2)}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.quotedAmount",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 293,
+      "context": "{t('dashboard:inquiryDetailModal.quotedAmount', 'Quoted Amount')}: CHF {inquiry.quotedAmount.toFixed(2)}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.internalNotes",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 305,
+      "context": "<h3 className=\"font-semibold mb-1\">{t('dashboard:inquiryDetailModal.internalNotes', 'Internal Notes')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.internalNotes",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 305,
+      "context": "<h3 className=\"font-semibold mb-1\">{t('dashboard:inquiryDetailModal.internalNotes', 'Internal Notes')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.respondedAt",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 313,
+      "context": "<p>{t('dashboard:inquiryDetailModal.respondedAt', 'First responded')}: {new Date(inquiry.respondedAt).toLocaleString(i18n.language)}</p>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.respondedAt",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 313,
+      "context": "<p>{t('dashboard:inquiryDetailModal.respondedAt', 'First responded')}: {new Date(inquiry.respondedAt).toLocaleString(i18n.language)}</p>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.fulfilledAt",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 316,
+      "context": "<p>{t('dashboard:inquiryDetailModal.fulfilledAt', 'Fulfilled')}: {new Date(inquiry.fulfilledAt).toLocaleString(i18n.language)}</p>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.fulfilledAt",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 316,
+      "context": "<p>{t('dashboard:inquiryDetailModal.fulfilledAt', 'Fulfilled')}: {new Date(inquiry.fulfilledAt).toLocaleString(i18n.language)}</p>"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 322,
+      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close', 'Close')}</Button>"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 322,
+      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close', 'Close')}</Button>"
+    },
+    {
+      "key": "common:supportPage.ticketForm.responsePlaceholder",
+      "file": "components/support/SupportReplyComposer.tsx",
+      "line": 47,
+      "context": "const displayPlaceholder = placeholder || t('common:supportPage.ticketForm.responsePlaceholder', { defaultValue: 'Type your reply...' });"
+    },
+    {
+      "key": "common:supportPage.ticketForm.responsePlaceholder",
+      "file": "components/support/SupportReplyComposer.tsx",
+      "line": 47,
+      "context": "const displayPlaceholder = placeholder || t('common:supportPage.ticketForm.responsePlaceholder', { defaultValue: 'Type your reply...' });"
+    },
+    {
+      "key": "common:buttons.sending",
+      "file": "components/support/SupportReplyComposer.tsx",
+      "line": 138,
+      "context": "{sending ? t('common:buttons.sending', { defaultValue: 'Sending...' }) : t('common:buttons.reply', { defaultValue: 'Reply' })}"
+    },
+    {
+      "key": "common:buttons.reply",
+      "file": "components/support/SupportReplyComposer.tsx",
+      "line": 138,
+      "context": "{sending ? t('common:buttons.sending', { defaultValue: 'Sending...' }) : t('common:buttons.reply', { defaultValue: 'Reply' })}"
+    },
+    {
+      "key": "common:buttons.sending",
+      "file": "components/support/SupportReplyComposer.tsx",
+      "line": 138,
+      "context": "{sending ? t('common:buttons.sending', { defaultValue: 'Sending...' }) : t('common:buttons.reply', { defaultValue: 'Reply' })}"
+    },
+    {
+      "key": "common:buttons.reply",
+      "file": "components/support/SupportReplyComposer.tsx",
+      "line": 138,
+      "context": "{sending ? t('common:buttons.sending', { defaultValue: 'Sending...' }) : t('common:buttons.reply', { defaultValue: 'Reply' })}"
+    },
+    {
+      "key": "common:errors.genericErrorTitle",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 80,
+      "context": "title: t('common:errors.genericErrorTitle'),"
+    },
+    {
+      "key": "common:errors.genericErrorTitle",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 80,
+      "context": "title: t('common:errors.genericErrorTitle'),"
+    },
+    {
+      "key": "common:errors.genericErrorMessage",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 81,
+      "context": "message: t('common:errors.genericErrorMessage'),"
+    },
+    {
+      "key": "common:errors.genericErrorMessage",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 81,
+      "context": "message: t('common:errors.genericErrorMessage'),"
+    },
+    {
+      "key": "notifications.successTitle",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 157,
+      "context": "title: t('notifications.successTitle', 'Success'),"
+    },
+    {
+      "key": "notifications.settingsUpdated",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 158,
+      "context": "message: t('notifications.settingsUpdated', 'Settings updated successfully'),"
+    },
+    {
+      "key": "common:errors.genericErrorTitle",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 164,
+      "context": "title: t('common:errors.genericErrorTitle', 'Error'),"
+    },
+    {
+      "key": "common:errors.genericErrorTitle",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 164,
+      "context": "title: t('common:errors.genericErrorTitle', 'Error'),"
+    },
+    {
+      "key": "common:errors.genericErrorMessage",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 165,
+      "context": "message: error instanceof Error ? error.message : t('common:errors.genericErrorMessage', 'An error occurred'),"
+    },
+    {
+      "key": "common:errors.genericErrorMessage",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 165,
+      "context": "message: error instanceof Error ? error.message : t('common:errors.genericErrorMessage', 'An error occurred'),"
+    },
+    {
+      "key": "common:organizationProfileForm.accessDenied",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 175,
+      "context": "return <p>{t('common:organizationProfileForm.accessDenied')}</p>;"
+    },
+    {
+      "key": "common:organizationProfileForm.accessDenied",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 175,
+      "context": "return <p>{t('common:organizationProfileForm.accessDenied')}</p>;"
+    },
+    {
+      "key": "common:loading",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 181,
+      "context": "<p>{t('common:loading')}</p>"
+    },
+    {
+      "key": "common:loading",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 181,
+      "context": "<p>{t('common:loading')}</p>"
+    },
+    {
+      "key": "common:organizationProfileForm.title",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 188,
+      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal mb-1\">{t('common:organizationProfileForm.title')}</h2>"
+    },
+    {
+      "key": "common:organizationProfileForm.title",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 188,
+      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal mb-1\">{t('common:organizationProfileForm.title')}</h2>"
+    },
+    {
+      "key": "common:organizationProfileForm.subtitle",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 189,
+      "context": "<p className=\"text-sm text-gray-500 mb-6\">{t('common:organizationProfileForm.subtitle')}</p>"
+    },
+    {
+      "key": "common:organizationProfileForm.subtitle",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 189,
+      "context": "<p className=\"text-sm text-gray-500 mb-6\">{t('common:organizationProfileForm.subtitle')}</p>"
+    },
+    {
+      "key": "dashboard:organizationProfileForm.saveSuccess",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 193,
+      "context": "{t('dashboard:organizationProfileForm.saveSuccess')}"
+    },
+    {
+      "key": "dashboard:organizationProfileForm.saveSuccess",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 193,
+      "context": "{t('dashboard:organizationProfileForm.saveSuccess')}"
+    },
+    {
+      "key": "common:organizationProfileForm.labels.capacity",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 200,
+      "context": "{t('common:organizationProfileForm.labels.capacity')}"
+    },
+    {
+      "key": "common:organizationProfileForm.labels.capacity",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 200,
+      "context": "{t('common:organizationProfileForm.labels.capacity')}"
+    },
+    {
+      "key": "common:organizationProfileForm.labels.pedagogy",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 215,
+      "context": "{t('common:organizationProfileForm.labels.pedagogy')}"
+    },
+    {
+      "key": "common:organizationProfileForm.labels.pedagogy",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 215,
+      "context": "{t('common:organizationProfileForm.labels.pedagogy')}"
+    },
+    {
+      "key": "common:organizationProfileForm.placeholders.pedagogy",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 224,
+      "context": "placeholder={t('common:organizationProfileForm.placeholders.pedagogy')}"
+    },
+    {
+      "key": "common:organizationProfileForm.placeholders.pedagogy",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 224,
+      "context": "placeholder={t('common:organizationProfileForm.placeholders.pedagogy')}"
+    },
+    {
+      "key": "common:organizationProfileForm.helpText.commaSeparated",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 226,
+      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
+    },
+    {
+      "key": "common:organizationProfileForm.helpText.commaSeparated",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 226,
+      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
+    },
+    {
+      "key": "common:organizationProfileForm.labels.languages",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 231,
+      "context": "{t('common:organizationProfileForm.labels.languages')}"
+    },
+    {
+      "key": "common:organizationProfileForm.labels.languages",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 231,
+      "context": "{t('common:organizationProfileForm.labels.languages')}"
+    },
+    {
+      "key": "common:organizationProfileForm.placeholders.languages",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 240,
+      "context": "placeholder={t('common:organizationProfileForm.placeholders.languages')}"
+    },
+    {
+      "key": "common:organizationProfileForm.placeholders.languages",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 240,
+      "context": "placeholder={t('common:organizationProfileForm.placeholders.languages')}"
+    },
+    {
+      "key": "common:organizationProfileForm.helpText.commaSeparated",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 242,
+      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
+    },
+    {
+      "key": "common:organizationProfileForm.helpText.commaSeparated",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 242,
+      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
+    },
+    {
+      "key": "common:buttons.saveChanges",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 247,
+      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
+    },
+    {
+      "key": "common:organizationProfileForm.saveButton",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 247,
+      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
+    },
+    {
+      "key": "common:buttons.saveChanges",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 247,
+      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
+    },
+    {
+      "key": "common:organizationProfileForm.saveButton",
+      "file": "components/settings/OrganizationProfileForm.tsx",
+      "line": 247,
+      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
+    },
+    {
+      "key": "common:buttons.confirm",
+      "file": "components/settings/ConfirmDestructiveActionModal.tsx",
+      "line": 25,
+      "context": "const finalConfirmButtonText = confirmButtonText || t('common:buttons.confirm');"
+    },
+    {
+      "key": "common:buttons.confirm",
+      "file": "components/settings/ConfirmDestructiveActionModal.tsx",
+      "line": 25,
+      "context": "const finalConfirmButtonText = confirmButtonText || t('common:buttons.confirm');"
+    },
+    {
+      "key": "forms.required",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 70,
+      "context": "newErrors.code = t('forms.required');"
+    },
+    {
+      "key": "settingsPromoCodeManager.validation.codeMinLength",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 72,
+      "context": "newErrors.code = t('settingsPromoCodeManager.validation.codeMinLength');"
+    },
+    {
+      "key": "forms.required",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 76,
+      "context": "newErrors.discount = t('forms.required');"
+    },
+    {
+      "key": "settingsPromoCodeManager.addEditModal.editTitle",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 124,
+      "context": "? t('settingsPromoCodeManager.addEditModal.editTitle')"
+    },
+    {
+      "key": "settingsPromoCodeManager.addEditModal.addTitle",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 125,
+      "context": ": t('settingsPromoCodeManager.addEditModal.addTitle')}"
+    },
+    {
+      "key": "buttons.close",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 131,
+      "context": "aria-label={t('buttons.close')}"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.code",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 142,
+      "context": "{t('settingsPromoCodeManager.form.code')} <span className=\"text-red-500\">*</span>"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.codePlaceholder",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 151,
+      "context": "placeholder={t('settingsPromoCodeManager.form.codePlaceholder')}"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.codeHelpText",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 156,
+      "context": "{t('settingsPromoCodeManager.form.codeHelpText', 'The code customers will use (e.g., SAVE20, FREESHIP)')}"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.discount",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 163,
+      "context": "{t('settingsPromoCodeManager.form.discount')} <span className=\"text-red-500\">*</span>"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.discountPlaceholder",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 172,
+      "context": "placeholder={t('settingsPromoCodeManager.form.discountPlaceholder', 'e.g., 20% off, Free shipping, CHF 10 off')}"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.discountHelpText",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 177,
+      "context": "{t('settingsPromoCodeManager.form.discountHelpText', 'Describe the discount customers will receive')}"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.description",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 184,
+      "context": "{t('settingsPromoCodeManager.form.description')}"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.descriptionPlaceholder",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 190,
+      "context": "placeholder={t('settingsPromoCodeManager.form.descriptionPlaceholder')}"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.descriptionHelpText",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 195,
+      "context": "{t('settingsPromoCodeManager.form.descriptionHelpText', 'Optional details about terms or conditions')}"
+    },
+    {
+      "key": "settingsPromoCodeManager.form.isActive",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 209,
+      "context": "{t('settingsPromoCodeManager.form.isActive', 'Show on profile')}"
+    },
+    {
+      "key": "buttons.cancel",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 221,
+      "context": "{t('buttons.cancel')}"
+    },
+    {
+      "key": "settingsPromoCodeManager.addEditModal.saving",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 229,
+      "context": "? t('settingsPromoCodeManager.addEditModal.saving')"
+    },
+    {
+      "key": "settingsPromoCodeManager.addEditModal.save",
+      "file": "components/settings/AddPromoCodeModal.tsx",
+      "line": 230,
+      "context": ": t('settingsPromoCodeManager.addEditModal.save')}"
+    },
+    {
       "key": "common:serviceUploadModal.editTitle",
       "file": "components/service-provider/ServiceUploadModal.tsx",
       "line": 87,
@@ -19793,360 +20147,6 @@
       "file": "components/service-provider/ServiceRequestDetailModal.tsx",
       "line": 95,
       "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close')}</Button>"
-    },
-    {
-      "key": "common:errors.genericErrorTitle",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 80,
-      "context": "title: t('common:errors.genericErrorTitle'),"
-    },
-    {
-      "key": "common:errors.genericErrorTitle",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 80,
-      "context": "title: t('common:errors.genericErrorTitle'),"
-    },
-    {
-      "key": "common:errors.genericErrorMessage",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 81,
-      "context": "message: t('common:errors.genericErrorMessage'),"
-    },
-    {
-      "key": "common:errors.genericErrorMessage",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 81,
-      "context": "message: t('common:errors.genericErrorMessage'),"
-    },
-    {
-      "key": "notifications.successTitle",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 157,
-      "context": "title: t('notifications.successTitle', 'Success'),"
-    },
-    {
-      "key": "notifications.settingsUpdated",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 158,
-      "context": "message: t('notifications.settingsUpdated', 'Settings updated successfully'),"
-    },
-    {
-      "key": "common:errors.genericErrorTitle",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 164,
-      "context": "title: t('common:errors.genericErrorTitle', 'Error'),"
-    },
-    {
-      "key": "common:errors.genericErrorTitle",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 164,
-      "context": "title: t('common:errors.genericErrorTitle', 'Error'),"
-    },
-    {
-      "key": "common:errors.genericErrorMessage",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 165,
-      "context": "message: error instanceof Error ? error.message : t('common:errors.genericErrorMessage', 'An error occurred'),"
-    },
-    {
-      "key": "common:errors.genericErrorMessage",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 165,
-      "context": "message: error instanceof Error ? error.message : t('common:errors.genericErrorMessage', 'An error occurred'),"
-    },
-    {
-      "key": "common:organizationProfileForm.accessDenied",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 175,
-      "context": "return <p>{t('common:organizationProfileForm.accessDenied')}</p>;"
-    },
-    {
-      "key": "common:organizationProfileForm.accessDenied",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 175,
-      "context": "return <p>{t('common:organizationProfileForm.accessDenied')}</p>;"
-    },
-    {
-      "key": "common:loading",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 181,
-      "context": "<p>{t('common:loading')}</p>"
-    },
-    {
-      "key": "common:loading",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 181,
-      "context": "<p>{t('common:loading')}</p>"
-    },
-    {
-      "key": "common:organizationProfileForm.title",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 188,
-      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal mb-1\">{t('common:organizationProfileForm.title')}</h2>"
-    },
-    {
-      "key": "common:organizationProfileForm.title",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 188,
-      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal mb-1\">{t('common:organizationProfileForm.title')}</h2>"
-    },
-    {
-      "key": "common:organizationProfileForm.subtitle",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 189,
-      "context": "<p className=\"text-sm text-gray-500 mb-6\">{t('common:organizationProfileForm.subtitle')}</p>"
-    },
-    {
-      "key": "common:organizationProfileForm.subtitle",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 189,
-      "context": "<p className=\"text-sm text-gray-500 mb-6\">{t('common:organizationProfileForm.subtitle')}</p>"
-    },
-    {
-      "key": "dashboard:organizationProfileForm.saveSuccess",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 193,
-      "context": "{t('dashboard:organizationProfileForm.saveSuccess')}"
-    },
-    {
-      "key": "dashboard:organizationProfileForm.saveSuccess",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 193,
-      "context": "{t('dashboard:organizationProfileForm.saveSuccess')}"
-    },
-    {
-      "key": "common:organizationProfileForm.labels.capacity",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 200,
-      "context": "{t('common:organizationProfileForm.labels.capacity')}"
-    },
-    {
-      "key": "common:organizationProfileForm.labels.capacity",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 200,
-      "context": "{t('common:organizationProfileForm.labels.capacity')}"
-    },
-    {
-      "key": "common:organizationProfileForm.labels.pedagogy",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 215,
-      "context": "{t('common:organizationProfileForm.labels.pedagogy')}"
-    },
-    {
-      "key": "common:organizationProfileForm.labels.pedagogy",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 215,
-      "context": "{t('common:organizationProfileForm.labels.pedagogy')}"
-    },
-    {
-      "key": "common:organizationProfileForm.placeholders.pedagogy",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 224,
-      "context": "placeholder={t('common:organizationProfileForm.placeholders.pedagogy')}"
-    },
-    {
-      "key": "common:organizationProfileForm.placeholders.pedagogy",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 224,
-      "context": "placeholder={t('common:organizationProfileForm.placeholders.pedagogy')}"
-    },
-    {
-      "key": "common:organizationProfileForm.helpText.commaSeparated",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 226,
-      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
-    },
-    {
-      "key": "common:organizationProfileForm.helpText.commaSeparated",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 226,
-      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
-    },
-    {
-      "key": "common:organizationProfileForm.labels.languages",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 231,
-      "context": "{t('common:organizationProfileForm.labels.languages')}"
-    },
-    {
-      "key": "common:organizationProfileForm.labels.languages",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 231,
-      "context": "{t('common:organizationProfileForm.labels.languages')}"
-    },
-    {
-      "key": "common:organizationProfileForm.placeholders.languages",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 240,
-      "context": "placeholder={t('common:organizationProfileForm.placeholders.languages')}"
-    },
-    {
-      "key": "common:organizationProfileForm.placeholders.languages",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 240,
-      "context": "placeholder={t('common:organizationProfileForm.placeholders.languages')}"
-    },
-    {
-      "key": "common:organizationProfileForm.helpText.commaSeparated",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 242,
-      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
-    },
-    {
-      "key": "common:organizationProfileForm.helpText.commaSeparated",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 242,
-      "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('common:organizationProfileForm.helpText.commaSeparated')}</p>"
-    },
-    {
-      "key": "common:buttons.saveChanges",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 247,
-      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
-    },
-    {
-      "key": "common:organizationProfileForm.saveButton",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 247,
-      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
-    },
-    {
-      "key": "common:buttons.saveChanges",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 247,
-      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
-    },
-    {
-      "key": "common:organizationProfileForm.saveButton",
-      "file": "components/settings/OrganizationProfileForm.tsx",
-      "line": 247,
-      "context": "{isSaving ? `${t('common:buttons.saveChanges')}...` : t('common:organizationProfileForm.saveButton')}"
-    },
-    {
-      "key": "common:buttons.confirm",
-      "file": "components/settings/ConfirmDestructiveActionModal.tsx",
-      "line": 25,
-      "context": "const finalConfirmButtonText = confirmButtonText || t('common:buttons.confirm');"
-    },
-    {
-      "key": "common:buttons.confirm",
-      "file": "components/settings/ConfirmDestructiveActionModal.tsx",
-      "line": 25,
-      "context": "const finalConfirmButtonText = confirmButtonText || t('common:buttons.confirm');"
-    },
-    {
-      "key": "forms.required",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 70,
-      "context": "newErrors.code = t('forms.required');"
-    },
-    {
-      "key": "settingsPromoCodeManager.validation.codeMinLength",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 72,
-      "context": "newErrors.code = t('settingsPromoCodeManager.validation.codeMinLength');"
-    },
-    {
-      "key": "forms.required",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 76,
-      "context": "newErrors.discount = t('forms.required');"
-    },
-    {
-      "key": "settingsPromoCodeManager.addEditModal.editTitle",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 124,
-      "context": "? t('settingsPromoCodeManager.addEditModal.editTitle')"
-    },
-    {
-      "key": "settingsPromoCodeManager.addEditModal.addTitle",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 125,
-      "context": ": t('settingsPromoCodeManager.addEditModal.addTitle')}"
-    },
-    {
-      "key": "buttons.close",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 131,
-      "context": "aria-label={t('buttons.close')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.code",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 142,
-      "context": "{t('settingsPromoCodeManager.form.code')} <span className=\"text-red-500\">*</span>"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.codePlaceholder",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 151,
-      "context": "placeholder={t('settingsPromoCodeManager.form.codePlaceholder')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.codeHelpText",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 156,
-      "context": "{t('settingsPromoCodeManager.form.codeHelpText', 'The code customers will use (e.g., SAVE20, FREESHIP)')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.discount",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 163,
-      "context": "{t('settingsPromoCodeManager.form.discount')} <span className=\"text-red-500\">*</span>"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.discountPlaceholder",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 172,
-      "context": "placeholder={t('settingsPromoCodeManager.form.discountPlaceholder', 'e.g., 20% off, Free shipping, CHF 10 off')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.discountHelpText",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 177,
-      "context": "{t('settingsPromoCodeManager.form.discountHelpText', 'Describe the discount customers will receive')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.description",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 184,
-      "context": "{t('settingsPromoCodeManager.form.description')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.descriptionPlaceholder",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 190,
-      "context": "placeholder={t('settingsPromoCodeManager.form.descriptionPlaceholder')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.descriptionHelpText",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 195,
-      "context": "{t('settingsPromoCodeManager.form.descriptionHelpText', 'Optional details about terms or conditions')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.form.isActive",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 209,
-      "context": "{t('settingsPromoCodeManager.form.isActive', 'Show on profile')}"
-    },
-    {
-      "key": "buttons.cancel",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 221,
-      "context": "{t('buttons.cancel')}"
-    },
-    {
-      "key": "settingsPromoCodeManager.addEditModal.saving",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 229,
-      "context": "? t('settingsPromoCodeManager.addEditModal.saving')"
-    },
-    {
-      "key": "settingsPromoCodeManager.addEditModal.save",
-      "file": "components/settings/AddPromoCodeModal.tsx",
-      "line": 230,
-      "context": ": t('settingsPromoCodeManager.addEditModal.save')}"
     },
     {
       "key": "recruitment:jobPostModal.workSchedule.title",
