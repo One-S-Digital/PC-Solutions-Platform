@@ -103,6 +103,8 @@ export class CrawlerService {
 
   async crawlSource(sourceId: number): Promise<{
     discovered: number;
+    whitelisted: number;
+    nonWhitelisted: number;
     created: number;
     updated: number;
     unchanged: number;
@@ -119,7 +121,9 @@ export class CrawlerService {
     }
 
     const results = { 
-      discovered: 0, 
+      discovered: 0,
+      whitelisted: 0,
+      nonWhitelisted: 0,
       created: 0, 
       updated: 0, 
       unchanged: 0,
@@ -167,7 +171,14 @@ export class CrawlerService {
         }
       });
 
-      this.logger.log(`Source ${source.label}: Found ${allCandidates.length} candidate links, ${candidates.length} whitelisted`);
+      results.whitelisted = candidates.length;
+      results.nonWhitelisted = Math.max(0, allCandidates.length - candidates.length);
+
+      this.logger.log(
+        `Source ${source.label}: Found ${allCandidates.length} candidate links, ` +
+        `${results.whitelisted} whitelisted, ` +
+        `${results.nonWhitelisted} non-whitelisted`
+      );
 
       // Step 2: Process each candidate with rate limiting
       for (const candidate of candidates) {
