@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useApiClient } from '../services/api';
@@ -423,15 +423,21 @@ const CrawlResultsModal: React.FC<{
   const [ingesting, setIngesting] = useState(false);
   const [ingestResult, setIngestResult] = useState<IngestResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const selectAllRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    const controller = new AbortController();
     const run = async () => {
       try {
         setLoading(true);
         setError(null);
         setIngestResult(null);
 
-        const resp = await apiClient.post(`/admin/crawler/scan/${source.id}`);
+        const resp = await apiClient.post(
+          `/admin/crawler/scan/${source.id}`,
+          undefined,
+          { signal: controller.signal } as any,
+        );
         const data: ScanResult = resp.data?.data || resp.data;
         setScan(data);
 
@@ -442,20 +448,38 @@ const CrawlResultsModal: React.FC<{
         }
         setSelected(initial);
       } catch (e: any) {
+        // Axios uses ERR_CANCELED for aborted requests
+        if (controller.signal.aborted || e?.code === 'ERR_CANCELED') return;
         setError(e.response?.data?.message || e.message || 'Failed to scan source');
       } finally {
         setLoading(false);
       }
     };
     run();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [source.id]);
+    return () => controller.abort();
+  }, [apiClient, source.id]);
+
+  // Close on Escape for keyboard users
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [onClose]);
 
   const visibleCandidates = (scan?.candidates || []).filter(c => {
     if (onlyWhitelisted && !c.whitelisted) return false;
     if (onlyPdf && !c.isPdf) return false;
     return true;
   });
+
+  useEffect(() => {
+    if (!selectAllRef.current) return;
+    const allSelected = visibleCandidates.length > 0 && visibleCandidates.every(c => selected[c.url]);
+    const someSelected = visibleCandidates.some(c => selected[c.url]);
+    selectAllRef.current.indeterminate = someSelected && !allSelected;
+  }, [visibleCandidates, selected]);
 
   const selectedUrls = Object.entries(selected)
     .filter(([, v]) => v)
@@ -471,7 +495,7 @@ const CrawlResultsModal: React.FC<{
 
   const ingestSelected = async () => {
     if (selectedUrls.length === 0) {
-      alert('Select at least one link to ingest.');
+      setError('Select at least one link to ingest.');
       return;
     }
     setIngesting(true);
@@ -492,16 +516,29 @@ const CrawlResultsModal: React.FC<{
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-5xl mx-4 max-h-[90vh] overflow-y-auto">
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      onClick={onClose}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="crawl-results-title"
+        className="bg-white rounded-lg p-6 w-full max-w-5xl mx-4 max-h-[90vh] overflow-y-auto"
+        onClick={e => e.stopPropagation()}
+      >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 className="text-xl font-bold">Crawl results</h2>
+            <h2 id="crawl-results-title" className="text-xl font-bold">Crawl results</h2>
             <p className="text-sm text-gray-600 mt-1">
               {source.label} — <span className="break-all">{source.url}</span>
             </p>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-2xl leading-none">
+          <button
+            onClick={onClose}
+            aria-label="Close crawl results"
+            className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+          >
             ×
           </button>
         </div>
@@ -600,6 +637,7 @@ const CrawlResultsModal: React.FC<{
                     <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">
                       <input
                         type="checkbox"
+                        ref={selectAllRef}
                         checked={visibleCandidates.length > 0 && visibleCandidates.every(c => selected[c.url])}
                         onChange={e => toggleAllVisible(e.target.checked)}
                       />

@@ -265,6 +265,30 @@ export class CrawlerService {
       }
     }
 
+    // Update source crawl status (manual ingest should count as a crawl)
+    const totalProcessed = summary.created + summary.updated + summary.unchanged + summary.skipped;
+    const status =
+      summary.errors.length === 0
+        ? 'success'
+        : totalProcessed > 0
+          ? 'partial'
+          : 'failed';
+
+    await this.prisma.cantonSource.update({
+      where: { id: sourceId },
+      data: {
+        lastCrawlAt: new Date(),
+        lastCrawlStatus: status,
+        lastCrawlError: summary.errors.length > 0
+          ? summary.errors.slice(0, 3).map(e => `${e.url}: ${e.error}`).join('; ')
+          : null,
+        nextCrawlAt:
+          status === 'failed'
+            ? new Date(Date.now() + 24 * 60 * 60 * 1000)
+            : new Date(Date.now() + source.crawlFrequencyDays * 24 * 60 * 60 * 1000),
+      },
+    });
+
     return summary;
   }
 
@@ -507,14 +531,17 @@ export class CrawlerService {
       defaultLang: source.canton.defaultLang,
     });
 
-    // Skip if NOT daycare-related (unless forced)
+    // Allow low-confidence PDFs to proceed to content-based reclassification
+    const shouldAttemptPdfReclass = Boolean(candidate.isPdf) && classification.confidence < 0.5;
+
+    // Skip if NOT daycare-related (unless forced or reclassifying a low-confidence PDF)
     if (!classification.isDaycareRelated) {
       const classifierReason = this.classifierSkipReason(classification as any);
       const topicsInfo = (classification as any)?._debug?.topicsFound?.length
         ? ` (topics: ${(classification as any)._debug.topicsFound.join(', ')})`
         : '';
 
-      if (!options?.force) {
+      if (!options?.force && !shouldAttemptPdfReclass) {
         this.logger.debug(
           `Skipping ${candidate.url} - not daycare-related (${classifierReason}, confidence: ${classification.confidence.toFixed(2)}${topicsInfo}, anchor: "${candidate.anchorText}")`
         );
@@ -530,9 +557,16 @@ export class CrawlerService {
         return 'skipped';
       }
 
-      this.logger.warn(
-        `FORCING ingest for ${candidate.url} despite classifier (${classifierReason}, confidence: ${classification.confidence.toFixed(2)}${topicsInfo})`
-      );
+      if (options?.force) {
+        this.logger.warn(
+          `FORCING ingest for ${candidate.url} despite classifier (${classifierReason}, confidence: ${classification.confidence.toFixed(2)}${topicsInfo})`
+        );
+      } else {
+        // We’ll attempt content-based reclassification before skipping
+        this.logger.debug(
+          `Low-confidence PDF ${candidate.url} failed metadata classifier (${classifierReason}, confidence: ${classification.confidence.toFixed(2)}${topicsInfo}); attempting PDF parse before skipping`
+        );
+      }
     }
 
     // ==========================================
@@ -591,7 +625,7 @@ export class CrawlerService {
     let finalClassification = classification;
 
     // Only download and parse PDF if we're uncertain about classification
-    if (classification.confidence < 0.5 && candidate.isPdf) {
+    if (shouldAttemptPdfReclass) {
       this.logger.log(`Low confidence (${classification.confidence.toFixed(2)}) for ${candidate.url}, parsing PDF...`);
       
       try {
