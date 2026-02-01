@@ -44,6 +44,7 @@ const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024;
 export class CrawlerService {
   private readonly logger = new Logger(CrawlerService.name);
   private systemUserId: string | null = null;
+  private readonly DEFAULT_DEBUG_LIMIT = 10;
 
   /**
    * Whitelisted domains for SSRF prevention.
@@ -101,7 +102,10 @@ export class CrawlerService {
     return this.systemUserId;
   }
 
-  async crawlSource(sourceId: number): Promise<{
+  async crawlSource(
+    sourceId: number,
+    options?: { debug?: boolean; debugLimit?: number },
+  ): Promise<{
     discovered: number;
     whitelisted: number;
     nonWhitelisted: number;
@@ -110,6 +114,10 @@ export class CrawlerService {
     unchanged: number;
     skipped: number;
     errors: string[];
+    debug?: {
+      nonWhitelistedSamples: Array<{ url: string; reason: string }>;
+      classifierSkippedSamples: Array<{ url: string; reason: string; anchorText: string; confidence: number }>;
+    };
   }> {
     const source = await this.prisma.cantonSource.findUnique({
       where: { id: sourceId },
@@ -120,6 +128,12 @@ export class CrawlerService {
       throw new Error(`Source ${sourceId} not found or inactive`);
     }
 
+    const debugEnabled = Boolean(options?.debug);
+    const debugLimit = Math.max(
+      1,
+      Math.min(options?.debugLimit ?? this.DEFAULT_DEBUG_LIMIT, 50),
+    );
+
     const results = { 
       discovered: 0,
       whitelisted: 0,
@@ -129,6 +143,17 @@ export class CrawlerService {
       unchanged: 0,
       skipped: 0,
       errors: [] as string[],
+      debug: debugEnabled
+        ? {
+            nonWhitelistedSamples: [] as Array<{ url: string; reason: string }>,
+            classifierSkippedSamples: [] as Array<{
+              url: string;
+              reason: string;
+              anchorText: string;
+              confidence: number;
+            }>,
+          }
+        : undefined,
     };
 
     try {
@@ -166,7 +191,14 @@ export class CrawlerService {
           return true;
         } catch (error: any) {
           // Silently skip non-whitelisted domains (social media, external sites, etc.)
-          this.logger.debug(`Skipping non-whitelisted URL: ${candidate.url} (${error.message})`);
+          const reason = error?.message || 'Non-whitelisted URL';
+          this.logger.debug(`Skipping non-whitelisted URL: ${candidate.url} (${reason})`);
+
+          if (debugEnabled && results.debug) {
+            if (results.debug.nonWhitelistedSamples.length < debugLimit) {
+              results.debug.nonWhitelistedSamples.push({ url: candidate.url, reason });
+            }
+          }
           return false;
         }
       });
@@ -183,7 +215,15 @@ export class CrawlerService {
       // Step 2: Process each candidate with rate limiting
       for (const candidate of candidates) {
         try {
-          const result = await this.processCandidate(candidate, source);
+          const result = await this.processCandidate(candidate, source, {
+            debugEnabled,
+            debugLimit,
+            onClassifierSkip: (info) => {
+              if (!results.debug) return;
+              if (results.debug.classifierSkippedSamples.length >= debugLimit) return;
+              results.debug.classifierSkippedSamples.push(info);
+            },
+          });
           results[result]++;
           
           // Per-document rate limit: 500ms between candidates
@@ -245,6 +285,16 @@ export class CrawlerService {
   private async processCandidate(
     candidate: CandidateDocument,
     source: CantonSourceWithCanton,
+    debug?: {
+      debugEnabled: boolean;
+      debugLimit: number;
+      onClassifierSkip: (info: {
+        url: string;
+        reason: string;
+        anchorText: string;
+        confidence: number;
+      }) => void;
+    },
   ): Promise<'created' | 'updated' | 'unchanged' | 'skipped'> {
     
     // ==========================================
@@ -269,6 +319,15 @@ export class CrawlerService {
       this.logger.debug(
         `Skipping ${candidate.url} - not daycare-related (${reason}, confidence: ${classification.confidence.toFixed(2)}${topicsInfo}, anchor: "${candidate.anchorText}")`
       );
+
+      if (debug?.debugEnabled) {
+        debug.onClassifierSkip({
+          url: candidate.url,
+          reason: `not daycare-related (${reason})`,
+          anchorText: candidate.anchorText,
+          confidence: classification.confidence,
+        });
+      }
       return 'skipped';
     }
 
@@ -344,6 +403,14 @@ export class CrawlerService {
 
         if (!finalClassification.isDaycareRelated) {
           this.logger.debug(`After parsing, ${candidate.url} still not daycare-related - skipping`);
+          if (debug?.debugEnabled) {
+            debug.onClassifierSkip({
+              url: candidate.url,
+              reason: 'not daycare-related after PDF parse',
+              anchorText: candidate.anchorText,
+              confidence: finalClassification.confidence,
+            });
+          }
           return 'skipped';
         }
       } catch (parseError) {
