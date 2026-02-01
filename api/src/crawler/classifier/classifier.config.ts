@@ -88,7 +88,8 @@ export const CLASSIFIER_CONFIG = {
     fr: [
       'adoption', 'fiscalité', 'impôts', 'succession', 'mariage', 'divorce', 'naturalisation',
       'organigramme', 'autorités', 'autorites', 'organigram', // Organizational charts
-      'mentions légales', 'plan du site', 'contact', 'accueil', 'retour', // Navigation
+      // NOTE: do not include "accueil" here; it is a core childcare term ("accueil de jour").
+      'mentions légales', 'plan du site', 'contact', 'retour', // Navigation
       'offres d\'emploi', 'emploi', 'recrutement', 'poste', // Job listings
       'se connecter', 'login', 'connexion', 'recherche', // Site navigation
     ],

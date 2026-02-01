@@ -91,7 +91,9 @@ export class ClassifierService {
       // Legal notices (not policies)
       'mentions-legales', 'impressum', 'legal-notice', 'legal notice', 'privacy-policy', 'disclaimer',
       // Navigation
-      'plan-du-site', 'sitemap', 'site-map', 'contact', 'kontakt', 'home', 'accueil',
+      // NOTE: do not include generic domain terms like "accueil" here.
+      // "accueil de jour" is a core childcare phrase and appears in relevant policy titles.
+      'plan-du-site', 'sitemap', 'site-map', 'contact', 'kontakt',
       // Job listings
       'offres-emploi', 'offres-d-emploi', 'stellenangebote', 'job-offers', 'jobs', 'careers',
       // Site navigation
