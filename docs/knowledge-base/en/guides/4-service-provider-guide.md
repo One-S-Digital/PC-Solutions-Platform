@@ -162,8 +162,8 @@ You can access Service Listings in either of these ways:
 
 | Field | Description | Required |
 |-------|-------------|----------|
-| **Title** | Service name | ✅ Yes |
-| **Description** | Full service description | ✅ Yes |
+| **Title** | Service name (max 100 characters) | ✅ Yes |
+| **Description** | Full service description (max 1000 characters) | ✅ Yes |
 | **Service Categories** | One or more categories (you can add custom) | ✅ Yes |
 | **Delivery Type** | On-site, Remote, or Hybrid | ✅ Recommended |
 | **Availability** | When you can deliver the service | ✅ Yes |
@@ -175,8 +175,8 @@ You can access Service Listings in either of these ways:
 
 When the **Add New Service** modal opens, complete it like this:
 
-1. **Service title** (required): short and clear (e.g., “Deep Cleaning for Daycares”)
-2. **Description** (required): what’s included, what’s not included, and typical duration
+1. **Service title** (required): short and clear, max 100 characters (e.g., “Deep Cleaning for Daycares”)
+2. **Description** (required): what’s included, what’s not included, and typical duration (max 1000 characters)
 3. **Service categories** (required): pick from suggestions or type your own and press Enter
 4. **Delivery type**: choose On-site / Remote / Hybrid
 5. **Availability & schedule** (required): e.g., “Weekdays 9:00–18:00” or “By appointment”
