@@ -46,7 +46,7 @@ const parseAvailabilitySettings = (
 };
 
 const ProfileEditPage: React.FC = () => {
-  const { t } = useTranslation(['common', 'settings']);
+  const { t } = useTranslation(['common', 'settings', 'dashboard']);
   const { currentUser } = useAppContext();
   const { addNotification } = useNotifications();
   const { request } = useAuthenticatedApi();
@@ -414,6 +414,17 @@ const ProfileEditPage: React.FC = () => {
     }
   };
 
+  const handleGoToMyListings = () => {
+    if (!currentUser) return;
+    if (currentUser.role === UserRole.PRODUCT_SUPPLIER) {
+      navigate('/supplier/product-listings');
+      return;
+    }
+    if (currentUser.role === UserRole.SERVICE_PROVIDER) {
+      navigate('/service-provider/service-listings');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -438,6 +449,18 @@ const ProfileEditPage: React.FC = () => {
                   <CheckCircleIcon className="w-5 h-5" />
                   <span className="text-sm font-medium">{t('common:buttons.profileUpdated', 'Profile updated!')}</span>
                 </div>
+              )}
+              {(currentUser.role === UserRole.PRODUCT_SUPPLIER ||
+                currentUser.role === UserRole.SERVICE_PROVIDER) && (
+                <Button
+                  variant="outline"
+                  onClick={handleGoToMyListings}
+                  disabled={isSaving}
+                >
+                  {currentUser.role === UserRole.PRODUCT_SUPPLIER
+                    ? t('dashboard:supplierDashboardPage.products', 'My Products')
+                    : t('dashboard:serviceProviderDashboardPage.services', 'My Services')}
+                </Button>
               )}
               <Button
                 variant="primary"
