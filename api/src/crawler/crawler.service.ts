@@ -37,7 +37,7 @@ interface CantonSourceWithCanton {
   };
 }
 
-interface CandidateScanResult {
+export interface CandidateScanResult {
   url: string;
   title: string;
   anchorText: string;
@@ -54,6 +54,19 @@ interface CandidateScanResult {
     topics: string[];
   };
   classifierSkipReason?: string;
+}
+
+export interface ScanSourceResult {
+  sourceId: number;
+  sourceLabel: string;
+  sourceUrl: string;
+  discovered: number;
+  whitelisted: number;
+  nonWhitelisted: number;
+  pdfCount: number;
+  daycareRelated: number;
+  classifierSkipped: number;
+  candidates: CandidateScanResult[];
 }
 
 /** Maximum file size for PDF downloads (50MB) */
@@ -99,18 +112,7 @@ export class CrawlerService {
    * Scan a source page and return discovered candidate links + classification results.
    * This does NOT create/update any assets.
    */
-  async scanSource(sourceId: number): Promise<{
-    sourceId: number;
-    sourceLabel: string;
-    sourceUrl: string;
-    discovered: number;
-    whitelisted: number;
-    nonWhitelisted: number;
-    pdfCount: number;
-    daycareRelated: number;
-    classifierSkipped: number;
-    candidates: CandidateScanResult[];
-  }> {
+  async scanSource(sourceId: number): Promise<ScanSourceResult> {
     const source = await this.prisma.cantonSource.findUnique({
       where: { id: sourceId },
       include: { canton: true },
