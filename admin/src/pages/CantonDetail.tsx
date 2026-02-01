@@ -409,19 +409,42 @@ export default function CantonDetailPage() {
       const response = await apiClient.post(`/admin/crawler/trigger/${sourceId}`);
       const results = response.data?.data || response.data;
       
+      const discovered = results?.discovered || 0;
+      const whitelisted = results?.whitelisted;
+      const nonWhitelisted = results?.nonWhitelisted;
+      const created = results?.created || 0;
+      const updated = results?.updated || 0;
+      const unchanged = results?.unchanged || 0;
+      const skipped = results?.skipped || 0;
+      const errorsCount = results?.errors?.length || 0;
+      const needsReview = created + updated;
+
       // Show detailed results
       const message = results 
         ? `Crawl completed!\n\n` +
-          `Discovered: ${results.discovered || 0} links\n` +
-          `Created: ${results.created || 0} new documents\n` +
-          `Updated: ${results.updated || 0} changed documents\n` +
-          `Unchanged: ${results.unchanged || 0} documents\n` +
-          `Skipped: ${results.skipped || 0} documents\n` +
-          (results.errors?.length > 0 ? `\nErrors: ${results.errors.length}` : '')
+          `Discovered: ${discovered} links\n` +
+          (typeof whitelisted === 'number' ? `Whitelisted: ${whitelisted} links\n` : '') +
+          (typeof nonWhitelisted === 'number' ? `Non-whitelisted (SSRF blocked): ${nonWhitelisted} links\n` : '') +
+          `Created: ${created} new documents\n` +
+          `Updated: ${updated} changed documents\n` +
+          `Unchanged: ${unchanged} documents\n` +
+          `Skipped (classifier): ${skipped} documents\n` +
+          (errorsCount > 0 ? `\nErrors: ${errorsCount}` : '') +
+          (needsReview > 0 ? `\n\nNext step: review ${needsReview} document(s) in the Policy Review tab.` : '')
         : t('admin:cantons.detail.crawlSuccess');
       
       alert(message);
-      fetchData();
+
+      // Refresh source status after crawl
+      await fetchData();
+
+      // Offer to jump straight to review queue if there is anything to review
+      if (needsReview > 0 && canton?.name) {
+        const openReview = confirm(`Open Policy Review now to review ${needsReview} document(s)?`);
+        if (openReview) {
+          navigate(`/policy-crawler/review?canton=${encodeURIComponent(canton.name)}`);
+        }
+      }
     } catch (err: any) {
       alert(`${t('admin:cantons.detail.crawlError')}: ${err.response?.data?.message || err.message}`);
     } finally {

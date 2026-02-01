@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useApiClient } from '../services/api';
 import { CheckCircle, XCircle, ExternalLink, Clock, FileText } from 'lucide-react';
 import { CANTON_CODES } from '@workspace/types/src/cantons';
+import { useLocation } from 'react-router-dom';
 
 interface StatePolicyAsset {
   id: string;
@@ -251,6 +252,7 @@ const PolicyReviewPanel: React.FC<{
 export default function PolicyReviewPage() {
   const { t } = useTranslation(['admin', 'content']);
   const apiClient = useApiClient();
+  const location = useLocation();
   const [policies, setPolicies] = useState<StatePolicyAsset[]>([]);
   const [filters, setFilters] = useState({
     canton: '',
@@ -258,6 +260,16 @@ export default function PolicyReviewPage() {
   });
   const [selectedPolicy, setSelectedPolicy] = useState<StatePolicyAsset | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Allow deep-linking into review queue via `?canton=<Canton Name>`
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const cantonFromQuery = params.get('canton');
+    if (cantonFromQuery && cantonFromQuery !== filters.canton) {
+      setFilters(prev => ({ ...prev, canton: cantonFromQuery }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search]);
 
   useEffect(() => {
     fetchPolicies();
