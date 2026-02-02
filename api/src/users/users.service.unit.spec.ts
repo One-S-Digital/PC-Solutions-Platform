@@ -107,6 +107,7 @@ describe('UsersService.hardRemove (hard delete)', () => {
       appUser: { findUnique: jest.fn().mockResolvedValue(appUser) },
       user: { findUnique: jest.fn().mockResolvedValue(profile) },
       asset: { count: jest.fn().mockResolvedValue(0) },
+      course: { count: jest.fn().mockResolvedValue(0) },
       userOrganization: { count: jest.fn().mockResolvedValue(0) },
       userContactInfo: { count: jest.fn().mockResolvedValue(0) },
       message: { count: jest.fn().mockResolvedValue(1) }, // blocking
@@ -146,8 +147,9 @@ describe('UsersService.hardRemove (hard delete)', () => {
 
     const tx = {
       // dependency deletes
-      message: { deleteMany: jest.fn() },
-      conversationParticipant: { deleteMany: jest.fn() },
+      message: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
+      conversationParticipant: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
+      conversation: { deleteMany: jest.fn() },
       jobApplication: { deleteMany: jest.fn() },
       ticketResponse: { deleteMany: jest.fn() },
       supportTicket: { deleteMany: jest.fn() },
@@ -173,6 +175,7 @@ describe('UsersService.hardRemove (hard delete)', () => {
       appUser: { findUnique: jest.fn().mockResolvedValue(appUser) },
       user: { findUnique: jest.fn().mockResolvedValue(profile) },
       asset: { count: jest.fn().mockResolvedValue(1) },
+      course: { count: jest.fn().mockResolvedValue(1) },
       userOrganization: { count: jest.fn().mockResolvedValue(0) },
       userContactInfo: { count: jest.fn().mockResolvedValue(0) },
       message: { count: jest.fn().mockResolvedValue(1) },
@@ -196,6 +199,13 @@ describe('UsersService.hardRemove (hard delete)', () => {
     await expect(service.hardRemove(appUser.id, { force: true })).resolves.toEqual({ success: true });
     expect(tx.message.deleteMany).toHaveBeenCalled();
     expect(tx.asset.updateMany).toHaveBeenCalled();
+    expect(tx.course.updateMany).toHaveBeenCalled();
+    expect(tx.appUser.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { clerkId: 'system' },
+        create: expect.objectContaining({ clerkId: 'system', role: UserRole.PARENT }),
+      }),
+    );
     expect(tx.appUser.delete).toHaveBeenCalledWith({ where: { id: appUser.id } });
   });
 
@@ -221,6 +231,7 @@ describe('UsersService.hardRemove (hard delete)', () => {
       appUser: { findUnique: jest.fn().mockResolvedValue(appUser) },
       user: { findUnique: jest.fn().mockResolvedValue(profile) },
       asset: { count: jest.fn().mockResolvedValue(0) },
+      course: { count: jest.fn().mockResolvedValue(0) },
       userOrganization: { count: jest.fn().mockResolvedValue(0) },
       userContactInfo: { count: jest.fn().mockResolvedValue(0) },
       message: { count: jest.fn().mockResolvedValue(0) },
