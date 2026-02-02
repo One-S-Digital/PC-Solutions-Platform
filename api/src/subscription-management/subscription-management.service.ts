@@ -807,7 +807,18 @@ export class SubscriptionManagementService {
         }
 
         // Delete dependents that are NOT guaranteed to be cascaded by the DB/schema.
-        await tx.billingTransaction.deleteMany({ where: { subscriptionId: id } });
+        // Note: billingTransaction table may not exist in all environments (created for future Stripe integration)
+        // so we wrap it in a try-catch to avoid breaking the delete operation
+        try {
+          await tx.billingTransaction.deleteMany({ where: { subscriptionId: id } });
+        } catch (billingError: any) {
+          // Ignore error if billing_transactions table doesn't exist
+          if (!billingError.message?.includes('does not exist')) {
+            throw billingError;
+          }
+          this.logger.warn(`billing_transactions table not found, skipping cleanup for subscription ${id}`);
+        }
+        
         await tx.subscriptionAction.deleteMany({ where: { subscriptionId: id } });
         await tx.subscriptionSchedule.deleteMany({ where: { subscriptionId: id } });
         await tx.subscriptionNote.deleteMany({ where: { subscriptionId: id } });
