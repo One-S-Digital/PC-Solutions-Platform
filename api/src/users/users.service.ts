@@ -1442,6 +1442,8 @@ export class UsersService {
               deactivatedAt: now,
               deactivatedReasonCode: 'ADMIN_DELETED',
               deactivatedReasonText: 'User deleted by admin',
+              // Keep role consistent with AppUser demotion to avoid stale admin roles in the profile table.
+              role: UserRole.PARENT,
               // Scrub PII (keep clerkId + id stable for FKs)
               email: null,
               firstName: null,
@@ -1558,18 +1560,39 @@ export class UsersService {
       });
     }
 
-    await this.prisma.$transaction(async (tx) => {
-      if (profile) {
-        await tx.userOrganization.deleteMany({ where: { userId: profile.id } });
-        await tx.userContactInfo.deleteMany({ where: { userId: profile.id } });
-        await tx.user.delete({ where: { id: profile.id } });
-      } else {
-        // Fall back to clerkId-based cleanup if profile row doesn't exist.
-        await tx.user.deleteMany({ where: { clerkId: appUser.clerkId } });
-      }
+    try {
+      await this.prisma.$transaction(async (tx) => {
+        if (profile) {
+          await tx.userOrganization.deleteMany({ where: { userId: profile.id } });
+          await tx.userContactInfo.deleteMany({ where: { userId: profile.id } });
+          await tx.user.delete({ where: { id: profile.id } });
+        } else {
+          // Fall back to clerkId-based cleanup if profile row doesn't exist.
+          await tx.user.deleteMany({ where: { clerkId: appUser.clerkId } });
+        }
 
-      await tx.appUser.delete({ where: { id: appUser.id } });
-    });
+        await tx.appUser.delete({ where: { id: appUser.id } });
+      });
+    } catch (err: any) {
+      // Guard against FK races: even after a "clean" preflight, a dependent record may be
+      // created before we delete, resulting in a FK constraint error. Translate to 409.
+      if (err?.code === 'P2003' || err instanceof Prisma.PrismaClientKnownRequestError) {
+        const code = err?.code;
+        if (code === 'P2003') {
+          throw new ConflictException({
+            message:
+              'User cannot be hard-deleted because dependent records exist. Use soft delete, or manually purge dependent data first.',
+            code: 'HARD_DELETE_BLOCKED',
+            blocking,
+            nonBlocking: {
+              orgMemberships: orgMembershipCount,
+              contactInfo: contactInfoCount,
+            },
+          });
+        }
+      }
+      throw err;
+    }
 
     return { success: true };
   }

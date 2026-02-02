@@ -76,6 +76,7 @@ describe('UsersService.remove (soft delete)', () => {
         data: expect.objectContaining({
           isActive: false,
           deactivatedReasonCode: 'ADMIN_DELETED',
+          role: UserRole.PARENT,
           email: null,
           firstName: null,
           lastName: null,
