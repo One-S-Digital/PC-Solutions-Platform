@@ -76,7 +76,7 @@ type UserRole = 'FOUNDATION' | 'EDUCATOR' | 'ADMIN' | 'PARENT';
 interface ContentUploadModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: any, file?: File) => void;
+  onSubmit: (data: any, file?: File, onProgress?: (progress: number) => void) => void | Promise<void>;
   contentType: UploadableContentType;
   existingContent?: any | null;
 }
@@ -116,6 +116,9 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
   const { t } = useTranslation('dashboard');
   const { getToken } = useAuth();
 
+  const defaultPolicyRegion =
+    REGIONS_BY_COUNTRY[COUNTRIES_FOR_POLICIES[0]]?.[0] ?? SWISS_CANTONS[0];
+
   const [elearningCategories, setElearningCategories] = useState<string[]>([...ELEARNING_CATEGORIES]);
   const [hrCategories, setHrCategories] = useState<string[]>([...HR_CATEGORIES]);
   const [policyCategories, setPolicyCategories] = useState<string[]>([...POLICY_BROAD_CATEGORIES]);
@@ -133,7 +136,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
     accessRoles: ['FOUNDATION'], // Default access roles for all content types
     fileType: contentType === 'hr' ? 'PDF' : contentType === 'policy' ? 'PDF' : undefined,
     country: contentType === 'policy' ? COUNTRIES_FOR_POLICIES[0] : undefined,
-    region: contentType === 'policy' ? REGIONS_BY_COUNTRY[COUNTRIES_FOR_POLICIES[0]][0] : undefined,
+    region: contentType === 'policy' ? defaultPolicyRegion : undefined,
     isCritical: false,
     tags: [],
     status: 'Draft',
@@ -280,8 +283,9 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
 
   useEffect(() => {
     if (formData.country && contentType === 'policy') {
-      const validRegions = REGIONS_BY_COUNTRY[formData.country];
-      if (!validRegions.includes(formData.region as any)) {
+      const validRegions = REGIONS_BY_COUNTRY[formData.country] ?? SWISS_CANTONS;
+      const currentRegion = (formData.region ?? '') as string;
+      if (!validRegions.includes(currentRegion)) {
         setFormData(prev => ({ ...prev, region: validRegions[0] as string }));
       }
     }
@@ -431,7 +435,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
 
     try {
       // Pass progress callback to onSubmit
-      await onSubmit(submissionData, file || undefined, (progress) => {
+      await onSubmit(submissionData, file || undefined, (progress: number) => {
         setUploadProgress(progress);
       });
       
@@ -764,7 +768,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
         <div>
           <label htmlFor="policyRegion" className="block text-sm font-medium text-gray-700 mb-1">{t('content.region','Region/Canton')} <span className="text-red-500 ml-0.5">*</span></label>
           <select name="region" id="policyRegion" value={formData.region || SWISS_CANTONS[0]} onChange={handleInputChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-            {(formData.country ? REGIONS_BY_COUNTRY[formData.country] : SWISS_CANTONS).map(region => <option key={region} value={region}>{region}</option>)}
+            {(formData.country ? (REGIONS_BY_COUNTRY[formData.country] ?? SWISS_CANTONS) : SWISS_CANTONS).map(region => <option key={region} value={region}>{region}</option>)}
           </select>
         </div>
       </div>
