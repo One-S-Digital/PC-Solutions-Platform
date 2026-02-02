@@ -1474,7 +1474,8 @@ export class UsersService {
    * break referential integrity (messages, subscriptions, uploaded assets, etc.),
    * we refuse with a 409 and provide counts so an admin can decide what to do.
    */
-  async hardRemove(id: string) {
+  async hardRemove(id: string, opts?: { force?: boolean }) {
+    const force = Boolean(opts?.force);
     const appUser = await this.prisma.appUser.findUnique({ where: { id } });
     if (!appUser) {
       throw new NotFoundException('User not found');
@@ -1486,6 +1487,7 @@ export class UsersService {
     // (typically newly created accounts) to avoid blowing away important history.
     const [
       assetCount,
+      courseCount,
       orgMembershipCount,
       contactInfoCount,
       messageCount,
@@ -1496,6 +1498,7 @@ export class UsersService {
       ticketResponseCount,
     ] = await Promise.all([
       this.prisma.asset.count({ where: { uploadedById: appUser.id } }),
+      this.prisma.course.count({ where: { createdBy: appUser.id } }),
       profile ? this.prisma.userOrganization.count({ where: { userId: profile.id } }) : Promise.resolve(0),
       profile ? this.prisma.userContactInfo.count({ where: { userId: profile.id } }) : Promise.resolve(0),
       profile
@@ -1514,6 +1517,7 @@ export class UsersService {
     // but refuse when the user has any "real" dependent data.
     const blocking: Record<string, number> = {
       assetsUploaded: assetCount,
+      coursesCreated: courseCount,
       messages: messageCount,
       conversationParticipants: conversationParticipantCount,
       subscriptions: subscriptionCount,
@@ -1523,7 +1527,7 @@ export class UsersService {
     };
 
     const hasBlocking = Object.values(blocking).some((n) => n > 0);
-    if (hasBlocking) {
+    if (hasBlocking && !force) {
       throw new ConflictException({
         message:
           'User cannot be hard-deleted because dependent records exist. Use soft delete, or manually purge dependent data first.',
@@ -1538,6 +1542,92 @@ export class UsersService {
 
     try {
       await this.prisma.$transaction(async (tx) => {
+        // In force mode, aggressively delete dependent data so the user can be removed.
+        if (force && profile) {
+          // Track conversation IDs that might become orphaned after we remove this user's
+          // messages and participant membership, so we can clean them up safely.
+          const [participantConversations, messageConversations] = await Promise.all([
+            tx.conversationParticipant.findMany({
+              where: { userId: profile.id },
+              select: { conversationId: true },
+            }),
+            tx.message.findMany({
+              where: {
+                OR: [{ senderId: profile.id }, { receiverId: profile.id }],
+                conversationId: { not: null },
+              },
+              select: { conversationId: true },
+            }),
+          ]);
+          const candidateConversationIds = Array.from(
+            new Set(
+              [
+                ...participantConversations.map((c) => c.conversationId),
+                ...messageConversations.map((m) => m.conversationId as string),
+              ].filter(Boolean),
+            ),
+          );
+
+          // Messaging
+          await tx.message.deleteMany({ where: { OR: [{ senderId: profile.id }, { receiverId: profile.id }] } });
+          await tx.conversationParticipant.deleteMany({ where: { userId: profile.id } });
+
+          // Remove conversations that were only kept alive by this user's participation/messages.
+          // We restrict deletion to conversations we touched to avoid sweeping unrelated records.
+          if (candidateConversationIds.length > 0) {
+            await tx.conversation.deleteMany({
+              where: {
+                id: { in: candidateConversationIds },
+                participants: { none: {} },
+                messages: { none: {} },
+              },
+            });
+          }
+
+          // Jobs / support / subscriptions
+          await tx.jobApplication.deleteMany({ where: { candidateId: profile.id } });
+          await tx.ticketResponse.deleteMany({ where: { userId: profile.id } });
+          await tx.supportTicket.deleteMany({ where: { OR: [{ userId: profile.id }, { assignedTo: profile.id }] } });
+          await tx.userSubscription.deleteMany({ where: { userId: profile.id } });
+          await tx.subscription.deleteMany({ where: { userId: profile.id } });
+
+          // E-learning
+          await tx.certificate.deleteMany({ where: { userId: profile.id } });
+          await tx.discussionReply.deleteMany({ where: { userId: profile.id } });
+          await tx.courseDiscussion.deleteMany({ where: { userId: profile.id } });
+          await tx.courseEnrollment.deleteMany({ where: { userId: profile.id } });
+        }
+
+        // If the AppUser has uploaded assets, we cannot delete it due to onDelete: Restrict.
+        // Courses also reference AppUser via Course.createdBy (non-nullable), so we must
+        // reassign ownership before deleting the AppUser.
+        //
+        // NOTE: `clerkId: 'system'` is a reserved placeholder and must never be used for
+        // real authentication flows.
+        if (force && (assetCount > 0 || courseCount > 0)) {
+          const systemAppUser = await tx.appUser.upsert({
+            where: { clerkId: 'system' },
+            update: {},
+            create: {
+              clerkId: 'system',
+              email: null,
+              role: UserRole.PARENT, // minimal privileges; only an ownership placeholder
+            },
+          });
+          if (assetCount > 0) {
+            await tx.asset.updateMany({
+              where: { uploadedById: appUser.id },
+              data: { uploadedById: systemAppUser.id },
+            });
+          }
+          if (courseCount > 0) {
+            await tx.course.updateMany({
+              where: { createdBy: appUser.id },
+              data: { createdBy: systemAppUser.id },
+            });
+          }
+        }
+
         if (profile) {
           await tx.userOrganization.deleteMany({ where: { userId: profile.id } });
           await tx.userContactInfo.deleteMany({ where: { userId: profile.id } });

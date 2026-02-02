@@ -324,7 +324,7 @@ export const apiService = {
   deleteUser: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/users/${id}`),
   /** Hard delete (permanent) */
   deleteUserHard: (apiClient: AxiosInstance, id: string) =>
-    apiClient.delete<ApiResponse<null>>(`/users/${id}`, { params: { hard: true } }),
+    apiClient.delete<ApiResponse<null>>(`/users/${id}`, { params: { hard: true, force: true } }),
   
   // Role Elevation - Super Admin only
   elevateUserToAdmin: (

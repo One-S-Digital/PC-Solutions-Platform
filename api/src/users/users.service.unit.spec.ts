@@ -107,6 +107,7 @@ describe('UsersService.hardRemove (hard delete)', () => {
       appUser: { findUnique: jest.fn().mockResolvedValue(appUser) },
       user: { findUnique: jest.fn().mockResolvedValue(profile) },
       asset: { count: jest.fn().mockResolvedValue(0) },
+      course: { count: jest.fn().mockResolvedValue(0) },
       userOrganization: { count: jest.fn().mockResolvedValue(0) },
       userContactInfo: { count: jest.fn().mockResolvedValue(0) },
       message: { count: jest.fn().mockResolvedValue(1) }, // blocking
@@ -133,6 +134,81 @@ describe('UsersService.hardRemove (hard delete)', () => {
     });
   });
 
+  it('force hard-delete deletes dependent records and completes', async () => {
+    const appUser = {
+      id: 'app-user-id',
+      clerkId: 'clerk_123',
+      email: 'user@example.com',
+      role: UserRole.FOUNDATION,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    const profile = { id: 'profile-id', clerkId: appUser.clerkId } as any;
+
+    const tx = {
+      // dependency deletes
+      message: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
+      conversationParticipant: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
+      conversation: { deleteMany: jest.fn() },
+      jobApplication: { deleteMany: jest.fn() },
+      ticketResponse: { deleteMany: jest.fn() },
+      supportTicket: { deleteMany: jest.fn() },
+      userSubscription: { deleteMany: jest.fn() },
+      subscription: { deleteMany: jest.fn() },
+      certificate: { deleteMany: jest.fn() },
+      discussionReply: { deleteMany: jest.fn() },
+      courseDiscussion: { deleteMany: jest.fn() },
+      courseEnrollment: { deleteMany: jest.fn() },
+
+      // uploader reassignment
+      asset: { updateMany: jest.fn() },
+      course: { updateMany: jest.fn() },
+
+      // final deletes
+      userOrganization: { deleteMany: jest.fn() },
+      userContactInfo: { deleteMany: jest.fn() },
+      user: { delete: jest.fn(), deleteMany: jest.fn() },
+      appUser: { upsert: jest.fn().mockResolvedValue({ id: 'system-app-user' }), delete: jest.fn() },
+    } as any;
+
+    const prisma = {
+      appUser: { findUnique: jest.fn().mockResolvedValue(appUser) },
+      user: { findUnique: jest.fn().mockResolvedValue(profile) },
+      asset: { count: jest.fn().mockResolvedValue(1) },
+      course: { count: jest.fn().mockResolvedValue(1) },
+      userOrganization: { count: jest.fn().mockResolvedValue(0) },
+      userContactInfo: { count: jest.fn().mockResolvedValue(0) },
+      message: { count: jest.fn().mockResolvedValue(1) },
+      conversationParticipant: { count: jest.fn().mockResolvedValue(1) },
+      subscription: { count: jest.fn().mockResolvedValue(1) },
+      jobApplication: { count: jest.fn().mockResolvedValue(1) },
+      supportTicket: { count: jest.fn().mockResolvedValue(1) },
+      ticketResponse: { count: jest.fn().mockResolvedValue(1) },
+      $transaction: jest.fn(async (fn: any) => fn(tx)),
+      outbox: { create: jest.fn() },
+    };
+
+    const service = new UsersService(
+      prisma as any,
+      {} as any,
+      {} as any,
+      { get: jest.fn().mockReturnValue(undefined) } as any,
+    );
+    (service as any).clerk = { users: { deleteUser: jest.fn().mockResolvedValue(undefined) } };
+
+    await expect(service.hardRemove(appUser.id, { force: true })).resolves.toEqual({ success: true });
+    expect(tx.message.deleteMany).toHaveBeenCalled();
+    expect(tx.asset.updateMany).toHaveBeenCalled();
+    expect(tx.course.updateMany).toHaveBeenCalled();
+    expect(tx.appUser.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { clerkId: 'system' },
+        create: expect.objectContaining({ clerkId: 'system', role: UserRole.PARENT }),
+      }),
+    );
+    expect(tx.appUser.delete).toHaveBeenCalledWith({ where: { id: appUser.id } });
+  });
+
   it('hard-deletes a clean user (no blocking dependents)', async () => {
     const appUser = {
       id: 'app-user-id',
@@ -155,6 +231,7 @@ describe('UsersService.hardRemove (hard delete)', () => {
       appUser: { findUnique: jest.fn().mockResolvedValue(appUser) },
       user: { findUnique: jest.fn().mockResolvedValue(profile) },
       asset: { count: jest.fn().mockResolvedValue(0) },
+      course: { count: jest.fn().mockResolvedValue(0) },
       userOrganization: { count: jest.fn().mockResolvedValue(0) },
       userContactInfo: { count: jest.fn().mockResolvedValue(0) },
       message: { count: jest.fn().mockResolvedValue(0) },
