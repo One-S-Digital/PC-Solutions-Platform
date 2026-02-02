@@ -1474,7 +1474,8 @@ export class UsersService {
    * break referential integrity (messages, subscriptions, uploaded assets, etc.),
    * we refuse with a 409 and provide counts so an admin can decide what to do.
    */
-  async hardRemove(id: string) {
+  async hardRemove(id: string, opts?: { force?: boolean }) {
+    const force = Boolean(opts?.force);
     const appUser = await this.prisma.appUser.findUnique({ where: { id } });
     if (!appUser) {
       throw new NotFoundException('User not found');
@@ -1523,7 +1524,7 @@ export class UsersService {
     };
 
     const hasBlocking = Object.values(blocking).some((n) => n > 0);
-    if (hasBlocking) {
+    if (hasBlocking && !force) {
       throw new ConflictException({
         message:
           'User cannot be hard-deleted because dependent records exist. Use soft delete, or manually purge dependent data first.',
@@ -1538,6 +1539,48 @@ export class UsersService {
 
     try {
       await this.prisma.$transaction(async (tx) => {
+        // In force mode, aggressively delete dependent data so the user can be removed.
+        if (force && profile) {
+          // Messaging
+          await tx.message.deleteMany({ where: { OR: [{ senderId: profile.id }, { receiverId: profile.id }] } });
+          await tx.conversationParticipant.deleteMany({ where: { userId: profile.id } });
+
+          // Jobs / support / subscriptions
+          await tx.jobApplication.deleteMany({ where: { candidateId: profile.id } });
+          await tx.ticketResponse.deleteMany({ where: { userId: profile.id } });
+          await tx.supportTicket.deleteMany({ where: { OR: [{ userId: profile.id }, { assignedTo: profile.id }] } });
+          await tx.userSubscription.deleteMany({ where: { userId: profile.id } });
+          await tx.subscription.deleteMany({ where: { userId: profile.id } });
+
+          // E-learning
+          await tx.certificate.deleteMany({ where: { userId: profile.id } });
+          await tx.discussionReply.deleteMany({ where: { userId: profile.id } });
+          await tx.courseDiscussion.deleteMany({ where: { userId: profile.id } });
+          await tx.courseEnrollment.deleteMany({ where: { userId: profile.id } });
+        }
+
+        // If the AppUser has uploaded assets, we cannot delete it due to onDelete: Restrict.
+        // Reassign uploaded assets (and courses) to a system AppUser so the user can be deleted.
+        if (force && assetCount > 0) {
+          const systemAppUser = await tx.appUser.upsert({
+            where: { clerkId: 'system' },
+            update: {},
+            create: {
+              clerkId: 'system',
+              email: null,
+              role: UserRole.ADMIN,
+            },
+          });
+          await tx.asset.updateMany({
+            where: { uploadedById: appUser.id },
+            data: { uploadedById: systemAppUser.id },
+          });
+          await tx.course.updateMany({
+            where: { createdBy: appUser.id },
+            data: { createdBy: systemAppUser.id },
+          });
+        }
+
         if (profile) {
           await tx.userOrganization.deleteMany({ where: { userId: profile.id } });
           await tx.userContactInfo.deleteMany({ where: { userId: profile.id } });
