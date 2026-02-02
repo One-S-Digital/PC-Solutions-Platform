@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ConflictException, ForbiddenException, Logger } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, ForbiddenException, Logger, BadRequestException } from '@nestjs/common';
 import { Prisma, UserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -1410,83 +1410,59 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    // IMPORTANT:
-    // Hard-deleting a user/profile is frequently blocked by foreign key constraints
-    // (messages, subscriptions, job applications, support tickets, etc.) and by
-    // AppUser-owned assets (onDelete: Restrict).
-    //
-    // For admin "Delete user", we perform a safe **soft delete**:
-    // - Deactivate the profile (blocks login via ClerkAuthGuard)
-    // - Remove org memberships
-    // - Scrub PII (email/name/phone) while retaining referential integrity
-    //
-    // This prevents 500s and keeps historical records intact.
+    // Soft delete = suspend account (do not change role; do not hard-delete).
+    // This blocks login via ClerkAuthGuard (checks User.isActive).
     const now = new Date();
 
-    const { updatedAppUser, updatedProfile } = await this.prisma.$transaction(async (tx) => {
+    const updatedProfile = await this.prisma.$transaction(async (tx) => {
       const profile = await tx.user.findUnique({ where: { clerkId: appUser.clerkId } });
 
       if (profile) {
-        // Remove memberships so the user stops appearing as an org member.
-        await tx.userOrganization.deleteMany({ where: { userId: profile.id } });
-
-        // Remove contact info (PII) if present.
-        await tx.userContactInfo.deleteMany({ where: { userId: profile.id } });
+        return tx.user.update({
+          where: { id: profile.id },
+          data: {
+            isActive: false,
+            deactivatedAt: now,
+            deactivatedReasonCode: 'ADMIN_SUSPENDED',
+            deactivatedReasonText: 'User suspended by admin',
+          },
+        });
       }
 
-      const updatedProfile = profile
-        ? await tx.user.update({
-            where: { id: profile.id },
-            data: {
-              isActive: false,
-              deactivatedAt: now,
-              deactivatedReasonCode: 'ADMIN_DELETED',
-              deactivatedReasonText: 'User deleted by admin',
-              // Keep role consistent with AppUser demotion to avoid stale admin roles in the profile table.
-              role: UserRole.PARENT,
-              // Scrub PII (keep clerkId + id stable for FKs)
-              email: null,
-              firstName: null,
-              lastName: null,
-              phoneNumber: null,
-              stripeCustomerId: null,
-              // Leave avatar/cover assets in place; assets may be shared and have their own lifecycle.
-            },
-          })
-        : null;
-
-      // Demote account role + scrub auth email (optional but reduces risk if other systems read AppUser).
-      const updatedAppUser = await tx.appUser.update({
-        where: { id: appUser.id },
+      // Ensure there is a profile row to enforce suspension in ClerkAuthGuard.
+      return tx.user.create({
         data: {
-          email: null,
-          role: UserRole.PARENT,
+          clerkId: appUser.clerkId,
+          email: appUser.email,
+          role: appUser.role,
+          isActive: false,
+          deactivatedAt: now,
+          deactivatedReasonCode: 'ADMIN_SUSPENDED',
+          deactivatedReasonText: 'User suspended by admin',
         },
       });
-
-      return { updatedAppUser, updatedProfile };
     });
 
     // Return in User format for compatibility
     return {
-      id: updatedAppUser.id,
-      clerkId: updatedAppUser.clerkId,
-      email: updatedAppUser.email,
-      firstName: updatedProfile?.firstName ?? null,
-      lastName: updatedProfile?.lastName ?? null,
-      role: updatedAppUser.role,
-      phoneNumber: updatedProfile?.phoneNumber ?? null,
-      workExperience: updatedProfile?.workExperience ?? null,
-      education: updatedProfile?.education ?? null,
-      certifications: updatedProfile?.certifications ?? [],
-      skills: updatedProfile?.skills ?? [],
-      availability: updatedProfile?.availability ?? null,
-      cvUrl: updatedProfile?.cvUrl ?? null,
-      stripeCustomerId: updatedProfile?.stripeCustomerId ?? null,
-      lastActiveAt: updatedProfile?.lastActiveAt ?? null,
-      isActive: updatedProfile?.isActive ?? false,
-      createdAt: updatedAppUser.createdAt,
-      updatedAt: updatedAppUser.updatedAt,
+      id: appUser.id,
+      clerkId: appUser.clerkId,
+      email: appUser.email,
+      firstName: updatedProfile.firstName ?? null,
+      lastName: updatedProfile.lastName ?? null,
+      role: appUser.role,
+      phoneNumber: updatedProfile.phoneNumber ?? null,
+      workExperience: updatedProfile.workExperience ?? null,
+      education: updatedProfile.education ?? null,
+      certifications: updatedProfile.certifications ?? [],
+      skills: updatedProfile.skills ?? [],
+      availability: updatedProfile.availability ?? null,
+      cvUrl: updatedProfile.cvUrl ?? null,
+      stripeCustomerId: updatedProfile.stripeCustomerId ?? null,
+      lastActiveAt: updatedProfile.lastActiveAt ?? null,
+      isActive: updatedProfile.isActive,
+      createdAt: appUser.createdAt,
+      updatedAt: appUser.updatedAt,
       organizations: [],
     };
   }
@@ -1592,6 +1568,35 @@ export class UsersService {
         }
       }
       throw err;
+    }
+
+    // Delete from Clerk too (best-effort). If Clerk deletion fails, queue a retry via outbox.
+    if (!this.clerk) {
+      throw new BadRequestException('Clerk is not configured on the API');
+    }
+
+    try {
+      await (this.clerk as any).users.deleteUser(appUser.clerkId);
+    } catch (error: any) {
+      if (error?.status === 404) {
+        // Already deleted in Clerk.
+      } else {
+        this.logger.error('Failed to delete user from Clerk, queuing retry', {
+          clerkId: appUser.clerkId,
+          message: error?.message,
+          status: error?.status,
+        });
+        await this.prisma.outbox.create({
+          data: {
+            topic: 'clerk.user.delete',
+            payload: {
+              clerkId: appUser.clerkId,
+              reason: 'Hard delete requested by admin',
+              requestedAt: new Date().toISOString(),
+            },
+          },
+        });
+      }
     }
 
     return { success: true };

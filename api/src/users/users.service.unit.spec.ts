@@ -2,7 +2,7 @@ import { UsersService } from './users.service';
 import { UserRole } from '@prisma/client';
 
 describe('UsersService.remove (soft delete)', () => {
-  it('deactivates profile, removes memberships/contact info, and scrubs AppUser', async () => {
+  it('suspends the user profile (isActive=false) without changing role', async () => {
     const appUser = {
       id: 'app-user-id',
       clerkId: 'clerk_123',
@@ -33,11 +33,8 @@ describe('UsersService.remove (soft delete)', () => {
     const tx = {
       user: {
         findUnique: jest.fn().mockResolvedValue(profile),
-        update: jest.fn().mockResolvedValue({
-          ...profile,
-          isActive: false,
-          deactivatedReasonCode: 'ADMIN_DELETED',
-        }),
+        update: jest.fn().mockResolvedValue({ ...profile, isActive: false }),
+        create: jest.fn(),
       },
       userOrganization: {
         deleteMany: jest.fn().mockResolvedValue({ count: 1 }),
@@ -46,7 +43,7 @@ describe('UsersService.remove (soft delete)', () => {
         deleteMany: jest.fn().mockResolvedValue({ count: 1 }),
       },
       appUser: {
-        update: jest.fn().mockResolvedValue({ ...appUser, email: null, role: UserRole.PARENT }),
+        update: jest.fn(),
       },
     };
 
@@ -68,34 +65,25 @@ describe('UsersService.remove (soft delete)', () => {
 
     expect(prisma.appUser.findUnique).toHaveBeenCalledWith({ where: { id: appUser.id } });
     expect(tx.user.findUnique).toHaveBeenCalledWith({ where: { clerkId: appUser.clerkId } });
-    expect(tx.userOrganization.deleteMany).toHaveBeenCalledWith({ where: { userId: profile.id } });
-    expect(tx.userContactInfo.deleteMany).toHaveBeenCalledWith({ where: { userId: profile.id } });
     expect(tx.user.update).toHaveBeenCalledWith(
       expect.objectContaining({
         where: { id: profile.id },
         data: expect.objectContaining({
           isActive: false,
-          deactivatedReasonCode: 'ADMIN_DELETED',
-          role: UserRole.PARENT,
-          email: null,
-          firstName: null,
-          lastName: null,
-          phoneNumber: null,
-          stripeCustomerId: null,
+          deactivatedReasonCode: 'ADMIN_SUSPENDED',
         }),
       }),
     );
-    expect(tx.appUser.update).toHaveBeenCalledWith({
-      where: { id: appUser.id },
-      data: { email: null, role: UserRole.PARENT },
-    });
+    expect(tx.userOrganization.deleteMany).not.toHaveBeenCalled();
+    expect(tx.userContactInfo.deleteMany).not.toHaveBeenCalled();
+    expect(tx.appUser.update).not.toHaveBeenCalled();
 
     expect(result).toEqual(
       expect.objectContaining({
         id: appUser.id,
         clerkId: appUser.clerkId,
-        email: null,
-        role: UserRole.PARENT,
+        email: appUser.email,
+        role: appUser.role,
         isActive: false,
       }),
     );
@@ -184,12 +172,14 @@ describe('UsersService.hardRemove (hard delete)', () => {
       {} as any,
       { get: jest.fn().mockReturnValue(undefined) } as any,
     );
+    (service as any).clerk = { users: { deleteUser: jest.fn().mockResolvedValue(undefined) } };
 
     await expect(service.hardRemove(appUser.id)).resolves.toEqual({ success: true });
     expect(tx.userOrganization.deleteMany).toHaveBeenCalledWith({ where: { userId: profile.id } });
     expect(tx.userContactInfo.deleteMany).toHaveBeenCalledWith({ where: { userId: profile.id } });
     expect(tx.user.delete).toHaveBeenCalledWith({ where: { id: profile.id } });
     expect(tx.appUser.delete).toHaveBeenCalledWith({ where: { id: appUser.id } });
+    expect((service as any).clerk.users.deleteUser).toHaveBeenCalledWith(appUser.clerkId);
   });
 });
 
