@@ -57,6 +57,7 @@ import { BuildInfoMiddleware } from './common/middleware/build-info.middleware';
 import { RenderDebugLoggerMiddleware } from './common/middleware/render-debug-logger.middleware';
 import { MaintenanceModeMiddleware } from './common/middleware/maintenance-mode.middleware';
 import { MaintenanceModule } from './maintenance/maintenance.module';
+import { CategoriesModule } from './categories/categories.module';
 
 import {
   AUTH_REQUESTS_LIMIT,
@@ -150,6 +151,7 @@ import {
     PromoCodesModule,
     VendorClientsModule,
     MaintenanceModule,
+    CategoriesModule,
     CrawlerModule,
   ],
   controllers: [AppController],

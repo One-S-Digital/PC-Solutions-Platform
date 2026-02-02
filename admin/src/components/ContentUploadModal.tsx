@@ -1,6 +1,7 @@
 import React, { useState, useEffect, FormEvent } from 'react';
 import { XMarkIcon, PaperClipIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '@clerk/clerk-react';
 
 // Define the content types
 export type UploadableContentType = 'e-learning' | 'hr' | 'policy';
@@ -75,7 +76,7 @@ type UserRole = 'FOUNDATION' | 'EDUCATOR' | 'ADMIN' | 'PARENT';
 interface ContentUploadModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: any, file?: File) => void;
+  onSubmit: (data: any, file?: File, onProgress?: (progress: number) => void) => void | Promise<void>;
   contentType: UploadableContentType;
   existingContent?: any | null;
 }
@@ -84,7 +85,7 @@ type FormData = {
   title?: string;
   description?: string;
   contentPreview?: string;
-  category?: typeof ELEARNING_CATEGORIES[number] | typeof HR_CATEGORIES[number] | typeof POLICY_BROAD_CATEGORIES[number];
+  category?: string;
   type?: ELearningContentType;
   policyType?: PolicyType;
   language?: LanguageCode;
@@ -113,6 +114,17 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
   existingContent
 }) => {
   const { t } = useTranslation('dashboard');
+  const { getToken } = useAuth();
+
+  const defaultPolicyRegion =
+    REGIONS_BY_COUNTRY[COUNTRIES_FOR_POLICIES[0]]?.[0] ?? SWISS_CANTONS[0];
+
+  const [elearningCategories, setElearningCategories] = useState<string[]>([...ELEARNING_CATEGORIES]);
+  const [hrCategories, setHrCategories] = useState<string[]>([...HR_CATEGORIES]);
+  const [policyCategories, setPolicyCategories] = useState<string[]>([...POLICY_BROAD_CATEGORIES]);
+  const [customCategory, setCustomCategory] = useState('');
+  const [isSavingCategory, setIsSavingCategory] = useState(false);
+
   const getInitialFormState = (): FormData => ({
     title: '',
     description: '',
@@ -124,7 +136,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
     accessRoles: ['FOUNDATION'], // Default access roles for all content types
     fileType: contentType === 'hr' ? 'PDF' : contentType === 'policy' ? 'PDF' : undefined,
     country: contentType === 'policy' ? COUNTRIES_FOR_POLICIES[0] : undefined,
-    region: contentType === 'policy' ? REGIONS_BY_COUNTRY[COUNTRIES_FOR_POLICIES[0]][0] : undefined,
+    region: contentType === 'policy' ? defaultPolicyRegion : undefined,
     isCritical: false,
     tags: [],
     status: 'Draft',
@@ -135,6 +147,86 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [videoSourceType, setVideoSourceType] = useState<'upload' | 'url'>('upload');
+
+  const categoryKind =
+    contentType === 'e-learning'
+      ? 'content-elearning'
+      : contentType === 'hr'
+        ? 'content-hr'
+        : 'content-policy';
+
+  const currentCategoryOptions =
+    contentType === 'e-learning'
+      ? elearningCategories
+      : contentType === 'hr'
+        ? hrCategories
+        : policyCategories;
+
+  const fetchCategories = async () => {
+    try {
+      const token = await getToken();
+      const baseUrl = (import.meta as any).env?.VITE_API_URL || '/api';
+      const url = `${String(baseUrl).replace(/\/+$/g, '')}/categories/${categoryKind}`;
+      const response = await fetch(url, {
+        headers: {
+          Authorization: token ? `Bearer ${token}` : '',
+          Accept: 'application/json',
+        },
+      });
+      if (!response.ok) return;
+      const payload = await response.json().catch(() => null);
+      const values = payload?.data;
+      if (!Array.isArray(values)) return;
+      const sanitized = values.filter((v: any) => typeof v === 'string');
+      if (contentType === 'e-learning') setElearningCategories(sanitized);
+      if (contentType === 'hr') setHrCategories(sanitized);
+      if (contentType === 'policy') setPolicyCategories(sanitized);
+    } catch {
+      // keep defaults
+    }
+  };
+
+  const persistCustomCategory = async (): Promise<string | null> => {
+    const name = customCategory.trim().replace(/\s+/g, ' ');
+    if (!name || name.length < 2 || name.toLowerCase() === 'other') {
+      alert('Please specify a category name');
+      return null;
+    }
+    setIsSavingCategory(true);
+    try {
+      const token = await getToken();
+      const baseUrl = (import.meta as any).env?.VITE_API_URL || '/api';
+      const url = `${String(baseUrl).replace(/\/+$/g, '')}/categories/${categoryKind}`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          Authorization: token ? `Bearer ${token}` : '',
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({ name }),
+      });
+      const payload = await response.json().catch(() => null);
+      if (!response.ok || payload?.success === false) {
+        throw new Error(payload?.message || 'Failed to save category');
+      }
+      const values = Array.isArray(payload?.data) ? payload.data : null;
+      if (values) {
+        const sanitized = values.filter((v: any) => typeof v === 'string');
+        if (contentType === 'e-learning') setElearningCategories(sanitized);
+        if (contentType === 'hr') setHrCategories(sanitized);
+        if (contentType === 'policy') setPolicyCategories(sanitized);
+      }
+      setFormData((prev) => ({ ...prev, category: name }));
+      setCustomCategory('');
+      return name;
+    } catch (e: any) {
+      alert(e?.message || 'Failed to save category');
+      return null;
+    } finally {
+      setIsSavingCategory(false);
+    }
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -183,16 +275,19 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
         setFormData(getInitialFormState());
         setVideoSourceType('upload'); // Reset to default for new content
       }
+      fetchCategories();
       setFile(null);
       setUploadProgress(0);
       setIsUploading(false);
+      setCustomCategory('');
     }
   }, [isOpen, contentType, existingContent]);
 
   useEffect(() => {
     if (formData.country && contentType === 'policy') {
-      const validRegions = REGIONS_BY_COUNTRY[formData.country];
-      if (!validRegions.includes(formData.region as any)) {
+      const validRegions = REGIONS_BY_COUNTRY[formData.country] ?? SWISS_CANTONS;
+      const currentRegion = (formData.region ?? '') as string;
+      if (!validRegions.includes(currentRegion)) {
         setFormData(prev => ({ ...prev, region: validRegions[0] as string }));
       }
     }
@@ -235,7 +330,17 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
     setIsUploading(true);
     setUploadProgress(0);
 
-    const submissionData: any = { ...formData };
+    let resolvedCategory = formData.category || '';
+    if (resolvedCategory === 'Other') {
+      const saved = await persistCustomCategory();
+      if (!saved) {
+        setIsUploading(false);
+        return;
+      }
+      resolvedCategory = saved;
+    }
+
+    const submissionData: any = { ...formData, category: resolvedCategory };
     if (contentType === 'policy' && formData.description) {
       submissionData.contentPreview = formData.description;
     }
@@ -327,7 +432,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
 
     try {
       // Pass progress callback to onSubmit
-      await onSubmit(submissionData, file || undefined, (progress) => {
+      await onSubmit(submissionData, file || undefined, (progress: number) => {
         setUploadProgress(progress);
       });
       
@@ -396,8 +501,28 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
         <div>
           <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">{t('eLearningPage.categoryLabel','Category')} <span className="text-red-500 ml-0.5">*</span></label>
           <select name="category" id="category" value={formData.category || ELEARNING_CATEGORIES[0]} onChange={handleInputChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-            {ELEARNING_CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+            {currentCategoryOptions.map(cat => <option key={cat} value={cat}>{cat}</option>)}
           </select>
+          {(formData.category || '') === 'Other' && (
+            <div className="mt-2 flex items-center gap-2">
+              <input
+                type="text"
+                value={customCategory}
+                onChange={(e) => setCustomCategory(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                placeholder={t('content.customCategoryPlaceholder', 'Specify category...')}
+                disabled={isSavingCategory}
+              />
+              <button
+                type="button"
+                onClick={persistCustomCategory}
+                disabled={isSavingCategory}
+                className="px-3 py-2 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+              >
+                {isSavingCategory ? t('common.saving', 'Saving...') : t('common.add', 'Add')}
+              </button>
+            </div>
+          )}
         </div>
       </div>
       <div>
@@ -516,8 +641,28 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
         <div>
           <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">{t('eLearningPage.categoryLabel','Category')} <span className="text-red-500 ml-0.5">*</span></label>
           <select name="category" id="category" value={formData.category || HR_CATEGORIES[0]} onChange={handleInputChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-            {HR_CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+            {currentCategoryOptions.map(cat => <option key={cat} value={cat}>{cat}</option>)}
           </select>
+          {(formData.category || '') === 'Other' && (
+            <div className="mt-2 flex items-center gap-2">
+              <input
+                type="text"
+                value={customCategory}
+                onChange={(e) => setCustomCategory(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                placeholder={t('content.customCategoryPlaceholder', 'Specify category...')}
+                disabled={isSavingCategory}
+              />
+              <button
+                type="button"
+                onClick={persistCustomCategory}
+                disabled={isSavingCategory}
+                className="px-3 py-2 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+              >
+                {isSavingCategory ? t('common.saving', 'Saving...') : t('common.add', 'Add')}
+              </button>
+            </div>
+          )}
         </div>
         {renderButtonSelect('language', formData.language, languageOptions, t('eLearningPage.languageLabel','Language'), true)}
       </div>
@@ -582,11 +727,31 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
         <div>
           <label htmlFor="policyCategory" className="block text-sm font-medium text-gray-700 mb-1">{t('eLearningPage.categoryLabel','Category')} <span className="text-red-500 ml-0.5">*</span></label>
           <select name="category" id="policyCategory" value={formData.category || POLICY_BROAD_CATEGORIES[0]} onChange={handleInputChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-            {POLICY_BROAD_CATEGORIES.map(c => {
+            {currentCategoryOptions.map(c => {
               const key = c.replace(/\s+/g, '').replace(/&/g, '&');
               return <option key={c} value={c}>{t(`content.policyCategory.${key}`, c)}</option>;
             })}
           </select>
+          {(formData.category || '') === 'Other' && (
+            <div className="mt-2 flex items-center gap-2">
+              <input
+                type="text"
+                value={customCategory}
+                onChange={(e) => setCustomCategory(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                placeholder={t('content.customCategoryPlaceholder', 'Specify category...')}
+                disabled={isSavingCategory}
+              />
+              <button
+                type="button"
+                onClick={persistCustomCategory}
+                disabled={isSavingCategory}
+                className="px-3 py-2 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+              >
+                {isSavingCategory ? t('common.saving', 'Saving...') : t('common.add', 'Add')}
+              </button>
+            </div>
+          )}
         </div>
         {renderButtonSelect('language', formData.language, languageOptions, t('eLearningPage.languageLabel','Language'), true)}
       </div>
@@ -600,7 +765,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
         <div>
           <label htmlFor="policyRegion" className="block text-sm font-medium text-gray-700 mb-1">{t('content.region','Region/Canton')} <span className="text-red-500 ml-0.5">*</span></label>
           <select name="region" id="policyRegion" value={formData.region || SWISS_CANTONS[0]} onChange={handleInputChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-            {(formData.country ? REGIONS_BY_COUNTRY[formData.country] : SWISS_CANTONS).map(region => <option key={region} value={region}>{region}</option>)}
+            {(formData.country ? (REGIONS_BY_COUNTRY[formData.country] ?? SWISS_CANTONS) : SWISS_CANTONS).map(region => <option key={region} value={region}>{region}</option>)}
           </select>
         </div>
       </div>

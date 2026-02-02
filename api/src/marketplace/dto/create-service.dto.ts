@@ -14,6 +14,15 @@ export class CreateServiceDto {
   @IsEnum(ServiceCategory)
   category: ServiceCategory;
 
+  /**
+   * Flexible service categories (stored as tags).
+   * Use this for custom categories (e.g. when user selects "Other").
+   */
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  categories?: string[];
+
   @IsOptional()
   @IsNumber()
   price?: number;
@@ -52,6 +61,11 @@ export class UpdateServiceDto {
   @IsOptional()
   @IsEnum(ServiceCategory)
   category?: ServiceCategory;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  categories?: string[];
 
   @IsOptional()
   @IsNumber()
