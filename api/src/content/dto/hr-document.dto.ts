@@ -13,8 +13,6 @@ import {
   ContentStatus,
   LanguageCode,
   FileType,
-  HR_CATEGORIES,
-  HRCategory,
 } from './content.enums';
 
 export class UploadHrDocumentDto {
@@ -33,14 +31,10 @@ export class UploadHrDocumentDto {
   @MaxLength(1000, { message: 'Content preview must not exceed 1000 characters' })
   contentPreview?: string;
 
-  @Transform(({ value }) => {
-    if (typeof value === 'string' && HR_CATEGORIES.includes(value as any)) {
-      return value;
-    }
-    return undefined;
-  })
   @IsString()
-  category: HRCategory;
+  @MinLength(2, { message: 'Category must be at least 2 characters long' })
+  @MaxLength(80, { message: 'Category must not exceed 80 characters' })
+  category: string;
 
   @Transform(({ value }) => {
     if (typeof value === 'string') {
@@ -132,14 +126,10 @@ export class UpdateHrDocumentDto {
   contentPreview?: string;
 
   @IsOptional()
-  @Transform(({ value }) => {
-    if (typeof value === 'string' && HR_CATEGORIES.includes(value as any)) {
-      return value;
-    }
-    return undefined;
-  })
   @IsString()
-  category?: HRCategory;
+  @MinLength(2, { message: 'Category must be at least 2 characters long' })
+  @MaxLength(80, { message: 'Category must not exceed 80 characters' })
+  category?: string;
 
   @IsOptional()
   @Transform(({ value }) => {

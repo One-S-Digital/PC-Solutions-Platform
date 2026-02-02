@@ -283,8 +283,16 @@ export class MarketplaceService {
     const andClauses: Prisma.ServiceWhereInput[] = [];
 
     if (filters?.category) {
-      andClauses.push({
-    category: filters.category as $Enums.ServiceCategory,});
+      const isEnumCategory = Object.values($Enums.ServiceCategory).includes(
+        filters.category as $Enums.ServiceCategory,
+      );
+      const categoryOrClauses: Prisma.ServiceWhereInput[] = [];
+      if (isEnumCategory) {
+        categoryOrClauses.push({ category: filters.category as $Enums.ServiceCategory });
+      }
+      // Always allow matching against flexible categories as tags.
+      categoryOrClauses.push({ categories: { has: filters.category } });
+      andClauses.push({ OR: categoryOrClauses });
     }
 
     if (filters?.providerId) {

@@ -66,6 +66,11 @@ export class UpdateSupplierSettingsDto {
   productCategory?: string;
 
   @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  productCategories?: string[];
+
+  @IsOptional()
   @IsString()
   serviceType?: string;
 

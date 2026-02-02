@@ -464,6 +464,7 @@ export class SettingsController {
         websiteUrl: (organization as any).websiteUrl ?? '',
         languages: organization.languages ?? [],
         productCategory: organization.productCategory ?? '',
+        productCategories: (organization as any).productCategories ?? [],
         serviceType: organization.serviceType ?? '',
         // Optional: when unset, return null (no default minimum).
         minimumOrderQuantity: organization.minimumOrderQuantity ?? null,
@@ -537,6 +538,9 @@ export class SettingsController {
             websiteUrl: settings.websiteUrl,
             languages: settings.languages ?? [],
             productCategory: settings.productCategory,
+            ...(settings.productCategories !== undefined && {
+              productCategories: settings.productCategories ?? [],
+            }),
             serviceType: settings.serviceType,
             ...(settings.minimumOrderQuantity !== undefined && {
               minimumOrderQuantity: settings.minimumOrderQuantity,
@@ -564,6 +568,7 @@ export class SettingsController {
             websiteUrl: settings.websiteUrl,
             languages: settings.languages ?? [],
             productCategory: settings.productCategory,
+            productCategories: settings.productCategories ?? [],
             serviceType: settings.serviceType,
             ...(settings.minimumOrderQuantity !== undefined && {
               minimumOrderQuantity: settings.minimumOrderQuantity,

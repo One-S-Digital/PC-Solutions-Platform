@@ -16,8 +16,6 @@ import {
   LanguageCode,
   FileType,
   PolicyType,
-  POLICY_CATEGORIES,
-  PolicyCategory,
   COUNTRIES,
   Country,
   REGIONS_BY_COUNTRY,
@@ -39,14 +37,10 @@ export class UploadStatePolicyDto {
   @MaxLength(1000, { message: 'Content preview must not exceed 1000 characters' })
   contentPreview?: string;
 
-  @Transform(({ value }) => {
-    if (typeof value === 'string' && POLICY_CATEGORIES.includes(value as any)) {
-      return value;
-    }
-    return undefined;
-  })
   @IsString()
-  category: PolicyCategory;
+  @MinLength(2, { message: 'Category must be at least 2 characters long' })
+  @MaxLength(80, { message: 'Category must not exceed 80 characters' })
+  category: string;
 
   @Transform(({ value }) => {
     if (typeof value === 'string') {
@@ -176,28 +170,20 @@ export class UpdateStatePolicyDto {
   contentPreview?: string;
 
   @IsOptional()
-  @Transform(({ value }) => {
-    if (typeof value === 'string' && POLICY_CATEGORIES.includes(value as any)) {
-      return value;
-    }
-    return undefined;
-  })
   @IsString()
-  category?: PolicyCategory;
+  @MinLength(2, { message: 'Category must be at least 2 characters long' })
+  @MaxLength(80, { message: 'Category must not exceed 80 characters' })
+  category?: string;
 
   /**
    * Backwards-compatible alias for `category`.
    * Some clients historically send `contentCategory`; we store it as `Asset.contentCategory`.
    */
   @IsOptional()
-  @Transform(({ value }) => {
-    if (typeof value === 'string' && POLICY_CATEGORIES.includes(value as any)) {
-      return value;
-    }
-    return undefined;
-  })
   @IsString()
-  contentCategory?: PolicyCategory;
+  @MinLength(2, { message: 'contentCategory must be at least 2 characters long' })
+  @MaxLength(80, { message: 'contentCategory must not exceed 80 characters' })
+  contentCategory?: string;
 
   @IsOptional()
   @Transform(({ value }) => {

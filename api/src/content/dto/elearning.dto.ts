@@ -16,8 +16,6 @@ import {
   ELearningContentType,
   ContentStatus,
   LanguageCode,
-  ELEARNING_CATEGORIES,
-  ELearningCategory,
 } from './content.enums';
 
 export class UploadElearningDto {
@@ -36,14 +34,10 @@ export class UploadElearningDto {
   @MaxLength(1000, { message: 'Content preview must not exceed 1000 characters' })
   contentPreview?: string;
 
-  @Transform(({ value }) => {
-    if (typeof value === 'string' && ELEARNING_CATEGORIES.includes(value as any)) {
-      return value;
-    }
-    return undefined;
-  })
   @IsString()
-  category: ELearningCategory;
+  @MinLength(2, { message: 'Category must be at least 2 characters long' })
+  @MaxLength(80, { message: 'Category must not exceed 80 characters' })
+  category: string;
 
   @Transform(({ value }) => {
     if (typeof value === 'string') {
@@ -153,14 +147,10 @@ export class UpdateElearningDto {
   contentPreview?: string;
 
   @IsOptional()
-  @Transform(({ value }) => {
-    if (typeof value === 'string' && ELEARNING_CATEGORIES.includes(value as any)) {
-      return value;
-    }
-    return undefined;
-  })
   @IsString()
-  category?: ELearningCategory;
+  @MinLength(2, { message: 'Category must be at least 2 characters long' })
+  @MaxLength(80, { message: 'Category must not exceed 80 characters' })
+  category?: string;
 
   @IsOptional()
   @Transform(({ value }) => {
