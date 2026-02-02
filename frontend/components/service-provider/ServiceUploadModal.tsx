@@ -6,6 +6,7 @@ import ChipInput from '../ui/ChipInput';
 import { XMarkIcon, PaperClipIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
+import { useCategories } from '../../hooks/useCategories';
 
 interface ServiceUploadModalProps {
   isOpen: boolean;
@@ -19,6 +20,11 @@ type ServiceFormData = Partial<Omit<Service, 'id' | 'providerId' | 'providerName
 const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose, onSubmit, existingService }) => {
     const { t } = useTranslation(['dashboard', 'common']);
   const { currentUser } = useAppContext();
+  const { categories: serviceCategoryOptions, addCategory: addServiceCategory } = useCategories(
+    'service',
+    SUGGESTED_SERVICE_CATEGORIES,
+  );
+  const [customServiceCategory, setCustomServiceCategory] = useState('');
 
   const initialFormState: ServiceFormData = {
     title: '',
@@ -110,11 +116,48 @@ const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose
               </label>
               <ChipInput<string>
                 selectedChips={formData.categories || []}
-                availableOptions={[...SUGGESTED_SERVICE_CATEGORIES]}
+                availableOptions={[...serviceCategoryOptions]}
                 onChange={(categories) => setFormData(prev => ({ ...prev, categories }))}
                 placeholder={t('common:serviceUploadModal.placeholders.categories', 'Type or select categories...')}
                 allowCustomValues={true}
               />
+              {(formData.categories || []).includes('Other') && (
+                <div className="mt-2 flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={customServiceCategory}
+                    onChange={(e) => setCustomServiceCategory(e.target.value)}
+                    className={STANDARD_INPUT_FIELD}
+                    placeholder={t('common:serviceUploadModal.placeholders.categories', 'Specify category...')}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={async () => {
+                      const name = customServiceCategory.trim();
+                      if (!name) return;
+                      try {
+                        await addServiceCategory(name);
+                        setFormData((prev) => ({
+                          ...prev,
+                          categories: (prev.categories || [])
+                            .filter((c) => c !== 'Other')
+                            .concat([name])
+                            .filter(
+                              (v, i, arr) =>
+                                arr.findIndex((x) => x.toLowerCase() === v.toLowerCase()) === i,
+                            ),
+                        }));
+                        setCustomServiceCategory('');
+                      } catch (e: any) {
+                        alert(e?.message || 'Failed to save category');
+                      }
+                    }}
+                  >
+                    {t('common:buttons.add', 'Add')}
+                  </Button>
+                </div>
+              )}
               <p className="text-xs text-gray-500 mt-1">
                 {t('common:serviceUploadModal.categoriesHelpText', 'Select from suggestions or add your own custom categories. Press Enter to add.')}
               </p>

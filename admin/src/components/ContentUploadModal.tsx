@@ -1,6 +1,7 @@
 import React, { useState, useEffect, FormEvent } from 'react';
 import { XMarkIcon, PaperClipIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '@clerk/clerk-react';
 
 // Define the content types
 export type UploadableContentType = 'e-learning' | 'hr' | 'policy';
@@ -84,7 +85,7 @@ type FormData = {
   title?: string;
   description?: string;
   contentPreview?: string;
-  category?: typeof ELEARNING_CATEGORIES[number] | typeof HR_CATEGORIES[number] | typeof POLICY_BROAD_CATEGORIES[number];
+  category?: string;
   type?: ELearningContentType;
   policyType?: PolicyType;
   language?: LanguageCode;
@@ -113,6 +114,14 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
   existingContent
 }) => {
   const { t } = useTranslation('dashboard');
+  const { getToken } = useAuth();
+
+  const [elearningCategories, setElearningCategories] = useState<string[]>([...ELEARNING_CATEGORIES]);
+  const [hrCategories, setHrCategories] = useState<string[]>([...HR_CATEGORIES]);
+  const [policyCategories, setPolicyCategories] = useState<string[]>([...POLICY_BROAD_CATEGORIES]);
+  const [customCategory, setCustomCategory] = useState('');
+  const [isSavingCategory, setIsSavingCategory] = useState(false);
+
   const getInitialFormState = (): FormData => ({
     title: '',
     description: '',
@@ -135,6 +144,84 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [videoSourceType, setVideoSourceType] = useState<'upload' | 'url'>('upload');
+
+  const categoryKind =
+    contentType === 'e-learning'
+      ? 'content-elearning'
+      : contentType === 'hr'
+        ? 'content-hr'
+        : 'content-policy';
+
+  const currentCategoryOptions =
+    contentType === 'e-learning'
+      ? elearningCategories
+      : contentType === 'hr'
+        ? hrCategories
+        : policyCategories;
+
+  const fetchCategories = async () => {
+    try {
+      const token = await getToken();
+      const baseUrl = (import.meta as any).env?.VITE_API_URL || '/api';
+      const url = `${String(baseUrl).replace(/\/+$/g, '')}/categories/${categoryKind}`;
+      const response = await fetch(url, {
+        headers: {
+          Authorization: token ? `Bearer ${token}` : '',
+          Accept: 'application/json',
+        },
+      });
+      if (!response.ok) return;
+      const payload = await response.json().catch(() => null);
+      const values = payload?.data;
+      if (!Array.isArray(values)) return;
+      const sanitized = values.filter((v: any) => typeof v === 'string');
+      if (contentType === 'e-learning') setElearningCategories(sanitized);
+      if (contentType === 'hr') setHrCategories(sanitized);
+      if (contentType === 'policy') setPolicyCategories(sanitized);
+    } catch {
+      // keep defaults
+    }
+  };
+
+  const persistCustomCategory = async () => {
+    const name = customCategory.trim();
+    if (!name || name.toLowerCase() === 'other') {
+      alert('Please specify a category name');
+      return;
+    }
+    setIsSavingCategory(true);
+    try {
+      const token = await getToken();
+      const baseUrl = (import.meta as any).env?.VITE_API_URL || '/api';
+      const url = `${String(baseUrl).replace(/\/+$/g, '')}/categories/${categoryKind}`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          Authorization: token ? `Bearer ${token}` : '',
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({ name }),
+      });
+      const payload = await response.json().catch(() => null);
+      if (!response.ok || payload?.success === false) {
+        throw new Error(payload?.message || 'Failed to save category');
+      }
+      const values = Array.isArray(payload?.data) ? payload.data : null;
+      if (values) {
+        const sanitized = values.filter((v: any) => typeof v === 'string');
+        if (contentType === 'e-learning') setElearningCategories(sanitized);
+        if (contentType === 'hr') setHrCategories(sanitized);
+        if (contentType === 'policy') setPolicyCategories(sanitized);
+      }
+      setFormData((prev) => ({ ...prev, category: name }));
+      setCustomCategory('');
+    } catch (e: any) {
+      alert(e?.message || 'Failed to save category');
+    } finally {
+      setIsSavingCategory(false);
+    }
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -183,9 +270,11 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
         setFormData(getInitialFormState());
         setVideoSourceType('upload'); // Reset to default for new content
       }
+      fetchCategories();
       setFile(null);
       setUploadProgress(0);
       setIsUploading(false);
+      setCustomCategory('');
     }
   }, [isOpen, contentType, existingContent]);
 
@@ -234,6 +323,21 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
     e.preventDefault();
     setIsUploading(true);
     setUploadProgress(0);
+
+    if ((formData.category || '') === 'Other') {
+      const name = customCategory.trim();
+      if (!name) {
+        alert('Please specify a category name');
+        setIsUploading(false);
+        return;
+      }
+      await persistCustomCategory();
+      // If still "Other" after persist attempt, abort submit.
+      if ((formData.category || '') === 'Other') {
+        setIsUploading(false);
+        return;
+      }
+    }
 
     const submissionData: any = { ...formData };
     if (contentType === 'policy' && formData.description) {
@@ -396,8 +500,28 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
         <div>
           <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">{t('eLearningPage.categoryLabel','Category')} <span className="text-red-500 ml-0.5">*</span></label>
           <select name="category" id="category" value={formData.category || ELEARNING_CATEGORIES[0]} onChange={handleInputChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-            {ELEARNING_CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+            {currentCategoryOptions.map(cat => <option key={cat} value={cat}>{cat}</option>)}
           </select>
+          {(formData.category || '') === 'Other' && (
+            <div className="mt-2 flex items-center gap-2">
+              <input
+                type="text"
+                value={customCategory}
+                onChange={(e) => setCustomCategory(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                placeholder={t('content.customCategoryPlaceholder', 'Specify category...')}
+                disabled={isSavingCategory}
+              />
+              <button
+                type="button"
+                onClick={persistCustomCategory}
+                disabled={isSavingCategory}
+                className="px-3 py-2 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+              >
+                {isSavingCategory ? t('common.saving', 'Saving...') : t('common.add', 'Add')}
+              </button>
+            </div>
+          )}
         </div>
       </div>
       <div>
@@ -516,8 +640,28 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
         <div>
           <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">{t('eLearningPage.categoryLabel','Category')} <span className="text-red-500 ml-0.5">*</span></label>
           <select name="category" id="category" value={formData.category || HR_CATEGORIES[0]} onChange={handleInputChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-            {HR_CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+            {currentCategoryOptions.map(cat => <option key={cat} value={cat}>{cat}</option>)}
           </select>
+          {(formData.category || '') === 'Other' && (
+            <div className="mt-2 flex items-center gap-2">
+              <input
+                type="text"
+                value={customCategory}
+                onChange={(e) => setCustomCategory(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                placeholder={t('content.customCategoryPlaceholder', 'Specify category...')}
+                disabled={isSavingCategory}
+              />
+              <button
+                type="button"
+                onClick={persistCustomCategory}
+                disabled={isSavingCategory}
+                className="px-3 py-2 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+              >
+                {isSavingCategory ? t('common.saving', 'Saving...') : t('common.add', 'Add')}
+              </button>
+            </div>
+          )}
         </div>
         {renderButtonSelect('language', formData.language, languageOptions, t('eLearningPage.languageLabel','Language'), true)}
       </div>
@@ -582,11 +726,31 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
         <div>
           <label htmlFor="policyCategory" className="block text-sm font-medium text-gray-700 mb-1">{t('eLearningPage.categoryLabel','Category')} <span className="text-red-500 ml-0.5">*</span></label>
           <select name="category" id="policyCategory" value={formData.category || POLICY_BROAD_CATEGORIES[0]} onChange={handleInputChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-            {POLICY_BROAD_CATEGORIES.map(c => {
+            {currentCategoryOptions.map(c => {
               const key = c.replace(/\s+/g, '').replace(/&/g, '&');
               return <option key={c} value={c}>{t(`content.policyCategory.${key}`, c)}</option>;
             })}
           </select>
+          {(formData.category || '') === 'Other' && (
+            <div className="mt-2 flex items-center gap-2">
+              <input
+                type="text"
+                value={customCategory}
+                onChange={(e) => setCustomCategory(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                placeholder={t('content.customCategoryPlaceholder', 'Specify category...')}
+                disabled={isSavingCategory}
+              />
+              <button
+                type="button"
+                onClick={persistCustomCategory}
+                disabled={isSavingCategory}
+                className="px-3 py-2 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+              >
+                {isSavingCategory ? t('common.saving', 'Saving...') : t('common.add', 'Add')}
+              </button>
+            </div>
+          )}
         </div>
         {renderButtonSelect('language', formData.language, languageOptions, t('eLearningPage.languageLabel','Language'), true)}
       </div>
