@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ConflictException, ForbiddenException, Logger } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, ForbiddenException, Logger, BadRequestException } from '@nestjs/common';
 import { Prisma, UserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -1410,48 +1410,196 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    // Delete both User profile and AppUser in a transaction for data consistency
-    const deletedAppUser = await this.prisma.$transaction(async (tx) => {
-      // Try to delete the User profile table first (if it exists)
-      // Using deleteMany to avoid errors if profile doesn't exist
-      const deleteResult = await tx.user.deleteMany({
-        where: { clerkId: appUser.clerkId },
-      });
-      
-      if (deleteResult.count > 0) {
-        console.log(`Deleted User profile for clerkId: ${appUser.clerkId}`);
-      } else {
-        console.log(`User profile not found for clerkId: ${appUser.clerkId}`);
+    // Soft delete = suspend account (do not change role; do not hard-delete).
+    // This blocks login via ClerkAuthGuard (checks User.isActive).
+    const now = new Date();
+
+    const updatedProfile = await this.prisma.$transaction(async (tx) => {
+      const profile = await tx.user.findUnique({ where: { clerkId: appUser.clerkId } });
+
+      if (profile) {
+        return tx.user.update({
+          where: { id: profile.id },
+          data: {
+            isActive: false,
+            deactivatedAt: now,
+            deactivatedReasonCode: 'ADMIN_SUSPENDED',
+            deactivatedReasonText: 'User suspended by admin',
+          },
+        });
       }
 
-      // Delete AppUser
-      return await tx.appUser.delete({
-        where: { id },
+      // Ensure there is a profile row to enforce suspension in ClerkAuthGuard.
+      return tx.user.create({
+        data: {
+          clerkId: appUser.clerkId,
+          email: appUser.email,
+          role: appUser.role,
+          isActive: false,
+          deactivatedAt: now,
+          deactivatedReasonCode: 'ADMIN_SUSPENDED',
+          deactivatedReasonText: 'User suspended by admin',
+        },
       });
     });
 
     // Return in User format for compatibility
     return {
-      id: deletedAppUser.id,
-      clerkId: deletedAppUser.clerkId,
-      email: deletedAppUser.email,
-      firstName: null,
-      lastName: null,
-      role: deletedAppUser.role,
-      phoneNumber: null,
-      workExperience: null,
-      education: null,
-      certifications: [],
-      skills: [],
-      availability: null,
-      cvUrl: null,
-      stripeCustomerId: null,
-      lastActiveAt: null,
-      isActive: true,
-      createdAt: deletedAppUser.createdAt,
-      updatedAt: deletedAppUser.updatedAt,
+      id: appUser.id,
+      clerkId: appUser.clerkId,
+      email: appUser.email,
+      firstName: updatedProfile.firstName ?? null,
+      lastName: updatedProfile.lastName ?? null,
+      role: appUser.role,
+      phoneNumber: updatedProfile.phoneNumber ?? null,
+      workExperience: updatedProfile.workExperience ?? null,
+      education: updatedProfile.education ?? null,
+      certifications: updatedProfile.certifications ?? [],
+      skills: updatedProfile.skills ?? [],
+      availability: updatedProfile.availability ?? null,
+      cvUrl: updatedProfile.cvUrl ?? null,
+      stripeCustomerId: updatedProfile.stripeCustomerId ?? null,
+      lastActiveAt: updatedProfile.lastActiveAt ?? null,
+      isActive: updatedProfile.isActive,
+      createdAt: appUser.createdAt,
+      updatedAt: appUser.updatedAt,
       organizations: [],
     };
+  }
+
+  /**
+   * Hard delete (best-effort) — only allowed when it is safe.
+   *
+   * This is intentionally strict: if the user has dependent records that would
+   * break referential integrity (messages, subscriptions, uploaded assets, etc.),
+   * we refuse with a 409 and provide counts so an admin can decide what to do.
+   */
+  async hardRemove(id: string) {
+    const appUser = await this.prisma.appUser.findUnique({ where: { id } });
+    if (!appUser) {
+      throw new NotFoundException('User not found');
+    }
+
+    const profile = await this.prisma.user.findUnique({ where: { clerkId: appUser.clerkId } });
+
+    // Preflight dependency counts. We only allow hard-delete for "clean" users
+    // (typically newly created accounts) to avoid blowing away important history.
+    const [
+      assetCount,
+      orgMembershipCount,
+      contactInfoCount,
+      messageCount,
+      conversationParticipantCount,
+      subscriptionCount,
+      jobApplicationCount,
+      supportTicketCount,
+      ticketResponseCount,
+    ] = await Promise.all([
+      this.prisma.asset.count({ where: { uploadedById: appUser.id } }),
+      profile ? this.prisma.userOrganization.count({ where: { userId: profile.id } }) : Promise.resolve(0),
+      profile ? this.prisma.userContactInfo.count({ where: { userId: profile.id } }) : Promise.resolve(0),
+      profile
+        ? this.prisma.message.count({
+            where: { OR: [{ senderId: profile.id }, { receiverId: profile.id }] },
+          })
+        : Promise.resolve(0),
+      profile ? this.prisma.conversationParticipant.count({ where: { userId: profile.id } }) : Promise.resolve(0),
+      profile ? this.prisma.subscription.count({ where: { userId: profile.id } }) : Promise.resolve(0),
+      profile ? this.prisma.jobApplication.count({ where: { candidateId: profile.id } }) : Promise.resolve(0),
+      profile ? this.prisma.supportTicket.count({ where: { OR: [{ userId: profile.id }, { assignedTo: profile.id }] } }) : Promise.resolve(0),
+      profile ? this.prisma.ticketResponse.count({ where: { userId: profile.id } }) : Promise.resolve(0),
+    ]);
+
+    // Allow deleting trivial link tables (memberships/contact) automatically,
+    // but refuse when the user has any "real" dependent data.
+    const blocking: Record<string, number> = {
+      assetsUploaded: assetCount,
+      messages: messageCount,
+      conversationParticipants: conversationParticipantCount,
+      subscriptions: subscriptionCount,
+      jobApplications: jobApplicationCount,
+      supportTickets: supportTicketCount,
+      ticketResponses: ticketResponseCount,
+    };
+
+    const hasBlocking = Object.values(blocking).some((n) => n > 0);
+    if (hasBlocking) {
+      throw new ConflictException({
+        message:
+          'User cannot be hard-deleted because dependent records exist. Use soft delete, or manually purge dependent data first.',
+        code: 'HARD_DELETE_BLOCKED',
+        blocking,
+        nonBlocking: {
+          orgMemberships: orgMembershipCount,
+          contactInfo: contactInfoCount,
+        },
+      });
+    }
+
+    try {
+      await this.prisma.$transaction(async (tx) => {
+        if (profile) {
+          await tx.userOrganization.deleteMany({ where: { userId: profile.id } });
+          await tx.userContactInfo.deleteMany({ where: { userId: profile.id } });
+          await tx.user.delete({ where: { id: profile.id } });
+        } else {
+          // Fall back to clerkId-based cleanup if profile row doesn't exist.
+          await tx.user.deleteMany({ where: { clerkId: appUser.clerkId } });
+        }
+
+        await tx.appUser.delete({ where: { id: appUser.id } });
+      });
+    } catch (err: any) {
+      // Guard against FK races: even after a "clean" preflight, a dependent record may be
+      // created before we delete, resulting in a FK constraint error. Translate to 409.
+      if (err?.code === 'P2003' || err instanceof Prisma.PrismaClientKnownRequestError) {
+        const code = err?.code;
+        if (code === 'P2003') {
+          throw new ConflictException({
+            message:
+              'User cannot be hard-deleted because dependent records exist. Use soft delete, or manually purge dependent data first.',
+            code: 'HARD_DELETE_BLOCKED',
+            blocking,
+            nonBlocking: {
+              orgMemberships: orgMembershipCount,
+              contactInfo: contactInfoCount,
+            },
+          });
+        }
+      }
+      throw err;
+    }
+
+    // Delete from Clerk too (best-effort). If Clerk deletion fails, queue a retry via outbox.
+    if (!this.clerk) {
+      throw new BadRequestException('Clerk is not configured on the API');
+    }
+
+    try {
+      await (this.clerk as any).users.deleteUser(appUser.clerkId);
+    } catch (error: any) {
+      if (error?.status === 404) {
+        // Already deleted in Clerk.
+      } else {
+        this.logger.error('Failed to delete user from Clerk, queuing retry', {
+          clerkId: appUser.clerkId,
+          message: error?.message,
+          status: error?.status,
+        });
+        await this.prisma.outbox.create({
+          data: {
+            topic: 'clerk.user.delete',
+            payload: {
+              clerkId: appUser.clerkId,
+              reason: 'Hard delete requested by admin',
+              requestedAt: new Date().toISOString(),
+            },
+          },
+        });
+      }
+    }
+
+    return { success: true };
   }
 
   // Sync user with Clerk webhook

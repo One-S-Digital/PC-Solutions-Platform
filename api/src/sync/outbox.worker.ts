@@ -24,6 +24,12 @@ interface EmailDeletePayload {
   scheduledAt?: string;
 }
 
+interface UserDeletePayload {
+  clerkId: string;
+  reason?: string;
+  requestedAt?: string;
+}
+
 @Injectable()
 export class OutboxWorker {
   private readonly logger = new Logger(OutboxWorker.name);
@@ -79,6 +85,8 @@ export class OutboxWorker {
       await this.syncEmailToClerk(job.payload as EmailSyncPayload);
     } else if (job.topic === 'clerk.email.delete') {
       await this.deleteOldEmailFromClerk(job.payload as EmailDeletePayload);
+    } else if (job.topic === 'clerk.user.delete') {
+      await this.deleteUserFromClerk(job.payload as UserDeletePayload);
     } else {
       this.logger.warn(`Unknown outbox topic: ${job.topic}`);
     }
@@ -222,6 +230,22 @@ export class OutboxWorker {
         return; // Don't throw error for non-existent resources
       }
       throw error; // Re-throw other errors for retry
+    }
+  }
+
+  private async deleteUserFromClerk(payload: UserDeletePayload) {
+    const { clerkId, reason } = payload;
+    this.logger.log(`🗑️ [OUTBOX] Deleting Clerk user ${clerkId}. Reason: ${reason || 'n/a'}`);
+
+    try {
+      await this.clerk.users.deleteUser(clerkId);
+      this.logger.log(`✅ [OUTBOX] Successfully deleted Clerk user ${clerkId}`);
+    } catch (error: any) {
+      if (error?.status === 404) {
+        this.logger.warn(`ℹ️ [OUTBOX] Clerk user ${clerkId} not found, skipping deletion`);
+        return;
+      }
+      throw error;
     }
   }
 
