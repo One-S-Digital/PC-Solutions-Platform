@@ -70,11 +70,12 @@ const DEFAULTS: Record<CategoryKind, readonly string[]> = {
 };
 
 function normalizeName(name: string) {
-  return name.trim().replace(/\s+/g, ' ');
+  const normalized = name.trim().replace(/\s+/g, ' ');
+  return normalized.toLowerCase() === 'other' ? 'Other' : normalized;
 }
 
 function ensureOtherAtEnd(values: string[]) {
-  const withoutOther = values.filter((v) => v !== 'Other');
+  const withoutOther = values.filter((v) => v.toLowerCase() !== 'other');
   return [...withoutOther, 'Other'];
 }
 
@@ -122,26 +123,53 @@ export class CategoriesService {
     }
 
     const key = SETTING_KEY_BY_KIND[kind];
-    const current = await this.getCategories(kind);
-    const merged = ensureOtherAtEnd(uniqueCaseInsensitive([name, ...current]));
+    const maxAttempts = 5;
 
-    await this.prisma.systemSettings.upsert({
-      where: { key },
-      update: {
-        value: merged as any,
-        updatedAt: new Date(),
-      },
-      create: {
-        key,
-        value: merged as any,
-        description: `Auto-managed category list for ${kind}`,
-        category: 'categories',
-        isEncrypted: false,
-        isPublic: false,
-      },
-    });
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      const existing = await this.prisma.systemSettings.findUnique({ where: { key } });
 
-    return merged;
+      const currentRaw = existing?.value as unknown;
+      const current = Array.isArray(currentRaw) && currentRaw.every((v) => typeof v === 'string')
+        ? (currentRaw as string[])
+        : [...DEFAULTS[kind]];
+
+      const merged = ensureOtherAtEnd(
+        uniqueCaseInsensitive([name, ...current].map((v) => normalizeName(v)).filter(Boolean)),
+      );
+
+      if (!existing) {
+        try {
+          await this.prisma.systemSettings.create({
+            data: {
+              key,
+              value: merged as any,
+              description: `Auto-managed category list for ${kind}`,
+              category: 'categories',
+              isEncrypted: false,
+              isPublic: false,
+            },
+          });
+          return merged;
+        } catch {
+          // Likely a concurrent create; retry.
+          continue;
+        }
+      }
+
+      const updatedAt = existing.updatedAt;
+      const result = await this.prisma.systemSettings.updateMany({
+        where: { key, updatedAt },
+        data: { value: merged as any, updatedAt: new Date() },
+      });
+
+      if (result.count === 1) {
+        return merged;
+      }
+      // Lost race; retry.
+    }
+
+    // Final fallback: return whatever is currently stored.
+    return this.getCategories(kind);
   }
 }
 

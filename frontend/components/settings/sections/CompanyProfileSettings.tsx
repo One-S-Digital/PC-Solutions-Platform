@@ -6,7 +6,7 @@ import SettingsSectionWrapper from '../SettingsSectionWrapper';
 import ChipInput from '../../ui/ChipInput';
 import ImageCropperModal from '../../shared/ImageCropperModal';
 import { useAuthenticatedApi } from '../../../hooks/useAuthenticatedApi';
-import { useCategories } from '../../../hooks/useCategories';
+import { normalizeCategoryName, useCategories } from '../../../hooks/useCategories';
 import { 
   BuildingOfficeIcon, 
   PhotoIcon, 
@@ -590,7 +590,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                         type="button"
                         className="px-3 py-2 text-sm font-medium rounded-md bg-swiss-mint text-white hover:bg-swiss-teal transition-colors"
                         onClick={async () => {
-                          const name = customProductCategory.trim();
+                          const name = normalizeCategoryName(customProductCategory);
                           if (!name) return;
                           try {
                             await addProductCategory(name);
@@ -717,7 +717,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                         type="button"
                         className="px-3 py-2 text-sm font-medium rounded-md bg-swiss-mint text-white hover:bg-swiss-teal transition-colors"
                         onClick={async () => {
-                          const name = customServiceCategory.trim();
+                          const name = normalizeCategoryName(customServiceCategory);
                           if (!name) return;
                           try {
                             await addServiceCategory(name);

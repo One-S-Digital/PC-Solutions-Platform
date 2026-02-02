@@ -10,7 +10,7 @@ type CategoryKind =
 
 type CategoriesResponse = { success: boolean; data?: string[]; message?: string };
 
-const normalize = (name: string) => name.trim().replace(/\s+/g, ' ');
+export const normalizeCategoryName = (name: string) => name.trim().replace(/\s+/g, ' ');
 
 export function useCategories(kind: CategoryKind, fallback: readonly string[]) {
   const { authenticatedRequest } = useAuthenticatedApi();
@@ -37,7 +37,7 @@ export function useCategories(kind: CategoryKind, fallback: readonly string[]) {
 
   const addCategory = useCallback(
     async (rawName: string) => {
-      const name = normalize(rawName);
+      const name = normalizeCategoryName(rawName);
       if (!name || name.toLowerCase() === 'other') {
         throw new Error('Please specify a category name');
       }
@@ -60,7 +60,7 @@ export function useCategories(kind: CategoryKind, fallback: readonly string[]) {
   );
 
   const normalizedCategories = useMemo(
-    () => categories.map((c) => normalize(c)).filter(Boolean),
+    () => categories.map((c) => normalizeCategoryName(c)).filter(Boolean),
     [categories],
   );
 

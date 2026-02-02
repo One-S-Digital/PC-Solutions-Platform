@@ -134,15 +134,21 @@ const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose
                     type="button"
                     variant="outline"
                     onClick={async () => {
-                      const name = customServiceCategory.trim();
+                      const name = customServiceCategory.trim().replace(/\s+/g, ' ');
                       if (!name) return;
+                      const existingOption = serviceCategoryOptions.find(
+                        (option) => option.toLowerCase() === name.toLowerCase(),
+                      );
+                      const resolvedName = existingOption ?? name;
                       try {
-                        await addServiceCategory(name);
+                        if (!existingOption) {
+                          await addServiceCategory(name);
+                        }
                         setFormData((prev) => ({
                           ...prev,
                           categories: (prev.categories || [])
                             .filter((c) => c !== 'Other')
-                            .concat([name])
+                            .concat([resolvedName])
                             .filter(
                               (v, i, arr) =>
                                 arr.findIndex((x) => x.toLowerCase() === v.toLowerCase()) === i,

@@ -302,6 +302,8 @@ const ProductUploadModal: React.FC<ProductUploadModalProps> = ({
     } else {
       setFormData({ ...defaultFormState });
     }
+    setCustomPrimaryCategory('');
+    setCustomAdditionalCategory('');
   }, [isOpen, initialProduct]);
 
   if (!isOpen) {
@@ -550,7 +552,7 @@ const ProductUploadModal: React.FC<ProductUploadModalProps> = ({
                           variant="outline"
                           size="sm"
                           onClick={async () => {
-                            const name = customPrimaryCategory.trim();
+                            const name = customPrimaryCategory.trim().replace(/\s+/g, ' ');
                             if (!name) return;
                             try {
                               await addProductCategory(name);
@@ -595,7 +597,7 @@ const ProductUploadModal: React.FC<ProductUploadModalProps> = ({
                           variant="outline"
                           size="sm"
                           onClick={async () => {
-                            const name = customAdditionalCategory.trim();
+                            const name = customAdditionalCategory.trim().replace(/\s+/g, ' ');
                             if (!name) return;
                             try {
                               await addProductCategory(name);

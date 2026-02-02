@@ -464,7 +464,13 @@ export class SettingsController {
         websiteUrl: (organization as any).websiteUrl ?? '',
         languages: organization.languages ?? [],
         productCategory: organization.productCategory ?? '',
-        productCategories: (organization as any).productCategories ?? [],
+        productCategories:
+          Array.isArray((organization as any).productCategories) &&
+          (organization as any).productCategories.length > 0
+            ? (organization as any).productCategories
+            : organization.productCategory
+              ? [organization.productCategory]
+              : [],
         serviceType: organization.serviceType ?? '',
         // Optional: when unset, return null (no default minimum).
         minimumOrderQuantity: organization.minimumOrderQuantity ?? null,

@@ -186,11 +186,11 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
     }
   };
 
-  const persistCustomCategory = async () => {
-    const name = customCategory.trim();
-    if (!name || name.toLowerCase() === 'other') {
+  const persistCustomCategory = async (): Promise<string | null> => {
+    const name = customCategory.trim().replace(/\s+/g, ' ');
+    if (!name || name.length < 2 || name.toLowerCase() === 'other') {
       alert('Please specify a category name');
-      return;
+      return null;
     }
     setIsSavingCategory(true);
     try {
@@ -219,8 +219,10 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
       }
       setFormData((prev) => ({ ...prev, category: name }));
       setCustomCategory('');
+      return name;
     } catch (e: any) {
       alert(e?.message || 'Failed to save category');
+      return null;
     } finally {
       setIsSavingCategory(false);
     }
@@ -328,22 +330,17 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
     setIsUploading(true);
     setUploadProgress(0);
 
-    if ((formData.category || '') === 'Other') {
-      const name = customCategory.trim();
-      if (!name) {
-        alert('Please specify a category name');
+    let resolvedCategory = formData.category || '';
+    if (resolvedCategory === 'Other') {
+      const saved = await persistCustomCategory();
+      if (!saved) {
         setIsUploading(false);
         return;
       }
-      await persistCustomCategory();
-      // If still "Other" after persist attempt, abort submit.
-      if ((formData.category || '') === 'Other') {
-        setIsUploading(false);
-        return;
-      }
+      resolvedCategory = saved;
     }
 
-    const submissionData: any = { ...formData };
+    const submissionData: any = { ...formData, category: resolvedCategory };
     if (contentType === 'policy' && formData.description) {
       submissionData.contentPreview = formData.description;
     }
