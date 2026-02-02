@@ -320,7 +320,11 @@ export const apiService = {
     const { id: _id, ...updateData } = userData
     return apiClient.patch<ApiResponse<User>>(`/users/${id}`, updateData)
   },
+  /** Soft-delete endpoint (currently suspends on backend). Prefer explicit status updates for suspension. */
   deleteUser: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/users/${id}`),
+  /** Hard delete (permanent) */
+  deleteUserHard: (apiClient: AxiosInstance, id: string) =>
+    apiClient.delete<ApiResponse<null>>(`/users/${id}`, { params: { hard: true } }),
   
   // Role Elevation - Super Admin only
   elevateUserToAdmin: (

@@ -644,11 +644,13 @@ const Users: React.FC = () => {
 
   // Delete user mutation
   const deleteUserMutation = useMutation({
-    mutationFn: (userId: string) => apiService.deleteUser(apiClient, userId),
+    // Delete is a permanent hard delete (Suspend is handled by status update).
+    mutationFn: (userId: string) => apiService.deleteUserHard(apiClient, userId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-users'] })
       setIsDeleteModalOpen(false)
       setSelectedUser(null)
+      toast.success(t('admin:users.deleteUser.success', 'User deleted'))
       logger.log('User deleted successfully')
     },
     onError: (error) => {
@@ -870,7 +872,28 @@ const Users: React.FC = () => {
   // Handle confirming delete
   const handleConfirmDelete = async () => {
     if (selectedUser) {
-      await deleteUserMutation.mutateAsync(selectedUser.id)
+      try {
+        await deleteUserMutation.mutateAsync(selectedUser.id)
+      } catch (err: any) {
+        // Keep modal open; provide actionable feedback.
+        const apiError =
+          err?.response?.data?.error?.message ||
+          err?.response?.data?.message ||
+          err?.message ||
+          t('admin:users.deleteUser.failed', 'Failed to delete user')
+
+        const apiCode = err?.response?.data?.error?.code
+        if (apiCode === 'HARD_DELETE_BLOCKED') {
+          toast.error(
+            t(
+              'admin:users.deleteUser.blocked',
+              'Cannot permanently delete this user because they have dependent records (messages/subscriptions/etc.). Suspend the account instead.',
+            ),
+          )
+        } else {
+          toast.error(apiError)
+        }
+      }
     }
   }
 
