@@ -21,7 +21,7 @@ export class MimeValidationService {
 
   constructor(private configService: ConfigService) {
     // Default extensions include video formats for e-learning content
-    const defaultExtensions = 'pdf,png,jpg,jpeg,webp,doc,docx,mp4,mov,webm,avi,ppt,pptx,xls,xlsx';
+    const defaultExtensions = 'pdf,png,jpg,jpeg,webp,doc,docx,mp4,mov,webm,avi,ppt,pptx,xls,xlsx,csv,ods';
     this.allowedExtensions = (this.configService.get<string>('UPLOAD_ALLOWED_EXT') || defaultExtensions)
       .split(',')
       .map(ext => ext.trim().toLowerCase())
@@ -29,7 +29,7 @@ export class MimeValidationService {
     
     // Default MIME types include video formats for e-learning content
     // Note: AVI files can be detected as either video/x-msvideo or video/vnd.avi depending on the file-type library version
-    const defaultMimeTypes = 'application/pdf,image/png,image/jpeg,image/webp,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,video/mp4,video/quicktime,video/webm,video/x-msvideo,video/vnd.avi,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    const defaultMimeTypes = 'application/pdf,image/png,image/jpeg,image/webp,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,video/mp4,video/quicktime,video/webm,video/x-msvideo,video/vnd.avi,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv,application/csv,application/vnd.oasis.opendocument.spreadsheet';
     this.allowedMimeTypes = (this.configService.get<string>('UPLOAD_ALLOWED_MIME') || defaultMimeTypes)
       .split(',')
       .map(mime => mime.trim().toLowerCase())

@@ -328,7 +328,19 @@ export class CloudflareR2Service {
       LOGO: ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'],
       COVER_IMAGE: ['image/jpeg', 'image/png', 'image/webp'],
       PRODUCT_IMAGE: ['image/jpeg', 'image/png', 'image/webp'],
-      DOCUMENT: ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+      DOCUMENT: [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        // Spreadsheets
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        // CSV (often uploaded as "spreadsheet")
+        'text/csv',
+        'application/csv',
+        // OpenDocument Spreadsheet
+        'application/vnd.oasis.opendocument.spreadsheet',
+      ],
       CV: ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
       CATALOG_PDF: ['application/pdf'],
       CATALOG_CSV: ['text/csv', 'application/csv'],
