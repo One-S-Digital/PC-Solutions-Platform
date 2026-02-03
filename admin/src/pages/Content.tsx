@@ -10,6 +10,12 @@ import {
 } from '@heroicons/react/24/outline';
 import ContentUploadModal from '../components/ContentUploadModal';
 import DocumentPreviewModal from '../components/DocumentPreviewModal';
+import {
+  ELEARNING_CATEGORIES,
+  HR_CATEGORIES,
+  COUNTRIES_FOR_POLICIES,
+  REGIONS_BY_COUNTRY,
+} from '../components/ContentUploadModal';
 import { useApiClient } from '../services/api';
 import * as api from '../services/api';
 import { retryWithBackoff, RetryPresets } from '../utils/retryUtility';
@@ -24,6 +30,10 @@ interface UploadedContent {
   description?: string;
   category?: string;
   type?: string;
+  country?: string;
+  region?: string;
+  policyType?: string;
+  status?: string;
   filename: string;
   publicUrl: string;
   updatedAt: string;
@@ -40,6 +50,14 @@ interface PaginationInfo {
 export default function Content() {
   const { t } = useTranslation(['admin', 'common']);
   const apiClient = useApiClient();
+
+  // Filters (primary navigation within each section)
+  const defaultPolicyCountry = COUNTRIES_FOR_POLICIES[0];
+  const defaultPolicyRegion = (REGIONS_BY_COUNTRY[defaultPolicyCountry] ?? [])[0] ?? '';
+  const [eLearningCategoryFilter, setELearningCategoryFilter] = useState<string>(ELEARNING_CATEGORIES[0]);
+  const [hrCategoryFilter, setHrCategoryFilter] = useState<string>(HR_CATEGORIES[0]);
+  const [policyCountryFilter, setPolicyCountryFilter] = useState<string>(defaultPolicyCountry);
+  const [policyRegionFilter, setPolicyRegionFilter] = useState<string>(defaultPolicyRegion);
   
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -107,13 +125,17 @@ export default function Content() {
 
   const fetchAllContent = async () => {
     await Promise.all([
-      fetchELearningContent(),
-      fetchHRDocuments(),
-      fetchStatePolicies(),
+      fetchELearningContent(eLearningPagination.page, eLearningSearch, eLearningCategoryFilter),
+      fetchHRDocuments(hrPagination.page, hrSearch, hrCategoryFilter),
+      fetchStatePolicies(policyPagination.page, policySearch, policyCountryFilter, policyRegionFilter),
     ]);
   };
 
-  const fetchELearningContent = useCallback(async (page = eLearningPagination.page, search = eLearningSearch) => {
+  const fetchELearningContent = useCallback(async (
+    page = eLearningPagination.page,
+    search = eLearningSearch,
+    category = eLearningCategoryFilter,
+  ) => {
     setIsLoadingELearning(true);
     setError(null);
     try {
@@ -122,6 +144,7 @@ export default function Content() {
         page,
         limit: eLearningPagination.limit,
         search: search || undefined,
+        category: category || undefined,
         lang: currentLang,
       });
       
@@ -141,9 +164,13 @@ export default function Content() {
     } finally {
       setIsLoadingELearning(false);
     }
-  }, [apiClient, eLearningPagination.limit, i18n.language]);
+  }, [apiClient, eLearningPagination.limit, i18n.language, eLearningPagination.page, eLearningSearch, eLearningCategoryFilter]);
 
-  const fetchHRDocuments = useCallback(async (page = hrPagination.page, search = hrSearch) => {
+  const fetchHRDocuments = useCallback(async (
+    page = hrPagination.page,
+    search = hrSearch,
+    category = hrCategoryFilter,
+  ) => {
     setIsLoadingHR(true);
     setError(null);
     try {
@@ -152,6 +179,7 @@ export default function Content() {
         page,
         limit: hrPagination.limit,
         search: search || undefined,
+        category: category || undefined,
         lang: currentLang,
       });
       
@@ -170,9 +198,14 @@ export default function Content() {
     } finally {
       setIsLoadingHR(false);
     }
-  }, [apiClient, hrPagination.limit, i18n.language]);
+  }, [apiClient, hrPagination.limit, i18n.language, hrPagination.page, hrSearch, hrCategoryFilter]);
 
-  const fetchStatePolicies = useCallback(async (page = policyPagination.page, search = policySearch) => {
+  const fetchStatePolicies = useCallback(async (
+    page = policyPagination.page,
+    search = policySearch,
+    country = policyCountryFilter,
+    region = policyRegionFilter,
+  ) => {
     setIsLoadingPolicies(true);
     setError(null);
     try {
@@ -181,6 +214,8 @@ export default function Content() {
         page,
         limit: policyPagination.limit,
         search: search || undefined,
+        country: country || undefined,
+        region: region || undefined,
         lang: currentLang,
       });
       
@@ -199,7 +234,23 @@ export default function Content() {
     } finally {
       setIsLoadingPolicies(false);
     }
-  }, [apiClient, policyPagination.limit, i18n.language]);
+  }, [apiClient, policyPagination.limit, i18n.language, policyPagination.page, policySearch, policyCountryFilter, policyRegionFilter]);
+
+  // If country changes, ensure the selected region is valid for that country.
+  useEffect(() => {
+    const validRegions = REGIONS_BY_COUNTRY[policyCountryFilter] ?? [];
+    if (!policyRegionFilter || !validRegions.includes(policyRegionFilter)) {
+      const nextRegion = validRegions[0] ?? '';
+      setPolicyRegionFilter(nextRegion);
+      setPolicyPagination((prev) => ({ ...prev, page: 1 }));
+      fetchStatePolicies(1, policySearch, policyCountryFilter, nextRegion);
+      return;
+    }
+    // Refresh policies if country changes but region remains valid
+    setPolicyPagination((prev) => ({ ...prev, page: 1 }));
+    fetchStatePolicies(1, policySearch, policyCountryFilter, policyRegionFilter);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [policyCountryFilter]);
 
   const handleOpenModal = (contentType: ContentType, existingContent?: any) => {
     setModalContentType(contentType);
@@ -465,28 +516,28 @@ export default function Content() {
     if (contentType === 'e-learning') {
       setELearningSearch(value);
       setELearningPagination((prev) => ({ ...prev, page: 1 }));
-      fetchELearningContent(1, value);
+      fetchELearningContent(1, value, eLearningCategoryFilter);
     } else if (contentType === 'hr') {
       setHrSearch(value);
       setHrPagination((prev) => ({ ...prev, page: 1 }));
-      fetchHRDocuments(1, value);
+      fetchHRDocuments(1, value, hrCategoryFilter);
     } else if (contentType === 'policy') {
       setPolicySearch(value);
       setPolicyPagination((prev) => ({ ...prev, page: 1 }));
-      fetchStatePolicies(1, value);
+      fetchStatePolicies(1, value, policyCountryFilter, policyRegionFilter);
     }
   };
 
   const handlePageChange = (contentType: ContentType, newPage: number) => {
     if (contentType === 'e-learning') {
       setELearningPagination((prev) => ({ ...prev, page: newPage }));
-      fetchELearningContent(newPage);
+      fetchELearningContent(newPage, eLearningSearch, eLearningCategoryFilter);
     } else if (contentType === 'hr') {
       setHrPagination((prev) => ({ ...prev, page: newPage }));
-      fetchHRDocuments(newPage);
+      fetchHRDocuments(newPage, hrSearch, hrCategoryFilter);
     } else if (contentType === 'policy') {
       setPolicyPagination((prev) => ({ ...prev, page: newPage }));
-      fetchStatePolicies(newPage);
+      fetchStatePolicies(newPage, policySearch, policyCountryFilter, policyRegionFilter);
     }
   };
 
@@ -501,14 +552,6 @@ export default function Content() {
       toast.style.opacity = '0';
       setTimeout(() => document.body.removeChild(toast), 300);
     }, 3000);
-  };
-
-  // Group e-learning content by type
-  const eLearningByType = {
-    COURSE: eLearningContent.filter((c) => c.type === 'COURSE'),
-    VIDEO: eLearningContent.filter((c) => c.type === 'VIDEO'),
-    PDF: eLearningContent.filter((c) => c.type === 'PDF'),
-    LINK: eLearningContent.filter((c) => c.type === 'LINK'),
   };
 
   return (
@@ -564,7 +607,7 @@ export default function Content() {
               <AcademicCapIcon className="h-8 w-8 text-indigo-600 mr-3" />
               <h2 className="text-2xl font-bold text-gray-900">{t('admin:content.eLearning.title')}</h2>
               <span className="ml-3 text-sm text-gray-500">
-                ({eLearningPagination.total} {t('admin:content.eLearning.total')})
+                ({eLearningPagination.total} {t('admin:content.eLearning.total')} • {t('admin:content.category', 'Category')}: {eLearningCategoryFilter || t('admin:content.all', 'All')})
               </span>
             </div>
             
@@ -579,6 +622,33 @@ export default function Content() {
               />
               <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
             </div>
+          </div>
+
+          {/* Categories (primary navigation) */}
+          <div className="mb-4 flex flex-wrap gap-2">
+            <FilterChip
+              label={t('admin:content.allCategories', 'All categories')}
+              selected={!eLearningCategoryFilter}
+              onClick={() => {
+                setELearningCategoryFilter('');
+                setELearningPagination((prev) => ({ ...prev, page: 1 }));
+                fetchELearningContent(1, eLearningSearch, '');
+              }}
+              color="indigo"
+            />
+            {ELEARNING_CATEGORIES.map((cat) => (
+              <FilterChip
+                key={cat}
+                label={cat}
+                selected={eLearningCategoryFilter === cat}
+                onClick={() => {
+                  setELearningCategoryFilter(cat);
+                  setELearningPagination((prev) => ({ ...prev, page: 1 }));
+                  fetchELearningContent(1, eLearningSearch, cat);
+                }}
+                color="indigo"
+              />
+            ))}
           </div>
           
           {isLoadingELearning ? (
@@ -631,7 +701,7 @@ export default function Content() {
               <DocumentTextIcon className="h-8 w-8 text-green-600 mr-3" />
               <h2 className="text-2xl font-bold text-gray-900">{t('admin:content.hrDocuments.title')}</h2>
               <span className="ml-3 text-sm text-gray-500">
-                ({hrPagination.total} {t('admin:content.eLearning.total')})
+                ({hrPagination.total} {t('admin:content.eLearning.total')} • {t('admin:content.category', 'Category')}: {hrCategoryFilter || t('admin:content.all', 'All')})
               </span>
             </div>
             
@@ -646,6 +716,33 @@ export default function Content() {
               />
               <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
             </div>
+          </div>
+
+          {/* Categories (primary navigation) */}
+          <div className="mb-4 flex flex-wrap gap-2">
+            <FilterChip
+              label={t('admin:content.allCategories', 'All categories')}
+              selected={!hrCategoryFilter}
+              onClick={() => {
+                setHrCategoryFilter('');
+                setHrPagination((prev) => ({ ...prev, page: 1 }));
+                fetchHRDocuments(1, hrSearch, '');
+              }}
+              color="green"
+            />
+            {HR_CATEGORIES.map((cat) => (
+              <FilterChip
+                key={cat}
+                label={cat}
+                selected={hrCategoryFilter === cat}
+                onClick={() => {
+                  setHrCategoryFilter(cat);
+                  setHrPagination((prev) => ({ ...prev, page: 1 }));
+                  fetchHRDocuments(1, hrSearch, cat);
+                }}
+                color="green"
+              />
+            ))}
           </div>
           
           {isLoadingHR ? (
@@ -698,7 +795,7 @@ export default function Content() {
               <ScaleIcon className="h-8 w-8 text-purple-600 mr-3" />
               <h2 className="text-2xl font-bold text-gray-900">{t('admin:content.statePolicies.title')}</h2>
               <span className="ml-3 text-sm text-gray-500">
-                ({policyPagination.total} {t('admin:content.eLearning.total')})
+                ({policyPagination.total} {t('admin:content.eLearning.total')} • {t('admin:content.country', 'Country')}: {policyCountryFilter} • {t('admin:content.state', 'State/Region')}: {policyRegionFilter || t('admin:content.allStates', 'All')})
               </span>
             </div>
             
@@ -712,6 +809,49 @@ export default function Content() {
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
               />
               <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+            </div>
+          </div>
+
+          {/* Country + State/Region (primary navigation) */}
+          <div className="mb-4 space-y-3">
+            <div className="flex flex-wrap gap-2">
+              {COUNTRIES_FOR_POLICIES.map((country) => (
+                <FilterChip
+                  key={country}
+                  label={country}
+                  selected={policyCountryFilter === country}
+                  onClick={() => {
+                    if (country === policyCountryFilter) return;
+                    setPolicyCountryFilter(country);
+                  }}
+                  color="purple"
+                />
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <FilterChip
+                label={t('admin:content.allStates', 'All states/regions')}
+                selected={!policyRegionFilter}
+                onClick={() => {
+                  setPolicyRegionFilter('');
+                  setPolicyPagination((prev) => ({ ...prev, page: 1 }));
+                  fetchStatePolicies(1, policySearch, policyCountryFilter, '');
+                }}
+                color="purple"
+              />
+              {(REGIONS_BY_COUNTRY[policyCountryFilter] ?? []).map((region) => (
+                <FilterChip
+                  key={region}
+                  label={region}
+                  selected={policyRegionFilter === region}
+                  onClick={() => {
+                    setPolicyRegionFilter(region);
+                    setPolicyPagination((prev) => ({ ...prev, page: 1 }));
+                    fetchStatePolicies(1, policySearch, policyCountryFilter, region);
+                  }}
+                  color="purple"
+                />
+              ))}
             </div>
           </div>
           
@@ -779,6 +919,51 @@ export default function Content() {
         />
       )}
     </div>
+  );
+}
+
+function FilterChip({
+  label,
+  selected,
+  onClick,
+  color,
+}: {
+  label: string;
+  selected: boolean;
+  onClick: () => void;
+  color: 'indigo' | 'green' | 'purple';
+}) {
+  const base =
+    'inline-flex items-center rounded-full px-3 py-1.5 text-sm font-medium border transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2';
+  const stylesByColor: Record<typeof color, { selected: string; unselected: string; ring: string }> = {
+    indigo: {
+      selected: 'bg-indigo-600 text-white border-indigo-600',
+      unselected: 'bg-white text-indigo-700 border-indigo-200 hover:bg-indigo-50',
+      ring: 'focus:ring-indigo-500',
+    },
+    green: {
+      selected: 'bg-green-600 text-white border-green-600',
+      unselected: 'bg-white text-green-700 border-green-200 hover:bg-green-50',
+      ring: 'focus:ring-green-500',
+    },
+    purple: {
+      selected: 'bg-purple-600 text-white border-purple-600',
+      unselected: 'bg-white text-purple-700 border-purple-200 hover:bg-purple-50',
+      ring: 'focus:ring-purple-500',
+    },
+  };
+
+  const styles = stylesByColor[color];
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={selected}
+      className={`${base} ${styles.ring} ${selected ? styles.selected : styles.unselected}`}
+    >
+      {label}
+    </button>
   );
 }
 
