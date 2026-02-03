@@ -148,6 +148,9 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
   const [isUploading, setIsUploading] = useState(false);
   const [videoSourceType, setVideoSourceType] = useState<'upload' | 'url'>('upload');
 
+  const isOtherCategory = (value: unknown) =>
+    typeof value === 'string' && value.trim().toLowerCase() === 'other';
+
   const categoryKind =
     contentType === 'e-learning'
       ? 'content-elearning'
@@ -331,7 +334,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
     setUploadProgress(0);
 
     let resolvedCategory = formData.category || '';
-    if (resolvedCategory === 'Other') {
+    if (isOtherCategory(resolvedCategory)) {
       const saved = await persistCustomCategory();
       if (!saved) {
         setIsUploading(false);
@@ -503,7 +506,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
           <select name="category" id="category" value={formData.category || ELEARNING_CATEGORIES[0]} onChange={handleInputChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
             {currentCategoryOptions.map(cat => <option key={cat} value={cat}>{cat}</option>)}
           </select>
-          {(formData.category || '') === 'Other' && (
+          {isOtherCategory(formData.category) && (
             <div className="mt-2 flex items-center gap-2">
               <input
                 type="text"
@@ -643,7 +646,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
           <select name="category" id="category" value={formData.category || HR_CATEGORIES[0]} onChange={handleInputChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
             {currentCategoryOptions.map(cat => <option key={cat} value={cat}>{cat}</option>)}
           </select>
-          {(formData.category || '') === 'Other' && (
+          {isOtherCategory(formData.category) && (
             <div className="mt-2 flex items-center gap-2">
               <input
                 type="text"
@@ -732,7 +735,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
               return <option key={c} value={c}>{t(`content.policyCategory.${key}`, c)}</option>;
             })}
           </select>
-          {(formData.category || '') === 'Other' && (
+          {isOtherCategory(formData.category) && (
             <div className="mt-2 flex items-center gap-2">
               <input
                 type="text"
