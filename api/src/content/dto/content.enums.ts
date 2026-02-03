@@ -35,7 +35,10 @@ export enum PolicyType {
 export enum FileType {
   PDF = 'PDF',
   DOCX = 'DOCX',
+  XLS = 'XLS',
   XLSX = 'XLSX',
+  CSV = 'CSV',
+  ODS = 'ODS',
   MP4 = 'MP4',
   DOC = 'DOC',
 }
@@ -156,6 +159,14 @@ export const ALLOWED_MIME_TYPES = {
     'application/pdf',
     'application/msword',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    // Spreadsheets
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    // CSV (common "spreadsheet" interchange format)
+    'text/csv',
+    'application/csv',
+    // OpenDocument Spreadsheet (LibreOffice)
+    'application/vnd.oasis.opendocument.spreadsheet',
   ],
 };
 
