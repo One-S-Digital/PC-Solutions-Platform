@@ -154,6 +154,11 @@ export const ALLOWED_MIME_TYPES = {
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     'application/vnd.ms-excel',
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    // CSV (common "spreadsheet" interchange format)
+    'text/csv',
+    'application/csv',
+    // OpenDocument Spreadsheet (LibreOffice)
+    'application/vnd.oasis.opendocument.spreadsheet',
   ],
   STATE_POLICY: [
     'application/pdf',
