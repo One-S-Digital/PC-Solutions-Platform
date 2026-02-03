@@ -478,7 +478,7 @@ export interface HRDocument {
     fileUrl: string;
     uploaderId: string;
     lastUpdated: string; // ISO date string
-    fileType: 'PDF' | 'DOCX' | 'XLSX';
+    fileType: 'PDF' | 'DOC' | 'DOCX' | 'XLS' | 'XLSX' | 'CSV' | 'ODS';
     tags: string[];
     isFavorite?: boolean;
     language?: LanguageCode;
@@ -531,7 +531,7 @@ export interface PolicyDocument {
     contentPreview?: string;
     externalLink?: string; // Link to official source
     fileUrl?: string;
-    fileType?: 'PDF' | 'DOC';
+    fileType?: 'PDF' | 'DOC' | 'DOCX' | 'XLS' | 'XLSX' | 'CSV' | 'ODS';
     status: 'Draft' | 'In Review' | 'Approved' | 'Published' | 'Upcoming' | 'Archived';
     isCritical?: boolean;
     language?: LanguageCode;

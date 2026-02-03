@@ -271,7 +271,7 @@
       "browseNoFileChosen": "No file selected",
       "dragAndDrop": "or drag and drop",
       "eLearningAllowedTypes": "Supported formats: PDF, MP4, MP3, ZIP",
-      "hrPolicyAllowedTypes": "Supported formats: PDF, DOC, DOCX",
+      "hrPolicyAllowedTypes": "Supported formats: PDF, DOC, DOCX, XLS, XLSX, CSV, ODS",
       "selected": "{{fileName}} selected"
     },
     "labels": {

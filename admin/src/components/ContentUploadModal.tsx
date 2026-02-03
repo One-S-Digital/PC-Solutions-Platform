@@ -90,7 +90,7 @@ type FormData = {
   policyType?: PolicyType;
   language?: LanguageCode;
   accessRoles?: UserRole[];
-  fileType?: 'PDF' | 'DOCX' | 'XLSX' | 'DOC';
+  fileType?: 'PDF' | 'DOC' | 'DOCX' | 'XLS' | 'XLSX' | 'CSV' | 'ODS';
   country?: typeof COUNTRIES_FOR_POLICIES[number];
   region?: string;
   isCritical?: boolean;
@@ -674,8 +674,12 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
           <label htmlFor="fileType" className="block text-sm font-medium text-gray-700 mb-1">{t('content.fileType','File Type')} <span className="text-red-500 ml-0.5">*</span></label>
           <select name="fileType" id="fileType" value={formData.fileType || 'PDF'} onChange={handleInputChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
             <option value="PDF">PDF</option>
+            <option value="DOC">DOC</option>
             <option value="DOCX">DOCX</option>
+            <option value="XLS">XLS</option>
             <option value="XLSX">XLSX</option>
+            <option value="CSV">CSV</option>
+            <option value="ODS">ODS</option>
           </select>
         </div>
         <div>
@@ -873,12 +877,19 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
                     <div className="flex text-sm text-gray-600">
                       <label htmlFor="file-upload" className="relative cursor-pointer bg-transparent rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
                         <span>{t('content.browse','Browse')}</span>
-                        <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} accept={contentType==='e-learning' ? '.pdf,.mp4,.docx' : '.pdf,.docx'}/>
+                        <input
+                          id="file-upload"
+                          name="file-upload"
+                          type="file"
+                          className="sr-only"
+                          onChange={handleFileChange}
+                          accept={contentType === 'e-learning' ? '.pdf,.mp4,.docx' : '.pdf,.doc,.docx,.xls,.xlsx,.csv,.ods'}
+                        />
                       </label>
                       <p className="pl-1 text-gray-500">{t('content.orDragDrop','or drag and drop')}</p>
                     </div>
                     <p className="text-xs text-gray-500">
-                      {contentType==='e-learning' ? t('content.allowedEl','PDF, MP4, DOCX files allowed') : t('content.allowedHr','PDF, DOCX files allowed')}
+                      {contentType==='e-learning' ? t('content.allowedEl','PDF, MP4, DOCX files allowed') : t('content.allowedHr','PDF, DOC, DOCX, XLS, XLSX, CSV, ODS files allowed')}
                     </p>
                   </div>
                 </div>

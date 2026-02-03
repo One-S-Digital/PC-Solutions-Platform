@@ -25,7 +25,7 @@ type FormData = {
   policyType?: PolicyType; 
   language?: LanguageCode;
   accessRoles?: UserRole[];
-  fileType?: 'PDF' | 'DOCX' | 'XLSX' | 'DOC'; // DOC added for policy
+  fileType?: 'PDF' | 'DOC' | 'DOCX' | 'XLS' | 'XLSX' | 'CSV' | 'ODS'; // Document/spreadsheet type metadata
   country?: CountryForPolicies; 
   region?: string; 
   isCritical?: boolean; 
@@ -136,7 +136,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
           mappedData.country = (pol.country as CountryForPolicies) || COUNTRIES_FOR_POLICIES[0];
           mappedData.region = pol.region;
           mappedData.isCritical = pol.isCritical;
-          mappedData.fileType = pol.fileType as 'PDF' | 'DOC';
+          mappedData.fileType = pol.fileType as any;
           mappedData.externalLink = pol.externalLink;
           mappedData.effectiveDate = pol.effectiveDate ? new Date(pol.effectiveDate).toISOString().split('T')[0] : undefined;
           mappedData.contentPreview = pol.contentPreview; // Explicitly map contentPreview from existing data
@@ -531,10 +531,14 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
       </div>
       <div>
         <label htmlFor="fileType" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.fileType')} <span className="text-red-500 ml-0.5">*</span></label>
-        <select name="fileType" id="fileType" value={formData.fileType as 'PDF' | 'DOCX' | 'XLSX'} onChange={handleInputChange} required className={`${STANDARD_INPUT_FIELD} mt-1`}>
+        <select name="fileType" id="fileType" value={formData.fileType as any} onChange={handleInputChange} required className={`${STANDARD_INPUT_FIELD} mt-1`}>
           <option value="PDF">PDF</option>
+          <option value="DOC">DOC</option>
           <option value="DOCX">DOCX</option>
-           <option value="XLSX">XLSX</option>
+          <option value="XLS">XLS</option>
+          <option value="XLSX">XLSX</option>
+          <option value="CSV">CSV</option>
+          <option value="ODS">ODS</option>
         </select>
       </div>
        <div>
@@ -677,7 +681,14 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
                     <div className="flex text-sm text-gray-600">
                       <label htmlFor="file-upload" className="relative cursor-pointer bg-transparent rounded-md font-medium text-swiss-mint hover:text-swiss-teal focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-swiss-mint">
                         <span>{t('common:contentUploadModal.fileUpload.browse')}</span>
-                        <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} accept={contentType==='e-learning' ? '.pdf,.mp4,.docx' : '.pdf,.docx'}/>
+                        <input
+                          id="file-upload"
+                          name="file-upload"
+                          type="file"
+                          className="sr-only"
+                          onChange={handleFileChange}
+                          accept={contentType === 'e-learning' ? '.pdf,.mp4,.docx' : '.pdf,.doc,.docx,.xls,.xlsx,.csv,.ods'}
+                        />
                       </label>
                       <p className="pl-1 text-gray-500">{t('common:contentUploadModal.fileUpload.dragAndDrop')}</p>
                     </div>
