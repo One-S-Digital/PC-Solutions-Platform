@@ -263,9 +263,14 @@ export class CrawlerService {
           }
           
           const candidateNormalized = normalizeUrl(candidate.url);
+          const isDocument = isLikelyDocument(candidate.url);
+          const isSubpage = isLikelySubpage(candidate.url, candidate.anchorText);
           
-          if (isLikelyDocument(candidate.url)) {
-            // It's a document - add to document candidates if not already found
+          // Add to document candidates if:
+          // 1. It's a document file (PDF, DOC, etc.), OR
+          // 2. It's an HTML page that passed the subpage filter (i.e., not navigation)
+          // This ensures HTML policy pages are also collected as candidates
+          if (isDocument || isSubpage) {
             if (!documentCandidates.some(c => normalizeUrl(c.url) === candidateNormalized)) {
               documentCandidates.push({
                 ...candidate,
@@ -273,8 +278,10 @@ export class CrawlerService {
                 depth: current.depth,
               });
             }
-          } else if (current.depth < maxDepth && isLikelySubpage(candidate.url, candidate.anchorText)) {
-            // It's a potential subpage - add to queue if not visited and within depth
+          }
+          
+          // Also add to traversal queue if it's a subpage and we haven't reached max depth
+          if (!isDocument && isSubpage && current.depth < maxDepth) {
             if (!visitedPages.has(candidateNormalized) && isSameDomain(candidate.url)) {
               // Check if already in queue
               const inQueue = queue.some(q => normalizeUrl(q.url) === candidateNormalized);
@@ -303,7 +310,7 @@ export class CrawlerService {
     
     this.logger.log(
       `Recursive crawl complete: visited ${visitedPages.size} pages, ` +
-      `found ${documentCandidates.length} document candidates`
+      `found ${documentCandidates.length} candidates (PDFs + HTML pages)`
     );
     
     return {
