@@ -6,6 +6,7 @@ import {
   DocumentIcon, 
   EyeIcon, 
   ArrowDownTrayIcon, 
+  TrashIcon,
   InboxIcon,
   ExclamationCircleIcon,
   ArrowPathIcon
@@ -64,9 +65,10 @@ interface FileCardProps {
   file: UserFile;
   onPreview: (file: UserFile) => void;
   onDownload: (file: UserFile) => void;
+  onDelete: (file: UserFile) => void;
 }
 
-const FileCard: React.FC<FileCardProps> = ({ file, onPreview, onDownload }) => {
+const FileCard: React.FC<FileCardProps> = ({ file, onPreview, onDownload, onDelete }) => {
   const { t, i18n } = useTranslation(['dashboard', 'common']);
   const fileIcon = getFileIcon(file.mimeType, file.name);
 
@@ -125,6 +127,15 @@ const FileCard: React.FC<FileCardProps> = ({ file, onPreview, onDownload }) => {
         >
           <ArrowDownTrayIcon className="w-4 h-4" />
         </Button>
+        <Button
+          variant="ghost"
+          size="xs"
+          title={t('common:fileGallery.actions.delete', 'Delete')}
+          className="!p-2 hover:bg-red-50 hover:text-red-600"
+          onClick={() => onDelete(file)}
+        >
+          <TrashIcon className="w-4 h-4" />
+        </Button>
       </div>
     </Card>
   );
@@ -149,7 +160,7 @@ const LoadingSkeleton: React.FC = () => (
 const FileGalleryPage: React.FC = () => {
   const { t } = useTranslation(['dashboard', 'common']);
   const { files, loading, error, refetch } = useUserFiles();
-  const { authenticatedDownload } = useAuthenticatedApi();
+  const { authenticatedDownload, request } = useAuthenticatedApi();
   const [previewFile, setPreviewFile] = useState<UserFile | null>(null);
 
   const handlePreview = (file: UserFile) => {
@@ -162,6 +173,24 @@ const FileGalleryPage: React.FC = () => {
     } catch (err) {
       console.error('Download failed:', err);
       alert(t('common:fileGallery.downloadError', 'Failed to download file. Please try again.'));
+    }
+  };
+
+  const handleDelete = async (file: UserFile) => {
+    const confirmed = window.confirm(
+      t(
+        'common:fileGallery.confirmDelete',
+        'Delete this file permanently? This cannot be undone.',
+      ),
+    );
+    if (!confirmed) return;
+
+    try {
+      await request(`/upload/files/${file.id}`, { method: 'DELETE' });
+      await refetch();
+    } catch (err) {
+      console.error('Delete failed:', err);
+      alert(t('common:fileGallery.deleteError', 'Failed to delete file. Please try again.'));
     }
   };
 
@@ -251,6 +280,7 @@ const FileGalleryPage: React.FC = () => {
               file={file} 
               onPreview={handlePreview}
               onDownload={handleDownload}
+              onDelete={handleDelete}
             />
           ))}
         </div>
