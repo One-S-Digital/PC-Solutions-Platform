@@ -629,7 +629,9 @@
       "rename": "Umbenennen"
     },
     "adminUploadNote": "Ihre Dateien ansehen und herunterladen",
-    "confirmDelete": "Sind Sie sicher, dass Sie diese Datei löschen möchten?",
+    "confirmDelete": "Diese Datei dauerhaft löschen? Dies kann nicht rückgängig gemacht werden.",
+    "deleteError": "Datei konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.",
+    "deleteHelpCta": "Wie kann ich Dateien löschen?",
     "downloadError": "Datei konnte nicht heruntergeladen werden. Bitte versuchen Sie es erneut.",
     "emptyState": {
       "message": "Ihre Dateien erscheinen hier, sobald sie hochgeladen sind",

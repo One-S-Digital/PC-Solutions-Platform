@@ -165,6 +165,11 @@
       "description": "How to manage your account security and authentication.",
       "content": "<strong>Open Account & Security</strong><br/><br/>1. In the sidebar, click <strong>Settings</strong><br/>2. Open <strong>Account & Security</strong><br/><br/><strong>From here you can</strong><br/><br/>• Change your password<br/>• Change your email address<br/>• Review connected accounts (if available)<br/><br/><strong>Security tips</strong><br/><br/>• Use a strong, unique password<br/>• Keep your email address current<br/>• Sign out on shared devices"
     },
+    "deleteFiles": {
+      "title": "Deleting files & documents",
+      "description": "How to permanently delete uploaded files like CVs, catalogs, and documents.",
+      "content": "<strong>Important</strong><br/><br/>Deleting a file is permanent. Once deleted, it can’t be restored.<br/><br/><strong>Delete a file from File Gallery</strong><br/><br/>1. Open <strong>File Gallery</strong><br/>2. Find the file you want to remove<br/>3. Click the <strong>Trash / Delete</strong> icon<br/>4. Confirm the deletion<br/><br/><strong>Delete your CV (Educators)</strong><br/><br/>1. Go to <strong>Settings → Edit Profile</strong><br/>2. Scroll to <strong>CV / Resume</strong><br/>3. Click <strong>Remove</strong> and confirm<br/><br/><strong>Delete catalogs / profile documents (Suppliers & Service Providers)</strong><br/><br/>1. Go to <strong>Settings → Edit Profile</strong><br/>2. Open <strong>Documents & Catalogs</strong><br/>3. Click the <strong>Delete</strong> (trash) button on the document you want to remove<br/><br/><strong>Tip</strong><br/><br/>If you only want to hide a document temporarily, consider removing it from your profile and re-uploading later."
+    },
     "notificationSettings": {
       "title": "Notification Settings",
       "description": "How to manage your email and platform notifications.",
