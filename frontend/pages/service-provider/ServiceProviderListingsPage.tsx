@@ -126,16 +126,20 @@ const ServiceProviderListingsPage: React.FC = () => {
       if (file) {
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('assetKind', 'DOCUMENT'); // Using DOCUMENT kind for service images
+        // Store as an image asset (not a generic document)
+        formData.append('assetKind', 'PRODUCT_IMAGE');
         
-        const uploadResponse = await authenticatedRequest<{ asset: UploadedAsset }>('/upload/file', {
+        const uploadResponse = await authenticatedRequest<any>('/upload/file', {
           method: 'POST',
           body: formData,
           headers: {}, // Let browser set Content-Type for FormData
         });
         
-        if (uploadResponse.success && uploadResponse.asset) {
-          imageUrl = uploadResponse.asset.publicUrl;
+        const uploadedAsset: UploadedAsset | undefined =
+          (uploadResponse as any)?.asset ?? (uploadResponse as any)?.data?.asset;
+
+        if (uploadResponse.success && uploadedAsset?.publicUrl) {
+          imageUrl = uploadedAsset.publicUrl;
         }
       }
 
@@ -182,7 +186,8 @@ const ServiceProviderListingsPage: React.FC = () => {
       handleCloseModal();
     } catch (err) {
       console.error('Failed to save service:', err);
-      alert(t('dashboard:serviceProviderListingsPage.saveError', 'Failed to save service'));
+      const errMsg = err instanceof Error ? err.message : String(err);
+      alert(`${t('dashboard:serviceProviderListingsPage.saveError', 'Failed to save service')}: ${errMsg}`);
     }
   };
 

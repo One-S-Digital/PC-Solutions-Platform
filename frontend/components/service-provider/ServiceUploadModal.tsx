@@ -196,7 +196,16 @@ const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose
                   <div className="flex text-sm text-gray-600">
                       <label htmlFor="service-file-upload" className="relative cursor-pointer bg-transparent rounded-md font-medium text-swiss-mint hover:text-swiss-teal focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-swiss-mint">
                         <span>{t('common:contentUploadModal.fileUpload.browse')}</span>
-                      <input id="service-file-upload" name="service-file-upload" type="file" className="sr-only" onChange={handleFileChange} accept="image/*"/>
+                      <input
+                        id="service-file-upload"
+                        name="service-file-upload"
+                        type="file"
+                        className="sr-only"
+                        onChange={handleFileChange}
+                        // Keep this aligned with backend upload allowlist.
+                        // (HEIC/AVIF are commonly unsupported in server-side type detection/allowlists.)
+                        accept="image/png,image/jpeg,image/webp"
+                      />
                     </label>
                       <p className="pl-1 text-gray-500">{t('common:contentUploadModal.fileUpload.dragAndDrop')}</p>
                   </div>
