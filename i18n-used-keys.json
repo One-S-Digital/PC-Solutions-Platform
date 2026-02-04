@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-02-04T16:42:33.278Z",
-  "totalKeys": 2052,
+  "timestamp": "2026-02-04T17:03:54.084Z",
+  "totalKeys": 2060,
   "byNamespace": {
-    "common": 2951,
-    "settings": 570,
+    "common": 2959,
+    "settings": 580,
     "content": 54,
     "signup": 120,
     "auth": 6,
@@ -6651,133 +6651,169 @@
     {
       "key": "common:fileGallery.actions.preview",
       "file": "pages/FileGalleryPage.tsx",
-      "line": 113,
+      "line": 116,
       "context": "title={t('common:fileGallery.actions.preview')}"
     },
     {
       "key": "common:fileGallery.actions.preview",
       "file": "pages/FileGalleryPage.tsx",
-      "line": 113,
+      "line": 116,
       "context": "title={t('common:fileGallery.actions.preview')}"
     },
     {
       "key": "common:fileGallery.actions.download",
       "file": "pages/FileGalleryPage.tsx",
-      "line": 122,
+      "line": 125,
       "context": "title={t('common:fileGallery.actions.download')}"
     },
     {
       "key": "common:fileGallery.actions.download",
       "file": "pages/FileGalleryPage.tsx",
-      "line": 122,
+      "line": 125,
       "context": "title={t('common:fileGallery.actions.download')}"
     },
     {
+      "key": "common:fileGallery.actions.delete",
+      "file": "pages/FileGalleryPage.tsx",
+      "line": 134,
+      "context": "title={t('common:fileGallery.actions.delete', 'Delete')}"
+    },
+    {
+      "key": "common:fileGallery.actions.delete",
+      "file": "pages/FileGalleryPage.tsx",
+      "line": 134,
+      "context": "title={t('common:fileGallery.actions.delete', 'Delete')}"
+    },
+    {
       "key": "common:fileGallery.downloadError",
       "file": "pages/FileGalleryPage.tsx",
-      "line": 164,
+      "line": 188,
       "context": "alert(t('common:fileGallery.downloadError', 'Failed to download file. Please try again.'));"
     },
     {
       "key": "common:fileGallery.downloadError",
       "file": "pages/FileGalleryPage.tsx",
-      "line": 164,
+      "line": 188,
       "context": "alert(t('common:fileGallery.downloadError', 'Failed to download file. Please try again.'));"
     },
     {
+      "key": "common:fileGallery.deleteError",
+      "file": "pages/FileGalleryPage.tsx",
+      "line": 206,
+      "context": "alert(t('common:fileGallery.deleteError', 'Failed to delete file. Please try again.'));"
+    },
+    {
+      "key": "common:fileGallery.deleteError",
+      "file": "pages/FileGalleryPage.tsx",
+      "line": 206,
+      "context": "alert(t('common:fileGallery.deleteError', 'Failed to delete file. Please try again.'));"
+    },
+    {
       "key": "dashboard:sidebar.fileGallery",
       "file": "pages/FileGalleryPage.tsx",
-      "line": 181,
+      "line": 223,
       "context": "{t('dashboard:sidebar.fileGallery')}"
     },
     {
       "key": "dashboard:sidebar.fileGallery",
       "file": "pages/FileGalleryPage.tsx",
-      "line": 181,
+      "line": 223,
       "context": "{t('dashboard:sidebar.fileGallery')}"
     },
     {
       "key": "common:fileGallery.adminUploadNote",
       "file": "pages/FileGalleryPage.tsx",
-      "line": 184,
+      "line": 226,
       "context": "{t('common:fileGallery.adminUploadNote', 'View and download your files')}"
     },
     {
       "key": "common:fileGallery.adminUploadNote",
       "file": "pages/FileGalleryPage.tsx",
-      "line": 184,
+      "line": 226,
       "context": "{t('common:fileGallery.adminUploadNote', 'View and download your files')}"
+    },
+    {
+      "key": "common:fileGallery.deleteHelpCta",
+      "file": "pages/FileGalleryPage.tsx",
+      "line": 233,
+      "context": "{t('common:fileGallery.deleteHelpCta', 'How do I delete files?')}"
+    },
+    {
+      "key": "common:fileGallery.deleteHelpCta",
+      "file": "pages/FileGalleryPage.tsx",
+      "line": 233,
+      "context": "{t('common:fileGallery.deleteHelpCta', 'How do I delete files?')}"
     },
     {
       "key": "common:refresh",
       "file": "pages/FileGalleryPage.tsx",
-      "line": 196,
+      "line": 245,
       "context": "{t('common:refresh', 'Refresh')}"
     },
     {
       "key": "common:refresh",
       "file": "pages/FileGalleryPage.tsx",
-      "line": 196,
+      "line": 245,
       "context": "{t('common:refresh', 'Refresh')}"
     },
     {
       "key": "common:fileGallery.fileCount",
       "file": "pages/FileGalleryPage.tsx",
-      "line": 200,
+      "line": 249,
       "context": "{t('common:fileGallery.fileCount', '{{count}} files', { count: files.length })}"
     },
     {
       "key": "common:fileGallery.fileCount",
       "file": "pages/FileGalleryPage.tsx",
-      "line": 200,
+      "line": 249,
       "context": "{t('common:fileGallery.fileCount', '{{count}} files', { count: files.length })}"
     },
     {
       "key": "common:errors.loadingFiles",
       "file": "pages/FileGalleryPage.tsx",
-      "line": 213,
+      "line": 262,
       "context": "{t('common:errors.loadingFiles', 'Error loading files')}"
     },
     {
       "key": "common:errors.loadingFiles",
       "file": "pages/FileGalleryPage.tsx",
-      "line": 213,
+      "line": 262,
       "context": "{t('common:errors.loadingFiles', 'Error loading files')}"
     },
     {
       "key": "common:tryAgain",
       "file": "pages/FileGalleryPage.tsx",
-      "line": 222,
+      "line": 271,
       "context": "{t('common:tryAgain', 'Try Again')}"
     },
     {
       "key": "common:tryAgain",
       "file": "pages/FileGalleryPage.tsx",
-      "line": 222,
+      "line": 271,
       "context": "{t('common:tryAgain', 'Try Again')}"
     },
     {
       "key": "common:fileGallery.emptyState.title",
       "file": "pages/FileGalleryPage.tsx",
-      "line": 237,
+      "line": 286,
       "context": "{t('common:fileGallery.emptyState.title')}"
     },
     {
       "key": "common:fileGallery.emptyState.title",
       "file": "pages/FileGalleryPage.tsx",
-      "line": 237,
+      "line": 286,
       "context": "{t('common:fileGallery.emptyState.title')}"
     },
     {
       "key": "common:fileGallery.emptyState.message",
       "file": "pages/FileGalleryPage.tsx",
-      "line": 240,
+      "line": 289,
       "context": "{t('common:fileGallery.emptyState.message')}"
     },
     {
       "key": "common:fileGallery.emptyState.message",
       "file": "pages/FileGalleryPage.tsx",
-      "line": 240,
+      "line": 289,
       "context": "{t('common:fileGallery.emptyState.message')}"
     },
     {
@@ -22785,121 +22821,121 @@
     {
       "key": "navbar.toggleNavigation",
       "file": "components/layout/Navbar.tsx",
-      "line": 62,
+      "line": 84,
       "context": "aria-label={t('navbar.toggleNavigation')}"
     },
     {
       "key": "navbar.goBackPreviousPage",
       "file": "components/layout/Navbar.tsx",
-      "line": 70,
+      "line": 92,
       "context": "aria-label={t('navbar.goBackPreviousPage')}"
     },
     {
       "key": "navbar.searchPlaceholder",
       "file": "components/layout/Navbar.tsx",
-      "line": 80,
+      "line": 102,
       "context": "placeholder={t('navbar.searchPlaceholder')}"
     },
     {
       "key": "navbar.searchPlaceholder",
       "file": "components/layout/Navbar.tsx",
-      "line": 82,
+      "line": 104,
       "context": "aria-label={t('navbar.searchPlaceholder')}"
     },
     {
       "key": "navbar.help",
       "file": "components/layout/Navbar.tsx",
-      "line": 93,
+      "line": 115,
       "context": "aria-label={t('navbar.help')}"
     },
     {
       "key": "navbar.help",
       "file": "components/layout/Navbar.tsx",
-      "line": 94,
+      "line": 116,
       "context": "title={t('navbar.help')}"
     },
     {
       "key": "navbar.helpShort",
       "file": "components/layout/Navbar.tsx",
-      "line": 98,
+      "line": 120,
       "context": "{t('navbar.helpShort', 'Help')}"
     },
     {
       "key": "navbar.viewShoppingCart",
       "file": "components/layout/Navbar.tsx",
-      "line": 106,
+      "line": 128,
       "context": "aria-label={t('navbar.viewShoppingCart')}"
     },
     {
       "key": "navbar.notifications",
       "file": "components/layout/Navbar.tsx",
-      "line": 121,
+      "line": 143,
       "context": "aria-label={t('navbar.notifications')}"
     },
     {
       "key": "navbar.notificationsCount",
       "file": "components/layout/Navbar.tsx",
-      "line": 134,
+      "line": 156,
       "context": "{t('navbar.notificationsCount', { count: totalNotificationsCount })}"
     },
     {
       "key": "common:buttons.dismiss",
       "file": "components/layout/Navbar.tsx",
-      "line": 144,
+      "line": 166,
       "context": "{t('common:buttons.dismiss')}"
     },
     {
       "key": "common:buttons.dismiss",
       "file": "components/layout/Navbar.tsx",
-      "line": 144,
+      "line": 166,
       "context": "{t('common:buttons.dismiss')}"
     },
     {
       "key": "navbar.newMessages",
       "file": "components/layout/Navbar.tsx",
-      "line": 150,
+      "line": 172,
       "context": "<p className=\"font-medium text-swiss-teal\">{t('navbar.newMessages')}</p>"
     },
     {
       "key": "navbar.unreadMessages",
       "file": "components/layout/Navbar.tsx",
-      "line": 151,
+      "line": 173,
       "context": "<p className=\"text-xs text-gray-500\">{t('navbar.unreadMessages', { count: totalUnreadMessages })}</p>"
     },
     {
       "key": "navbar.noNewNotifications",
       "file": "components/layout/Navbar.tsx",
-      "line": 155,
+      "line": 177,
       "context": "<p className=\"px-4 py-3 text-sm text-gray-500 text-center\">{t('navbar.noNewNotifications')}</p>"
     },
     {
       "key": "navbar.viewAll",
       "file": "components/layout/Navbar.tsx",
-      "line": 160,
+      "line": 182,
       "context": "{t('navbar.viewAll')}"
     },
     {
       "key": "navbar.userMenu",
       "file": "components/layout/Navbar.tsx",
-      "line": 174,
+      "line": 196,
       "context": "aria-label={t('navbar.userMenu')}"
     },
     {
       "key": "dashboard:sidebar.settings",
       "file": "components/layout/Navbar.tsx",
-      "line": 195,
+      "line": 217,
       "context": "{t('dashboard:sidebar.settings')}"
     },
     {
       "key": "dashboard:sidebar.settings",
       "file": "components/layout/Navbar.tsx",
-      "line": 195,
+      "line": 217,
       "context": "{t('dashboard:sidebar.settings')}"
     },
     {
       "key": "navbar.signOut",
       "file": "components/layout/Navbar.tsx",
-      "line": 202,
+      "line": 224,
       "context": "{t('navbar.signOut')}"
     },
     {
@@ -22917,157 +22953,157 @@
     {
       "key": "common:buttons.back",
       "file": "components/help/HelpModal.tsx",
-      "line": 128,
+      "line": 142,
       "context": "aria-label={t('common:buttons.back')}"
     },
     {
       "key": "common:buttons.back",
       "file": "components/help/HelpModal.tsx",
-      "line": 128,
+      "line": 142,
       "context": "aria-label={t('common:buttons.back')}"
     },
     {
       "key": "help:modal.needMoreHelp",
       "file": "components/help/HelpModal.tsx",
-      "line": 158,
+      "line": 172,
       "context": "{t('help:modal.needMoreHelp')}{' '}"
     },
     {
       "key": "help:modal.needMoreHelp",
       "file": "components/help/HelpModal.tsx",
-      "line": 158,
+      "line": 172,
       "context": "{t('help:modal.needMoreHelp')}{' '}"
     },
     {
       "key": "help:modal.contactSupport",
       "file": "components/help/HelpModal.tsx",
-      "line": 163,
+      "line": 177,
       "context": "{t('help:modal.contactSupport')}"
     },
     {
       "key": "help:modal.contactSupport",
       "file": "components/help/HelpModal.tsx",
-      "line": 163,
+      "line": 177,
       "context": "{t('help:modal.contactSupport')}"
     },
     {
       "key": "help:modal.categories",
       "file": "components/help/HelpModal.tsx",
-      "line": 175,
+      "line": 189,
       "context": "<h3 className=\"font-semibold text-gray-900\">{t('help:modal.categories')}</h3>"
     },
     {
       "key": "help:modal.categories",
       "file": "components/help/HelpModal.tsx",
-      "line": 175,
+      "line": 189,
       "context": "<h3 className=\"font-semibold text-gray-900\">{t('help:modal.categories')}</h3>"
     },
     {
       "key": "help:modal.searchPlaceholder",
       "file": "components/help/HelpModal.tsx",
-      "line": 215,
+      "line": 229,
       "context": "placeholder={t('help:modal.searchPlaceholder')}"
     },
     {
       "key": "help:modal.searchPlaceholder",
       "file": "components/help/HelpModal.tsx",
-      "line": 215,
+      "line": 229,
       "context": "placeholder={t('help:modal.searchPlaceholder')}"
     },
     {
       "key": "help:modal.allCategories",
       "file": "components/help/HelpModal.tsx",
-      "line": 225,
+      "line": 239,
       "context": "{t('help:modal.allCategories')}"
     },
     {
       "key": "help:modal.allCategories",
       "file": "components/help/HelpModal.tsx",
-      "line": 225,
+      "line": 239,
       "context": "{t('help:modal.allCategories')}"
     },
     {
       "key": "help:modal.noResults",
       "file": "components/help/HelpModal.tsx",
-      "line": 240,
+      "line": 254,
       "context": "<p className=\"text-gray-500 mb-2\">{t('help:modal.noResults')}</p>"
     },
     {
       "key": "help:modal.noResults",
       "file": "components/help/HelpModal.tsx",
-      "line": 240,
+      "line": 254,
       "context": "<p className=\"text-gray-500 mb-2\">{t('help:modal.noResults')}</p>"
     },
     {
       "key": "help:modal.tryDifferentSearch",
       "file": "components/help/HelpModal.tsx",
-      "line": 241,
+      "line": 255,
       "context": "<p className=\"text-sm text-gray-400\">{t('help:modal.tryDifferentSearch')}</p>"
     },
     {
       "key": "help:modal.tryDifferentSearch",
       "file": "components/help/HelpModal.tsx",
-      "line": 241,
+      "line": 255,
       "context": "<p className=\"text-sm text-gray-400\">{t('help:modal.tryDifferentSearch')}</p>"
     },
     {
       "key": "help:modal.title",
       "file": "components/help/HelpModal.tsx",
-      "line": 289,
+      "line": 303,
       "context": "{t('help:modal.title')}"
     },
     {
       "key": "help:modal.title",
       "file": "components/help/HelpModal.tsx",
-      "line": 289,
+      "line": 303,
       "context": "{t('help:modal.title')}"
     },
     {
       "key": "help:modal.toggleMenu",
       "file": "components/help/HelpModal.tsx",
-      "line": 297,
+      "line": 311,
       "context": "aria-label={t('help:modal.toggleMenu')}"
     },
     {
       "key": "help:modal.toggleMenu",
       "file": "components/help/HelpModal.tsx",
-      "line": 297,
+      "line": 311,
       "context": "aria-label={t('help:modal.toggleMenu')}"
     },
     {
       "key": "common:buttons.close",
       "file": "components/help/HelpModal.tsx",
-      "line": 306,
+      "line": 320,
       "context": "aria-label={t('common:buttons.close')}"
     },
     {
       "key": "common:buttons.close",
       "file": "components/help/HelpModal.tsx",
-      "line": 306,
+      "line": 320,
       "context": "aria-label={t('common:buttons.close')}"
     },
     {
       "key": "help:modal.supportEmail",
       "file": "components/help/HelpModal.tsx",
-      "line": 336,
+      "line": 350,
       "context": "{t('help:modal.supportEmail')}:{' '}"
     },
     {
       "key": "help:modal.supportEmail",
       "file": "components/help/HelpModal.tsx",
-      "line": 336,
+      "line": 350,
       "context": "{t('help:modal.supportEmail')}:{' '}"
     },
     {
       "key": "help:modal.goToSupport",
       "file": "components/help/HelpModal.tsx",
-      "line": 346,
+      "line": 360,
       "context": "{t('help:modal.goToSupport')}"
     },
     {
       "key": "help:modal.goToSupport",
       "file": "components/help/HelpModal.tsx",
-      "line": 346,
+      "line": 360,
       "context": "{t('help:modal.goToSupport')}"
     },
     {
@@ -24897,469 +24933,481 @@
     {
       "key": "settings:profileDocuments.unknownSize",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 60,
+      "line": 61,
       "context": "if (!bytes) return t('settings:profileDocuments.unknownSize');"
     },
     {
       "key": "settings:profileDocuments.unknownSize",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 60,
+      "line": 61,
       "context": "if (!bytes) return t('settings:profileDocuments.unknownSize');"
     },
     {
       "key": "settings:profileDocuments.invalidFileType",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 124,
+      "line": 137,
       "context": "title: t('settings:profileDocuments.invalidFileType', 'Invalid file type'),"
     },
     {
       "key": "settings:profileDocuments.invalidFileType",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 124,
+      "line": 137,
       "context": "title: t('settings:profileDocuments.invalidFileType', 'Invalid file type'),"
     },
     {
       "key": "settings:profileDocuments.allowedTypes",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 125,
+      "line": 138,
       "context": "message: t('settings:profileDocuments.allowedTypes', 'Please upload a PDF, Word, Excel, or PowerPoint file.'),"
     },
     {
       "key": "settings:profileDocuments.allowedTypes",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 125,
+      "line": 138,
       "context": "message: t('settings:profileDocuments.allowedTypes', 'Please upload a PDF, Word, Excel, or PowerPoint file.'),"
     },
     {
       "key": "settings:profileDocuments.fileTooLarge",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 135,
+      "line": 148,
       "context": "title: t('settings:profileDocuments.fileTooLarge', 'File too large'),"
     },
     {
       "key": "settings:profileDocuments.fileTooLarge",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 135,
+      "line": 148,
       "context": "title: t('settings:profileDocuments.fileTooLarge', 'File too large'),"
     },
     {
       "key": "settings:profileDocuments.maxFileSize",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 136,
+      "line": 149,
       "context": "message: t('settings:profileDocuments.maxFileSize', 'Maximum file size is 50MB.'),"
     },
     {
       "key": "settings:profileDocuments.maxFileSize",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 136,
+      "line": 149,
       "context": "message: t('settings:profileDocuments.maxFileSize', 'Maximum file size is 50MB.'),"
     },
     {
       "key": "settings:profileDocuments.uploadSuccess",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 172,
+      "line": 185,
       "context": "title: t('settings:profileDocuments.uploadSuccess', 'Document uploaded'),"
     },
     {
       "key": "settings:profileDocuments.uploadSuccess",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 172,
+      "line": 185,
       "context": "title: t('settings:profileDocuments.uploadSuccess', 'Document uploaded'),"
     },
     {
       "key": "settings:profileDocuments.uploadSuccessMessage",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 173,
+      "line": 186,
       "context": "message: t('settings:profileDocuments.uploadSuccessMessage', 'Your document has been uploaded successfully.'),"
     },
     {
       "key": "settings:profileDocuments.uploadSuccessMessage",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 173,
+      "line": 186,
       "context": "message: t('settings:profileDocuments.uploadSuccessMessage', 'Your document has been uploaded successfully.'),"
     },
     {
       "key": "settings:profileDocuments.uploadFailed",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 187,
+      "line": 200,
       "context": "title: t('settings:profileDocuments.uploadFailed', 'Upload failed'),"
     },
     {
       "key": "settings:profileDocuments.uploadFailed",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 187,
+      "line": 200,
       "context": "title: t('settings:profileDocuments.uploadFailed', 'Upload failed'),"
     },
     {
       "key": "settings:profileDocuments.uploadFailedMessage",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 188,
+      "line": 201,
       "context": "message: error.message || t('settings:profileDocuments.uploadFailedMessage', 'Failed to upload document. Please try again.'),"
     },
     {
       "key": "settings:profileDocuments.uploadFailedMessage",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 188,
+      "line": 201,
       "context": "message: error.message || t('settings:profileDocuments.uploadFailedMessage', 'Failed to upload document. Please try again.'),"
     },
     {
       "key": "settings:profileDocuments.confirmDelete",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 201,
+      "line": 214,
       "context": "if (!confirm(t('settings:profileDocuments.confirmDelete', 'Are you sure you want to delete this document?'))) {"
     },
     {
       "key": "settings:profileDocuments.confirmDelete",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 201,
+      "line": 214,
       "context": "if (!confirm(t('settings:profileDocuments.confirmDelete', 'Are you sure you want to delete this document?'))) {"
     },
     {
       "key": "settings:profileDocuments.deleteSuccess",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 215,
+      "line": 228,
       "context": "title: t('settings:profileDocuments.deleteSuccess', 'Document deleted'),"
     },
     {
       "key": "settings:profileDocuments.deleteSuccess",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 215,
+      "line": 228,
       "context": "title: t('settings:profileDocuments.deleteSuccess', 'Document deleted'),"
     },
     {
       "key": "settings:profileDocuments.deleteSuccessMessage",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 216,
+      "line": 229,
       "context": "message: t('settings:profileDocuments.deleteSuccessMessage', 'The document has been deleted successfully.'),"
     },
     {
       "key": "settings:profileDocuments.deleteSuccessMessage",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 216,
+      "line": 229,
       "context": "message: t('settings:profileDocuments.deleteSuccessMessage', 'The document has been deleted successfully.'),"
     },
     {
       "key": "settings:profileDocuments.deleteFailed",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 225,
+      "line": 238,
       "context": "title: t('settings:profileDocuments.deleteFailed', 'Delete failed'),"
     },
     {
       "key": "settings:profileDocuments.deleteFailed",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 225,
+      "line": 238,
       "context": "title: t('settings:profileDocuments.deleteFailed', 'Delete failed'),"
     },
     {
       "key": "settings:profileDocuments.deleteFailedMessage",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 226,
+      "line": 239,
       "context": "message: error.message || t('settings:profileDocuments.deleteFailedMessage', 'Failed to delete document. Please try again.'),"
     },
     {
       "key": "settings:profileDocuments.deleteFailedMessage",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 226,
+      "line": 239,
       "context": "message: error.message || t('settings:profileDocuments.deleteFailedMessage', 'Failed to delete document. Please try again.'),"
     },
     {
       "key": "common:errors.downloadFailed",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 237,
+      "line": 250,
       "context": "title: t('common:errors.downloadFailed', 'Download failed'),"
     },
     {
       "key": "common:errors.downloadFailed",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 237,
+      "line": 250,
       "context": "title: t('common:errors.downloadFailed', 'Download failed'),"
     },
     {
       "key": "settings:profileDocuments.noFileUrl",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 238,
+      "line": 251,
       "context": "message: t('settings:profileDocuments.noFileUrl', 'Document URL not available.'),"
     },
     {
       "key": "settings:profileDocuments.noFileUrl",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 238,
+      "line": 251,
       "context": "message: t('settings:profileDocuments.noFileUrl', 'Document URL not available.'),"
     },
     {
       "key": "common:errors.downloadFailed",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 249,
+      "line": 262,
       "context": "title: t('common:errors.downloadFailed', 'Download failed'),"
     },
     {
       "key": "common:errors.downloadFailed",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 249,
+      "line": 262,
       "context": "title: t('common:errors.downloadFailed', 'Download failed'),"
     },
     {
       "key": "settings:profileDocuments.downloadFailedMessage",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 250,
+      "line": 263,
       "context": "message: error.message || t('settings:profileDocuments.downloadFailedMessage', 'Failed to download document.'),"
     },
     {
       "key": "settings:profileDocuments.downloadFailedMessage",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 250,
+      "line": 263,
       "context": "message: error.message || t('settings:profileDocuments.downloadFailedMessage', 'Failed to download document.'),"
     },
     {
       "key": "settings:profileDocuments.title",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 268,
+      "line": 281,
       "context": "title={t('settings:profileDocuments.title')}"
     },
     {
       "key": "settings:profileDocuments.title",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 268,
+      "line": 281,
       "context": "title={t('settings:profileDocuments.title')}"
     },
     {
       "key": "settings:profileDocuments.supplierDescription",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 275,
+      "line": 288,
       "context": "? t('settings:profileDocuments.supplierDescription', 'Upload product catalogs, price lists, or company brochures that will be visible on your public profile.')"
     },
     {
       "key": "settings:profileDocuments.supplierDescription",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 275,
+      "line": 288,
       "context": "? t('settings:profileDocuments.supplierDescription', 'Upload product catalogs, price lists, or company brochures that will be visible on your public profile.')"
     },
     {
       "key": "settings:profileDocuments.serviceProviderDescription",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 276,
+      "line": 289,
       "context": ": t('settings:profileDocuments.serviceProviderDescription', 'Upload service brochures, company profiles, or capability documents that will be visible on your public profile.')"
     },
     {
       "key": "settings:profileDocuments.serviceProviderDescription",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 276,
+      "line": 289,
       "context": ": t('settings:profileDocuments.serviceProviderDescription', 'Upload service brochures, company profiles, or capability documents that will be visible on your public profile.')"
     },
     {
       "key": "settings:profileDocuments.uploadNew",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 283,
+      "line": 296,
       "context": "{t('settings:profileDocuments.uploadNew')}"
     },
     {
       "key": "settings:profileDocuments.uploadNew",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 283,
+      "line": 296,
       "context": "{t('settings:profileDocuments.uploadNew')}"
     },
     {
       "key": "settings:profileDocuments.documentType",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 289,
+      "line": 302,
       "context": "{t('settings:profileDocuments.documentType')}"
     },
     {
       "key": "settings:profileDocuments.documentType",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 289,
+      "line": 302,
       "context": "{t('settings:profileDocuments.documentType')}"
     },
     {
       "key": "settings:profileDocuments.documentTitle",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 307,
+      "line": 320,
       "context": "{t('settings:profileDocuments.documentTitle')}"
     },
     {
       "key": "settings:profileDocuments.documentTitle",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 307,
+      "line": 320,
       "context": "{t('settings:profileDocuments.documentTitle')}"
     },
     {
       "key": "settings:profileDocuments.titlePlaceholder",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 313,
+      "line": 326,
       "context": "placeholder={t('settings:profileDocuments.titlePlaceholder')}"
     },
     {
       "key": "settings:profileDocuments.titlePlaceholder",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 313,
+      "line": 326,
       "context": "placeholder={t('settings:profileDocuments.titlePlaceholder')}"
     },
     {
       "key": "settings:profileDocuments.description",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 322,
+      "line": 335,
       "context": "{t('settings:profileDocuments.description')}"
     },
     {
       "key": "settings:profileDocuments.description",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 322,
+      "line": 335,
       "context": "{t('settings:profileDocuments.description')}"
     },
     {
       "key": "settings:profileDocuments.descriptionPlaceholder",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 327,
+      "line": 340,
       "context": "placeholder={t('settings:profileDocuments.descriptionPlaceholder')}"
     },
     {
       "key": "settings:profileDocuments.descriptionPlaceholder",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 327,
+      "line": 340,
       "context": "placeholder={t('settings:profileDocuments.descriptionPlaceholder')}"
     },
     {
       "key": "settings:profileDocuments.uploading",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 354,
+      "line": 367,
       "context": "{t('settings:profileDocuments.uploading')} ({uploadingProgress}%)"
     },
     {
       "key": "settings:profileDocuments.uploading",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 354,
+      "line": 367,
       "context": "{t('settings:profileDocuments.uploading')} ({uploadingProgress}%)"
     },
     {
       "key": "settings:profileDocuments.selectFile",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 359,
+      "line": 372,
       "context": "{t('settings:profileDocuments.selectFile')}"
     },
     {
       "key": "settings:profileDocuments.selectFile",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 359,
+      "line": 372,
       "context": "{t('settings:profileDocuments.selectFile')}"
     },
     {
       "key": "settings:profileDocuments.allowedFormats",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 365,
+      "line": 378,
       "context": "{t('settings:profileDocuments.allowedFormats')}"
     },
     {
       "key": "settings:profileDocuments.allowedFormats",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 365,
+      "line": 378,
       "context": "{t('settings:profileDocuments.allowedFormats')}"
     },
     {
       "key": "settings:profileDocuments.uploadedDocuments",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 373,
+      "line": 387,
       "context": "{t('settings:profileDocuments.uploadedDocuments')}"
     },
     {
       "key": "settings:profileDocuments.uploadedDocuments",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 373,
+      "line": 387,
       "context": "{t('settings:profileDocuments.uploadedDocuments')}"
+    },
+    {
+      "key": "settings:profileDocuments.deleteHelpCta",
+      "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
+      "line": 394,
+      "context": "{t('settings:profileDocuments.deleteHelpCta', 'How do I delete files?')}"
+    },
+    {
+      "key": "settings:profileDocuments.deleteHelpCta",
+      "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
+      "line": 394,
+      "context": "{t('settings:profileDocuments.deleteHelpCta', 'How do I delete files?')}"
     },
     {
       "key": "common:loading",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 380,
+      "line": 402,
       "context": "{t('common:loading')}"
     },
     {
       "key": "common:loading",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 380,
+      "line": 402,
       "context": "{t('common:loading')}"
     },
     {
       "key": "settings:profileDocuments.noDocuments",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 387,
+      "line": 409,
       "context": "{t('settings:profileDocuments.noDocuments')}"
     },
     {
       "key": "settings:profileDocuments.noDocuments",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 387,
+      "line": 409,
       "context": "{t('settings:profileDocuments.noDocuments')}"
     },
     {
       "key": "settings:profileDocuments.uploadHint",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 390,
+      "line": 412,
       "context": "{t('settings:profileDocuments.uploadHint')}"
     },
     {
       "key": "settings:profileDocuments.uploadHint",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 390,
+      "line": 412,
       "context": "{t('settings:profileDocuments.uploadHint')}"
     },
     {
       "key": "settings:profileDocuments.untitledDocument",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 408,
+      "line": 430,
       "context": "{doc.title || doc.asset?.filename || t('settings:profileDocuments.untitledDocument')}"
     },
     {
       "key": "settings:profileDocuments.untitledDocument",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 408,
+      "line": 430,
       "context": "{doc.title || doc.asset?.filename || t('settings:profileDocuments.untitledDocument')}"
     },
     {
       "key": "settings:profileDocuments.preview",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 430,
+      "line": 452,
       "context": "title={t('settings:profileDocuments.preview')}"
     },
     {
       "key": "settings:profileDocuments.preview",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 430,
+      "line": 452,
       "context": "title={t('settings:profileDocuments.preview')}"
     },
     {
       "key": "settings:profileDocuments.download",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 438,
+      "line": 460,
       "context": "title={t('settings:profileDocuments.download')}"
     },
     {
       "key": "settings:profileDocuments.download",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 438,
+      "line": 460,
       "context": "title={t('settings:profileDocuments.download')}"
     },
     {
       "key": "settings:profileDocuments.delete",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 446,
+      "line": 468,
       "context": "title={t('settings:profileDocuments.delete')}"
     },
     {
       "key": "settings:profileDocuments.delete",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 446,
+      "line": 468,
       "context": "title={t('settings:profileDocuments.delete')}"
     },
     {
       "key": "settings:profileDocuments.previewIframeTitle",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 477,
+      "line": 499,
       "context": "title={t('settings:profileDocuments.previewIframeTitle')}"
     },
     {
       "key": "settings:profileDocuments.previewIframeTitle",
       "file": "components/settings/sections/ProfileDocumentsSettings.tsx",
-      "line": 477,
+      "line": 499,
       "context": "title={t('settings:profileDocuments.previewIframeTitle')}"
     },
     {
@@ -25521,572 +25569,584 @@
     {
       "key": "settings:educatorProfile.invalidImageType",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 130,
+      "line": 143,
       "context": "alert(t('settings:educatorProfile.invalidImageType', 'Please select an image file'));"
     },
     {
       "key": "settings:educatorProfile.invalidImageType",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 130,
+      "line": 143,
       "context": "alert(t('settings:educatorProfile.invalidImageType', 'Please select an image file'));"
     },
     {
       "key": "settings:educatorProfile.uploadFailed",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 161,
+      "line": 174,
       "context": "alert(error.message || t('settings:educatorProfile.uploadFailed', 'Upload failed. Please try again.'));"
     },
     {
       "key": "settings:educatorProfile.uploadFailed",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 161,
+      "line": 174,
       "context": "alert(error.message || t('settings:educatorProfile.uploadFailed', 'Upload failed. Please try again.'));"
     },
     {
       "key": "settings:page.educatorProfile",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 185,
+      "line": 217,
       "context": "<SettingsSectionWrapper title={t('settings:page.educatorProfile', 'Profile Information')} icon={UserCircleIcon}>"
     },
     {
       "key": "settings:page.educatorProfile",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 185,
+      "line": 217,
       "context": "<SettingsSectionWrapper title={t('settings:page.educatorProfile', 'Profile Information')} icon={UserCircleIcon}>"
     },
     {
       "key": "settings:educatorProfile.avatar",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 191,
+      "line": 223,
       "context": "{t('settings:educatorProfile.avatar', 'Profile Photo')}"
     },
     {
       "key": "settings:educatorProfile.avatar",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 191,
+      "line": 223,
       "context": "{t('settings:educatorProfile.avatar', 'Profile Photo')}"
     },
     {
       "key": "common.profile",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 197,
+      "line": 229,
       "context": "alt={t('common.profile')}"
     },
     {
       "key": "settings:educatorProfile.uploading",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 227,
+      "line": 259,
       "context": "? t('settings:educatorProfile.uploading', 'Uploading...')"
     },
     {
       "key": "settings:educatorProfile.uploading",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 227,
+      "line": 259,
       "context": "? t('settings:educatorProfile.uploading', 'Uploading...')"
     },
     {
       "key": "settings:educatorProfile.chooseAvatar",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 228,
+      "line": 260,
       "context": ": t('settings:educatorProfile.chooseAvatar', 'Choose avatar')"
     },
     {
       "key": "settings:educatorProfile.chooseAvatar",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 228,
+      "line": 260,
       "context": ": t('settings:educatorProfile.chooseAvatar', 'Choose avatar')"
     },
     {
       "key": "settings:educatorProfile.avatarHint",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 232,
+      "line": 264,
       "context": "{t('settings:educatorProfile.avatarHint', 'JPG, PNG or GIF. Will be cropped to 256×256px')}"
     },
     {
       "key": "settings:educatorProfile.avatarHint",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 232,
+      "line": 264,
       "context": "{t('settings:educatorProfile.avatarHint', 'JPG, PNG or GIF. Will be cropped to 256×256px')}"
     },
     {
       "key": "settings:educatorProfile.basicInfo",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 242,
+      "line": 274,
       "context": "<h3 className=\"text-lg font-medium text-gray-900 mb-4\">{t('settings:educatorProfile.basicInfo', 'Basic Information')}</h3>"
     },
     {
       "key": "settings:educatorProfile.basicInfo",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 242,
+      "line": 274,
       "context": "<h3 className=\"text-lg font-medium text-gray-900 mb-4\">{t('settings:educatorProfile.basicInfo', 'Basic Information')}</h3>"
     },
     {
       "key": "settings:educatorProfile.firstName",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 245,
+      "line": 277,
       "context": "{t('settings:educatorProfile.firstName', 'First Name')}"
     },
     {
       "key": "settings:educatorProfile.firstName",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 245,
+      "line": 277,
       "context": "{t('settings:educatorProfile.firstName', 'First Name')}"
     },
     {
       "key": "settings:educatorProfile.firstNamePlaceholder",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 254,
+      "line": 286,
       "context": "placeholder={t('settings:educatorProfile.firstNamePlaceholder', 'Enter your first name')}"
     },
     {
       "key": "settings:educatorProfile.firstNamePlaceholder",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 254,
+      "line": 286,
       "context": "placeholder={t('settings:educatorProfile.firstNamePlaceholder', 'Enter your first name')}"
     },
     {
       "key": "settings:educatorProfile.lastName",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 259,
+      "line": 291,
       "context": "{t('settings:educatorProfile.lastName', 'Last Name')}"
     },
     {
       "key": "settings:educatorProfile.lastName",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 259,
+      "line": 291,
       "context": "{t('settings:educatorProfile.lastName', 'Last Name')}"
     },
     {
       "key": "settings:educatorProfile.lastNamePlaceholder",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 268,
+      "line": 300,
       "context": "placeholder={t('settings:educatorProfile.lastNamePlaceholder', 'Enter your last name')}"
     },
     {
       "key": "settings:educatorProfile.lastNamePlaceholder",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 268,
+      "line": 300,
       "context": "placeholder={t('settings:educatorProfile.lastNamePlaceholder', 'Enter your last name')}"
     },
     {
       "key": "settings:educatorProfile.email",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 273,
+      "line": 305,
       "context": "{t('settings:educatorProfile.email', 'Email')}"
     },
     {
       "key": "settings:educatorProfile.email",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 273,
+      "line": 305,
       "context": "{t('settings:educatorProfile.email', 'Email')}"
     },
     {
       "key": "settings:educatorProfile.emailPlaceholder",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 282,
+      "line": 314,
       "context": "placeholder={t('settings:educatorProfile.emailPlaceholder', 'Enter your email address')}"
     },
     {
       "key": "settings:educatorProfile.emailPlaceholder",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 282,
+      "line": 314,
       "context": "placeholder={t('settings:educatorProfile.emailPlaceholder', 'Enter your email address')}"
     },
     {
       "key": "settings:educatorProfile.phoneNumber",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 287,
+      "line": 319,
       "context": "{t('settings:educatorProfile.phoneNumber', 'Phone Number')}"
     },
     {
       "key": "settings:educatorProfile.phoneNumber",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 287,
+      "line": 319,
       "context": "{t('settings:educatorProfile.phoneNumber', 'Phone Number')}"
     },
     {
       "key": "settings:educatorProfile.phoneNumberPlaceholder",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 296,
+      "line": 328,
       "context": "placeholder={t('settings:educatorProfile.phoneNumberPlaceholder', '+41 XX XXX XX XX')}"
     },
     {
       "key": "settings:educatorProfile.phoneNumberPlaceholder",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 296,
+      "line": 328,
       "context": "placeholder={t('settings:educatorProfile.phoneNumberPlaceholder', '+41 XX XXX XX XX')}"
     },
     {
       "key": "settings:educatorProfile.role",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 301,
+      "line": 333,
       "context": "{t('settings:educatorProfile.role', 'Role')} <span className=\"text-swiss-coral\">*</span>"
     },
     {
       "key": "settings:educatorProfile.role",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 301,
+      "line": 333,
       "context": "{t('settings:educatorProfile.role', 'Role')} <span className=\"text-swiss-coral\">*</span>"
     },
     {
       "key": "settings:educatorProfile.rolePlaceholder",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 310,
+      "line": 342,
       "context": "placeholder={t('settings:educatorProfile.rolePlaceholder', 'e.g., Educator, Assistant')}"
     },
     {
       "key": "settings:educatorProfile.rolePlaceholder",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 310,
+      "line": 342,
       "context": "placeholder={t('settings:educatorProfile.rolePlaceholder', 'e.g., Educator, Assistant')}"
     },
     {
       "key": "settings:educatorProfile.location",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 318,
+      "line": 350,
       "context": "{t('settings:educatorProfile.location', 'Location')} <span className=\"text-swiss-coral\">*</span>"
     },
     {
       "key": "settings:educatorProfile.location",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 318,
+      "line": 350,
       "context": "{t('settings:educatorProfile.location', 'Location')} <span className=\"text-swiss-coral\">*</span>"
     },
     {
       "key": "settings:educatorProfile.locationPlaceholder",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 329,
+      "line": 361,
       "context": "<option value=\"\">{t('settings:educatorProfile.locationPlaceholder', 'Select a canton')}</option>"
     },
     {
       "key": "settings:educatorProfile.locationPlaceholder",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 329,
+      "line": 361,
       "context": "<option value=\"\">{t('settings:educatorProfile.locationPlaceholder', 'Select a canton')}</option>"
     },
     {
       "key": "settings:educatorProfile.bio",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 352,
+      "line": 384,
       "context": "{t('settings:educatorProfile.bio', 'Bio')}"
     },
     {
       "key": "settings:educatorProfile.bio",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 352,
+      "line": 384,
       "context": "{t('settings:educatorProfile.bio', 'Bio')}"
     },
     {
       "key": "settings:educatorProfile.shortBio",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 356,
+      "line": 388,
       "context": "{t('settings:educatorProfile.shortBio', 'Short Bio / About Me')}"
     },
     {
       "key": "settings:educatorProfile.shortBio",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 356,
+      "line": 388,
       "context": "{t('settings:educatorProfile.shortBio', 'Short Bio / About Me')}"
     },
     {
       "key": "settings:educatorProfile.shortBioPlaceholder",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 365,
+      "line": 397,
       "context": "placeholder={t('settings:educatorProfile.shortBioPlaceholder', 'Tell others about yourself, your experience, and what makes you unique...')}"
     },
     {
       "key": "settings:educatorProfile.shortBioPlaceholder",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 365,
+      "line": 397,
       "context": "placeholder={t('settings:educatorProfile.shortBioPlaceholder', 'Tell others about yourself, your experience, and what makes you unique...')}"
     },
     {
       "key": "settings:educatorProfile.bioHint",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 368,
+      "line": 400,
       "context": "{t('settings:educatorProfile.bioHint', 'This will appear on your public profile')}"
     },
     {
       "key": "settings:educatorProfile.bioHint",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 368,
+      "line": 400,
       "context": "{t('settings:educatorProfile.bioHint', 'This will appear on your public profile')}"
     },
     {
       "key": "settings:educatorProfile.skills",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 380,
+      "line": 412,
       "context": "{t('settings:educatorProfile.skills', 'Skills & Specialties')}"
     },
     {
       "key": "settings:educatorProfile.skills",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 380,
+      "line": 412,
       "context": "{t('settings:educatorProfile.skills', 'Skills & Specialties')}"
     },
     {
       "key": "settings:educatorProfile.skillsLabel",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 384,
+      "line": 416,
       "context": "{t('settings:educatorProfile.skillsLabel', 'Skills')}"
     },
     {
       "key": "settings:educatorProfile.skillsLabel",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 384,
+      "line": 416,
       "context": "{t('settings:educatorProfile.skillsLabel', 'Skills')}"
     },
     {
       "key": "settings:educatorProfile.skillsPlaceholder",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 390,
+      "line": 422,
       "context": "placeholder={t('settings:educatorProfile.skillsPlaceholder', 'e.g., Early Childhood Education, Special Needs, Bilingual')}"
     },
     {
       "key": "settings:educatorProfile.skillsPlaceholder",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 390,
+      "line": 422,
       "context": "placeholder={t('settings:educatorProfile.skillsPlaceholder', 'e.g., Early Childhood Education, Special Needs, Bilingual')}"
     },
     {
       "key": "settings:educatorProfile.skillsHint",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 394,
+      "line": 426,
       "context": "{t('settings:educatorProfile.skillsHint', 'Type and press Enter to add skills')}"
     },
     {
       "key": "settings:educatorProfile.skillsHint",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 394,
+      "line": 426,
       "context": "{t('settings:educatorProfile.skillsHint', 'Type and press Enter to add skills')}"
     },
     {
       "key": "settings:educatorProfile.workExperience",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 406,
+      "line": 438,
       "context": "{t('settings:educatorProfile.workExperience', 'Work Experience')}"
     },
     {
       "key": "settings:educatorProfile.workExperience",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 406,
+      "line": 438,
       "context": "{t('settings:educatorProfile.workExperience', 'Work Experience')}"
     },
     {
       "key": "settings:educatorProfile.workExperienceLabel",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 410,
+      "line": 442,
       "context": "{t('settings:educatorProfile.workExperienceLabel', 'Work Experience')}"
     },
     {
       "key": "settings:educatorProfile.workExperienceLabel",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 410,
+      "line": 442,
       "context": "{t('settings:educatorProfile.workExperienceLabel', 'Work Experience')}"
     },
     {
       "key": "settings:educatorProfile.workExperiencePlaceholder",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 419,
+      "line": 451,
       "context": "placeholder={t('settings:educatorProfile.workExperiencePlaceholder', 'Describe your work experience...')}"
     },
     {
       "key": "settings:educatorProfile.workExperiencePlaceholder",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 419,
+      "line": 451,
       "context": "placeholder={t('settings:educatorProfile.workExperiencePlaceholder', 'Describe your work experience...')}"
     },
     {
       "key": "settings:educatorProfile.workExperienceHint",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 422,
+      "line": 454,
       "context": "{t('settings:educatorProfile.workExperienceHint', 'You can use JSON format or plain text')}"
     },
     {
       "key": "settings:educatorProfile.workExperienceHint",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 422,
+      "line": 454,
       "context": "{t('settings:educatorProfile.workExperienceHint', 'You can use JSON format or plain text')}"
     },
     {
       "key": "settings:educatorProfile.education",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 434,
+      "line": 466,
       "context": "{t('settings:educatorProfile.education', 'Education')}"
     },
     {
       "key": "settings:educatorProfile.education",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 434,
+      "line": 466,
       "context": "{t('settings:educatorProfile.education', 'Education')}"
     },
     {
       "key": "settings:educatorProfile.educationLabel",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 438,
+      "line": 470,
       "context": "{t('settings:educatorProfile.educationLabel', 'Education')}"
     },
     {
       "key": "settings:educatorProfile.educationLabel",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 438,
+      "line": 470,
       "context": "{t('settings:educatorProfile.educationLabel', 'Education')}"
     },
     {
       "key": "settings:educatorProfile.educationPlaceholder",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 447,
+      "line": 479,
       "context": "placeholder={t('settings:educatorProfile.educationPlaceholder', 'List your educational background...')}"
     },
     {
       "key": "settings:educatorProfile.educationPlaceholder",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 447,
+      "line": 479,
       "context": "placeholder={t('settings:educatorProfile.educationPlaceholder', 'List your educational background...')}"
     },
     {
       "key": "settings:educatorProfile.educationHint",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 450,
+      "line": 482,
       "context": "{t('settings:educatorProfile.educationHint', 'You can use JSON format or plain text')}"
     },
     {
       "key": "settings:educatorProfile.educationHint",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 450,
+      "line": 482,
       "context": "{t('settings:educatorProfile.educationHint', 'You can use JSON format or plain text')}"
     },
     {
       "key": "settings:educatorProfile.certifications",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 462,
+      "line": 494,
       "context": "{t('settings:educatorProfile.certifications', 'Certifications')}"
     },
     {
       "key": "settings:educatorProfile.certifications",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 462,
+      "line": 494,
       "context": "{t('settings:educatorProfile.certifications', 'Certifications')}"
     },
     {
       "key": "settings:educatorProfile.certificationsLabel",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 466,
+      "line": 498,
       "context": "{t('settings:educatorProfile.certificationsLabel', 'Certifications')}"
     },
     {
       "key": "settings:educatorProfile.certificationsLabel",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 466,
+      "line": 498,
       "context": "{t('settings:educatorProfile.certificationsLabel', 'Certifications')}"
     },
     {
       "key": "settings:educatorProfile.certificationsPlaceholder",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 472,
+      "line": 504,
       "context": "placeholder={t('settings:educatorProfile.certificationsPlaceholder', 'e.g., CPR Certified, Early Childhood Education Certificate')}"
     },
     {
       "key": "settings:educatorProfile.certificationsPlaceholder",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 472,
+      "line": 504,
       "context": "placeholder={t('settings:educatorProfile.certificationsPlaceholder', 'e.g., CPR Certified, Early Childhood Education Certificate')}"
     },
     {
       "key": "settings:educatorProfile.certificationsHint",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 476,
+      "line": 508,
       "context": "{t('settings:educatorProfile.certificationsHint', 'Type and press Enter to add certifications')}"
     },
     {
       "key": "settings:educatorProfile.certificationsHint",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 476,
+      "line": 508,
       "context": "{t('settings:educatorProfile.certificationsHint', 'Type and press Enter to add certifications')}"
     },
     {
       "key": "settings:educatorProfile.cv",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 499,
+      "line": 531,
       "context": "{t('settings:educatorProfile.cv', 'CV / Resume')}"
     },
     {
       "key": "settings:educatorProfile.cv",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 499,
+      "line": 531,
       "context": "{t('settings:educatorProfile.cv', 'CV / Resume')}"
     },
     {
       "key": "settings:educatorProfile.cvUpload",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 503,
+      "line": 535,
       "context": "{t('settings:educatorProfile.cvUpload', 'Upload CV')}"
     },
     {
       "key": "settings:educatorProfile.cvUpload",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 503,
+      "line": 535,
       "context": "{t('settings:educatorProfile.cvUpload', 'Upload CV')}"
     },
     {
       "key": "settings:educatorProfile.cvDocument",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 512,
+      "line": 544,
       "context": "{profileData.cvUrl.split('/').pop() || t('settings:educatorProfile.cvDocument', 'CV document')}"
     },
     {
       "key": "settings:educatorProfile.cvDocument",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 512,
+      "line": 544,
       "context": "{profileData.cvUrl.split('/').pop() || t('settings:educatorProfile.cvDocument', 'CV document')}"
     },
     {
       "key": "settings:educatorProfile.viewDocument",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 520,
+      "line": 552,
       "context": "{t('settings:educatorProfile.viewDocument', 'View document')}"
     },
     {
       "key": "settings:educatorProfile.viewDocument",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 520,
+      "line": 552,
       "context": "{t('settings:educatorProfile.viewDocument', 'View document')}"
     },
     {
       "key": "common:buttons.remove",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 531,
+      "line": 563,
       "context": "{t('common:buttons.remove', 'Remove')}"
     },
     {
       "key": "common:buttons.remove",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 531,
+      "line": 563,
       "context": "{t('common:buttons.remove', 'Remove')}"
     },
     {
       "key": "settings:educatorProfile.cvDragDrop",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 536,
+      "line": 568,
       "context": "label={t('settings:educatorProfile.cvDragDrop', 'Drag & drop your CV here')}"
     },
     {
       "key": "settings:educatorProfile.cvDragDrop",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 536,
+      "line": 568,
       "context": "label={t('settings:educatorProfile.cvDragDrop', 'Drag & drop your CV here')}"
     },
     {
       "key": "settings:educatorProfile.cvHint",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 545,
+      "line": 577,
       "context": "{t('settings:educatorProfile.cvHint', 'Accepted formats: PDF, DOC, DOCX (Max 5MB). This will be shared with foundations when you apply for jobs.')}"
     },
     {
       "key": "settings:educatorProfile.cvHint",
       "file": "components/settings/sections/EducatorProfileSettings.tsx",
-      "line": 545,
+      "line": 577,
       "context": "{t('settings:educatorProfile.cvHint', 'Accepted formats: PDF, DOC, DOCX (Max 5MB). This will be shared with foundations when you apply for jobs.')}"
+    },
+    {
+      "key": "settings:educatorProfile.deleteHelpCta",
+      "file": "components/settings/sections/EducatorProfileSettings.tsx",
+      "line": 584,
+      "context": "{t('settings:educatorProfile.deleteHelpCta', 'How do I delete files?')}"
+    },
+    {
+      "key": "settings:educatorProfile.deleteHelpCta",
+      "file": "components/settings/sections/EducatorProfileSettings.tsx",
+      "line": 584,
+      "context": "{t('settings:educatorProfile.deleteHelpCta', 'How do I delete files?')}"
     },
     {
       "key": "settings:page.defaults",
@@ -28731,289 +28791,337 @@
     {
       "key": "settings:companyProfile.serviceProvider",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 98,
+      "line": 133,
       "context": "{formData.companyName || t('settings:companyProfile.serviceProvider', 'Service Provider')}"
     },
     {
       "key": "settings:companyProfile.serviceProvider",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 98,
+      "line": 133,
       "context": "{formData.companyName || t('settings:companyProfile.serviceProvider', 'Service Provider')}"
     },
     {
       "key": "settings:companyProfile.serviceProvider",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 101,
+      "line": 136,
       "context": "{t('settings:companyProfile.serviceProvider', 'Service Provider')}"
     },
     {
       "key": "settings:companyProfile.serviceProvider",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 101,
+      "line": 136,
       "context": "{t('settings:companyProfile.serviceProvider', 'Service Provider')}"
     },
     {
       "key": "settings:companyProfile.basicInfo",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 112,
+      "line": 147,
       "context": "{t('settings:companyProfile.basicInfo', 'Basic Information')}"
     },
     {
       "key": "settings:companyProfile.basicInfo",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 112,
+      "line": 147,
       "context": "{t('settings:companyProfile.basicInfo', 'Basic Information')}"
     },
     {
       "key": "common:settingsCompanyProfile.companyName",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 117,
+      "line": 152,
       "context": "{t('common:settingsCompanyProfile.companyName', 'Organization Name')} <span className=\"text-swiss-coral\">*</span>"
     },
     {
       "key": "common:settingsCompanyProfile.companyName",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 117,
+      "line": 152,
       "context": "{t('common:settingsCompanyProfile.companyName', 'Organization Name')} <span className=\"text-swiss-coral\">*</span>"
     },
     {
       "key": "settings:companyProfile.companyNamePlaceholder",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 126,
+      "line": 161,
       "context": "placeholder={t('settings:companyProfile.companyNamePlaceholder', 'Enter your organization name')}"
     },
     {
       "key": "settings:companyProfile.companyNamePlaceholder",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 126,
+      "line": 161,
       "context": "placeholder={t('settings:companyProfile.companyNamePlaceholder', 'Enter your organization name')}"
     },
     {
       "key": "common:settingsCompanyProfile.aboutText",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 132,
+      "line": 167,
       "context": "{t('common:settingsCompanyProfile.aboutText', 'Description / About')}"
     },
     {
       "key": "common:settingsCompanyProfile.aboutText",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 132,
+      "line": 167,
       "context": "{t('common:settingsCompanyProfile.aboutText', 'Description / About')}"
     },
     {
       "key": "settings:companyProfile.descriptionPlaceholder",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 141,
+      "line": 176,
       "context": "placeholder={t('settings:companyProfile.descriptionPlaceholder', 'Describe your organization...')}"
     },
     {
       "key": "settings:companyProfile.descriptionPlaceholder",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 141,
+      "line": 176,
       "context": "placeholder={t('settings:companyProfile.descriptionPlaceholder', 'Describe your organization...')}"
     },
     {
       "key": "common:settingsCompanyProfile.vatNumber",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 150,
+      "line": 185,
       "context": "{t('common:settingsCompanyProfile.vatNumber', 'VAT Number')}"
     },
     {
       "key": "common:settingsCompanyProfile.vatNumber",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 150,
+      "line": 185,
       "context": "{t('common:settingsCompanyProfile.vatNumber', 'VAT Number')}"
     },
     {
       "key": "common:placeholders.vatNumber",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 158,
+      "line": 193,
       "context": "placeholder={t('common:placeholders.vatNumber')}"
     },
     {
       "key": "common:placeholders.vatNumber",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 158,
+      "line": 193,
       "context": "placeholder={t('common:placeholders.vatNumber')}"
     },
     {
       "key": "settings:companyProfile.location",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 171,
+      "line": 206,
       "context": "{t('settings:companyProfile.location', 'Location')}"
     },
     {
       "key": "settings:companyProfile.location",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 171,
+      "line": 206,
       "context": "{t('settings:companyProfile.location', 'Location')}"
     },
     {
       "key": "common:settingsCompanyProfile.regionsServed",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 176,
+      "line": 211,
       "context": "{t('common:settingsCompanyProfile.regionsServed', 'Regions Served (Cantons)')}"
     },
     {
       "key": "common:settingsCompanyProfile.regionsServed",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 176,
+      "line": 211,
       "context": "{t('common:settingsCompanyProfile.regionsServed', 'Regions Served (Cantons)')}"
     },
     {
       "key": "common:settingsCompanyProfile.cantonsHelpText",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 178,
+      "line": 213,
       "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('common:settingsCompanyProfile.cantonsHelpText', 'Select all cantons where your organization operates')}</p>"
     },
     {
       "key": "common:settingsCompanyProfile.cantonsHelpText",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 178,
+      "line": 213,
       "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('common:settingsCompanyProfile.cantonsHelpText', 'Select all cantons where your organization operates')}</p>"
     },
     {
       "key": "common:settingsCompanyProfile.languagesSpoken",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 199,
+      "line": 234,
       "context": "{t('common:settingsCompanyProfile.languagesSpoken', 'Languages Spoken')}"
     },
     {
       "key": "common:settingsCompanyProfile.languagesSpoken",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 199,
+      "line": 234,
       "context": "{t('common:settingsCompanyProfile.languagesSpoken', 'Languages Spoken')}"
     },
     {
       "key": "common:settingsCompanyProfile.languagesHelpText",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 201,
+      "line": 236,
       "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('common:settingsCompanyProfile.languagesHelpText', 'Select all languages your organization supports')}</p>"
     },
     {
       "key": "common:settingsCompanyProfile.languagesHelpText",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 201,
+      "line": 236,
       "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('common:settingsCompanyProfile.languagesHelpText', 'Select all languages your organization supports')}</p>"
     },
     {
       "key": "settings:companyProfile.serviceProviderInfo",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 226,
+      "line": 261,
       "context": "{t('settings:companyProfile.serviceProviderInfo', 'Service Provider Information')}"
     },
     {
       "key": "settings:companyProfile.serviceProviderInfo",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 226,
+      "line": 261,
       "context": "{t('settings:companyProfile.serviceProviderInfo', 'Service Provider Information')}"
     },
     {
       "key": "settings:companyProfile.serviceType",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 231,
+      "line": 266,
       "context": "{t('settings:companyProfile.serviceType', 'Service Type')}"
     },
     {
       "key": "settings:companyProfile.serviceType",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 231,
+      "line": 266,
       "context": "{t('settings:companyProfile.serviceType', 'Service Type')}"
     },
     {
       "key": "settings:companyProfile.serviceTypePlaceholder",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 239,
+      "line": 274,
       "context": "placeholder={t('settings:companyProfile.serviceTypePlaceholder', 'e.g., IT Support, Cleaning Services')}"
     },
     {
       "key": "settings:companyProfile.serviceTypePlaceholder",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 239,
+      "line": 274,
       "context": "placeholder={t('settings:companyProfile.serviceTypePlaceholder', 'e.g., IT Support, Cleaning Services')}"
     },
     {
       "key": "settings:companyProfile.serviceCategories",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 245,
+      "line": 280,
       "context": "{t('settings:companyProfile.serviceCategories', 'Service Categories')}"
     },
     {
       "key": "settings:companyProfile.serviceCategories",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 245,
+      "line": 280,
       "context": "{t('settings:companyProfile.serviceCategories', 'Service Categories')}"
     },
     {
       "key": "settings:companyProfile.serviceCategoriesHint",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 247,
+      "line": 282,
       "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('settings:companyProfile.serviceCategoriesHint', 'Select all that apply')}</p>"
     },
     {
       "key": "settings:companyProfile.serviceCategoriesHint",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 247,
+      "line": 282,
       "context": "<p className=\"text-xs text-gray-500 mb-3\">{t('settings:companyProfile.serviceCategoriesHint', 'Select all that apply')}</p>"
+    },
+    {
+      "key": "settings:companyProfile.otherServiceCategoryLabel",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 303,
+      "context": "{t('settings:companyProfile.otherServiceCategoryLabel', 'Specify your service category')}"
+    },
+    {
+      "key": "settings:companyProfile.otherServiceCategoryLabel",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 303,
+      "context": "{t('settings:companyProfile.otherServiceCategoryLabel', 'Specify your service category')}"
+    },
+    {
+      "key": "settings:companyProfile.otherServiceCategoryPlaceholder",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 312,
+      "context": "placeholder={t('settings:companyProfile.otherServiceCategoryPlaceholder', 'e.g., Catering, Landscaping')}"
+    },
+    {
+      "key": "settings:companyProfile.otherServiceCategoryPlaceholder",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 312,
+      "context": "placeholder={t('settings:companyProfile.otherServiceCategoryPlaceholder', 'e.g., Catering, Landscaping')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 330,
+      "context": "{t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 330,
+      "context": "{t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "settings:companyProfile.otherServiceCategoryHint",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 334,
+      "context": "{t('settings:companyProfile.otherServiceCategoryHint', 'This will be added to your service categories.')}"
+    },
+    {
+      "key": "settings:companyProfile.otherServiceCategoryHint",
+      "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
+      "line": 334,
+      "context": "{t('settings:companyProfile.otherServiceCategoryHint', 'This will be added to your service categories.')}"
     },
     {
       "key": "settings:companyProfile.deliveryType",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 268,
+      "line": 342,
       "context": "{t('settings:companyProfile.deliveryType', 'Delivery Type')}"
     },
     {
       "key": "settings:companyProfile.deliveryType",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 268,
+      "line": 342,
       "context": "{t('settings:companyProfile.deliveryType', 'Delivery Type')}"
     },
     {
       "key": "settings:companyProfile.selectDeliveryType",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 276,
+      "line": 350,
       "context": "<option value=\"\">{t('settings:companyProfile.selectDeliveryType', 'Select Delivery Type')}</option>"
     },
     {
       "key": "settings:companyProfile.selectDeliveryType",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 276,
+      "line": 350,
       "context": "<option value=\"\">{t('settings:companyProfile.selectDeliveryType', 'Select Delivery Type')}</option>"
     },
     {
       "key": "settings:companyProfile.bookingLink",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 285,
+      "line": 359,
       "context": "{t('settings:companyProfile.bookingLink', 'Booking Link')}"
     },
     {
       "key": "settings:companyProfile.bookingLink",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 285,
+      "line": 359,
       "context": "{t('settings:companyProfile.bookingLink', 'Booking Link')}"
     },
     {
       "key": "common:placeholders.url",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 293,
+      "line": 367,
       "context": "placeholder={t('common:placeholders.url')}"
     },
     {
       "key": "common:placeholders.url",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 293,
+      "line": 367,
       "context": "placeholder={t('common:placeholders.url')}"
     },
     {
       "key": "settings:companyProfile.bookingLinkHint",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 296,
+      "line": 370,
       "context": "{t('settings:companyProfile.bookingLinkHint', 'You can enter it without https://')}"
     },
     {
       "key": "settings:companyProfile.bookingLinkHint",
       "file": "components/profile/edit/ServiceProviderProfileForm.tsx",
-      "line": 296,
+      "line": 370,
       "context": "{t('settings:companyProfile.bookingLinkHint', 'You can enter it without https://')}"
     },
     {
