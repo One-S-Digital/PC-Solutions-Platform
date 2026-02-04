@@ -81,7 +81,9 @@
     "nameAsc": "Name (A-Z)"
   },
   "cart": {
-    "notesPlaceholder": "e.g., Preferred delivery times, specific packaging..."
+    "notesPlaceholder": "e.g., Preferred delivery times, specific packaging...",
+    "confirmSwitchSupplier": "Your current cart contains items from {{currentSupplier}}. Would you like to clear it and add items from {{newSupplier}}?",
+    "outOfStock": "Sorry, {{productName}} is out of stock."
   },
   "labels": {
     "categoryFilter": "Filter by category",

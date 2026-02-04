@@ -311,6 +311,11 @@
       "title": "E-Learning"
     },
   "statePolicies": {
-    "title": "Staatliche Richtlinien"
+    "title": "Staatliche Richtlinien",
+    "legalNotice": "Rechtlicher Hinweis",
+    "documentSingular": "Dokument",
+    "documentPlural": "Dokumente",
+    "updatedShort": "Aktualisiert",
+    "disclaimer": "Alle hier aufgeführten Richtlinien und Dokumente stammen direkt von offiziellen kantonalen und bundesweiten Websites. ProCrèche erstellt, verändert oder garantiert nicht die rechtliche Gültigkeit dieser Dokumente und kann nicht für deren Inhalt oder für Änderungen durch die herausgebenden Behörden haftbar gemacht werden. Bitte beziehen Sie sich stets auf die offizielle Quelle für die aktuellste Version."
   }
 }

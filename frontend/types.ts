@@ -98,6 +98,7 @@ export interface Organization {
   minimumOrderQuantity?: number;
   directOrderLink?: string;
   catalogUrl?: string;
+  websiteUrl?: string;
   serviceCategories?: string[];
   deliveryType?: string;
   bookingLink?: string;
@@ -477,7 +478,7 @@ export interface HRDocument {
     fileUrl: string;
     uploaderId: string;
     lastUpdated: string; // ISO date string
-    fileType: 'PDF' | 'DOCX' | 'XLSX';
+    fileType: 'PDF' | 'DOC' | 'DOCX' | 'XLS' | 'XLSX' | 'CSV' | 'ODS';
     tags: string[];
     isFavorite?: boolean;
     language?: LanguageCode;
@@ -530,7 +531,7 @@ export interface PolicyDocument {
     contentPreview?: string;
     externalLink?: string; // Link to official source
     fileUrl?: string;
-    fileType?: 'PDF' | 'DOC';
+    fileType?: 'PDF' | 'DOC' | 'DOCX' | 'XLS' | 'XLSX' | 'CSV' | 'ODS';
     status: 'Draft' | 'In Review' | 'Approved' | 'Published' | 'Upcoming' | 'Archived';
     isCritical?: boolean;
     language?: LanguageCode;
@@ -684,6 +685,11 @@ export interface Order {
   supplierId: string;
   supplierName: string;
   items: LineItem[];
+  subtotalAmount?: number;
+  promoCodeCode?: string;
+  discountType?: string;
+  discountValue?: number;
+  discountAmount?: number;
   totalAmount: number;
   notes?: string;
   status: OrderRequestStatus;
@@ -870,6 +876,7 @@ interface BaseSettings {
     contactPerson?: string;
     phoneNumber?: string;
     contactEmail?: string;
+    websiteUrl?: string;
     address?: string;
     canton?: string;
     city?: string;

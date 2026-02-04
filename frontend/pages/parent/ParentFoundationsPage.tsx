@@ -21,6 +21,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
 import { SWISS_CANTONS } from '../../constants';
+import { openExternalUrl } from '../../utils/url';
 
 interface Foundation {
   id: string;
@@ -299,7 +300,7 @@ const ParentFoundationsPage: React.FC = () => {
                   variant="outline"
                   size="sm"
                   leftIcon={GlobeAltIcon}
-                  onClick={() => window.open(foundation.catalogUrl, '_blank')}
+                  onClick={() => openExternalUrl(foundation.catalogUrl)}
                 >
                   {t('parentFoundationsPage.website', 'Website')}
                 </Button>

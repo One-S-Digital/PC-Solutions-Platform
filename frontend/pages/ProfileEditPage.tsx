@@ -46,7 +46,7 @@ const parseAvailabilitySettings = (
 };
 
 const ProfileEditPage: React.FC = () => {
-  const { t } = useTranslation(['common', 'settings']);
+  const { t } = useTranslation(['common', 'settings', 'dashboard']);
   const { currentUser } = useAppContext();
   const { addNotification } = useNotifications();
   const { request } = useAuthenticatedApi();
@@ -83,6 +83,7 @@ const ProfileEditPage: React.FC = () => {
           contactEmail: data.contactEmail || currentUser.email,
           phoneNumber: data.phoneNumber || org?.phoneNumber || '',
           contactPerson: data.contactPerson || org?.contactPerson || '',
+          websiteUrl: data.websiteUrl || org?.websiteUrl || '',
           address: data.address || org?.region || '',
           canton: data.canton || org?.canton || '',
           city: data.city || org?.city || '',
@@ -105,6 +106,7 @@ const ProfileEditPage: React.FC = () => {
           contactEmail: data.contactEmail || currentUser.email,
           phoneNumber: data.phoneNumber || org?.phoneNumber || '',
           contactPerson: data.contactPerson || org?.contactPerson || '',
+          websiteUrl: data.websiteUrl || org?.websiteUrl || '',
           address: data.address || org?.region || '',
           canton: data.canton || org?.canton || '',
           city: data.city || org?.city || '',
@@ -117,7 +119,10 @@ const ProfileEditPage: React.FC = () => {
           coverImageUrl: data.coverImageUrl || org?.coverImageUrl || null,
           productCategory: data.productCategory || org?.productCategory || '',
           serviceType: data.serviceType || org?.serviceType || '',
-          minimumOrderQuantity: typeof data.minimumOrderQuantity === 'number' ? data.minimumOrderQuantity : (org?.minimumOrderQuantity || 0),
+          minimumOrderQuantity:
+            typeof data.minimumOrderQuantity === 'number'
+              ? data.minimumOrderQuantity
+              : org?.minimumOrderQuantity ?? undefined,
           directOrderLink: data.directOrderLink || org?.directOrderLink || '',
           catalogUrl: data.catalogUrl || org?.catalogUrl || '',
         } as Partial<SettingsFormData>;
@@ -130,6 +135,7 @@ const ProfileEditPage: React.FC = () => {
           contactEmail: data.contactEmail || currentUser.email,
           phoneNumber: data.phoneNumber || org?.phoneNumber || '',
           contactPerson: data.contactPerson || org?.contactPerson || '',
+          websiteUrl: data.websiteUrl || org?.websiteUrl || '',
           address: data.address || org?.region || '',
           canton: data.canton || org?.canton || '',
           city: data.city || org?.city || '',
@@ -222,6 +228,7 @@ const ProfileEditPage: React.FC = () => {
             contactEmail: payload.contactEmail || currentUser.email,
             phoneNumber: payload.phoneNumber || '',
             contactPerson: payload.contactPerson || '',
+            websiteUrl: payload.websiteUrl || '',
             address: payload.address || '',
             canton: payload.canton || '',
             city: payload.city || '',
@@ -243,6 +250,7 @@ const ProfileEditPage: React.FC = () => {
             contactEmail: payload.contactEmail || currentUser.email,
             phoneNumber: payload.phoneNumber || '',
             contactPerson: payload.contactPerson || '',
+            websiteUrl: payload.websiteUrl || '',
             address: payload.address || '',
             canton: payload.canton || '',
             city: payload.city || '',
@@ -252,7 +260,9 @@ const ProfileEditPage: React.FC = () => {
             languages: Array.isArray(payload.languagesSpoken) ? payload.languagesSpoken : [],
             productCategory: payload.productCategory || '',
             serviceType: payload.serviceType || '',
-            minimumOrderQuantity: Number.isFinite(payload.minimumOrderQuantity) ? Number(payload.minimumOrderQuantity) : 0,
+            minimumOrderQuantity: Number.isFinite(payload.minimumOrderQuantity)
+              ? Number(payload.minimumOrderQuantity)
+            : null,
             directOrderLink: payload.directOrderLink || '',
             catalogUrl: payload.catalogUrl || '',
             ...(payload.logoAssetId !== undefined && { logoAssetId: payload.logoAssetId || null }),
@@ -267,6 +277,7 @@ const ProfileEditPage: React.FC = () => {
             contactEmail: payload.contactEmail || currentUser.email,
             phoneNumber: payload.phoneNumber || '',
             contactPerson: payload.contactPerson || '',
+            websiteUrl: payload.websiteUrl || '',
             address: payload.address || '',
             canton: payload.canton || '',
             city: payload.city || '',
@@ -403,6 +414,17 @@ const ProfileEditPage: React.FC = () => {
     }
   };
 
+  const handleGoToMyListings = () => {
+    if (!currentUser) return;
+    if (currentUser.role === UserRole.PRODUCT_SUPPLIER) {
+      navigate('/supplier/product-listings');
+      return;
+    }
+    if (currentUser.role === UserRole.SERVICE_PROVIDER) {
+      navigate('/service-provider/service-listings');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -427,6 +449,18 @@ const ProfileEditPage: React.FC = () => {
                   <CheckCircleIcon className="w-5 h-5" />
                   <span className="text-sm font-medium">{t('common:buttons.profileUpdated', 'Profile updated!')}</span>
                 </div>
+              )}
+              {(currentUser.role === UserRole.PRODUCT_SUPPLIER ||
+                currentUser.role === UserRole.SERVICE_PROVIDER) && (
+                <Button
+                  variant="outline"
+                  onClick={handleGoToMyListings}
+                  disabled={isSaving}
+                >
+                  {currentUser.role === UserRole.PRODUCT_SUPPLIER
+                    ? t('dashboard:supplierDashboardPage.products', 'My Products')
+                    : t('dashboard:serviceProviderDashboardPage.services', 'My Services')}
+                </Button>
               )}
               <Button
                 variant="primary"

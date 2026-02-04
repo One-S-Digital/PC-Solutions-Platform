@@ -7,20 +7,20 @@ import {
   Body,
   Param,
   Request,
-  Query,
   UnauthorizedException,
   BadRequestException,
   UseGuards,
   UseInterceptors,
   ParseUUIDPipe,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags, ApiParam } from '@nestjs/swagger';
 import { UserRole } from '@prisma/client';
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { EnsureProfileInterceptor } from '../principal/ensure-profile.interceptor';
 import { PromoCodesService } from './promo-codes.service';
+import { PromoCodeDebugInterceptor } from './promo-code-debug.interceptor';
 import {
   CreatePromoCodeDto,
   UpdatePromoCodeDto,
@@ -30,7 +30,7 @@ import {
 @ApiTags('promo-codes')
 @Controller('promo-codes')
 @UseGuards(ClerkAuthGuard, RolesGuard)
-@UseInterceptors(EnsureProfileInterceptor)
+@UseInterceptors(EnsureProfileInterceptor, PromoCodeDebugInterceptor)
 @ApiBearerAuth()
 export class PromoCodesController {
   constructor(private readonly promoCodesService: PromoCodesService) {}
@@ -46,6 +46,7 @@ export class PromoCodesController {
 
   /**
    * Get all promo codes for the current user's organization
+   * Creates organization on-demand for suppliers/service providers if needed
    */
   @Get()
   @Roles(UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER)
@@ -58,12 +59,22 @@ export class PromoCodesController {
   async getPromoCodes(@Request() req) {
     const { profileId } = this.getContext(req);
 
-    const organizationId = await this.promoCodesService.getUserOrganizationId(profileId);
+    // Try to get existing organization first
+    let organizationId = await this.promoCodesService.getUserOrganizationId(profileId);
+    
+    // If no organization exists, try to create one
+    if (!organizationId) {
+      organizationId = await this.promoCodesService.getOrCreateOrganizationForUser(profileId);
+    }
+
+    // If still no organization (e.g., wrong role), return empty with hasOrganization: true
+    // This prevents the button from being disabled - the create will handle validation
     if (!organizationId) {
       return {
         success: true,
+        hasOrganization: true, // Allow the UI to show the add button
         data: [],
-        message: 'No organization found',
+        message: 'Ready to add promo codes',
       };
     }
 
@@ -71,12 +82,14 @@ export class PromoCodesController {
 
     return {
       success: true,
+      hasOrganization: true,
       data: promoCodes,
     };
   }
 
   /**
    * Create a new promo code
+   * Creates organization on-demand for suppliers/service providers if needed
    */
   @Post()
   @Roles(UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER)
@@ -92,9 +105,12 @@ export class PromoCodesController {
   ) {
     const { profileId } = this.getContext(req);
 
-    const organizationId = await this.promoCodesService.getUserOrganizationId(profileId);
+    // Get or create organization for this user
+    const organizationId = await this.promoCodesService.getOrCreateOrganizationForUser(profileId);
     if (!organizationId) {
-      throw new BadRequestException('No organization found for this user');
+      throw new BadRequestException(
+        'Could not create promo code. Please ensure your profile is complete.'
+      );
     }
 
     const promoCode = await this.promoCodesService.createPromoCode(organizationId, dto);
@@ -131,38 +147,9 @@ export class PromoCodesController {
   }
 
   /**
-   * Validate a promo code for an organization (for buyers/foundations)
-   * NOTE: This route MUST be declared before @Get(':id') to avoid route conflicts
-   */
-  @Get('validate/:organizationId')
-  @ApiOperation({ summary: 'Validate a promo code for an organization' })
-  @ApiParam({ name: 'organizationId', description: 'Organization ID' })
-  @ApiQuery({ name: 'code', description: 'Promo code to validate' })
-  @ApiResponse({
-    status: 200,
-    description: 'Promo code validation result',
-  })
-  async validatePromoCode(
-    @Param('organizationId', ParseUUIDPipe) organizationId: string,
-    @Query('code') code: string,
-  ) {
-    if (!code) {
-      throw new BadRequestException('Promo code is required');
-    }
-
-    const promoCode = await this.promoCodesService.validatePromoCode(code, organizationId);
-
-    return {
-      success: true,
-      valid: promoCode !== null,
-      data: promoCode,
-    };
-  }
-
-  /**
    * Get a single promo code by ID
    * NOTE: This route MUST be declared after specific routes like 'public/:organizationId'
-   * and 'validate/:organizationId' to avoid NestJS matching ':id' for those paths
+   * to avoid NestJS matching ':id' for those paths
    */
   @Get(':id')
   @Roles(UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER)

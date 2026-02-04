@@ -97,7 +97,7 @@
   "content": {
     "accessRoles": "Access Roles",
     "allowedEl": "PDF, MP4, DOCX files allowed",
-    "allowedHr": "PDF, DOCX files allowed",
+    "allowedHr": "PDF, DOC, DOCX, XLS, XLSX, CSV, ODS files allowed",
     "browse": "Browse",
     "country": "Country",
     "critical": "Critical",
@@ -803,6 +803,7 @@
   },
   "navbar": {
     "goBackPreviousPage": "Go back to previous page",
+    "help": "Help & Knowledge Base",
     "newMessages": "New messages",
     "noNewNotifications": "No new notifications",
     "notifications": "Notifications",

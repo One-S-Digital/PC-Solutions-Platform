@@ -3,7 +3,7 @@ import { useCart } from '../../contexts/CartContext';
 import { useAppContext } from '../../contexts/AppContext';
 import Button from '../ui/Button';
 import { XMarkIcon, ShoppingCartIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { OrderRequestStatus, LineItem, Order } from '../../types';
+import { Order } from '../../types';
 import QuantityInput from '../ui/QuantityInput';
 import { useTranslation } from 'react-i18next';
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
@@ -42,23 +42,12 @@ const OrderSummaryDrawer: React.FC<OrderSummaryDrawerProps> = ({ isOpen, onClose
     setIsSubmitting(true);
     setError(null);
 
-    const lineItems: LineItem[] = cartItems.map(item => ({
-      productId: item.productId,
-      productName: item.title,
-      quantity: item.quantity,
-      unitPrice: item.price,
-      imageUrl: item.imageUrl,
-    }));
-
     const orderData = {
-      foundationId: currentUser.id,
-      foundationOrgId: currentUser.orgId || 'UNKNOWN_ORG',
-      supplierId: cartSupplierInfo.id,
-      supplierName: cartSupplierInfo.name,
-      items: lineItems,
-      totalAmount: getCartTotal(),
       notes: notes || undefined,
-      status: OrderRequestStatus.SUBMITTED,
+      items: cartItems.map(item => ({
+        productId: item.productId,
+        quantity: item.quantity,
+      })),
     };
 
     try {
@@ -71,8 +60,12 @@ const OrderSummaryDrawer: React.FC<OrderSummaryDrawerProps> = ({ isOpen, onClose
         clearCart();
         setNotes('');
         onClose();
-        alert(t('orderSummaryDrawer.orderSuccess', 
-          `Order successfully submitted to ${cartSupplierInfo.name}! Order ID: ${response.data.id}`));
+        alert(
+          t('orderSummaryDrawer.orderSuccess', {
+            supplierName: cartSupplierInfo.name,
+            orderId: response.data.id,
+          }),
+        );
       } else {
         throw new Error(response.message || 'Failed to submit order');
       }
@@ -188,9 +181,11 @@ const OrderSummaryDrawer: React.FC<OrderSummaryDrawerProps> = ({ isOpen, onClose
                       placeholder={t('marketplace:cart.notesPlaceholder', t('orderSummaryDrawer.notesPlaceholder', 'e.g., Preferred delivery times, specific packaging...'))}
                     ></textarea>
                   </div>
-                  <div className="flex justify-between text-base font-medium text-gray-900 mt-6">
-                    <p>{t("orderSummaryDrawer.subtotal")}</p>
-                    <p>CHF {getCartTotal().toFixed(2)}</p>
+                  <div className="mt-6 space-y-1 text-sm">
+                    <div className="flex justify-between text-base font-medium text-gray-900 pt-2 border-t border-gray-200">
+                      <p>{t('orderSummaryDrawer.total', 'Total')}</p>
+                      <p>CHF {getCartTotal().toFixed(2)}</p>
+                    </div>
                   </div>
                   <p className="mt-0.5 text-sm text-gray-500">{t("orderSummaryDrawer.shippingNote")}</p>
                   <div className="mt-6">

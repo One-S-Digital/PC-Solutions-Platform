@@ -15,7 +15,7 @@ export class UploadHrDocumentDto {
     example: 'Employee Onboarding Procedure',
   })
   @IsString()
-  @MaxLength(200)
+  @MaxLength(100)
   title!: string;
 
   @ApiProperty({

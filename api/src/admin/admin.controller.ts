@@ -1,10 +1,10 @@
-import { Controller, Get, Put, Post, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Put, Post, Body, UseGuards, Request, Logger } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { PrismaService } from '../prisma/prisma.service';
 
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { UserRole } from '@prisma/client';
+import { UserRole, OrganizationType } from '@prisma/client';
 
 export class SystemSettingsDto {
   maintenanceMode: boolean;
@@ -45,6 +45,8 @@ export class SubscriptionTierDto {
 @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
 @ApiBearerAuth()
 export class AdminController {
+  private readonly logger = new Logger(AdminController.name);
+  
   constructor(private readonly prisma: PrismaService) {}
 
   @Get('settings')
@@ -301,6 +303,151 @@ export class AdminController {
     return {
       success: true,
       data: health
+    };
+  }
+
+  @Post('backfill-organizations')
+  @ApiOperation({ summary: 'Create organizations for users who do not have one' })
+  @ApiResponse({ status: 200, description: 'Organizations backfilled successfully' })
+  async backfillOrganizations() {
+    this.logger.log('🏢 [BACKFILL] Starting organization backfill for users without organizations...');
+    
+    // Find all users with organization-based roles who don't have a UserOrganization link
+    const orgBasedRoles = [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER];
+    
+    const usersWithoutOrgs = await this.prisma.user.findMany({
+      where: {
+        role: { in: orgBasedRoles },
+        organizations: { none: {} }, // No UserOrganization links
+      },
+      select: {
+        id: true,
+        clerkId: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        phoneNumber: true,
+        role: true,
+      },
+    });
+
+    this.logger.log(`🏢 [BACKFILL] Found ${usersWithoutOrgs.length} users without organizations`);
+
+    const results = {
+      total: usersWithoutOrgs.length,
+      created: 0,
+      failed: 0,
+      details: [] as { userId: string; email: string; role: string; organizationId?: string; error?: string }[],
+    };
+
+    // Map user role to organization type
+    const roleToOrgType: Record<string, OrganizationType> = {
+      [UserRole.FOUNDATION]: OrganizationType.FOUNDATION,
+      [UserRole.PRODUCT_SUPPLIER]: OrganizationType.PRODUCT_SUPPLIER,
+      [UserRole.SERVICE_PROVIDER]: OrganizationType.SERVICE_PROVIDER,
+    };
+
+    for (const user of usersWithoutOrgs) {
+      try {
+        const orgType = roleToOrgType[user.role];
+        const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim();
+        
+        // Create organization and link in a transaction
+        const result = await this.prisma.$transaction(async (tx) => {
+          const organization = await tx.organization.create({
+            data: {
+              name: fullName || user.email || 'New Organization',
+              type: orgType,
+              contactPerson: fullName || null,
+              phoneNumber: user.phoneNumber || null,
+              isActive: true,
+            },
+          });
+
+          await tx.userOrganization.create({
+            data: {
+              userId: user.id,
+              organizationId: organization.id,
+              role: user.role,
+            },
+          });
+
+          return organization;
+        });
+
+        results.created++;
+        results.details.push({
+          userId: user.id,
+          email: user.email,
+          role: user.role,
+          organizationId: result.id,
+        });
+
+        this.logger.log(`✅ [BACKFILL] Created organization for user ${user.email} (${user.role}): ${result.id}`);
+      } catch (error) {
+        results.failed++;
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        results.details.push({
+          userId: user.id,
+          email: user.email,
+          role: user.role,
+          error: errorMessage,
+        });
+
+        this.logger.error(`❌ [BACKFILL] Failed to create organization for user ${user.email}: ${errorMessage}`);
+      }
+    }
+
+    this.logger.log(`🏢 [BACKFILL] Completed: ${results.created} created, ${results.failed} failed`);
+
+    return {
+      success: true,
+      message: `Organization backfill completed: ${results.created} created, ${results.failed} failed`,
+      data: results,
+    };
+  }
+
+  @Get('users-without-organizations')
+  @ApiOperation({ summary: 'Get users with organization roles but no organization' })
+  @ApiResponse({ status: 200, description: 'Users retrieved successfully' })
+  async getUsersWithoutOrganizations() {
+    const orgBasedRoles = [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER];
+    
+    const usersWithoutOrgs = await this.prisma.user.findMany({
+      where: {
+        role: { in: orgBasedRoles },
+        organizations: { none: {} },
+      },
+      select: {
+        id: true,
+        clerkId: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        role: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    // Group by role for better overview
+    const byRole = {
+      FOUNDATION: usersWithoutOrgs.filter(u => u.role === UserRole.FOUNDATION),
+      PRODUCT_SUPPLIER: usersWithoutOrgs.filter(u => u.role === UserRole.PRODUCT_SUPPLIER),
+      SERVICE_PROVIDER: usersWithoutOrgs.filter(u => u.role === UserRole.SERVICE_PROVIDER),
+    };
+
+    return {
+      success: true,
+      data: {
+        total: usersWithoutOrgs.length,
+        byRole: {
+          foundations: byRole.FOUNDATION.length,
+          productSuppliers: byRole.PRODUCT_SUPPLIER.length,
+          serviceProviders: byRole.SERVICE_PROVIDER.length,
+        },
+        users: usersWithoutOrgs,
+      },
     };
   }
 }

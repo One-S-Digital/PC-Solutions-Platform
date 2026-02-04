@@ -5,8 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { STANDARD_INPUT_FIELD, APP_NAME } from '../constants';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
-import { SquaresPlusIcon, EyeIcon, EyeSlashIcon, CheckCircleIcon, HomeIcon } from '@heroicons/react/24/outline';
+import { SquaresPlusIcon, EyeIcon, EyeSlashIcon, CheckCircleIcon, HomeIcon, QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
 import LanguageSwitcher from '../components/ui/LanguageSwitcher';
+import HelpModal from '../components/help/HelpModal';
 import { useAppContext } from '../contexts/AppContext';
 import { useAuthContext } from '../providers/AuthProvider';
 import { useFrontendSettings } from '../hooks/useFrontendSettings';
@@ -48,6 +49,7 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -270,10 +272,19 @@ const LoginPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="mt-3 sm:mt-4 flex justify-center">
+          <div className="mt-3 sm:mt-4 flex justify-center items-center gap-3">
             <LanguageSwitcher />
+            <button
+              onClick={() => setIsHelpModalOpen(true)}
+              className="p-2 rounded-full text-gray-500 hover:text-swiss-teal hover:bg-gray-100 transition-colors"
+              aria-label={t('common:navbar.help')}
+              title={t('common:navbar.help')}
+            >
+              <QuestionMarkCircleIcon className="h-5 w-5" />
+            </button>
           </div>
         </Card>
+        <HelpModal isOpen={isHelpModalOpen} onClose={() => setIsHelpModalOpen(false)} />
       </div>
     );
   }
@@ -343,10 +354,19 @@ const LoginPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="mt-3 sm:mt-4 flex justify-center">
+          <div className="mt-3 sm:mt-4 flex justify-center items-center gap-3">
             <LanguageSwitcher />
+            <button
+              onClick={() => setIsHelpModalOpen(true)}
+              className="p-2 rounded-full text-gray-500 hover:text-swiss-teal hover:bg-gray-100 transition-colors"
+              aria-label={t('common:navbar.help')}
+              title={t('common:navbar.help')}
+            >
+              <QuestionMarkCircleIcon className="h-5 w-5" />
+            </button>
           </div>
         </Card>
+        <HelpModal isOpen={isHelpModalOpen} onClose={() => setIsHelpModalOpen(false)} />
       </div>
     );
   }
@@ -401,7 +421,7 @@ const LoginPage: React.FC = () => {
                     {t('common:loginPage.passwordLabel')}
                   </label>
                   <Link
-                    to="/reset-password"
+                    to={email ? `/reset-password?email=${encodeURIComponent(email)}` : '/reset-password'}
                     className="text-xs text-swiss-mint hover:underline"
                   >
                     {t('common:loginPage.forgotPassword')}
@@ -486,10 +506,19 @@ const LoginPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-3 sm:mt-4 flex justify-center">
+        <div className="mt-3 sm:mt-4 flex justify-center items-center gap-3">
           <LanguageSwitcher />
+          <button
+            onClick={() => setIsHelpModalOpen(true)}
+            className="p-2 rounded-full text-gray-500 hover:text-swiss-teal hover:bg-gray-100 transition-colors"
+            aria-label={t('common:navbar.help')}
+            title={t('common:navbar.help')}
+          >
+            <QuestionMarkCircleIcon className="h-5 w-5" />
+          </button>
         </div>
       </Card>
+      <HelpModal isOpen={isHelpModalOpen} onClose={() => setIsHelpModalOpen(false)} />
     </div>
   );
 };

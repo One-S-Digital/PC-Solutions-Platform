@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Organization, Product, Service, UserRole, StockStatus, ServiceRequest, ServiceRequestStatus, OrganizationType } from '../../types';
-import { STANDARD_INPUT_FIELD } from '../../constants';
 import { useAppContext } from '../../contexts/AppContext';
 import { useCart } from '../../contexts/CartContext';
 import Card from '../../components/ui/Card';
@@ -10,10 +9,8 @@ import ServiceRequestModal from '../../components/marketplace/ServiceRequestModa
 import QuantityInput from '../../components/ui/QuantityInput';
 import { 
   ArrowLeftIcon, 
-  BuildingStorefrontIcon, 
   CogIcon, 
   ShoppingCartIcon, 
-  TagIcon, 
   StarIcon, 
   PhoneIcon, 
   EnvelopeIcon, 
@@ -30,10 +27,10 @@ import { useTranslation } from 'react-i18next';
 import { useOrganizationMessaging } from '../../hooks/useOrganizationMessaging';
 import ActiveClientToggle from '../../components/shared/ActiveClientToggle';
 import OrganizationDocumentsList from '../../components/profile/OrganizationDocumentsList';
+import PromoCodesDisplaySection from '../../components/profile/PromoCodesDisplaySection';
 import { formatServiceCategory, formatServiceDeliveryType, formatCategory } from '../../utils/serviceFormatting';
+import { openExternalUrl, toExternalUrl } from '../../utils/url';
 import { organizationService } from '../../services/organizationService';
-import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
-import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/solid';
 
 interface ProductItemProps {
   product: Product;
@@ -109,128 +106,6 @@ const ProductItemCard: React.FC<ProductItemProps> = ({ product, partner, isFound
           >
             {t('partnerDetailPage.addToOrderButton')}
           </Button>
-        </div>
-      )}
-    </Card>
-  );
-};
-
-// Promo Code Input Component
-interface PromoCodeInputProps {
-  partnerId: string;
-}
-
-const PromoCodeInput: React.FC<PromoCodeInputProps> = ({ partnerId }) => {
-  const { t } = useTranslation(['dashboard', 'common']);
-  const { request } = useAuthenticatedApi();
-  const [promoCode, setPromoCode] = useState('');
-  const [isValidating, setIsValidating] = useState(false);
-  const [validationResult, setValidationResult] = useState<{
-    valid: boolean;
-    message: string;
-    discount?: string;
-  } | null>(null);
-
-  const handleApplyPromoCode = async () => {
-    if (!promoCode.trim()) return;
-
-    setIsValidating(true);
-    setValidationResult(null);
-
-    try {
-      const response = await request<{
-        success: boolean;
-        valid: boolean;
-        data?: {
-          discountType: string;
-          value: number;
-          description?: string;
-        };
-      }>(`/promo-codes/validate/${partnerId}?code=${encodeURIComponent(promoCode.trim())}`);
-
-      const res = response as any;
-      if (res.success && res.valid && res.data) {
-        let discountText = '';
-        switch (res.data.discountType) {
-          case 'Percentage':
-            discountText = `${res.data.value}% off`;
-            break;
-          case 'FixedAmount':
-            discountText = `CHF ${res.data.value} off`;
-            break;
-          case 'FreeMinutes':
-            discountText = `${res.data.value} free minutes`;
-            break;
-          default:
-            discountText = `${res.data.value}`;
-        }
-
-        setValidationResult({
-          valid: true,
-          message: t('partnerDetailPage.promoCodeValid', 'Promo code applied!'),
-          discount: discountText,
-        });
-      } else {
-        setValidationResult({
-          valid: false,
-          message: t('partnerDetailPage.promoCodeInvalid', 'Invalid or expired promo code'),
-        });
-      }
-    } catch (error) {
-      console.error('Failed to validate promo code:', error);
-      setValidationResult({
-        valid: false,
-        message: t('partnerDetailPage.promoCodeError', 'Failed to validate promo code'),
-      });
-    } finally {
-      setIsValidating(false);
-    }
-  };
-
-  return (
-    <Card className="mt-6 p-4 bg-gray-50">
-      <h3 className="text-md font-semibold text-swiss-charcoal mb-2 flex items-center gap-2">
-        <TagIcon className="w-5 h-5 text-swiss-mint" />
-        {t('partnerDetailPage.promoCodeTitle')}
-      </h3>
-      <div className="flex gap-2">
-        <input
-          type="text"
-          value={promoCode}
-          onChange={(e) => {
-            setPromoCode(e.target.value.toUpperCase());
-            setValidationResult(null);
-          }}
-          placeholder={t('partnerDetailPage.promoCodePlaceholder')}
-          className={`${STANDARD_INPUT_FIELD} flex-grow`}
-          onKeyDown={(e) => e.key === 'Enter' && handleApplyPromoCode()}
-        />
-        <Button
-          variant="outline"
-          size="md"
-          onClick={handleApplyPromoCode}
-          disabled={isValidating || !promoCode.trim()}
-        >
-          {isValidating ? '...' : t('partnerDetailPage.applyPromoButton')}
-        </Button>
-      </div>
-      {validationResult && (
-        <div
-          className={`mt-2 flex items-center gap-2 text-sm ${
-            validationResult.valid ? 'text-green-600' : 'text-red-600'
-          }`}
-        >
-          {validationResult.valid ? (
-            <CheckCircleIcon className="w-5 h-5" />
-          ) : (
-            <ExclamationCircleIcon className="w-5 h-5" />
-          )}
-          <span>
-            {validationResult.message}
-            {validationResult.discount && (
-              <span className="font-semibold ml-1">({validationResult.discount})</span>
-            )}
-          </span>
         </div>
       )}
     </Card>
@@ -505,7 +380,7 @@ const PartnerDetailPage: React.FC = () => {
                 <p className="flex items-center">
                   <GlobeAltIcon className="w-5 h-5 mr-2 text-gray-400" /> 
                   <a 
-                    href={partner.catalogUrl || partner.bookingLink || partner.directOrderLink} 
+                    href={toExternalUrl(partner.catalogUrl || partner.bookingLink || partner.directOrderLink) ?? undefined} 
                     target="_blank" 
                     rel="noopener noreferrer" 
                     className="hover:text-swiss-mint truncate"
@@ -519,7 +394,7 @@ const PartnerDetailPage: React.FC = () => {
               <Button 
                 variant="secondary" 
                 leftIcon={ArrowTopRightOnSquareIcon} 
-                onClick={() => window.open(partner.directOrderLink, '_blank')}
+                onClick={() => openExternalUrl(partner.directOrderLink)}
                 className="w-full mt-4"
               >
                 {t('partnerDetailPage.directOrderButton')}
@@ -534,6 +409,11 @@ const PartnerDetailPage: React.FC = () => {
               </h2>
               <p className="text-sm text-gray-600 whitespace-pre-line">{partner.description}</p>
             </Card>
+          )}
+
+          {/* Promo Codes Section - Display available promo codes */}
+          {(isSupplier || isServiceProvider) && (
+            <PromoCodesDisplaySection organizationId={partner.id} isOwnProfile={false} />
           )}
           
           <Card className="p-6">
@@ -638,10 +518,6 @@ const PartnerDetailPage: React.FC = () => {
                   <p className="text-gray-500">{t('dashboard:partnerDetailPage.noServicesListed', 'No services listed')}</p>
                 </div>
               )
-            )}
-            
-            {isFoundationUser && (isSupplier || isServiceProvider) && (products.length > 0 || services.length > 0) && (
-              <PromoCodeInput partnerId={partner.id} />
             )}
           </Card>
 

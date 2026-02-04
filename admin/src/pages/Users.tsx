@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import { 
   Users as UsersIcon, 
@@ -47,7 +48,17 @@ interface DeleteConfirmModalProps {
 
 const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({ isOpen, onClose, user, onConfirm, isLoading }) => {
   const { t } = useTranslation(['common', 'admin']);
+  const [confirmText, setConfirmText] = useState('')
+  const requiredPhrase = 'SUDO DELETE USER'
+
+  useEffect(() => {
+    if (isOpen) {
+      setConfirmText('')
+    }
+  }, [isOpen])
+
   if (!isOpen || !user) return null
+  const canConfirm = confirmText.trim() === requiredPhrase
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
@@ -64,6 +75,24 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({ isOpen, onClose
               {t('admin:users.deleteUser.warning', ' This action cannot be undone and will permanently remove all associated data.')}
             </p>
           </div>
+
+          <div className="mt-5">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t('admin:users.deleteUser.typeToConfirm', 'Type the phrase below to confirm')}
+            </label>
+            <div className="text-xs text-gray-600 mb-2">
+              <span className="font-mono bg-gray-100 px-2 py-1 rounded">{requiredPhrase}</span>
+            </div>
+            <input
+              type="text"
+              className={STANDARD_INPUT_FIELD}
+              value={confirmText}
+              onChange={(e) => setConfirmText(e.target.value)}
+              placeholder={requiredPhrase}
+              disabled={isLoading}
+              autoFocus
+            />
+          </div>
         </div>
 
         <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
@@ -78,7 +107,7 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({ isOpen, onClose
           <button
             type="button"
             onClick={onConfirm}
-            disabled={isLoading}
+            disabled={isLoading || !canConfirm}
             className="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 disabled:opacity-50"
           >
             {isLoading ? t('admin:users.deleteUser.deleting', 'Deleting...') : t('admin:users.deleteUser.delete', 'Delete User')}
@@ -576,6 +605,7 @@ const SuspendUserModal: React.FC<SuspendUserModalProps> = ({ isOpen, onClose, us
 
 const Users: React.FC = () => {
   const { t } = useTranslation(['common', 'admin']);
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedRole, setSelectedRole] = useState('')
   const [page, setPage] = useState(1)
@@ -642,11 +672,13 @@ const Users: React.FC = () => {
 
   // Delete user mutation
   const deleteUserMutation = useMutation({
-    mutationFn: (userId: string) => apiService.deleteUser(apiClient, userId),
+    // Delete is a permanent hard delete (Suspend is handled by status update).
+    mutationFn: (userId: string) => apiService.deleteUserHard(apiClient, userId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-users'] })
       setIsDeleteModalOpen(false)
       setSelectedUser(null)
+      toast.success(t('admin:users.deleteUser.success', 'User deleted'))
       logger.log('User deleted successfully')
     },
     onError: (error) => {
@@ -868,7 +900,28 @@ const Users: React.FC = () => {
   // Handle confirming delete
   const handleConfirmDelete = async () => {
     if (selectedUser) {
-      await deleteUserMutation.mutateAsync(selectedUser.id)
+      try {
+        await deleteUserMutation.mutateAsync(selectedUser.id)
+      } catch (err: any) {
+        // Keep modal open; provide actionable feedback.
+        const apiError =
+          err?.response?.data?.error?.message ||
+          err?.response?.data?.message ||
+          err?.message ||
+          t('admin:users.deleteUser.failed', 'Failed to delete user')
+
+        const apiCode = err?.response?.data?.error?.code
+        if (apiCode === 'HARD_DELETE_BLOCKED') {
+          toast.error(
+            t(
+              'admin:users.deleteUser.blocked',
+              'Cannot permanently delete this user because they have dependent records (messages/subscriptions/etc.). Suspend the account instead.',
+            ),
+          )
+        } else {
+          toast.error(apiError)
+        }
+      }
     }
   }
 
@@ -1140,6 +1193,18 @@ const Users: React.FC = () => {
                               </Menu.Item>
                             )}
 
+                            {/* Edit Full Profile - Navigate to full profile edit page */}
+                            <Menu.Item>
+                              {({ active }) => (
+                                <button
+                                  onClick={() => navigate(`/users/${user.id}/profile`)}
+                                  className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-swiss-teal font-medium`}
+                                >
+                                  <Edit className="h-4 w-4 mr-2" />
+                                  {t('admin:users.editFullProfile', 'Edit Full Profile')}
+                                </button>
+                              )}
+                            </Menu.Item>
                             {/* View Profile - Only for users with organizations (suppliers/service providers) */}
                             {user.orgId && (user.role === UserRole.PRODUCT_SUPPLIER || user.role === UserRole.SERVICE_PROVIDER) && (
                               <Menu.Item>

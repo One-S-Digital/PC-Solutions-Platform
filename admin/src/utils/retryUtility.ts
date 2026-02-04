@@ -283,5 +283,40 @@ export const RetryPresets = {
       return defaultShouldRetry(error, attempt);
     },
   } as RetryOptions,
+
+  /**
+   * Video upload retry (specialized for large video file uploads)
+   * More patient with longer delays and fewer retries since timeouts are already very long
+   */
+  videoUpload: {
+    maxAttempts: 2, // Only 2 attempts since timeout is 10 minutes
+    initialDelay: 5000,
+    maxDelay: 30000,
+    backoffFactor: 2,
+    shouldRetry: (error: any, attempt: number) => {
+      // Don't retry on validation errors
+      if (error.response?.status === 400) {
+        return false;
+      }
+      
+      // Don't retry on authentication errors
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        return false;
+      }
+
+      // Don't retry on file too large errors
+      if (error.response?.status === 413) {
+        return false;
+      }
+
+      // Retry on timeout, network errors and server errors
+      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+        return attempt < 2; // Only retry once for timeouts
+      }
+
+      // Retry on network errors and server errors
+      return defaultShouldRetry(error, attempt);
+    },
+  } as RetryOptions,
 };
 

@@ -18,6 +18,7 @@ import Button from '../ui/Button';
 import OrganizationDocumentsList from './OrganizationDocumentsList';
 import { User, UserRole, Product, Service, JobListing, Organization } from '../../types';
 import { formatServiceCategory, formatServiceDeliveryType, formatCategory } from '../../utils/serviceFormatting';
+import { openExternalUrl, toExternalUrl } from '../../utils/url';
 
 type OrganizationPublicProfileProps = {
   user?: User;
@@ -79,6 +80,8 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
   const jobListings: JobListing[] = Array.isArray(organization.jobListings) ? organization.jobListings : [];
   const serviceCategories = Array.isArray(organization.serviceCategories) ? organization.serviceCategories : [];
   const pedagogy = Array.isArray(organization.pedagogy) ? organization.pedagogy : [];
+  const websiteHref = toExternalUrl(organization.websiteUrl);
+  const bookingHref = toExternalUrl(organization.bookingLink);
 
   return (
     <div className="space-y-6 w-full">
@@ -243,18 +246,47 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
 
               <div>
                 <p className="text-xs text-gray-500 mb-1 font-medium">
-                  {t('profile:organization.website', { defaultValue: 'Website / Booking' })}
+                  {t('profile:organization.website', { defaultValue: 'Website' })}
                 </p>
-                {organization.bookingLink ? (
+                {organization.websiteUrl && websiteHref ? (
                   <a
-                    href={organization.bookingLink}
+                    href={websiteHref}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-swiss-mint hover:text-swiss-teal flex items-center gap-2 truncate"
                   >
                     <GlobeAltIcon className="w-4 h-4 flex-shrink-0" />
+                    <span className="truncate">{organization.websiteUrl}</span>
+                  </a>
+                ) : organization.websiteUrl ? (
+                  <p className="text-gray-700 flex items-center gap-2">
+                    <GlobeAltIcon className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                    <span className="truncate">{organization.websiteUrl}</span>
+                  </p>
+                ) : (
+                  <p className="text-gray-400 italic text-xs">{t('profile:organization.notProvided', { defaultValue: 'Not provided' })}</p>
+                )}
+              </div>
+
+              <div>
+                <p className="text-xs text-gray-500 mb-1 font-medium">
+                  {t('profile:organization.bookingLink', { defaultValue: 'Booking Link' })}
+                </p>
+                {organization.bookingLink && bookingHref ? (
+                  <a
+                    href={bookingHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-swiss-mint hover:text-swiss-teal flex items-center gap-2 truncate"
+                  >
+                    <LinkIcon className="w-4 h-4 flex-shrink-0" />
                     <span className="truncate">{organization.bookingLink}</span>
                   </a>
+                ) : organization.bookingLink ? (
+                  <p className="text-gray-700 flex items-center gap-2">
+                    <LinkIcon className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                    <span className="truncate">{organization.bookingLink}</span>
+                  </p>
                 ) : (
                   <p className="text-gray-400 italic text-xs">{t('profile:organization.notProvided', { defaultValue: 'Not provided' })}</p>
                 )}
@@ -268,7 +300,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                     </p>
                     {organization.directOrderLink ? (
                       <a
-                        href={organization.directOrderLink}
+                        href={toExternalUrl(organization.directOrderLink) ?? undefined}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-swiss-mint hover:text-swiss-teal flex items-center gap-2 truncate"
@@ -287,7 +319,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                     </p>
                     {organization.catalogUrl ? (
                       <a
-                        href={organization.catalogUrl}
+                        href={toExternalUrl(organization.catalogUrl) ?? undefined}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-swiss-mint hover:text-swiss-teal flex items-center gap-2 truncate"
@@ -487,15 +519,21 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                             </span>
                           )}
                           {service.bookingLink && (
-                            <a
-                              href={service.bookingLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 bg-swiss-mint/10 text-swiss-mint rounded-full px-2 py-1 hover:bg-swiss-mint/20"
-                            >
-                              <LinkIcon className="w-3 h-3" />
-                              {t('profile:organization.bookService', { defaultValue: 'Book Now' })}
-                            </a>
+                            (() => {
+                              const href = toExternalUrl(service.bookingLink);
+                              if (!href) return null;
+                              return (
+                                <a
+                                  href={href}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 bg-swiss-mint/10 text-swiss-mint rounded-full px-2 py-1 hover:bg-swiss-mint/20"
+                                >
+                                  <LinkIcon className="w-3 h-3" />
+                                  {t('profile:organization.bookService', { defaultValue: 'Book Now' })}
+                                </a>
+                              );
+                            })()
                           )}
                         </div>
                       )}
@@ -573,7 +611,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
             {organization.directOrderLink && role === UserRole.PRODUCT_SUPPLIER && (
               <Button
                 variant="secondary"
-                onClick={() => window.open(organization.directOrderLink!, '_blank', 'noopener,noreferrer')}
+                onClick={() => openExternalUrl(organization.directOrderLink)}
               >
                 {t('profile:organization.actions.directOrder', { defaultValue: 'Direct Order' })}
               </Button>
@@ -581,7 +619,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
             {organization.bookingLink && (
               <Button
                 variant="outline"
-                onClick={() => window.open(organization.bookingLink!, '_blank', 'noopener,noreferrer')}
+                onClick={() => openExternalUrl(organization.bookingLink)}
               >
                 {t('profile:organization.actions.bookNow', { defaultValue: 'Book Now' })}
               </Button>
@@ -589,7 +627,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
             {organization.catalogUrl && role === UserRole.PRODUCT_SUPPLIER && (
               <Button
                 variant="outline"
-                onClick={() => window.open(organization.catalogUrl!, '_blank', 'noopener,noreferrer')}
+                onClick={() => openExternalUrl(organization.catalogUrl)}
               >
                 {t('profile:organization.actions.viewCatalog', { defaultValue: 'View Catalog' })}
               </Button>

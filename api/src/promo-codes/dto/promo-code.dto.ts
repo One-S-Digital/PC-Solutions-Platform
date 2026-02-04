@@ -1,106 +1,98 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsString,
-  IsNumber,
   IsOptional,
-  IsDateString,
-  IsInt,
-  Min,
-  IsIn,
+  IsBoolean,
   MaxLength,
   MinLength,
 } from 'class-validator';
 
+/**
+ * DTO for creating a display-only promo code
+ * These are simple promotional codes shown on supplier/provider profiles
+ */
 export class CreatePromoCodeDto {
-  @ApiProperty({ description: 'Promo code string', example: 'SAVE20' })
+  @ApiProperty({ 
+    description: 'Promo code string that customers can use', 
+    example: 'SAVE20' 
+  })
   @IsString()
-  @MinLength(3)
+  @MinLength(2)
   @MaxLength(50)
   code: string;
 
-  @ApiProperty({
-    description: 'Type of discount',
-    enum: ['Percentage', 'FixedAmount', 'FreeMinutes'],
-    example: 'Percentage',
+  @ApiPropertyOptional({ 
+    description: 'Description of the promo code offer', 
+    example: 'First-time customer discount' 
   })
   @IsString()
-  @IsIn(['Percentage', 'FixedAmount', 'FreeMinutes'])
-  discountType: string;
-
-  @ApiProperty({ description: 'Discount value', example: 20 })
-  @IsNumber()
-  @Min(0)
-  value: number;
-
-  @ApiProperty({ description: 'Expiry date in ISO format', example: '2025-12-31T23:59:59.000Z' })
-  @IsDateString()
-  expiryDate: string;
-
-  @ApiPropertyOptional({ description: 'Description of the promo code', example: 'First-time customer discount' })
-  @IsString()
   @IsOptional()
-  @MaxLength(255)
+  @MaxLength(500)
   description?: string;
 
-  @ApiPropertyOptional({ description: 'Maximum usage limit', example: 100 })
-  @IsInt()
-  @Min(1)
+  @ApiProperty({ 
+    description: 'Free text discount display (e.g., "20% off", "Free shipping", "CHF 10 off")', 
+    example: '20% off your first order' 
+  })
+  @IsString()
+  @MinLength(1)
+  @MaxLength(100)
+  discount: string;
+
+  @ApiPropertyOptional({ 
+    description: 'Whether the promo code is active and visible on profile', 
+    example: true,
+    default: true
+  })
+  @IsBoolean()
   @IsOptional()
-  maxUsage?: number;
+  isActive?: boolean;
 }
 
+/**
+ * DTO for updating a display-only promo code
+ */
 export class UpdatePromoCodeDto {
-  @ApiPropertyOptional({ description: 'Promo code string', example: 'SAVE20' })
+  @ApiPropertyOptional({ 
+    description: 'Promo code string', 
+    example: 'SAVE20' 
+  })
   @IsString()
-  @MinLength(3)
+  @MinLength(2)
   @MaxLength(50)
   @IsOptional()
   code?: string;
 
-  @ApiPropertyOptional({
-    description: 'Type of discount',
-    enum: ['Percentage', 'FixedAmount', 'FreeMinutes'],
-    example: 'Percentage',
+  @ApiPropertyOptional({ 
+    description: 'Description of the promo code offer' 
   })
   @IsString()
-  @IsIn(['Percentage', 'FixedAmount', 'FreeMinutes'])
-  @IsOptional()
-  discountType?: string;
-
-  @ApiPropertyOptional({ description: 'Discount value', example: 20 })
-  @IsNumber()
-  @Min(0)
-  @IsOptional()
-  value?: number;
-
-  @ApiPropertyOptional({ description: 'Expiry date in ISO format', example: '2025-12-31T23:59:59.000Z' })
-  @IsDateString()
-  @IsOptional()
-  expiryDate?: string;
-
-  @ApiPropertyOptional({
-    description: 'Status of the promo code',
-    enum: ['Active', 'Expired', 'Disabled'],
-    example: 'Active',
-  })
-  @IsString()
-  @IsIn(['Active', 'Expired', 'Disabled'])
-  @IsOptional()
-  status?: string;
-
-  @ApiPropertyOptional({ description: 'Description of the promo code' })
-  @IsString()
-  @MaxLength(255)
+  @MaxLength(500)
   @IsOptional()
   description?: string;
 
-  @ApiPropertyOptional({ description: 'Maximum usage limit', example: 100 })
-  @IsInt()
-  @Min(1)
+  @ApiPropertyOptional({ 
+    description: 'Free text discount display', 
+    example: '20% off' 
+  })
+  @IsString()
+  @MinLength(1)
+  @MaxLength(100)
   @IsOptional()
-  maxUsage?: number;
+  discount?: string;
+
+  @ApiPropertyOptional({ 
+    description: 'Whether the promo code is active and visible', 
+    example: true 
+  })
+  @IsBoolean()
+  @IsOptional()
+  isActive?: boolean;
 }
 
+/**
+ * Response DTO for promo code data
+ */
 export class PromoCodeResponseDto {
   @ApiProperty({ description: 'Promo code ID' })
   id: string;
@@ -108,26 +100,14 @@ export class PromoCodeResponseDto {
   @ApiProperty({ description: 'Promo code string' })
   code: string;
 
-  @ApiProperty({ description: 'Type of discount' })
-  discountType: string;
-
-  @ApiProperty({ description: 'Discount value' })
-  value: number;
-
-  @ApiProperty({ description: 'Expiry date' })
-  expiryDate: Date;
-
-  @ApiProperty({ description: 'Status of the promo code' })
-  status: string;
-
   @ApiPropertyOptional({ description: 'Description of the promo code' })
   description?: string;
 
-  @ApiProperty({ description: 'Number of times the code has been used' })
-  usageCount: number;
+  @ApiProperty({ description: 'Free text discount display' })
+  discount: string;
 
-  @ApiPropertyOptional({ description: 'Maximum usage limit' })
-  maxUsage?: number;
+  @ApiProperty({ description: 'Whether the promo code is active' })
+  isActive: boolean;
 
   @ApiProperty({ description: 'Organization ID' })
   organizationId: string;

@@ -93,6 +93,7 @@
     "back": "Zurück",
     "cancel": "Abbrechen",
     "close": "Schließen",
+    "continue": "Weiter",
     "confirm": "Bestätigen",
     "copy": "Kopieren",
     "copied": "Kopiert!",
@@ -113,6 +114,7 @@
     "remove": "Entfernen",
     "reply": "Antworten",
     "sending": "Wird gesendet...",
+    "resetPassword": "Passwort zurücksetzen",
     "resetFilters": "Filter zurücksetzen",
     "retry": "Wiederholen",
     "save": "Speichern",
@@ -250,7 +252,7 @@
       "browseNoFileChosen": "Keine Datei ausgewählt",
       "dragAndDrop": "oder per Drag & Drop ablegen",
       "eLearningAllowedTypes": "Unterstützte Formate: PDF, MP4, MP3, ZIP",
-      "hrPolicyAllowedTypes": "Unterstützte Formate: PDF, DOC, DOCX",
+      "hrPolicyAllowedTypes": "Unterstützte Formate: PDF, DOC, DOCX, XLS, XLSX, CSV, ODS",
       "selected": "{{fileName}} ausgewählt"
     },
     "labels": {
@@ -573,7 +575,11 @@
       "hint": "hint",
       "placeholder": "placeholder"
     },
-    "unnamed": "unnamed"
+    "unnamed": "unnamed",
+    "visibility": {
+      "title": "Sichtbarkeit",
+      "toggleLabel": "Mein Profil im Kandidatenpool anzeigen"
+    }
   },
   "emptyStates": {
     "noProductSuppliers": "no Product Suppliers",
@@ -1106,6 +1112,8 @@
   },
   "navbar": {
     "goBackPreviousPage": "Zurück zur vorherigen Seite",
+    "help": "Hilfe und Wissensdatenbank",
+    "helpShort": "Hilfe",
     "newMessages": "Neue Nachrichten",
     "noNewNotifications": "Keine neuen Benachrichtigungen",
     "notifications": "Benachrichtigungen",
@@ -1208,17 +1216,49 @@
   "orderSummaryDrawer": {
     "closePanel": "Panel schließen",
     "continueShopping": "Weiter einkaufen",
-    "emptyCart": "Warenkorb leeren",
+    "emptyCart": "Dein Warenkorb ist leer",
     "itemsFrom": "Artikel von",
-    "notesPlaceholder": "Enter notes",
-    "orderError": "order Error",
-    "orderSuccess": "order Success",
-    "shippingNote": "Versandhinweis",
+    "notesPlaceholder": "Notizen eingeben",
+    "orderError": "Bestellung konnte nicht gesendet werden. Bitte versuche es erneut.",
+    "orderSuccess": "Bestellung erfolgreich an {{supplierName}} gesendet! Bestell-ID: {{orderId}}",
+    "shippingNote": "Der Versand wird direkt mit dem Anbieter vereinbart.",
     "specialInstructions": "Besondere Anweisungen",
-    "submitTo": "Absenden to",
-    "submitting": "submitting",
+    "submitTo": "Bestellung senden an",
+    "submitting": "Wird gesendet...",
     "subtotal": "Zwischensumme",
-    "title": "Titel"
+    "title": "Bestellübersicht",
+    "total": "Gesamt"
+  },
+  "promoCodes": {
+    "modal": {
+      "title": "Promo-Code",
+      "subtitle": "Promo-Code für {{organizationName}} anwenden",
+      "codeLabel": "Promo-Code",
+      "codePlaceholder": "Promo-Code eingeben",
+      "validate": "Prüfen",
+      "validating": "Wird geprüft...",
+      "apply": "Anwenden",
+      "remove": "Entfernen"
+    },
+    "messages": {
+      "valid": "Promo-Code ist gültig.",
+      "invalid": "Ungültiger oder abgelaufener Promo-Code.",
+      "error": "Promo-Code konnte nicht geprüft werden. Bitte versuche es erneut."
+    },
+    "discount": {
+      "percentage": "{{value}}% Rabatt",
+      "fixedAmount": "CHF {{value}} Rabatt",
+      "freeMinutes": "{{value}} kostenlose Minuten"
+    },
+    "cart": {
+      "title": "Promo-Code",
+      "noneApplied": "Kein Promo-Code angewendet",
+      "add": "Hinzufügen",
+      "change": "Ändern",
+      "remove": "Entfernen",
+      "discount": "Rabatt",
+      "total": "Total"
+    }
   },
   "organizationName": "Organisationsname",
   "organizationProfileForm": {
@@ -1963,50 +2003,42 @@
     },
     "addNewCode": "Neuen Code hinzufügen",
     "confirmDelete": "Möchten Sie diesen Promo-Code wirklich löschen?",
+    "description": "Erstellen Sie Promo-Codes zur Anzeige auf Ihrem öffentlichen Profil.",
     "noCodesYet": "Noch keine Promo-Codes. Fügen Sie Ihren ersten hinzu!",
     "promoCreated": "Promo-Code erfolgreich erstellt",
     "promoUpdated": "Promo-Code erfolgreich aktualisiert",
     "promoDeleted": "Promo-Code erfolgreich gelöscht",
     "validation": {
-      "required": "Code und Ablaufdatum sind erforderlich"
+      "required": "Code und Rabatt sind erforderlich",
+      "codeMinLength": "Der Code muss mindestens 2 Zeichen lang sein"
     },
     "form": {
-      "code": "Code",
-      "codePlaceholder": "z. B. SAVE20",
-      "discountType": "Rabattart",
-      "percentage": "Prozentual",
-      "fixedAmount": "Fester Betrag (CHF)",
-      "freeMinutes": "Gratis-Minuten",
-      "value": "Wert",
-      "expiryDate": "Ablaufdatum",
+      "code": "Promo-Code",
+      "codePlaceholder": "z. B. SAVE20, VERSANDFREI",
+      "codeHelpText": "Der Code den Kunden verwenden werden",
+      "discount": "Rabatt",
+      "discountPlaceholder": "z. B. 20% Rabatt, Gratis Versand, CHF 10 Rabatt",
+      "discountHelpText": "Beschreiben Sie den Rabatt für Kunden",
       "description": "Beschreibung (optional)",
-      "descriptionPlaceholder": "z. B. Rabatt für Neukunden",
-      "maxUsage": "Max. Nutzung (optional)",
-      "maxUsagePlaceholder": "Leer lassen für unbegrenzt",
-      "status": "Status"
+      "descriptionPlaceholder": "z. B. Nur für Neukunden gültig",
+      "descriptionHelpText": "Optionale Details zu Bedingungen",
+      "isActive": "Auf Profil anzeigen"
     },
     "status": {
-      "active": "Aktiv",
-      "disabled": "Deaktiviert",
-      "expired": "Abgelaufen"
-    },
-    "discountTypes": {
-      "percentage": "{{value}}% Rabatt",
-      "fixedAmount": "CHF {{value}} Rabatt",
-      "freeMinutes": "{{value}} Gratis-Minuten"
+      "active": "Sichtbar",
+      "hidden": "Verborgen"
     },
     "table": {
       "actions": "Aktionen",
       "code": "Code",
-      "discountOffer": "Rabatt",
-      "expiry": "Ablauf",
+      "discount": "Rabatt",
       "status": "Status"
     }
   },
   "promoCodesDisplay": {
-    "noActivePromoCodes": "Keine aktiven Promo-Codes verfügbar.",
-    "expiresOn": "Gültig bis",
-    "usageCount": "Verwendet"
+    "title": "Promo-Codes",
+    "subtitle": "Verwenden Sie diese Codes bei Ihrem Einkauf für Rabatte.",
+    "noActivePromoCodes": "Keine aktiven Promo-Codes verfügbar."
   },
   "settingsTeamPermissions": {
     "confirmRemoveMember": "Mitglied entfernen bestätigen",

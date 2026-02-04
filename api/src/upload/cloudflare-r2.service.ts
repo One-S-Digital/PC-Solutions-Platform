@@ -4,6 +4,8 @@ import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand, Head
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { AssetKind } from '@prisma/client';
 import { createHash } from 'crypto';
+import * as fs from 'fs';
+import { Readable } from 'stream';
 
 export interface UploadResult {
   key: string;
@@ -95,6 +97,8 @@ export class CloudflareR2Service {
 
   /**
    * Upload file directly from server with checksum verification
+   * Supports both memory storage (file.buffer) and disk storage (file.path)
+   * Uses streaming for disk storage to avoid loading large files into memory
    */
   async uploadFile(
     file: Express.Multer.File,
@@ -120,14 +124,38 @@ export class CloudflareR2Service {
 
       const key = this.generateStorageKey(file.originalname, assetKind, appUserId, subcategory, conversationId);
       
-      // Calculate SHA-256 checksum
-      const checksum = this.calculateChecksum(file.buffer);
+      let fileBody: Buffer | Readable;
+      let checksum: string;
+      
+      if (file.buffer) {
+        // Memory storage - file is already in memory (small files)
+        fileBody = file.buffer;
+        checksum = this.calculateChecksum(file.buffer);
+        this.logger.log(`Using memory storage for ${file.originalname} (${(file.size / 1024 / 1024).toFixed(2)}MB)`);
+      } else if (file.path) {
+        // Disk storage - stream file directly to R2 (large files)
+        this.logger.log(`Using disk storage for ${file.originalname} (${(file.size / 1024 / 1024).toFixed(2)}MB), streaming from ${file.path}`);
+        
+        // Calculate checksum by streaming (memory efficient)
+        const hash = createHash('sha256');
+        const checksumStream = fs.createReadStream(file.path);
+        for await (const chunk of checksumStream) {
+          hash.update(chunk);
+        }
+        checksum = hash.digest('base64');
+        
+        // Create fresh read stream for upload
+        fileBody = fs.createReadStream(file.path);
+      } else {
+        throw new BadRequestException('File data not available');
+      }
       
       const command = new PutObjectCommand({
         Bucket: this.bucketName,
         Key: key,
-        Body: file.buffer,
+        Body: fileBody,
         ContentType: file.mimetype,
+        ContentLength: file.size, // Required for streaming
         ChecksumSHA256: checksum, // S3-compatible checksum
         Metadata: {
           'uploaded-by': appUserId,
@@ -140,6 +168,16 @@ export class CloudflareR2Service {
       this.logger.log(`Uploading file: ${file.originalname} (${assetKind}) to ${key} with checksum: ${checksum.substring(0, 16)}...`);
       
       await this.s3Client.send(command);
+      
+      // Clean up temp file if using disk storage
+      if (file.path) {
+        try {
+          await fs.promises.unlink(file.path);
+          this.logger.log(`Cleaned up temp file: ${file.path}`);
+        } catch (cleanupError) {
+          this.logger.warn(`Failed to clean up temp file ${file.path}:`, cleanupError);
+        }
+      }
       
       // Verify upload by fetching ETag
       const headCommand = new HeadObjectCommand({
@@ -164,6 +202,15 @@ export class CloudflareR2Service {
         checksum,
       };
     } catch (error) {
+      // Clean up temp file on error if using disk storage
+      if (file.path) {
+        try {
+          await fs.promises.unlink(file.path);
+        } catch (cleanupError) {
+          this.logger.warn(`Failed to clean up temp file on error:`, cleanupError);
+        }
+      }
+      
       this.logger.error('Failed to upload file', {
         error: error.message,
         filename: file?.originalname,
@@ -246,6 +293,17 @@ export class CloudflareR2Service {
    * Validate file type and size based on asset kind
    */
   validateFile(file: Express.Multer.File, assetKind: AssetKind): void {
+    // Use UPLOAD_MAX_MB env var for e-learning (videos can be large), default to 500MB
+    // Validate to avoid NaN or invalid values disabling size checks
+    const rawUploadMaxMb = this.configService.get<string>('UPLOAD_MAX_MB');
+    const uploadMaxMb = Number(rawUploadMaxMb);
+    const effectiveUploadMaxMb =
+      Number.isFinite(uploadMaxMb) && uploadMaxMb > 0 ? uploadMaxMb : 500;
+    
+    if (rawUploadMaxMb && (!Number.isFinite(uploadMaxMb) || uploadMaxMb <= 0)) {
+      this.logger.warn(`Invalid UPLOAD_MAX_MB="${rawUploadMaxMb}". Falling back to 500MB.`);
+    }
+    
     const maxSizes = {
       AVATAR: 5 * 1024 * 1024, // 5MB
       LOGO: 5 * 1024 * 1024, // 5MB
@@ -261,7 +319,7 @@ export class CloudflareR2Service {
       ADMIN_LOGO: 5 * 1024 * 1024, // 5MB
       ADMIN_FAVICON: 1 * 1024 * 1024, // 1MB
       SIDEBAR_LOGO: 5 * 1024 * 1024, // 5MB
-      ELEARNING: 100 * 1024 * 1024, // 100MB - for videos, PDFs, courses
+      ELEARNING: effectiveUploadMaxMb * 1024 * 1024, // Use env var - for large video uploads
       COMPANY_PROFILE_DOC: 50 * 1024 * 1024, // 50MB - for catalogs, company profiles
     };
 
@@ -270,7 +328,19 @@ export class CloudflareR2Service {
       LOGO: ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'],
       COVER_IMAGE: ['image/jpeg', 'image/png', 'image/webp'],
       PRODUCT_IMAGE: ['image/jpeg', 'image/png', 'image/webp'],
-      DOCUMENT: ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+      DOCUMENT: [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        // Spreadsheets
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        // CSV (often uploaded as "spreadsheet")
+        'text/csv',
+        'application/csv',
+        // OpenDocument Spreadsheet
+        'application/vnd.oasis.opendocument.spreadsheet',
+      ],
       CV: ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
       CATALOG_PDF: ['application/pdf'],
       CATALOG_CSV: ['text/csv', 'application/csv'],
@@ -284,8 +354,16 @@ export class CloudflareR2Service {
         'application/pdf',
         'video/mp4',
         'video/quicktime',
-        'video/x-msvideo', // AVI
+        'video/x-msvideo', // AVI (legacy MIME type)
+        'video/vnd.avi', // AVI (detected by file-type library v21+)
         'video/webm',
+        'video/x-m4v', // M4V files
+        'video/3gpp', // 3GP files
+        'video/ogg', // OGG video
+        'video/x-matroska', // MKV files
+        'video/mpeg', // MPEG files
+        'video/x-flv', // FLV files
+        'application/octet-stream', // Generic binary (some browsers report video files this way)
         'application/vnd.ms-powerpoint',
         'application/vnd.openxmlformats-officedocument.presentationml.presentation',
       ],

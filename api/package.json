@@ -10,7 +10,7 @@
   },
   "scripts": {
     "postinstall": "prisma generate",
-    "prebuild": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
+    "prebuild": "node scripts/prebuild-complete-db-setup.mjs && node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
     "copy:locales": "node scripts/copy-locales.mjs",
     "build": "nest build && pnpm run copy:locales",
     "build:render": "SKIP_SEED=true ./scripts/render-build-with-recovery.sh && node ./scripts/seed-once.js && pnpm run build",
@@ -54,6 +54,7 @@
     "db:setup": "node scripts/prebuild-complete-db-setup.mjs",
     "db:setup:recovery": "node scripts/prebuild-db-setup.mjs",
     "prebuild:db": "node scripts/prebuild-complete-db-setup.mjs",
+    "db:seed:cantons": "ts-node scripts/seed-cantons.ts",
     "import:translations": "ts-node scripts/import-static-translations.ts",
     "create:test-users": "ts-node scripts/create-test-users.ts"
   },
@@ -87,6 +88,7 @@
     "bcryptjs": "^2.4.3",
     "bull": "^4.16.5",
     "cache-manager": "^5.7.6",
+    "cheerio": "^1.2.0",
     "clamdjs": "^1.0.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
@@ -103,6 +105,7 @@
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
+    "pdf-parse": "^2.4.5",
     "prom-client": "^15.1.3",
     "redis": "^5.9.0",
     "reflect-metadata": "^0.2.2",

@@ -8,7 +8,8 @@ import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import {
   UsersIcon, LockClosedIcon, BellAlertIcon, WalletIcon, BuildingOfficeIcon,
-  PhoneIcon, AdjustmentsHorizontalIcon, ChartPieIcon, UserCircleIcon, PencilSquareIcon
+  PhoneIcon, AdjustmentsHorizontalIcon, ChartPieIcon, UserCircleIcon, PencilSquareIcon,
+  TagIcon
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import Tabs from '../components/ui/Tabs';
@@ -22,6 +23,7 @@ import AnalyticsPreferencesSettings from '../components/settings/sections/Analyt
 import TeamPermissionsSettings from '../components/settings/sections/TeamPermissionsSettings';
 import PrivacyDataSettings from '../components/settings/sections/PrivacyDataSettings';
 import AccountSecuritySettings from '../components/settings/sections/AccountSecuritySettings';
+import PromoCodeManagerSettings from '../components/settings/sections/PromoCodeManagerSettings';
 import { useAuthenticatedApi } from '../hooks/useAuthenticatedApi';
 
 
@@ -73,6 +75,7 @@ const SettingsPage: React.FC = () => {
             contactEmail: data.contactEmail || currentUser.email,
             phoneNumber: data.phoneNumber || org?.phoneNumber || '',
             contactPerson: data.contactPerson || org?.contactPerson || '',
+            websiteUrl: data.websiteUrl || org?.websiteUrl || '',
             address: data.address || org?.region || '',
             canton: data.canton || org?.canton || '',
             city: data.city || org?.city || '',
@@ -95,6 +98,7 @@ const SettingsPage: React.FC = () => {
             contactEmail: data.contactEmail || currentUser.email,
             phoneNumber: data.phoneNumber || org?.phoneNumber || '',
             contactPerson: data.contactPerson || org?.contactPerson || '',
+            websiteUrl: data.websiteUrl || org?.websiteUrl || '',
             address: data.address || org?.region || '',
             canton: data.canton || org?.canton || '',
             city: data.city || org?.city || '',
@@ -107,7 +111,12 @@ const SettingsPage: React.FC = () => {
             coverImageUrl: data.coverImageUrl || org?.coverImageUrl || null,
             productCategory: data.productCategory || org?.productCategory || '',
             serviceType: data.serviceType || org?.serviceType || '',
-            minimumOrderQuantity: typeof data.minimumOrderQuantity === 'number' ? data.minimumOrderQuantity : (org?.minimumOrderQuantity || 0),
+            minimumOrderQuantity:
+              Number.isFinite(data.minimumOrderQuantity)
+                ? data.minimumOrderQuantity
+                : Number.isFinite(org?.minimumOrderQuantity)
+                  ? org?.minimumOrderQuantity
+                  : undefined,
             directOrderLink: data.directOrderLink || org?.directOrderLink || '',
             catalogUrl: data.catalogUrl || org?.catalogUrl || '',
           } as Partial<SettingsFormData>;
@@ -120,6 +129,7 @@ const SettingsPage: React.FC = () => {
             contactEmail: data.contactEmail || currentUser.email,
             phoneNumber: data.phoneNumber || org?.phoneNumber || '',
             contactPerson: data.contactPerson || org?.contactPerson || '',
+            websiteUrl: data.websiteUrl || org?.websiteUrl || '',
             address: data.address || org?.region || '',
             canton: data.canton || org?.canton || '',
             city: data.city || org?.city || '',
@@ -207,6 +217,7 @@ const SettingsPage: React.FC = () => {
   const sections: SettingsSectionConfig[] = [
     { id: 'accountSecurity', nameKey: 'common:settingsPage.accountSecurity', icon: UserCircleIcon, component: AccountSecuritySettings, roles: [UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.FOUNDATION, UserRole.EDUCATOR, UserRole.PARENT, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
     { id: 'billingSubscription', nameKey: 'common:settingsPage.billingSubscription', icon: WalletIcon, component: BillingSubscriptionSettings, roles: [UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.FOUNDATION] },
+    { id: 'promoCodeManager', nameKey: 'common:settingsPage.promoCodeManager', icon: TagIcon, component: PromoCodeManagerSettings, roles: [UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER] },
     { id: 'notifications', nameKey: 'common:settingsPage.notificationPreferences', icon: BellAlertIcon, component: NotificationPreferencesSettings, roles: [UserRole.PRODUCT_SUPPLIER, UserRole.FOUNDATION] },
     { id: 'privacyData', nameKey: 'common:settingsPage.privacyData', icon: LockClosedIcon, component: PrivacyDataSettings, roles: [UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER, UserRole.FOUNDATION] },
     { id: 'contactBooking', nameKey: 'common:settingsPage.contactBooking', icon: PhoneIcon, component: ContactBookingSettings, roles: [UserRole.PRODUCT_SUPPLIER] },
@@ -264,6 +275,7 @@ const SettingsPage: React.FC = () => {
               contactEmail: payload.contactEmail || currentUser.email,
               phoneNumber: payload.phoneNumber || '',
               contactPerson: payload.contactPerson || '',
+              websiteUrl: payload.websiteUrl || '',
               address: payload.address || '',
               canton: payload.canton || '',
               city: payload.city || '',
@@ -289,6 +301,7 @@ const SettingsPage: React.FC = () => {
               contactEmail: payload.contactEmail || currentUser.email,
               phoneNumber: payload.phoneNumber || '',
               contactPerson: payload.contactPerson || '',
+              websiteUrl: payload.websiteUrl || '',
               address: payload.address || '',
               canton: payload.canton || '',
               city: payload.city || '',
@@ -298,7 +311,9 @@ const SettingsPage: React.FC = () => {
               languages: Array.isArray(payload.languagesSpoken) ? payload.languagesSpoken : [],
               productCategory: payload.productCategory || '',
               serviceType: payload.serviceType || '',
-              minimumOrderQuantity: Number.isFinite(payload.minimumOrderQuantity) ? Number(payload.minimumOrderQuantity) : 0,
+              minimumOrderQuantity: Number.isFinite(payload.minimumOrderQuantity)
+                ? Number(payload.minimumOrderQuantity)
+                : null,
               directOrderLink: payload.directOrderLink || '',
               catalogUrl: payload.catalogUrl || '',
               ...(payload.logoAssetId !== undefined && { logoAssetId: payload.logoAssetId || null }),
@@ -317,6 +332,7 @@ const SettingsPage: React.FC = () => {
               contactEmail: payload.contactEmail || currentUser.email,
               phoneNumber: payload.phoneNumber || '',
               contactPerson: payload.contactPerson || '',
+              websiteUrl: payload.websiteUrl || '',
               address: payload.address || '',
               canton: payload.canton || '',
               city: payload.city || '',

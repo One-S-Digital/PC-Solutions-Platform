@@ -18,7 +18,7 @@ interface FileUploadZoneProps {
 const FileUploadZone: React.FC<FileUploadZoneProps> = ({
   onFileUpload,
   onUploadSuccess,
-  acceptedMimeTypes = "image/*,application/pdf,.doc,.docx,.xls,.xlsx",
+  acceptedMimeTypes = "image/*,application/pdf,.doc,.docx,.xls,.xlsx,.csv,.ods",
   maxFileSizeMB = 5,
   label,
   multiple = false,

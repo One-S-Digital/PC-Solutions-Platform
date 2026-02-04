@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { MagnifyingGlassIcon, BellIcon, ChevronDownIcon, ArrowLeftIcon, ShoppingCartIcon, UserCircleIcon, CogIcon, Bars3Icon } from '@heroicons/react/24/outline'; // Added Bars3Icon
+import { MagnifyingGlassIcon, BellIcon, ChevronDownIcon, ArrowLeftIcon, ShoppingCartIcon, UserCircleIcon, CogIcon, Bars3Icon, QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../../contexts/AppContext';
 import { useCart } from '../../contexts/CartContext';
 import { useMessaging } from '../../contexts/MessagingContext';
 import { ICON_INPUT_FIELD } from '../../constants';
 import { useNavigate, Link } from 'react-router-dom';
 import OrderSummaryDrawer from '../cart/OrderSummaryDrawer';
+import HelpModal from '../help/HelpModal';
 import { UserRole, AppNotification } from '../../types';
 import { useNotifications } from '../../contexts/NotificationContext';
 import LanguageSwitcher from '../../components/ui/LanguageSwitcher';
-import { useTranslation } from 'react-i18next'; // Import useTranslation
+import { useTranslation } from 'react-i18next';
 
 interface NavbarProps {
   onMobileMenuToggle: () => void;
@@ -25,6 +26,7 @@ const Navbar: React.FC<NavbarProps> = ({ onMobileMenuToggle }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const cartItemCount = getCartItemCount();
@@ -83,6 +85,19 @@ const Navbar: React.FC<NavbarProps> = ({ onMobileMenuToggle }) => {
         </div>
         <div className="flex items-center space-x-1 sm:space-x-2 lg:space-x-3 xl:space-x-4">
           <LanguageSwitcher />
+
+          {/* Help Button */}
+          <button
+            onClick={() => setIsHelpModalOpen(true)}
+            className="relative flex items-center gap-1.5 px-2 py-1.5 sm:px-3 sm:py-2 rounded-full text-gray-500 hover:text-swiss-teal hover:bg-gray-100 focus:outline-none transition-colors"
+            aria-label={t('navbar.help')}
+            title={t('navbar.help')}
+          >
+            <QuestionMarkCircleIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+            <span className="text-xs sm:text-sm font-medium">
+              {t('navbar.helpShort', 'Help')}
+            </span>
+          </button>
 
           {currentUser?.role === UserRole.FOUNDATION && (
             <button
@@ -193,6 +208,7 @@ const Navbar: React.FC<NavbarProps> = ({ onMobileMenuToggle }) => {
         </div>
       </header>
       <OrderSummaryDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <HelpModal isOpen={isHelpModalOpen} onClose={() => setIsHelpModalOpen(false)} />
     </>
   );
 };

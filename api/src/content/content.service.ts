@@ -4,6 +4,7 @@ import {
   NotFoundException,
   Logger,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { CloudflareR2Service } from '../upload/cloudflare-r2.service';
 import { AssetKind } from '@prisma/client';
@@ -45,12 +46,48 @@ export interface PaginatedResponse<T> {
 @Injectable()
 export class ContentService {
   private readonly logger = new Logger(ContentService.name);
+  private readonly fileSizeLimits: typeof FILE_SIZE_LIMITS;
+  private static readonly UPLOAD_TITLE_MAX_LENGTH = 100;
+
+  private buildSuffixedTitle(baseTitle: string, suffixNumber: number) {
+    const trimmedBase = (baseTitle || '').trim();
+    if (!trimmedBase) return trimmedBase;
+    if (suffixNumber <= 1) return trimmedBase;
+
+    const suffix = ` (${suffixNumber})`;
+    const maxBaseLength = ContentService.UPLOAD_TITLE_MAX_LENGTH - suffix.length;
+    const safeBase =
+      maxBaseLength > 0
+        ? trimmedBase.slice(0, maxBaseLength).trimEnd()
+        : '';
+
+    return `${safeBase}${suffix}`.slice(0, ContentService.UPLOAD_TITLE_MAX_LENGTH);
+  }
 
   constructor(
     private prisma: PrismaService,
     private r2Service: CloudflareR2Service,
     private translationService: TranslationService,
-  ) {}
+    private configService: ConfigService,
+  ) {
+    // Use environment variable UPLOAD_MAX_MB for e-learning (videos can be large)
+    // Fall back to hardcoded defaults if not set or invalid
+    const rawUploadMaxMb = this.configService.get<string>('UPLOAD_MAX_MB');
+    const uploadMaxMb = Number(rawUploadMaxMb);
+    const effectiveUploadMaxMb =
+      Number.isFinite(uploadMaxMb) && uploadMaxMb > 0 ? uploadMaxMb : 500;
+    
+    if (rawUploadMaxMb && (!Number.isFinite(uploadMaxMb) || uploadMaxMb <= 0)) {
+      this.logger.warn(`Invalid UPLOAD_MAX_MB="${rawUploadMaxMb}". Falling back to 500MB.`);
+    }
+    
+    this.fileSizeLimits = {
+      ELEARNING: effectiveUploadMaxMb * 1024 * 1024, // Use env var for e-learning
+      HR_DOCUMENT: FILE_SIZE_LIMITS.HR_DOCUMENT,
+      STATE_POLICY: FILE_SIZE_LIMITS.STATE_POLICY,
+    };
+    this.logger.log(`Content service initialized with e-learning max file size: ${effectiveUploadMaxMb}MB`);
+  }
 
   /**
    * ========================================
@@ -63,7 +100,13 @@ export class ContentService {
     dto: UploadElearningDto,
     userId: string,
   ) {
-    this.logger.log(`Uploading e-learning content: ${dto.title}`);
+    const startTime = Date.now();
+    this.logger.log(`📤 [UPLOAD START] E-learning content: ${dto.title}`);
+    this.logger.log(`📤 [UPLOAD CONFIG] Max file size: ${this.fileSizeLimits.ELEARNING / 1024 / 1024}MB`);
+    
+    if (file) {
+      this.logger.log(`📤 [UPLOAD FILE] Name: ${file.originalname}, Size: ${(file.size / 1024 / 1024).toFixed(2)}MB, Type: ${file.mimetype}`);
+    }
 
     // Validate file based on content type
     if (dto.type !== ELearningContentType.LINK && dto.videoSourceType !== 'url') {
@@ -72,18 +115,23 @@ export class ContentService {
       }
 
       // Validate file size
-      if (file.size > FILE_SIZE_LIMITS.ELEARNING) {
+      this.logger.log(`📤 [VALIDATION] Checking file size: ${file.size} bytes vs limit: ${this.fileSizeLimits.ELEARNING} bytes`);
+      if (file.size > this.fileSizeLimits.ELEARNING) {
+        this.logger.error(`📤 [VALIDATION FAILED] File size ${file.size} exceeds limit ${this.fileSizeLimits.ELEARNING}`);
         throw new BadRequestException(
-          `File size exceeds maximum allowed (${FILE_SIZE_LIMITS.ELEARNING / 1024 / 1024}MB)`,
+          `File size exceeds maximum allowed (${this.fileSizeLimits.ELEARNING / 1024 / 1024}MB)`,
         );
       }
+      this.logger.log(`📤 [VALIDATION] File size OK`);
 
       // Validate MIME type
       if (!ALLOWED_MIME_TYPES.ELEARNING.includes(file.mimetype)) {
+        this.logger.error(`📤 [VALIDATION FAILED] Invalid MIME type: ${file.mimetype}`);
         throw new BadRequestException(
           `Invalid file type. Allowed types: ${ALLOWED_MIME_TYPES.ELEARNING.join(', ')}`,
         );
       }
+      this.logger.log(`📤 [VALIDATION] MIME type OK`);
     }
 
     // Ensure unique title by auto-suffixing duplicates for e-learning
@@ -110,7 +158,7 @@ export class ContentService {
           if (!Number.isNaN(n) && n >= maxSuffix) maxSuffix = n + 1;
         }
       }
-      if (maxSuffix > 1) dto.title = `${elBaseTitle} (${maxSuffix})`;
+      if (maxSuffix > 1) dto.title = this.buildSuffixedTitle(elBaseTitle, maxSuffix);
     }
 
     let uploadResult: { url: string; key: string } | undefined;
@@ -486,9 +534,9 @@ export class ContentService {
     }
 
     // Validate file size
-    if (file.size > FILE_SIZE_LIMITS.HR_DOCUMENT) {
+    if (file.size > this.fileSizeLimits.HR_DOCUMENT) {
       throw new BadRequestException(
-        `File size exceeds maximum allowed (${FILE_SIZE_LIMITS.HR_DOCUMENT / 1024 / 1024}MB)`,
+        `File size exceeds maximum allowed (${this.fileSizeLimits.HR_DOCUMENT / 1024 / 1024}MB)`,
       );
     }
 
@@ -534,7 +582,7 @@ export class ContentService {
       }
 
       if (maxSuffix > 1) {
-        dto.title = `${baseTitle} (${maxSuffix})`;
+        dto.title = this.buildSuffixedTitle(baseTitle, maxSuffix);
       }
     }
 
@@ -896,9 +944,9 @@ export class ContentService {
 
     if (file) {
       // Validate file size
-      if (file.size > FILE_SIZE_LIMITS.STATE_POLICY) {
+      if (file.size > this.fileSizeLimits.STATE_POLICY) {
         throw new BadRequestException(
-          `File size exceeds maximum allowed (${FILE_SIZE_LIMITS.STATE_POLICY / 1024 / 1024}MB)`,
+          `File size exceeds maximum allowed (${this.fileSizeLimits.STATE_POLICY / 1024 / 1024}MB)`,
         );
       }
 
@@ -935,7 +983,7 @@ export class ContentService {
           if (!Number.isNaN(n) && n >= maxSuffix) maxSuffix = n + 1;
         }
       }
-      if (maxSuffix > 1) dto.title = `${spBaseTitle} (${maxSuffix})`;
+      if (maxSuffix > 1) dto.title = this.buildSuffixedTitle(spBaseTitle, maxSuffix);
     }
 
     let uploadResult: { url: string; key: string } | undefined;
@@ -1205,13 +1253,17 @@ export class ContentService {
     }
 
     try {
+      if (dto.category && dto.contentCategory && dto.category !== dto.contentCategory) {
+        throw new BadRequestException('category and contentCategory must match');
+      }
+      const effectiveCategory = dto.category ?? dto.contentCategory;
       const updatedAsset = await this.prisma.asset.update({
         where: { id },
         data: {
           ...(dto.title && { title: dto.title }),
           ...(dto.description && { description: dto.description }),
           ...(dto.contentPreview && { contentPreview: dto.contentPreview }),
-          ...(dto.category && { contentCategory: dto.category }),
+          ...(effectiveCategory && { contentCategory: effectiveCategory }),
           ...(dto.language && { language: dto.language }),
           ...(dto.country && { country: dto.country }),
           ...(dto.region && { region: dto.region }),
@@ -1225,6 +1277,7 @@ export class ContentService {
           ...(dto.effectiveDate && { effectiveDate: new Date(dto.effectiveDate) }),
           ...(dto.expirationDate && { expirationDate: new Date(dto.expirationDate) }),
           ...(dto.externalLink && { externalLink: dto.externalLink }),
+          ...(dto.crawlStatus !== undefined && { crawlStatus: dto.crawlStatus }),
         },
         include: {
           uploader: {

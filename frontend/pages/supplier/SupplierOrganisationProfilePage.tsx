@@ -25,6 +25,7 @@ import { useNotifications } from '../../contexts/NotificationContext';
 import ProfileDocumentsSettings from '../../components/settings/sections/ProfileDocumentsSettings';
 import PromoCodesDisplaySection from '../../components/profile/PromoCodesDisplaySection';
 import { UserRole } from '../../types';
+import { openExternalUrl, toExternalUrl } from '../../utils/url';
 
 interface SupplierSettingsData {
   companyName?: string;
@@ -37,6 +38,7 @@ interface SupplierSettingsData {
   languages?: string[];
   description?: string;
   vatNumber?: string;
+  websiteUrl?: string;
   logoUrl?: string;
   coverImageUrl?: string;
   productCategory?: string;
@@ -63,6 +65,7 @@ interface OrganizationDetails {
   minimumOrderQuantity?: number | null;
   directOrderLink?: string | null;
   catalogUrl?: string | null;
+  websiteUrl?: string | null;
   createdAt?: string;
   updatedAt?: string;
   isActive?: boolean;
@@ -200,6 +203,7 @@ const SupplierOrganisationProfilePage: React.FC = () => {
           languages: Array.isArray(data.languages) ? data.languages.filter(Boolean) : [],
           description: data.description || '',
           vatNumber: data.vatNumber || '',
+          websiteUrl: data.websiteUrl || '',
           logoUrl: data.logoUrl || '',
           coverImageUrl: data.coverImageUrl || '',
           productCategory: data.productCategory || '',
@@ -289,6 +293,8 @@ const SupplierOrganisationProfilePage: React.FC = () => {
   const vatNumber = supplierSettings?.vatNumber || organizationDetails?.vatNumber || notProvidedLabel;
   const directOrderLink = supplierSettings?.directOrderLink || organizationDetails?.directOrderLink || '';
   const catalogUrl = supplierSettings?.catalogUrl || organizationDetails?.catalogUrl || '';
+  const websiteUrl = supplierSettings?.websiteUrl || organizationDetails?.websiteUrl || '';
+  const websiteHref = toExternalUrl(websiteUrl);
 
   const logoUrl = supplierSettings?.logoUrl || organizationDetails?.logoUrl || currentUser?.orgLogoUrl ||
     `https://ui-avatars.com/api/?name=${encodeURIComponent(organizationName)}&background=2DD4BF&color=ffffff&size=128&rounded=true`;
@@ -464,6 +470,26 @@ const SupplierOrganisationProfilePage: React.FC = () => {
                   label={t('common:foundationOrganisationProfilePage.labels.address', 'Address')}
                   value={locationValue}
                 />
+                <InfoItem
+                  icon={GlobeAltIcon}
+                  label={t('settings:companyProfile.website', 'Website')}
+                  value={
+                    websiteUrl
+                      ? websiteHref
+                        ? (
+                          <a
+                            href={websiteHref}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-swiss-mint hover:text-swiss-teal break-all"
+                          >
+                            {websiteUrl}
+                          </a>
+                        )
+                        : websiteUrl
+                      : notProvidedLabel
+                  }
+                />
               </div>
             </Card>
 
@@ -536,7 +562,7 @@ const SupplierOrganisationProfilePage: React.FC = () => {
                     variant="outline"
                     size="sm"
                     leftIcon={LinkIcon}
-                    onClick={() => window.open(catalogUrl, '_blank', 'noopener,noreferrer')}
+                    onClick={() => openExternalUrl(catalogUrl)}
                   >
                     {t('common:supplierOrganisationProfilePage.actions.openCatalog', 'Open Catalog')}
                   </Button>
@@ -546,7 +572,7 @@ const SupplierOrganisationProfilePage: React.FC = () => {
                     variant="outline"
                     size="sm"
                     leftIcon={LinkIcon}
-                    onClick={() => window.open(directOrderLink, '_blank', 'noopener,noreferrer')}
+                    onClick={() => openExternalUrl(directOrderLink)}
                   >
                     {t('common:supplierOrganisationProfilePage.actions.openDirectOrderLink', 'Open Direct Order Link')}
                   </Button>

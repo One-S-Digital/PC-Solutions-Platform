@@ -35,7 +35,10 @@ export enum PolicyType {
 export enum FileType {
   PDF = 'PDF',
   DOCX = 'DOCX',
+  XLS = 'XLS',
   XLSX = 'XLSX',
+  CSV = 'CSV',
+  ODS = 'ODS',
   MP4 = 'MP4',
   DOC = 'DOC',
 }
@@ -121,7 +124,7 @@ export const REGIONS_BY_COUNTRY: Record<Country, readonly string[]> = {
 
 // File size limits (in bytes)
 export const FILE_SIZE_LIMITS = {
-  ELEARNING: 100 * 1024 * 1024, // 100 MB
+  ELEARNING: 500 * 1024 * 1024, // 500 MB - increased for video uploads
   HR_DOCUMENT: 50 * 1024 * 1024, // 50 MB
   STATE_POLICY: 50 * 1024 * 1024, // 50 MB
 };
@@ -132,6 +135,16 @@ export const ALLOWED_MIME_TYPES = {
     'application/pdf',
     'video/mp4',
     'video/quicktime',
+    'video/webm',
+    'video/x-msvideo', // AVI format (legacy MIME type)
+    'video/vnd.avi', // AVI format (detected by file-type library v21+)
+    'video/x-m4v', // M4V files
+    'video/3gpp', // 3GP files
+    'video/ogg', // OGG video
+    'video/x-matroska', // MKV files
+    'video/mpeg', // MPEG files
+    'video/x-flv', // FLV files
+    'application/octet-stream', // Generic binary (some browsers report video files this way)
     'application/vnd.ms-powerpoint',
     'application/vnd.openxmlformats-officedocument.presentationml.presentation',
   ],
@@ -141,11 +154,24 @@ export const ALLOWED_MIME_TYPES = {
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     'application/vnd.ms-excel',
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    // CSV (common "spreadsheet" interchange format)
+    'text/csv',
+    'application/csv',
+    // OpenDocument Spreadsheet (LibreOffice)
+    'application/vnd.oasis.opendocument.spreadsheet',
   ],
   STATE_POLICY: [
     'application/pdf',
     'application/msword',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    // Spreadsheets
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    // CSV (common "spreadsheet" interchange format)
+    'text/csv',
+    'application/csv',
+    // OpenDocument Spreadsheet (LibreOffice)
+    'application/vnd.oasis.opendocument.spreadsheet',
   ],
 };
 

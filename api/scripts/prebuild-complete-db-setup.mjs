@@ -192,17 +192,22 @@ const verifyCriticalTables = () => {
     'organizations',
     'organization_contact_infos',
     'assets',
+    // Policy crawler (feature-flagged, but schema must exist once migrations run)
+    'cantons',
+    'canton_sources',
+    'policy_crawl_history',
     'products',
     'services',
     'job_listings',
     'static_translations',
     'messages',
+    'promo_codes',
   ];
   
   const sql = `
-    SELECT table_name 
-    FROM information_schema.tables 
-    WHERE table_schema = 'public' 
+    SELECT COUNT(*) AS count
+    FROM information_schema.tables
+    WHERE table_schema = 'public'
     AND table_name IN (${criticalTables.map(t => `'${t}'`).join(', ')});
   `;
   
@@ -218,7 +223,17 @@ const verifyCriticalTables = () => {
     throw new Error('Failed to verify critical tables');
   }
   
-  success('Critical tables verified');
+  // Parse the count from the result to verify all tables exist
+  const countMatch = result.stdout?.match(/\b(\d+)\b/);
+  const count = countMatch ? Number(countMatch[1]) : NaN;
+  
+  if (!Number.isInteger(count) || count !== criticalTables.length) {
+    warn(`Expected ${criticalTables.length} critical tables, found ${count || 'unknown'}`);
+    // Log which tables might be missing for debugging
+    log('Expected tables: ' + criticalTables.join(', '));
+  }
+  
+  success(`Critical tables verified (${count}/${criticalTables.length})`);
 };
 
 /**
@@ -226,34 +241,75 @@ const verifyCriticalTables = () => {
  */
 const verifyEducatorAvailabilityColumn = () => {
   log('Verifying educator availability settings column...');
-  
-  const sql = `
-    SELECT column_name 
-    FROM information_schema.columns 
-    WHERE table_schema = 'public' 
-    AND table_name = 'users' 
-    AND column_name = 'availabilitySettings';
+
+  const verifySql = `
+    SELECT column_name
+    FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'users'
+      AND column_name = 'availabilitySettings';
   `;
-  
-  const result = runPrisma(
-    ['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'],
-    { 
+
+  const verifyOnce = () =>
+    runPrisma(['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'], {
       silent: true,
-      input: sql,
-    }
-  );
-  
-  if (!result.success) {
+      input: verifySql,
+    });
+
+  const initial = verifyOnce();
+  if (!initial.success) {
     warn('Could not verify availabilitySettings column');
     return;
   }
-  
-  // Check if we got a result (column exists)
-  if (result.stdout && result.stdout.includes('availabilitySettings')) {
+
+  // Prisma prints tabular output; the column name appears in stdout when present.
+  if (initial.stdout && initial.stdout.includes('availabilitySettings')) {
     success('Educator availability settings column exists');
+    return;
+  }
+
+  // Self-heal in case migrations are marked applied but schema drifted, or migrations
+  // haven't run yet during a deploy.
+  warn('Educator availability settings column may not exist yet');
+  log('Attempting to create it defensively (safe to re-run)...');
+
+  const ensureSql = `
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'users'
+      AND column_name = 'availabilitySettings'
+  ) THEN
+    ALTER TABLE "public"."users" ADD COLUMN "availabilitySettings" JSONB;
+
+    COMMENT ON COLUMN "public"."users"."availabilitySettings" IS 'Structured availability settings for educators (Calendly-style scheduling). Contains employmentType, weeklySchedule, dateOverrides, timezone, and notes.';
+  END IF;
+END
+$$;
+
+CREATE INDEX IF NOT EXISTS "users_availability_employment_type_idx"
+ON "public"."users" ((("availabilitySettings"->>'employmentType')));
+`;
+
+  const ensure = runPrisma(['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'], {
+    silent: true,
+    input: ensureSql,
+  });
+
+  if (!ensure.success) {
+    warn('Could not create/ensure availabilitySettings column (continuing)');
+    return;
+  }
+
+  const after = verifyOnce();
+  if (after.success && after.stdout && after.stdout.includes('availabilitySettings')) {
+    success('Educator availability settings column created/verified');
   } else {
-    warn('Educator availability settings column may not exist yet');
-    log('It will be created by the migration');
+    warn('availabilitySettings column still not detected after ensure step');
+    log('It should be created by migration 20251217100000_add_educator_availability_settings');
   }
 };
 

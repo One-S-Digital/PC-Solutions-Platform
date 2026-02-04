@@ -13,6 +13,9 @@ export * from './user';
 // Platform Settings
 export * from './platform-settings';
 
+// Cantons (policy/crawler)
+export * from './cantons';
+
 // Re-export commonly used types
 export type {
   ApiEnvelope,

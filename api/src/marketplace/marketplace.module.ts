@@ -7,9 +7,10 @@ import { InquiryService } from './inquiry.service';
 import { CsvProcessingService } from './csv-processing.service';
 import { AuthModule } from '../auth/auth.module';
 import { TranslationModule } from '../translation/translation.module';
+import { PromoCodesModule } from '../promo-codes/promo-codes.module';
 
 @Module({
-  imports: [PrismaModule, UploadModule, AuthModule, TranslationModule],
+  imports: [PrismaModule, UploadModule, AuthModule, TranslationModule, PromoCodesModule],
   controllers: [MarketplaceController],
   providers: [MarketplaceService, InquiryService, CsvProcessingService],
   exports: [MarketplaceService, InquiryService],

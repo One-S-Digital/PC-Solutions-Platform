@@ -333,8 +333,12 @@ const Candidates: React.FC = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">{position}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${statusColors[status] || 'bg-gray-100 text-gray-800'}`}>
+                    <td className="px-6 py-4 align-top">
+                      <span
+                        className={`inline-block max-w-[220px] whitespace-normal break-words px-2 py-1 text-xs font-semibold leading-snug rounded-full ${
+                          statusColors[status] || 'bg-gray-100 text-gray-800'
+                        }`}
+                      >
                         {status}
                       </span>
                     </td>

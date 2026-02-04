@@ -16,14 +16,12 @@ import {
   ELearningContentType,
   ContentStatus,
   LanguageCode,
-  ELEARNING_CATEGORIES,
-  ELearningCategory,
 } from './content.enums';
 
 export class UploadElearningDto {
   @IsString()
   @MinLength(3, { message: 'Title must be at least 3 characters long' })
-  @MaxLength(200, { message: 'Title must not exceed 200 characters' })
+  @MaxLength(100, { message: 'Title must not exceed 100 characters' })
   title: string;
 
   @IsOptional()
@@ -36,14 +34,10 @@ export class UploadElearningDto {
   @MaxLength(1000, { message: 'Content preview must not exceed 1000 characters' })
   contentPreview?: string;
 
-  @Transform(({ value }) => {
-    if (typeof value === 'string' && ELEARNING_CATEGORIES.includes(value as any)) {
-      return value;
-    }
-    return undefined;
-  })
   @IsString()
-  category: ELearningCategory;
+  @MinLength(2, { message: 'Category must be at least 2 characters long' })
+  @MaxLength(80, { message: 'Category must not exceed 80 characters' })
+  category: string;
 
   @Transform(({ value }) => {
     if (typeof value === 'string') {
@@ -139,7 +133,7 @@ export class UpdateElearningDto {
   @IsOptional()
   @IsString()
   @MinLength(3, { message: 'Title must be at least 3 characters long' })
-  @MaxLength(200, { message: 'Title must not exceed 200 characters' })
+  @MaxLength(100, { message: 'Title must not exceed 100 characters' })
   title?: string;
 
   @IsOptional()
@@ -153,14 +147,10 @@ export class UpdateElearningDto {
   contentPreview?: string;
 
   @IsOptional()
-  @Transform(({ value }) => {
-    if (typeof value === 'string' && ELEARNING_CATEGORIES.includes(value as any)) {
-      return value;
-    }
-    return undefined;
-  })
   @IsString()
-  category?: ELearningCategory;
+  @MinLength(2, { message: 'Category must be at least 2 characters long' })
+  @MaxLength(80, { message: 'Category must not exceed 80 characters' })
+  category?: string;
 
   @IsOptional()
   @Transform(({ value }) => {
@@ -254,7 +244,6 @@ export class GetElearningQueryDto {
   @IsOptional()
   @Transform(({ value }) => parseInt(value, 10))
   @IsInt()
-  @Min(1)
   @Min(1)
   limit?: number = 20;
 

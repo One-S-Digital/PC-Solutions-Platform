@@ -320,7 +320,11 @@ export const apiService = {
     const { id: _id, ...updateData } = userData
     return apiClient.patch<ApiResponse<User>>(`/users/${id}`, updateData)
   },
+  /** Soft-delete endpoint (currently suspends on backend). Prefer explicit status updates for suspension. */
   deleteUser: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/users/${id}`),
+  /** Hard delete (permanent) */
+  deleteUserHard: (apiClient: AxiosInstance, id: string) =>
+    apiClient.delete<ApiResponse<null>>(`/users/${id}`, { params: { hard: true, force: true } }),
   
   // Role Elevation - Super Admin only
   elevateUserToAdmin: (
@@ -331,11 +335,17 @@ export const apiService = {
   ) => apiClient.post<ApiResponse<User>>(`/users/${userId}/elevate-to-admin`, { targetRole, reason }),
 
   // Organizations
-  getOrganizations: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Organization[]>>('/compat/organizations'),
+  getOrganizations: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Organization[]>>('/compat/organizations', { params: { limit: 10000 } }),
   getOrganizationById: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Organization>>(`/compat/organizations/${id}`),
   createOrganization: (apiClient: AxiosInstance, orgData: Partial<Organization>) => apiClient.post<ApiResponse<Organization>>('/compat/organizations', orgData),
   updateOrganization: (apiClient: AxiosInstance, id: string, orgData: Partial<Organization>) => apiClient.put<ApiResponse<Organization>>(`/compat/organizations/${id}`, orgData),
   deleteOrganization: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/compat/organizations/${id}`),
+
+  // Organization Backfill (Admin)
+  getUsersWithoutOrganizations: (apiClient: AxiosInstance) => 
+    apiClient.get<ApiResponse<{ total: number; byRole: { foundations: number; productSuppliers: number; serviceProviders: number }; users: any[] }>>('/admin/users-without-organizations'),
+  backfillOrganizations: (apiClient: AxiosInstance) => 
+    apiClient.post<ApiResponse<{ total: number; created: number; failed: number; details: any[] }>>('/admin/backfill-organizations'),
 
   // Discount Terminations / Vendor Clients (Admin)
   getVendorClients: (
@@ -429,6 +439,7 @@ export const apiService = {
     onProgress?: (progress: number) => void
   ) => apiClient.post<ApiResponse<any>>('/content/elearning', data, {
     headers: { 'Content-Type': 'multipart/form-data' },
+    timeout: 600000, // 10 minutes timeout for large video uploads
     onUploadProgress: (progressEvent) => {
       if (onProgress && progressEvent.total) {
         const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
@@ -463,6 +474,7 @@ export const apiService = {
     onProgress?: (progress: number) => void
   ) => apiClient.post<ApiResponse<HrDocument>>('/content/hr-documents/upload', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
+    timeout: 300000, // 5 minutes timeout for large document uploads
     onUploadProgress: (progressEvent) => {
       if (onProgress && progressEvent.total) {
         const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
@@ -500,6 +512,7 @@ export const apiService = {
     onProgress?: (progress: number) => void
   ) => apiClient.post<ApiResponse<PolicyDocument>>('/content/state-policies/upload', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
+    timeout: 300000, // 5 minutes timeout for large policy document uploads
     onUploadProgress: (progressEvent) => {
       if (onProgress && progressEvent.total) {
         const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
@@ -844,6 +857,16 @@ export const apiService = {
   ) => apiClient.post<ApiResponse<{ success: boolean; cleaned: number; affected: number }>>('/static-translations/admin/cleanup-prefixes', {}, {
     timeout: 300000, // 5 minutes timeout for cleanup operations (can take a while for large datasets)
   }),
+
+  // Admin Profile Management
+  getAdminUserProfile: (apiClient: AxiosInstance, userId: string) =>
+    apiClient.get<ApiResponse<any>>(`/admin/users/${userId}/profile`),
+  updateAdminUserProfile: (apiClient: AxiosInstance, userId: string, data: any) =>
+    apiClient.patch<ApiResponse<any>>(`/admin/users/${userId}/profile`, data),
+  getAdminOrganizationProfile: (apiClient: AxiosInstance, orgId: string) =>
+    apiClient.get<ApiResponse<any>>(`/admin/organizations/${orgId}/profile`),
+  updateAdminOrganizationProfile: (apiClient: AxiosInstance, orgId: string, data: any) =>
+    apiClient.patch<ApiResponse<any>>(`/admin/organizations/${orgId}/profile`, data),
 
   // Support Tickets
   getSupportTickets: (apiClient: AxiosInstance, filters?: {

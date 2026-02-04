@@ -5,6 +5,7 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { UserRole, OrganizationType, PromoCode, Prisma } from '@prisma/client';
 import {
   CreatePromoCodeDto,
   UpdatePromoCodeDto,
@@ -29,6 +30,94 @@ export class PromoCodesService {
   }
 
   /**
+   * Get or create organization for user (for suppliers/service providers only)
+   */
+  async getOrCreateOrganizationForUser(profileId: string): Promise<string | null> {
+    // First check if organization already exists
+    const existingOrg = await this.prisma.userOrganization.findFirst({
+      where: { userId: profileId },
+      select: { organizationId: true },
+    });
+
+    if (existingOrg) {
+      return existingOrg.organizationId;
+    }
+
+    // Get user to determine their role
+    const user = await this.prisma.user.findUnique({
+      where: { id: profileId },
+      select: { 
+        id: true, 
+        role: true, 
+        firstName: true, 
+        lastName: true, 
+        email: true,
+      },
+    });
+
+    if (!user) {
+      this.logger.warn(`User not found: ${profileId}`);
+      return null;
+    }
+
+    // Only create organizations for supplier/service provider roles
+    const roleToOrgType: Record<string, OrganizationType> = {
+      [UserRole.PRODUCT_SUPPLIER]: OrganizationType.PRODUCT_SUPPLIER,
+      [UserRole.SERVICE_PROVIDER]: OrganizationType.SERVICE_PROVIDER,
+    };
+
+    const orgType = roleToOrgType[user.role];
+    if (!orgType) {
+      this.logger.warn(`User role ${user.role} does not support promo codes`);
+      return null;
+    }
+
+    // Create organization and link it to the user in a transaction
+    const result = await this.prisma.$transaction(async (tx) => {
+      const organization = await tx.organization.create({
+        data: {
+          name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'My Organization',
+          type: orgType,
+          contactPerson: `${user.firstName || ''} ${user.lastName || ''}`.trim() || null,
+          isActive: true,
+        },
+      });
+
+      await tx.userOrganization.create({
+        data: {
+          userId: user.id,
+          organizationId: organization.id,
+          role: user.role,
+        },
+      });
+
+      this.logger.log(
+        `Created organization ${organization.id} for user ${profileId} (${user.role})`
+      );
+
+      return organization.id;
+    });
+
+    return result;
+  }
+
+  /**
+   * Map database record to response DTO
+   */
+  private mapToResponse(promoCode: PromoCode): PromoCodeResponseDto {
+    return {
+      id: promoCode.id,
+      code: promoCode.code,
+      description: promoCode.description || undefined,
+      discount: promoCode.discount,
+      isActive: promoCode.isActive,
+      organizationId: promoCode.organizationId,
+      createdAt: promoCode.createdAt,
+      updatedAt: promoCode.updatedAt,
+    };
+  }
+
+  /**
    * Get all promo codes for an organization
    */
   async getPromoCodes(organizationId: string): Promise<PromoCodeResponseDto[]> {
@@ -37,37 +126,7 @@ export class PromoCodesService {
       orderBy: { createdAt: 'desc' },
     });
 
-    // Auto-update expired statuses
-    const now = new Date();
-    const expiredIds: string[] = [];
-    
-    for (const code of promoCodes) {
-      if (code.status === 'Active' && new Date(code.expiryDate) < now) {
-        expiredIds.push(code.id);
-      }
-    }
-
-    if (expiredIds.length > 0) {
-      await this.prisma.promoCode.updateMany({
-        where: { id: { in: expiredIds } },
-        data: { status: 'Expired' },
-      });
-    }
-
-    return promoCodes.map((code) => ({
-      id: code.id,
-      code: code.code,
-      discountType: code.discountType,
-      value: code.value,
-      expiryDate: code.expiryDate,
-      status: expiredIds.includes(code.id) ? 'Expired' : code.status,
-      description: code.description || undefined,
-      usageCount: code.usageCount,
-      maxUsage: code.maxUsage || undefined,
-      organizationId: code.organizationId,
-      createdAt: code.createdAt,
-      updatedAt: code.updatedAt,
-    }));
+    return promoCodes.map(code => this.mapToResponse(code));
   }
 
   /**
@@ -85,20 +144,7 @@ export class PromoCodesService {
       throw new NotFoundException('Promo code not found');
     }
 
-    return {
-      id: promoCode.id,
-      code: promoCode.code,
-      discountType: promoCode.discountType,
-      value: promoCode.value,
-      expiryDate: promoCode.expiryDate,
-      status: promoCode.status,
-      description: promoCode.description || undefined,
-      usageCount: promoCode.usageCount,
-      maxUsage: promoCode.maxUsage || undefined,
-      organizationId: promoCode.organizationId,
-      createdAt: promoCode.createdAt,
-      updatedAt: promoCode.updatedAt,
-    };
+    return this.mapToResponse(promoCode);
   }
 
   /**
@@ -123,11 +169,9 @@ export class PromoCodesService {
     const promoCode = await this.prisma.promoCode.create({
       data: {
         code: dto.code.toUpperCase(),
-        discountType: dto.discountType,
-        value: dto.value,
-        expiryDate: new Date(dto.expiryDate),
-        description: dto.description,
-        maxUsage: dto.maxUsage,
+        description: dto.description || null,
+        discount: dto.discount,
+        isActive: dto.isActive ?? true,
         organizationId,
       },
     });
@@ -136,20 +180,7 @@ export class PromoCodesService {
       `Created promo code ${promoCode.code} for organization ${organizationId}`,
     );
 
-    return {
-      id: promoCode.id,
-      code: promoCode.code,
-      discountType: promoCode.discountType,
-      value: promoCode.value,
-      expiryDate: promoCode.expiryDate,
-      status: promoCode.status,
-      description: promoCode.description || undefined,
-      usageCount: promoCode.usageCount,
-      maxUsage: promoCode.maxUsage || undefined,
-      organizationId: promoCode.organizationId,
-      createdAt: promoCode.createdAt,
-      updatedAt: promoCode.updatedAt,
-    };
+    return this.mapToResponse(promoCode);
   }
 
   /**
@@ -191,31 +222,15 @@ export class PromoCodesService {
       where: { id: promoCodeId },
       data: {
         ...(dto.code !== undefined && { code: dto.code.toUpperCase() }),
-        ...(dto.discountType !== undefined && { discountType: dto.discountType }),
-        ...(dto.value !== undefined && { value: dto.value }),
-        ...(dto.expiryDate !== undefined && { expiryDate: new Date(dto.expiryDate) }),
-        ...(dto.status !== undefined && { status: dto.status }),
         ...(dto.description !== undefined && { description: dto.description }),
-        ...(dto.maxUsage !== undefined && { maxUsage: dto.maxUsage }),
+        ...(dto.discount !== undefined && { discount: dto.discount }),
+        ...(dto.isActive !== undefined && { isActive: dto.isActive }),
       },
     });
 
     this.logger.log(`Updated promo code ${promoCodeId}`);
 
-    return {
-      id: promoCode.id,
-      code: promoCode.code,
-      discountType: promoCode.discountType,
-      value: promoCode.value,
-      expiryDate: promoCode.expiryDate,
-      status: promoCode.status,
-      description: promoCode.description || undefined,
-      usageCount: promoCode.usageCount,
-      maxUsage: promoCode.maxUsage || undefined,
-      organizationId: promoCode.organizationId,
-      createdAt: promoCode.createdAt,
-      updatedAt: promoCode.updatedAt,
-    };
+    return this.mapToResponse(promoCode);
   }
 
   /**
@@ -245,73 +260,112 @@ export class PromoCodesService {
    * Get public/active promo codes for an organization (for profile viewing)
    */
   async getPublicPromoCodes(organizationId: string): Promise<PromoCodeResponseDto[]> {
-    const now = new Date();
-    
     const promoCodes = await this.prisma.promoCode.findMany({
       where: {
         organizationId,
-        status: 'Active',
-        expiryDate: { gte: now },
+        isActive: true,
       },
       orderBy: { createdAt: 'desc' },
     });
 
-    return promoCodes.map((code) => ({
-      id: code.id,
-      code: code.code,
-      discountType: code.discountType,
-      value: code.value,
-      expiryDate: code.expiryDate,
-      status: code.status,
-      description: code.description || undefined,
-      usageCount: code.usageCount,
-      maxUsage: code.maxUsage || undefined,
-      organizationId: code.organizationId,
-      createdAt: code.createdAt,
-      updatedAt: code.updatedAt,
-    }));
+    return promoCodes.map(code => this.mapToResponse(code));
   }
 
   /**
-   * Validate and apply a promo code (for use by foundations/buyers)
+   * Redeem a promo code - validates and returns discount info for order processing.
+   * Since promo codes are now display-only (free text discount descriptions),
+   * this method parses the discount text to extract type and value when possible.
+   * 
+   * @param code - The promo code string
+   * @param organizationId - The supplier/organization ID the code belongs to
+   * @param tx - Optional Prisma transaction client
+   * @returns Promo code with parsed discount info, or null if invalid/not found
    */
-  async validatePromoCode(
+  async redeemPromoCode(
     code: string,
     organizationId: string,
-  ): Promise<PromoCodeResponseDto | null> {
-    const now = new Date();
+    tx?: Prisma.TransactionClient,
+  ): Promise<{ id: string; code: string; discountType: string; value: number } | null> {
+    const prismaClient = tx || this.prisma;
 
-    const promoCode = await this.prisma.promoCode.findFirst({
+    const promoCode = await prismaClient.promoCode.findFirst({
       where: {
         code: code.toUpperCase(),
         organizationId,
-        status: 'Active',
-        expiryDate: { gte: now },
+        isActive: true,
       },
     });
 
     if (!promoCode) {
+      this.logger.warn(
+        `Promo code "${code}" not found or inactive for organization ${organizationId}`,
+      );
       return null;
     }
 
-    // Check max usage
-    if (promoCode.maxUsage && promoCode.usageCount >= promoCode.maxUsage) {
-      return null;
-    }
+    // Parse the free-text discount field to extract type and value
+    // Examples: "20% off" -> Percentage/20, "CHF 10 off" -> FixedAmount/10
+    const parsed = this.parseDiscountText(promoCode.discount);
+
+    this.logger.log(
+      `Promo code ${promoCode.code} redeemed for organization ${organizationId} - ` +
+      `parsed as ${parsed.discountType}/${parsed.value}`,
+    );
 
     return {
       id: promoCode.id,
       code: promoCode.code,
-      discountType: promoCode.discountType,
-      value: promoCode.value,
-      expiryDate: promoCode.expiryDate,
-      status: promoCode.status,
-      description: promoCode.description || undefined,
-      usageCount: promoCode.usageCount,
-      maxUsage: promoCode.maxUsage || undefined,
-      organizationId: promoCode.organizationId,
-      createdAt: promoCode.createdAt,
-      updatedAt: promoCode.updatedAt,
+      discountType: parsed.discountType,
+      value: parsed.value,
     };
+  }
+
+  /**
+   * Parse free-text discount description into structured type and value.
+   * Handles formats like:
+   * - "20% off" -> { discountType: 'Percentage', value: 20 }
+   * - "CHF 10 off" -> { discountType: 'FixedAmount', value: 10 }
+   * - "10 free minutes" -> { discountType: 'FreeMinutes', value: 10 }
+   * - Other formats -> { discountType: 'Other', value: 0 } (no auto discount)
+   */
+  private parseDiscountText(discount: string): { discountType: string; value: number } {
+    if (!discount) {
+      return { discountType: 'Other', value: 0 };
+    }
+
+    const normalizedDiscount = discount.toLowerCase().trim();
+
+    // Match percentage: "20% off", "20%", "20 percent", "20 per cent"
+    const percentMatch = normalizedDiscount.match(/^(\d+(?:\.\d+)?)\s*(?:%|percent|per\s*cent)/);
+    if (percentMatch) {
+      return { discountType: 'Percentage', value: parseFloat(percentMatch[1]) };
+    }
+
+    // Match fixed amount: "CHF 10 off", "CHF 10", "$10 off", "10 CHF off"
+    const fixedMatchPrefix = normalizedDiscount.match(/^(?:chf|usd|\$|€|eur)\s*(\d+(?:\.\d+)?)/);
+    if (fixedMatchPrefix) {
+      return { discountType: 'FixedAmount', value: parseFloat(fixedMatchPrefix[1]) };
+    }
+
+    const fixedMatchSuffix = normalizedDiscount.match(/^(\d+(?:\.\d+)?)\s*(?:chf|usd|\$|€|eur)/);
+    if (fixedMatchSuffix) {
+      return { discountType: 'FixedAmount', value: parseFloat(fixedMatchSuffix[1]) };
+    }
+
+    // Match free minutes: "10 free minutes", "10 minutes free"
+    const minutesMatch = normalizedDiscount.match(/(\d+)\s*(?:free\s*)?minutes?/);
+    if (minutesMatch) {
+      return { discountType: 'FreeMinutes', value: parseInt(minutesMatch[1], 10) };
+    }
+
+    // Fallback: try to extract any number as a percentage
+    const anyNumberMatch = normalizedDiscount.match(/(\d+(?:\.\d+)?)/);
+    if (anyNumberMatch && normalizedDiscount.includes('%')) {
+      return { discountType: 'Percentage', value: parseFloat(anyNumberMatch[1]) };
+    }
+
+    // Unknown format - promo code is display-only, no automatic discount
+    this.logger.warn(`Could not parse discount format: "${discount}" - treating as display-only`);
+    return { discountType: 'Other', value: 0 };
   }
 }

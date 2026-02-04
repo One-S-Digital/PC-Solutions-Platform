@@ -1,6 +1,6 @@
 # i18n Legacy Backlog
 
-> **Last Updated:** 2025/12/24, 01:12:10
+> **Last Updated:** 2/1/2026, 3:02:04 PM
 > 
 > **Purpose:** Tracking document only - these issues do NOT block commits or releases.
 > Fix them incrementally when working in affected files.
@@ -15,8 +15,8 @@
 
 | Area | High | Medium | Total |
 |------|------|--------|-------|
-| Frontend | 8 | 49 | 57 |
-| Admin | 0 | 23 | 23 |
+| Frontend | 8 | 48 | 56 |
+| Admin | 0 | 24 | 24 |
 | UI Package | 0 | 0 | 0 |
 | Translations | 23 | 6 | 29 |
 | Other | 0 | 0 | 0 |
@@ -33,19 +33,19 @@
 
 **High Confidence:**
 
-- Line 496: `"Education Policy"`
-- Line 496: `"Education Policy"`
-- Line 500: `"Data Privacy"`
-- Line 500: `"Data Privacy"`
+- Line 502: `"Education Policy"`
+- Line 502: `"Education Policy"`
+- Line 506: `"Data Privacy"`
+- Line 506: `"Data Privacy"`
 
 **Medium Confidence:**
 
-- Line 427: `"Child Development"`
-- Line 427: `"Child Development"`
-- Line 434: `"Other Content"`
-- Line 499: `"Child Protection"`
-- Line 499: `"Child Protection"`
-- Line 1115: `"New Client"`
+- Line 433: `"Child Development"`
+- Line 433: `"Child Development"`
+- Line 440: `"Other Content"`
+- Line 505: `"Child Protection"`
+- Line 505: `"Child Protection"`
+- Line 1133: `"New Client"`
 
 ---
 
@@ -65,6 +65,20 @@
 
 ---
 
+#### `frontend/sentry.config.ts`
+
+**Total:** 2 (1 high, 1 medium)
+
+**High Confidence:**
+
+- Line 38: `"Send Feedback"`
+
+**Medium Confidence:**
+
+- Line 95: `"Failed to fetch"`
+
+---
+
 #### `frontend/components/availability/DateOverrideModal.tsx`
 
 **Total:** 1 (1 high, 0 medium)
@@ -72,16 +86,6 @@
 **High Confidence:**
 
 - Line 125: `"Edit Date Override"`
-
----
-
-#### `frontend/pages/foundation/FoundationOrganisationProfilePage.tsx`
-
-**Total:** 1 (1 high, 0 medium)
-
-**High Confidence:**
-
-- Line 546: `"Update core organization profile information"`
 
 ---
 
@@ -127,12 +131,12 @@
 **Medium Confidence:**
 
 - Line 29: `"Authentication token not available"`
-- Line 60: `"An unexpected error occurred"`
-- Line 78: `"Authentication token not available"`
-- Line 123: `"An unexpected error occurred"`
-- Line 140: `"Authentication token not available"`
-- Line 152: `"An unexpected error occurred"`
-- Line 166: `"Authentication token not available"`
+- Line 69: `"An unexpected error occurred"`
+- Line 87: `"Authentication token not available"`
+- Line 132: `"An unexpected error occurred"`
+- Line 149: `"Authentication token not available"`
+- Line 161: `"An unexpected error occurred"`
+- Line 175: `"Authentication token not available"`
 
 ---
 
@@ -187,7 +191,7 @@
 **Medium Confidence:**
 
 - Line 167: `"Authentication token not available"`
-- Line 448: `"Authentication token not available"`
+- Line 465: `"Authentication token not available"`
 
 ---
 
@@ -210,26 +214,6 @@
 
 - Line 12: `"Educatrice bilingue"`
 - Line 28: `"Educatrice bilingue"`
-
----
-
-#### `frontend/components/profile/edit/FoundationProfileForm.tsx`
-
-**Total:** 1 (0 high, 1 medium)
-
-**Medium Confidence:**
-
-- Line 23: `"Reggio Emilia"`
-
----
-
-#### `frontend/components/settings/sections/CompanyProfileSettings.tsx`
-
-**Total:** 1 (0 high, 1 medium)
-
-**Medium Confidence:**
-
-- Line 40: `"Reggio Emilia"`
 
 ---
 
@@ -281,10 +265,10 @@
 
 **Medium Confidence:**
 
-- Line 45: `"Early Childhood Education Degree"`
-- Line 47: `"Valid childcare certification"`
-- Line 49: `"Background check required"`
-- Line 56: `"Paid time off"`
+- Line 47: `"Early Childhood Education Degree"`
+- Line 49: `"Valid childcare certification"`
+- Line 51: `"Background check required"`
+- Line 58: `"Paid time off"`
 
 ---
 
@@ -299,23 +283,13 @@
 
 ---
 
-#### `admin/src/components/auth/AdminCustomSignupFormNew.tsx`
-
-**Total:** 1 (0 high, 1 medium)
-
-**Medium Confidence:**
-
-- Line 295: `"Organization Name"`
-
----
-
 #### `admin/src/components/ContentUploadModal.tsx`
 
 **Total:** 1 (0 high, 1 medium)
 
 **Medium Confidence:**
 
-- Line 640: `"In Review"`
+- Line 643: `"In Review"`
 
 ---
 
@@ -339,13 +313,33 @@
 
 ---
 
+#### `admin/src/components/auth/AdminCustomSignupFormNew.tsx`
+
+**Total:** 1 (0 high, 1 medium)
+
+**Medium Confidence:**
+
+- Line 295: `"Organization Name"`
+
+---
+
+#### `admin/src/pages/AdminOrganizationProfileEdit.tsx`
+
+**Total:** 1 (0 high, 1 medium)
+
+**Medium Confidence:**
+
+- Line 75: `"Reggio Emilia"`
+
+---
+
 #### `admin/src/types/subscription.ts`
 
 **Total:** 1 (0 high, 1 medium)
 
 **Medium Confidence:**
 
-- Line 323: `"Grace Period"`
+- Line 324: `"Grace Period"`
 
 ---
 

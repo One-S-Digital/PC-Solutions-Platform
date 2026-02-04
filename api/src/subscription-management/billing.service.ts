@@ -103,8 +103,13 @@ export class BillingService {
 
       this.logger.log(`Created payment intent: ${transaction.id}`);
       return transaction as BillingTransaction;
-    } catch (error) {
-      this.logger.error(`Failed to create payment intent: ${(error as Error).message}`);
+    } catch (error: any) {
+      // Provide clearer error message if billing_transactions table doesn't exist
+      if (error.message?.includes('does not exist')) {
+        this.logger.error('billing_transactions table not found - billing features are not available until migration is applied');
+        throw new Error('Billing features are not available. Please contact your administrator.');
+      }
+      this.logger.error(`Failed to create payment intent: ${error.message}`);
       throw error;
     }
   }
@@ -140,8 +145,13 @@ export class BillingService {
 
       this.logger.log(`Updated payment status: ${transaction.id} to ${status}`);
       return transaction as BillingTransaction;
-    } catch (error) {
-      this.logger.error(`Failed to update payment status: ${(error as Error).message}`);
+    } catch (error: any) {
+      // Provide clearer error message if billing_transactions table doesn't exist
+      if (error.message?.includes('does not exist')) {
+        this.logger.error('billing_transactions table not found - billing features are not available');
+        throw new Error('Billing features are not available. Please contact your administrator.');
+      }
+      this.logger.error(`Failed to update payment status: ${error.message}`);
       throw error;
     }
   }
@@ -157,19 +167,61 @@ export class BillingService {
       dateTo?: Date;
     },
   ): Promise<{ transactions: BillingTransaction[]; total: number; pages: number }> {
-    const where: any = {};
-    
-    if (filters?.status) where.status = filters.status;
-    if (filters?.subscriptionId) where.subscriptionId = filters.subscriptionId;
-    if (filters?.dateFrom || filters?.dateTo) {
-      where.createdAt = {};
-      if (filters.dateFrom) where.createdAt.gte = filters.dateFrom;
-      if (filters.dateTo) where.createdAt.lte = filters.dateTo;
-    }
+    try {
+      const where: any = {};
+      
+      if (filters?.status) where.status = filters.status;
+      if (filters?.subscriptionId) where.subscriptionId = filters.subscriptionId;
+      if (filters?.dateFrom || filters?.dateTo) {
+        where.createdAt = {};
+        if (filters.dateFrom) where.createdAt.gte = filters.dateFrom;
+        if (filters.dateTo) where.createdAt.lte = filters.dateTo;
+      }
 
-    const [transactions, total] = await Promise.all([
-      this.prisma.billingTransaction.findMany({
-        where,
+      const [transactions, total] = await Promise.all([
+        this.prisma.billingTransaction.findMany({
+          where,
+          include: {
+            subscription: {
+              include: {
+                plan: true,
+                user: {
+                  select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    email: true,
+                  },
+                },
+              },
+            },
+          },
+          orderBy: { createdAt: 'desc' },
+          skip: (page - 1) * limit,
+          take: limit,
+        }),
+        this.prisma.billingTransaction.count({ where }),
+      ]);
+
+      return {
+        transactions: transactions as BillingTransaction[],
+        total,
+        pages: Math.ceil(total / limit),
+      };
+    } catch (error: any) {
+      // Handle case where billing_transactions table doesn't exist
+      if (error.message?.includes('does not exist')) {
+        this.logger.warn('billing_transactions table not found, returning empty results');
+        return { transactions: [], total: 0, pages: 0 };
+      }
+      throw error;
+    }
+  }
+
+  async getTransactionById(transactionId: string): Promise<BillingTransaction | null> {
+    try {
+      const transaction = await this.prisma.billingTransaction.findUnique({
+        where: { id: transactionId },
         include: {
           subscription: {
             include: {
@@ -185,41 +237,17 @@ export class BillingService {
             },
           },
         },
-        orderBy: { createdAt: 'desc' },
-        skip: (page - 1) * limit,
-        take: limit,
-      }),
-      this.prisma.billingTransaction.count({ where }),
-    ]);
+      });
 
-    return {
-      transactions: transactions as BillingTransaction[],
-      total,
-      pages: Math.ceil(total / limit),
-    };
-  }
-
-  async getTransactionById(transactionId: string): Promise<BillingTransaction | null> {
-    const transaction = await this.prisma.billingTransaction.findUnique({
-      where: { id: transactionId },
-      include: {
-        subscription: {
-          include: {
-            plan: true,
-            user: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                email: true,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    return transaction as BillingTransaction | null;
+      return transaction as BillingTransaction | null;
+    } catch (error: any) {
+      // Handle case where billing_transactions table doesn't exist
+      if (error.message?.includes('does not exist')) {
+        this.logger.warn('billing_transactions table not found');
+        return null;
+      }
+      throw error;
+    }
   }
 
   async processRefund(
@@ -266,8 +294,13 @@ export class BillingService {
 
       this.logger.log(`Processed refund for transaction ${transactionId}: CHF ${refundAmount}`);
       return refundTransaction as BillingTransaction;
-    } catch (error) {
-      this.logger.error(`Failed to process refund: ${(error as Error).message}`);
+    } catch (error: any) {
+      // Provide clearer error message if billing_transactions table doesn't exist
+      if (error.message?.includes('does not exist')) {
+        this.logger.error('billing_transactions table not found - refund features are not available');
+        throw new Error('Billing features are not available. Please contact your administrator.');
+      }
+      this.logger.error(`Failed to process refund: ${error.message}`);
       throw error;
     }
   }
@@ -277,18 +310,38 @@ export class BillingService {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
 
-    const transactions = await this.prisma.billingTransaction.findMany({
-      where: {
-        createdAt: { gte: startDate },
-      },
-      include: {
-        subscription: {
-          include: {
-            plan: true,
+    let transactions: any[] = [];
+    try {
+      transactions = await this.prisma.billingTransaction.findMany({
+        where: {
+          createdAt: { gte: startDate },
+        },
+        include: {
+          subscription: {
+            include: {
+              plan: true,
+            },
           },
         },
-      },
-    });
+      });
+    } catch (error: any) {
+      // Handle case where billing_transactions table doesn't exist
+      if (error.message?.includes('does not exist')) {
+        this.logger.warn('billing_transactions table not found, returning default analytics');
+        // Return empty analytics
+        return {
+          totalRevenue: 0,
+          monthlyRecurringRevenue: 0,
+          averageTransactionValue: 0,
+          paymentSuccessRate: 0,
+          refundRate: 0,
+          revenueByMonth: [],
+          paymentMethodDistribution: [],
+          failedPayments: [],
+        };
+      }
+      throw error;
+    }
 
     const successfulTransactions = transactions.filter(t => t.status === 'succeeded');
     const failedTransactions = transactions.filter(t => t.status === 'failed');

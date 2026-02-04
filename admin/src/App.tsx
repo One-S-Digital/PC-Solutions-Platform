@@ -25,6 +25,10 @@ import SupportPage from './pages/Support';
 import SupportTicketPage from './pages/SupportTicket';
 import SubscriptionsPage from './pages/Subscriptions';
 import DiscountTerminationsPage from './pages/DiscountTerminations';
+import PolicyCrawlerPage from './pages/PolicyCrawler';
+import AdminUserProfileEdit from './pages/AdminUserProfileEdit';
+import AdminOrganizationProfileEdit from './pages/AdminOrganizationProfileEdit';
+import ResetPassword from './pages/ResetPassword';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -69,6 +73,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<AdminLoginPage />} />
         <Route path="/signup" element={<AdminSignupPage />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/access-denied" element={<AccessDeniedPage />} />
         <Route
           path="/"
@@ -80,7 +85,9 @@ function App() {
         >
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="users" element={<UsersPage />} />
+          <Route path="users/:id/profile" element={<AdminUserProfileEdit />} />
           <Route path="organizations" element={<OrganizationsPage />} />
+          <Route path="organizations/:id/profile" element={<AdminOrganizationProfileEdit />} />
           <Route path="partners" element={<PartnersPage />} />
           <Route path="products" element={<ProductsPage />} />
           <Route path="services" element={<ServicesPage />} />
@@ -94,6 +101,10 @@ function App() {
           <Route path="support/tickets/:ticketId" element={<SupportTicketPage />} />
           <Route path="discount-terminations" element={<DiscountTerminationsPage />} />
           <Route path="subscriptions" element={<SubscriptionsPage />} />
+
+          {/* Policy crawler (always visible; status is indicated inside) */}
+          <Route path="policy-crawler/*" element={<PolicyCrawlerPage />} />
+
           <Route path="system" element={<SystemMonitorPage />} />
           <Route path="translations" element={<TranslationsPage />} />
           <Route path="settings" element={<SettingsPage />} />

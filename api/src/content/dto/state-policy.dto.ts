@@ -16,8 +16,6 @@ import {
   LanguageCode,
   FileType,
   PolicyType,
-  POLICY_CATEGORIES,
-  PolicyCategory,
   COUNTRIES,
   Country,
   REGIONS_BY_COUNTRY,
@@ -26,7 +24,7 @@ import {
 export class UploadStatePolicyDto {
   @IsString()
   @MinLength(3, { message: 'Policy title must be at least 3 characters long' })
-  @MaxLength(200, { message: 'Policy title must not exceed 200 characters' })
+  @MaxLength(100, { message: 'Policy title must not exceed 100 characters' })
   title: string;
 
   @IsOptional()
@@ -36,17 +34,13 @@ export class UploadStatePolicyDto {
 
   @IsOptional()
   @IsString()
-  @MaxLength(300, { message: 'Content preview must not exceed 300 characters' })
+  @MaxLength(1000, { message: 'Content preview must not exceed 1000 characters' })
   contentPreview?: string;
 
-  @Transform(({ value }) => {
-    if (typeof value === 'string' && POLICY_CATEGORIES.includes(value as any)) {
-      return value;
-    }
-    return undefined;
-  })
   @IsString()
-  category: PolicyCategory;
+  @MinLength(2, { message: 'Category must be at least 2 characters long' })
+  @MaxLength(80, { message: 'Category must not exceed 80 characters' })
+  category: string;
 
   @Transform(({ value }) => {
     if (typeof value === 'string') {
@@ -162,7 +156,7 @@ export class UpdateStatePolicyDto {
   @IsOptional()
   @IsString()
   @MinLength(3, { message: 'Policy title must be at least 3 characters long' })
-  @MaxLength(200, { message: 'Policy title must not exceed 200 characters' })
+  @MaxLength(100, { message: 'Policy title must not exceed 100 characters' })
   title?: string;
 
   @IsOptional()
@@ -172,18 +166,24 @@ export class UpdateStatePolicyDto {
 
   @IsOptional()
   @IsString()
-  @MaxLength(300, { message: 'Content preview must not exceed 300 characters' })
+  @MaxLength(1000, { message: 'Content preview must not exceed 1000 characters' })
   contentPreview?: string;
 
   @IsOptional()
-  @Transform(({ value }) => {
-    if (typeof value === 'string' && POLICY_CATEGORIES.includes(value as any)) {
-      return value;
-    }
-    return undefined;
-  })
   @IsString()
-  category?: PolicyCategory;
+  @MinLength(2, { message: 'Category must be at least 2 characters long' })
+  @MaxLength(80, { message: 'Category must not exceed 80 characters' })
+  category?: string;
+
+  /**
+   * Backwards-compatible alias for `category`.
+   * Some clients historically send `contentCategory`; we store it as `Asset.contentCategory`.
+   */
+  @IsOptional()
+  @IsString()
+  @MinLength(2, { message: 'contentCategory must be at least 2 characters long' })
+  @MaxLength(80, { message: 'contentCategory must not exceed 80 characters' })
+  contentCategory?: string;
 
   @IsOptional()
   @Transform(({ value }) => {
@@ -264,6 +264,15 @@ export class UpdateStatePolicyDto {
   })
   @IsEnum(ContentStatus, { message: 'Invalid status value' })
   status?: ContentStatus;
+
+  /**
+   * Crawler workflow status for STATE_POLICY assets (e.g. pending_review, approved, rejected).
+   * This is stored as `Asset.crawlStatus`.
+   */
+  @IsOptional()
+  @IsString()
+  @MaxLength(50, { message: 'crawlStatus must not exceed 50 characters' })
+  crawlStatus?: string;
 
   @IsOptional()
   @IsString()

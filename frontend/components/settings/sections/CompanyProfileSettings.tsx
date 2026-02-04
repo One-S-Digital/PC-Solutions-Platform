@@ -1,11 +1,12 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useMemo, useState, useRef } from 'react';
 import { SettingsFormData, UserRole, SwissCanton, SupportedLanguage } from '../../../types';
 import { STANDARD_INPUT_FIELD, SWISS_CANTONS, SUGGESTED_SERVICE_CATEGORIES, SUGGESTED_PRODUCT_CATEGORIES, PEDAGOGY_OPTIONS } from '../../../constants';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
 import ChipInput from '../../ui/ChipInput';
 import ImageCropperModal from '../../shared/ImageCropperModal';
 import { useAuthenticatedApi } from '../../../hooks/useAuthenticatedApi';
+import { normalizeCategoryName, useCategories } from '../../../hooks/useCategories';
 import { 
   BuildingOfficeIcon, 
   PhotoIcon, 
@@ -55,6 +56,17 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
   const { t } = useTranslation(['dashboard', 'common', 'settings']);
   const { currentUser } = useAppContext();
   const { upload } = useAuthenticatedApi();
+
+  const { categories: productCategoryOptions, addCategory: addProductCategory } = useCategories(
+    'product',
+    SUGGESTED_PRODUCT_CATEGORIES,
+  );
+  const { categories: serviceCategoryOptions, addCategory: addServiceCategory } = useCategories(
+    'service',
+    SUGGESTED_SERVICE_CATEGORIES,
+  );
+  const [customProductCategory, setCustomProductCategory] = useState('');
+  const [customServiceCategory, setCustomServiceCategory] = useState('');
   
   // Logo cropping state
   const [showLogoCropper, setShowLogoCropper] = useState(false);
@@ -95,6 +107,15 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
   
   const coverImageUrl = settings.coverImageUrl || currentUser?.orgCoverImageUrl || 
     'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&q=80';
+
+  const hasOtherProductCategory = useMemo(
+    () => (settings.productCategories || []).includes('Other'),
+    [settings.productCategories],
+  );
+  const hasOtherServiceCategory = useMemo(
+    () => (settings.serviceCategories || []).includes('Other'),
+    [settings.serviceCategories],
+  );
 
   // Logo handlers
   const handleLogoFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -403,6 +424,23 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                 placeholder={t('settings:companyProfile.contactEmailPlaceholder', 'Enter contact email address')}
               />
             </div>
+
+            <label htmlFor="websiteUrl" className="form-label md:pt-2">
+              {t('settings:companyProfile.website', 'Website')}
+            </label>
+            <div className="form-input-container">
+              <input
+                type="text"
+                id="websiteUrl"
+                value={settings.websiteUrl || ''}
+                onChange={(e) => onChange('websiteUrl', e.target.value)}
+                className={STANDARD_INPUT_FIELD}
+                placeholder={t('common:placeholders.url', 'www.example.com')}
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                {t('settings:companyProfile.websiteHint', 'You can enter it without https://')}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -531,11 +569,46 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                 <div className="form-input-container">
                   <ChipInput<string>
                     selectedChips={settings.productCategories || []}
-                    availableOptions={[...SUGGESTED_PRODUCT_CATEGORIES]}
+                    availableOptions={[...productCategoryOptions]}
                     onChange={(categories) => onChange('productCategories', categories)}
                     placeholder={t('settings:companyProfile.productCategoriesPlaceholder', 'Type or select categories...')}
                     allowCustomValues={true}
                   />
+                  {hasOtherProductCategory && (
+                    <div className="mt-2 flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={customProductCategory}
+                        onChange={(e) => setCustomProductCategory(e.target.value)}
+                        className={STANDARD_INPUT_FIELD}
+                        placeholder={t(
+                          'settings:companyProfile.otherProductCategoryPlaceholder',
+                          'Specify product category...',
+                        )}
+                      />
+                      <button
+                        type="button"
+                        className="px-3 py-2 text-sm font-medium rounded-md bg-swiss-mint text-white hover:bg-swiss-teal transition-colors"
+                        onClick={async () => {
+                          const name = normalizeCategoryName(customProductCategory);
+                          if (!name) return;
+                          try {
+                            await addProductCategory(name);
+                            const next = (settings.productCategories || [])
+                              .filter((c) => c !== 'Other')
+                              .concat([name])
+                              .filter((v, i, arr) => arr.findIndex((x) => x.toLowerCase() === v.toLowerCase()) === i);
+                            onChange('productCategories', next);
+                            setCustomProductCategory('');
+                          } catch (e: any) {
+                            alert(e?.message || 'Failed to save category');
+                          }
+                        }}
+                      >
+                        {t('common:buttons.add', 'Add')}
+                      </button>
+                    </div>
+                  )}
                   <p className="text-xs text-gray-500 mt-1">
                     {t('settings:companyProfile.productCategoriesHint', 'Select from suggestions or add your own custom categories. Press Enter to add.')}
                   </p>
@@ -548,9 +621,14 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                   <input
                     type="number"
                     id="minimumOrderQuantity"
-                    min="0"
-                    value={settings.minimumOrderQuantity || ''}
-                    onChange={(e) => onChange('minimumOrderQuantity', e.target.value ? parseInt(e.target.value, 10) : 0)}
+                    min="1"
+                    value={settings.minimumOrderQuantity ?? ''}
+                    onChange={(e) =>
+                      onChange(
+                        'minimumOrderQuantity',
+                        e.target.value ? parseInt(e.target.value, 10) : undefined,
+                      )
+                    }
                     className={STANDARD_INPUT_FIELD}
                     placeholder={t('settings:companyProfile.minimumOrderQuantityPlaceholder', 'Enter minimum order quantity')}
                   />
@@ -618,11 +696,46 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                 <div className="form-input-container">
                   <ChipInput<string>
                     selectedChips={settings.serviceCategories || []}
-                    availableOptions={[...SUGGESTED_SERVICE_CATEGORIES]}
+                    availableOptions={[...serviceCategoryOptions]}
                     onChange={(categories) => onChange('serviceCategories', categories)}
                     placeholder={t('settings:companyProfile.serviceCategoriesPlaceholder', 'Type or select categories...')}
                     allowCustomValues={true}
                   />
+                  {hasOtherServiceCategory && (
+                    <div className="mt-2 flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={customServiceCategory}
+                        onChange={(e) => setCustomServiceCategory(e.target.value)}
+                        className={STANDARD_INPUT_FIELD}
+                        placeholder={t(
+                          'settings:companyProfile.otherServiceCategoryPlaceholder',
+                          'Specify service category...',
+                        )}
+                      />
+                      <button
+                        type="button"
+                        className="px-3 py-2 text-sm font-medium rounded-md bg-swiss-mint text-white hover:bg-swiss-teal transition-colors"
+                        onClick={async () => {
+                          const name = normalizeCategoryName(customServiceCategory);
+                          if (!name) return;
+                          try {
+                            await addServiceCategory(name);
+                            const next = (settings.serviceCategories || [])
+                              .filter((c) => c !== 'Other')
+                              .concat([name])
+                              .filter((v, i, arr) => arr.findIndex((x) => x.toLowerCase() === v.toLowerCase()) === i);
+                            onChange('serviceCategories', next);
+                            setCustomServiceCategory('');
+                          } catch (e: any) {
+                            alert(e?.message || 'Failed to save category');
+                          }
+                        }}
+                      >
+                        {t('common:buttons.add', 'Add')}
+                      </button>
+                    </div>
+                  )}
                   <p className="text-xs text-gray-500 mt-1">
                     {t('settings:companyProfile.serviceCategoriesHint', 'Select from suggestions or add your own custom categories. Press Enter to add.')}
                   </p>
@@ -653,13 +766,16 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                 </label>
                 <div className="form-input-container">
                   <input
-                    type="url"
+                    type="text"
                     id="bookingLink"
                     value={settings.bookingLink || ''}
                     onChange={(e) => onChange('bookingLink', e.target.value)}
                     className={STANDARD_INPUT_FIELD}
                     placeholder={t('common:placeholders.url')}
                   />
+                  <p className="mt-1 text-xs text-gray-500">
+                    {t('settings:companyProfile.bookingLinkHint', 'You can enter it without https://')}
+                  </p>
                 </div>
               </div>
             </div>

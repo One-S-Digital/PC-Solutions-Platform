@@ -16,6 +16,7 @@ import {
   SUGGESTED_PRODUCT_AGE_RANGES,
   SUGGESTED_PRODUCT_DELIVERY_METHODS,
 } from '../../constants';
+import { useCategories } from '../../hooks/useCategories';
 import {
   Product,
   ProductAvailabilityStatus,
@@ -180,6 +181,12 @@ const ProductUploadModal: React.FC<ProductUploadModalProps> = ({
 }) => {
   const { t } = useTranslation(['dashboard', 'common']);
   const [formData, setFormData] = useState<ProductFormState>(defaultFormState);
+  const { categories: productCategoryOptions, addCategory: addProductCategory } = useCategories(
+    'product',
+    SUGGESTED_PRODUCT_CATEGORIES,
+  );
+  const [customPrimaryCategory, setCustomPrimaryCategory] = useState('');
+  const [customAdditionalCategory, setCustomAdditionalCategory] = useState('');
 
   const modalTitle = initialProduct
     ? t('dashboard:productUploadModal.editTitle', 'Edit Product')
@@ -295,6 +302,8 @@ const ProductUploadModal: React.FC<ProductUploadModalProps> = ({
     } else {
       setFormData({ ...defaultFormState });
     }
+    setCustomPrimaryCategory('');
+    setCustomAdditionalCategory('');
   }, [isOpen, initialProduct]);
 
   if (!isOpen) {
@@ -523,27 +532,92 @@ const ProductUploadModal: React.FC<ProductUploadModalProps> = ({
                       )}
                     />
                     <datalist id="product-category-suggestions">
-                      {[...SUGGESTED_PRODUCT_CATEGORIES].map(
+                      {[...productCategoryOptions].map(
                         (cat) => (
                           <option key={cat} value={cat} />
                         ),
                       )}
                     </datalist>
+                    {formData.primaryCategory === 'Other' && (
+                      <div className="mt-2 flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={customPrimaryCategory}
+                          onChange={(e) => setCustomPrimaryCategory(e.target.value)}
+                          className={STANDARD_INPUT_FIELD}
+                          placeholder={helper('primaryCategoryPlaceholder', 'Specify primary category...')}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={async () => {
+                            const name = customPrimaryCategory.trim().replace(/\s+/g, ' ');
+                            if (!name) return;
+                            try {
+                              await addProductCategory(name);
+                              handleFieldChange('primaryCategory', name);
+                              setCustomPrimaryCategory('');
+                            } catch (e: any) {
+                              alert(e?.message || 'Failed to save category');
+                            }
+                          }}
+                        >
+                          {t('common:buttons.add', 'Add')}
+                        </Button>
+                      </div>
+                    )}
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       {label('categories', 'Additional categories')}
                     </label>
-                    {renderChipInput(
-                      formData.categories,
-                      'categories',
-                      SUGGESTED_PRODUCT_CATEGORIES,
-                      true,
-                      helper(
+                    <ChipInput<string>
+                      selectedChips={formData.categories}
+                      availableOptions={[...productCategoryOptions]}
+                      onChange={(chips) => handleFieldChange('categories', chips)}
+                      placeholder={helper(
                         'categoriesPlaceholder',
                         'Add tags like “Furniture” or “Kitchen”',
-                      ),
+                      )}
+                      allowCustomValues={true}
+                    />
+                    {(formData.categories || []).includes('Other') && (
+                      <div className="mt-2 flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={customAdditionalCategory}
+                          onChange={(e) => setCustomAdditionalCategory(e.target.value)}
+                          className={STANDARD_INPUT_FIELD}
+                          placeholder={helper('categoriesPlaceholder', 'Specify category...')}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={async () => {
+                            const name = customAdditionalCategory.trim().replace(/\s+/g, ' ');
+                            if (!name) return;
+                            try {
+                              await addProductCategory(name);
+                              const next = (formData.categories || [])
+                                .filter((c) => c !== 'Other')
+                                .concat([name])
+                                .filter(
+                                  (v, i, arr) =>
+                                    arr.findIndex((x) => x.toLowerCase() === v.toLowerCase()) === i,
+                                );
+                              handleFieldChange('categories', next);
+                              setCustomAdditionalCategory('');
+                            } catch (e: any) {
+                              alert(e?.message || 'Failed to save category');
+                            }
+                          }}
+                        >
+                          {t('common:buttons.add', 'Add')}
+                        </Button>
+                      </div>
                     )}
                   </div>
 

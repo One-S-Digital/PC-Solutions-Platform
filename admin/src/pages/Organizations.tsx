@@ -1,4 +1,5 @@
 import React, { useState, useEffect, Fragment, useMemo, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import { 
   Building2, 
@@ -17,7 +18,9 @@ import {
   Briefcase,
   Package,
   Wrench,
-  Globe
+  Globe,
+  RefreshCw,
+  CheckCircle
 } from 'lucide-react'
 import { useApiClient, apiService } from '../services/api'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
@@ -531,9 +534,10 @@ interface OrganizationCardProps {
   org: Organization
   onEdit: (org: Organization) => void
   onDelete: (org: Organization) => void
+  onEditFullProfile: (org: Organization) => void
 }
 
-const OrganizationCard: React.FC<OrganizationCardProps> = ({ org, onEdit, onDelete }) => {
+const OrganizationCard: React.FC<OrganizationCardProps> = ({ org, onEdit, onDelete, onEditFullProfile }) => {
   const { t } = useTranslation(['admin', 'common'])
 
   const getTypeIcon = () => {
@@ -606,8 +610,19 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ org, onEdit, onDele
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+            <Menu.Items className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
               <div className="py-1">
+                <Menu.Item>
+                  {({ active }) => (
+                    <button
+                      onClick={() => onEditFullProfile(org)}
+                      className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-swiss-teal font-medium`}
+                    >
+                      <Edit className="h-4 w-4 mr-2" />
+                      {t('admin:organizations.editFullProfile', 'Edit Full Profile')}
+                    </button>
+                  )}
+                </Menu.Item>
                 <Menu.Item>
                   {({ active }) => (
                     <button
@@ -691,6 +706,7 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ org, onEdit, onDele
 // Main Organizations Component
 const Organizations: React.FC = () => {
   const { t } = useTranslation(['admin', 'common'])
+  const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
   const [activeTab, setActiveTab] = useState<TabType>('foundations')
   const [page, setPage] = useState(1)
@@ -767,6 +783,37 @@ const Organizations: React.FC = () => {
     },
     onError: (error) => {
       logger.error('Failed to delete organization:', error)
+    },
+  })
+
+  // Backfill state
+  const [backfillResult, setBackfillResult] = useState<{ total: number; created: number; failed: number } | null>(null)
+  const [showBackfillResult, setShowBackfillResult] = useState(false)
+
+  // Check for users without organizations
+  const { data: usersWithoutOrgsResponse, refetch: refetchUsersWithoutOrgs } = useQuery({
+    queryKey: ['users-without-organizations'],
+    queryFn: () => apiService.getUsersWithoutOrganizations(apiClient),
+    staleTime: 30000, // Cache for 30 seconds
+  })
+
+  const usersWithoutOrgsCount = usersWithoutOrgsResponse?.data?.data?.total || 0
+
+  // Backfill organizations mutation
+  const backfillMutation = useMutation({
+    mutationFn: () => apiService.backfillOrganizations(apiClient),
+    onSuccess: (response) => {
+      const result = response.data?.data
+      if (result) {
+        setBackfillResult({ total: result.total, created: result.created, failed: result.failed })
+        setShowBackfillResult(true)
+      }
+      queryClient.invalidateQueries({ queryKey: ['organizations'] })
+      refetchUsersWithoutOrgs()
+      logger.log('Organization backfill completed:', result)
+    },
+    onError: (error) => {
+      logger.error('Failed to backfill organizations:', error)
     },
   })
 
@@ -875,14 +922,78 @@ const Organizations: React.FC = () => {
             {t('admin:organizations.subtitle', 'Manage all organizations across the platform')} ({Array.isArray(organizations) ? organizations.length : 0} {t('common:total', 'total')})
           </p>
         </div>
-        <Button
-          variant="primary"
-          leftIcon={Plus}
-          onClick={handleAddOrganization}
-        >
-          {t('common:add', 'Add')} {activeTab === 'foundations' ? t('admin:organizations.foundation', 'Foundation') : t('admin:organizations.organisation', 'Organisation')}
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="primary"
+            leftIcon={Plus}
+            onClick={handleAddOrganization}
+          >
+            {t('common:add', 'Add')} {activeTab === 'foundations' ? t('admin:organizations.foundation', 'Foundation') : t('admin:organizations.organisation', 'Organisation')}
+          </Button>
+        </div>
       </div>
+
+      {/* Backfill Banner - Show when there are users without organizations */}
+      {usersWithoutOrgsCount > 0 && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <AlertTriangle className="h-5 w-5 text-amber-500 mr-3" />
+              <div>
+                <p className="text-sm font-medium text-amber-800">
+                  {t('admin:organizations.backfill.usersWithoutOrgs', '{{count}} users have organization roles but no organization profile', { count: usersWithoutOrgsCount })}
+                </p>
+                <p className="text-xs text-amber-600 mt-0.5">
+                  {t('admin:organizations.backfill.description', 'These users signed up before automatic organization creation was enabled. Click to create their organizations.')}
+                </p>
+              </div>
+            </div>
+            <Button
+              variant="secondary"
+              size="sm"
+              leftIcon={RefreshCw}
+              onClick={() => backfillMutation.mutate()}
+              disabled={backfillMutation.isPending}
+            >
+              {backfillMutation.isPending 
+                ? t('admin:organizations.backfill.creating', 'Creating...') 
+                : t('admin:organizations.backfill.createOrgs', 'Create Organizations')}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Backfill Result Banner */}
+      {showBackfillResult && backfillResult && (
+        <div className={`border rounded-lg p-4 ${backfillResult.failed > 0 ? 'bg-amber-50 border-amber-200' : 'bg-green-50 border-green-200'}`}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              {backfillResult.failed > 0 ? (
+                <AlertTriangle className="h-5 w-5 text-amber-500 mr-3" />
+              ) : (
+                <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
+              )}
+              <div>
+                <p className={`text-sm font-medium ${backfillResult.failed > 0 ? 'text-amber-800' : 'text-green-800'}`}>
+                  {t('admin:organizations.backfill.resultTitle', 'Organization Creation Complete')}
+                </p>
+                <p className={`text-xs mt-0.5 ${backfillResult.failed > 0 ? 'text-amber-600' : 'text-green-600'}`}>
+                  {t('admin:organizations.backfill.resultDetails', '{{created}} organizations created successfully{{failed}}', { 
+                    created: backfillResult.created,
+                    failed: backfillResult.failed > 0 ? `, ${backfillResult.failed} failed` : ''
+                  })}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowBackfillResult(false)}
+              className="p-1 rounded-full hover:bg-gray-200 transition-colors"
+            >
+              <X className="h-4 w-4 text-gray-500" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Horizontal Tab Navigation */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-2">
@@ -982,6 +1093,7 @@ const Organizations: React.FC = () => {
             org={org}
             onEdit={handleEditOrganization}
             onDelete={handleDeleteClick}
+            onEditFullProfile={(org) => navigate(`/organizations/${org.id}/profile`)}
           />
         ))}
       </div>
