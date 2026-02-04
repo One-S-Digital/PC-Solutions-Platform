@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-02-01T15:02:02.954Z",
-  "totalKeys": 2049,
+  "timestamp": "2026-02-04T16:42:33.278Z",
+  "totalKeys": 2052,
   "byNamespace": {
-    "common": 2917,
+    "common": 2951,
     "settings": 570,
     "content": 54,
     "signup": 120,
     "auth": 6,
     "recruitment": 252,
-    "dashboard": 372,
+    "dashboard": 370,
     "admin": 168,
     "profile": 228,
     "parentLeadForm": 56,
@@ -11199,199 +11199,187 @@
     {
       "key": "dashboard:serviceProviderListingsPage.loadError",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 78,
+      "line": 91,
       "context": "setError(t('dashboard:serviceProviderListingsPage.loadError', 'Failed to load services'));"
     },
     {
       "key": "dashboard:serviceProviderListingsPage.loadError",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 78,
+      "line": 91,
       "context": "setError(t('dashboard:serviceProviderListingsPage.loadError', 'Failed to load services'));"
     },
     {
       "key": "dashboard:serviceProviderListingsPage.missingOrgDetails",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 106,
+      "line": 119,
       "context": "alert(t('dashboard:serviceProviderListingsPage.missingOrgDetails', 'User organization details are missing.'));"
     },
     {
       "key": "dashboard:serviceProviderListingsPage.missingOrgDetails",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 106,
+      "line": 119,
       "context": "alert(t('dashboard:serviceProviderListingsPage.missingOrgDetails', 'User organization details are missing.'));"
     },
     {
       "key": "dashboard:serviceProviderListingsPage.defaultTitle",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 154,
+      "line": 160,
       "context": "title: data.title || t('dashboard:serviceProviderListingsPage.defaultTitle', 'Untitled Service'),"
     },
     {
       "key": "dashboard:serviceProviderListingsPage.defaultTitle",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 154,
+      "line": 160,
       "context": "title: data.title || t('dashboard:serviceProviderListingsPage.defaultTitle', 'Untitled Service'),"
     },
     {
       "key": "dashboard:serviceProviderListingsPage.defaultAvailability",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 157,
+      "line": 165,
       "context": "availability: data.availability || t('dashboard:serviceProviderListingsPage.defaultAvailability', 'By appointment'),"
     },
     {
       "key": "dashboard:serviceProviderListingsPage.defaultAvailability",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 157,
+      "line": 165,
       "context": "availability: data.availability || t('dashboard:serviceProviderListingsPage.defaultAvailability', 'By appointment'),"
-    },
-    {
-      "key": "dashboard:serviceProviderListingsPage.defaultDeliveryType",
-      "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 159,
-      "context": "deliveryType: data.deliveryType || t('dashboard:serviceProviderListingsPage.defaultDeliveryType', 'On-site'),"
-    },
-    {
-      "key": "dashboard:serviceProviderListingsPage.defaultDeliveryType",
-      "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 159,
-      "context": "deliveryType: data.deliveryType || t('dashboard:serviceProviderListingsPage.defaultDeliveryType', 'On-site'),"
     },
     {
       "key": "dashboard:serviceProviderListingsPage.defaultPriceInfo",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 160,
+      "line": 169,
       "context": "priceInfo: data.priceInfo || t('dashboard:serviceProviderListingsPage.defaultPriceInfo', 'Contact for quote'),"
     },
     {
       "key": "dashboard:serviceProviderListingsPage.defaultPriceInfo",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 160,
+      "line": 169,
       "context": "priceInfo: data.priceInfo || t('dashboard:serviceProviderListingsPage.defaultPriceInfo', 'Contact for quote'),"
     },
     {
       "key": "dashboard:serviceProviderListingsPage.saveError",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 178,
+      "line": 185,
       "context": "alert(t('dashboard:serviceProviderListingsPage.saveError', 'Failed to save service'));"
     },
     {
       "key": "dashboard:serviceProviderListingsPage.saveError",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 178,
+      "line": 185,
       "context": "alert(t('dashboard:serviceProviderListingsPage.saveError', 'Failed to save service'));"
     },
     {
       "key": "dashboard:serviceProviderListingsPage.confirmDelete",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 183,
+      "line": 190,
       "context": "if (!window.confirm(t('dashboard:serviceProviderListingsPage.confirmDelete'))) {"
     },
     {
       "key": "dashboard:serviceProviderListingsPage.confirmDelete",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 183,
+      "line": 190,
       "context": "if (!window.confirm(t('dashboard:serviceProviderListingsPage.confirmDelete'))) {"
     },
     {
       "key": "serviceProviderListingsPage.deleteError",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 197,
+      "line": 204,
       "context": "alert(t('serviceProviderListingsPage.deleteError', 'Failed to delete service'));"
     },
     {
       "key": "common:retry",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 220,
+      "line": 227,
       "context": "<Button onClick={fetchServices}>{t('common:retry', 'Retry')}</Button>"
     },
     {
       "key": "common:retry",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 220,
+      "line": 227,
       "context": "<Button onClick={fetchServices}>{t('common:retry', 'Retry')}</Button>"
     },
     {
       "key": "dashboard:serviceProviderListingsPage.title",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 228,
+      "line": 235,
       "context": "<h1 className=\"text-3xl font-bold text-swiss-charcoal mb-4 md:mb-0\">{t('dashboard:serviceProviderListingsPage.title')}</h1>"
     },
     {
       "key": "dashboard:serviceProviderListingsPage.title",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 228,
+      "line": 235,
       "context": "<h1 className=\"text-3xl font-bold text-swiss-charcoal mb-4 md:mb-0\">{t('dashboard:serviceProviderListingsPage.title')}</h1>"
     },
     {
       "key": "dashboard:serviceProviderListingsPage.addNewServiceButton",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 230,
+      "line": 237,
       "context": "{t('dashboard:serviceProviderListingsPage.addNewServiceButton')}"
     },
     {
       "key": "dashboard:serviceProviderListingsPage.addNewServiceButton",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 230,
+      "line": 237,
       "context": "{t('dashboard:serviceProviderListingsPage.addNewServiceButton')}"
     },
     {
       "key": "dashboard:serviceProviderListingsPage.searchPlaceholder",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 238,
+      "line": 245,
       "context": "placeholder={t('dashboard:serviceProviderListingsPage.searchPlaceholder')}"
     },
     {
       "key": "dashboard:serviceProviderListingsPage.searchPlaceholder",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 238,
+      "line": 245,
       "context": "placeholder={t('dashboard:serviceProviderListingsPage.searchPlaceholder')}"
     },
     {
       "key": "common:filters.all",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 250,
+      "line": 257,
       "context": "{cat === 'All' ? t('common:filters.all') : formatServiceCategory(t, cat)}"
     },
     {
       "key": "common:filters.all",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 250,
+      "line": 257,
       "context": "{cat === 'All' ? t('common:filters.all') : formatServiceCategory(t, cat)}"
     },
     {
       "key": "dashboard:serviceProviderListingsPage.emptyState.title",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 260,
+      "line": 267,
       "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal mb-2\">{t('dashboard:serviceProviderListingsPage.emptyState.title')}</h2>"
     },
     {
       "key": "dashboard:serviceProviderListingsPage.emptyState.title",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 260,
+      "line": 267,
       "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal mb-2\">{t('dashboard:serviceProviderListingsPage.emptyState.title')}</h2>"
     },
     {
       "key": "dashboard:serviceProviderListingsPage.emptyState.noMatch",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 262,
+      "line": 269,
       "context": "{serviceListings.length > 0 ? t('dashboard:serviceProviderListingsPage.emptyState.noMatch') : t('dashboard:serviceProviderListingsPage.emptyState.noServicesYet')}"
     },
     {
       "key": "dashboard:serviceProviderListingsPage.emptyState.noServicesYet",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 262,
+      "line": 269,
       "context": "{serviceListings.length > 0 ? t('dashboard:serviceProviderListingsPage.emptyState.noMatch') : t('dashboard:serviceProviderListingsPage.emptyState.noServicesYet')}"
     },
     {
       "key": "dashboard:serviceProviderListingsPage.emptyState.noMatch",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 262,
+      "line": 269,
       "context": "{serviceListings.length > 0 ? t('dashboard:serviceProviderListingsPage.emptyState.noMatch') : t('dashboard:serviceProviderListingsPage.emptyState.noServicesYet')}"
     },
     {
       "key": "dashboard:serviceProviderListingsPage.emptyState.noServicesYet",
       "file": "pages/service-provider/ServiceProviderListingsPage.tsx",
-      "line": 262,
+      "line": 269,
       "context": "{serviceListings.length > 0 ? t('dashboard:serviceProviderListingsPage.emptyState.noMatch') : t('dashboard:serviceProviderListingsPage.emptyState.noServicesYet')}"
     },
     {
@@ -17277,14 +17265,872 @@
     {
       "key": "common:placeholders.typeorselect",
       "file": "components/ui/ChipInput.tsx",
-      "line": 30,
+      "line": 39,
       "context": "const placeholderText = placeholder || t('common:placeholders.typeorselect');"
     },
     {
       "key": "common:placeholders.typeorselect",
       "file": "components/ui/ChipInput.tsx",
-      "line": 30,
+      "line": 39,
       "context": "const placeholderText = placeholder || t('common:placeholders.typeorselect');"
+    },
+    {
+      "key": "common:chipInput.pressEnterHint",
+      "file": "components/ui/ChipInput.tsx",
+      "line": 41,
+      "context": "const hintText = enterHintText ?? t('common:chipInput.pressEnterHint', 'Press Enter to add.');"
+    },
+    {
+      "key": "common:chipInput.pressEnterHint",
+      "file": "components/ui/ChipInput.tsx",
+      "line": 41,
+      "context": "const hintText = enterHintText ?? t('common:chipInput.pressEnterHint', 'Press Enter to add.');"
+    },
+    {
+      "key": "common:supportPage.ticketForm.responsePlaceholder",
+      "file": "components/support/SupportReplyComposer.tsx",
+      "line": 47,
+      "context": "const displayPlaceholder = placeholder || t('common:supportPage.ticketForm.responsePlaceholder', { defaultValue: 'Type your reply...' });"
+    },
+    {
+      "key": "common:supportPage.ticketForm.responsePlaceholder",
+      "file": "components/support/SupportReplyComposer.tsx",
+      "line": 47,
+      "context": "const displayPlaceholder = placeholder || t('common:supportPage.ticketForm.responsePlaceholder', { defaultValue: 'Type your reply...' });"
+    },
+    {
+      "key": "common:buttons.sending",
+      "file": "components/support/SupportReplyComposer.tsx",
+      "line": 138,
+      "context": "{sending ? t('common:buttons.sending', { defaultValue: 'Sending...' }) : t('common:buttons.reply', { defaultValue: 'Reply' })}"
+    },
+    {
+      "key": "common:buttons.reply",
+      "file": "components/support/SupportReplyComposer.tsx",
+      "line": 138,
+      "context": "{sending ? t('common:buttons.sending', { defaultValue: 'Sending...' }) : t('common:buttons.reply', { defaultValue: 'Reply' })}"
+    },
+    {
+      "key": "common:buttons.sending",
+      "file": "components/support/SupportReplyComposer.tsx",
+      "line": 138,
+      "context": "{sending ? t('common:buttons.sending', { defaultValue: 'Sending...' }) : t('common:buttons.reply', { defaultValue: 'Reply' })}"
+    },
+    {
+      "key": "common:buttons.reply",
+      "file": "components/support/SupportReplyComposer.tsx",
+      "line": 138,
+      "context": "{sending ? t('common:buttons.sending', { defaultValue: 'Sending...' }) : t('common:buttons.reply', { defaultValue: 'Reply' })}"
+    },
+    {
+      "key": "dashboard:productUploadModal.editTitle",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 192,
+      "context": "? t('dashboard:productUploadModal.editTitle', 'Edit Product')"
+    },
+    {
+      "key": "dashboard:productUploadModal.editTitle",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 192,
+      "context": "? t('dashboard:productUploadModal.editTitle', 'Edit Product')"
+    },
+    {
+      "key": "dashboard:productUploadModal.addTitle",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 193,
+      "context": ": t('dashboard:productUploadModal.addTitle', 'Add Product');"
+    },
+    {
+      "key": "dashboard:productUploadModal.addTitle",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 193,
+      "context": ": t('dashboard:productUploadModal.addTitle', 'Add Product');"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 438,
+      "context": "aria-label={t('common:buttons.close', 'Close')}"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 438,
+      "context": "aria-label={t('common:buttons.close', 'Close')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 566,
+      "context": "{t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 566,
+      "context": "{t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 618,
+      "context": "{t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 618,
+      "context": "{t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 889,
+      "context": "{t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 889,
+      "context": "{t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.delete",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 951,
+      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
+    },
+    {
+      "key": "common:buttons.delete",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 951,
+      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 977,
+      "context": "{t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 977,
+      "context": "{t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.delete",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1113,
+      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
+    },
+    {
+      "key": "common:buttons.delete",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1113,
+      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1210,
+      "context": "{t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1210,
+      "context": "{t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.delete",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1276,
+      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
+    },
+    {
+      "key": "common:buttons.delete",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1276,
+      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
+    },
+    {
+      "key": "common:buttons.remove",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1354,
+      "context": "{t('common:buttons.remove', 'Remove')}"
+    },
+    {
+      "key": "common:buttons.remove",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1354,
+      "context": "{t('common:buttons.remove', 'Remove')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1472,
+      "context": "{t('common:buttons.cancel', 'Cancel')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1472,
+      "context": "{t('common:buttons.cancel', 'Cancel')}"
+    },
+    {
+      "key": "common:buttons.saving",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1476,
+      "context": "? t('common:buttons.saving', 'Saving...')"
+    },
+    {
+      "key": "common:buttons.saving",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1476,
+      "context": "? t('common:buttons.saving', 'Saving...')"
+    },
+    {
+      "key": "common:buttons.saveChanges",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1478,
+      "context": "? t('common:buttons.saveChanges', 'Save changes')"
+    },
+    {
+      "key": "common:buttons.saveChanges",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1478,
+      "context": "? t('common:buttons.saveChanges', 'Save changes')"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1479,
+      "context": ": t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/supplier/ProductUploadModal.tsx",
+      "line": 1479,
+      "context": ": t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "dashboard:supplierDashboard.recentOrdersActions.decline",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 34,
+      "context": "<Button variant=\"danger\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.DECLINED)}>{t('dashboard:supplierDashboard.recentOrdersActions.decline')}</Button>"
+    },
+    {
+      "key": "dashboard:supplierDashboard.recentOrdersActions.decline",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 34,
+      "context": "<Button variant=\"danger\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.DECLINED)}>{t('dashboard:supplierDashboard.recentOrdersActions.decline')}</Button>"
+    },
+    {
+      "key": "dashboard:supplierDashboard.recentOrdersActions.accept",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 35,
+      "context": "<Button variant=\"primary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.ACCEPTED)}>{t('dashboard:supplierDashboard.recentOrdersActions.accept')}</Button>"
+    },
+    {
+      "key": "dashboard:supplierDashboard.recentOrdersActions.accept",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 35,
+      "context": "<Button variant=\"primary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.ACCEPTED)}>{t('dashboard:supplierDashboard.recentOrdersActions.accept')}</Button>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.markAsProcessing",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 39,
+      "context": "return <Button variant=\"secondary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.PROCESSING)}>{t(\"dashboard:orderRequestDetailModal.markAsProcessing\")}</Button>;"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.markAsProcessing",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 39,
+      "context": "return <Button variant=\"secondary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.PROCESSING)}>{t(\"dashboard:orderRequestDetailModal.markAsProcessing\")}</Button>;"
+    },
+    {
+      "key": "dashboard:supplierOrdersPage.actions.ship",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 41,
+      "context": "return <Button variant=\"secondary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.SHIPPED)}>{t('dashboard:supplierOrdersPage.actions.ship')}</Button>;"
+    },
+    {
+      "key": "dashboard:supplierOrdersPage.actions.ship",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 41,
+      "context": "return <Button variant=\"secondary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.SHIPPED)}>{t('dashboard:supplierOrdersPage.actions.ship')}</Button>;"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.title",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 51,
+      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('dashboard:orderRequestDetailModal.title')}</h2>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.title",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 51,
+      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('dashboard:orderRequestDetailModal.title')}</h2>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.orderId",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 56,
+      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.orderId')}</span><span className=\"font-semibold\">{order.id}</span></div>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.orderId",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 56,
+      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.orderId')}</span><span className=\"font-semibold\">{order.id}</span></div>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.date",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 57,
+      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.date')}</span><span className=\"font-semibold\">{new Date(order.requestDate).toLocaleDateString(i18n.language)}</span></div>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.date",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 57,
+      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.date')}</span><span className=\"font-semibold\">{new Date(order.requestDate).toLocaleDateString(i18n.language)}</span></div>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.status",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 58,
+      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.status')}</span><span className=\"font-semibold\">{t(`common:orderStatus.${order.status.toLowerCase().replace(/\\s/g, '')}` as const, order.status)}</span></div>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.status",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 58,
+      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.status')}</span><span className=\"font-semibold\">{t(`common:orderStatus.${order.status.toLowerCase().replace(/\\s/g, '')}` as const, order.status)}</span></div>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.total",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 59,
+      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.total')}</span><span className=\"font-semibold\">CHF {order.totalAmount.toFixed(2)}</span></div>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.total",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 59,
+      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.total')}</span><span className=\"font-semibold\">CHF {order.totalAmount.toFixed(2)}</span></div>"
+    },
+    {
+      "key": "dashboard:supplierOrdersPage.table.foundation",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 63,
+      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:supplierOrdersPage.table.foundation')}</h3>"
+    },
+    {
+      "key": "dashboard:supplierOrdersPage.table.foundation",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 63,
+      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:supplierOrdersPage.table.foundation')}</h3>"
+    },
+    {
+      "key": "common:unknown",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 67,
+      "context": "<p className=\"font-medium\">{daycare?.name || t('common:unknown', 'Unknown')}</p>"
+    },
+    {
+      "key": "common:unknown",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 67,
+      "context": "<p className=\"font-medium\">{daycare?.name || t('common:unknown', 'Unknown')}</p>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.viewDaycareProfile",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 72,
+      "context": "{t('dashboard:orderRequestDetailModal.viewDaycareProfile', t('orderRequestDetailModal.viewDaycareProfile'))}"
+    },
+    {
+      "key": "orderRequestDetailModal.viewDaycareProfile",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 72,
+      "context": "{t('dashboard:orderRequestDetailModal.viewDaycareProfile', t('orderRequestDetailModal.viewDaycareProfile'))}"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.viewDaycareProfile",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 72,
+      "context": "{t('dashboard:orderRequestDetailModal.viewDaycareProfile', t('orderRequestDetailModal.viewDaycareProfile'))}"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.lineItems",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 78,
+      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:orderRequestDetailModal.lineItems')}</h3>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.lineItems",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 78,
+      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:orderRequestDetailModal.lineItems')}</h3>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.product",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 83,
+      "context": "<th className=\"px-4 py-2 text-left font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.product')}</th>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.product",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 83,
+      "context": "<th className=\"px-4 py-2 text-left font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.product')}</th>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.quantity",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 84,
+      "context": "<th className=\"px-4 py-2 text-center font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.quantity')}</th>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.quantity",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 84,
+      "context": "<th className=\"px-4 py-2 text-center font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.quantity')}</th>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.price",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 85,
+      "context": "<th className=\"px-4 py-2 text-right font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.price')}</th>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.price",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 85,
+      "context": "<th className=\"px-4 py-2 text-right font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.price')}</th>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.notes",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 105,
+      "context": "<h3 className=\"font-semibold mb-1\">{t('dashboard:orderRequestDetailModal.notes')}</h3>"
+    },
+    {
+      "key": "dashboard:orderRequestDetailModal.notes",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 105,
+      "context": "<h3 className=\"font-semibold mb-1\">{t('dashboard:orderRequestDetailModal.notes')}</h3>"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 111,
+      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close')}</Button>"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/supplier/OrderRequestDetailModal.tsx",
+      "line": 111,
+      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close')}</Button>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.quoteAmount",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 95,
+      "context": "? t('dashboard:inquiryDetailModal.quoteAmount', 'Quote Amount (CHF)')"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.quoteAmount",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 95,
+      "context": "? t('dashboard:inquiryDetailModal.quoteAmount', 'Quote Amount (CHF)')"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.responseMessage",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 96,
+      "context": ": t('dashboard:inquiryDetailModal.responseMessage', 'Response Message')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.responseMessage",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 96,
+      "context": ": t('dashboard:inquiryDetailModal.responseMessage', 'Response Message')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.responsePlaceholder",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 111,
+      "context": "placeholder={t('dashboard:inquiryDetailModal.responsePlaceholder', 'Enter your response to the customer...')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.responsePlaceholder",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 111,
+      "context": "placeholder={t('dashboard:inquiryDetailModal.responsePlaceholder', 'Enter your response to the customer...')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 118,
+      "context": "{t('common:buttons.cancel', 'Cancel')}"
+    },
+    {
+      "key": "common:buttons.cancel",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 118,
+      "context": "{t('common:buttons.cancel', 'Cancel')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.sendResponse",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 121,
+      "context": "{t('dashboard:inquiryDetailModal.sendResponse', 'Send Response')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.sendResponse",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 121,
+      "context": "{t('dashboard:inquiryDetailModal.sendResponse', 'Send Response')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.decline",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 133,
+      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.decline",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 133,
+      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.markPending",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 136,
+      "context": "{t('dashboard:inquiryDetailModal.actions.markPending', 'Mark as Pending')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.markPending",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 136,
+      "context": "{t('dashboard:inquiryDetailModal.actions.markPending', 'Mark as Pending')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.contacted",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 139,
+      "context": "{t('dashboard:inquiryDetailModal.actions.contacted', 'Mark as Contacted')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.contacted",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 139,
+      "context": "{t('dashboard:inquiryDetailModal.actions.contacted', 'Mark as Contacted')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.decline",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 148,
+      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.decline",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 148,
+      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.sendQuote",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 151,
+      "context": "{t('dashboard:inquiryDetailModal.actions.sendQuote', 'Send Quote')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.sendQuote",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 151,
+      "context": "{t('dashboard:inquiryDetailModal.actions.sendQuote', 'Send Quote')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.markFulfilled",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 154,
+      "context": "{t('dashboard:inquiryDetailModal.actions.markFulfilled', 'Mark as Fulfilled')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.markFulfilled",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 154,
+      "context": "{t('dashboard:inquiryDetailModal.actions.markFulfilled', 'Mark as Fulfilled')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.decline",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 162,
+      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.decline",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 162,
+      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.markFulfilled",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 165,
+      "context": "{t('dashboard:inquiryDetailModal.actions.markFulfilled', 'Mark as Fulfilled')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.actions.markFulfilled",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 165,
+      "context": "{t('dashboard:inquiryDetailModal.actions.markFulfilled', 'Mark as Fulfilled')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.title",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 178,
+      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('dashboard:inquiryDetailModal.title', 'Inquiry Details')}</h2>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.title",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 178,
+      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('dashboard:inquiryDetailModal.title', 'Inquiry Details')}</h2>"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 179,
+      "context": "<button onClick={onClose} className=\"p-1 rounded-full text-gray-400 hover:text-gray-600\" aria-label={t('common:buttons.close', 'Close')}>"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 179,
+      "context": "<button onClick={onClose} className=\"p-1 rounded-full text-gray-400 hover:text-gray-600\" aria-label={t('common:buttons.close', 'Close')}>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.inquiryId",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 188,
+      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.inquiryId', 'Inquiry ID')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.inquiryId",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 188,
+      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.inquiryId', 'Inquiry ID')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.date",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 192,
+      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.date', 'Date')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.date",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 192,
+      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.date', 'Date')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.status",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 196,
+      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.status', 'Status')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.status",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 196,
+      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.status', 'Status')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.urgency",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 202,
+      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.urgency', 'Urgency')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.urgency",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 202,
+      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.urgency', 'Urgency')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.from",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 215,
+      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:inquiryDetailModal.from', 'From')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.from",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 215,
+      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:inquiryDetailModal.from', 'From')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.viewProfile",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 225,
+      "context": "{t('dashboard:inquiryDetailModal.viewProfile', 'View Profile')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.viewProfile",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 225,
+      "context": "{t('dashboard:inquiryDetailModal.viewProfile', 'View Profile')}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.contactInfo",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 233,
+      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:inquiryDetailModal.contactInfo', 'Contact Information')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.contactInfo",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 233,
+      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:inquiryDetailModal.contactInfo', 'Contact Information')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.preferredContact",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 250,
+      "context": "{t('dashboard:inquiryDetailModal.preferredContact', 'Preferred')}: {t(`preferredContactMethod.${inquiry.preferredContactMethod.toLowerCase()}` as const, inquiry.preferredContactMethod)}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.preferredContact",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 250,
+      "context": "{t('dashboard:inquiryDetailModal.preferredContact', 'Preferred')}: {t(`preferredContactMethod.${inquiry.preferredContactMethod.toLowerCase()}` as const, inquiry.preferredContactMethod)}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.message",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 259,
+      "context": "<h3 className=\"font-semibold mb-2\">{inquiry.subject || t('dashboard:inquiryDetailModal.message', 'Message')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.message",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 259,
+      "context": "<h3 className=\"font-semibold mb-2\">{inquiry.subject || t('dashboard:inquiryDetailModal.message', 'Message')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.productInterest",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 269,
+      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.productInterest', 'Product Interest')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.productInterest",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 269,
+      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.productInterest', 'Product Interest')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.quantity",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 275,
+      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.quantity', 'Est. Quantity')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.quantity",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 275,
+      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.quantity', 'Est. Quantity')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.budget",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 281,
+      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.budget', 'Budget')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.budget",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 281,
+      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.budget', 'Budget')}</span>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.yourResponse",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 290,
+      "context": "<h3 className=\"font-semibold mb-2 text-purple-700\">{t('dashboard:inquiryDetailModal.yourResponse', 'Your Response')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.yourResponse",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 290,
+      "context": "<h3 className=\"font-semibold mb-2 text-purple-700\">{t('dashboard:inquiryDetailModal.yourResponse', 'Your Response')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.quotedAmount",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 293,
+      "context": "{t('dashboard:inquiryDetailModal.quotedAmount', 'Quoted Amount')}: CHF {inquiry.quotedAmount.toFixed(2)}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.quotedAmount",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 293,
+      "context": "{t('dashboard:inquiryDetailModal.quotedAmount', 'Quoted Amount')}: CHF {inquiry.quotedAmount.toFixed(2)}"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.internalNotes",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 305,
+      "context": "<h3 className=\"font-semibold mb-1\">{t('dashboard:inquiryDetailModal.internalNotes', 'Internal Notes')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.internalNotes",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 305,
+      "context": "<h3 className=\"font-semibold mb-1\">{t('dashboard:inquiryDetailModal.internalNotes', 'Internal Notes')}</h3>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.respondedAt",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 313,
+      "context": "<p>{t('dashboard:inquiryDetailModal.respondedAt', 'First responded')}: {new Date(inquiry.respondedAt).toLocaleString(i18n.language)}</p>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.respondedAt",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 313,
+      "context": "<p>{t('dashboard:inquiryDetailModal.respondedAt', 'First responded')}: {new Date(inquiry.respondedAt).toLocaleString(i18n.language)}</p>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.fulfilledAt",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 316,
+      "context": "<p>{t('dashboard:inquiryDetailModal.fulfilledAt', 'Fulfilled')}: {new Date(inquiry.fulfilledAt).toLocaleString(i18n.language)}</p>"
+    },
+    {
+      "key": "dashboard:inquiryDetailModal.fulfilledAt",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 316,
+      "context": "<p>{t('dashboard:inquiryDetailModal.fulfilledAt', 'Fulfilled')}: {new Date(inquiry.fulfilledAt).toLocaleString(i18n.language)}</p>"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 322,
+      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close', 'Close')}</Button>"
+    },
+    {
+      "key": "common:buttons.close",
+      "file": "components/supplier/InquiryDetailModal.tsx",
+      "line": 322,
+      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close', 'Close')}</Button>"
     },
     {
       "key": "subscription:requestForm.validation.required",
@@ -18535,828 +19381,6 @@
       "context": "{t('common:buttons.saveChanges')}"
     },
     {
-      "key": "dashboard:productUploadModal.editTitle",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 185,
-      "context": "? t('dashboard:productUploadModal.editTitle', 'Edit Product')"
-    },
-    {
-      "key": "dashboard:productUploadModal.editTitle",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 185,
-      "context": "? t('dashboard:productUploadModal.editTitle', 'Edit Product')"
-    },
-    {
-      "key": "dashboard:productUploadModal.addTitle",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 186,
-      "context": ": t('dashboard:productUploadModal.addTitle', 'Add Product');"
-    },
-    {
-      "key": "dashboard:productUploadModal.addTitle",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 186,
-      "context": ": t('dashboard:productUploadModal.addTitle', 'Add Product');"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 429,
-      "context": "aria-label={t('common:buttons.close', 'Close')}"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 429,
-      "context": "aria-label={t('common:buttons.close', 'Close')}"
-    },
-    {
-      "key": "common:buttons.add",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 815,
-      "context": "{t('common:buttons.add', 'Add')}"
-    },
-    {
-      "key": "common:buttons.add",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 815,
-      "context": "{t('common:buttons.add', 'Add')}"
-    },
-    {
-      "key": "common:buttons.delete",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 877,
-      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
-    },
-    {
-      "key": "common:buttons.delete",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 877,
-      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
-    },
-    {
-      "key": "common:buttons.add",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 903,
-      "context": "{t('common:buttons.add', 'Add')}"
-    },
-    {
-      "key": "common:buttons.add",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 903,
-      "context": "{t('common:buttons.add', 'Add')}"
-    },
-    {
-      "key": "common:buttons.delete",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1039,
-      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
-    },
-    {
-      "key": "common:buttons.delete",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1039,
-      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
-    },
-    {
-      "key": "common:buttons.add",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1136,
-      "context": "{t('common:buttons.add', 'Add')}"
-    },
-    {
-      "key": "common:buttons.add",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1136,
-      "context": "{t('common:buttons.add', 'Add')}"
-    },
-    {
-      "key": "common:buttons.delete",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1202,
-      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
-    },
-    {
-      "key": "common:buttons.delete",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1202,
-      "context": "aria-label={t('common:buttons.delete', 'Delete')}"
-    },
-    {
-      "key": "common:buttons.remove",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1280,
-      "context": "{t('common:buttons.remove', 'Remove')}"
-    },
-    {
-      "key": "common:buttons.remove",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1280,
-      "context": "{t('common:buttons.remove', 'Remove')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1398,
-      "context": "{t('common:buttons.cancel', 'Cancel')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1398,
-      "context": "{t('common:buttons.cancel', 'Cancel')}"
-    },
-    {
-      "key": "common:buttons.saving",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1402,
-      "context": "? t('common:buttons.saving', 'Saving...')"
-    },
-    {
-      "key": "common:buttons.saving",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1402,
-      "context": "? t('common:buttons.saving', 'Saving...')"
-    },
-    {
-      "key": "common:buttons.saveChanges",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1404,
-      "context": "? t('common:buttons.saveChanges', 'Save changes')"
-    },
-    {
-      "key": "common:buttons.saveChanges",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1404,
-      "context": "? t('common:buttons.saveChanges', 'Save changes')"
-    },
-    {
-      "key": "common:buttons.add",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1405,
-      "context": ": t('common:buttons.add', 'Add')}"
-    },
-    {
-      "key": "common:buttons.add",
-      "file": "components/supplier/ProductUploadModal.tsx",
-      "line": 1405,
-      "context": ": t('common:buttons.add', 'Add')}"
-    },
-    {
-      "key": "dashboard:supplierDashboard.recentOrdersActions.decline",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 34,
-      "context": "<Button variant=\"danger\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.DECLINED)}>{t('dashboard:supplierDashboard.recentOrdersActions.decline')}</Button>"
-    },
-    {
-      "key": "dashboard:supplierDashboard.recentOrdersActions.decline",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 34,
-      "context": "<Button variant=\"danger\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.DECLINED)}>{t('dashboard:supplierDashboard.recentOrdersActions.decline')}</Button>"
-    },
-    {
-      "key": "dashboard:supplierDashboard.recentOrdersActions.accept",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 35,
-      "context": "<Button variant=\"primary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.ACCEPTED)}>{t('dashboard:supplierDashboard.recentOrdersActions.accept')}</Button>"
-    },
-    {
-      "key": "dashboard:supplierDashboard.recentOrdersActions.accept",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 35,
-      "context": "<Button variant=\"primary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.ACCEPTED)}>{t('dashboard:supplierDashboard.recentOrdersActions.accept')}</Button>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.markAsProcessing",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 39,
-      "context": "return <Button variant=\"secondary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.PROCESSING)}>{t(\"dashboard:orderRequestDetailModal.markAsProcessing\")}</Button>;"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.markAsProcessing",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 39,
-      "context": "return <Button variant=\"secondary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.PROCESSING)}>{t(\"dashboard:orderRequestDetailModal.markAsProcessing\")}</Button>;"
-    },
-    {
-      "key": "dashboard:supplierOrdersPage.actions.ship",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 41,
-      "context": "return <Button variant=\"secondary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.SHIPPED)}>{t('dashboard:supplierOrdersPage.actions.ship')}</Button>;"
-    },
-    {
-      "key": "dashboard:supplierOrdersPage.actions.ship",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 41,
-      "context": "return <Button variant=\"secondary\" onClick={() => onUpdateStatus(order.id, OrderRequestStatus.SHIPPED)}>{t('dashboard:supplierOrdersPage.actions.ship')}</Button>;"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.title",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 51,
-      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('dashboard:orderRequestDetailModal.title')}</h2>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.title",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 51,
-      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('dashboard:orderRequestDetailModal.title')}</h2>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.orderId",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 56,
-      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.orderId')}</span><span className=\"font-semibold\">{order.id}</span></div>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.orderId",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 56,
-      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.orderId')}</span><span className=\"font-semibold\">{order.id}</span></div>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.date",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 57,
-      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.date')}</span><span className=\"font-semibold\">{new Date(order.requestDate).toLocaleDateString(i18n.language)}</span></div>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.date",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 57,
-      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.date')}</span><span className=\"font-semibold\">{new Date(order.requestDate).toLocaleDateString(i18n.language)}</span></div>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.status",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 58,
-      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.status')}</span><span className=\"font-semibold\">{t(`common:orderStatus.${order.status.toLowerCase().replace(/\\s/g, '')}` as const, order.status)}</span></div>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.status",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 58,
-      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.status')}</span><span className=\"font-semibold\">{t(`common:orderStatus.${order.status.toLowerCase().replace(/\\s/g, '')}` as const, order.status)}</span></div>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.total",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 59,
-      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.total')}</span><span className=\"font-semibold\">CHF {order.totalAmount.toFixed(2)}</span></div>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.total",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 59,
-      "context": "<div className=\"p-3 bg-gray-50 rounded-md\"><span className=\"block text-xs text-gray-500\">{t('dashboard:orderRequestDetailModal.total')}</span><span className=\"font-semibold\">CHF {order.totalAmount.toFixed(2)}</span></div>"
-    },
-    {
-      "key": "dashboard:supplierOrdersPage.table.foundation",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 63,
-      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:supplierOrdersPage.table.foundation')}</h3>"
-    },
-    {
-      "key": "dashboard:supplierOrdersPage.table.foundation",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 63,
-      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:supplierOrdersPage.table.foundation')}</h3>"
-    },
-    {
-      "key": "common:unknown",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 67,
-      "context": "<p className=\"font-medium\">{daycare?.name || t('common:unknown', 'Unknown')}</p>"
-    },
-    {
-      "key": "common:unknown",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 67,
-      "context": "<p className=\"font-medium\">{daycare?.name || t('common:unknown', 'Unknown')}</p>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.viewDaycareProfile",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 72,
-      "context": "{t('dashboard:orderRequestDetailModal.viewDaycareProfile', t('orderRequestDetailModal.viewDaycareProfile'))}"
-    },
-    {
-      "key": "orderRequestDetailModal.viewDaycareProfile",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 72,
-      "context": "{t('dashboard:orderRequestDetailModal.viewDaycareProfile', t('orderRequestDetailModal.viewDaycareProfile'))}"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.viewDaycareProfile",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 72,
-      "context": "{t('dashboard:orderRequestDetailModal.viewDaycareProfile', t('orderRequestDetailModal.viewDaycareProfile'))}"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.lineItems",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 78,
-      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:orderRequestDetailModal.lineItems')}</h3>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.lineItems",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 78,
-      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:orderRequestDetailModal.lineItems')}</h3>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.product",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 83,
-      "context": "<th className=\"px-4 py-2 text-left font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.product')}</th>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.product",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 83,
-      "context": "<th className=\"px-4 py-2 text-left font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.product')}</th>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.quantity",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 84,
-      "context": "<th className=\"px-4 py-2 text-center font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.quantity')}</th>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.quantity",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 84,
-      "context": "<th className=\"px-4 py-2 text-center font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.quantity')}</th>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.price",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 85,
-      "context": "<th className=\"px-4 py-2 text-right font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.price')}</th>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.price",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 85,
-      "context": "<th className=\"px-4 py-2 text-right font-medium text-gray-600\">{t('dashboard:orderRequestDetailModal.price')}</th>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.notes",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 105,
-      "context": "<h3 className=\"font-semibold mb-1\">{t('dashboard:orderRequestDetailModal.notes')}</h3>"
-    },
-    {
-      "key": "dashboard:orderRequestDetailModal.notes",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 105,
-      "context": "<h3 className=\"font-semibold mb-1\">{t('dashboard:orderRequestDetailModal.notes')}</h3>"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 111,
-      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close')}</Button>"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/supplier/OrderRequestDetailModal.tsx",
-      "line": 111,
-      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close')}</Button>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.quoteAmount",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 95,
-      "context": "? t('dashboard:inquiryDetailModal.quoteAmount', 'Quote Amount (CHF)')"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.quoteAmount",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 95,
-      "context": "? t('dashboard:inquiryDetailModal.quoteAmount', 'Quote Amount (CHF)')"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.responseMessage",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 96,
-      "context": ": t('dashboard:inquiryDetailModal.responseMessage', 'Response Message')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.responseMessage",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 96,
-      "context": ": t('dashboard:inquiryDetailModal.responseMessage', 'Response Message')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.responsePlaceholder",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 111,
-      "context": "placeholder={t('dashboard:inquiryDetailModal.responsePlaceholder', 'Enter your response to the customer...')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.responsePlaceholder",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 111,
-      "context": "placeholder={t('dashboard:inquiryDetailModal.responsePlaceholder', 'Enter your response to the customer...')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 118,
-      "context": "{t('common:buttons.cancel', 'Cancel')}"
-    },
-    {
-      "key": "common:buttons.cancel",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 118,
-      "context": "{t('common:buttons.cancel', 'Cancel')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.sendResponse",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 121,
-      "context": "{t('dashboard:inquiryDetailModal.sendResponse', 'Send Response')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.sendResponse",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 121,
-      "context": "{t('dashboard:inquiryDetailModal.sendResponse', 'Send Response')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.decline",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 133,
-      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.decline",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 133,
-      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.markPending",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 136,
-      "context": "{t('dashboard:inquiryDetailModal.actions.markPending', 'Mark as Pending')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.markPending",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 136,
-      "context": "{t('dashboard:inquiryDetailModal.actions.markPending', 'Mark as Pending')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.contacted",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 139,
-      "context": "{t('dashboard:inquiryDetailModal.actions.contacted', 'Mark as Contacted')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.contacted",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 139,
-      "context": "{t('dashboard:inquiryDetailModal.actions.contacted', 'Mark as Contacted')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.decline",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 148,
-      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.decline",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 148,
-      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.sendQuote",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 151,
-      "context": "{t('dashboard:inquiryDetailModal.actions.sendQuote', 'Send Quote')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.sendQuote",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 151,
-      "context": "{t('dashboard:inquiryDetailModal.actions.sendQuote', 'Send Quote')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.markFulfilled",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 154,
-      "context": "{t('dashboard:inquiryDetailModal.actions.markFulfilled', 'Mark as Fulfilled')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.markFulfilled",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 154,
-      "context": "{t('dashboard:inquiryDetailModal.actions.markFulfilled', 'Mark as Fulfilled')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.decline",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 162,
-      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.decline",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 162,
-      "context": "{t('dashboard:inquiryDetailModal.actions.decline', 'Decline')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.markFulfilled",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 165,
-      "context": "{t('dashboard:inquiryDetailModal.actions.markFulfilled', 'Mark as Fulfilled')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.actions.markFulfilled",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 165,
-      "context": "{t('dashboard:inquiryDetailModal.actions.markFulfilled', 'Mark as Fulfilled')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.title",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 178,
-      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('dashboard:inquiryDetailModal.title', 'Inquiry Details')}</h2>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.title",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 178,
-      "context": "<h2 className=\"text-xl font-semibold text-swiss-charcoal\">{t('dashboard:inquiryDetailModal.title', 'Inquiry Details')}</h2>"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 179,
-      "context": "<button onClick={onClose} className=\"p-1 rounded-full text-gray-400 hover:text-gray-600\" aria-label={t('common:buttons.close', 'Close')}>"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 179,
-      "context": "<button onClick={onClose} className=\"p-1 rounded-full text-gray-400 hover:text-gray-600\" aria-label={t('common:buttons.close', 'Close')}>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.inquiryId",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 188,
-      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.inquiryId', 'Inquiry ID')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.inquiryId",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 188,
-      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.inquiryId', 'Inquiry ID')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.date",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 192,
-      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.date', 'Date')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.date",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 192,
-      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.date', 'Date')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.status",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 196,
-      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.status', 'Status')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.status",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 196,
-      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.status', 'Status')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.urgency",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 202,
-      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.urgency', 'Urgency')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.urgency",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 202,
-      "context": "<span className=\"block text-xs text-gray-500\">{t('dashboard:inquiryDetailModal.urgency', 'Urgency')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.from",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 215,
-      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:inquiryDetailModal.from', 'From')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.from",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 215,
-      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:inquiryDetailModal.from', 'From')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.viewProfile",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 225,
-      "context": "{t('dashboard:inquiryDetailModal.viewProfile', 'View Profile')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.viewProfile",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 225,
-      "context": "{t('dashboard:inquiryDetailModal.viewProfile', 'View Profile')}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.contactInfo",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 233,
-      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:inquiryDetailModal.contactInfo', 'Contact Information')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.contactInfo",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 233,
-      "context": "<h3 className=\"font-semibold mb-2\">{t('dashboard:inquiryDetailModal.contactInfo', 'Contact Information')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.preferredContact",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 250,
-      "context": "{t('dashboard:inquiryDetailModal.preferredContact', 'Preferred')}: {t(`preferredContactMethod.${inquiry.preferredContactMethod.toLowerCase()}` as const, inquiry.preferredContactMethod)}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.preferredContact",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 250,
-      "context": "{t('dashboard:inquiryDetailModal.preferredContact', 'Preferred')}: {t(`preferredContactMethod.${inquiry.preferredContactMethod.toLowerCase()}` as const, inquiry.preferredContactMethod)}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.message",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 259,
-      "context": "<h3 className=\"font-semibold mb-2\">{inquiry.subject || t('dashboard:inquiryDetailModal.message', 'Message')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.message",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 259,
-      "context": "<h3 className=\"font-semibold mb-2\">{inquiry.subject || t('dashboard:inquiryDetailModal.message', 'Message')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.productInterest",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 269,
-      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.productInterest', 'Product Interest')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.productInterest",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 269,
-      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.productInterest', 'Product Interest')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.quantity",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 275,
-      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.quantity', 'Est. Quantity')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.quantity",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 275,
-      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.quantity', 'Est. Quantity')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.budget",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 281,
-      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.budget', 'Budget')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.budget",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 281,
-      "context": "<span className=\"block text-xs text-gray-500 mb-1\">{t('dashboard:inquiryDetailModal.budget', 'Budget')}</span>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.yourResponse",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 290,
-      "context": "<h3 className=\"font-semibold mb-2 text-purple-700\">{t('dashboard:inquiryDetailModal.yourResponse', 'Your Response')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.yourResponse",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 290,
-      "context": "<h3 className=\"font-semibold mb-2 text-purple-700\">{t('dashboard:inquiryDetailModal.yourResponse', 'Your Response')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.quotedAmount",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 293,
-      "context": "{t('dashboard:inquiryDetailModal.quotedAmount', 'Quoted Amount')}: CHF {inquiry.quotedAmount.toFixed(2)}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.quotedAmount",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 293,
-      "context": "{t('dashboard:inquiryDetailModal.quotedAmount', 'Quoted Amount')}: CHF {inquiry.quotedAmount.toFixed(2)}"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.internalNotes",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 305,
-      "context": "<h3 className=\"font-semibold mb-1\">{t('dashboard:inquiryDetailModal.internalNotes', 'Internal Notes')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.internalNotes",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 305,
-      "context": "<h3 className=\"font-semibold mb-1\">{t('dashboard:inquiryDetailModal.internalNotes', 'Internal Notes')}</h3>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.respondedAt",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 313,
-      "context": "<p>{t('dashboard:inquiryDetailModal.respondedAt', 'First responded')}: {new Date(inquiry.respondedAt).toLocaleString(i18n.language)}</p>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.respondedAt",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 313,
-      "context": "<p>{t('dashboard:inquiryDetailModal.respondedAt', 'First responded')}: {new Date(inquiry.respondedAt).toLocaleString(i18n.language)}</p>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.fulfilledAt",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 316,
-      "context": "<p>{t('dashboard:inquiryDetailModal.fulfilledAt', 'Fulfilled')}: {new Date(inquiry.fulfilledAt).toLocaleString(i18n.language)}</p>"
-    },
-    {
-      "key": "dashboard:inquiryDetailModal.fulfilledAt",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 316,
-      "context": "<p>{t('dashboard:inquiryDetailModal.fulfilledAt', 'Fulfilled')}: {new Date(inquiry.fulfilledAt).toLocaleString(i18n.language)}</p>"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 322,
-      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close', 'Close')}</Button>"
-    },
-    {
-      "key": "common:buttons.close",
-      "file": "components/supplier/InquiryDetailModal.tsx",
-      "line": 322,
-      "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.close', 'Close')}</Button>"
-    },
-    {
-      "key": "common:supportPage.ticketForm.responsePlaceholder",
-      "file": "components/support/SupportReplyComposer.tsx",
-      "line": 47,
-      "context": "const displayPlaceholder = placeholder || t('common:supportPage.ticketForm.responsePlaceholder', { defaultValue: 'Type your reply...' });"
-    },
-    {
-      "key": "common:supportPage.ticketForm.responsePlaceholder",
-      "file": "components/support/SupportReplyComposer.tsx",
-      "line": 47,
-      "context": "const displayPlaceholder = placeholder || t('common:supportPage.ticketForm.responsePlaceholder', { defaultValue: 'Type your reply...' });"
-    },
-    {
-      "key": "common:buttons.sending",
-      "file": "components/support/SupportReplyComposer.tsx",
-      "line": 138,
-      "context": "{sending ? t('common:buttons.sending', { defaultValue: 'Sending...' }) : t('common:buttons.reply', { defaultValue: 'Reply' })}"
-    },
-    {
-      "key": "common:buttons.reply",
-      "file": "components/support/SupportReplyComposer.tsx",
-      "line": 138,
-      "context": "{sending ? t('common:buttons.sending', { defaultValue: 'Sending...' }) : t('common:buttons.reply', { defaultValue: 'Reply' })}"
-    },
-    {
-      "key": "common:buttons.sending",
-      "file": "components/support/SupportReplyComposer.tsx",
-      "line": 138,
-      "context": "{sending ? t('common:buttons.sending', { defaultValue: 'Sending...' }) : t('common:buttons.reply', { defaultValue: 'Reply' })}"
-    },
-    {
-      "key": "common:buttons.reply",
-      "file": "components/support/SupportReplyComposer.tsx",
-      "line": 138,
-      "context": "{sending ? t('common:buttons.sending', { defaultValue: 'Sending...' }) : t('common:buttons.reply', { defaultValue: 'Reply' })}"
-    },
-    {
       "key": "common:errors.genericErrorTitle",
       "file": "components/settings/OrganizationProfileForm.tsx",
       "line": 80,
@@ -19713,325 +19737,337 @@
     {
       "key": "common:serviceUploadModal.editTitle",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 87,
+      "line": 93,
       "context": "{existingService ? t('common:serviceUploadModal.editTitle') : t('common:serviceUploadModal.addTitle')}"
     },
     {
       "key": "common:serviceUploadModal.addTitle",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 87,
+      "line": 93,
       "context": "{existingService ? t('common:serviceUploadModal.editTitle') : t('common:serviceUploadModal.addTitle')}"
     },
     {
       "key": "common:serviceUploadModal.editTitle",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 87,
+      "line": 93,
       "context": "{existingService ? t('common:serviceUploadModal.editTitle') : t('common:serviceUploadModal.addTitle')}"
     },
     {
       "key": "common:serviceUploadModal.addTitle",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 87,
+      "line": 93,
       "context": "{existingService ? t('common:serviceUploadModal.editTitle') : t('common:serviceUploadModal.addTitle')}"
     },
     {
       "key": "common:buttons.close",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 89,
+      "line": 95,
       "context": "<button onClick={onClose} className=\"p-1 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors\" aria-label={t('common:buttons.close')}>"
     },
     {
       "key": "common:buttons.close",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 89,
+      "line": 95,
       "context": "<button onClick={onClose} className=\"p-1 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors\" aria-label={t('common:buttons.close')}>"
     },
     {
       "key": "common:serviceUploadModal.labels.title",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 97,
+      "line": 103,
       "context": "<label htmlFor=\"title\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:serviceUploadModal.labels.title')} <span className=\"text-red-500 ml-0.5\">*</span></label>"
     },
     {
       "key": "common:serviceUploadModal.labels.title",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 97,
+      "line": 103,
       "context": "<label htmlFor=\"title\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:serviceUploadModal.labels.title')} <span className=\"text-red-500 ml-0.5\">*</span></label>"
     },
     {
       "key": "common:serviceUploadModal.labels.description",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 102,
+      "line": 108,
       "context": "<label htmlFor=\"description\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:serviceUploadModal.labels.description')} <span className=\"text-red-500 ml-0.5\">*</span></label>"
     },
     {
       "key": "common:serviceUploadModal.labels.description",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 102,
+      "line": 108,
       "context": "<label htmlFor=\"description\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:serviceUploadModal.labels.description')} <span className=\"text-red-500 ml-0.5\">*</span></label>"
     },
     {
       "key": "common:serviceUploadModal.labels.categories",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 109,
+      "line": 115,
       "context": "{t('common:serviceUploadModal.labels.categories', 'Service Categories')} <span className=\"text-red-500 ml-0.5\">*</span>"
     },
     {
       "key": "common:serviceUploadModal.labels.categories",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 109,
+      "line": 115,
       "context": "{t('common:serviceUploadModal.labels.categories', 'Service Categories')} <span className=\"text-red-500 ml-0.5\">*</span>"
     },
     {
       "key": "common:serviceUploadModal.placeholders.categories",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 115,
+      "line": 121,
       "context": "placeholder={t('common:serviceUploadModal.placeholders.categories', 'Type or select categories...')}"
     },
     {
       "key": "common:serviceUploadModal.placeholders.categories",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 115,
+      "line": 121,
       "context": "placeholder={t('common:serviceUploadModal.placeholders.categories', 'Type or select categories...')}"
     },
     {
-      "key": "common:serviceUploadModal.categoriesHelpText",
+      "key": "common:serviceUploadModal.placeholders.categories",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 119,
-      "context": "{t('common:serviceUploadModal.categoriesHelpText', 'Select from suggestions or add your own custom categories. Press Enter to add.')}"
+      "line": 131,
+      "context": "placeholder={t('common:serviceUploadModal.placeholders.categories', 'Specify category...')}"
     },
     {
-      "key": "common:serviceUploadModal.categoriesHelpText",
+      "key": "common:serviceUploadModal.placeholders.categories",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 119,
-      "context": "{t('common:serviceUploadModal.categoriesHelpText', 'Select from suggestions or add your own custom categories. Press Enter to add.')}"
+      "line": 131,
+      "context": "placeholder={t('common:serviceUploadModal.placeholders.categories', 'Specify category...')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/service-provider/ServiceUploadModal.tsx",
+      "line": 163,
+      "context": "{t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/service-provider/ServiceUploadModal.tsx",
+      "line": 163,
+      "context": "{t('common:buttons.add', 'Add')}"
     },
     {
       "key": "common:serviceUploadModal.labels.deliveryType",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 124,
+      "line": 170,
       "context": "<label htmlFor=\"deliveryType\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:serviceUploadModal.labels.deliveryType')}</label>"
     },
     {
       "key": "common:serviceUploadModal.labels.deliveryType",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 124,
+      "line": 170,
       "context": "<label htmlFor=\"deliveryType\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:serviceUploadModal.labels.deliveryType')}</label>"
     },
     {
       "key": "common:serviceUploadModal.labels.availability",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 131,
+      "line": 177,
       "context": "<label htmlFor=\"availability\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:serviceUploadModal.labels.availability')} <span className=\"text-red-500 ml-0.5\">*</span></label>"
     },
     {
       "key": "common:serviceUploadModal.labels.availability",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 131,
+      "line": 177,
       "context": "<label htmlFor=\"availability\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:serviceUploadModal.labels.availability')} <span className=\"text-red-500 ml-0.5\">*</span></label>"
     },
     {
       "key": "common:serviceUploadModal.placeholders.availability",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 132,
+      "line": 178,
       "context": "<input type=\"text\" name=\"availability\" id=\"availability\" value={formData.availability} onChange={handleInputChange} required className={STANDARD_INPUT_FIELD} placeholder={t('common:serviceUploadModal.placeholders.availability')} />"
     },
     {
       "key": "common:serviceUploadModal.placeholders.availability",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 132,
+      "line": 178,
       "context": "<input type=\"text\" name=\"availability\" id=\"availability\" value={formData.availability} onChange={handleInputChange} required className={STANDARD_INPUT_FIELD} placeholder={t('common:serviceUploadModal.placeholders.availability')} />"
     },
     {
       "key": "common:serviceUploadModal.labels.priceInfo",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 136,
+      "line": 182,
       "context": "<label htmlFor=\"priceInfo\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:serviceUploadModal.labels.priceInfo')}</label>"
     },
     {
       "key": "common:serviceUploadModal.labels.priceInfo",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 136,
+      "line": 182,
       "context": "<label htmlFor=\"priceInfo\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:serviceUploadModal.labels.priceInfo')}</label>"
     },
     {
       "key": "common:serviceUploadModal.placeholders.priceInfo",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 137,
+      "line": 183,
       "context": "<input type=\"text\" name=\"priceInfo\" id=\"priceInfo\" value={formData.priceInfo} onChange={handleInputChange} className={STANDARD_INPUT_FIELD} placeholder={t('common:serviceUploadModal.placeholders.priceInfo')} />"
     },
     {
       "key": "common:serviceUploadModal.placeholders.priceInfo",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 137,
+      "line": 183,
       "context": "<input type=\"text\" name=\"priceInfo\" id=\"priceInfo\" value={formData.priceInfo} onChange={handleInputChange} className={STANDARD_INPUT_FIELD} placeholder={t('common:serviceUploadModal.placeholders.priceInfo')} />"
     },
     {
       "key": "common:serviceUploadModal.labels.tags",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 141,
+      "line": 187,
       "context": "<label htmlFor=\"tags\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:serviceUploadModal.labels.tags')}</label>"
     },
     {
       "key": "common:serviceUploadModal.labels.tags",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 141,
+      "line": 187,
       "context": "<label htmlFor=\"tags\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:serviceUploadModal.labels.tags')}</label>"
     },
     {
       "key": "common:serviceUploadModal.placeholders.tags",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 142,
+      "line": 188,
       "context": "<input type=\"text\" name=\"tags\" id=\"tags\" value={(formData.tags || []).join(', ')} onChange={handleInputChange} className={STANDARD_INPUT_FIELD} placeholder={t('common:serviceUploadModal.placeholders.tags')} />"
     },
     {
       "key": "common:serviceUploadModal.placeholders.tags",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 142,
+      "line": 188,
       "context": "<input type=\"text\" name=\"tags\" id=\"tags\" value={(formData.tags || []).join(', ')} onChange={handleInputChange} className={STANDARD_INPUT_FIELD} placeholder={t('common:serviceUploadModal.placeholders.tags')} />"
     },
     {
       "key": "common:serviceUploadModal.labels.image",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 146,
+      "line": 192,
       "context": "<label className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:serviceUploadModal.labels.image')}</label>"
     },
     {
       "key": "common:serviceUploadModal.labels.image",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 146,
+      "line": 192,
       "context": "<label className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:serviceUploadModal.labels.image')}</label>"
     },
     {
       "key": "common:contentUploadModal.fileUpload.browse",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 152,
+      "line": 198,
       "context": "<span>{t('common:contentUploadModal.fileUpload.browse')}</span>"
     },
     {
       "key": "common:contentUploadModal.fileUpload.browse",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 152,
+      "line": 198,
       "context": "<span>{t('common:contentUploadModal.fileUpload.browse')}</span>"
     },
     {
       "key": "common:contentUploadModal.fileUpload.dragAndDrop",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 155,
+      "line": 201,
       "context": "<p className=\"pl-1 text-gray-500\">{t('common:contentUploadModal.fileUpload.dragAndDrop')}</p>"
     },
     {
       "key": "common:contentUploadModal.fileUpload.dragAndDrop",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 155,
+      "line": 201,
       "context": "<p className=\"pl-1 text-gray-500\">{t('common:contentUploadModal.fileUpload.dragAndDrop')}</p>"
     },
     {
       "key": "common:contentUploadModal.fileUpload.selected",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 159,
+      "line": 205,
       "context": "? t('common:contentUploadModal.fileUpload.selected', { fileName: file.name })"
     },
     {
       "key": "common:contentUploadModal.fileUpload.selected",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 159,
+      "line": 205,
       "context": "? t('common:contentUploadModal.fileUpload.selected', { fileName: file.name })"
     },
     {
       "key": "common:contentUploadModal.fileUpload.browseNoFileChosen",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 160,
+      "line": 206,
       "context": ": t('common:contentUploadModal.fileUpload.browseNoFileChosen')}"
     },
     {
       "key": "common:contentUploadModal.fileUpload.browseNoFileChosen",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 160,
+      "line": 206,
       "context": ": t('common:contentUploadModal.fileUpload.browseNoFileChosen')}"
     },
     {
       "key": "common:serviceUploadModal.imageHelpText",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 162,
+      "line": 208,
       "context": "<p className=\"text-xs text-gray-500\">{t('common:serviceUploadModal.imageHelpText')}</p>"
     },
     {
       "key": "common:serviceUploadModal.imageHelpText",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 162,
+      "line": 208,
       "context": "<p className=\"text-xs text-gray-500\">{t('common:serviceUploadModal.imageHelpText')}</p>"
     },
     {
       "key": "common:contentUploadModal.fileUpload.selected",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 165,
+      "line": 211,
       "context": "{file && <p className=\"mt-2 text-sm text-gray-500\"><PaperClipIcon className=\"w-4 h-4 inline mr-1\"/> {t('common:contentUploadModal.fileUpload.selected', { fileName: file.name })}</p>}"
     },
     {
       "key": "common:contentUploadModal.fileUpload.selected",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 165,
+      "line": 211,
       "context": "{file && <p className=\"mt-2 text-sm text-gray-500\"><PaperClipIcon className=\"w-4 h-4 inline mr-1\"/> {t('common:contentUploadModal.fileUpload.selected', { fileName: file.name })}</p>}"
     },
     {
       "key": "common:serviceUploadModal.currentImage",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 166,
+      "line": 212,
       "context": "{formData.imageUrl && !file && <p className=\"mt-2 text-sm text-gray-500\">{t('common:serviceUploadModal.currentImage')}: <a href={formData.imageUrl} target=\"_blank\" rel=\"noopener noreferrer\" className=\"text-swiss-mint hover:underline\">{t('common:buttons.view')}</a></p>}"
     },
     {
       "key": "common:buttons.view",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 166,
+      "line": 212,
       "context": "{formData.imageUrl && !file && <p className=\"mt-2 text-sm text-gray-500\">{t('common:serviceUploadModal.currentImage')}: <a href={formData.imageUrl} target=\"_blank\" rel=\"noopener noreferrer\" className=\"text-swiss-mint hover:underline\">{t('common:buttons.view')}</a></p>}"
     },
     {
       "key": "common:serviceUploadModal.currentImage",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 166,
+      "line": 212,
       "context": "{formData.imageUrl && !file && <p className=\"mt-2 text-sm text-gray-500\">{t('common:serviceUploadModal.currentImage')}: <a href={formData.imageUrl} target=\"_blank\" rel=\"noopener noreferrer\" className=\"text-swiss-mint hover:underline\">{t('common:buttons.view')}</a></p>}"
     },
     {
       "key": "common:buttons.view",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 166,
+      "line": 212,
       "context": "{formData.imageUrl && !file && <p className=\"mt-2 text-sm text-gray-500\">{t('common:serviceUploadModal.currentImage')}: <a href={formData.imageUrl} target=\"_blank\" rel=\"noopener noreferrer\" className=\"text-swiss-mint hover:underline\">{t('common:buttons.view')}</a></p>}"
     },
     {
       "key": "common:buttons.cancel",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 170,
+      "line": 216,
       "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.cancel')}</Button>"
     },
     {
       "key": "common:buttons.cancel",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 170,
+      "line": 216,
       "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.cancel')}</Button>"
     },
     {
       "key": "common:buttons.saveChanges",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 172,
+      "line": 218,
       "context": "{existingService ? t('common:buttons.saveChanges') : t('common:buttons.add')}"
     },
     {
       "key": "common:buttons.add",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 172,
+      "line": 218,
       "context": "{existingService ? t('common:buttons.saveChanges') : t('common:buttons.add')}"
     },
     {
       "key": "common:buttons.saveChanges",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 172,
+      "line": 218,
       "context": "{existingService ? t('common:buttons.saveChanges') : t('common:buttons.add')}"
     },
     {
       "key": "common:buttons.add",
       "file": "components/service-provider/ServiceUploadModal.tsx",
-      "line": 172,
+      "line": 218,
       "context": "{existingService ? t('common:buttons.saveChanges') : t('common:buttons.add')}"
     },
     {
@@ -23629,699 +23665,831 @@
       "context": "<Button type=\"button\" variant=\"light\" onClick={onClose}>{t('common:buttons.cancel')}</Button>"
     },
     {
+      "key": "common:contentUploadModal.error.invalidCategory",
+      "file": "components/admin/ContentUploadModal.tsx",
+      "line": 202,
+      "context": "alert(t('common:contentUploadModal.error.invalidCategory', 'Please specify a category name'));"
+    },
+    {
+      "key": "common:contentUploadModal.error.invalidCategory",
+      "file": "components/admin/ContentUploadModal.tsx",
+      "line": 202,
+      "context": "alert(t('common:contentUploadModal.error.invalidCategory', 'Please specify a category name'));"
+    },
+    {
+      "key": "common:contentUploadModal.error.saveCategoryFailed",
+      "file": "components/admin/ContentUploadModal.tsx",
+      "line": 214,
+      "context": "alert(e?.message || t('common:contentUploadModal.error.saveCategoryFailed', 'Failed to save category'));"
+    },
+    {
+      "key": "common:contentUploadModal.error.saveCategoryFailed",
+      "file": "components/admin/ContentUploadModal.tsx",
+      "line": 214,
+      "context": "alert(e?.message || t('common:contentUploadModal.error.saveCategoryFailed', 'Failed to save category'));"
+    },
+    {
       "key": "common:contentUploadModal.error.selectFileOrLink",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 275,
+      "line": 303,
       "context": "alert(t('common:contentUploadModal.error.selectFileOrLink'));"
     },
     {
       "key": "common:contentUploadModal.error.selectFileOrLink",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 275,
+      "line": 303,
       "context": "alert(t('common:contentUploadModal.error.selectFileOrLink'));"
     },
     {
       "key": "common:contentUploadModal.title.edit",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 292,
+      "line": 320,
       "context": "? t('common:contentUploadModal.title.edit', { contentType: t(`contentUploadModal.contentType.${contentType}`)})"
     },
     {
       "key": "common:contentUploadModal.title.edit",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 292,
+      "line": 320,
       "context": "? t('common:contentUploadModal.title.edit', { contentType: t(`contentUploadModal.contentType.${contentType}`)})"
     },
     {
       "key": "common:contentUploadModal.labels.descriptionPreview",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 295,
+      "line": 323,
       "context": "const descriptionLabel = contentType === 'policy' ? t('common:contentUploadModal.labels.descriptionPreview') : t('common:contentUploadModal.labels.description');"
     },
     {
       "key": "common:contentUploadModal.labels.description",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 295,
+      "line": 323,
       "context": "const descriptionLabel = contentType === 'policy' ? t('common:contentUploadModal.labels.descriptionPreview') : t('common:contentUploadModal.labels.description');"
     },
     {
       "key": "common:contentUploadModal.labels.descriptionPreview",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 295,
+      "line": 323,
       "context": "const descriptionLabel = contentType === 'policy' ? t('common:contentUploadModal.labels.descriptionPreview') : t('common:contentUploadModal.labels.description');"
     },
     {
       "key": "common:contentUploadModal.labels.description",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 295,
+      "line": 323,
       "context": "const descriptionLabel = contentType === 'policy' ? t('common:contentUploadModal.labels.descriptionPreview') : t('common:contentUploadModal.labels.description');"
     },
     {
       "key": "common:languageSwitcher.enShort",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 302,
+      "line": 330,
       "context": "{ value: 'EN', label: t('common:languageSwitcher.enShort') },"
     },
     {
       "key": "common:languageSwitcher.enShort",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 302,
+      "line": 330,
       "context": "{ value: 'EN', label: t('common:languageSwitcher.enShort') },"
     },
     {
       "key": "common:languageSwitcher.frShort",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 303,
+      "line": 331,
       "context": "{ value: 'FR', label: t('common:languageSwitcher.frShort') },"
     },
     {
       "key": "common:languageSwitcher.frShort",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 303,
+      "line": 331,
       "context": "{ value: 'FR', label: t('common:languageSwitcher.frShort') },"
     },
     {
       "key": "common:languageSwitcher.deShort",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 304,
+      "line": 332,
       "context": "{ value: 'DE', label: t('common:languageSwitcher.deShort') },"
     },
     {
       "key": "common:languageSwitcher.deShort",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 304,
+      "line": 332,
       "context": "{ value: 'DE', label: t('common:languageSwitcher.deShort') },"
     },
     {
       "key": "common:contentUploadModal.labels.title",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 339,
+      "line": 367,
       "context": "<label htmlFor=\"title\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.title')} <span className=\"text-red-500 ml-0.5\">*</span></label>"
     },
     {
       "key": "common:contentUploadModal.labels.title",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 339,
+      "line": 367,
       "context": "<label htmlFor=\"title\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.title')} <span className=\"text-red-500 ml-0.5\">*</span></label>"
     },
     {
       "key": "common:contentUploadModal.labels.category",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 343,
+      "line": 371,
       "context": "<label htmlFor=\"category\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.category')} <span className=\"text-red-500 ml-0.5\">*</span></label>"
     },
     {
       "key": "common:contentUploadModal.labels.category",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 343,
+      "line": 371,
       "context": "<label htmlFor=\"category\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.category')} <span className=\"text-red-500 ml-0.5\">*</span></label>"
+    },
+    {
+      "key": "common:contentUploadModal.placeholders.otherCategory",
+      "file": "components/admin/ContentUploadModal.tsx",
+      "line": 382,
+      "context": "placeholder={t('common:contentUploadModal.placeholders.otherCategory', 'Specify category...')}"
+    },
+    {
+      "key": "common:contentUploadModal.placeholders.otherCategory",
+      "file": "components/admin/ContentUploadModal.tsx",
+      "line": 382,
+      "context": "placeholder={t('common:contentUploadModal.placeholders.otherCategory', 'Specify category...')}"
+    },
+    {
+      "key": "common:saving",
+      "file": "components/admin/ContentUploadModal.tsx",
+      "line": 392,
+      "context": "{isSavingCategory ? t('common:saving', 'Saving...') : t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/admin/ContentUploadModal.tsx",
+      "line": 392,
+      "context": "{isSavingCategory ? t('common:saving', 'Saving...') : t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:saving",
+      "file": "components/admin/ContentUploadModal.tsx",
+      "line": 392,
+      "context": "{isSavingCategory ? t('common:saving', 'Saving...') : t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/admin/ContentUploadModal.tsx",
+      "line": 392,
+      "context": "{isSavingCategory ? t('common:saving', 'Saving...') : t('common:buttons.add', 'Add')}"
     },
     {
       "key": "common:contentUploadModal.labels.contentType",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 355,
+      "line": 404,
       "context": "{renderButtonSelect('type', formData.type, Object.values(ELearningContentType).map(v => ({ value: v, label: ELearningContentTypeLabels[v] })), t('common:contentUploadModal.labels.contentType'), true)}"
     },
     {
       "key": "common:contentUploadModal.labels.contentType",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 355,
+      "line": 404,
       "context": "{renderButtonSelect('type', formData.type, Object.values(ELearningContentType).map(v => ({ value: v, label: ELearningContentTypeLabels[v] })), t('common:contentUploadModal.labels.contentType'), true)}"
     },
     {
       "key": "common:contentUploadModal.labels.language",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 356,
+      "line": 405,
       "context": "{renderButtonSelect('language', formData.language, languageOptions, t('common:contentUploadModal.labels.language'), true)}"
     },
     {
       "key": "common:contentUploadModal.labels.language",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 356,
+      "line": 405,
       "context": "{renderButtonSelect('language', formData.language, languageOptions, t('common:contentUploadModal.labels.language'), true)}"
     },
     {
       "key": "common:contentUploadModal.labels.duration",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 391,
+      "line": 440,
       "context": "<label htmlFor=\"duration\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.duration')}</label>"
     },
     {
       "key": "common:contentUploadModal.labels.duration",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 391,
+      "line": 440,
       "context": "<label htmlFor=\"duration\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.duration')}</label>"
     },
     {
       "key": "common:contentUploadModal.placeholders.duration",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 392,
+      "line": 441,
       "context": "<input type=\"text\" name=\"duration\" id=\"duration\" value={formData.duration || ''} onChange={handleInputChange} className={`${STANDARD_INPUT_FIELD} mt-1`} placeholder={t('common:contentUploadModal.placeholders.duration')}/>"
     },
     {
       "key": "common:contentUploadModal.placeholders.duration",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 392,
+      "line": 441,
       "context": "<input type=\"text\" name=\"duration\" id=\"duration\" value={formData.duration || ''} onChange={handleInputChange} className={`${STANDARD_INPUT_FIELD} mt-1`} placeholder={t('common:contentUploadModal.placeholders.duration')}/>"
     },
     {
       "key": "common:contentUploadModal.labels.lessons",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 397,
+      "line": 446,
       "context": "<label htmlFor=\"lessons\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.lessons')}</label>"
     },
     {
       "key": "common:contentUploadModal.labels.lessons",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 397,
+      "line": 446,
       "context": "<label htmlFor=\"lessons\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.lessons')}</label>"
     },
     {
       "key": "common:contentUploadModal.labels.linkUrl",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 405,
+      "line": 454,
       "context": "{formData.type === ELearningContentType.VIDEO ? 'Video URL' : t('common:contentUploadModal.labels.linkUrl')}"
     },
     {
       "key": "common:contentUploadModal.labels.linkUrl",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 405,
+      "line": 454,
       "context": "{formData.type === ELearningContentType.VIDEO ? 'Video URL' : t('common:contentUploadModal.labels.linkUrl')}"
     },
     {
       "key": "common:contentUploadModal.placeholders.linkUrl",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 416,
+      "line": 465,
       "context": "placeholder={formData.type === ELearningContentType.VIDEO ? \"https://www.youtube.com/watch?v=...\" : t('common:contentUploadModal.placeholders.linkUrl')}"
     },
     {
       "key": "common:contentUploadModal.placeholders.linkUrl",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 416,
+      "line": 465,
       "context": "placeholder={formData.type === ELearningContentType.VIDEO ? \"https://www.youtube.com/watch?v=...\" : t('common:contentUploadModal.placeholders.linkUrl')}"
     },
     {
       "key": "common:contentUploadModal.labels.accessRoles",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 426,
+      "line": 475,
       "context": "<label className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.accessRoles')}</label>"
     },
     {
       "key": "common:contentUploadModal.labels.accessRoles",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 426,
+      "line": 475,
       "context": "<label className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.accessRoles')}</label>"
     },
     {
       "key": "common:contentUploadModal.labels.status",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 437,
+      "line": 486,
       "context": "<label htmlFor=\"status\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.status')}</label>"
     },
     {
       "key": "common:contentUploadModal.labels.status",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 437,
+      "line": 486,
       "context": "<label htmlFor=\"status\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.status')}</label>"
     },
     {
       "key": "common:contentUploadModal.statusOptions.draft",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 439,
+      "line": 488,
       "context": "<option value=\"Draft\">{t('common:contentUploadModal.statusOptions.draft')}</option>"
     },
     {
       "key": "common:contentUploadModal.statusOptions.draft",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 439,
+      "line": 488,
       "context": "<option value=\"Draft\">{t('common:contentUploadModal.statusOptions.draft')}</option>"
     },
     {
       "key": "common:contentUploadModal.statusOptions.published",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 440,
+      "line": 489,
       "context": "<option value=\"Published\">{t('common:contentUploadModal.statusOptions.published')}</option>"
     },
     {
       "key": "common:contentUploadModal.statusOptions.published",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 440,
+      "line": 489,
       "context": "<option value=\"Published\">{t('common:contentUploadModal.statusOptions.published')}</option>"
     },
     {
       "key": "common:contentUploadModal.statusOptions.archived",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 441,
+      "line": 490,
       "context": "<option value=\"Archived\">{t('common:contentUploadModal.statusOptions.archived')}</option>"
     },
     {
       "key": "common:contentUploadModal.statusOptions.archived",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 441,
+      "line": 490,
       "context": "<option value=\"Archived\">{t('common:contentUploadModal.statusOptions.archived')}</option>"
     },
     {
       "key": "common:contentUploadModal.labels.documentTitle",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 450,
+      "line": 499,
       "context": "<label htmlFor=\"title\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.documentTitle')} <span className=\"text-red-500 ml-0.5\">*</span></label>"
     },
     {
       "key": "common:contentUploadModal.labels.documentTitle",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 450,
+      "line": 499,
       "context": "<label htmlFor=\"title\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.documentTitle')} <span className=\"text-red-500 ml-0.5\">*</span></label>"
     },
     {
       "key": "common:contentUploadModal.labels.category",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 455,
+      "line": 504,
       "context": "<label htmlFor=\"category\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.category')} <span className=\"text-red-500 ml-0.5\">*</span></label>"
     },
     {
       "key": "common:contentUploadModal.labels.category",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 455,
+      "line": 504,
       "context": "<label htmlFor=\"category\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.category')} <span className=\"text-red-500 ml-0.5\">*</span></label>"
     },
     {
+      "key": "common:contentUploadModal.placeholders.otherCategory",
+      "file": "components/admin/ContentUploadModal.tsx",
+      "line": 515,
+      "context": "placeholder={t('common:contentUploadModal.placeholders.otherCategory', 'Specify category...')}"
+    },
+    {
+      "key": "common:contentUploadModal.placeholders.otherCategory",
+      "file": "components/admin/ContentUploadModal.tsx",
+      "line": 515,
+      "context": "placeholder={t('common:contentUploadModal.placeholders.otherCategory', 'Specify category...')}"
+    },
+    {
+      "key": "common:saving",
+      "file": "components/admin/ContentUploadModal.tsx",
+      "line": 525,
+      "context": "{isSavingCategory ? t('common:saving', 'Saving...') : t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/admin/ContentUploadModal.tsx",
+      "line": 525,
+      "context": "{isSavingCategory ? t('common:saving', 'Saving...') : t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:saving",
+      "file": "components/admin/ContentUploadModal.tsx",
+      "line": 525,
+      "context": "{isSavingCategory ? t('common:saving', 'Saving...') : t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/admin/ContentUploadModal.tsx",
+      "line": 525,
+      "context": "{isSavingCategory ? t('common:saving', 'Saving...') : t('common:buttons.add', 'Add')}"
+    },
+    {
       "key": "common:contentUploadModal.labels.language",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 460,
+      "line": 530,
       "context": "{renderButtonSelect('language', formData.language, languageOptions, t('common:contentUploadModal.labels.language'), true)}"
     },
     {
       "key": "common:contentUploadModal.labels.language",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 460,
+      "line": 530,
       "context": "{renderButtonSelect('language', formData.language, languageOptions, t('common:contentUploadModal.labels.language'), true)}"
     },
     {
       "key": "common:contentUploadModal.labels.fileType",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 463,
+      "line": 533,
       "context": "<label htmlFor=\"fileType\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.fileType')} <span className=\"text-red-500 ml-0.5\">*</span></label>"
     },
     {
       "key": "common:contentUploadModal.labels.fileType",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 463,
+      "line": 533,
       "context": "<label htmlFor=\"fileType\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.fileType')} <span className=\"text-red-500 ml-0.5\">*</span></label>"
     },
     {
       "key": "common:contentUploadModal.labels.version",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 471,
+      "line": 545,
       "context": "<label htmlFor=\"version\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.version')}</label>"
     },
     {
       "key": "common:contentUploadModal.labels.version",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 471,
+      "line": 545,
       "context": "<label htmlFor=\"version\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.version')}</label>"
     },
     {
       "key": "common:contentUploadModal.placeholders.version",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 472,
+      "line": 546,
       "context": "<input type=\"text\" name=\"version\" id=\"version\" value={formData.version || ''} onChange={handleInputChange} className={`${STANDARD_INPUT_FIELD} mt-1`} placeholder={t('common:contentUploadModal.placeholders.version')}/>"
     },
     {
       "key": "common:contentUploadModal.placeholders.version",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 472,
+      "line": 546,
       "context": "<input type=\"text\" name=\"version\" id=\"version\" value={formData.version || ''} onChange={handleInputChange} className={`${STANDARD_INPUT_FIELD} mt-1`} placeholder={t('common:contentUploadModal.placeholders.version')}/>"
     },
     {
       "key": "common:contentUploadModal.labels.status",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 475,
+      "line": 549,
       "context": "<label htmlFor=\"status\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.status')}</label>"
     },
     {
       "key": "common:contentUploadModal.labels.status",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 475,
+      "line": 549,
       "context": "<label htmlFor=\"status\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.status')}</label>"
     },
     {
       "key": "common:contentUploadModal.statusOptions.draft",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 477,
+      "line": 551,
       "context": "<option value=\"Draft\">{t('common:contentUploadModal.statusOptions.draft')}</option>"
     },
     {
       "key": "common:contentUploadModal.statusOptions.draft",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 477,
+      "line": 551,
       "context": "<option value=\"Draft\">{t('common:contentUploadModal.statusOptions.draft')}</option>"
     },
     {
       "key": "common:contentUploadModal.statusOptions.published",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 478,
+      "line": 552,
       "context": "<option value=\"Published\">{t('common:contentUploadModal.statusOptions.published')}</option>"
     },
     {
       "key": "common:contentUploadModal.statusOptions.published",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 478,
+      "line": 552,
       "context": "<option value=\"Published\">{t('common:contentUploadModal.statusOptions.published')}</option>"
     },
     {
       "key": "common:contentUploadModal.statusOptions.archived",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 479,
+      "line": 553,
       "context": "<option value=\"Archived\">{t('common:contentUploadModal.statusOptions.archived')}</option>"
     },
     {
       "key": "common:contentUploadModal.statusOptions.archived",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 479,
+      "line": 553,
       "context": "<option value=\"Archived\">{t('common:contentUploadModal.statusOptions.archived')}</option>"
     },
     {
       "key": "common:contentUploadModal.labels.title",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 488,
+      "line": 562,
       "context": "<label htmlFor=\"policyTitle\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.title')} <span className=\"text-red-500 ml-0.5\">*</span></label>"
     },
     {
       "key": "common:contentUploadModal.labels.title",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 488,
+      "line": 562,
       "context": "<label htmlFor=\"policyTitle\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.title')} <span className=\"text-red-500 ml-0.5\">*</span></label>"
     },
     {
       "key": "common:contentUploadModal.labels.category",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 493,
+      "line": 567,
       "context": "<label htmlFor=\"policyCategory\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.category')} <span className=\"text-red-500 ml-0.5\">*</span></label>"
     },
     {
       "key": "common:contentUploadModal.labels.category",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 493,
+      "line": 567,
       "context": "<label htmlFor=\"policyCategory\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.category')} <span className=\"text-red-500 ml-0.5\">*</span></label>"
     },
     {
+      "key": "common:contentUploadModal.placeholders.otherCategory",
+      "file": "components/admin/ContentUploadModal.tsx",
+      "line": 578,
+      "context": "placeholder={t('common:contentUploadModal.placeholders.otherCategory', 'Specify category...')}"
+    },
+    {
+      "key": "common:contentUploadModal.placeholders.otherCategory",
+      "file": "components/admin/ContentUploadModal.tsx",
+      "line": 578,
+      "context": "placeholder={t('common:contentUploadModal.placeholders.otherCategory', 'Specify category...')}"
+    },
+    {
+      "key": "common:saving",
+      "file": "components/admin/ContentUploadModal.tsx",
+      "line": 588,
+      "context": "{isSavingCategory ? t('common:saving', 'Saving...') : t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/admin/ContentUploadModal.tsx",
+      "line": 588,
+      "context": "{isSavingCategory ? t('common:saving', 'Saving...') : t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:saving",
+      "file": "components/admin/ContentUploadModal.tsx",
+      "line": 588,
+      "context": "{isSavingCategory ? t('common:saving', 'Saving...') : t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/admin/ContentUploadModal.tsx",
+      "line": 588,
+      "context": "{isSavingCategory ? t('common:saving', 'Saving...') : t('common:buttons.add', 'Add')}"
+    },
+    {
       "key": "common:contentUploadModal.labels.language",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 498,
+      "line": 593,
       "context": "{renderButtonSelect('language', formData.language, languageOptions, t('common:contentUploadModal.labels.language'), true)}"
     },
     {
       "key": "common:contentUploadModal.labels.language",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 498,
+      "line": 593,
       "context": "{renderButtonSelect('language', formData.language, languageOptions, t('common:contentUploadModal.labels.language'), true)}"
     },
     {
       "key": "common:contentUploadModal.labels.country",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 502,
+      "line": 597,
       "context": "<label htmlFor=\"policyCountry\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.country')} <span className=\"text-red-500 ml-0.5\">*</span></label>"
     },
     {
       "key": "common:contentUploadModal.labels.country",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 502,
+      "line": 597,
       "context": "<label htmlFor=\"policyCountry\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.country')} <span className=\"text-red-500 ml-0.5\">*</span></label>"
     },
     {
       "key": "common:contentUploadModal.labels.regionCanton",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 508,
+      "line": 603,
       "context": "<label htmlFor=\"policyRegion\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.regionCanton')} <span className=\"text-red-500 ml-0.5\">*</span></label>"
     },
     {
       "key": "common:contentUploadModal.labels.regionCanton",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 508,
+      "line": 603,
       "context": "<label htmlFor=\"policyRegion\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.regionCanton')} <span className=\"text-red-500 ml-0.5\">*</span></label>"
     },
     {
       "key": "common:contentUploadModal.labels.policyType",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 516,
+      "line": 611,
       "context": "<label htmlFor=\"policyPolicyType\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.policyType')} <span className=\"text-red-500 ml-0.5\">*</span></label>"
     },
     {
       "key": "common:contentUploadModal.labels.policyType",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 516,
+      "line": 611,
       "context": "<label htmlFor=\"policyPolicyType\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.policyType')} <span className=\"text-red-500 ml-0.5\">*</span></label>"
     },
     {
       "key": "common:contentUploadModal.labels.criticality",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 522,
+      "line": 617,
       "context": "<label htmlFor=\"isCritical\" className=\"block text-sm font-medium text-gray-700 mb-1.5\">{t('common:contentUploadModal.labels.criticality')}</label>"
     },
     {
       "key": "common:contentUploadModal.labels.criticality",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 522,
+      "line": 617,
       "context": "<label htmlFor=\"isCritical\" className=\"block text-sm font-medium text-gray-700 mb-1.5\">{t('common:contentUploadModal.labels.criticality')}</label>"
     },
     {
       "key": "common:contentUploadModal.labels.markAsCritical",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 530,
+      "line": 625,
       "context": "<span className=\"sr-only\">{t('common:contentUploadModal.labels.markAsCritical')}</span>"
     },
     {
       "key": "common:contentUploadModal.labels.markAsCritical",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 530,
+      "line": 625,
       "context": "<span className=\"sr-only\">{t('common:contentUploadModal.labels.markAsCritical')}</span>"
     },
     {
       "key": "common:contentUploadModal.criticalityOptions.critical",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 533,
+      "line": 628,
       "context": "<span className=\"ml-2 text-sm text-gray-600\">{formData.isCritical ? t('common:contentUploadModal.criticalityOptions.critical') : t('common:contentUploadModal.criticalityOptions.normal')}</span>"
     },
     {
       "key": "common:contentUploadModal.criticalityOptions.normal",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 533,
+      "line": 628,
       "context": "<span className=\"ml-2 text-sm text-gray-600\">{formData.isCritical ? t('common:contentUploadModal.criticalityOptions.critical') : t('common:contentUploadModal.criticalityOptions.normal')}</span>"
     },
     {
       "key": "common:contentUploadModal.criticalityOptions.critical",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 533,
+      "line": 628,
       "context": "<span className=\"ml-2 text-sm text-gray-600\">{formData.isCritical ? t('common:contentUploadModal.criticalityOptions.critical') : t('common:contentUploadModal.criticalityOptions.normal')}</span>"
     },
     {
       "key": "common:contentUploadModal.criticalityOptions.normal",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 533,
+      "line": 628,
       "context": "<span className=\"ml-2 text-sm text-gray-600\">{formData.isCritical ? t('common:contentUploadModal.criticalityOptions.critical') : t('common:contentUploadModal.criticalityOptions.normal')}</span>"
     },
     {
       "key": "common:contentUploadModal.labels.effectiveDate",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 538,
+      "line": 633,
       "context": "<label htmlFor=\"policyEffectiveDate\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.effectiveDate')}</label>"
     },
     {
       "key": "common:contentUploadModal.labels.effectiveDate",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 538,
+      "line": 633,
       "context": "<label htmlFor=\"policyEffectiveDate\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.effectiveDate')}</label>"
     },
     {
       "key": "common:contentUploadModal.labels.status",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 542,
+      "line": 637,
       "context": "<label htmlFor=\"policyStatus\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.status')}</label>"
     },
     {
       "key": "common:contentUploadModal.labels.status",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 542,
+      "line": 637,
       "context": "<label htmlFor=\"policyStatus\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.status')}</label>"
     },
     {
       "key": "common:contentUploadModal.labels.externalLink",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 549,
+      "line": 644,
       "context": "<label htmlFor=\"policyExternalLink\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.externalLink')}</label>"
     },
     {
       "key": "common:contentUploadModal.labels.externalLink",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 549,
+      "line": 644,
       "context": "<label htmlFor=\"policyExternalLink\" className=\"block text-sm font-medium text-gray-700 mb-1\">{t('common:contentUploadModal.labels.externalLink')}</label>"
     },
     {
       "key": "common:contentUploadModal.placeholders.externalLink",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 550,
+      "line": 645,
       "context": "<input type=\"url\" name=\"externalLink\" id=\"policyExternalLink\" value={formData.externalLink || ''} onChange={handleInputChange} className={policySpecificInputClass} placeholder={t('common:contentUploadModal.placeholders.externalLink')}/>"
     },
     {
       "key": "common:contentUploadModal.placeholders.externalLink",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 550,
+      "line": 645,
       "context": "<input type=\"url\" name=\"externalLink\" id=\"policyExternalLink\" value={formData.externalLink || ''} onChange={handleInputChange} className={policySpecificInputClass} placeholder={t('common:contentUploadModal.placeholders.externalLink')}/>"
     },
     {
       "key": "common:buttons.close",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 565,
+      "line": 660,
       "context": "<button onClick={onClose} className=\"p-1 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors\" aria-label={t('common:buttons.close')}>"
     },
     {
       "key": "common:buttons.close",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 565,
+      "line": 660,
       "context": "<button onClick={onClose} className=\"p-1 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors\" aria-label={t('common:buttons.close')}>"
     },
     {
       "key": "common:contentUploadModal.labels.currentFile",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 579,
+      "line": 674,
       "context": "{existingContent && (existingContent as any).fileUrl && !file ? t('common:contentUploadModal.labels.currentFile', { fileName: (existingContent as any).fileUrl}) :"
     },
     {
       "key": "common:contentUploadModal.labels.currentFile",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 579,
+      "line": 674,
       "context": "{existingContent && (existingContent as any).fileUrl && !file ? t('common:contentUploadModal.labels.currentFile', { fileName: (existingContent as any).fileUrl}) :"
     },
     {
       "key": "common:contentUploadModal.labels.uploadFileType",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 580,
+      "line": 675,
       "context": "(contentType === 'e-learning' && (formData.type === ELearningContentType.PDF || formData.type === ELearningContentType.VIDEO) ? t('common:contentUploadModal.labels.uploadFileType', { fileType: formData.type}) : t('common:contentUploadModal.labels.uploadFile'))}"
     },
     {
       "key": "common:contentUploadModal.labels.uploadFile",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 580,
+      "line": 675,
       "context": "(contentType === 'e-learning' && (formData.type === ELearningContentType.PDF || formData.type === ELearningContentType.VIDEO) ? t('common:contentUploadModal.labels.uploadFileType', { fileType: formData.type}) : t('common:contentUploadModal.labels.uploadFile'))}"
     },
     {
       "key": "common:contentUploadModal.labels.uploadFileType",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 580,
+      "line": 675,
       "context": "(contentType === 'e-learning' && (formData.type === ELearningContentType.PDF || formData.type === ELearningContentType.VIDEO) ? t('common:contentUploadModal.labels.uploadFileType', { fileType: formData.type}) : t('common:contentUploadModal.labels.uploadFile'))}"
     },
     {
       "key": "common:contentUploadModal.labels.uploadFile",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 580,
+      "line": 675,
       "context": "(contentType === 'e-learning' && (formData.type === ELearningContentType.PDF || formData.type === ELearningContentType.VIDEO) ? t('common:contentUploadModal.labels.uploadFileType', { fileType: formData.type}) : t('common:contentUploadModal.labels.uploadFile'))}"
     },
     {
       "key": "common:contentUploadModal.fileUpload.browse",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 588,
+      "line": 683,
       "context": "<span>{t('common:contentUploadModal.fileUpload.browse')}</span>"
     },
     {
       "key": "common:contentUploadModal.fileUpload.browse",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 588,
+      "line": 683,
       "context": "<span>{t('common:contentUploadModal.fileUpload.browse')}</span>"
     },
     {
       "key": "common:contentUploadModal.fileUpload.dragAndDrop",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 591,
+      "line": 693,
       "context": "<p className=\"pl-1 text-gray-500\">{t('common:contentUploadModal.fileUpload.dragAndDrop')}</p>"
     },
     {
       "key": "common:contentUploadModal.fileUpload.dragAndDrop",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 591,
+      "line": 693,
       "context": "<p className=\"pl-1 text-gray-500\">{t('common:contentUploadModal.fileUpload.dragAndDrop')}</p>"
     },
     {
       "key": "common:contentUploadModal.fileUpload.eLearningAllowedTypes",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 594,
+      "line": 696,
       "context": "{contentType==='e-learning' ? t('common:contentUploadModal.fileUpload.eLearningAllowedTypes') : t('common:contentUploadModal.fileUpload.hrPolicyAllowedTypes')}"
     },
     {
       "key": "common:contentUploadModal.fileUpload.hrPolicyAllowedTypes",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 594,
+      "line": 696,
       "context": "{contentType==='e-learning' ? t('common:contentUploadModal.fileUpload.eLearningAllowedTypes') : t('common:contentUploadModal.fileUpload.hrPolicyAllowedTypes')}"
     },
     {
       "key": "common:contentUploadModal.fileUpload.eLearningAllowedTypes",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 594,
+      "line": 696,
       "context": "{contentType==='e-learning' ? t('common:contentUploadModal.fileUpload.eLearningAllowedTypes') : t('common:contentUploadModal.fileUpload.hrPolicyAllowedTypes')}"
     },
     {
       "key": "common:contentUploadModal.fileUpload.hrPolicyAllowedTypes",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 594,
+      "line": 696,
       "context": "{contentType==='e-learning' ? t('common:contentUploadModal.fileUpload.eLearningAllowedTypes') : t('common:contentUploadModal.fileUpload.hrPolicyAllowedTypes')}"
     },
     {
       "key": "common:contentUploadModal.fileUpload.selected",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 598,
+      "line": 700,
       "context": "{file && <p className=\"mt-2 text-sm text-gray-500\"><PaperClipIcon className=\"w-4 h-4 inline mr-1\"/> {t('common:contentUploadModal.fileUpload.selected', { fileName: file.name })}</p>}"
     },
     {
       "key": "common:contentUploadModal.fileUpload.selected",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 598,
+      "line": 700,
       "context": "{file && <p className=\"mt-2 text-sm text-gray-500\"><PaperClipIcon className=\"w-4 h-4 inline mr-1\"/> {t('common:contentUploadModal.fileUpload.selected', { fileName: file.name })}</p>}"
     },
     {
       "key": "common:buttons.cancel",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 609,
+      "line": 711,
       "context": "<Button type=\"button\" variant=\"light\" onClick={onClose} disabled={isUploading}>{t('common:buttons.cancel')}</Button>"
     },
     {
       "key": "common:buttons.cancel",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 609,
+      "line": 711,
       "context": "<Button type=\"button\" variant=\"light\" onClick={onClose} disabled={isUploading}>{t('common:buttons.cancel')}</Button>"
     },
     {
       "key": "common:contentUploadModal.buttons.uploading",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 611,
+      "line": 713,
       "context": "{isUploading ? t('common:contentUploadModal.buttons.uploading') : (existingContent ? t('common:buttons.saveChanges') : t('common:contentUploadModal.buttons.upload'))}"
     },
     {
       "key": "common:buttons.saveChanges",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 611,
+      "line": 713,
       "context": "{isUploading ? t('common:contentUploadModal.buttons.uploading') : (existingContent ? t('common:buttons.saveChanges') : t('common:contentUploadModal.buttons.upload'))}"
     },
     {
       "key": "common:contentUploadModal.buttons.upload",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 611,
+      "line": 713,
       "context": "{isUploading ? t('common:contentUploadModal.buttons.uploading') : (existingContent ? t('common:buttons.saveChanges') : t('common:contentUploadModal.buttons.upload'))}"
     },
     {
       "key": "common:contentUploadModal.buttons.uploading",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 611,
+      "line": 713,
       "context": "{isUploading ? t('common:contentUploadModal.buttons.uploading') : (existingContent ? t('common:buttons.saveChanges') : t('common:contentUploadModal.buttons.upload'))}"
     },
     {
       "key": "common:buttons.saveChanges",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 611,
+      "line": 713,
       "context": "{isUploading ? t('common:contentUploadModal.buttons.uploading') : (existingContent ? t('common:buttons.saveChanges') : t('common:contentUploadModal.buttons.upload'))}"
     },
     {
       "key": "common:contentUploadModal.buttons.upload",
       "file": "components/admin/ContentUploadModal.tsx",
-      "line": 611,
+      "line": 713,
       "context": "{isUploading ? t('common:contentUploadModal.buttons.uploading') : (existingContent ? t('common:buttons.saveChanges') : t('common:contentUploadModal.buttons.upload'))}"
     },
     {
@@ -26199,757 +26367,781 @@
     {
       "key": "settings:companyProfile.invalidImageType",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 105,
+      "line": 126,
       "context": "alert(t('settings:companyProfile.invalidImageType', 'Please select an image file'));"
     },
     {
       "key": "settings:companyProfile.invalidImageType",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 105,
+      "line": 126,
       "context": "alert(t('settings:companyProfile.invalidImageType', 'Please select an image file'));"
     },
     {
       "key": "settings:companyProfile.uploadFailed",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 136,
+      "line": 157,
       "context": "alert(error.message || t('settings:companyProfile.uploadFailed', 'Upload failed. Please try again.'));"
     },
     {
       "key": "settings:companyProfile.uploadFailed",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 136,
+      "line": 157,
       "context": "alert(error.message || t('settings:companyProfile.uploadFailed', 'Upload failed. Please try again.'));"
     },
     {
       "key": "settings:companyProfile.invalidImageType",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 148,
+      "line": 169,
       "context": "alert(t('settings:companyProfile.invalidImageType', 'Please select an image file'));"
     },
     {
       "key": "settings:companyProfile.invalidImageType",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 148,
+      "line": 169,
       "context": "alert(t('settings:companyProfile.invalidImageType', 'Please select an image file'));"
     },
     {
       "key": "settings:companyProfile.uploadFailed",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 179,
+      "line": 200,
       "context": "alert(error.message || t('settings:companyProfile.uploadFailed', 'Upload failed. Please try again.'));"
     },
     {
       "key": "settings:companyProfile.uploadFailed",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 179,
+      "line": 200,
       "context": "alert(error.message || t('settings:companyProfile.uploadFailed', 'Upload failed. Please try again.'));"
     },
     {
       "key": "settings:page.companyProfile",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 186,
+      "line": 207,
       "context": "<SettingsSectionWrapper title={t('settings:page.companyProfile', 'Organization Profile')} icon={BuildingOfficeIcon}>"
     },
     {
       "key": "settings:page.companyProfile",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 186,
+      "line": 207,
       "context": "<SettingsSectionWrapper title={t('settings:page.companyProfile', 'Organization Profile')} icon={BuildingOfficeIcon}>"
     },
     {
       "key": "settings:companyProfile.images",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 192,
+      "line": 213,
       "context": "{t('settings:companyProfile.images', 'Logo & Cover Image')}"
     },
     {
       "key": "settings:companyProfile.images",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 192,
+      "line": 213,
       "context": "{t('settings:companyProfile.images', 'Logo & Cover Image')}"
     },
     {
       "key": "settings:companyProfile.logo",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 199,
+      "line": 220,
       "context": "{t('settings:companyProfile.logo', 'Logo')}"
     },
     {
       "key": "settings:companyProfile.logo",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 199,
+      "line": 220,
       "context": "{t('settings:companyProfile.logo', 'Logo')}"
     },
     {
       "key": "settings:companyProfile.uploading",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 235,
+      "line": 256,
       "context": "? t('settings:companyProfile.uploading', 'Uploading...')"
     },
     {
       "key": "settings:companyProfile.uploading",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 235,
+      "line": 256,
       "context": "? t('settings:companyProfile.uploading', 'Uploading...')"
     },
     {
       "key": "settings:companyProfile.uploadLogo",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 236,
+      "line": 257,
       "context": ": t('settings:companyProfile.uploadLogo', 'Upload Logo')"
     },
     {
       "key": "settings:companyProfile.uploadLogo",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 236,
+      "line": 257,
       "context": ": t('settings:companyProfile.uploadLogo', 'Upload Logo')"
     },
     {
       "key": "settings:companyProfile.logoHint",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 240,
+      "line": 261,
       "context": "{t('settings:companyProfile.logoHint', 'JPG, PNG or GIF. Will be cropped to 256×256px')}"
     },
     {
       "key": "settings:companyProfile.logoHint",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 240,
+      "line": 261,
       "context": "{t('settings:companyProfile.logoHint', 'JPG, PNG or GIF. Will be cropped to 256×256px')}"
     },
     {
       "key": "settings:companyProfile.coverImage",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 249,
+      "line": 270,
       "context": "{t('settings:companyProfile.coverImage', 'Cover Image')}"
     },
     {
       "key": "settings:companyProfile.coverImage",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 249,
+      "line": 270,
       "context": "{t('settings:companyProfile.coverImage', 'Cover Image')}"
     },
     {
       "key": "settings:companyProfile.uploading",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 285,
+      "line": 306,
       "context": "? t('settings:companyProfile.uploading', 'Uploading...')"
     },
     {
       "key": "settings:companyProfile.uploading",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 285,
+      "line": 306,
       "context": "? t('settings:companyProfile.uploading', 'Uploading...')"
     },
     {
       "key": "settings:companyProfile.uploadCoverImage",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 286,
+      "line": 307,
       "context": ": t('settings:companyProfile.uploadCoverImage', 'Upload Cover Image')"
     },
     {
       "key": "settings:companyProfile.uploadCoverImage",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 286,
+      "line": 307,
       "context": ": t('settings:companyProfile.uploadCoverImage', 'Upload Cover Image')"
     },
     {
       "key": "settings:companyProfile.coverHint",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 290,
+      "line": 311,
       "context": "{t('settings:companyProfile.coverHint', 'Recommended: 1600×400px')}"
     },
     {
       "key": "settings:companyProfile.coverHint",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 290,
+      "line": 311,
       "context": "{t('settings:companyProfile.coverHint', 'Recommended: 1600×400px')}"
     },
     {
       "key": "settings:companyProfile.basicInfo",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 304,
+      "line": 325,
       "context": "{t('settings:companyProfile.basicInfo', 'Basic Information')}"
     },
     {
       "key": "settings:companyProfile.basicInfo",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 304,
+      "line": 325,
       "context": "{t('settings:companyProfile.basicInfo', 'Basic Information')}"
     },
     {
       "key": "common:settingsCompanyProfile.companyName",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 308,
+      "line": 329,
       "context": "{t('common:settingsCompanyProfile.companyName', 'Organization Name')} <span className=\"text-swiss-coral\">*</span>"
     },
     {
       "key": "common:settingsCompanyProfile.companyName",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 308,
+      "line": 329,
       "context": "{t('common:settingsCompanyProfile.companyName', 'Organization Name')} <span className=\"text-swiss-coral\">*</span>"
     },
     {
       "key": "settings:companyProfile.companyNamePlaceholder",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 317,
+      "line": 338,
       "context": "placeholder={t('settings:companyProfile.companyNamePlaceholder', 'Enter your organization name')}"
     },
     {
       "key": "settings:companyProfile.companyNamePlaceholder",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 317,
+      "line": 338,
       "context": "placeholder={t('settings:companyProfile.companyNamePlaceholder', 'Enter your organization name')}"
     },
     {
       "key": "common:settingsCompanyProfile.aboutText",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 323,
+      "line": 344,
       "context": "{t('common:settingsCompanyProfile.aboutText', 'Description / About')}"
     },
     {
       "key": "common:settingsCompanyProfile.aboutText",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 323,
+      "line": 344,
       "context": "{t('common:settingsCompanyProfile.aboutText', 'Description / About')}"
     },
     {
       "key": "settings:companyProfile.descriptionPlaceholder",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 333,
+      "line": 354,
       "context": "placeholder={t('settings:companyProfile.descriptionPlaceholder', 'Describe your organization...')}"
     },
     {
       "key": "settings:companyProfile.descriptionPlaceholder",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 333,
+      "line": 354,
       "context": "placeholder={t('settings:companyProfile.descriptionPlaceholder', 'Describe your organization...')}"
     },
     {
       "key": "common:settingsCompanyProfile.vatNumber",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 341,
+      "line": 362,
       "context": "{t('common:settingsCompanyProfile.vatNumber', 'VAT Number')}"
     },
     {
       "key": "common:settingsCompanyProfile.vatNumber",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 341,
+      "line": 362,
       "context": "{t('common:settingsCompanyProfile.vatNumber', 'VAT Number')}"
     },
     {
       "key": "common:placeholders.vatNumber",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 350,
+      "line": 371,
       "context": "placeholder={t('common:placeholders.vatNumber')}"
     },
     {
       "key": "common:placeholders.vatNumber",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 350,
+      "line": 371,
       "context": "placeholder={t('common:placeholders.vatNumber')}"
     },
     {
       "key": "settings:companyProfile.contactInfo",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 362,
+      "line": 383,
       "context": "{t('settings:companyProfile.contactInfo', 'Contact Information')}"
     },
     {
       "key": "settings:companyProfile.contactInfo",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 362,
+      "line": 383,
       "context": "{t('settings:companyProfile.contactInfo', 'Contact Information')}"
     },
     {
       "key": "settings:companyProfile.contactPerson",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 366,
+      "line": 387,
       "context": "{t('settings:companyProfile.contactPerson', 'Contact Person')}"
     },
     {
       "key": "settings:companyProfile.contactPerson",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 366,
+      "line": 387,
       "context": "{t('settings:companyProfile.contactPerson', 'Contact Person')}"
     },
     {
       "key": "settings:companyProfile.contactPersonPlaceholder",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 375,
+      "line": 396,
       "context": "placeholder={t('settings:companyProfile.contactPersonPlaceholder', 'Enter contact person name')}"
     },
     {
       "key": "settings:companyProfile.contactPersonPlaceholder",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 375,
+      "line": 396,
       "context": "placeholder={t('settings:companyProfile.contactPersonPlaceholder', 'Enter contact person name')}"
     },
     {
       "key": "settings:companyProfile.phoneNumber",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 380,
+      "line": 401,
       "context": "{t('settings:companyProfile.phoneNumber', 'Phone Number')}"
     },
     {
       "key": "settings:companyProfile.phoneNumber",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 380,
+      "line": 401,
       "context": "{t('settings:companyProfile.phoneNumber', 'Phone Number')}"
     },
     {
       "key": "common:placeholders.41xxxxxxxxx",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 389,
+      "line": 410,
       "context": "placeholder={t('common:placeholders.41xxxxxxxxx')}"
     },
     {
       "key": "common:placeholders.41xxxxxxxxx",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 389,
+      "line": 410,
       "context": "placeholder={t('common:placeholders.41xxxxxxxxx')}"
     },
     {
       "key": "settings:companyProfile.contactEmail",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 394,
+      "line": 415,
       "context": "{t('settings:companyProfile.contactEmail', 'Contact Email')}"
     },
     {
       "key": "settings:companyProfile.contactEmail",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 394,
+      "line": 415,
       "context": "{t('settings:companyProfile.contactEmail', 'Contact Email')}"
     },
     {
       "key": "settings:companyProfile.contactEmailPlaceholder",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 403,
+      "line": 424,
       "context": "placeholder={t('settings:companyProfile.contactEmailPlaceholder', 'Enter contact email address')}"
     },
     {
       "key": "settings:companyProfile.contactEmailPlaceholder",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 403,
+      "line": 424,
       "context": "placeholder={t('settings:companyProfile.contactEmailPlaceholder', 'Enter contact email address')}"
     },
     {
       "key": "settings:companyProfile.website",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 408,
+      "line": 429,
       "context": "{t('settings:companyProfile.website', 'Website')}"
     },
     {
       "key": "settings:companyProfile.website",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 408,
+      "line": 429,
       "context": "{t('settings:companyProfile.website', 'Website')}"
     },
     {
       "key": "common:placeholders.url",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 417,
+      "line": 438,
       "context": "placeholder={t('common:placeholders.url', 'www.example.com')}"
     },
     {
       "key": "common:placeholders.url",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 417,
+      "line": 438,
       "context": "placeholder={t('common:placeholders.url', 'www.example.com')}"
     },
     {
       "key": "settings:companyProfile.websiteHint",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 420,
+      "line": 441,
       "context": "{t('settings:companyProfile.websiteHint', 'You can enter it without https://')}"
     },
     {
       "key": "settings:companyProfile.websiteHint",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 420,
+      "line": 441,
       "context": "{t('settings:companyProfile.websiteHint', 'You can enter it without https://')}"
     },
     {
       "key": "settings:companyProfile.location",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 432,
+      "line": 453,
       "context": "{t('settings:companyProfile.location', 'Location')}"
     },
     {
       "key": "settings:companyProfile.location",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 432,
+      "line": 453,
       "context": "{t('settings:companyProfile.location', 'Location')}"
     },
     {
       "key": "common:settingsCompanyProfile.regionsServed",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 436,
+      "line": 457,
       "context": "{t('common:settingsCompanyProfile.regionsServed', 'Regions Served (Cantons)')}"
     },
     {
       "key": "common:settingsCompanyProfile.regionsServed",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 436,
+      "line": 457,
       "context": "{t('common:settingsCompanyProfile.regionsServed', 'Regions Served (Cantons)')}"
     },
     {
       "key": "common:settingsCompanyProfile.cantonsHelpText",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 439,
+      "line": 460,
       "context": "<p className=\"text-xs text-gray-500 mb-2\">{t('common:settingsCompanyProfile.cantonsHelpText', 'Select all cantons where your organization operates')}</p>"
     },
     {
       "key": "common:settingsCompanyProfile.cantonsHelpText",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 439,
+      "line": 460,
       "context": "<p className=\"text-xs text-gray-500 mb-2\">{t('common:settingsCompanyProfile.cantonsHelpText', 'Select all cantons where your organization operates')}</p>"
     },
     {
       "key": "common:settingsCompanyProfile.languagesSpoken",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 459,
+      "line": 480,
       "context": "{t('common:settingsCompanyProfile.languagesSpoken', 'Languages Spoken')}"
     },
     {
       "key": "common:settingsCompanyProfile.languagesSpoken",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 459,
+      "line": 480,
       "context": "{t('common:settingsCompanyProfile.languagesSpoken', 'Languages Spoken')}"
     },
     {
       "key": "common:settingsCompanyProfile.languagesHelpText",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 462,
+      "line": 483,
       "context": "<p className=\"text-xs text-gray-500 mb-2\">{t('common:settingsCompanyProfile.languagesHelpText', 'Select all languages your organization supports')}</p>"
     },
     {
       "key": "common:settingsCompanyProfile.languagesHelpText",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 462,
+      "line": 483,
       "context": "<p className=\"text-xs text-gray-500 mb-2\">{t('common:settingsCompanyProfile.languagesHelpText', 'Select all languages your organization supports')}</p>"
     },
     {
       "key": "settings:companyProfile.foundationInfo",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 490,
+      "line": 511,
       "context": "{t('settings:companyProfile.foundationInfo', 'Foundation Information')}"
     },
     {
       "key": "settings:companyProfile.foundationInfo",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 490,
+      "line": 511,
       "context": "{t('settings:companyProfile.foundationInfo', 'Foundation Information')}"
     },
     {
       "key": "settings:companyProfile.capacity",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 494,
+      "line": 515,
       "context": "{t('settings:companyProfile.capacity', 'Capacity (Number of Children)')}"
     },
     {
       "key": "settings:companyProfile.capacity",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 494,
+      "line": 515,
       "context": "{t('settings:companyProfile.capacity', 'Capacity (Number of Children)')}"
     },
     {
       "key": "settings:companyProfile.capacityPlaceholder",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 504,
+      "line": 525,
       "context": "placeholder={t('settings:companyProfile.capacityPlaceholder', 'Enter number of children')}"
     },
     {
       "key": "settings:companyProfile.capacityPlaceholder",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 504,
+      "line": 525,
       "context": "placeholder={t('settings:companyProfile.capacityPlaceholder', 'Enter number of children')}"
     },
     {
       "key": "settings:companyProfile.pedagogy",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 509,
+      "line": 530,
       "context": "{t('settings:companyProfile.pedagogy', 'Pedagogical Approaches')}"
     },
     {
       "key": "settings:companyProfile.pedagogy",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 509,
+      "line": 530,
       "context": "{t('settings:companyProfile.pedagogy', 'Pedagogical Approaches')}"
     },
     {
       "key": "settings:companyProfile.pedagogyHint",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 512,
+      "line": 533,
       "context": "<p className=\"text-xs text-gray-500 mb-2\">{t('settings:companyProfile.pedagogyHint', 'Select all that apply')}</p>"
     },
     {
       "key": "settings:companyProfile.pedagogyHint",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 512,
+      "line": 533,
       "context": "<p className=\"text-xs text-gray-500 mb-2\">{t('settings:companyProfile.pedagogyHint', 'Select all that apply')}</p>"
     },
     {
       "key": "settings:companyProfile.supplierInfo",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 542,
+      "line": 563,
       "context": "{t('settings:companyProfile.supplierInfo', 'Supplier Information')}"
     },
     {
       "key": "settings:companyProfile.supplierInfo",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 542,
+      "line": 563,
       "context": "{t('settings:companyProfile.supplierInfo', 'Supplier Information')}"
     },
     {
       "key": "settings:companyProfile.productCategories",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 546,
+      "line": 567,
       "context": "{t('settings:companyProfile.productCategories', 'Product Categories')}"
     },
     {
       "key": "settings:companyProfile.productCategories",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 546,
+      "line": 567,
       "context": "{t('settings:companyProfile.productCategories', 'Product Categories')}"
     },
     {
       "key": "settings:companyProfile.productCategoriesPlaceholder",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 553,
+      "line": 574,
       "context": "placeholder={t('settings:companyProfile.productCategoriesPlaceholder', 'Type or select categories...')}"
     },
     {
       "key": "settings:companyProfile.productCategoriesPlaceholder",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 553,
+      "line": 574,
       "context": "placeholder={t('settings:companyProfile.productCategoriesPlaceholder', 'Type or select categories...')}"
     },
     {
+      "key": "common:buttons.add",
+      "file": "components/settings/sections/CompanyProfileSettings.tsx",
+      "line": 609,
+      "context": "{t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/settings/sections/CompanyProfileSettings.tsx",
+      "line": 609,
+      "context": "{t('common:buttons.add', 'Add')}"
+    },
+    {
       "key": "settings:companyProfile.productCategoriesHint",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 557,
+      "line": 614,
       "context": "{t('settings:companyProfile.productCategoriesHint', 'Select from suggestions or add your own custom categories. Press Enter to add.')}"
     },
     {
       "key": "settings:companyProfile.productCategoriesHint",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 557,
+      "line": 614,
       "context": "{t('settings:companyProfile.productCategoriesHint', 'Select from suggestions or add your own custom categories. Press Enter to add.')}"
     },
     {
       "key": "settings:companyProfile.minimumOrderQuantity",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 562,
+      "line": 619,
       "context": "{t('settings:companyProfile.minimumOrderQuantity', 'Minimum Order Quantity')}"
     },
     {
       "key": "settings:companyProfile.minimumOrderQuantity",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 562,
+      "line": 619,
       "context": "{t('settings:companyProfile.minimumOrderQuantity', 'Minimum Order Quantity')}"
     },
     {
       "key": "settings:companyProfile.minimumOrderQuantityPlaceholder",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 577,
+      "line": 634,
       "context": "placeholder={t('settings:companyProfile.minimumOrderQuantityPlaceholder', 'Enter minimum order quantity')}"
     },
     {
       "key": "settings:companyProfile.minimumOrderQuantityPlaceholder",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 577,
+      "line": 634,
       "context": "placeholder={t('settings:companyProfile.minimumOrderQuantityPlaceholder', 'Enter minimum order quantity')}"
     },
     {
       "key": "settings:companyProfile.directOrderLink",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 582,
+      "line": 639,
       "context": "{t('settings:companyProfile.directOrderLink', 'Direct Order Link')}"
     },
     {
       "key": "settings:companyProfile.directOrderLink",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 582,
+      "line": 639,
       "context": "{t('settings:companyProfile.directOrderLink', 'Direct Order Link')}"
     },
     {
       "key": "common:placeholders.url",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 591,
+      "line": 648,
       "context": "placeholder={t('common:placeholders.url')}"
     },
     {
       "key": "common:placeholders.url",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 591,
+      "line": 648,
       "context": "placeholder={t('common:placeholders.url')}"
     },
     {
       "key": "settings:companyProfile.catalogUrl",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 596,
+      "line": 653,
       "context": "{t('settings:companyProfile.catalogUrl', 'Catalog URL')}"
     },
     {
       "key": "settings:companyProfile.catalogUrl",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 596,
+      "line": 653,
       "context": "{t('settings:companyProfile.catalogUrl', 'Catalog URL')}"
     },
     {
       "key": "common:placeholders.url",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 605,
+      "line": 662,
       "context": "placeholder={t('common:placeholders.url')}"
     },
     {
       "key": "common:placeholders.url",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 605,
+      "line": 662,
       "context": "placeholder={t('common:placeholders.url')}"
     },
     {
       "key": "settings:companyProfile.serviceProviderInfo",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 620,
+      "line": 677,
       "context": "{t('settings:companyProfile.serviceProviderInfo', 'Service Provider Information')}"
     },
     {
       "key": "settings:companyProfile.serviceProviderInfo",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 620,
+      "line": 677,
       "context": "{t('settings:companyProfile.serviceProviderInfo', 'Service Provider Information')}"
     },
     {
       "key": "settings:companyProfile.serviceType",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 624,
+      "line": 681,
       "context": "{t('settings:companyProfile.serviceType', 'Service Type')}"
     },
     {
       "key": "settings:companyProfile.serviceType",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 624,
+      "line": 681,
       "context": "{t('settings:companyProfile.serviceType', 'Service Type')}"
     },
     {
       "key": "settings:companyProfile.serviceTypePlaceholder",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 633,
+      "line": 690,
       "context": "placeholder={t('settings:companyProfile.serviceTypePlaceholder', 'e.g., IT Support, Cleaning Services')}"
     },
     {
       "key": "settings:companyProfile.serviceTypePlaceholder",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 633,
+      "line": 690,
       "context": "placeholder={t('settings:companyProfile.serviceTypePlaceholder', 'e.g., IT Support, Cleaning Services')}"
     },
     {
       "key": "settings:companyProfile.serviceCategories",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 638,
+      "line": 695,
       "context": "{t('settings:companyProfile.serviceCategories', 'Service Categories')}"
     },
     {
       "key": "settings:companyProfile.serviceCategories",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 638,
+      "line": 695,
       "context": "{t('settings:companyProfile.serviceCategories', 'Service Categories')}"
     },
     {
       "key": "settings:companyProfile.serviceCategoriesPlaceholder",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 645,
+      "line": 702,
       "context": "placeholder={t('settings:companyProfile.serviceCategoriesPlaceholder', 'Type or select categories...')}"
     },
     {
       "key": "settings:companyProfile.serviceCategoriesPlaceholder",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 645,
+      "line": 702,
       "context": "placeholder={t('settings:companyProfile.serviceCategoriesPlaceholder', 'Type or select categories...')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/settings/sections/CompanyProfileSettings.tsx",
+      "line": 737,
+      "context": "{t('common:buttons.add', 'Add')}"
+    },
+    {
+      "key": "common:buttons.add",
+      "file": "components/settings/sections/CompanyProfileSettings.tsx",
+      "line": 737,
+      "context": "{t('common:buttons.add', 'Add')}"
     },
     {
       "key": "settings:companyProfile.serviceCategoriesHint",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 649,
+      "line": 742,
       "context": "{t('settings:companyProfile.serviceCategoriesHint', 'Select from suggestions or add your own custom categories. Press Enter to add.')}"
     },
     {
       "key": "settings:companyProfile.serviceCategoriesHint",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 649,
+      "line": 742,
       "context": "{t('settings:companyProfile.serviceCategoriesHint', 'Select from suggestions or add your own custom categories. Press Enter to add.')}"
     },
     {
       "key": "settings:companyProfile.deliveryType",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 654,
+      "line": 747,
       "context": "{t('settings:companyProfile.deliveryType', 'Delivery Type')}"
     },
     {
       "key": "settings:companyProfile.deliveryType",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 654,
+      "line": 747,
       "context": "{t('settings:companyProfile.deliveryType', 'Delivery Type')}"
     },
     {
       "key": "settings:companyProfile.selectDeliveryType",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 663,
+      "line": 756,
       "context": "<option value=\"\">{t('settings:companyProfile.selectDeliveryType', 'Select Delivery Type')}</option>"
     },
     {
       "key": "settings:companyProfile.selectDeliveryType",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 663,
+      "line": 756,
       "context": "<option value=\"\">{t('settings:companyProfile.selectDeliveryType', 'Select Delivery Type')}</option>"
     },
     {
       "key": "settings:companyProfile.deliveryTypeHint",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 669,
+      "line": 762,
       "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('settings:companyProfile.deliveryTypeHint', 'Choose how you deliver your services')}</p>"
     },
     {
       "key": "settings:companyProfile.deliveryTypeHint",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 669,
+      "line": 762,
       "context": "<p className=\"text-xs text-gray-500 mt-1\">{t('settings:companyProfile.deliveryTypeHint', 'Choose how you deliver your services')}</p>"
     },
     {
       "key": "settings:companyProfile.bookingLink",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 674,
+      "line": 767,
       "context": "{t('settings:companyProfile.bookingLink', 'Booking Link')}"
     },
     {
       "key": "settings:companyProfile.bookingLink",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 674,
+      "line": 767,
       "context": "{t('settings:companyProfile.bookingLink', 'Booking Link')}"
     },
     {
       "key": "common:placeholders.url",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 683,
+      "line": 776,
       "context": "placeholder={t('common:placeholders.url')}"
     },
     {
       "key": "common:placeholders.url",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 683,
+      "line": 776,
       "context": "placeholder={t('common:placeholders.url')}"
     },
     {
       "key": "settings:companyProfile.bookingLinkHint",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 686,
+      "line": 779,
       "context": "{t('settings:companyProfile.bookingLinkHint', 'You can enter it without https://')}"
     },
     {
       "key": "settings:companyProfile.bookingLinkHint",
       "file": "components/settings/sections/CompanyProfileSettings.tsx",
-      "line": 686,
+      "line": 779,
       "context": "{t('settings:companyProfile.bookingLinkHint', 'You can enter it without https://')}"
     },
     {

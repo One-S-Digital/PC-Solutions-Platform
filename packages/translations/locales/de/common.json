@@ -245,6 +245,8 @@
       "normal": "Normal"
     },
     "error": {
+      "invalidCategory": "Bitte wählen Sie eine gültige Kategorie aus",
+      "saveCategoryFailed": "Kategorie konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.",
       "selectFileOrLink": "Bitte wählen Sie eine Datei aus oder geben Sie einen Link an"
     },
     "fileUpload": {
@@ -285,6 +287,7 @@
       "duration": "Dauer",
       "externalLink": "Externer Link",
       "linkUrl": "Link-URL",
+      "otherCategory": "Andere (bitte angeben)",
       "version": "Version"
     },
     "statusOptions": {
@@ -2067,6 +2070,7 @@
     }
   },
   "showPassword": "Passwort anzeigen",
+  "saving": "Speichern...",
   "sidebar": {
     "ordersAppointments": "orders Appointments"
   },

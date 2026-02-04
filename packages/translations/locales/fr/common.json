@@ -239,6 +239,8 @@
       "normal": "Normal"
     },
     "error": {
+      "invalidCategory": "Veuillez choisir une catégorie valide",
+      "saveCategoryFailed": "Impossible d’enregistrer la catégorie. Veuillez réessayer.",
       "selectFileOrLink": "Veuillez sélectionner un fichier ou fournir un lien"
     },
     "fileUpload": {
@@ -279,6 +281,7 @@
       "duration": "Durée",
       "externalLink": "Lien externe",
       "linkUrl": "URL du lien",
+      "otherCategory": "Autre (à préciser)",
       "version": "Version"
     },
     "statusOptions": {
@@ -2068,6 +2071,7 @@
     }
   },
   "showPassword": "Afficher le mot de passe",
+  "saving": "Enregistrement...",
   "sidebar": {
     "ordersAppointments": "orders Appointments"
   },
