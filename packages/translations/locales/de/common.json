@@ -287,7 +287,7 @@
       "duration": "Dauer",
       "externalLink": "Externer Link",
       "linkUrl": "Link-URL",
-      "otherCategory": "Andere Kategorie",
+      "otherCategory": "Andere (bitte angeben)",
       "version": "Version"
     },
     "statusOptions": {
@@ -1502,6 +1502,9 @@
     "url": "https://example.com",
     "vatNumber": "vat Number"
   },
+  "chipInput": {
+    "pressEnterHint": "Tippen und zum Hinzufügen Enter drücken."
+  },
   "policyAlertModal": {
     "labels": {
       "displayEndDate": "Enddatum anzeigen",
@@ -2069,6 +2072,7 @@
     }
   },
   "showPassword": "Passwort anzeigen",
+  "saving": "Speichern...",
   "sidebar": {
     "ordersAppointments": "orders Appointments"
   },

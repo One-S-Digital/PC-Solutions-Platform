@@ -21,6 +21,21 @@ export class MarketplaceService {
     private promoCodesService: PromoCodesService,
   ) {}
 
+  /**
+   * Services belong to `ServiceProvider` (not directly to `Organization`).
+   * For SERVICE_PROVIDER users we only reliably have `organizationId` in `req.user`,
+   * so we resolve (and create if missing) the matching ServiceProvider record here.
+   */
+  async ensureServiceProviderIdForOrganization(organizationId: string): Promise<string> {
+    const provider = await this.prisma.serviceProvider.upsert({
+      where: { organizationId },
+      update: {},
+      create: { organizationId },
+      select: { id: true },
+    });
+    return provider.id;
+  }
+
   // Product Management
   async createProduct(createProductDto: CreateProductDto, supplierId: string) {
     const {

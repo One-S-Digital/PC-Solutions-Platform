@@ -57,6 +57,18 @@ const ServiceProviderListingsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState<ServiceCategory | 'All'>('All');
 
+  const normalizeServiceFromApi = useCallback((service: any): Service => {
+    const providerOrgId = service?.provider?.organizationId;
+    return {
+      ...service,
+      // For UI compatibility, treat providerId as the organizationId when available.
+      providerId: providerOrgId || service.providerId,
+      providerName: service?.provider?.organization?.name || service.providerName,
+      // providerLogo is not always included by this endpoint; preserve if present.
+      providerLogo: service.providerLogo,
+    } as Service;
+  }, []);
+
   const fetchServices = useCallback(async () => {
     if (!currentUser?.orgId) {
       setLoading(false);
@@ -67,10 +79,11 @@ const ServiceProviderListingsPage: React.FC = () => {
     setError(null);
 
     try {
-      const response = await authenticatedRequest<Service[]>('/marketplace/services');
+      const response = await authenticatedRequest<any[]>('/marketplace/services');
       if (response.success && response.data) {
+        const normalized = response.data.map(normalizeServiceFromApi);
         // Filter to only services belonging to this provider
-        const myServices = response.data.filter(s => s.providerId === currentUser.orgId);
+        const myServices = normalized.filter((s) => s.providerId === currentUser.orgId);
         setServiceListings(myServices);
       }
     } catch (err) {
@@ -79,7 +92,7 @@ const ServiceProviderListingsPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [currentUser?.orgId, authenticatedRequest, t]);
+  }, [currentUser?.orgId, authenticatedRequest, normalizeServiceFromApi, t]);
 
   useEffect(() => {
     fetchServices();
@@ -106,10 +119,6 @@ const ServiceProviderListingsPage: React.FC = () => {
       alert(t('dashboard:serviceProviderListingsPage.missingOrgDetails', 'User organization details are missing.'));
       return;
     }
-
-    const providerId = currentUser.orgId;
-    const providerName = currentUser.orgName;
-    const providerLogo = currentUser.avatarUrl;
 
     try {
       // Upload file if provided
@@ -148,28 +157,26 @@ const ServiceProviderListingsPage: React.FC = () => {
       } else {
         // Add new service
         const newServiceData = {
-          providerId,
-          providerName,
-          providerLogo,
           title: data.title || t('dashboard:serviceProviderListingsPage.defaultTitle', 'Untitled Service'),
           description: data.description || '',
           category: data.category || ServiceCategory.OTHER,
+          categories: data.categories || [],
+          price: data.price,
           availability: data.availability || t('dashboard:serviceProviderListingsPage.defaultAvailability', 'By appointment'),
           tags: data.tags || [],
-          deliveryType: data.deliveryType || t('dashboard:serviceProviderListingsPage.defaultDeliveryType', 'On-site'),
+          // IMPORTANT: use canonical backend values, not translated strings.
+          deliveryType: data.deliveryType || 'On-site',
           priceInfo: data.priceInfo || t('dashboard:serviceProviderListingsPage.defaultPriceInfo', 'Contact for quote'),
           imageUrl,
-          isActive: true,
-          ...data,
         };
 
-        const response = await authenticatedRequest<Service>('/marketplace/services', {
+        const response = await authenticatedRequest<any>('/marketplace/services', {
           method: 'POST',
           body: JSON.stringify(newServiceData),
         });
 
         if (response.success && response.data) {
-          setServiceListings(prev => [response.data!, ...prev]);
+          setServiceListings((prev) => [normalizeServiceFromApi(response.data), ...prev]);
         }
       }
       handleCloseModal();

@@ -1,7 +1,6 @@
 
 import React, { useState, KeyboardEvent } from 'react';
 import { XCircleIcon } from '@heroicons/react/20/solid';
-import { STANDARD_INPUT_FIELD } from '../../constants';
 import { useTranslation } from 'react-i18next';
 
 interface ChipInputProps<T extends string> {
@@ -11,6 +10,13 @@ interface ChipInputProps<T extends string> {
   placeholder?: string;
   maxChips?: number;
   allowCustomValues?: boolean; // If true and no availableOptions, input acts as a tag adder
+  /**
+   * When true, show helper text under the input (useful to explain "Press Enter to add").
+   * Defaults to `allowCustomValues`.
+   */
+  showEnterHint?: boolean;
+  /** Optional override for helper text */
+  enterHintText?: string;
 }
 
 const ChipInput = <T extends string>({
@@ -19,13 +25,17 @@ const ChipInput = <T extends string>({
   onChange,
   placeholder,
   maxChips,
-  allowCustomValues = !availableOptions // Default to true if no options are provided
-}: ChipInputProps<T>): JSX.Element => {
+  allowCustomValues = !availableOptions, // Default to true if no options are provided
+  showEnterHint,
+  enterHintText,
+}: ChipInputProps<T>): React.ReactElement => {
   const { t } = useTranslation(['common']);
   const [inputValue, setInputValue] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   
   const placeholderText = placeholder || t('common:placeholders.typeorselect');
+  const shouldShowHint = (showEnterHint ?? allowCustomValues) && !(maxChips !== undefined && selectedChips.length >= maxChips);
+  const hintText = enterHintText ?? t('common:chipInput.pressEnterHint', 'Press Enter to add.');
 
   const handleAddChip = (chipValue: T) => {
     if (chipValue && !selectedChips.includes(chipValue) && (!maxChips || selectedChips.length < maxChips)) {
@@ -44,7 +54,10 @@ const ChipInput = <T extends string>({
       e.preventDefault();
       handleAddChip(inputValue as T);
     } else if (e.key === 'Backspace' && !inputValue && selectedChips.length > 0) {
-      handleRemoveChip(selectedChips[selectedChips.length - 1]);
+      const lastChip = selectedChips[selectedChips.length - 1];
+      if (lastChip) {
+        handleRemoveChip(lastChip);
+      }
     }
   };
 
@@ -98,6 +111,9 @@ const ChipInput = <T extends string>({
             </li>
           ))}
         </ul>
+      )}
+      {shouldShowHint && (
+        <p className="text-xs text-gray-500 mt-1">{hintText}</p>
       )}
     </div>
   );

@@ -281,7 +281,7 @@
       "duration": "Durée",
       "externalLink": "Lien externe",
       "linkUrl": "URL du lien",
-      "otherCategory": "Autre catégorie",
+      "otherCategory": "Autre (à préciser)",
       "version": "Version"
     },
     "statusOptions": {
@@ -1485,6 +1485,9 @@
     "url": "https://example.com",
     "vatNumber": "vat Number"
   },
+  "chipInput": {
+    "pressEnterHint": "Tapez puis appuyez sur Entrée pour ajouter."
+  },
   "policyAlertModal": {
     "labels": {
       "displayEndDate": "Date de fin d'affichage",
@@ -2070,6 +2073,7 @@
     }
   },
   "showPassword": "Afficher le mot de passe",
+  "saving": "Enregistrement...",
   "sidebar": {
     "ordersAppointments": "orders Appointments"
   },
