@@ -21,9 +21,10 @@ import {
 interface HelpModalProps {
   isOpen: boolean;
   onClose: () => void;
+  initialArticleId?: string;
 }
 
-const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
+const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose, initialArticleId }) => {
   const { t } = useTranslation(['help', 'common']);
   const { currentUser } = useAppContext();
   
@@ -75,6 +76,19 @@ const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
       setIsMobileMenuOpen(false);
     }
   }, [isOpen]);
+
+  // If the caller provided an initial article id, auto-open that article when the modal opens.
+  useEffect(() => {
+    if (!isOpen) return;
+    if (!initialArticleId) return;
+
+    const article = availableArticles.find((a) => a.id === initialArticleId);
+    if (article) {
+      setSelectedCategory(article.category);
+      setSelectedArticle(article);
+      setIsMobileMenuOpen(false);
+    }
+  }, [isOpen, initialArticleId, availableArticles]);
 
   // Handle escape key - only attach listener while modal is open
   useEffect(() => {

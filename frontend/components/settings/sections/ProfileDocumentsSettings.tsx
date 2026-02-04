@@ -16,6 +16,7 @@ import {
   ArrowPathIcon,
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 interface ProfileDocument {
   id: string;
@@ -67,6 +68,18 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
   const { t, i18n } = useTranslation(['settings', 'common']);
   const { request, upload, authenticatedDownload } = useAuthenticatedApi();
   const { addNotification } = useNotifications();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const openDeleteFilesHelp = () => {
+    const params = new URLSearchParams(location.search);
+    params.set('help', 'delete-files');
+    const nextSearch = params.toString();
+    navigate(
+      { pathname: location.pathname, search: nextSearch ? `?${nextSearch}` : '' },
+      { replace: false },
+    );
+  };
   
   const [documents, setDocuments] = useState<ProfileDocument[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -369,9 +382,18 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
 
         {/* Documents List */}
         <div>
-          <h4 className="text-sm font-medium text-gray-900 mb-3">
-            {t('settings:profileDocuments.uploadedDocuments')}
-          </h4>
+          <div className="flex items-center justify-between gap-4 mb-3">
+            <h4 className="text-sm font-medium text-gray-900">
+              {t('settings:profileDocuments.uploadedDocuments')}
+            </h4>
+            <button
+              type="button"
+              onClick={openDeleteFilesHelp}
+              className="text-xs text-swiss-teal hover:underline"
+            >
+              {t('settings:profileDocuments.deleteHelpCta', 'How do I delete files?')}
+            </button>
+          </div>
           
           {isLoading ? (
             <div className="text-center py-8">

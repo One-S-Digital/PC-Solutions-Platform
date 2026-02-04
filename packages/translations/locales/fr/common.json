@@ -239,6 +239,8 @@
       "normal": "Normal"
     },
     "error": {
+      "invalidCategory": "Veuillez sélectionner une catégorie valide",
+      "saveCategoryFailed": "Impossible d’enregistrer la catégorie. Veuillez réessayer.",
       "selectFileOrLink": "Veuillez sélectionner un fichier ou fournir un lien"
     },
     "fileUpload": {
@@ -279,6 +281,7 @@
       "duration": "Durée",
       "externalLink": "Lien externe",
       "linkUrl": "URL du lien",
+      "otherCategory": "Autre catégorie",
       "version": "Version"
     },
     "statusOptions": {
@@ -622,7 +625,9 @@
       "rename": "Renommer"
     },
     "adminUploadNote": "Consultez et téléchargez vos fichiers",
-    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce fichier ?",
+    "confirmDelete": "Supprimer définitivement ce fichier ? Cette action est irréversible.",
+    "deleteError": "Échec de la suppression du fichier. Veuillez réessayer.",
+    "deleteHelpCta": "Comment supprimer des fichiers ?",
     "downloadError": "Échec du téléchargement du fichier. Veuillez réessayer.",
     "emptyState": {
       "message": "Vos fichiers apparaîtront ici une fois téléchargés",
@@ -2349,5 +2354,6 @@
   "viewAll": "Voir Tous",
   "welcome": "Bienvener",
   "welcomeBack": "Bon retour !",
+  "saving": "Enregistrement...",
   "description": "Description"
 }

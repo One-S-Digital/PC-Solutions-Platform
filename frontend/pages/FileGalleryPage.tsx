@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   PaperClipIcon, 
   DocumentIcon, 
   EyeIcon, 
   ArrowDownTrayIcon, 
+  TrashIcon,
   InboxIcon,
   ExclamationCircleIcon,
   ArrowPathIcon
@@ -64,9 +66,10 @@ interface FileCardProps {
   file: UserFile;
   onPreview: (file: UserFile) => void;
   onDownload: (file: UserFile) => void;
+  onDelete: (file: UserFile) => void;
 }
 
-const FileCard: React.FC<FileCardProps> = ({ file, onPreview, onDownload }) => {
+const FileCard: React.FC<FileCardProps> = ({ file, onPreview, onDownload, onDelete }) => {
   const { t, i18n } = useTranslation(['dashboard', 'common']);
   const fileIcon = getFileIcon(file.mimeType, file.name);
 
@@ -125,6 +128,15 @@ const FileCard: React.FC<FileCardProps> = ({ file, onPreview, onDownload }) => {
         >
           <ArrowDownTrayIcon className="w-4 h-4" />
         </Button>
+        <Button
+          variant="ghost"
+          size="xs"
+          title={t('common:fileGallery.actions.delete', 'Delete')}
+          className="!p-2 hover:bg-red-50 hover:text-red-600"
+          onClick={() => onDelete(file)}
+        >
+          <TrashIcon className="w-4 h-4" />
+        </Button>
       </div>
     </Card>
   );
@@ -149,8 +161,20 @@ const LoadingSkeleton: React.FC = () => (
 const FileGalleryPage: React.FC = () => {
   const { t } = useTranslation(['dashboard', 'common']);
   const { files, loading, error, refetch } = useUserFiles();
-  const { authenticatedDownload } = useAuthenticatedApi();
+  const { authenticatedDownload, request } = useAuthenticatedApi();
   const [previewFile, setPreviewFile] = useState<UserFile | null>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const openDeleteFilesHelp = () => {
+    const params = new URLSearchParams(location.search);
+    params.set('help', 'delete-files');
+    const nextSearch = params.toString();
+    navigate(
+      { pathname: location.pathname, search: nextSearch ? `?${nextSearch}` : '' },
+      { replace: false },
+    );
+  };
 
   const handlePreview = (file: UserFile) => {
     setPreviewFile(file);
@@ -162,6 +186,24 @@ const FileGalleryPage: React.FC = () => {
     } catch (err) {
       console.error('Download failed:', err);
       alert(t('common:fileGallery.downloadError', 'Failed to download file. Please try again.'));
+    }
+  };
+
+  const handleDelete = async (file: UserFile) => {
+    const confirmed = window.confirm(
+      t(
+        'common:fileGallery.confirmDelete',
+        'Delete this file permanently? This cannot be undone.',
+      ),
+    );
+    if (!confirmed) return;
+
+    try {
+      await request(`/upload/files/${file.id}`, { method: 'DELETE' });
+      await refetch();
+    } catch (err) {
+      console.error('Delete failed:', err);
+      alert(t('common:fileGallery.deleteError', 'Failed to delete file. Please try again.'));
     }
   };
 
@@ -183,6 +225,13 @@ const FileGalleryPage: React.FC = () => {
           <p className="text-sm text-gray-500 mt-1">
             {t('common:fileGallery.adminUploadNote', 'View and download your files')}
           </p>
+          <button
+            type="button"
+            onClick={openDeleteFilesHelp}
+            className="text-xs text-swiss-teal hover:underline mt-2"
+          >
+            {t('common:fileGallery.deleteHelpCta', 'How do I delete files?')}
+          </button>
         </div>
         <div className="flex items-center gap-3">
           <Button 
@@ -251,6 +300,7 @@ const FileGalleryPage: React.FC = () => {
               file={file} 
               onPreview={handlePreview}
               onDownload={handleDownload}
+              onDelete={handleDelete}
             />
           ))}
         </div>

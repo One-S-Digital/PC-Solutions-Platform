@@ -32,15 +32,42 @@ export class MimeValidationService {
     // Default MIME types include video formats for e-learning content
     // Note: AVI files can be detected as either video/x-msvideo or video/vnd.avi depending on the file-type library version
     const defaultMimeTypes = 'application/pdf,image/png,image/jpeg,image/webp,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,video/mp4,video/quicktime,video/webm,video/x-msvideo,video/vnd.avi,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv,application/csv,application/vnd.oasis.opendocument.spreadsheet';
-    this.allowedMimeTypes = (this.configService.get<string>('UPLOAD_ALLOWED_MIME') || defaultMimeTypes)
+    const configuredAllowedMime = this.configService.get<string>('UPLOAD_ALLOWED_MIME');
+    const baseAllowedMimeTypes = (configuredAllowedMime || defaultMimeTypes)
       .split(',')
       .map(mime => mime.trim().toLowerCase())
       .filter(Boolean);
+
+    /**
+     * Production config foot-gun prevention:
+     * If operators configure UPLOAD_ALLOWED_EXT but forget to include the corresponding
+     * canonical MIME types in UPLOAD_ALLOWED_MIME, valid files can be rejected.
+     *
+     * Example from your logs: .docx detected as
+     * application/vnd.openxmlformats-officedocument.wordprocessingml.document
+     * but rejected because that MIME wasn't present in the configured allowed list.
+     *
+     * To keep security intact while avoiding false rejections, we expand the allowed MIME set
+     * with canonical MIME types inferred from the allowed extensions.
+     */
+    const inferredFromExtensions: string[] = [];
+    for (const ext of this.allowedExtensions) {
+      // mime-types lookup expects a filename
+      const inferred = mime.lookup(`file.${ext}`);
+      if (typeof inferred === 'string' && inferred.trim().length > 0) {
+        inferredFromExtensions.push(inferred.toLowerCase());
+      }
+    }
+
+    this.allowedMimeTypes = Array.from(new Set([...baseAllowedMimeTypes, ...inferredFromExtensions]));
     
     // Default max file size is 100MB to support video uploads
     this.maxFileSize = Number(this.configService.get<string>('UPLOAD_MAX_MB') || '100') * 1024 * 1024;
     
-    this.logger.log(`MIME validation configured: ${this.allowedExtensions.length} extensions, ${this.allowedMimeTypes.length} MIME types, max ${this.maxFileSize / (1024 * 1024)}MB`);
+    const expandedMimeCount = this.allowedMimeTypes.length - baseAllowedMimeTypes.length;
+    this.logger.log(
+      `MIME validation configured: ${this.allowedExtensions.length} extensions, ${this.allowedMimeTypes.length} MIME types${expandedMimeCount > 0 ? ` (+${expandedMimeCount} inferred)` : ''}, max ${this.maxFileSize / (1024 * 1024)}MB`,
+    );
   }
 
   /**

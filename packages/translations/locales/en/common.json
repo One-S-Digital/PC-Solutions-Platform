@@ -264,6 +264,8 @@
       "normal": "Normal"
     },
     "error": {
+      "invalidCategory": "Please select a valid category",
+      "saveCategoryFailed": "Failed to save category. Please try again.",
       "selectFileOrLink": "Please select a file or provide a link"
     },
     "fileUpload": {
@@ -304,6 +306,7 @@
       "duration": "Duration",
       "externalLink": "External Link",
       "linkUrl": "Link Url",
+      "otherCategory": "Other category",
       "version": "Version"
     },
     "statusOptions": {
@@ -657,7 +660,9 @@
       "rename": "Rename"
     },
     "adminUploadNote": "View and download your files",
-    "confirmDelete": "Are you sure you want to delete this file?",
+    "confirmDelete": "Delete this file permanently? This cannot be undone.",
+    "deleteError": "Failed to delete file. Please try again.",
+    "deleteHelpCta": "How do I delete files?",
     "downloadError": "Failed to download file. Please try again.",
     "emptyState": {
       "message": "Your files will appear here once uploaded",
@@ -2349,5 +2354,6 @@
   "viewAll": "view All",
   "welcome": "Welcome",
   "welcomeBack": "Welcome back!",
+  "saving": "Saving...",
   "description": "Description"
 }
