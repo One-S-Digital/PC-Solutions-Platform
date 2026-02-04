@@ -59,8 +59,20 @@ export function useAuthenticatedApi() {
           );
         }
 
-        const data = await response.json();
-        return data;
+        const json = await response.json();
+
+        // Normalize backend responses into ApiResponse<T>.
+        // Some endpoints return a wrapped envelope: { success, data, message }.
+        // Others return the entity/array directly (NestJS default).
+        if (Array.isArray(json) && !(json as any).success) {
+          return { success: true, data: json as unknown as T };
+        }
+
+        if (json && typeof json === 'object' && 'success' in (json as any)) {
+          return json as ApiResponse<T>;
+        }
+
+        return { success: true, data: json as T };
       } catch (error) {
         if (error instanceof ApiError) {
           throw error;

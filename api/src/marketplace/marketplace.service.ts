@@ -22,6 +22,23 @@ export class MarketplaceService {
   ) {}
 
   /**
+   * Compatibility layer for frontend expectations:
+   * - Prisma `Service.providerId` is a ServiceProvider.id
+   * - Frontend historically treats `providerId` as Organization.id
+   *
+   * So we expose `providerId` as the organizationId when available.
+   */
+  private normalizeServiceProviderIdForFrontend<T extends { providerId: string; provider?: any }>(
+    service: T,
+  ): T {
+    const providerOrgId = service?.provider?.organizationId;
+    if (providerOrgId && typeof providerOrgId === 'string') {
+      return { ...service, providerId: providerOrgId };
+    }
+    return service;
+  }
+
+  /**
    * Services belong to `ServiceProvider` (not directly to `Organization`).
    * For SERVICE_PROVIDER users we only reliably have `organizationId` in `req.user`,
    * so we resolve (and create if missing) the matching ServiceProvider record here.
@@ -284,7 +301,7 @@ export class MarketplaceService {
       );
     }
 
-    return service;
+    return this.normalizeServiceProviderIdForFrontend(service);
   }
 
   async findAllServices(filters?: {
@@ -355,18 +372,19 @@ export class MarketplaceService {
             filters.lang!,
           );
 
-          return {
+          const withTranslations = {
             ...service,
             title: translatedFields.title || service.title,
             description: translatedFields.description || service.description,
           };
+          return this.normalizeServiceProviderIdForFrontend(withTranslations);
         }),
       );
 
       return servicesWithTranslations;
     }
 
-    return services;
+    return services.map((service) => this.normalizeServiceProviderIdForFrontend(service));
   }
 
   async findServiceById(id: string, lang?: string) {
@@ -399,14 +417,15 @@ export class MarketplaceService {
         lang,
       );
 
-      return {
+      const withTranslations = {
         ...service,
         title: translatedFields.title || service.title,
         description: translatedFields.description || service.description,
       };
+      return this.normalizeServiceProviderIdForFrontend(withTranslations);
     }
 
-    return service;
+    return this.normalizeServiceProviderIdForFrontend(service);
   }
 
   async updateService(id: string, updateServiceDto: UpdateServiceDto) {
@@ -441,7 +460,7 @@ export class MarketplaceService {
       );
     }
 
-    return service;
+    return this.normalizeServiceProviderIdForFrontend(service);
   }
 
   async deleteService(id: string) {
