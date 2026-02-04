@@ -583,7 +583,10 @@ const CrawlResultsModal: React.FC<{
         const resp = await apiClient.post(
           `/admin/crawler/scan/${source.id}`,
           undefined,
-          { signal: controller.signal } as any,
+          { 
+            signal: controller.signal,
+            timeout: 600000, // 10 minutes - crawling can take a while with deep subpages
+          } as any,
         );
         const data: ScanResult = resp.data?.data || resp.data;
         setScan(data);
@@ -648,11 +651,17 @@ const CrawlResultsModal: React.FC<{
     setIngesting(true);
     setError(null);
     try {
-      const resp = await apiClient.post(`/admin/crawler/ingest/${source.id}`, {
-        urls: selectedUrls,
-        force,
-        queueUnchanged,
-      });
+      const resp = await apiClient.post(
+        `/admin/crawler/ingest/${source.id}`, 
+        {
+          urls: selectedUrls,
+          force,
+          queueUnchanged,
+        },
+        {
+          timeout: 600000, // 10 minutes - ingesting many URLs can take a while
+        },
+      );
       const data: IngestResult = resp.data?.data || resp.data;
       setIngestResult(data);
       await onAfterIngest();
