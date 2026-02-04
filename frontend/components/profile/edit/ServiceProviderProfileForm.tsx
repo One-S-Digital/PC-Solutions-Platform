@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { SettingsFormData, SwissCanton, SupportedLanguage } from '../../../types';
 import { STANDARD_INPUT_FIELD, SWISS_CANTONS } from '../../../constants';
 import { useTranslation } from 'react-i18next';
@@ -41,6 +41,32 @@ interface ServiceProviderProfileFormProps {
 const ServiceProviderProfileForm: React.FC<ServiceProviderProfileFormProps> = ({ formData, onChange }) => {
   const { t } = useTranslation(['common', 'settings']);
   const { currentUser } = useAppContext();
+  const [customServiceCategory, setCustomServiceCategory] = useState('');
+
+  const serviceCategories = useMemo(
+    () => (Array.isArray(formData.serviceCategories) ? formData.serviceCategories.filter(Boolean) : []),
+    [formData.serviceCategories],
+  );
+
+  const normalizedKnownOptions = useMemo(
+    () => new Set(SERVICE_CATEGORIES_OPTIONS.map((value) => value.toUpperCase())),
+    [],
+  );
+
+  const existingCustomCategory = useMemo(() => {
+    // Anything outside the legacy enum options counts as a custom category.
+    // This supports previously-saved human labels (e.g. "Cleaning & Maintenance") too.
+    return serviceCategories.find((value) => !normalizedKnownOptions.has(String(value).toUpperCase())) || '';
+  }, [normalizedKnownOptions, serviceCategories]);
+
+  const isOtherSelected = useMemo(() => {
+    const hasOtherLegacy = serviceCategories.some((value) => String(value).toUpperCase() === 'OTHER');
+    return hasOtherLegacy || !!existingCustomCategory;
+  }, [existingCustomCategory, serviceCategories]);
+
+  useEffect(() => {
+    setCustomServiceCategory(existingCustomCategory || '');
+  }, [existingCustomCategory]);
 
   const handleMultiSelectChange = (field: keyof SettingsFormData, selectedValue: string) => {
     const currentValues = (formData[field] as string[] || []) as Array<SwissCanton | SupportedLanguage | string>;
@@ -49,6 +75,15 @@ const ServiceProviderProfileForm: React.FC<ServiceProviderProfileFormProps> = ({
       newValues = currentValues.filter(v => v !== selectedValue);
     } else {
       newValues = [...currentValues, selectedValue as any];
+    }
+
+    // If the user turns off OTHER, also clear any existing custom category value.
+    if (field === 'serviceCategories' && String(selectedValue).toUpperCase() === 'OTHER') {
+      const turningOffOther = currentValues.some((v) => String(v).toUpperCase() === 'OTHER');
+      if (turningOffOther) {
+        newValues = newValues.filter((v) => normalizedKnownOptions.has(String(v).toUpperCase()));
+        setCustomServiceCategory('');
+      }
     }
     onChange(field, newValues);
   };
@@ -257,10 +292,49 @@ const ServiceProviderProfileForm: React.FC<ServiceProviderProfileFormProps> = ({
                       : 'bg-white text-gray-700 border-gray-300 hover:border-swiss-teal'
                   }`}
                 >
-                  {option.replace(/_/g, ' ')}
+                  {t(`common:serviceCategories.${option}`, option.replace(/_/g, ' '))}
                 </button>
               ))}
             </div>
+
+            {isOtherSelected && (
+              <div className="mt-3">
+                <label htmlFor="customServiceCategory" className="block text-xs font-medium text-gray-600 mb-1">
+                  {t('settings:companyProfile.otherServiceCategoryLabel', 'Specify your service category')}
+                </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    id="customServiceCategory"
+                    type="text"
+                    value={customServiceCategory}
+                    onChange={(e) => setCustomServiceCategory(e.target.value)}
+                    className={STANDARD_INPUT_FIELD}
+                    placeholder={t('settings:companyProfile.otherServiceCategoryPlaceholder', 'e.g., Catering, Landscaping')}
+                  />
+                  <button
+                    type="button"
+                    className="px-3 py-2 text-sm font-medium rounded-md bg-swiss-mint text-white hover:bg-swiss-teal transition-colors"
+                    onClick={() => {
+                      const name = customServiceCategory.trim();
+                      if (!name) return;
+
+                      // Persist the custom category alongside OTHER.
+                      // Keep legacy enum values (incl. OTHER) and avoid duplicates (case-insensitive).
+                      const next = [...serviceCategories.filter((v) => normalizedKnownOptions.has(String(v).toUpperCase())), 'OTHER', name]
+                        .map(String)
+                        .filter((value, idx, arr) => arr.findIndex((v) => v.toLowerCase() === value.toLowerCase()) === idx);
+
+                      onChange('serviceCategories', next);
+                    }}
+                  >
+                    {t('common:buttons.add', 'Add')}
+                  </button>
+                </div>
+                <p className="mt-1 text-xs text-gray-500">
+                  {t('settings:companyProfile.otherServiceCategoryHint', 'This will be added to your service categories.')}
+                </p>
+              </div>
+            )}
           </div>
 
           <div>
