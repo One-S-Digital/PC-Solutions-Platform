@@ -31,17 +31,30 @@ export function useAuthenticatedApi() {
 
         const url = `${apiService.apiBaseUrl}${endpoint}`;
 
+        const isFormDataBody =
+          typeof FormData !== 'undefined' && options.body instanceof FormData;
+
+        // Build headers carefully:
+        // - Never set Content-Type for FormData (browser will add boundary)
+        // - Respect any caller-provided headers (e.g. custom Content-Type)
+        const callerHeaders = (options.headers ?? {}) as Record<string, string>;
+        const baseHeaders: Record<string, string> = {
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+        };
+
+        const headers: Record<string, string> = {
+          ...(!isFormDataBody ? { 'Content-Type': 'application/json' } : {}),
+          ...baseHeaders,
+          ...callerHeaders,
+        };
+
         const response = await fetch(url, {
           ...options,
           // Avoid browser HTTP caching/conditional requests (304 has no body, and these
           // endpoints are auth-protected + user-specific anyway).
           cache: 'no-store',
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            Authorization: `Bearer ${token}`,
-            ...options.headers,
-          },
+          headers,
         });
 
         if (!response.ok) {
@@ -49,6 +62,8 @@ export function useAuthenticatedApi() {
           const resolvedMessage =
             typeof (errorData as any)?.message === 'string'
               ? (errorData as any).message
+              : typeof (errorData as any)?.error?.message === 'string'
+                ? (errorData as any).error.message
               : typeof (errorData as any)?.error === 'string'
                 ? (errorData as any).error
                 : `HTTP ${response.status}: ${response.statusText}`;
@@ -128,10 +143,14 @@ export function useAuthenticatedApi() {
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
+          const resolvedMessage =
+            (errorData as any)?.message ||
+            (errorData as any)?.error?.message ||
+            `HTTP ${response.status}: ${response.statusText}`;
           throw new ApiError(
-            errorData.message || `HTTP ${response.status}: ${response.statusText}`,
+            resolvedMessage,
             response.status,
-            errorData.code
+            (errorData as any)?.code || (errorData as any)?.error?.code
           );
         }
 
