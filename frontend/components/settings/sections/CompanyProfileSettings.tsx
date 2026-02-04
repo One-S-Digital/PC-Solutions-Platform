@@ -573,6 +573,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                     onChange={(categories) => onChange('productCategories', categories)}
                     placeholder={t('settings:companyProfile.productCategoriesPlaceholder', 'Type or select categories...')}
                     allowCustomValues={true}
+                    showEnterHint={false}
                   />
                   {hasOtherProductCategory && (
                     <div className="mt-2 flex items-center gap-2">
@@ -700,6 +701,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                     onChange={(categories) => onChange('serviceCategories', categories)}
                     placeholder={t('settings:companyProfile.serviceCategoriesPlaceholder', 'Type or select categories...')}
                     allowCustomValues={true}
+                    showEnterHint={false}
                   />
                   {hasOtherServiceCategory && (
                     <div className="mt-2 flex items-center gap-2">

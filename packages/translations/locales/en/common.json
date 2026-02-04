@@ -1507,6 +1507,9 @@
     "url": "https://example.com",
     "vatNumber": "vat Number"
   },
+  "chipInput": {
+    "pressEnterHint": "Type and press Enter to add."
+  },
   "policyAlertModal": {
     "labels": {
       "displayEndDate": "Display End Date",

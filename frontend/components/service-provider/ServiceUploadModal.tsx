@@ -164,9 +164,6 @@ const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose
                   </Button>
                 </div>
               )}
-              <p className="text-xs text-gray-500 mt-1">
-                {t('common:serviceUploadModal.categoriesHelpText', 'Select from suggestions or add your own custom categories. Press Enter to add.')}
-              </p>
             </div>
 
             <div>
