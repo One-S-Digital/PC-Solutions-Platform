@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useSignIn, useAuth } from '@clerk/clerk-react';
 import { useTranslation } from 'react-i18next';
 import { STANDARD_INPUT_FIELD, APP_NAME } from '../constants';
@@ -28,6 +28,7 @@ const GoogleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 const LoginPage: React.FC = () => {
   const { t } = useTranslation(['auth', 'common']);
   const navigate = useNavigate();
+  const location = useLocation();
   const { signIn, isLoaded: isSignInLoaded, setActive } = useSignIn();
   const { isSignedIn, isLoaded: isAuthLoaded } = useAuth();
   const { currentUser } = useAppContext();
@@ -42,6 +43,24 @@ const LoginPage: React.FC = () => {
       console.warn('Failed to load frontend settings:', settingsError);
     }
   }, [settingsError]);
+
+  // If a user is already signed in, don't keep them stuck on /login.
+  // This can happen after OAuth completes, or when a signed-in user refreshes /login.
+  useEffect(() => {
+    if (!isAuthLoaded || !isSignedIn) return;
+
+    // Avoid redirecting while the backend sync is still loading or during sign-out.
+    // Important: this must run BEFORE checking currentUser to prevent bounce-to-dashboard during sign-out.
+    if (isAuthLoading || isSigningOutGlobal) return;
+
+    // If backend user exists, go to dashboard. Otherwise, route to signup to complete profile.
+    if (currentUser) {
+      navigate('/dashboard', { replace: true });
+      return;
+    }
+
+    navigate('/signup', { replace: true, state: { from: location, isPending: true } });
+  }, [isAuthLoaded, isSignedIn, currentUser, isAuthLoading, isSigningOutGlobal, navigate, location]);
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -162,9 +181,11 @@ const LoginPage: React.FC = () => {
     }
 
     try {
-      // OAuth will redirect to dashboard after completion
-      // Use full URL for redirects (Clerk v5 requirement)
-      const redirectUrl = `${window.location.origin}/dashboard`;
+      // OAuth completes via a full page load (server request). Redirecting to a deep SPA
+      // route like `/dashboard` can 404 in environments without an index.html rewrite.
+      // Redirect to the app base URL and let the client router handle post-login navigation.
+      // Use full URL for redirects (Clerk v5 requirement).
+      const redirectUrl = new URL(import.meta.env.BASE_URL || '/', window.location.origin).toString();
       
       await signIn.authenticateWithRedirect({
         strategy: provider,
@@ -206,85 +227,8 @@ const LoginPage: React.FC = () => {
   // Show "Active Session" UI - let user choose to go to dashboard or sign out
   if (isSignedIn && currentUser) {
     return (
-      <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-2 sm:p-3 md:p-4 lg:p-6">
-        <Card className="w-full max-w-md p-3 sm:p-4 md:p-6 shadow-xl">
-          <div className="text-center mb-3 sm:mb-4 md:mb-5">
-            <LogoLink
-              to={homePath}
-              ariaLabel={t('common:buttons.goHome', 'Go to home')}
-              logoUrl={logoUrl}
-              altText={settings?.siteName || APP_NAME}
-              showFallback={showLogoFallback}
-              imageClassName="h-12 sm:h-14 md:h-[72px] w-auto mx-auto mb-1.5 sm:mb-2"
-              iconClassName="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-swiss-mint mx-auto mb-1.5 sm:mb-2"
-              fallbackIcon={SquaresPlusIcon}
-            />
-            <h1 className="text-base sm:text-lg md:text-xl font-bold text-swiss-charcoal">
-              {t('common:loginPage.title', { appName: settings?.siteName || APP_NAME })}
-            </h1>
-          </div>
-
-          <div className="space-y-3 sm:space-y-4">
-            <div className="flex justify-center mb-2 sm:mb-3">
-              <CheckCircleIcon className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 text-swiss-mint" />
-            </div>
-            <h2 className="text-base sm:text-lg md:text-xl font-bold text-swiss-charcoal text-center">
-              {t('common:loginPage.alreadySignedInTitle', 'Active Session Detected')}
-            </h2>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-              <p className="text-sm text-blue-800 text-center">
-                <strong>Welcome back, {currentUser.firstName || 'User'}!</strong>
-              </p>
-              <p className="text-xs text-blue-700 text-center mt-1.5">
-                {t('common:loginPage.alreadySignedInDescription', 'You are already logged in. Choose an option below to continue.')}
-              </p>
-            </div>
-            <div className="flex flex-col space-y-2">
-              <Button
-                type="button"
-                variant="primary"
-                size="lg"
-                className="w-full"
-                onClick={() => navigate('/dashboard', { replace: true })}
-              >
-                {t('common:loginPage.goToDashboard', 'Go to Dashboard')}
-              </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                className="w-full"
-                onClick={handleLogout}
-                disabled={isSigningOut}
-              >
-                {isSigningOut
-                  ? t('common:loginPage.signingOut', 'Signing Out...')
-                  : t('common:loginPage.signOutButton', 'Sign Out')}
-              </Button>
-            </div>
-          </div>
-
-          <div className="mt-3 sm:mt-4 md:mt-5 text-center text-xs text-gray-600 space-y-1.5">
-            <p>
-              {t('common:loginPage.noAccount')}{' '}
-              <Link to="/signup" className="font-medium text-swiss-mint hover:underline">
-                {t('common:buttons.signup')}
-              </Link>
-            </p>
-          </div>
-
-          <div className="mt-3 sm:mt-4 flex justify-center items-center gap-3">
-            <LanguageSwitcher />
-            <button
-              onClick={() => setIsHelpModalOpen(true)}
-              className="p-2 rounded-full text-gray-500 hover:text-swiss-teal hover:bg-gray-100 transition-colors"
-              aria-label={t('common:navbar.help')}
-              title={t('common:navbar.help')}
-            >
-              <QuestionMarkCircleIcon className="h-5 w-5" />
-            </button>
-          </div>
-        </Card>
-        <HelpModal isOpen={isHelpModalOpen} onClose={() => setIsHelpModalOpen(false)} />
+      <div className="min-h-screen bg-page-bg flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-swiss-mint"></div>
       </div>
     );
   }
