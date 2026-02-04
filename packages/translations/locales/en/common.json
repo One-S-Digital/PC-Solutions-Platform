@@ -264,6 +264,8 @@
       "normal": "Normal"
     },
     "error": {
+      "invalidCategory": "Please select a valid category",
+      "saveCategoryFailed": "Failed to save category. Please try again.",
       "selectFileOrLink": "Please select a file or provide a link"
     },
     "fileUpload": {
@@ -304,6 +306,7 @@
       "duration": "Duration",
       "externalLink": "External Link",
       "linkUrl": "Link Url",
+      "otherCategory": "Other category",
       "version": "Version"
     },
     "statusOptions": {
@@ -2351,5 +2354,6 @@
   "viewAll": "view All",
   "welcome": "Welcome",
   "welcomeBack": "Welcome back!",
+  "saving": "Saving...",
   "description": "Description"
 }
