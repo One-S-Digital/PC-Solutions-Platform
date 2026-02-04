@@ -119,6 +119,12 @@ export class CrawlerService {
     private classifier: ClassifierService,
   ) {}
 
+  /** Maximum number of pages to crawl in a single recursive crawl session */
+  private readonly MAX_PAGES_PER_CRAWL = 50;
+  
+  /** Maximum time (ms) for a recursive crawl session (3 minutes) */
+  private readonly MAX_CRAWL_DURATION_MS = 3 * 60 * 1000;
+
   /**
    * Recursively crawl pages starting from a source URL up to maxDepth levels.
    * Collects document candidates (PDFs and relevant pages) from all visited pages.
@@ -143,6 +149,9 @@ export class CrawlerService {
     
     // Queue of pages to visit: [url, depth]
     const queue: Array<{ url: string; depth: number }> = [{ url: startUrl, depth: 0 }];
+    
+    // Track crawl start time for timeout
+    const crawlStartTime = Date.now();
     
     // Normalize URL for comparison (remove trailing slash, hash, normalize path)
     const normalizeUrl = (url: string): string => {
@@ -219,9 +228,22 @@ export class CrawlerService {
       return true;
     };
 
-    this.logger.log(`Starting recursive crawl from ${startUrl} with max depth ${maxDepth}`);
+    this.logger.log(`Starting recursive crawl from ${startUrl} with max depth ${maxDepth} (max ${this.MAX_PAGES_PER_CRAWL} pages, ${this.MAX_CRAWL_DURATION_MS / 1000}s timeout)`);
 
     while (queue.length > 0) {
+      // Check page limit
+      if (visitedPages.size >= this.MAX_PAGES_PER_CRAWL) {
+        this.logger.warn(`Reached maximum page limit (${this.MAX_PAGES_PER_CRAWL}), stopping crawl`);
+        break;
+      }
+      
+      // Check timeout
+      const elapsedMs = Date.now() - crawlStartTime;
+      if (elapsedMs >= this.MAX_CRAWL_DURATION_MS) {
+        this.logger.warn(`Crawl timeout reached (${Math.round(elapsedMs / 1000)}s), stopping crawl`);
+        break;
+      }
+      
       const current = queue.shift()!;
       const normalizedUrl = normalizeUrl(current.url);
       
@@ -245,7 +267,7 @@ export class CrawlerService {
       }
       
       visitedPages.add(normalizedUrl);
-      this.logger.debug(`Crawling page [depth=${current.depth}]: ${current.url}`);
+      this.logger.debug(`Crawling page [depth=${current.depth}, ${visitedPages.size}/${this.MAX_PAGES_PER_CRAWL}]: ${current.url}`);
       
       try {
         // Fetch and parse page
@@ -297,9 +319,9 @@ export class CrawlerService {
           }
         }
         
-        // Rate limiting between page fetches (200ms to avoid overwhelming servers)
+        // Rate limiting between page fetches (100ms to avoid overwhelming servers)
         if (queue.length > 0) {
-          await this.delay(200);
+          await this.delay(100);
         }
         
       } catch (error: any) {
@@ -308,9 +330,11 @@ export class CrawlerService {
       }
     }
     
+    const totalDurationSec = ((Date.now() - crawlStartTime) / 1000).toFixed(1);
     this.logger.log(
-      `Recursive crawl complete: visited ${visitedPages.size} pages, ` +
-      `found ${documentCandidates.length} candidates (PDFs + HTML pages)`
+      `Recursive crawl complete in ${totalDurationSec}s: visited ${visitedPages.size}/${this.MAX_PAGES_PER_CRAWL} pages, ` +
+      `found ${documentCandidates.length} candidates (PDFs + HTML pages), ` +
+      `${queue.length} pages remaining in queue`
     );
     
     return {
