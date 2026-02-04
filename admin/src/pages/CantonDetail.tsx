@@ -29,6 +29,7 @@ interface CantonSource {
   cssSelector?: string;
   isActive: boolean;
   crawlFrequencyDays: number;
+  maxSubpageDepth: number;
   lastCrawlAt?: string;
   lastCrawlStatus?: string;
   lastCrawlError?: string;
@@ -65,6 +66,10 @@ interface ScanResult {
   daycareRelated: number;
   classifierSkipped: number;
   candidates: CandidateScanResult[];
+  // Subpage crawling stats
+  maxSubpageDepth: number;
+  pagesCrawled: number;
+  subpagesDiscovered: number;
 }
 
 interface IngestResult {
@@ -93,6 +98,7 @@ const AddSourceModal: React.FC<AddSourceModalProps> = ({ cantonId, onClose, onSu
     renderType: 'static',
     cssSelector: '',
     crawlFrequencyDays: 7,
+    maxSubpageDepth: 0,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -205,6 +211,27 @@ const AddSourceModal: React.FC<AddSourceModalProps> = ({ cantonId, onClose, onSu
             />
           </div>
 
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              {t('admin:cantons.addSource.maxSubpageDepth', 'Subpage Depth')}
+            </label>
+            <select
+              value={form.maxSubpageDepth}
+              onChange={e => setForm({...form, maxSubpageDepth: parseInt(e.target.value) || 0})}
+              className="w-full border rounded px-3 py-2"
+            >
+              <option value="0">0 - Source page only</option>
+              <option value="1">1 - Source + direct links</option>
+              <option value="2">2 - Two levels deep</option>
+              <option value="3">3 - Three levels deep</option>
+              <option value="4">4 - Four levels deep</option>
+              <option value="5">5 - Five levels deep</option>
+            </select>
+            <p className="text-xs text-gray-500 mt-1">
+              {t('admin:cantons.addSource.maxSubpageDepthHelp', 'How many levels of subpages to crawl for documents. Higher values find more documents but take longer.')}
+            </p>
+          </div>
+
           <div className="flex justify-end gap-3 pt-4">
             <button
               type="button"
@@ -265,6 +292,7 @@ const EditSourceModal: React.FC<EditSourceModalProps> = ({ source, onClose, onSu
     renderType: source.renderType,
     cssSelector: source.cssSelector || '',
     crawlFrequencyDays: source.crawlFrequencyDays,
+    maxSubpageDepth: source.maxSubpageDepth ?? 0,
     isActive: source.isActive,
   });
   const [loading, setLoading] = useState(false);
@@ -371,6 +399,25 @@ const EditSourceModal: React.FC<EditSourceModalProps> = ({ source, onClose, onSu
               onChange={e => setForm({...form, crawlFrequencyDays: parseInt(e.target.value) || 7})}
               className="w-full border rounded px-3 py-2"
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Subpage Depth</label>
+            <select
+              value={form.maxSubpageDepth}
+              onChange={e => setForm({...form, maxSubpageDepth: parseInt(e.target.value) || 0})}
+              className="w-full border rounded px-3 py-2"
+            >
+              <option value="0">0 - Source page only</option>
+              <option value="1">1 - Source + direct links</option>
+              <option value="2">2 - Two levels deep</option>
+              <option value="3">3 - Three levels deep</option>
+              <option value="4">4 - Four levels deep</option>
+              <option value="5">5 - Five levels deep</option>
+            </select>
+            <p className="text-xs text-gray-500 mt-1">
+              How many levels of subpages to crawl for documents.
+            </p>
           </div>
 
           <div className="flex items-center">
@@ -562,9 +609,17 @@ const CrawlResultsModal: React.FC<{
               create review items.
             </div>
 
-            <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
               <div className="rounded border bg-gray-50 p-3">
-                <div className="text-xs text-gray-500">Discovered</div>
+                <div className="text-xs text-gray-500">Pages Crawled</div>
+                <div className="text-lg font-semibold">{scan.pagesCrawled || 1}</div>
+              </div>
+              <div className="rounded border bg-gray-50 p-3">
+                <div className="text-xs text-gray-500">Subpages Found</div>
+                <div className="text-lg font-semibold">{scan.subpagesDiscovered || 0}</div>
+              </div>
+              <div className="rounded border bg-gray-50 p-3">
+                <div className="text-xs text-gray-500">Documents Found</div>
                 <div className="text-lg font-semibold">{scan.discovered}</div>
               </div>
               <div className="rounded border bg-gray-50 p-3">
@@ -580,6 +635,12 @@ const CrawlResultsModal: React.FC<{
                 <div className="text-lg font-semibold">{scan.classifierSkipped}</div>
               </div>
             </div>
+            
+            {scan.maxSubpageDepth > 0 && (
+              <div className="mt-3 text-sm text-gray-600">
+                Crawling with subpage depth: {scan.maxSubpageDepth} (crawled {scan.pagesCrawled || 1} page{(scan.pagesCrawled || 1) !== 1 ? 's' : ''})
+              </div>
+            )}
 
             <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
               <div className="flex flex-wrap items-center gap-4">
@@ -838,6 +899,7 @@ export default function CantonDetailPage() {
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin:cantons.detail.table.label')}</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin:cantons.detail.table.url')}</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin:cantons.detail.table.type')}</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Depth</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin:cantons.detail.table.status')}</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin:cantons.detail.table.lastCrawl')}</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin:cantons.detail.table.actions')}</th>
@@ -860,6 +922,11 @@ export default function CantonDetailPage() {
                 <td className="px-4 py-3 text-sm">
                   <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">
                     {source.sourceType}
+                  </span>
+                </td>
+                <td className="px-4 py-3 text-sm">
+                  <span className={`px-2 py-1 text-xs rounded ${source.maxSubpageDepth > 0 ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-600'}`}>
+                    {source.maxSubpageDepth || 0}
                   </span>
                 </td>
                 <td className="px-4 py-3 text-sm">
