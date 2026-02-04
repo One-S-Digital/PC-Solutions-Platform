@@ -97,6 +97,18 @@ export class CrawlerService {
   private readonly DEFAULT_DEBUG_LIMIT = 10;
 
   /**
+   * Crawl configuration - configurable via environment variables
+   */
+  /** Maximum number of pages to crawl in a single recursive crawl session */
+  private readonly MAX_PAGES_PER_CRAWL: number;
+  
+  /** Maximum time (ms) for a recursive crawl session */
+  private readonly MAX_CRAWL_DURATION_MS: number;
+  
+  /** Delay between page fetches in milliseconds (to avoid overwhelming servers) */
+  private readonly PAGE_FETCH_DELAY_MS: number;
+
+  /**
    * Whitelisted domains for SSRF prevention.
    * Only URLs from these domains (or subdomains) are allowed.
    */
@@ -117,13 +129,17 @@ export class CrawlerService {
     private pdfParser: PdfParserService,
     private playwrightRenderer: PlaywrightRendererService,
     private classifier: ClassifierService,
-  ) {}
-
-  /** Maximum number of pages to crawl in a single recursive crawl session */
-  private readonly MAX_PAGES_PER_CRAWL = 500;
-  
-  /** Maximum time (ms) for a recursive crawl session (15 minutes) */
-  private readonly MAX_CRAWL_DURATION_MS = 15 * 60 * 1000;
+  ) {
+    // Initialize configurable crawl settings from environment variables
+    this.MAX_PAGES_PER_CRAWL = parseInt(process.env.CRAWLER_MAX_PAGES || '500', 10);
+    this.MAX_CRAWL_DURATION_MS = parseInt(process.env.CRAWLER_MAX_DURATION_MS || String(15 * 60 * 1000), 10);
+    this.PAGE_FETCH_DELAY_MS = parseInt(process.env.CRAWLER_PAGE_DELAY_MS || '200', 10);
+    
+    this.logger.log(
+      `Crawler initialized with: maxPages=${this.MAX_PAGES_PER_CRAWL}, ` +
+      `maxDuration=${this.MAX_CRAWL_DURATION_MS}ms, pageDelay=${this.PAGE_FETCH_DELAY_MS}ms`
+    );
+  }
 
   /**
    * Recursively crawl pages starting from a source URL up to maxDepth levels.
@@ -319,9 +335,9 @@ export class CrawlerService {
           }
         }
         
-        // Rate limiting between page fetches (100ms to avoid overwhelming servers)
+        // Rate limiting between page fetches to avoid overwhelming servers
         if (queue.length > 0) {
-          await this.delay(100);
+          await this.delay(this.PAGE_FETCH_DELAY_MS);
         }
         
       } catch (error: any) {
