@@ -26,6 +26,9 @@ interface CantonSourceWithCanton {
   isActive: boolean;
   crawlFrequencyDays: number;
   maxSubpageDepth: number;
+  maxCrawlPages: number;
+  maxCrawlDurationSec: number;
+  crawlDelayMs: number;
   lastCrawlAt: Date | null;
   lastCrawlStatus: string | null;
   lastCrawlError: string | null;
@@ -128,6 +131,7 @@ export class CrawlerService {
    * @param renderType Whether to use dynamic rendering (Playwright) or static fetch
    * @param cssSelector Optional CSS selector to limit link extraction
    * @param baseUrlDomain Domain to restrict crawling to (prevents crawling external sites)
+   * @param crawlSettings Per-source crawl settings (limits and delays)
    * @returns RecursiveCrawlResult with visited pages and discovered candidates
    */
   private async crawlPagesRecursively(
@@ -136,6 +140,11 @@ export class CrawlerService {
     renderType: string,
     cssSelector: string | null,
     baseUrlDomain: string,
+    crawlSettings: {
+      maxPages: number;
+      maxDurationMs: number;
+      delayMs: number;
+    },
   ): Promise<RecursiveCrawlResult> {
     const visitedPages = new Set<string>();
     const documentCandidates: CandidateWithSource[] = [];
@@ -143,6 +152,11 @@ export class CrawlerService {
     
     // Queue of pages to visit: [url, depth]
     const queue: Array<{ url: string; depth: number }> = [{ url: startUrl, depth: 0 }];
+    
+    // Track crawl start time for timeout
+    const crawlStartTime = Date.now();
+    
+    const { maxPages, maxDurationMs, delayMs } = crawlSettings;
     
     // Normalize URL for comparison (remove trailing slash, hash, normalize path)
     const normalizeUrl = (url: string): string => {
@@ -219,9 +233,22 @@ export class CrawlerService {
       return true;
     };
 
-    this.logger.log(`Starting recursive crawl from ${startUrl} with max depth ${maxDepth}`);
+    this.logger.log(`Starting recursive crawl from ${startUrl} with max depth ${maxDepth} (max ${maxPages} pages, ${maxDurationMs / 1000}s timeout, ${delayMs}ms delay)`);
 
     while (queue.length > 0) {
+      // Check page limit
+      if (visitedPages.size >= maxPages) {
+        this.logger.warn(`Reached maximum page limit (${maxPages}), stopping crawl`);
+        break;
+      }
+      
+      // Check timeout
+      const elapsedMs = Date.now() - crawlStartTime;
+      if (elapsedMs >= maxDurationMs) {
+        this.logger.warn(`Crawl timeout reached (${Math.round(elapsedMs / 1000)}s), stopping crawl`);
+        break;
+      }
+      
       const current = queue.shift()!;
       const normalizedUrl = normalizeUrl(current.url);
       
@@ -245,7 +272,7 @@ export class CrawlerService {
       }
       
       visitedPages.add(normalizedUrl);
-      this.logger.debug(`Crawling page [depth=${current.depth}]: ${current.url}`);
+      this.logger.debug(`Crawling page [depth=${current.depth}, ${visitedPages.size}/${maxPages}]: ${current.url}`);
       
       try {
         // Fetch and parse page
@@ -297,9 +324,9 @@ export class CrawlerService {
           }
         }
         
-        // Rate limiting between page fetches (200ms to avoid overwhelming servers)
+        // Rate limiting between page fetches to avoid overwhelming servers
         if (queue.length > 0) {
-          await this.delay(200);
+          await this.delay(delayMs);
         }
         
       } catch (error: any) {
@@ -308,9 +335,11 @@ export class CrawlerService {
       }
     }
     
+    const totalDurationSec = ((Date.now() - crawlStartTime) / 1000).toFixed(1);
     this.logger.log(
-      `Recursive crawl complete: visited ${visitedPages.size} pages, ` +
-      `found ${documentCandidates.length} candidates (PDFs + HTML pages)`
+      `Recursive crawl complete in ${totalDurationSec}s: visited ${visitedPages.size}/${maxPages} pages, ` +
+      `found ${documentCandidates.length} candidates (PDFs + HTML pages), ` +
+      `${queue.length} pages remaining in queue`
     );
     
     return {
@@ -378,6 +407,11 @@ export class CrawlerService {
         source.renderType,
         source.cssSelector,
         baseDomain,
+        {
+          maxPages: source.maxCrawlPages,
+          maxDurationMs: source.maxCrawlDurationSec * 1000,
+          delayMs: source.crawlDelayMs,
+        },
       );
       
       pagesCrawled = crawlResult.visitedPages.size;
@@ -702,6 +736,11 @@ export class CrawlerService {
           source.renderType,
           source.cssSelector,
           baseDomain,
+          {
+            maxPages: source.maxCrawlPages,
+            maxDurationMs: source.maxCrawlDurationSec * 1000,
+            delayMs: source.crawlDelayMs,
+          },
         );
         
         results.pagesCrawled = crawlResult.visitedPages.size;

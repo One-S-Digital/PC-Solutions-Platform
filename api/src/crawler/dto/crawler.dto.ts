@@ -50,6 +50,24 @@ export class CreateSourceDto {
   @Max(5)
   @IsOptional()
   maxSubpageDepth?: number = 0;
+
+  @IsInt()
+  @Min(1)
+  @Max(1000)
+  @IsOptional()
+  maxCrawlPages?: number = 100;
+
+  @IsInt()
+  @Min(60)
+  @Max(3600)
+  @IsOptional()
+  maxCrawlDurationSec?: number = 300;
+
+  @IsInt()
+  @Min(50)
+  @Max(2000)
+  @IsOptional()
+  crawlDelayMs?: number = 200;
 }
 
 export class UpdateSourceDto {
@@ -88,6 +106,24 @@ export class UpdateSourceDto {
   @Max(5)
   @IsOptional()
   maxSubpageDepth?: number;
+
+  @IsInt()
+  @Min(1)
+  @Max(1000)
+  @IsOptional()
+  maxCrawlPages?: number;
+
+  @IsInt()
+  @Min(60)
+  @Max(3600)
+  @IsOptional()
+  maxCrawlDurationSec?: number;
+
+  @IsInt()
+  @Min(50)
+  @Max(2000)
+  @IsOptional()
+  crawlDelayMs?: number;
 }
 
 export class ReviewQueueQueryDto {

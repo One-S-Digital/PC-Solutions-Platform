@@ -617,6 +617,9 @@ model CantonSource {
   isActive           Boolean  @default(true)
   crawlFrequencyDays Int      @default(7)
   maxSubpageDepth    Int      @default(0)  // 0 = only source page, 1 = source + direct subpages, etc.
+  maxCrawlPages      Int      @default(100) // Max pages to crawl per session
+  maxCrawlDurationSec Int     @default(300) // Max crawl duration in seconds (5 min default)
+  crawlDelayMs       Int      @default(200) // Delay between page fetches in ms
 
   lastCrawlAt        DateTime?
   lastCrawlStatus    String?  // success, failed, partial

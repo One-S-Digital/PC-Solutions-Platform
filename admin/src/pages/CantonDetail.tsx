@@ -30,6 +30,9 @@ interface CantonSource {
   isActive: boolean;
   crawlFrequencyDays: number;
   maxSubpageDepth: number;
+  maxCrawlPages: number;
+  maxCrawlDurationSec: number;
+  crawlDelayMs: number;
   lastCrawlAt?: string;
   lastCrawlStatus?: string;
   lastCrawlError?: string;
@@ -99,6 +102,9 @@ const AddSourceModal: React.FC<AddSourceModalProps> = ({ cantonId, onClose, onSu
     cssSelector: '',
     crawlFrequencyDays: 7,
     maxSubpageDepth: 0,
+    maxCrawlPages: 100,
+    maxCrawlDurationSec: 300,
+    crawlDelayMs: 200,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -232,6 +238,51 @@ const AddSourceModal: React.FC<AddSourceModalProps> = ({ cantonId, onClose, onSu
             </p>
           </div>
 
+          {/* Crawl Settings - only show when subpage depth > 0 */}
+          {form.maxSubpageDepth > 0 && (
+            <div className="border-t pt-4 mt-2">
+              <h4 className="text-sm font-medium text-gray-700 mb-3">Crawl Settings</h4>
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Max Pages</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="1000"
+                    value={form.maxCrawlPages}
+                    onChange={e => setForm({...form, maxCrawlPages: parseInt(e.target.value) || 100})}
+                    className="w-full border rounded px-3 py-2"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Limit pages per crawl</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Timeout (sec)</label>
+                  <input
+                    type="number"
+                    min="60"
+                    max="3600"
+                    value={form.maxCrawlDurationSec}
+                    onChange={e => setForm({...form, maxCrawlDurationSec: parseInt(e.target.value) || 300})}
+                    className="w-full border rounded px-3 py-2"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Max crawl duration</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Delay (ms)</label>
+                  <input
+                    type="number"
+                    min="50"
+                    max="2000"
+                    value={form.crawlDelayMs}
+                    onChange={e => setForm({...form, crawlDelayMs: parseInt(e.target.value) || 200})}
+                    className="w-full border rounded px-3 py-2"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Between requests</p>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="flex justify-end gap-3 pt-4">
             <button
               type="button"
@@ -293,6 +344,9 @@ const EditSourceModal: React.FC<EditSourceModalProps> = ({ source, onClose, onSu
     cssSelector: source.cssSelector || '',
     crawlFrequencyDays: source.crawlFrequencyDays,
     maxSubpageDepth: source.maxSubpageDepth ?? 0,
+    maxCrawlPages: source.maxCrawlPages ?? 100,
+    maxCrawlDurationSec: source.maxCrawlDurationSec ?? 300,
+    crawlDelayMs: source.crawlDelayMs ?? 200,
     isActive: source.isActive,
   });
   const [loading, setLoading] = useState(false);
@@ -419,6 +473,51 @@ const EditSourceModal: React.FC<EditSourceModalProps> = ({ source, onClose, onSu
               How many levels of subpages to crawl for documents.
             </p>
           </div>
+
+          {/* Crawl Settings - only show when subpage depth > 0 */}
+          {form.maxSubpageDepth > 0 && (
+            <div className="border-t pt-4 mt-2">
+              <h4 className="text-sm font-medium text-gray-700 mb-3">Crawl Settings</h4>
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Max Pages</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="1000"
+                    value={form.maxCrawlPages}
+                    onChange={e => setForm({...form, maxCrawlPages: parseInt(e.target.value) || 100})}
+                    className="w-full border rounded px-3 py-2"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Limit pages per crawl</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Timeout (sec)</label>
+                  <input
+                    type="number"
+                    min="60"
+                    max="3600"
+                    value={form.maxCrawlDurationSec}
+                    onChange={e => setForm({...form, maxCrawlDurationSec: parseInt(e.target.value) || 300})}
+                    className="w-full border rounded px-3 py-2"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Max crawl duration</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Delay (ms)</label>
+                  <input
+                    type="number"
+                    min="50"
+                    max="2000"
+                    value={form.crawlDelayMs}
+                    onChange={e => setForm({...form, crawlDelayMs: parseInt(e.target.value) || 200})}
+                    className="w-full border rounded px-3 py-2"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Between requests</p>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="flex items-center">
             <input
