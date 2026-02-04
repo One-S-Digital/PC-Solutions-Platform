@@ -120,10 +120,10 @@ export class CrawlerService {
   ) {}
 
   /** Maximum number of pages to crawl in a single recursive crawl session */
-  private readonly MAX_PAGES_PER_CRAWL = 50;
+  private readonly MAX_PAGES_PER_CRAWL = 500;
   
-  /** Maximum time (ms) for a recursive crawl session (3 minutes) */
-  private readonly MAX_CRAWL_DURATION_MS = 3 * 60 * 1000;
+  /** Maximum time (ms) for a recursive crawl session (15 minutes) */
+  private readonly MAX_CRAWL_DURATION_MS = 15 * 60 * 1000;
 
   /**
    * Recursively crawl pages starting from a source URL up to maxDepth levels.
