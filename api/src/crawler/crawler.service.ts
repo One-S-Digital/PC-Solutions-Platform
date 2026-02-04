@@ -26,6 +26,9 @@ interface CantonSourceWithCanton {
   isActive: boolean;
   crawlFrequencyDays: number;
   maxSubpageDepth: number;
+  maxCrawlPages: number;
+  maxCrawlDurationSec: number;
+  crawlDelayMs: number;
   lastCrawlAt: Date | null;
   lastCrawlStatus: string | null;
   lastCrawlError: string | null;
@@ -97,18 +100,6 @@ export class CrawlerService {
   private readonly DEFAULT_DEBUG_LIMIT = 10;
 
   /**
-   * Crawl configuration - configurable via environment variables
-   */
-  /** Maximum number of pages to crawl in a single recursive crawl session */
-  private readonly MAX_PAGES_PER_CRAWL: number;
-  
-  /** Maximum time (ms) for a recursive crawl session */
-  private readonly MAX_CRAWL_DURATION_MS: number;
-  
-  /** Delay between page fetches in milliseconds (to avoid overwhelming servers) */
-  private readonly PAGE_FETCH_DELAY_MS: number;
-
-  /**
    * Whitelisted domains for SSRF prevention.
    * Only URLs from these domains (or subdomains) are allowed.
    */
@@ -129,17 +120,7 @@ export class CrawlerService {
     private pdfParser: PdfParserService,
     private playwrightRenderer: PlaywrightRendererService,
     private classifier: ClassifierService,
-  ) {
-    // Initialize configurable crawl settings from environment variables
-    this.MAX_PAGES_PER_CRAWL = parseInt(process.env.CRAWLER_MAX_PAGES || '500', 10);
-    this.MAX_CRAWL_DURATION_MS = parseInt(process.env.CRAWLER_MAX_DURATION_MS || String(15 * 60 * 1000), 10);
-    this.PAGE_FETCH_DELAY_MS = parseInt(process.env.CRAWLER_PAGE_DELAY_MS || '200', 10);
-    
-    this.logger.log(
-      `Crawler initialized with: maxPages=${this.MAX_PAGES_PER_CRAWL}, ` +
-      `maxDuration=${this.MAX_CRAWL_DURATION_MS}ms, pageDelay=${this.PAGE_FETCH_DELAY_MS}ms`
-    );
-  }
+  ) {}
 
   /**
    * Recursively crawl pages starting from a source URL up to maxDepth levels.
@@ -150,6 +131,7 @@ export class CrawlerService {
    * @param renderType Whether to use dynamic rendering (Playwright) or static fetch
    * @param cssSelector Optional CSS selector to limit link extraction
    * @param baseUrlDomain Domain to restrict crawling to (prevents crawling external sites)
+   * @param crawlSettings Per-source crawl settings (limits and delays)
    * @returns RecursiveCrawlResult with visited pages and discovered candidates
    */
   private async crawlPagesRecursively(
@@ -158,6 +140,11 @@ export class CrawlerService {
     renderType: string,
     cssSelector: string | null,
     baseUrlDomain: string,
+    crawlSettings: {
+      maxPages: number;
+      maxDurationMs: number;
+      delayMs: number;
+    },
   ): Promise<RecursiveCrawlResult> {
     const visitedPages = new Set<string>();
     const documentCandidates: CandidateWithSource[] = [];
@@ -168,6 +155,8 @@ export class CrawlerService {
     
     // Track crawl start time for timeout
     const crawlStartTime = Date.now();
+    
+    const { maxPages, maxDurationMs, delayMs } = crawlSettings;
     
     // Normalize URL for comparison (remove trailing slash, hash, normalize path)
     const normalizeUrl = (url: string): string => {
@@ -244,18 +233,18 @@ export class CrawlerService {
       return true;
     };
 
-    this.logger.log(`Starting recursive crawl from ${startUrl} with max depth ${maxDepth} (max ${this.MAX_PAGES_PER_CRAWL} pages, ${this.MAX_CRAWL_DURATION_MS / 1000}s timeout)`);
+    this.logger.log(`Starting recursive crawl from ${startUrl} with max depth ${maxDepth} (max ${maxPages} pages, ${maxDurationMs / 1000}s timeout, ${delayMs}ms delay)`);
 
     while (queue.length > 0) {
       // Check page limit
-      if (visitedPages.size >= this.MAX_PAGES_PER_CRAWL) {
-        this.logger.warn(`Reached maximum page limit (${this.MAX_PAGES_PER_CRAWL}), stopping crawl`);
+      if (visitedPages.size >= maxPages) {
+        this.logger.warn(`Reached maximum page limit (${maxPages}), stopping crawl`);
         break;
       }
       
       // Check timeout
       const elapsedMs = Date.now() - crawlStartTime;
-      if (elapsedMs >= this.MAX_CRAWL_DURATION_MS) {
+      if (elapsedMs >= maxDurationMs) {
         this.logger.warn(`Crawl timeout reached (${Math.round(elapsedMs / 1000)}s), stopping crawl`);
         break;
       }
@@ -283,7 +272,7 @@ export class CrawlerService {
       }
       
       visitedPages.add(normalizedUrl);
-      this.logger.debug(`Crawling page [depth=${current.depth}, ${visitedPages.size}/${this.MAX_PAGES_PER_CRAWL}]: ${current.url}`);
+      this.logger.debug(`Crawling page [depth=${current.depth}, ${visitedPages.size}/${maxPages}]: ${current.url}`);
       
       try {
         // Fetch and parse page
@@ -337,7 +326,7 @@ export class CrawlerService {
         
         // Rate limiting between page fetches to avoid overwhelming servers
         if (queue.length > 0) {
-          await this.delay(this.PAGE_FETCH_DELAY_MS);
+          await this.delay(delayMs);
         }
         
       } catch (error: any) {
@@ -348,7 +337,7 @@ export class CrawlerService {
     
     const totalDurationSec = ((Date.now() - crawlStartTime) / 1000).toFixed(1);
     this.logger.log(
-      `Recursive crawl complete in ${totalDurationSec}s: visited ${visitedPages.size}/${this.MAX_PAGES_PER_CRAWL} pages, ` +
+      `Recursive crawl complete in ${totalDurationSec}s: visited ${visitedPages.size}/${maxPages} pages, ` +
       `found ${documentCandidates.length} candidates (PDFs + HTML pages), ` +
       `${queue.length} pages remaining in queue`
     );
@@ -418,6 +407,11 @@ export class CrawlerService {
         source.renderType,
         source.cssSelector,
         baseDomain,
+        {
+          maxPages: source.maxCrawlPages,
+          maxDurationMs: source.maxCrawlDurationSec * 1000,
+          delayMs: source.crawlDelayMs,
+        },
       );
       
       pagesCrawled = crawlResult.visitedPages.size;
@@ -742,6 +736,11 @@ export class CrawlerService {
           source.renderType,
           source.cssSelector,
           baseDomain,
+          {
+            maxPages: source.maxCrawlPages,
+            maxDurationMs: source.maxCrawlDurationSec * 1000,
+            delayMs: source.crawlDelayMs,
+          },
         );
         
         results.pagesCrawled = crawlResult.visitedPages.size;
