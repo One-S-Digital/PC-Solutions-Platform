@@ -22,6 +22,7 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../../contexts/AppContext';
 import { useAuthenticatedApi } from '../../../hooks/useAuthenticatedApi';
 
@@ -62,7 +63,19 @@ interface EducatorProfileSettingsProps {
 const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ settings, onChange, userRole }) => {
   const { t } = useTranslation(['dashboard', 'common', 'settings']);
   const { currentUser } = useAppContext();
-  const { upload } = useAuthenticatedApi();
+  const { upload, request } = useAuthenticatedApi();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const openDeleteFilesHelp = () => {
+    const params = new URLSearchParams(location.search);
+    params.set('help', 'delete-files');
+    const nextSearch = params.toString();
+    navigate(
+      { pathname: location.pathname, search: nextSearch ? `?${nextSearch}` : '' },
+      { replace: false },
+    );
+  };
   
   // Avatar cropping state
   const [showAvatarCropper, setShowAvatarCropper] = useState(false);
@@ -172,9 +185,28 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
     }
   };
 
-  const handleRemoveCv = () => {
-    handleFieldChange('cvUrl', '');
-    onChange('cvAssetId', '');
+  const handleRemoveCv = async () => {
+    const confirmed = window.confirm(
+      t(
+        'settings:educatorProfile.confirmDeleteCv',
+        'Delete your CV permanently? This cannot be undone.',
+      ),
+    );
+    if (!confirmed) return;
+
+    try {
+      await request('/settings/educator/cv', { method: 'DELETE' });
+      handleFieldChange('cvUrl', '');
+      onChange('cvAssetId', '');
+    } catch (e: any) {
+      console.error('CV delete failed:', e);
+      alert(
+        t(
+          'settings:educatorProfile.deleteCvFailed',
+          'Failed to delete CV. Please try again.',
+        ),
+      );
+    }
   };
 
   // Use avatarUrl from settings (computed from asset relation on backend)
@@ -544,6 +576,13 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
               <p className="mt-2 text-xs text-gray-500">
                 {t('settings:educatorProfile.cvHint', 'Accepted formats: PDF, DOC, DOCX (Max 5MB). This will be shared with foundations when you apply for jobs.')}
               </p>
+              <button
+                type="button"
+                onClick={openDeleteFilesHelp}
+                className="text-xs text-swiss-teal hover:underline mt-2"
+              >
+                {t('settings:educatorProfile.deleteHelpCta', 'How do I delete files?')}
+              </button>
             </div>
           </div>
         </div>

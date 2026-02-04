@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AssetKind } from '@prisma/client';
+import { UploadService } from '../upload/upload.service';
 import {
   CreateOrganizationDocumentDto,
   UpdateOrganizationDocumentDto,
@@ -17,7 +18,10 @@ import {
 export class OrganizationDocumentsService {
   private readonly logger = new Logger(OrganizationDocumentsService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly uploadService: UploadService,
+  ) {}
 
   /**
    * Get user's organization ID
@@ -248,12 +252,20 @@ export class OrganizationDocumentsService {
   /**
    * Delete an organization document
    */
-  async deleteDocument(documentId: string, organizationId: string): Promise<void> {
+  async deleteDocument(
+    documentId: string,
+    organizationId: string,
+    accountId: string,
+  ): Promise<void> {
     // Verify the document belongs to the organization
     const existingDoc = await this.prisma.organizationDocument.findFirst({
       where: {
         id: documentId,
         organizationId,
+      },
+      select: {
+        id: true,
+        assetId: true,
       },
     });
 
@@ -264,6 +276,60 @@ export class OrganizationDocumentsService {
     await this.prisma.organizationDocument.delete({
       where: { id: documentId },
     });
+
+    // Best-effort: also delete the underlying asset if it's safe to do so.
+    // We only auto-delete asset kinds that are exclusively used for profile docs.
+    const asset = await this.prisma.asset.findUnique({
+      where: { id: existingDoc.assetId },
+      select: {
+        id: true,
+        kind: true,
+        uploadedById: true,
+      },
+    });
+
+    if (!asset) {
+      this.logger.warn(`Asset not found for deleted document ${documentId}: ${existingDoc.assetId}`);
+      this.logger.log(`Deleted organization document ${documentId}`);
+      return;
+    }
+
+    // Only delete if the user owns the asset and it's not referenced by other org-doc records.
+    // Avoid deleting generic DOCUMENT assets (could be reused e.g. message attachments).
+    const deletableKinds: AssetKind[] = [
+      AssetKind.COMPANY_PROFILE_DOC,
+      AssetKind.CATALOG_PDF,
+      AssetKind.CATALOG_CSV,
+    ];
+
+    if (asset.uploadedById !== accountId || !deletableKinds.includes(asset.kind)) {
+      this.logger.log(
+        `Deleted organization document ${documentId} (asset retained: ${asset.id}, kind=${asset.kind})`,
+      );
+      return;
+    }
+
+    const remainingRefs = await this.prisma.organizationDocument.count({
+      where: { assetId: asset.id },
+    });
+
+    if (remainingRefs > 0) {
+      this.logger.log(
+        `Deleted organization document ${documentId} (asset retained due to remaining refs: ${asset.id}, refs=${remainingRefs})`,
+      );
+      return;
+    }
+
+    try {
+      await this.uploadService.deleteAsset(asset.id, accountId);
+      this.logger.log(`Deleted organization document ${documentId} and asset ${asset.id}`);
+    } catch (e: any) {
+      // Don't fail the document delete if storage deletion fails.
+      this.logger.error(
+        `Deleted organization document ${documentId}, but failed to delete asset ${asset.id}: ${e?.message || e}`,
+        e?.stack,
+      );
+    }
 
     this.logger.log(`Deleted organization document ${documentId}`);
   }

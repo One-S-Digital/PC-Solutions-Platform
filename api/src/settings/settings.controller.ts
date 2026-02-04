@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Patch,
+  Delete,
   Request,
   UnauthorizedException,
   BadRequestException,
@@ -18,6 +19,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { EnsureProfileInterceptor } from '../principal/ensure-profile.interceptor';
 import { PrincipalService } from '../principal/principal.service';
+import { UploadService } from '../upload/upload.service';
 import { UpdateFoundationSettingsDto } from './dto/foundation-settings.dto';
 import { UpdateEducatorSettingsDto } from './dto/educator-settings.dto';
 import { UpdateSupplierSettingsDto } from './dto/supplier-settings.dto';
@@ -38,7 +40,70 @@ export class SettingsController {
     private readonly prisma: PrismaService,
     private readonly principal: PrincipalService,
     private readonly translationService: TranslationService,
+    private readonly uploadService: UploadService,
   ) {}
+
+  /**
+   * Try to resolve an Asset (by publicUrl or storageKey) for a given user and kind.
+   * This is used for "full delete" flows where the profile stores only a URL.
+   */
+  private async resolveUserAssetByUrl(
+    accountId: string,
+    fileUrl: string,
+    kind: AssetKind,
+  ): Promise<{ id: string } | null> {
+    if (!fileUrl || typeof fileUrl !== 'string') return null;
+
+    // First try direct match on publicUrl
+    const byPublicUrl = await this.prisma.asset.findFirst({
+      where: {
+        uploadedById: accountId,
+        kind,
+        publicUrl: fileUrl,
+      },
+      select: { id: true },
+    });
+    if (byPublicUrl) return byPublicUrl;
+
+    // Then try to infer storageKey from known URL formats
+    const storageKey = this.extractStorageKeyFromFileUrl(fileUrl);
+    if (!storageKey) return null;
+
+    return await this.prisma.asset.findFirst({
+      where: {
+        uploadedById: accountId,
+        kind,
+        storageKey,
+      },
+      select: { id: true },
+    });
+  }
+
+  /**
+   * Extracts a storageKey from various file URL formats:
+   * - /api/upload/download/<storageKey>
+   * - https://.../api/upload/download/<storageKey>
+   * - https://assets.../<storageKey>
+   */
+  private extractStorageKeyFromFileUrl(fileUrl: string): string | null {
+    try {
+      const url = new URL(fileUrl, 'http://localhost');
+      const pathname = url.pathname || '';
+
+      const downloadPrefix = '/api/upload/download/';
+      const idx = pathname.indexOf(downloadPrefix);
+      if (idx !== -1) {
+        const key = pathname.substring(idx + downloadPrefix.length);
+        return key && key.trim() ? key : null;
+      }
+
+      // Otherwise treat path as "<storageKey>" (strip leading slash)
+      const key = pathname.startsWith('/') ? pathname.substring(1) : pathname;
+      return key && key.trim() ? key : null;
+    } catch {
+      return null;
+    }
+  }
 
   private getContext(request: any) {
     const context = request?.context ?? {};
@@ -339,6 +404,24 @@ export class SettingsController {
   async updateEducatorSettings(@Request() req, @Body() settings: UpdateEducatorSettingsDto) {
     const { profileId, accountId } = this.getContext(req);
 
+    // If the user removes their CV (cvUrl=""), we perform a full delete:
+    // 1) clear cvUrl on the profile
+    // 2) delete the underlying uploaded asset (best-effort)
+    const existingCv = await this.prisma.user.findUnique({
+      where: { id: profileId },
+      select: { cvUrl: true },
+    });
+    const previousCvUrl = existingCv?.cvUrl || '';
+    const normalizedIncomingCvUrl =
+      settings.cvUrl !== undefined && typeof settings.cvUrl === 'string' && settings.cvUrl.trim().length === 0
+        ? null
+        : settings.cvUrl;
+    const shouldDeletePreviousCv =
+      settings.cvUrl !== undefined &&
+      normalizedIncomingCvUrl === null &&
+      typeof previousCvUrl === 'string' &&
+      previousCvUrl.trim().length > 0;
+
     await this.prisma.$transaction(async (tx) => {
       // Validate asset ownership and kind before updating
       // Use accountId (AppUser.id) since Asset.uploadedById references AppUser
@@ -369,7 +452,7 @@ export class SettingsController {
           certifications: settings.certifications,
           skills: settings.skills,
           availability: settings.availability,
-          cvUrl: settings.cvUrl,
+          ...(settings.cvUrl !== undefined && { cvUrl: normalizedIncomingCvUrl }),
           shortBio: settings.shortBio,
           region: settings.region,
           ...(settings.cities !== undefined && { cities: settings.cities }),
@@ -406,10 +489,57 @@ export class SettingsController {
       }
     });
 
+    if (shouldDeletePreviousCv) {
+      try {
+        const asset = await this.resolveUserAssetByUrl(accountId, previousCvUrl, AssetKind.CV);
+        if (asset?.id) {
+          await this.uploadService.deleteAsset(asset.id, accountId);
+        }
+      } catch (e: any) {
+        // Do not fail settings update if deletion fails; leaving an orphaned file is preferable
+        // to blocking the user from updating their profile.
+      }
+    }
+
     return {
       success: true,
       message: 'Settings updated successfully',
     };
+  }
+
+  @Delete('educator/cv')
+  @Roles(UserRole.EDUCATOR)
+  @ApiOperation({ summary: 'Delete educator CV (full delete)' })
+  @ApiResponse({ status: 200, description: 'CV deleted successfully' })
+  async deleteEducatorCv(@Request() req) {
+    const { profileId, accountId } = this.getContext(req);
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: profileId },
+      select: { cvUrl: true },
+    });
+
+    const cvUrl = user?.cvUrl || '';
+    if (!cvUrl || !cvUrl.trim()) {
+      return { success: true, message: 'No CV to delete' };
+    }
+
+    // Clear cvUrl first, then delete the underlying asset best-effort.
+    await this.prisma.user.update({
+      where: { id: profileId },
+      data: { cvUrl: null },
+    });
+
+    try {
+      const asset = await this.resolveUserAssetByUrl(accountId, cvUrl, AssetKind.CV);
+      if (asset?.id) {
+        await this.uploadService.deleteAsset(asset.id, accountId);
+      }
+    } catch {
+      // Best-effort delete; profile is already unlinked.
+    }
+
+    return { success: true, message: 'CV deleted successfully' };
   }
 
   // ─────────────────────────────────────────────────────────────

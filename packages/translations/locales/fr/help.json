@@ -165,6 +165,11 @@
       "description": "Comment gérer la sécurité et l'authentification de votre compte.",
       "content": "<strong>Ouvrir Compte et sécurité</strong><br/><br/>1. Dans la barre latérale, cliquez sur <strong>Paramètres</strong><br/>2. Ouvrez <strong>Compte et sécurité</strong><br/><br/><strong>Vous pouvez ensuite</strong><br/><br/>• Changer votre mot de passe<br/>• Changer votre adresse email<br/>• Gérer les comptes connectés (si disponible)<br/><br/><strong>Conseils</strong><br/><br/>• Utilisez un mot de passe fort et unique<br/>• Gardez votre email à jour<br/>• Déconnectez-vous sur les appareils partagés"
     },
+    "deleteFiles": {
+      "title": "Supprimer des fichiers et documents",
+      "description": "Comment supprimer définitivement des fichiers téléchargés (CV, catalogues, documents).",
+      "content": "<strong>Important</strong><br/><br/>La suppression d’un fichier est définitive. Une fois supprimé, il ne peut pas être restauré.<br/><br/><strong>Supprimer un fichier depuis la Galerie de fichiers</strong><br/><br/>1. Ouvrez la <strong>Galerie de fichiers</strong><br/>2. Trouvez le fichier à supprimer<br/>3. Cliquez sur l’icône <strong>Poubelle / Supprimer</strong><br/>4. Confirmez la suppression<br/><br/><strong>Supprimer votre CV (Éducateurs)</strong><br/><br/>1. Allez dans <strong>Paramètres → Modifier le profil</strong><br/>2. Descendez jusqu’à <strong>CV / Résumé</strong><br/>3. Cliquez sur <strong>Supprimer</strong> et confirmez<br/><br/><strong>Supprimer des catalogues / documents de profil (Fournisseurs & Prestataires)</strong><br/><br/>1. Allez dans <strong>Paramètres → Modifier le profil</strong><br/>2. Ouvrez <strong>Documents & Catalogues</strong><br/>3. Cliquez sur <strong>Supprimer</strong> (poubelle) sur le document concerné<br/><br/><strong>Astuce</strong><br/><br/>Si vous souhaitez seulement masquer un document temporairement, supprimez-le de votre profil et téléchargez-le à nouveau plus tard."
+    },
     "notificationSettings": {
       "title": "Paramètres de notifications",
       "description": "Comment gérer vos notifications par email et sur la plateforme.",
