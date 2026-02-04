@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   PaperClipIcon, 
   DocumentIcon, 
@@ -162,6 +163,18 @@ const FileGalleryPage: React.FC = () => {
   const { files, loading, error, refetch } = useUserFiles();
   const { authenticatedDownload, request } = useAuthenticatedApi();
   const [previewFile, setPreviewFile] = useState<UserFile | null>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const openDeleteFilesHelp = () => {
+    const params = new URLSearchParams(location.search);
+    params.set('help', 'delete-files');
+    const nextSearch = params.toString();
+    navigate(
+      { pathname: location.pathname, search: nextSearch ? `?${nextSearch}` : '' },
+      { replace: false },
+    );
+  };
 
   const handlePreview = (file: UserFile) => {
     setPreviewFile(file);
@@ -212,6 +225,13 @@ const FileGalleryPage: React.FC = () => {
           <p className="text-sm text-gray-500 mt-1">
             {t('common:fileGallery.adminUploadNote', 'View and download your files')}
           </p>
+          <button
+            type="button"
+            onClick={openDeleteFilesHelp}
+            className="text-xs text-swiss-teal hover:underline mt-2"
+          >
+            {t('common:fileGallery.deleteHelpCta', 'How do I delete files?')}
+          </button>
         </div>
         <div className="flex items-center gap-3">
           <Button 

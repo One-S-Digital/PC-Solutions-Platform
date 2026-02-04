@@ -301,6 +301,14 @@ export const HELP_ARTICLES: HelpArticle[] = [
     keywords: ['security', 'password', 'email', 'account', 'protection'],
   },
   {
+    id: 'delete-files',
+    titleKey: 'help:articles.deleteFiles.title',
+    descriptionKey: 'help:articles.deleteFiles.description',
+    contentKey: 'help:articles.deleteFiles.content',
+    category: 'settings',
+    keywords: ['delete', 'remove', 'file', 'document', 'cv', 'resume', 'catalog', 'upload'],
+  },
+  {
     id: 'notification-settings',
     titleKey: 'help:articles.notificationSettings.title',
     descriptionKey: 'help:articles.notificationSettings.description',
