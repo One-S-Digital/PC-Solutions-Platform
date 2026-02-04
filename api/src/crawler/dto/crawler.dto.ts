@@ -44,6 +44,12 @@ export class CreateSourceDto {
   @Max(365)
   @IsOptional()
   crawlFrequencyDays?: number = 7;
+
+  @IsInt()
+  @Min(0)
+  @Max(5)
+  @IsOptional()
+  maxSubpageDepth?: number = 0;
 }
 
 export class UpdateSourceDto {
@@ -76,6 +82,12 @@ export class UpdateSourceDto {
   @Max(365)
   @IsOptional()
   crawlFrequencyDays?: number;
+
+  @IsInt()
+  @Min(0)
+  @Max(5)
+  @IsOptional()
+  maxSubpageDepth?: number;
 }
 
 export class ReviewQueueQueryDto {

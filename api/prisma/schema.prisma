@@ -616,6 +616,7 @@ model CantonSource {
 
   isActive           Boolean  @default(true)
   crawlFrequencyDays Int      @default(7)
+  maxSubpageDepth    Int      @default(0)  // 0 = only source page, 1 = source + direct subpages, etc.
 
   lastCrawlAt        DateTime?
   lastCrawlStatus    String?  // success, failed, partial

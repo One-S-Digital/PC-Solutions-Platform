@@ -25,6 +25,7 @@ interface CantonSourceWithCanton {
   cssSelector: string | null;
   isActive: boolean;
   crawlFrequencyDays: number;
+  maxSubpageDepth: number;
   lastCrawlAt: Date | null;
   lastCrawlStatus: string | null;
   lastCrawlError: string | null;
@@ -35,6 +36,19 @@ interface CantonSourceWithCanton {
     name: string;
     defaultLang: string;
   };
+}
+
+/** Extended candidate document with source page info */
+interface CandidateWithSource extends CandidateDocument {
+  sourcePage: string;  // The page where this link was found
+  depth: number;       // Depth level at which this was discovered
+}
+
+/** Result of recursive page crawling */
+interface RecursiveCrawlResult {
+  visitedPages: Set<string>;
+  documentCandidates: CandidateWithSource[];
+  subpageCandidates: CandidateWithSource[];
 }
 
 export interface CandidateScanResult {
@@ -67,6 +81,10 @@ export interface ScanSourceResult {
   daycareRelated: number;
   classifierSkipped: number;
   candidates: CandidateScanResult[];
+  // Subpage crawling stats
+  maxSubpageDepth: number;
+  pagesCrawled: number;
+  subpagesDiscovered: number;
 }
 
 /** Maximum file size for PDF downloads (50MB) */
@@ -101,6 +119,219 @@ export class CrawlerService {
     private classifier: ClassifierService,
   ) {}
 
+  /**
+   * Recursively crawl pages starting from a source URL up to maxDepth levels.
+   * Collects document candidates (PDFs and relevant pages) from all visited pages.
+   * 
+   * @param startUrl The initial URL to crawl
+   * @param maxDepth Maximum depth to crawl (0 = only start page, 1 = start + direct links, etc.)
+   * @param renderType Whether to use dynamic rendering (Playwright) or static fetch
+   * @param cssSelector Optional CSS selector to limit link extraction
+   * @param baseUrlDomain Domain to restrict crawling to (prevents crawling external sites)
+   * @returns RecursiveCrawlResult with visited pages and discovered candidates
+   */
+  private async crawlPagesRecursively(
+    startUrl: string,
+    maxDepth: number,
+    renderType: string,
+    cssSelector: string | null,
+    baseUrlDomain: string,
+  ): Promise<RecursiveCrawlResult> {
+    const visitedPages = new Set<string>();
+    const documentCandidates: CandidateWithSource[] = [];
+    const subpageCandidates: CandidateWithSource[] = [];
+    
+    // Queue of pages to visit: [url, depth]
+    const queue: Array<{ url: string; depth: number }> = [{ url: startUrl, depth: 0 }];
+    
+    // Normalize URL for comparison (remove trailing slash, hash, normalize path)
+    const normalizeUrl = (url: string): string => {
+      try {
+        const parsed = new URL(url);
+        // Remove hash and normalize
+        parsed.hash = '';
+        let path = parsed.pathname;
+        // Remove trailing slash unless it's root
+        if (path.length > 1 && path.endsWith('/')) {
+          path = path.slice(0, -1);
+        }
+        parsed.pathname = path;
+        return parsed.toString();
+      } catch {
+        return url;
+      }
+    };
+
+    // Check if URL is within the same domain/subdomain
+    const isSameDomain = (url: string): boolean => {
+      try {
+        const urlHost = new URL(url).hostname.toLowerCase();
+        return urlHost === baseUrlDomain || urlHost.endsWith('.' + baseUrlDomain);
+      } catch {
+        return false;
+      }
+    };
+
+    // Check if URL is likely a document vs a navigation page
+    const isLikelyDocument = (url: string): boolean => {
+      const lower = url.toLowerCase();
+      return lower.endsWith('.pdf') || 
+             lower.includes('.pdf?') ||
+             lower.endsWith('.doc') ||
+             lower.endsWith('.docx') ||
+             lower.endsWith('.xls') ||
+             lower.endsWith('.xlsx');
+    };
+
+    // Check if URL is likely a subpage worth crawling (not a document or anchor)
+    const isLikelySubpage = (url: string, anchorText: string): boolean => {
+      // Skip documents
+      if (isLikelyDocument(url)) return false;
+      
+      // Skip same-page anchors
+      try {
+        const urlObj = new URL(url);
+        if (urlObj.hash && urlObj.pathname === new URL(startUrl).pathname) {
+          return false;
+        }
+      } catch {
+        return false;
+      }
+      
+      // Skip URLs with common non-content patterns
+      const lower = url.toLowerCase();
+      const skipPatterns = [
+        '/login', '/logout', '/signin', '/signup', '/register',
+        '/search', '/recherche', '/suche',
+        '/contact', '/kontakt',
+        '/sitemap', '/plan-du-site',
+        '/print', '/pdf', '/export',
+        '?print=', '?pdf=', '?export=',
+        '/rss', '/feed', '/atom',
+        '.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg',
+        '.css', '.js', '.json', '.xml',
+      ];
+      
+      if (skipPatterns.some(pattern => lower.includes(pattern))) {
+        return false;
+      }
+      
+      return true;
+    };
+
+    this.logger.log(`Starting recursive crawl from ${startUrl} with max depth ${maxDepth}`);
+
+    while (queue.length > 0) {
+      const current = queue.shift()!;
+      const normalizedUrl = normalizeUrl(current.url);
+      
+      // Skip if already visited
+      if (visitedPages.has(normalizedUrl)) {
+        continue;
+      }
+      
+      // Validate URL is whitelisted
+      try {
+        this.validateUrl(current.url);
+      } catch (e: any) {
+        this.logger.debug(`Skipping non-whitelisted URL: ${current.url}`);
+        continue;
+      }
+      
+      // Check same domain
+      if (!isSameDomain(current.url)) {
+        this.logger.debug(`Skipping external domain URL: ${current.url}`);
+        continue;
+      }
+      
+      visitedPages.add(normalizedUrl);
+      this.logger.debug(`Crawling page [depth=${current.depth}]: ${current.url}`);
+      
+      try {
+        // Fetch and parse page
+        const html = await this.fetchPage(current.url, renderType === 'dynamic');
+        // Only use CSS selector on the root page
+        const selector = current.depth === 0 ? cssSelector : null;
+        const extracted = this.htmlParser.extractLinks(html, current.url, selector);
+        
+        for (const candidate of extracted) {
+          // Validate URL
+          try {
+            this.validateUrl(candidate.url);
+          } catch {
+            continue;
+          }
+          
+          const candidateNormalized = normalizeUrl(candidate.url);
+          
+          if (isLikelyDocument(candidate.url)) {
+            // It's a document - add to document candidates if not already found
+            if (!documentCandidates.some(c => normalizeUrl(c.url) === candidateNormalized)) {
+              documentCandidates.push({
+                ...candidate,
+                sourcePage: current.url,
+                depth: current.depth,
+              });
+            }
+          } else if (current.depth < maxDepth && isLikelySubpage(candidate.url, candidate.anchorText)) {
+            // It's a potential subpage - add to queue if not visited and within depth
+            if (!visitedPages.has(candidateNormalized) && isSameDomain(candidate.url)) {
+              // Check if already in queue
+              const inQueue = queue.some(q => normalizeUrl(q.url) === candidateNormalized);
+              if (!inQueue) {
+                queue.push({ url: candidate.url, depth: current.depth + 1 });
+                subpageCandidates.push({
+                  ...candidate,
+                  sourcePage: current.url,
+                  depth: current.depth,
+                });
+              }
+            }
+          }
+        }
+        
+        // Rate limiting between page fetches (200ms to avoid overwhelming servers)
+        if (queue.length > 0) {
+          await this.delay(200);
+        }
+        
+      } catch (error: any) {
+        this.logger.warn(`Failed to crawl page ${current.url}: ${error.message}`);
+        // Continue with other pages in queue
+      }
+    }
+    
+    this.logger.log(
+      `Recursive crawl complete: visited ${visitedPages.size} pages, ` +
+      `found ${documentCandidates.length} document candidates`
+    );
+    
+    return {
+      visitedPages,
+      documentCandidates,
+      subpageCandidates,
+    };
+  }
+
+  /**
+   * Extract base domain from a URL (e.g., "www.vd.ch" -> "vd.ch")
+   */
+  private extractBaseDomain(url: string): string {
+    try {
+      const hostname = new URL(url).hostname.toLowerCase();
+      // For cantonal sites, we want to match the canton domain
+      // e.g., "www.vd.ch" or "prestations.vd.ch" should match "vd.ch"
+      const parts = hostname.split('.');
+      if (parts.length >= 2) {
+        // Return last two parts (e.g., "vd.ch")
+        return parts.slice(-2).join('.');
+      }
+      return hostname;
+    } catch {
+      return '';
+    }
+  }
+
   private classifierSkipReason(classification: any): string {
     const debug = classification?._debug || {};
     return debug.negativePattern
@@ -111,6 +342,8 @@ export class CrawlerService {
   /**
    * Scan a source page and return discovered candidate links + classification results.
    * This does NOT create/update any assets.
+   * 
+   * If maxSubpageDepth > 0, will recursively crawl subpages to discover documents.
    */
   async scanSource(sourceId: number): Promise<ScanSourceResult> {
     const source = await this.prisma.cantonSource.findUnique({
@@ -122,11 +355,45 @@ export class CrawlerService {
       throw new Error(`Source ${sourceId} not found or inactive`);
     }
 
-    this.logger.log(`Scanning source: ${source.label} (${source.url})`);
+    this.logger.log(`Scanning source: ${source.label} (${source.url}), maxSubpageDepth: ${source.maxSubpageDepth}`);
     this.validateUrl(source.url);
 
-    const html = await this.fetchPage(source.url, source.renderType === 'dynamic');
-    const extracted = this.htmlParser.extractLinks(html, source.url, source.cssSelector);
+    const baseDomain = this.extractBaseDomain(source.url);
+    let extracted: CandidateDocument[];
+    let pagesCrawled = 1;
+    let subpagesDiscovered = 0;
+
+    if (source.maxSubpageDepth > 0) {
+      // Use recursive crawling
+      const crawlResult = await this.crawlPagesRecursively(
+        source.url,
+        source.maxSubpageDepth,
+        source.renderType,
+        source.cssSelector,
+        baseDomain,
+      );
+      
+      pagesCrawled = crawlResult.visitedPages.size;
+      subpagesDiscovered = crawlResult.subpageCandidates.length;
+      
+      // Convert CandidateWithSource back to CandidateDocument
+      extracted = crawlResult.documentCandidates.map(c => ({
+        url: c.url,
+        title: c.title,
+        isPdf: c.isPdf,
+        sectionHeading: c.sectionHeading,
+        anchorText: c.anchorText,
+      }));
+      
+      this.logger.log(
+        `Recursive scan found ${extracted.length} document candidates ` +
+        `across ${pagesCrawled} pages (${subpagesDiscovered} subpages discovered)`
+      );
+    } else {
+      // Original single-page behavior
+      const html = await this.fetchPage(source.url, source.renderType === 'dynamic');
+      extracted = this.htmlParser.extractLinks(html, source.url, source.cssSelector);
+    }
 
     const candidates: CandidateScanResult[] = extracted.map(candidate => {
       let whitelisted = true;
@@ -195,6 +462,10 @@ export class CrawlerService {
       daycareRelated,
       classifierSkipped,
       candidates,
+      // Subpage stats
+      maxSubpageDepth: source.maxSubpageDepth,
+      pagesCrawled,
+      subpagesDiscovered,
     };
   }
 
@@ -340,6 +611,9 @@ export class CrawlerService {
     unchanged: number;
     skipped: number;
     errors: string[];
+    // Subpage crawling stats
+    maxSubpageDepth: number;
+    pagesCrawled: number;
     debug?: {
       nonWhitelistedSamples: Array<{ url: string; reason: string }>;
       classifierSkippedSamples: Array<{ url: string; reason: string; anchorText: string; confidence: number }>;
@@ -369,6 +643,9 @@ export class CrawlerService {
       unchanged: 0,
       skipped: 0,
       errors: [] as string[],
+      // Subpage crawling stats
+      maxSubpageDepth: source.maxSubpageDepth,
+      pagesCrawled: 1,
       debug: debugEnabled
         ? {
             nonWhitelistedSamples: [] as Array<{ url: string; reason: string }>,
@@ -405,9 +682,41 @@ export class CrawlerService {
         throw new Error(errorMsg);
       }
 
-      this.logger.debug(`Attempting to fetch page: ${source.url} (renderType: ${source.renderType})`);
-      const html = await this.fetchPage(source.url, source.renderType === 'dynamic');
-      const allCandidates = this.htmlParser.extractLinks(html, source.url, source.cssSelector);
+      this.logger.debug(`Attempting to fetch page: ${source.url} (renderType: ${source.renderType}, maxSubpageDepth: ${source.maxSubpageDepth})`);
+      
+      let allCandidates: CandidateDocument[];
+      
+      if (source.maxSubpageDepth > 0) {
+        // Use recursive crawling for subpages
+        const baseDomain = this.extractBaseDomain(source.url);
+        const crawlResult = await this.crawlPagesRecursively(
+          source.url,
+          source.maxSubpageDepth,
+          source.renderType,
+          source.cssSelector,
+          baseDomain,
+        );
+        
+        results.pagesCrawled = crawlResult.visitedPages.size;
+        allCandidates = crawlResult.documentCandidates.map(c => ({
+          url: c.url,
+          title: c.title,
+          isPdf: c.isPdf,
+          sectionHeading: c.sectionHeading,
+          anchorText: c.anchorText,
+        }));
+        
+        this.logger.log(
+          `Recursive crawl for ${source.label}: crawled ${results.pagesCrawled} pages, ` +
+          `discovered ${crawlResult.subpageCandidates.length} subpages, ` +
+          `found ${allCandidates.length} document candidates`
+        );
+      } else {
+        // Original single-page crawl
+        const html = await this.fetchPage(source.url, source.renderType === 'dynamic');
+        allCandidates = this.htmlParser.extractLinks(html, source.url, source.cssSelector);
+      }
+      
       results.discovered = allCandidates.length;
 
       // Filter out candidates with non-whitelisted domains before processing
@@ -433,7 +742,7 @@ export class CrawlerService {
       results.nonWhitelisted = Math.max(0, allCandidates.length - candidates.length);
 
       this.logger.log(
-        `Source ${source.label}: Found ${allCandidates.length} candidate links, ` +
+        `Source ${source.label}: Found ${allCandidates.length} candidate links across ${results.pagesCrawled} page(s), ` +
         `${results.whitelisted} whitelisted, ` +
         `${results.nonWhitelisted} non-whitelisted`
       );
@@ -481,6 +790,7 @@ export class CrawlerService {
         : '0';
       this.logger.log(
         `Crawl summary for ${source.label}: ` +
+        `Pages crawled: ${results.pagesCrawled}, ` +
         `Discovered: ${results.discovered}, ` +
         `Created: ${results.created}, ` +
         `Updated: ${results.updated}, ` +
