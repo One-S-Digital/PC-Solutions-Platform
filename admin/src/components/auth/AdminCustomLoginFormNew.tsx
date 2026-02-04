@@ -40,6 +40,14 @@ export default function AdminCustomLoginForm() {
 
   // No auto-redirect - use render gating instead
 
+  // If already signed in, don't render this page (prevents getting stuck on /login).
+  React.useEffect(() => {
+    if (!authLoaded) return;
+    if (isSignedIn) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [authLoaded, isSignedIn, navigate]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -123,9 +131,11 @@ export default function AdminCustomLoginForm() {
     setIsLoading(true);
 
     try {
-      // OAuth will redirect to dashboard after completion
-      // Use full URL for redirects (Clerk v5 requirement)
-      const redirectUrl = `${window.location.origin}/dashboard`;
+      // OAuth completes via a full page load (server request). Redirecting to a deep SPA
+      // route like `/dashboard` can 404 in environments without an index.html rewrite.
+      // Redirect to the app base URL and let the client router handle post-login navigation.
+      // Use full URL for redirects (Clerk v5 requirement).
+      const redirectUrl = new URL(import.meta.env.BASE_URL || '/', window.location.origin).toString();
       
       await signIn.authenticateWithRedirect({
         strategy: 'oauth_google',
