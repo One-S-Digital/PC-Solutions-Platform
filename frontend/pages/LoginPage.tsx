@@ -47,17 +47,17 @@ const LoginPage: React.FC = () => {
   // If a user is already signed in, don't keep them stuck on /login.
   // This can happen after OAuth completes, or when a signed-in user refreshes /login.
   useEffect(() => {
-    if (!isAuthLoaded) return;
-    if (!isSignedIn) return;
+    if (!isAuthLoaded || !isSignedIn) return;
+
+    // Avoid redirecting while the backend sync is still loading or during sign-out.
+    // Important: this must run BEFORE checking currentUser to prevent bounce-to-dashboard during sign-out.
+    if (isAuthLoading || isSigningOutGlobal) return;
 
     // If backend user exists, go to dashboard. Otherwise, route to signup to complete profile.
     if (currentUser) {
       navigate('/dashboard', { replace: true });
       return;
     }
-
-    // Avoid redirecting while the backend sync is still loading or during sign-out.
-    if (isAuthLoading || isSigningOutGlobal) return;
 
     navigate('/signup', { replace: true, state: { from: location, isPending: true } });
   }, [isAuthLoaded, isSignedIn, currentUser, isAuthLoading, isSigningOutGlobal, navigate, location]);
