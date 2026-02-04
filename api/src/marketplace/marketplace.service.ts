@@ -460,7 +460,7 @@ export class MarketplaceService {
       );
     }
 
-    return service;
+    return this.normalizeServiceProviderIdForFrontend(service);
   }
 
   async deleteService(id: string) {
