@@ -27,6 +27,7 @@ export function AppProvider({ children }: AppProviderProps) {
       signInUrl="/login"
       signUpUrl="/signup"
       afterSignOutUrl="/login"
+      navigate={(to) => window.location.assign(to)}
     >
       {children}
     </ClerkProvider>
