@@ -12,12 +12,13 @@ interface ServiceUploadModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: Partial<Omit<Service, 'id' | 'providerId' | 'providerName' | 'providerLogo'>>, file?: File) => void;
+  isSaving?: boolean;
   existingService?: Service | null;
 }
 
 type ServiceFormData = Partial<Omit<Service, 'id' | 'providerId' | 'providerName' | 'providerLogo'>>;
 
-const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose, onSubmit, existingService }) => {
+const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose, onSubmit, isSaving, existingService }) => {
     const { t } = useTranslation(['dashboard', 'common']);
   const { currentUser } = useAppContext();
   const { categories: serviceCategoryOptions, addCategory: addServiceCategory } = useCategories(
@@ -86,6 +87,9 @@ const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose
         alert("Current user or organization ID is missing.");
         return;
     }
+    if (isSaving) {
+      return;
+    }
     onSubmit(formData, file || undefined);
     // Don't close here; parent closes only after a successful save.
   };
@@ -99,7 +103,12 @@ const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose
           <h2 id="serviceUploadModalTitle" className="text-xl font-semibold text-swiss-charcoal">
             {existingService ? t('common:serviceUploadModal.editTitle') : t('common:serviceUploadModal.addTitle')}
           </h2>
-            <button onClick={onClose} className="p-1 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors" aria-label={t('common:buttons.close')}>
+            <button
+              onClick={onClose}
+              disabled={!!isSaving}
+              className="p-1 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label={t('common:buttons.close')}
+            >
             <XMarkIcon className="w-6 h-6" />
           </button>
         </div>
@@ -229,9 +238,11 @@ const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose
             </div>
           </div>
           <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
-              <Button type="button" variant="light" onClick={onClose}>{t('common:buttons.cancel')}</Button>
-            <Button type="submit" variant="primary" className="bg-swiss-mint">
-                {existingService ? t('common:buttons.saveChanges') : t('common:buttons.add')}
+              <Button type="button" variant="light" onClick={onClose} disabled={!!isSaving}>
+                {t('common:buttons.cancel')}
+              </Button>
+            <Button type="submit" variant="primary" className="bg-swiss-mint" disabled={!!isSaving}>
+                {isSaving ? t('common:saving', 'Saving...') : existingService ? t('common:buttons.saveChanges') : t('common:buttons.add')}
             </Button>
           </div>
         </form>
