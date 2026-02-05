@@ -46,9 +46,16 @@ const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose
       if (existingService) {
         // When editing, pre-fill the form
         setFormData({
-          ...existingService,
+          title: existingService.title || '',
+          description: existingService.description || '',
+          category: existingService.category || SERVICE_CATEGORIES[0],
           categories: existingService.categories || [],
+          availability: existingService.availability || '',
           tags: existingService.tags || [],
+          deliveryType: existingService.deliveryType || SERVICE_DELIVERY_TYPES[0],
+          priceInfo: existingService.priceInfo || '',
+          imageUrl: existingService.imageUrl,
+          // NOTE: Intentionally do not include `id`, provider fields, timestamps, or nested provider object.
         });
       } else {
         setFormData(initialFormState);
@@ -80,7 +87,7 @@ const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose
         return;
     }
     onSubmit(formData, file || undefined);
-    onClose(); // Close modal after submission
+    // Don't close here; parent closes only after a successful save.
   };
 
   if (!isOpen) return null;
