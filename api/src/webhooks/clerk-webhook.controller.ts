@@ -835,6 +835,7 @@ ${'='.repeat(100)}`);
     const primaryEmail = data.email_addresses?.[0]?.email_address || `${clerkId}@missing-email.local`;
     const firstName = data.first_name || 'Unknown';
     const lastName = data.last_name || 'User';
+    const lastActiveAt = this.resolveLastActiveAt(data);
 
     this.logger.debug(`🔄 [handleUserUpdated] Extracted update details:`, {
       clerkId,
