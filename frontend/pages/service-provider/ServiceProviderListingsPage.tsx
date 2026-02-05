@@ -11,6 +11,7 @@ import { formatServiceCategory, formatServiceDeliveryType } from '../../utils/se
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { UploadedAsset } from '../../services/api';
+import { useNotifications } from '../../contexts/NotificationContext';
 
 interface ServiceCardProps {
   service: Service;
@@ -48,12 +49,14 @@ const ServiceProviderListingsPage: React.FC = () => {
   const { t } = useTranslation(['dashboard', 'common']);
   const { currentUser } = useAppContext();
   const { authenticatedRequest } = useAuthenticatedApi();
+  const { showToast } = useNotifications();
   
   const [serviceListings, setServiceListings] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState<ServiceCategory | 'All'>('All');
 
@@ -121,6 +124,7 @@ const ServiceProviderListingsPage: React.FC = () => {
     }
 
     try {
+      setIsSaving(true);
       // Upload file if provided
       let imageUrl = editingService?.imageUrl;
       if (file) {
@@ -138,11 +142,17 @@ const ServiceProviderListingsPage: React.FC = () => {
         const uploadedAsset: UploadedAsset | undefined =
           (uploadResponse as any)?.asset ?? (uploadResponse as any)?.data?.asset;
 
-        if (uploadResponse.success && uploadedAsset?.publicUrl) {
+        if (!uploadResponse.success) {
+          throw new Error((uploadResponse as any)?.message || 'Image upload failed');
+        }
+        if (uploadedAsset?.publicUrl) {
           imageUrl = uploadedAsset.publicUrl;
+        } else {
+          throw new Error('Image upload succeeded but no URL was returned');
         }
       }
 
+      let didSave = false;
       if (editingService) {
         // Update existing service
         // IMPORTANT: Only send fields supported by UpdateServiceDto.
@@ -174,11 +184,18 @@ const ServiceProviderListingsPage: React.FC = () => {
           body: JSON.stringify(updateServiceData),
         });
 
-        if (response.success && response.data) {
-          setServiceListings(prev =>
-            prev.map(s => s.id === editingService.id ? normalizeServiceFromApi(response.data!) : s)
-          );
+        if (!response.success || !response.data) {
+          throw new Error((response as any)?.message || 'Failed to save service');
         }
+
+        setServiceListings(prev =>
+          prev.map(s => s.id === editingService.id ? normalizeServiceFromApi(response.data!) : s)
+        );
+        showToast({
+          type: 'success',
+          title: t('common:saveSuccess', 'Saved'),
+        });
+        didSave = true;
       } else {
         // Add new service
         const newServiceData = {
@@ -200,15 +217,32 @@ const ServiceProviderListingsPage: React.FC = () => {
           body: JSON.stringify(newServiceData),
         });
 
-        if (response.success && response.data) {
-          setServiceListings((prev) => [normalizeServiceFromApi(response.data), ...prev]);
+        if (!response.success || !response.data) {
+          throw new Error((response as any)?.message || 'Failed to save service');
         }
+
+        setServiceListings((prev) => [normalizeServiceFromApi(response.data), ...prev]);
+        showToast({
+          type: 'success',
+          title: t('common:saveSuccess', 'Saved'),
+        });
+        didSave = true;
       }
-      handleCloseModal();
+
+      if (didSave) {
+        handleCloseModal();
+      }
     } catch (err) {
       console.error('Failed to save service:', err);
       const errMsg = err instanceof Error ? err.message : String(err);
-      alert(`${t('dashboard:serviceProviderListingsPage.saveError', 'Failed to save service')}: ${errMsg}`);
+      showToast({
+        type: 'error',
+        title: t('dashboard:serviceProviderListingsPage.saveError', 'Failed to save service'),
+        message: errMsg,
+        duration: 8000,
+      });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -313,6 +347,7 @@ const ServiceProviderListingsPage: React.FC = () => {
         onClose={handleCloseModal}
         onSubmit={handleServiceSubmit}
         existingService={editingService}
+        isSaving={isSaving}
       />
     </div>
   );
