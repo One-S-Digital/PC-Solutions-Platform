@@ -469,6 +469,45 @@ ${'='.repeat(100)}`);
     console.log(`✅ [E2E DEBUG] EVENT ROUTING COMPLETED FOR TYPE: ${type}`);
   }
 
+  private parseClerkTimestamp(value: unknown): Date | undefined {
+    if (value === null || value === undefined) {
+      return undefined;
+    }
+
+    if (value instanceof Date) {
+      return value;
+    }
+
+    if (typeof value === 'number') {
+      const ms = value < 1e12 ? value * 1000 : value;
+      const parsed = new Date(ms);
+      return Number.isNaN(parsed.getTime()) ? undefined : parsed;
+    }
+
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      if (!trimmed) {
+        return undefined;
+      }
+
+      const numeric = Number(trimmed);
+      if (!Number.isNaN(numeric)) {
+        const ms = numeric < 1e12 ? numeric * 1000 : numeric;
+        const parsed = new Date(ms);
+        return Number.isNaN(parsed.getTime()) ? undefined : parsed;
+      }
+
+      const parsed = new Date(trimmed);
+      return Number.isNaN(parsed.getTime()) ? undefined : parsed;
+    }
+
+    return undefined;
+  }
+
+  private resolveLastActiveAt(data: any): Date | undefined {
+    return this.parseClerkTimestamp(data?.last_sign_in_at ?? data?.last_active_at);
+  }
+
   private async handleUserCreated(data: any) {
     const clerkId: string = data.id;
     
@@ -551,7 +590,9 @@ ${'='.repeat(100)}`);
     
     const firstName = data.first_name || 'Unknown';
     const lastName = data.last_name || 'User';
+    const lastActiveAt = this.resolveLastActiveAt(data);
     const phoneNumber = data.phone_numbers?.[0]?.phone_number || null;
+    const lastActiveAt = this.resolveLastActiveAt(data);
 
     console.log(`👤 [E2E DEBUG] USER DETAILS EXTRACTED:`, {
       clerkId,
@@ -559,6 +600,7 @@ ${'='.repeat(100)}`);
       firstName,
       lastName,
       role: validRole,
+      lastActiveAt,
       emailAddresses: data.email_addresses,
       emailAddressesLength: data.email_addresses?.length || 0,
       isClerkTestWebhook: !!(data.primary_email_address_id && (!data.email_addresses || data.email_addresses.length === 0)),
@@ -617,25 +659,34 @@ ${'='.repeat(100)}`);
           select: { id: true, role: true, email: true },
         });
 
+        const userUpdateData: any = {
+          email: primaryEmail,
+          firstName,
+          lastName,
+          role: validRole as UserRole,
+          phoneNumber,
+          isActive: true,
+        };
+
+        const userCreateData: any = {
+          clerkId,
+          email: primaryEmail,
+          firstName,
+          lastName,
+          role: validRole as UserRole,
+          phoneNumber,
+          isActive: true,
+        };
+
+        if (lastActiveAt !== undefined) {
+          userUpdateData.lastActiveAt = lastActiveAt;
+          userCreateData.lastActiveAt = lastActiveAt;
+        }
+
         const user = await tx.user.upsert({
           where: { clerkId },
-          update: {
-            email: primaryEmail,
-            firstName,
-            lastName,
-            role: validRole as UserRole,
-            phoneNumber,
-            isActive: true,
-          },
-          create: {
-            clerkId,
-            email: primaryEmail,
-            firstName,
-            lastName,
-            role: validRole as UserRole,
-            phoneNumber,
-            isActive: true,
-          },
+          update: userUpdateData,
+          create: userCreateData,
         });
 
         // Create organization and link user for organization-based roles
@@ -793,6 +844,7 @@ ${'='.repeat(100)}`);
       primaryEmail,
       firstName,
       lastName,
+      lastActiveAt,
     });
 
     // Get user from our database (source of truth)
@@ -821,23 +873,35 @@ ${'='.repeat(100)}`);
     this.logger.debug(`✅ [handleUserUpdated] AppUser updated`);
 
     this.logger.debug(`💾 [handleUserUpdated] Updating User record...`);
+    const userUpdateData: any = {
+      email: primaryEmail,
+      firstName,
+      lastName,
+    };
+
+    if (lastActiveAt !== undefined) {
+      userUpdateData.lastActiveAt = lastActiveAt;
+    }
+
     await this.prisma.user.update({
       where: { clerkId },
-      data: {
+      data: userUpdateData,
+    }).catch(async () => {
+      const userCreateData: any = {
+        id: appUser.id,
+        clerkId,
         email: primaryEmail,
         firstName,
         lastName,
-      },
-    }).catch(async () => {
+        role: appUser.role,
+      };
+
+      if (lastActiveAt !== undefined) {
+        userCreateData.lastActiveAt = lastActiveAt;
+      }
+
       await this.prisma.user.create({
-        data: {
-          id: appUser.id,
-          clerkId,
-          email: primaryEmail,
-          firstName,
-          lastName,
-          role: appUser.role,
-        },
+        data: userCreateData,
       });
     });
     this.logger.debug(`✅ [handleUserUpdated] User record updated`);
