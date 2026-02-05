@@ -505,7 +505,7 @@ ${'='.repeat(100)}`);
   }
 
   private resolveLastActiveAt(data: any): Date | undefined {
-    return this.parseClerkTimestamp(data?.last_sign_in_at ?? data?.last_active_at);
+    return this.parseClerkTimestamp(data?.last_active_at ?? data?.last_sign_in_at);
   }
 
   private async handleUserCreated(data: any) {
@@ -590,7 +590,6 @@ ${'='.repeat(100)}`);
     
     const firstName = data.first_name || 'Unknown';
     const lastName = data.last_name || 'User';
-    const lastActiveAt = this.resolveLastActiveAt(data);
     const phoneNumber = data.phone_numbers?.[0]?.phone_number || null;
     const lastActiveAt = this.resolveLastActiveAt(data);
 
