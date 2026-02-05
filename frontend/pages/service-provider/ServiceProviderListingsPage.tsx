@@ -145,17 +145,38 @@ const ServiceProviderListingsPage: React.FC = () => {
 
       if (editingService) {
         // Update existing service
+        // IMPORTANT: Only send fields supported by UpdateServiceDto.
+        // Never send `id`, `provider*`, timestamps, or nested provider objects,
+        // because backend ValidationPipe forbids non-whitelisted properties.
+        const updateServiceData: Record<string, unknown> = {
+          title: data.title,
+          description: data.description,
+          category: data.category,
+          categories: data.categories,
+          price: typeof (data as any).price === 'string' ? Number((data as any).price) : (data as any).price,
+          isActive: (data as any).isActive,
+          priceInfo: (data as any).priceInfo,
+          availability: (data as any).availability,
+          deliveryType: (data as any).deliveryType,
+          tags: (data as any).tags,
+          imageUrl,
+        };
+
+        // Remove undefined and NaN (for numeric fields) to keep payload clean.
+        Object.keys(updateServiceData).forEach((k) => {
+          const v = (updateServiceData as any)[k];
+          if (v === undefined) delete (updateServiceData as any)[k];
+          if (typeof v === 'number' && Number.isNaN(v)) delete (updateServiceData as any)[k];
+        });
+
         const response = await authenticatedRequest<Service>(`/marketplace/services/${editingService.id}`, {
           method: 'PATCH',
-          body: JSON.stringify({
-            ...data,
-            imageUrl,
-          }),
+          body: JSON.stringify(updateServiceData),
         });
 
         if (response.success && response.data) {
           setServiceListings(prev =>
-            prev.map(s => s.id === editingService.id ? response.data! : s)
+            prev.map(s => s.id === editingService.id ? normalizeServiceFromApi(response.data!) : s)
           );
         }
       } else {
