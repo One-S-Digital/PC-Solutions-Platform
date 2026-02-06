@@ -191,6 +191,16 @@ class AdminUpdateOrganizationProfileDto {
   @IsString()
   catalogUrl?: string;
 
+  // Public website (canonical field is Organization.websiteUrl)
+  // Keep `website` as a backwards-compatible alias for admin UIs that still send it.
+  @IsOptional()
+  @IsString()
+  websiteUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  website?: string;
+
   // Service Provider-specific
   @IsOptional()
   @IsString()
@@ -507,6 +517,9 @@ export class AdminProfilesController {
         description: org.description ?? '',
         vatNumber: org.vatNumber ?? '',
         languages: org.languages ?? [],
+        // Public website (admin UI historically used `website`)
+        websiteUrl: org.websiteUrl ?? '',
+        website: org.websiteUrl ?? '',
         logoUrl: org.logoAsset?.publicUrl ?? null,
         logoAssetId: org.logoAssetId ?? null,
         coverImageUrl: org.coverAsset?.publicUrl ?? null,
@@ -557,6 +570,10 @@ export class AdminProfilesController {
       throw new BadRequestException(`Invalid organization type: ${dto.type}. Valid types are: ${VALID_ORGANIZATION_TYPES.join(', ')}`);
     }
 
+    // Normalize website field (support both websiteUrl and legacy website)
+    const normalizedWebsiteUrl =
+      dto.websiteUrl !== undefined ? dto.websiteUrl : dto.website !== undefined ? dto.website : undefined;
+
     await this.prisma.$transaction(async (tx) => {
       // Update contact email separately
       if (dto.contactEmail !== undefined) {
@@ -595,6 +612,7 @@ export class AdminProfilesController {
           ...(dto.minimumOrderQuantity !== undefined && { minimumOrderQuantity: dto.minimumOrderQuantity }),
           ...(dto.directOrderLink !== undefined && { directOrderLink: dto.directOrderLink }),
           ...(dto.catalogUrl !== undefined && { catalogUrl: dto.catalogUrl }),
+          ...(normalizedWebsiteUrl !== undefined && { websiteUrl: normalizedWebsiteUrl }),
           // Service Provider-specific
           ...(dto.serviceType !== undefined && { serviceType: dto.serviceType }),
           ...(dto.serviceCategories !== undefined && { serviceCategories: dto.serviceCategories }),
