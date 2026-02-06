@@ -1277,6 +1277,37 @@ export class UsersService {
           } else {
             userProfile = existingUser;
           }
+
+          // Cascade user active status to their organizations
+          // When a user is deactivated, their organizations should also be hidden
+          // from the frontend so inactive users' profiles don't appear in listings.
+          if (updateUserDto.status !== undefined && existingUser) {
+            const userOrgLinks = await tx.userOrganization.findMany({
+              where: { userId: existingUser.id },
+              select: { organizationId: true },
+            });
+            const orgIds = userOrgLinks.map((link) => link.organizationId);
+
+            if (orgIds.length > 0) {
+              if (updateUserDto.status === 'INACTIVE') {
+                const result = await tx.organization.updateMany({
+                  where: { id: { in: orgIds } },
+                  data: { isActive: false },
+                });
+                this.logger.log(
+                  `🏢 [UPDATE] Cascaded user deactivation to ${result.count} organization(s) for user ${id}`,
+                );
+              } else if (updateUserDto.status === 'ACTIVE') {
+                const result = await tx.organization.updateMany({
+                  where: { id: { in: orgIds } },
+                  data: { isActive: true },
+                });
+                this.logger.log(
+                  `🏢 [UPDATE] Cascaded user reactivation to ${result.count} organization(s) for user ${id}`,
+                );
+              }
+            }
+          }
         }
       }
 
@@ -1417,8 +1448,9 @@ export class UsersService {
     const updatedProfile = await this.prisma.$transaction(async (tx) => {
       const profile = await tx.user.findUnique({ where: { clerkId: appUser.clerkId } });
 
+      let result;
       if (profile) {
-        return tx.user.update({
+        result = await tx.user.update({
           where: { id: profile.id },
           data: {
             isActive: false,
@@ -1427,20 +1459,39 @@ export class UsersService {
             deactivatedReasonText: 'User suspended by admin',
           },
         });
+      } else {
+        // Ensure there is a profile row to enforce suspension in ClerkAuthGuard.
+        result = await tx.user.create({
+          data: {
+            clerkId: appUser.clerkId,
+            email: appUser.email,
+            role: appUser.role,
+            isActive: false,
+            deactivatedAt: now,
+            deactivatedReasonCode: 'ADMIN_SUSPENDED',
+            deactivatedReasonText: 'User suspended by admin',
+          },
+        });
       }
 
-      // Ensure there is a profile row to enforce suspension in ClerkAuthGuard.
-      return tx.user.create({
-        data: {
-          clerkId: appUser.clerkId,
-          email: appUser.email,
-          role: appUser.role,
-          isActive: false,
-          deactivatedAt: now,
-          deactivatedReasonCode: 'ADMIN_SUSPENDED',
-          deactivatedReasonText: 'User suspended by admin',
-        },
+      // Cascade suspension to user's organizations so they don't appear in frontend listings
+      const profileId = result.id;
+      const userOrgLinks = await tx.userOrganization.findMany({
+        where: { userId: profileId },
+        select: { organizationId: true },
       });
+      const orgIds = userOrgLinks.map((link) => link.organizationId);
+      if (orgIds.length > 0) {
+        const orgResult = await tx.organization.updateMany({
+          where: { id: { in: orgIds } },
+          data: { isActive: false },
+        });
+        this.logger.log(
+          `🏢 [REMOVE] Cascaded user suspension to ${orgResult.count} organization(s) for user ${id}`,
+        );
+      }
+
+      return result;
     });
 
     // Return in User format for compatibility

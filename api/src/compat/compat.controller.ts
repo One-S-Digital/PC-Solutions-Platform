@@ -325,7 +325,7 @@ export class CompatController {
   async getCandidates() {
     try {
       const candidates = await this.prisma.user.findMany({
-        where: { role: UserRole.EDUCATOR },
+        where: { role: UserRole.EDUCATOR, isActive: true },
         orderBy: { createdAt: 'desc' },
         take: 100,
         include: {
@@ -443,7 +443,11 @@ export class CompatController {
   @Public()
   async getUsers() {
     try {
-      const users = await this.prisma.user.findMany({ orderBy: { createdAt: 'desc' }, take: 50 });
+      const users = await this.prisma.user.findMany({
+        where: { isActive: true },
+        orderBy: { createdAt: 'desc' },
+        take: 50,
+      });
       return { success: true, message: 'OK', data: users, timestamp: new Date().toISOString() };
     } catch (error) {
       return { success: false, message: 'Failed', error: String((error as Error).message || error), timestamp: new Date().toISOString() };
@@ -498,6 +502,29 @@ export class CompatController {
       if (isActive !== undefined) {
         where.isActive = isActive === 'true';
       }
+
+      // Defense in depth: also exclude organizations whose owner users are ALL inactive.
+      // This ensures that even if the cascade from user deactivation to organization
+      // deactivation didn't run (e.g. for pre-existing data), the organization won't appear.
+      where.AND = [
+        ...(where.AND || []),
+        {
+          OR: [
+            // Organization has at least one active member user
+            {
+              members: {
+                some: {
+                  user: { isActive: true },
+                },
+              },
+            },
+            // Allow organizations without any members (e.g. admin-created)
+            {
+              members: { none: {} },
+            },
+          ],
+        },
+      ];
       
       // Search filter
       if (search) {
@@ -631,6 +658,7 @@ export class CompatController {
                   lastName: true,
                   email: true,
                   role: true,
+                  isActive: true,
                   // Include user's subscriptions to check for user-based subscriptions
                   mainSubscriptions: {
                     where: activeSubWhere,
@@ -650,6 +678,19 @@ export class CompatController {
       });
       if (!org) {
         return { success: false, message: 'Organization not found', timestamp: new Date().toISOString() };
+      }
+
+      // Defense in depth: hide organizations whose owner users are all inactive.
+      // This is checked separately from Organization.isActive to catch pre-existing
+      // data that wasn't cascaded when a user was deactivated.
+      const hasMembers = org.members && org.members.length > 0;
+      if (hasMembers) {
+        const hasActiveOwner = org.members.some(
+          (member) => member.user?.isActive !== false,
+        );
+        if (!hasActiveOwner && !this.canBypassMarketplaceSubscriptionGate(req?.user, org.id)) {
+          return { success: false, message: 'Organization not found', timestamp: new Date().toISOString() };
+        }
       }
 
       // Check if org has valid subscription either directly or through a member user

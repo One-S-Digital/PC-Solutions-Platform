@@ -158,23 +158,68 @@ export class UserManagementService {
     const { userIds, operation: op, newRole } = operation;
 
     switch (op) {
-      case 'activate':
-        return this.prisma.user.updateMany({
+      case 'activate': {
+        const activateResult = await this.prisma.user.updateMany({
           where: { id: { in: userIds } },
-          data: { isActive: true },
+          data: { isActive: true, deactivatedAt: null, deactivatedReasonCode: null, deactivatedReasonText: null },
         });
+        // Cascade reactivation to user organizations
+        const activateOrgLinks = await this.prisma.userOrganization.findMany({
+          where: { userId: { in: userIds } },
+          select: { organizationId: true },
+        });
+        const activateOrgIds = activateOrgLinks.map((link) => link.organizationId);
+        if (activateOrgIds.length > 0) {
+          await this.prisma.organization.updateMany({
+            where: { id: { in: activateOrgIds } },
+            data: { isActive: true },
+          });
+          this.logger.log(`🏢 [BULK ACTIVATE] Cascaded activation to ${activateOrgIds.length} organization(s)`);
+        }
+        return activateResult;
+      }
 
-      case 'deactivate':
-        return this.prisma.user.updateMany({
+      case 'deactivate': {
+        const deactivateResult = await this.prisma.user.updateMany({
           where: { id: { in: userIds } },
-          data: { isActive: false },
+          data: { isActive: false, deactivatedAt: new Date() },
         });
+        // Cascade deactivation to user organizations
+        const deactivateOrgLinks = await this.prisma.userOrganization.findMany({
+          where: { userId: { in: userIds } },
+          select: { organizationId: true },
+        });
+        const deactivateOrgIds = deactivateOrgLinks.map((link) => link.organizationId);
+        if (deactivateOrgIds.length > 0) {
+          await this.prisma.organization.updateMany({
+            where: { id: { in: deactivateOrgIds } },
+            data: { isActive: false },
+          });
+          this.logger.log(`🏢 [BULK DEACTIVATE] Cascaded deactivation to ${deactivateOrgIds.length} organization(s)`);
+        }
+        return deactivateResult;
+      }
 
-      case 'suspend':
-        return this.prisma.user.updateMany({
+      case 'suspend': {
+        const suspendResult = await this.prisma.user.updateMany({
           where: { id: { in: userIds } },
-          data: { isActive: false },
+          data: { isActive: false, deactivatedAt: new Date() },
         });
+        // Cascade suspension to user organizations
+        const suspendOrgLinks = await this.prisma.userOrganization.findMany({
+          where: { userId: { in: userIds } },
+          select: { organizationId: true },
+        });
+        const suspendOrgIds = suspendOrgLinks.map((link) => link.organizationId);
+        if (suspendOrgIds.length > 0) {
+          await this.prisma.organization.updateMany({
+            where: { id: { in: suspendOrgIds } },
+            data: { isActive: false },
+          });
+          this.logger.log(`🏢 [BULK SUSPEND] Cascaded suspension to ${suspendOrgIds.length} organization(s)`);
+        }
+        return suspendResult;
+      }
 
       case 'delete':
         return this.prisma.user.deleteMany({
