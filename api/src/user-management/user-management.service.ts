@@ -196,7 +196,17 @@ export class UserManagementService {
             data: { isActive: false },
           });
           this.logger.log(`🏢 [BULK DEACTIVATE] Cascaded deactivation to ${deactivateOrgIds.length} organization(s)`);
+          // Cancel org-based subscriptions
+          await this.prisma.subscription.updateMany({
+            where: { organizationId: { in: deactivateOrgIds }, status: { in: ['ACTIVE', 'TRIAL', 'GRACE_PERIOD', 'PAST_DUE'] } },
+            data: { status: 'CANCELLED', canceledAt: new Date(), cancellationReason: 'User account deactivated by admin' },
+          });
         }
+        // Cancel user-based subscriptions
+        await this.prisma.subscription.updateMany({
+          where: { userId: { in: userIds }, status: { in: ['ACTIVE', 'TRIAL', 'GRACE_PERIOD', 'PAST_DUE'] } },
+          data: { status: 'CANCELLED', canceledAt: new Date(), cancellationReason: 'User account deactivated by admin' },
+        });
         return deactivateResult;
       }
 
@@ -217,7 +227,17 @@ export class UserManagementService {
             data: { isActive: false },
           });
           this.logger.log(`🏢 [BULK SUSPEND] Cascaded suspension to ${suspendOrgIds.length} organization(s)`);
+          // Cancel org-based subscriptions
+          await this.prisma.subscription.updateMany({
+            where: { organizationId: { in: suspendOrgIds }, status: { in: ['ACTIVE', 'TRIAL', 'GRACE_PERIOD', 'PAST_DUE'] } },
+            data: { status: 'CANCELLED', canceledAt: new Date(), cancellationReason: 'User account suspended by admin' },
+          });
         }
+        // Cancel user-based subscriptions
+        await this.prisma.subscription.updateMany({
+          where: { userId: { in: userIds }, status: { in: ['ACTIVE', 'TRIAL', 'GRACE_PERIOD', 'PAST_DUE'] } },
+          data: { status: 'CANCELLED', canceledAt: new Date(), cancellationReason: 'User account suspended by admin' },
+        });
         return suspendResult;
       }
 

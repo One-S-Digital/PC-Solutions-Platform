@@ -46,6 +46,9 @@ describe('UsersService.remove (soft delete)', () => {
       organization: {
         updateMany: jest.fn().mockResolvedValue({ count: 1 }),
       },
+      subscription: {
+        updateMany: jest.fn().mockResolvedValue({ count: 0 }),
+      },
       appUser: {
         update: jest.fn(),
       },

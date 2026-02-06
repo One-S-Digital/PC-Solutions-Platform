@@ -57,10 +57,13 @@ export class CompatController {
    * Build the marketplace visibility condition for organizations.
    * An organization is visible if it has an active subscription linked EITHER:
    * 1. Directly to the organization (via organizationId), OR
-   * 2. Through a member user (via userId -> UserOrganization -> User -> Subscription)
+   * 2. Through an ACTIVE member user (via userId -> UserOrganization -> User -> Subscription)
    * 
    * This handles both new subscriptions (with organizationId) and legacy subscriptions
    * (with only userId).
+   * 
+   * Note: Option 2 requires the member user to be active (isActive: true).
+   * An inactive user's subscription should not grant marketplace visibility.
    */
   private marketplaceVisibilityWhere(now: Date): Prisma.OrganizationWhereInput {
     const activeSubCondition = this.marketplaceActiveSubscriptionWhere(now);
@@ -73,11 +76,12 @@ export class CompatController {
             some: activeSubCondition,
           },
         },
-        // Option 2: Subscription linked through a member user
+        // Option 2: Subscription linked through an ACTIVE member user
         {
           members: {
             some: {
               user: {
+                isActive: true,
                 mainSubscriptions: {
                   some: activeSubCondition,
                 },

@@ -1278,9 +1278,11 @@ export class UsersService {
             userProfile = existingUser;
           }
 
-          // Cascade user active status to their organizations
+          // Cascade user active status to their organizations and subscriptions.
           // When a user is deactivated, their organizations should also be hidden
           // from the frontend so inactive users' profiles don't appear in listings.
+          // Their active subscriptions should also be suspended so the subscription
+          // status doesn't create a visibility loophole in marketplace gates.
           if (updateUserDto.status !== undefined && existingUser) {
             const userOrgLinks = await tx.userOrganization.findMany({
               where: { userId: existingUser.id },
@@ -1305,6 +1307,49 @@ export class UsersService {
                 this.logger.log(
                   `🏢 [UPDATE] Cascaded user reactivation to ${result.count} organization(s) for user ${id}`,
                 );
+              }
+            }
+
+            // Suspend active subscriptions when user is deactivated.
+            // Subscriptions are NOT auto-restored on reactivation — an admin must
+            // manually re-activate them to prevent accidental billing issues.
+            if (updateUserDto.status === 'INACTIVE') {
+              // User-based subscriptions (mainSubscriptions relation)
+              const userSubResult = await tx.subscription.updateMany({
+                where: {
+                  userId: existingUser.id,
+                  status: { in: ['ACTIVE', 'TRIAL', 'GRACE_PERIOD', 'PAST_DUE'] },
+                },
+                data: {
+                  status: 'CANCELLED',
+                  canceledAt: new Date(),
+                  cancellationReason: 'User account deactivated by admin',
+                },
+              });
+              if (userSubResult.count > 0) {
+                this.logger.log(
+                  `💳 [UPDATE] Cancelled ${userSubResult.count} user subscription(s) for deactivated user ${id}`,
+                );
+              }
+
+              // Organization-based subscriptions
+              if (orgIds.length > 0) {
+                const orgSubResult = await tx.subscription.updateMany({
+                  where: {
+                    organizationId: { in: orgIds },
+                    status: { in: ['ACTIVE', 'TRIAL', 'GRACE_PERIOD', 'PAST_DUE'] },
+                  },
+                  data: {
+                    status: 'CANCELLED',
+                    canceledAt: new Date(),
+                    cancellationReason: 'User account deactivated by admin',
+                  },
+                });
+                if (orgSubResult.count > 0) {
+                  this.logger.log(
+                    `💳 [UPDATE] Cancelled ${orgSubResult.count} organization subscription(s) for deactivated user ${id}`,
+                  );
+                }
               }
             }
           }
@@ -1488,6 +1533,42 @@ export class UsersService {
         });
         this.logger.log(
           `🏢 [REMOVE] Cascaded user suspension to ${orgResult.count} organization(s) for user ${id}`,
+        );
+
+        // Cancel organization-based subscriptions
+        const orgSubResult = await tx.subscription.updateMany({
+          where: {
+            organizationId: { in: orgIds },
+            status: { in: ['ACTIVE', 'TRIAL', 'GRACE_PERIOD', 'PAST_DUE'] },
+          },
+          data: {
+            status: 'CANCELLED',
+            canceledAt: now,
+            cancellationReason: 'User account suspended by admin',
+          },
+        });
+        if (orgSubResult.count > 0) {
+          this.logger.log(
+            `💳 [REMOVE] Cancelled ${orgSubResult.count} organization subscription(s) for suspended user ${id}`,
+          );
+        }
+      }
+
+      // Cancel user-based subscriptions
+      const userSubResult = await tx.subscription.updateMany({
+        where: {
+          userId: profileId,
+          status: { in: ['ACTIVE', 'TRIAL', 'GRACE_PERIOD', 'PAST_DUE'] },
+        },
+        data: {
+          status: 'CANCELLED',
+          canceledAt: now,
+          cancellationReason: 'User account suspended by admin',
+        },
+      });
+      if (userSubResult.count > 0) {
+        this.logger.log(
+          `💳 [REMOVE] Cancelled ${userSubResult.count} user subscription(s) for suspended user ${id}`,
         );
       }
 
