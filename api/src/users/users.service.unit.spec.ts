@@ -38,9 +38,13 @@ describe('UsersService.remove (soft delete)', () => {
       },
       userOrganization: {
         deleteMany: jest.fn().mockResolvedValue({ count: 1 }),
+        findMany: jest.fn().mockResolvedValue([{ organizationId: 'org-id-1' }]),
       },
       userContactInfo: {
         deleteMany: jest.fn().mockResolvedValue({ count: 1 }),
+      },
+      organization: {
+        updateMany: jest.fn().mockResolvedValue({ count: 1 }),
       },
       appUser: {
         update: jest.fn(),
@@ -74,6 +78,15 @@ describe('UsersService.remove (soft delete)', () => {
         }),
       }),
     );
+    // Cascade: organizations should be deactivated along with the user
+    expect(tx.userOrganization.findMany).toHaveBeenCalledWith({
+      where: { userId: profile.id },
+      select: { organizationId: true },
+    });
+    expect(tx.organization.updateMany).toHaveBeenCalledWith({
+      where: { id: { in: ['org-id-1'] } },
+      data: { isActive: false },
+    });
     expect(tx.userOrganization.deleteMany).not.toHaveBeenCalled();
     expect(tx.userContactInfo.deleteMany).not.toHaveBeenCalled();
     expect(tx.appUser.update).not.toHaveBeenCalled();
