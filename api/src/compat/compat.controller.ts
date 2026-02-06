@@ -689,6 +689,8 @@ export class CompatController {
       // data that wasn't cascaded when a user was deactivated.
       const hasMembers = org.members && org.members.length > 0;
       if (hasMembers) {
+        // Use !== false (not === true) so that legacy rows with
+        // undefined/null isActive are treated as active by default.
         const hasActiveOwner = org.members.some(
           (member) => member.user?.isActive !== false,
         );

@@ -1292,21 +1292,37 @@ export class UsersService {
 
             if (orgIds.length > 0) {
               if (updateUserDto.status === 'INACTIVE') {
-                const result = await tx.organization.updateMany({
+                const orgDeactivateResult = await tx.organization.updateMany({
                   where: { id: { in: orgIds } },
                   data: { isActive: false },
                 });
                 this.logger.log(
-                  `🏢 [UPDATE] Cascaded user deactivation to ${result.count} organization(s) for user ${id}`,
+                  `🏢 [UPDATE] Cascaded user deactivation to ${orgDeactivateResult.count} organization(s) for user ${id}`,
                 );
               } else if (updateUserDto.status === 'ACTIVE') {
-                const result = await tx.organization.updateMany({
-                  where: { id: { in: orgIds } },
-                  data: { isActive: true },
+                // Only reactivate orgs where ALL member users are now active.
+                // This prevents blindly reactivating an org that another inactive
+                // member originally caused to be deactivated.
+                const orgsWithInactiveMembers = await tx.userOrganization.findMany({
+                  where: {
+                    organizationId: { in: orgIds },
+                    user: { isActive: false },
+                  },
+                  select: { organizationId: true },
                 });
-                this.logger.log(
-                  `🏢 [UPDATE] Cascaded user reactivation to ${result.count} organization(s) for user ${id}`,
-                );
+                const blockedOrgIds = new Set(orgsWithInactiveMembers.map((l) => l.organizationId));
+                const safeToReactivate = orgIds.filter((oid) => !blockedOrgIds.has(oid));
+
+                if (safeToReactivate.length > 0) {
+                  const orgActivateResult = await tx.organization.updateMany({
+                    where: { id: { in: safeToReactivate } },
+                    data: { isActive: true },
+                  });
+                  this.logger.log(
+                    `🏢 [UPDATE] Cascaded user reactivation to ${orgActivateResult.count} organization(s) for user ${id}` +
+                      (blockedOrgIds.size > 0 ? ` (skipped ${blockedOrgIds.size} with other inactive members)` : ''),
+                  );
+                }
               }
             }
 

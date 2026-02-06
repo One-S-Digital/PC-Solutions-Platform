@@ -154,91 +154,120 @@ export class UserManagementService {
     });
   }
 
+  /**
+   * Cascade deactivation/suspension to related organizations and subscriptions.
+   * Shared by the 'deactivate' and 'suspend' bulk operations.
+   *
+   * Runs inside the caller-provided transaction client (`tx`) so all changes
+   * are atomic with the user status update.
+   */
+  private async cascadeDeactivation(
+    tx: Parameters<Parameters<PrismaService['$transaction']>[0]>[0],
+    userIds: string[],
+    label: string,
+    cancellationReason: string,
+  ) {
+    const orgLinks = await tx.userOrganization.findMany({
+      where: { userId: { in: userIds } },
+      select: { organizationId: true },
+    });
+    const orgIds = [...new Set(orgLinks.map((link) => link.organizationId))];
+
+    if (orgIds.length > 0) {
+      await tx.organization.updateMany({
+        where: { id: { in: orgIds } },
+        data: { isActive: false },
+      });
+      this.logger.log(`🏢 [BULK ${label}] Cascaded deactivation to ${orgIds.length} organization(s)`);
+
+      // Cancel org-based subscriptions
+      await tx.subscription.updateMany({
+        where: {
+          organizationId: { in: orgIds },
+          status: { in: ['ACTIVE', 'TRIAL', 'GRACE_PERIOD', 'PAST_DUE'] },
+        },
+        data: { status: 'CANCELLED', canceledAt: new Date(), cancellationReason },
+      });
+    }
+
+    // Cancel user-based subscriptions
+    await tx.subscription.updateMany({
+      where: {
+        userId: { in: userIds },
+        status: { in: ['ACTIVE', 'TRIAL', 'GRACE_PERIOD', 'PAST_DUE'] },
+      },
+      data: { status: 'CANCELLED', canceledAt: new Date(), cancellationReason },
+    });
+  }
+
   async bulkUpdateUsers(operation: BulkUserOperation) {
     const { userIds, operation: op, newRole } = operation;
 
     switch (op) {
       case 'activate': {
-        const activateResult = await this.prisma.user.updateMany({
-          where: { id: { in: userIds } },
-          data: { isActive: true, deactivatedAt: null, deactivatedReasonCode: null, deactivatedReasonText: null },
-        });
-        // Cascade reactivation to user organizations
-        const activateOrgLinks = await this.prisma.userOrganization.findMany({
-          where: { userId: { in: userIds } },
-          select: { organizationId: true },
-        });
-        const activateOrgIds = activateOrgLinks.map((link) => link.organizationId);
-        if (activateOrgIds.length > 0) {
-          await this.prisma.organization.updateMany({
-            where: { id: { in: activateOrgIds } },
-            data: { isActive: true },
+        return this.prisma.$transaction(async (tx) => {
+          const activateResult = await tx.user.updateMany({
+            where: { id: { in: userIds } },
+            data: { isActive: true, deactivatedAt: null, deactivatedReasonCode: null, deactivatedReasonText: null },
           });
-          this.logger.log(`🏢 [BULK ACTIVATE] Cascaded activation to ${activateOrgIds.length} organization(s)`);
-        }
-        return activateResult;
+
+          // Only reactivate orgs where ALL member users are now active.
+          // This prevents blindly reactivating an org that another inactive member
+          // originally caused to be deactivated.
+          const orgLinks = await tx.userOrganization.findMany({
+            where: { userId: { in: userIds } },
+            select: { organizationId: true },
+          });
+          const orgIds = [...new Set(orgLinks.map((link) => link.organizationId))];
+
+          if (orgIds.length > 0) {
+            // Find orgs that still have at least one inactive member — skip those.
+            const orgsWithInactiveMembers = await tx.userOrganization.findMany({
+              where: {
+                organizationId: { in: orgIds },
+                user: { isActive: false },
+              },
+              select: { organizationId: true },
+            });
+            const blockedOrgIds = new Set(orgsWithInactiveMembers.map((l) => l.organizationId));
+            const safeToReactivate = orgIds.filter((id) => !blockedOrgIds.has(id));
+
+            if (safeToReactivate.length > 0) {
+              await tx.organization.updateMany({
+                where: { id: { in: safeToReactivate } },
+                data: { isActive: true },
+              });
+              this.logger.log(
+                `🏢 [BULK ACTIVATE] Cascaded activation to ${safeToReactivate.length} organization(s)` +
+                  (blockedOrgIds.size > 0 ? ` (skipped ${blockedOrgIds.size} with other inactive members)` : ''),
+              );
+            }
+          }
+
+          return activateResult;
+        });
       }
 
       case 'deactivate': {
-        const deactivateResult = await this.prisma.user.updateMany({
-          where: { id: { in: userIds } },
-          data: { isActive: false, deactivatedAt: new Date() },
-        });
-        // Cascade deactivation to user organizations
-        const deactivateOrgLinks = await this.prisma.userOrganization.findMany({
-          where: { userId: { in: userIds } },
-          select: { organizationId: true },
-        });
-        const deactivateOrgIds = deactivateOrgLinks.map((link) => link.organizationId);
-        if (deactivateOrgIds.length > 0) {
-          await this.prisma.organization.updateMany({
-            where: { id: { in: deactivateOrgIds } },
-            data: { isActive: false },
+        return this.prisma.$transaction(async (tx) => {
+          const result = await tx.user.updateMany({
+            where: { id: { in: userIds } },
+            data: { isActive: false, deactivatedAt: new Date() },
           });
-          this.logger.log(`🏢 [BULK DEACTIVATE] Cascaded deactivation to ${deactivateOrgIds.length} organization(s)`);
-          // Cancel org-based subscriptions
-          await this.prisma.subscription.updateMany({
-            where: { organizationId: { in: deactivateOrgIds }, status: { in: ['ACTIVE', 'TRIAL', 'GRACE_PERIOD', 'PAST_DUE'] } },
-            data: { status: 'CANCELLED', canceledAt: new Date(), cancellationReason: 'User account deactivated by admin' },
-          });
-        }
-        // Cancel user-based subscriptions
-        await this.prisma.subscription.updateMany({
-          where: { userId: { in: userIds }, status: { in: ['ACTIVE', 'TRIAL', 'GRACE_PERIOD', 'PAST_DUE'] } },
-          data: { status: 'CANCELLED', canceledAt: new Date(), cancellationReason: 'User account deactivated by admin' },
+          await this.cascadeDeactivation(tx, userIds, 'DEACTIVATE', 'User account deactivated by admin');
+          return result;
         });
-        return deactivateResult;
       }
 
       case 'suspend': {
-        const suspendResult = await this.prisma.user.updateMany({
-          where: { id: { in: userIds } },
-          data: { isActive: false, deactivatedAt: new Date() },
-        });
-        // Cascade suspension to user organizations
-        const suspendOrgLinks = await this.prisma.userOrganization.findMany({
-          where: { userId: { in: userIds } },
-          select: { organizationId: true },
-        });
-        const suspendOrgIds = suspendOrgLinks.map((link) => link.organizationId);
-        if (suspendOrgIds.length > 0) {
-          await this.prisma.organization.updateMany({
-            where: { id: { in: suspendOrgIds } },
-            data: { isActive: false },
+        return this.prisma.$transaction(async (tx) => {
+          const result = await tx.user.updateMany({
+            where: { id: { in: userIds } },
+            data: { isActive: false, deactivatedAt: new Date() },
           });
-          this.logger.log(`🏢 [BULK SUSPEND] Cascaded suspension to ${suspendOrgIds.length} organization(s)`);
-          // Cancel org-based subscriptions
-          await this.prisma.subscription.updateMany({
-            where: { organizationId: { in: suspendOrgIds }, status: { in: ['ACTIVE', 'TRIAL', 'GRACE_PERIOD', 'PAST_DUE'] } },
-            data: { status: 'CANCELLED', canceledAt: new Date(), cancellationReason: 'User account suspended by admin' },
-          });
-        }
-        // Cancel user-based subscriptions
-        await this.prisma.subscription.updateMany({
-          where: { userId: { in: userIds }, status: { in: ['ACTIVE', 'TRIAL', 'GRACE_PERIOD', 'PAST_DUE'] } },
-          data: { status: 'CANCELLED', canceledAt: new Date(), cancellationReason: 'User account suspended by admin' },
+          await this.cascadeDeactivation(tx, userIds, 'SUSPEND', 'User account suspended by admin');
+          return result;
         });
-        return suspendResult;
       }
 
       case 'delete':

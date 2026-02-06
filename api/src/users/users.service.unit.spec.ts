@@ -90,6 +90,33 @@ describe('UsersService.remove (soft delete)', () => {
       where: { id: { in: ['org-id-1'] } },
       data: { isActive: false },
     });
+    // Cascade: subscriptions should be cancelled for the suspended user
+    // subscription.updateMany is called twice: once for org-based, once for user-based
+    expect(tx.subscription.updateMany).toHaveBeenCalledTimes(2);
+    expect(tx.subscription.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          organizationId: { in: ['org-id-1'] },
+          status: { in: ['ACTIVE', 'TRIAL', 'GRACE_PERIOD', 'PAST_DUE'] },
+        }),
+        data: expect.objectContaining({
+          status: 'CANCELLED',
+          cancellationReason: 'User account suspended by admin',
+        }),
+      }),
+    );
+    expect(tx.subscription.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          userId: profile.id,
+          status: { in: ['ACTIVE', 'TRIAL', 'GRACE_PERIOD', 'PAST_DUE'] },
+        }),
+        data: expect.objectContaining({
+          status: 'CANCELLED',
+          cancellationReason: 'User account suspended by admin',
+        }),
+      }),
+    );
     expect(tx.userOrganization.deleteMany).not.toHaveBeenCalled();
     expect(tx.userContactInfo.deleteMany).not.toHaveBeenCalled();
     expect(tx.appUser.update).not.toHaveBeenCalled();
