@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from 'sonner';
 import { AdminLayout } from './components/AdminLayout';
 import { AdminLoginPage, AdminSignupPage, AdminProtectedRoute } from './components/auth/AdminAuthComponents';
 import { useSettings } from './hooks/useSettings';
@@ -70,6 +71,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <FrontendSettingsManager />
+      <Toaster richColors position="top-right" closeButton />
       <Routes>
         <Route path="/login" element={<AdminLoginPage />} />
         <Route path="/signup" element={<AdminSignupPage />} />
