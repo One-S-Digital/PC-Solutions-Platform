@@ -17,7 +17,7 @@ import Card from '../ui/Card';
 import Button from '../ui/Button';
 import OrganizationDocumentsList from './OrganizationDocumentsList';
 import { User, UserRole, Product, Service, JobListing, Organization } from '../../types';
-import { formatServiceCategory, formatServiceDeliveryType, formatCategory } from '../../utils/serviceFormatting';
+import { formatServiceCategory, formatServiceCategoryForService, formatServiceDeliveryType, formatCategory } from '../../utils/serviceFormatting';
 import { openExternalUrl, toExternalUrl } from '../../utils/url';
 
 type OrganizationPublicProfileProps = {
@@ -498,7 +498,7 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
                         <div className="flex-1">
                           <h3 className="font-semibold text-swiss-charcoal">{service.title}</h3>
                             <p className="text-xs text-gray-500 mt-1">
-                              {formatServiceCategory(t, service.category)}
+                              {formatServiceCategoryForService(t, service)}
                             </p>
                         </div>
                         {typeof service.price === 'number' && (

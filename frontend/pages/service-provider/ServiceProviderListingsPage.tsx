@@ -7,7 +7,7 @@ import { Service, ServiceCategory, SERVICE_CATEGORIES } from '../../types';
 import ServiceUploadModal from '../../components/service-provider/ServiceUploadModal';
 import { useAppContext } from '../../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
-import { formatServiceCategory, formatServiceDeliveryType } from '../../utils/serviceFormatting';
+import { formatServiceCategoryForService, formatServiceDeliveryType } from '../../utils/serviceFormatting';
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { UploadedAsset } from '../../services/api';
@@ -21,7 +21,7 @@ interface ServiceCardProps {
 
 const ProviderServiceCard: React.FC<ServiceCardProps> = ({ service, onEdit, onDelete }) => {
     const { t } = useTranslation(['dashboard', 'common']);
-    const categoryLabel = formatServiceCategory(t, service.category);
+    const categoryLabel = formatServiceCategoryForService(t, service);
     const deliveryLabel = formatServiceDeliveryType(t, service.deliveryType);
     return (
         <Card className="flex flex-col group" hoverEffect>

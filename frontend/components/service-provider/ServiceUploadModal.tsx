@@ -1,5 +1,5 @@
 import React, { useState, useEffect, FormEvent } from 'react';
-import { Service, ServiceCategory, SERVICE_CATEGORIES, ServiceDeliveryType, SERVICE_DELIVERY_TYPES } from '../../types';
+import { Service, ServiceCategory, SERVICE_DELIVERY_TYPES } from '../../types';
 import { STANDARD_INPUT_FIELD, SUGGESTED_SERVICE_CATEGORIES } from '../../constants';
 import Button from '../ui/Button';
 import ChipInput from '../ui/ChipInput';
@@ -7,6 +7,7 @@ import { XMarkIcon, PaperClipIcon, ArrowUpTrayIcon } from '@heroicons/react/24/o
 import { useAppContext } from '../../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
 import { useCategories } from '../../hooks/useCategories';
+import { inferServiceCategoryFromFlexibleCategories } from '../../utils/serviceFormatting';
 
 interface ServiceUploadModalProps {
   isOpen: boolean;
@@ -30,7 +31,8 @@ const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose
   const initialFormState: ServiceFormData = {
     title: '',
     description: '',
-    category: SERVICE_CATEGORIES[0],
+    // Default to OTHER; we'll infer a better enum from `categories` when possible.
+    category: ServiceCategory.OTHER,
     categories: [],
     availability: '',
     tags: [],
@@ -49,7 +51,11 @@ const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose
         setFormData({
           title: existingService.title || '',
           description: existingService.description || '',
-          category: existingService.category || SERVICE_CATEGORIES[0],
+          // Prefer inferring the legacy enum from flexible categories when possible.
+          category:
+            inferServiceCategoryFromFlexibleCategories(existingService.categories) ||
+            existingService.category ||
+            ServiceCategory.OTHER,
           categories: existingService.categories || [],
           availability: existingService.availability || '',
           tags: existingService.tags || [],
@@ -133,7 +139,14 @@ const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose
               <ChipInput<string>
                 selectedChips={formData.categories || []}
                 availableOptions={[...serviceCategoryOptions]}
-                onChange={(categories) => setFormData(prev => ({ ...prev, categories }))}
+                onChange={(categories) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    categories,
+                    category:
+                      inferServiceCategoryFromFlexibleCategories(categories) || ServiceCategory.OTHER,
+                  }))
+                }
                 placeholder={t('common:serviceUploadModal.placeholders.categories', 'Type or select categories...')}
                 allowCustomValues={true}
               />
