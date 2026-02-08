@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Service } from '../../types';
 import Card from '../ui/Card';
@@ -6,6 +6,7 @@ import Button from '../ui/Button';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { formatServiceCategoryForService, formatServiceDeliveryType } from '../../utils/serviceFormatting';
 import { openExternalUrl } from '../../utils/url';
+import servicePlaceholder from '../../assets/service-placeholder.svg';
 
 interface ServiceViewModalProps {
   service: Service | null;
@@ -24,7 +25,22 @@ const ServiceViewModal: React.FC<ServiceViewModalProps> = ({
 }) => {
   const { t } = useTranslation(['common', 'dashboard', 'profile']);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen || !service) return null;
+
+  const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (event.target === event.currentTarget) {
+      onClose();
+    }
+  };
 
   const handleRequest = () => {
     onRequestService(service);
@@ -36,8 +52,10 @@ const ServiceViewModal: React.FC<ServiceViewModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="serviceViewModalTitle"
+      onClick={handleBackdropClick}
     >
-      <Card className="w-full max-w-2xl bg-white p-0 shadow-xl rounded-lg overflow-hidden">
+      <div onClick={(event) => event.stopPropagation()} className="w-full max-w-2xl">
+        <Card className="bg-white p-0 shadow-xl rounded-lg overflow-hidden">
         <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
           <h2 id="serviceViewModalTitle" className="text-xl font-semibold text-swiss-charcoal">
             {t('common:serviceViewModal.title', 'Service Details')}
@@ -54,7 +72,7 @@ const ServiceViewModal: React.FC<ServiceViewModalProps> = ({
         <div className="p-6 grid grid-cols-1 md:grid-cols-[160px,1fr] gap-6">
           <div className="w-full">
             <img
-              src={service.imageUrl || `https://picsum.photos/seed/${service.id}/200/200`}
+              src={service.imageUrl || servicePlaceholder}
               alt={service.title}
               className="w-full h-40 object-cover rounded-lg"
             />
@@ -126,7 +144,8 @@ const ServiceViewModal: React.FC<ServiceViewModalProps> = ({
             {t('dashboard:partnerDetailPage.requestServiceButton', 'Request Service')}
           </Button>
         </div>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 };

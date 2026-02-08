@@ -655,9 +655,6 @@
     "title": "Bestellungen und Anfragen",
     "updateError": "Status konnte nicht aktualisiert werden"
   },
-  "supplierOrganisationProfilePage": {
-    "loadError": "Organisationsprofildetails konnten nicht geladen werden. Bitte versuchen Sie es erneut."
-  },
   "supplierProductListingsPage": {
     "addProductButton": "Produkt hinzufügen",
     "confirmDelete": "Sind Sie sicher, dass Sie dieses Produkt löschen möchten?",

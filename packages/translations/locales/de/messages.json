@@ -5,8 +5,8 @@
     "sendMessage": "Nachricht senden"
   },
   "confirmDelete": "Bestätigen Löschen",
-  "deleteMessage": "Löschen message.",
-  "editMessage": "Bearbeiten message.",
+  "deleteMessage": "Nachricht löschen.",
+  "editMessage": "Nachricht bearbeiten.",
   "emptyState": {
     "noConversationSelectedSubtitle": "Wählen Sie eine Konversation zum Starten",
     "noConversationSelectedTitle": "Keine Konversation ausgewählt",
@@ -20,8 +20,8 @@
     "all": "Alle",
     "unread": "Ungelesen"
   },
-  "loadingMore": "Laden... more",
-  "messageDeleted": "message Deleted",
+  "loadingMore": "Mehr laden...",
+  "messageDeleted": "Nachricht gelöscht",
   "messageUpdated": "Nachricht aktualisiert",
   "messages": {
     "buttons": {
@@ -53,11 +53,11 @@
   "noConversationsFound": "Keine Konversationen gefunden",
   "noMessagesYet": "Noch keine Nachrichten",
   "placeholders": {
-    "addCaption": "Hinzufügen caption",
+    "addCaption": "Bildunterschrift hinzufügen",
     "searchConversations": "Konversationen durchsuchen...",
     "typeMessage": "Nachricht eingeben..."
   },
-  "scrollForMore": "scroll For More",
+  "scrollForMore": "Für mehr scrollen",
   "searchPlaceholder": "Konversationen durchsuchen...",
   "tabs": {
     "all": "Alle Nachrichten",

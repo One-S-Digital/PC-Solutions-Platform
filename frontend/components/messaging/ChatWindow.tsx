@@ -530,7 +530,7 @@ const ChatWindow: React.FC = () => {
             size="md" 
             className="!p-2.5 disabled:opacity-50" 
             aria-label={t('common:buttons.sendMessage')}
-            disabled={isUploading || (!newMessage.trim() && !pendingFile) || !!fileError}
+            disabled={isUploading || (!newMessage.trim() && !pendingFile) || (!!fileError && !!pendingFile)}
           >
             <PaperAirplaneIcon className="w-5 h-5" />
           </Button>

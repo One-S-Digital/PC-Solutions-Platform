@@ -105,10 +105,19 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
             onUploadSuccess(response.asset);
           }
         } else {
-          setValidationError('Upload failed. Please try again.');
+          setValidationError(
+            t('common:fileUploadZone.errors.uploadFailed', {
+              defaultValue: 'Upload failed. Please try again.',
+            }),
+          );
         }
       } catch (err: any) {
-        setValidationError(err.message || 'Upload failed. Please try again.');
+        setValidationError(
+          err.message ||
+            t('common:fileUploadZone.errors.uploadFailed', {
+              defaultValue: 'Upload failed. Please try again.',
+            }),
+        );
       } finally {
         setIsUploading(false);
       }

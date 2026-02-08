@@ -211,6 +211,20 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
     }
   };
 
+  const requiresFile = useMemo(() => {
+    if (existingContent && !file) return false;
+    if (contentType === 'e-learning' && formData.type === ELearningContentType.LINK) return false;
+    if (contentType === 'policy' && (formData.externalLink || formData.description)) return false;
+    return true;
+  }, [
+    contentType,
+    existingContent,
+    file,
+    formData.type,
+    formData.externalLink,
+    formData.description,
+  ]);
+
   const persistCustomCategory = async (): Promise<string | null> => {
     const name = normalizeCategoryName(customCategory);
     if (!name || name.length < 2 || name.toLowerCase() === 'other') {
@@ -240,7 +254,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (fileError) {
+    if (fileError && requiresFile) {
       return;
     }
     setIsUploading(true);
@@ -728,7 +742,12 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
           </div>
           <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
             <Button type="button" variant="light" onClick={onClose} disabled={isUploading}>{t('common:buttons.cancel')}</Button>
-            <Button type="submit" variant="primary" className="bg-swiss-mint" disabled={isUploading || !!fileError}>
+            <Button
+              type="submit"
+              variant="primary"
+              className="bg-swiss-mint"
+              disabled={isUploading || (requiresFile && !!fileError)}
+            >
               {isUploading ? t('common:contentUploadModal.buttons.uploading') : (existingContent ? t('common:buttons.saveChanges') : t('common:contentUploadModal.buttons.upload'))}
             </Button>
           </div>

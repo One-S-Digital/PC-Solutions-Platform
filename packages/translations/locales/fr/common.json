@@ -657,7 +657,8 @@
     "dragAndDrop": "Glissez-déposez les fichiers ici",
     "errors": {
       "sizeExceeded": "La taille du fichier dépasse {{max}} Mo.",
-      "invalidType": "Type de fichier invalide. Accepté : {{types}}"
+      "invalidType": "Type de fichier invalide. Accepté : {{types}}",
+      "uploadFailed": "Échec du téléchargement. Veuillez réessayer."
     }
   },
   "filters": {

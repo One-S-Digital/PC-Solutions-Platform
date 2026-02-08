@@ -1262,14 +1262,19 @@ const Messaging: React.FC = () => {
                     placeholder={isUploading ? t('admin:messaging.uploading', 'Uploading...') : pendingFile ? t('admin:messaging.addCaption', 'Add a caption...') : t('admin:messaging.typePlaceholder')}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-swiss-mint focus:border-transparent outline-none text-sm shadow-sm disabled:opacity-50"
                     value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
+                    onChange={(e) => {
+                      setNewMessage(e.target.value)
+                      if (fileError) setFileError(null)
+                    }}
                     onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                     disabled={isUploading}
                   />
                 </div>
                 <button
                   onClick={handleSendMessage}
-                  disabled={isUploading || (!newMessage.trim() && !pendingFile) || !!fileError}
+                  disabled={
+                    isUploading || (!newMessage.trim() && !pendingFile) || (!!fileError && !!pendingFile)
+                  }
                   className="bg-swiss-mint hover:bg-swiss-teal disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded-lg flex items-center transition-colors"
                   aria-label={t('admin:messaging.send', 'Send')}
                 >

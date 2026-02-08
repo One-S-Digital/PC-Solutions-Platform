@@ -692,7 +692,8 @@
     "dragAndDrop": "Drag and drop files here",
     "errors": {
       "sizeExceeded": "File size exceeds {{max}}MB.",
-      "invalidType": "Invalid file type. Accepted: {{types}}"
+      "invalidType": "Invalid file type. Accepted: {{types}}",
+      "uploadFailed": "Upload failed. Please try again."
     }
   },
   "filters": {

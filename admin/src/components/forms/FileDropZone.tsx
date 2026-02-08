@@ -1,5 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react'
 import { Upload, FileText, X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 interface FileDropZoneProps {
   label?: string
@@ -24,6 +25,7 @@ const FileDropZone: React.FC<FileDropZoneProps> = ({
   selectedFile,
   disabled,
 }) => {
+  const { t } = useTranslation(['admin', 'common'])
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -39,7 +41,10 @@ const FileDropZone: React.FC<FileDropZoneProps> = ({
       const file = files[0]
 
       if (maxSizeMB && file.size > maxSizeMB * 1024 * 1024) {
-        const message = `File size exceeds ${maxSizeMB}MB limit.`
+        const message = t('admin:fileUpload.errors.sizeExceeded', {
+          defaultValue: `File size exceeds ${maxSizeMB}MB limit.`,
+          max: maxSizeMB,
+        })
         setError(message)
         if (fileInputRef.current) {
           fileInputRef.current.setCustomValidity(message)
@@ -54,7 +59,7 @@ const FileDropZone: React.FC<FileDropZoneProps> = ({
       }
       onFileSelect(file)
     },
-    [maxSizeMB, onFileSelect]
+    [maxSizeMB, onFileSelect, t]
   )
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {

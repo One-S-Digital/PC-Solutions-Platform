@@ -157,7 +157,7 @@ const normalizeDocuments = (value: unknown, cvUrl?: string): DocumentItem[] => {
         name: (doc as any).name || getFilenameFromUrl(url),
         url,
         type: (doc as any).type || 'Other',
-        uploadDate: (doc as any).uploadDate || new Date().toISOString(),
+        uploadDate: (doc as any).uploadDate || '',
         size: (doc as any).size || 0,
       });
     });
@@ -171,7 +171,7 @@ const normalizeDocuments = (value: unknown, cvUrl?: string): DocumentItem[] => {
         name: getFilenameFromUrl(cvUrl),
         url: cvUrl,
         type: 'CV',
-        uploadDate: new Date().toISOString(),
+      uploadDate: '',
         size: 0,
       });
     }

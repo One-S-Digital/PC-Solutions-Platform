@@ -88,8 +88,9 @@ const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0];
       const maxSizeMB = 5;
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/webp'];
 
-      if (!selectedFile.type.startsWith('image/')) {
+      if (!allowedTypes.includes(selectedFile.type)) {
         setFile(null);
         setFileError(
           t('common:serviceUploadModal.errors.invalidImageType', {

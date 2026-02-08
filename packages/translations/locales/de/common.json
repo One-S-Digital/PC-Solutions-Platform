@@ -664,7 +664,8 @@
     "dragAndDrop": "Dateien hierher ziehen und ablegen",
     "errors": {
       "sizeExceeded": "Dateigröße überschreitet {{max}} MB.",
-      "invalidType": "Ungültiger Dateityp. Erlaubt: {{types}}"
+      "invalidType": "Ungültiger Dateityp. Erlaubt: {{types}}",
+      "uploadFailed": "Upload fehlgeschlagen. Bitte versuchen Sie es erneut."
     }
   },
   "filters": {

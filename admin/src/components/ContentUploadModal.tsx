@@ -335,6 +335,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
             max: maxSizeMB,
           }),
         );
+        e.target.value = '';
         return;
       }
       setFileError(null);

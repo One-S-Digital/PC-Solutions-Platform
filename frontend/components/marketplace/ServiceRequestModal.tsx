@@ -79,7 +79,7 @@ const ServiceRequestModal: React.FC<ServiceRequestModalProps> = ({ service, isOp
             </div>
             <div>
               <label htmlFor="preferredDateModal" className="block text-sm font-medium text-gray-700 mb-1">
-                {t('common:serviceRequestModal.preferredDateLabel')}
+                {t('common:serviceRequestModal.preferredDateLabel', 'Preferred Date')}
               </label>
               <div className="relative">
                 <input
@@ -94,7 +94,7 @@ const ServiceRequestModal: React.FC<ServiceRequestModalProps> = ({ service, isOp
             </div>
             <div>
               <label htmlFor="notesModal" className="block text-sm font-medium text-gray-700 mb-1">
-                {t('common:serviceRequestModal.notesLabel')}
+                {t('common:serviceRequestModal.notesLabel', 'Notes')}
               </label>
               <textarea
                 id="notesModal"
@@ -108,7 +108,9 @@ const ServiceRequestModal: React.FC<ServiceRequestModalProps> = ({ service, isOp
           </div>
           <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
             <Button type="button" variant="light" onClick={onClose}>{t('common:buttons.cancel')}</Button>
-            <Button type="submit" variant="secondary">{t('common:serviceRequestModal.submitButton')}</Button>
+            <Button type="submit" variant="secondary">
+              {t('common:serviceRequestModal.submitButton', 'Submit Request')}
+            </Button>
           </div>
         </form>
       </Card>

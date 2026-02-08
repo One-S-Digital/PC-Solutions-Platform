@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../contexts/AppContext';
 import { useNotifications } from '../contexts/NotificationContext';
 import { useAuthenticatedApi } from '../hooks/useAuthenticatedApi';
-import { UserRole, SettingsFormData, WorkExperienceItem, EducationItem, CertificationItem } from '../types';
+import { UserRole, SettingsFormData } from '../types';
 import { useTranslation } from 'react-i18next';
 import FoundationProfileForm from '../components/profile/edit/FoundationProfileForm';
 import EducatorProfileForm from '../components/profile/edit/EducatorProfileForm';
@@ -14,6 +14,11 @@ import { ArrowLeftIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import Tabs from '../components/ui/Tabs';
 import { AvailabilityScheduler } from '../components/availability';
 import { EducatorAvailabilitySettings, createEmptyAvailabilitySettings } from '../types/availability';
+import {
+  certificationItemsFromNames,
+  fallbackEducationFromText,
+  fallbackWorkExperienceFromText,
+} from '../utils/educatorProfileHelpers';
 
 // Helper function to parse availability settings from various formats
 const parseAvailabilitySettings = (
@@ -45,49 +50,6 @@ const parseAvailabilitySettings = (
   return createEmptyAvailabilitySettings();
 };
 
-const createTempId = (prefix: string) =>
-  `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-
-const splitLines = (value: string) =>
-  value
-    .split(/\r?\n|- /g)
-    .map((line) => line.trim())
-    .filter(Boolean);
-
-const buildFallbackWorkExperienceItems = (value: string): WorkExperienceItem[] => {
-  if (!value || !value.trim()) return [];
-  return [
-    {
-      id: createTempId('legacy-work'),
-      jobTitle: '',
-      institutionName: '',
-      startDate: '',
-      endDate: '',
-      descriptionPoints: splitLines(value),
-    },
-  ];
-};
-
-const buildFallbackEducationItems = (value: string): EducationItem[] => {
-  if (!value || !value.trim()) return [];
-  return [
-    {
-      id: createTempId('legacy-edu'),
-      degree: '',
-      institutionName: '',
-      graduationYear: '',
-      description: value.trim(),
-    },
-  ];
-};
-
-const buildCertificationItemsFromNames = (names: string[]): CertificationItem[] =>
-  names.map((name, index) => ({
-    id: `cert-${index}-${Date.now()}`,
-    name,
-    issuingOrganization: '',
-    issueDate: '',
-  }));
 
 const ProfileEditPage: React.FC = () => {
   const { t } = useTranslation(['common', 'settings', 'dashboard']);
@@ -201,15 +163,15 @@ const ProfileEditPage: React.FC = () => {
         const workExperienceItems =
           Array.isArray(data.workExperienceItems) && data.workExperienceItems.length > 0
             ? data.workExperienceItems
-            : buildFallbackWorkExperienceItems(data.workExperience || '');
+            : fallbackWorkExperienceFromText(data.workExperience || '');
         const educationItems =
           Array.isArray(data.educationItems) && data.educationItems.length > 0
             ? data.educationItems
-            : buildFallbackEducationItems(data.education || '');
+            : fallbackEducationFromText(data.education || '');
         const certificationItems =
           Array.isArray(data.certificationItems) && data.certificationItems.length > 0
             ? data.certificationItems
-            : buildCertificationItemsFromNames(
+            : certificationItemsFromNames(
                 Array.isArray(data.certifications) ? data.certifications : [],
               );
 

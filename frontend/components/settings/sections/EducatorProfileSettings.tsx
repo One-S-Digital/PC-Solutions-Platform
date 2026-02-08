@@ -25,6 +25,12 @@ import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../../contexts/AppContext';
 import { useAuthenticatedApi } from '../../../hooks/useAuthenticatedApi';
+import {
+  certificationItemsFromNames,
+  createTempId,
+  fallbackEducationFromText,
+  fallbackWorkExperienceFromText,
+} from '../../../utils/educatorProfileHelpers';
 
 // Helper function to parse availability settings from various formats
 const parseAvailabilitySettings = (value: EducatorAvailabilitySettings | string | undefined): EducatorAvailabilitySettings => {
@@ -55,13 +61,16 @@ const parseAvailabilitySettings = (value: EducatorAvailabilitySettings | string 
 };
 
 const parseLegacyItems = <T,>(value: unknown): T[] => {
+  const normalize = (items: unknown[]): T[] =>
+    items.filter((item) => item && typeof item === 'object') as T[];
+
   if (Array.isArray(value)) {
-    return value as T[];
+    return normalize(value);
   }
   if (typeof value === 'string' && value.trim().length > 0) {
     try {
       const parsed = JSON.parse(value);
-      return Array.isArray(parsed) ? (parsed as T[]) : [];
+      return Array.isArray(parsed) ? normalize(parsed as unknown[]) : [];
     } catch {
       return [];
     }
@@ -69,48 +78,47 @@ const parseLegacyItems = <T,>(value: unknown): T[] => {
   return [];
 };
 
-const createTempId = (prefix: string) =>
-  `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+const buildProfileData = (settings: SettingsFormData, currentUser: any) => {
+  const parsedWorkItems = parseLegacyItems<WorkExperienceItem>(settings.workExperienceItems);
+  const parsedWorkLegacy = parseLegacyItems<WorkExperienceItem>(settings.workExperience);
+  const parsedEducationItems = parseLegacyItems<EducationItem>(settings.educationItems);
+  const parsedEducationLegacy = parseLegacyItems<EducationItem>(settings.education);
+  const parsedCertItems = parseLegacyItems<CertificationItem>(settings.certificationItems);
 
-const certificationItemsFromNames = (names: string[]): CertificationItem[] =>
-  names.map((name, index) => ({
-    id: `cert-${index}-${Date.now()}`,
-    name,
-    issuingOrganization: '',
-    issueDate: '',
-  }));
-
-const splitLines = (value: string) =>
-  value
-    .split(/\r?\n|- /g)
-    .map((line) => line.trim())
-    .filter(Boolean);
-
-const fallbackWorkExperienceFromText = (value: string): WorkExperienceItem[] => {
-  if (!value || !value.trim()) return [];
-  return [
-    {
-      id: createTempId('legacy-work'),
-      jobTitle: '',
-      institutionName: '',
-      startDate: '',
-      endDate: '',
-      descriptionPoints: splitLines(value),
-    },
-  ];
-};
-
-const fallbackEducationFromText = (value: string): EducationItem[] => {
-  if (!value || !value.trim()) return [];
-  return [
-    {
-      id: createTempId('legacy-edu'),
-      degree: '',
-      institutionName: '',
-      graduationYear: '',
-      description: value.trim(),
-    },
-  ];
+  return {
+    firstName: settings.firstName || currentUser?.firstName || '',
+    lastName: settings.lastName || currentUser?.lastName || '',
+    email: settings.email || currentUser?.email || '',
+    phoneNumber: settings.phoneNumber || '',
+    jobRole: (settings as any).jobRole || '',
+    region: (settings as any).region || '',
+    shortBio: settings.shortBio || '',
+    workExperience: settings.workExperience || '',
+    education: settings.education || '',
+    certifications: Array.isArray(settings.certifications) ? settings.certifications : [],
+    workExperienceItems:
+      parsedWorkItems.length > 0
+        ? parsedWorkItems
+        : parsedWorkLegacy.length > 0
+          ? parsedWorkLegacy
+          : fallbackWorkExperienceFromText(settings.workExperience || ''),
+    educationItems:
+      parsedEducationItems.length > 0
+        ? parsedEducationItems
+        : parsedEducationLegacy.length > 0
+          ? parsedEducationLegacy
+          : fallbackEducationFromText(settings.education || ''),
+    certificationItems:
+      parsedCertItems.length > 0
+        ? parsedCertItems
+        : certificationItemsFromNames(
+            Array.isArray(settings.certifications) ? settings.certifications : [],
+          ),
+    skills: Array.isArray(settings.skills) ? settings.skills : [],
+    availability: settings.availability || '',
+    cvUrl: settings.cvUrl || '',
+    avatarAssetId: settings.avatarAssetId || '',
+  };
 };
 
 interface EducatorProfileSettingsProps {
@@ -144,77 +152,13 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
   const avatarInputRef = useRef<HTMLInputElement>(null);
 
   // Initialize form fields from settings
-  const [profileData, setProfileData] = useState({
-    firstName: settings.firstName || currentUser?.firstName || '',
-    lastName: settings.lastName || currentUser?.lastName || '',
-    email: settings.email || currentUser?.email || '',
-    phoneNumber: settings.phoneNumber || '',
-    jobRole: (settings as any).jobRole || '',
-    region: (settings as any).region || '',
-    shortBio: settings.shortBio || '',
-    workExperience: settings.workExperience || '',
-    education: settings.education || '',
-    certifications: Array.isArray(settings.certifications) ? settings.certifications : [],
-    workExperienceItems:
-      parseLegacyItems<WorkExperienceItem>(settings.workExperienceItems).length > 0
-        ? parseLegacyItems<WorkExperienceItem>(settings.workExperienceItems)
-        : parseLegacyItems<WorkExperienceItem>(settings.workExperience).length > 0
-          ? parseLegacyItems<WorkExperienceItem>(settings.workExperience)
-          : fallbackWorkExperienceFromText(settings.workExperience || ''),
-    educationItems:
-      parseLegacyItems<EducationItem>(settings.educationItems).length > 0
-        ? parseLegacyItems<EducationItem>(settings.educationItems)
-        : parseLegacyItems<EducationItem>(settings.education).length > 0
-          ? parseLegacyItems<EducationItem>(settings.education)
-          : fallbackEducationFromText(settings.education || ''),
-    certificationItems:
-      parseLegacyItems<CertificationItem>(settings.certificationItems).length > 0
-        ? parseLegacyItems<CertificationItem>(settings.certificationItems)
-        : certificationItemsFromNames(
-            Array.isArray(settings.certifications) ? settings.certifications : [],
-          ),
-    skills: Array.isArray(settings.skills) ? settings.skills : [],
-    availability: settings.availability || '',
-    cvUrl: settings.cvUrl || '',
-    avatarAssetId: settings.avatarAssetId || '',
-  });
+  const [profileData, setProfileData] = useState(() =>
+    buildProfileData(settings, currentUser),
+  );
 
   // Sync when settings change
   useEffect(() => {
-    setProfileData({
-      firstName: settings.firstName || currentUser?.firstName || '',
-      lastName: settings.lastName || currentUser?.lastName || '',
-      email: settings.email || currentUser?.email || '',
-      phoneNumber: settings.phoneNumber || '',
-      jobRole: (settings as any).jobRole || '',
-      region: (settings as any).region || '',
-      shortBio: settings.shortBio || '',
-      workExperience: settings.workExperience || '',
-      education: settings.education || '',
-      certifications: Array.isArray(settings.certifications) ? settings.certifications : [],
-      workExperienceItems:
-        parseLegacyItems<WorkExperienceItem>(settings.workExperienceItems).length > 0
-          ? parseLegacyItems<WorkExperienceItem>(settings.workExperienceItems)
-          : parseLegacyItems<WorkExperienceItem>(settings.workExperience).length > 0
-            ? parseLegacyItems<WorkExperienceItem>(settings.workExperience)
-            : fallbackWorkExperienceFromText(settings.workExperience || ''),
-      educationItems:
-        parseLegacyItems<EducationItem>(settings.educationItems).length > 0
-          ? parseLegacyItems<EducationItem>(settings.educationItems)
-          : parseLegacyItems<EducationItem>(settings.education).length > 0
-            ? parseLegacyItems<EducationItem>(settings.education)
-            : fallbackEducationFromText(settings.education || ''),
-      certificationItems:
-        parseLegacyItems<CertificationItem>(settings.certificationItems).length > 0
-          ? parseLegacyItems<CertificationItem>(settings.certificationItems)
-          : certificationItemsFromNames(
-              Array.isArray(settings.certifications) ? settings.certifications : [],
-            ),
-      skills: Array.isArray(settings.skills) ? settings.skills : [],
-      availability: settings.availability || '',
-      cvUrl: settings.cvUrl || '',
-      avatarAssetId: settings.avatarAssetId || '',
-    });
+    setProfileData(buildProfileData(settings, currentUser));
   }, [settings, currentUser]);
 
   const handleFieldChange = (field: keyof typeof profileData, value: any) => {
