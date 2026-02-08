@@ -496,12 +496,16 @@ export class SupportService {
       this.logger.error(`Failed to send confirmation email to ${user.email}: ${(error as Error).message}`);
     }
 
-    // 2. Send notification email to all admins
+    // 2. Send notification email to support team
     try {
       const adminEmails = await this.getAdminEmails();
-      
-      if (adminEmails.length === 0) {
-        this.logger.warn('No admin emails found - support team notification not sent');
+      const supportInbox = 'support@procrechesolutions.com';
+      const recipients = Array.from(
+        new Set([...(adminEmails || []), supportInbox].filter(Boolean))
+      );
+
+      if (recipients.length === 0) {
+        this.logger.warn('No support notification recipients found');
         return;
       }
 
@@ -523,7 +527,7 @@ export class SupportService {
       }
 
       // Send to each admin individually via Mailgun
-      const emailPromises = adminEmails.map(async (adminEmail) => {
+      const emailPromises = recipients.map(async (adminEmail) => {
         const payload = {
           ticketId: ticket.id,
           ticketSubject: ticket.subject,
@@ -561,7 +565,9 @@ export class SupportService {
 
       const results = await Promise.all(emailPromises);
       const successCount = results.filter(r => r.success).length;
-      this.logger.log(`Support team notification emails sent to ${successCount}/${adminEmails.length} admins for ticket ${ticket.id}`);
+      this.logger.log(
+        `Support team notification emails sent to ${successCount}/${recipients.length} recipients for ticket ${ticket.id}`
+      );
     } catch (error) {
       this.logger.error(`Failed to send support team notification emails: ${(error as Error).message}`);
     }
