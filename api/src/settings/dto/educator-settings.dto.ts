@@ -6,7 +6,7 @@ import {
   IsOptional,
   IsString,
   IsUrl,
-  MaxArraySize,
+  ArrayMaxSize,
   ValidateIf,
   ValidateNested,
 } from 'class-validator';
@@ -123,21 +123,21 @@ export class UpdateEducatorSettingsDto {
 
   @IsOptional()
   @IsArray()
-  @MaxArraySize(MAX_EDUCATOR_ITEMS)
+  @ArrayMaxSize(MAX_EDUCATOR_ITEMS)
   @ValidateNested({ each: true })
   @Type(() => EducatorWorkExperienceItemDto)
   workExperienceItems?: EducatorWorkExperienceItemDto[];
 
   @IsOptional()
   @IsArray()
-  @MaxArraySize(MAX_EDUCATOR_ITEMS)
+  @ArrayMaxSize(MAX_EDUCATOR_ITEMS)
   @ValidateNested({ each: true })
   @Type(() => EducatorEducationItemDto)
   educationItems?: EducatorEducationItemDto[];
 
   @IsOptional()
   @IsArray()
-  @MaxArraySize(MAX_EDUCATOR_ITEMS)
+  @ArrayMaxSize(MAX_EDUCATOR_ITEMS)
   @ValidateNested({ each: true })
   @Type(() => EducatorCertificationItemDto)
   certificationItems?: EducatorCertificationItemDto[];
