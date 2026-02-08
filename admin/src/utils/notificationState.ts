@@ -121,3 +121,16 @@ export const getDismissedCount = (section: string) => {
   if (!entries) return 0
   return Object.keys(entries).length
 }
+
+export const getDismissedCountSince = (section: string, since: Date) => {
+  if (!section) return 0
+  const state = loadState()
+  pruneDismissed(state)
+  const entries = state.dismissed?.[section]
+  if (!entries) return 0
+  const sinceTs = since.getTime()
+  return Object.values(entries).filter((value) => {
+    const ts = new Date(value).getTime()
+    return !Number.isNaN(ts) && ts >= sinceTs
+  }).length
+}

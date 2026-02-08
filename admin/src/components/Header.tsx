@@ -2,12 +2,20 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useUser, useClerk } from '@clerk/clerk-react'
 import { Menu, Bell, User } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import LanguageSwitcher from './design-system/LanguageSwitcher'
 import { useTranslation } from 'react-i18next'
 import { useApiClient, apiService } from '../services/api'
 import { subscriptionService } from '../services/subscriptionService'
-import { dismissNotification, getDismissedCount, isDismissed, isWithinWindow, markVisited } from '../utils/notificationState'
+import {
+  dismissNotification,
+  getDismissedCountSince,
+  getEffectiveSince,
+  getLastVisited,
+  isDismissed,
+  isNewSince,
+  markVisited,
+} from '../utils/notificationState'
 
 interface HeaderProps {
   setSidebarOpen: (open: boolean) => void
@@ -18,17 +26,44 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
   const { signOut } = useClerk()
   const { t } = useTranslation(['dashboard','common','admin'])
   const apiClient = useApiClient()
+  const location = useLocation()
   const navigate = useNavigate()
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
   const [dismissedVersion, setDismissedVersion] = useState(0)
   const notificationsRef = useRef<HTMLDivElement | null>(null)
   const notificationsButtonRef = useRef<HTMLButtonElement | null>(null)
-  const recentWindowDays = 7
-  const recentFrom = useMemo(() => {
-    const date = new Date()
-    date.setDate(date.getDate() - recentWindowDays)
-    return date.toISOString()
-  }, [])
+  const getLatestVisited = (...dates: Array<Date | null>) => {
+    const valid = dates.filter(Boolean) as Date[]
+    if (valid.length === 0) return null
+    return new Date(Math.max(...valid.map(date => date.getTime())))
+  }
+
+  const supportLastVisited = useMemo(() => getLastVisited('support'), [location.pathname, dismissedVersion])
+  const usersLastVisited = useMemo(() => getLastVisited('users'), [location.pathname, dismissedVersion])
+  const productsLastVisited = useMemo(() => getLastVisited('products'), [location.pathname, dismissedVersion])
+  const servicesLastVisited = useMemo(() => getLastVisited('services'), [location.pathname, dismissedVersion])
+  const subscriptionsLastVisited = useMemo(() => getLastVisited('subscriptions'), [location.pathname, dismissedVersion])
+  const subscriptionRequestsLastVisited = useMemo(
+    () => getLatestVisited(subscriptionsLastVisited, getLastVisited('subscriptionRequests')),
+    [subscriptionsLastVisited, location.pathname, dismissedVersion]
+  )
+  const subscriptionCancellationsLastVisited = useMemo(
+    () => getLatestVisited(subscriptionsLastVisited, getLastVisited('subscriptionCancellations')),
+    [subscriptionsLastVisited, location.pathname, dismissedVersion]
+  )
+
+  const usersSince = useMemo(
+    () => getEffectiveSince(usersLastVisited).toISOString(),
+    [usersLastVisited]
+  )
+  const subscriptionRequestsSince = useMemo(
+    () => getEffectiveSince(subscriptionRequestsLastVisited).toISOString(),
+    [subscriptionRequestsLastVisited]
+  )
+  const subscriptionCancellationsSince = useMemo(
+    () => getEffectiveSince(subscriptionCancellationsLastVisited).toISOString(),
+    [subscriptionCancellationsLastVisited]
+  )
 
   const handleSignOut = () => {
     signOut()
@@ -42,12 +77,12 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
   })
 
   const { data: recentUsersResponse, isLoading: usersLoading } = useQuery({
-    queryKey: ['recent-user-notifications', recentFrom],
+    queryKey: ['recent-user-notifications', usersSince],
     queryFn: () =>
       apiService.getAdminUsers(apiClient, {
         page: 1,
         limit: 50,
-        dateFrom: recentFrom,
+        dateFrom: usersSince,
         sortBy: 'createdAt',
         sortOrder: 'desc',
       }),
@@ -70,26 +105,26 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
   })
 
   const { data: subscriptionRequestsResponse, isLoading: requestsLoading } = useQuery({
-    queryKey: ['subscription-request-notifications', recentFrom],
+    queryKey: ['subscription-request-notifications', subscriptionRequestsSince],
     queryFn: () =>
       subscriptionService.getSubscriptionRequests(apiClient, {
         status: 'PENDING',
         page: 1,
         limit: 5,
-        dateFrom: recentFrom,
+        dateFrom: subscriptionRequestsSince,
       }),
     enabled: !!apiClient,
     staleTime: 30000,
   })
 
   const { data: cancellationRequestsResponse, isLoading: cancellationsLoading } = useQuery({
-    queryKey: ['subscription-cancellation-request-notifications', recentFrom],
+    queryKey: ['subscription-cancellation-request-notifications', subscriptionCancellationsSince],
     queryFn: () =>
       subscriptionService.getCancellationRequests(apiClient, {
         status: 'PENDING',
         page: 1,
         limit: 5,
-        dateFrom: recentFrom,
+        dateFrom: subscriptionCancellationsSince,
       }),
     enabled: !!apiClient,
     staleTime: 30000,
@@ -99,9 +134,10 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
   const supportNotifications = useMemo(
     () =>
       supportTickets.filter(
-        (ticket: any) => isWithinWindow(ticket.createdAt) && !isDismissed('support', ticket.id)
+        (ticket: any) =>
+          isNewSince(ticket.createdAt, supportLastVisited) && !isDismissed('support', ticket.id)
       ),
-    [supportTickets, dismissedVersion]
+    [supportTickets, supportLastVisited, dismissedVersion]
   )
   const supportCount = supportNotifications.length
   const supportItems = supportNotifications.slice(0, 5)
@@ -111,37 +147,36 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
   const recentUsersNotifications = useMemo(
     () =>
       recentUsers.filter(
-        (recentUser: any) => isWithinWindow(recentUser.createdAt) && !isDismissed('users', recentUser.id)
+        (recentUser: any) =>
+          isNewSince(recentUser.createdAt, usersLastVisited) && !isDismissed('users', recentUser.id)
       ),
-    [recentUsers, dismissedVersion]
+    [recentUsers, usersLastVisited, dismissedVersion]
   )
   const recentUsersTotal = recentUsersPayload?.total ?? recentUsersNotifications.length
-  const recentUsersCount = Math.max(0, recentUsersTotal - getDismissedCount('users'))
+  const recentUsersCount = Math.max(
+    0,
+    recentUsersTotal - getDismissedCountSince('users', getEffectiveSince(usersLastVisited))
+  )
 
   const products = useMemo(() => productsResponse?.data?.data || [], [productsResponse])
   const services = useMemo(() => servicesResponse?.data?.data || [], [servicesResponse])
-  const recentCutoff = useMemo(() => new Date(recentFrom).getTime(), [recentFrom])
-  const recentProducts = useMemo(
-    () => products.filter((product: any) => new Date(product.createdAt).getTime() >= recentCutoff),
-    [products, recentCutoff]
-  )
-  const recentServices = useMemo(
-    () => services.filter((service: any) => new Date(service.createdAt).getTime() >= recentCutoff),
-    [services, recentCutoff]
-  )
+  const recentProducts = useMemo(() => products, [products])
+  const recentServices = useMemo(() => services, [services])
   const recentProductNotifications = useMemo(
     () =>
       recentProducts.filter(
-        (product: any) => isWithinWindow(product.createdAt) && !isDismissed('products', product.id)
+        (product: any) =>
+          isNewSince(product.createdAt, productsLastVisited) && !isDismissed('products', product.id)
       ),
-    [recentProducts, dismissedVersion]
+    [recentProducts, productsLastVisited, dismissedVersion]
   )
   const recentServiceNotifications = useMemo(
     () =>
       recentServices.filter(
-        (service: any) => isWithinWindow(service.createdAt) && !isDismissed('services', service.id)
+        (service: any) =>
+          isNewSince(service.createdAt, servicesLastVisited) && !isDismissed('services', service.id)
       ),
-    [recentServices, dismissedVersion]
+    [recentServices, servicesLastVisited, dismissedVersion]
   )
   const recentProductsCount = recentProductNotifications.length
   const recentServicesCount = recentServiceNotifications.length
@@ -153,12 +188,21 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
   const subscriptionNotifications = useMemo(
     () =>
       subscriptionRequests.filter(
-        (request: any) => isWithinWindow(request.createdAt) && !isDismissed('subscriptionRequests', request.id)
+        (request: any) =>
+          isNewSince(request.createdAt, subscriptionRequestsLastVisited) &&
+          !isDismissed('subscriptionRequests', request.id)
       ),
-    [subscriptionRequests, dismissedVersion]
+    [subscriptionRequests, subscriptionRequestsLastVisited, dismissedVersion]
   )
   const subscriptionTotal = subscriptionRequestsData?.total ?? subscriptionNotifications.length
-  const subscriptionCount = Math.max(0, subscriptionTotal - getDismissedCount('subscriptionRequests'))
+  const subscriptionCount = Math.max(
+    0,
+    subscriptionTotal -
+      getDismissedCountSince(
+        'subscriptionRequests',
+        getEffectiveSince(subscriptionRequestsLastVisited)
+      )
+  )
   const subscriptionItems = subscriptionNotifications.slice(0, 5)
 
   const cancellationRequestsData = cancellationRequestsResponse?.data?.data
@@ -166,12 +210,21 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
   const cancellationNotifications = useMemo(
     () =>
       cancellationRequests.filter(
-        (request: any) => isWithinWindow(request.requestedAt) && !isDismissed('subscriptionCancellations', request.id)
+        (request: any) =>
+          isNewSince(request.requestedAt, subscriptionCancellationsLastVisited) &&
+          !isDismissed('subscriptionCancellations', request.id)
       ),
-    [cancellationRequests, dismissedVersion]
+    [cancellationRequests, subscriptionCancellationsLastVisited, dismissedVersion]
   )
   const cancellationTotal = cancellationRequestsData?.total ?? cancellationNotifications.length
-  const cancellationCount = Math.max(0, cancellationTotal - getDismissedCount('subscriptionCancellations'))
+  const cancellationCount = Math.max(
+    0,
+    cancellationTotal -
+      getDismissedCountSince(
+        'subscriptionCancellations',
+        getEffectiveSince(subscriptionCancellationsLastVisited)
+      )
+  )
   const cancellationItems = cancellationNotifications.slice(0, 5)
 
   const totalNotifications =
@@ -216,6 +269,10 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
       document.removeEventListener('keydown', handleEscape)
     }
   }, [isNotificationsOpen])
+
+  useEffect(() => {
+    setDismissedVersion((value) => value + 1)
+  }, [location.pathname])
 
   const formatTimestamp = (value?: string) => {
     if (!value) return ''
