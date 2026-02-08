@@ -654,7 +654,7 @@ export class RecruitmentService {
     });
   }
 
-  async findCandidateById(id: string) {
+  async findCandidateById(id: string, options?: { visibleOnly?: boolean }) {
     return this.prisma.user.findUnique({
       where: {
         id,
@@ -662,6 +662,11 @@ export class RecruitmentService {
         // be viewed individually either.  Uses { not: false } so legacy
         // rows with null isActive are treated as active.
         isActive: { not: false },
+        // When visibleOnly is set, only return educators who opted into
+        // the candidate pool.  This prevents foundation users from viewing
+        // profiles of educators who removed themselves from the pool
+        // (e.g. via a previously bookmarked URL).
+        ...(options?.visibleOnly ? { candidatePoolVisible: true } : {}),
       },
       include: {
         avatarAsset: true,

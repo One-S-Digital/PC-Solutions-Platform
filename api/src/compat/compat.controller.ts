@@ -328,10 +328,18 @@ export class CompatController {
 
   @Get('candidates')
   @Public()
-  async getCandidates() {
+  async getCandidates(@Query('includeHidden') includeHidden?: string) {
     try {
+      // By default only return educators who opted into the candidate pool.
+      // The admin app passes ?includeHidden=true to see all educators for
+      // management purposes (the admin Candidates page shows a "Pool" column).
+      const showAll = includeHidden === 'true';
       const candidates = await this.prisma.user.findMany({
-        where: { role: UserRole.EDUCATOR, isActive: { not: false } },
+        where: {
+          role: UserRole.EDUCATOR,
+          isActive: { not: false },
+          ...(!showAll ? { candidatePoolVisible: true } : {}),
+        },
         orderBy: { createdAt: 'desc' },
         take: 100,
         include: {

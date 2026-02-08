@@ -403,7 +403,7 @@ export const apiService = {
   deleteJobListing: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/compat/job-listings/${id}`),
 
   // Candidates
-  getCandidates: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Candidate[]>>('/compat/candidates'),
+  getCandidates: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Candidate[]>>('/compat/candidates?includeHidden=true'),
   createCandidate: (apiClient: AxiosInstance, candidateData: {
     firstName: string;
     lastName: string;
