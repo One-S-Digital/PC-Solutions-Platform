@@ -1206,6 +1206,7 @@ export class CrawlerService {
       );
 
       if (!response.ok) {
+        await this.disposeResponse(response);
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
@@ -1299,12 +1300,14 @@ export class CrawlerService {
       );
 
       if (!response.ok) {
+        await this.disposeResponse(response);
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
       // Content-length validation to prevent memory exhaustion
       const contentLength = response.headers.get('content-length');
       if (contentLength && parseInt(contentLength, 10) > MAX_FILE_SIZE_BYTES) {
+        await this.disposeResponse(response);
         throw new Error(`File size (${contentLength} bytes) exceeds maximum allowed (${MAX_FILE_SIZE_BYTES} bytes)`);
       }
 
