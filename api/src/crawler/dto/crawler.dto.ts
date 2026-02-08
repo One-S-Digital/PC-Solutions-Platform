@@ -13,6 +13,16 @@ export enum RenderType {
   DYNAMIC = 'dynamic',
 }
 
+export enum SchedulerMode {
+  MANUAL = 'manual',
+  AUTOMATIC = 'automatic',
+}
+
+export class UpdateSchedulerModeDto {
+  @IsEnum(SchedulerMode)
+  mode!: SchedulerMode;
+}
+
 export class CreateSourceDto {
   @IsInt()
   cantonId!: number;

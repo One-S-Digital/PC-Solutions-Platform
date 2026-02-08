@@ -1,17 +1,21 @@
 import React from 'react';
 import { NavLink, Route, Routes, Navigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Activity, CheckCircle2, XCircle } from 'lucide-react';
+import { Activity, CheckCircle2, XCircle, Repeat } from 'lucide-react';
 
 import { useApiClient } from '../services/api';
 import CantonsPage from './Cantons';
 import CantonDetailPage from './CantonDetail';
 import PolicyReviewPage from './PolicyReview';
 
+type SchedulerMode = 'manual' | 'automatic';
+
 type CrawlerHealth = {
   enabled?: boolean;
   schedulerEnabled?: boolean;
+  schedulerEnvEnabled?: boolean;
+  schedulerMode?: SchedulerMode;
   totalSources: number;
   activeSources: number;
   failedSources: number;
@@ -21,6 +25,7 @@ type CrawlerHealth = {
 export default function PolicyCrawlerPage() {
   const { t } = useTranslation(['admin', 'common']);
   const apiClient = useApiClient();
+  const queryClient = useQueryClient();
 
   const { data: healthResp, isLoading } = useQuery({
     queryKey: ['policy-crawler-health'],
@@ -32,6 +37,23 @@ export default function PolicyCrawlerPage() {
 
   const health: CrawlerHealth | null = (healthResp?.data ?? null) as any;
   const enabled = Boolean(health?.enabled);
+  const schedulerMode: SchedulerMode = (health?.schedulerMode as SchedulerMode) || (health?.schedulerEnabled ? 'automatic' : 'manual');
+  const schedulerEnvEnabled = (health?.schedulerEnvEnabled ?? false) as boolean;
+  const canToggleScheduler = Boolean(apiClient) && schedulerEnvEnabled;
+
+  const toggleSchedulerMutation = useMutation({
+    mutationFn: async (mode: SchedulerMode) => apiClient.patch('/admin/crawler/scheduler', { mode }),
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['policy-crawler-health'] }),
+        queryClient.invalidateQueries({ queryKey: ['dashboard-policy-crawler-health'] }),
+      ]);
+    },
+    onError: (e: any) => {
+      console.error('Failed to update crawler scheduler mode:', e);
+      alert(t('admin:policyCrawler.scheduler.updateFailed', 'Failed to update crawler scheduler mode.'));
+    },
+  });
 
   return (
     <div className="p-6 space-y-4">
@@ -45,25 +67,75 @@ export default function PolicyCrawlerPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2">
-          <Activity className="h-4 w-4 text-gray-400" />
-          {isLoading ? (
-            <span className="text-sm text-gray-600">{t('common:loading', 'Loading...')}</span>
-          ) : enabled ? (
-            <>
-              <CheckCircle2 className="h-4 w-4 text-green-600" />
-              <span className="text-sm font-medium text-green-700">
-                {t('admin:policyCrawler.status.enabled', 'Enabled')}
-              </span>
-            </>
-          ) : (
-            <>
-              <XCircle className="h-4 w-4 text-red-600" />
-              <span className="text-sm font-medium text-red-700">
-                {t('admin:policyCrawler.status.disabled', 'Disabled')}
-              </span>
-            </>
-          )}
+        <div className="flex flex-col items-end gap-2">
+          <div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2">
+            <Activity className="h-4 w-4 text-gray-400" />
+            {isLoading ? (
+              <span className="text-sm text-gray-600">{t('common:loading', 'Loading...')}</span>
+            ) : enabled ? (
+              <>
+                <CheckCircle2 className="h-4 w-4 text-green-600" />
+                <span className="text-sm font-medium text-green-700">
+                  {t('admin:policyCrawler.status.enabled', 'Enabled')}
+                </span>
+              </>
+            ) : (
+              <>
+                <XCircle className="h-4 w-4 text-red-600" />
+                <span className="text-sm font-medium text-red-700">
+                  {t('admin:policyCrawler.status.disabled', 'Disabled')}
+                </span>
+              </>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2">
+              <Repeat className="h-4 w-4 text-gray-400" />
+              {!schedulerEnvEnabled ? (
+                <span className="text-sm font-medium text-gray-700">
+                  {t('admin:policyCrawler.scheduler.envDisabled', 'Scheduler disabled by environment')}
+                </span>
+              ) : schedulerMode === 'automatic' ? (
+                <span className="text-sm font-medium text-green-700">
+                  {t('admin:policyCrawler.scheduler.automatic', 'Automatic')}
+                </span>
+              ) : (
+                <span className="text-sm font-medium text-gray-700">
+                  {t('admin:policyCrawler.scheduler.manual', 'Manual')}
+                </span>
+              )}
+            </div>
+
+            <button
+              type="button"
+              className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-50 disabled:opacity-60 disabled:cursor-not-allowed"
+              disabled={!canToggleScheduler || toggleSchedulerMutation.isPending || isLoading}
+              onClick={() => {
+                const next: SchedulerMode = schedulerMode === 'automatic' ? 'manual' : 'automatic';
+                if (next === 'automatic') {
+                  const ok = window.confirm(
+                    t(
+                      'admin:policyCrawler.scheduler.confirmEnable',
+                      'Enable automatic scheduled crawls (runs daily at 3AM). Continue?',
+                    ),
+                  );
+                  if (!ok) return;
+                }
+                toggleSchedulerMutation.mutate(next);
+              }}
+              title={t(
+                'admin:policyCrawler.scheduler.toggleHelp',
+                'Switch between manual (no cron) and automatic (scheduled at 3AM) mode',
+              )}
+            >
+              {toggleSchedulerMutation.isPending
+                ? t('common:loading', 'Loading...')
+                : schedulerMode === 'automatic'
+                  ? t('admin:policyCrawler.scheduler.setManual', 'Set manual')
+                  : t('admin:policyCrawler.scheduler.setAutomatic', 'Set automatic')}
+            </button>
+          </div>
         </div>
       </div>
 

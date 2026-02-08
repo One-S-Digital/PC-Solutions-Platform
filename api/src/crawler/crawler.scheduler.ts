@@ -2,13 +2,14 @@ import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
 import { CrawlerService } from './crawler.service';
+import { CrawlerSettingsService } from './crawler-settings.service';
 
 @Injectable()
 export class CrawlerScheduler implements OnModuleInit {
   private readonly logger = new Logger(CrawlerScheduler.name);
   private isRunning = false;
 
-  private isSchedulerEnabled(): boolean {
+  private isSchedulerEnvEnabled(): boolean {
     return process.env.CRAWLER_SCHEDULER_ENABLED === 'true';
   }
 
@@ -19,6 +20,7 @@ export class CrawlerScheduler implements OnModuleInit {
   constructor(
     private prisma: PrismaService,
     private crawler: CrawlerService,
+    private crawlerSettings: CrawlerSettingsService,
   ) {}
 
   async onModuleInit() {
@@ -28,8 +30,13 @@ export class CrawlerScheduler implements OnModuleInit {
   // Run every day at 3 AM
   @Cron(CronExpression.EVERY_DAY_AT_3AM)
   async runScheduledCrawls() {
-    if (!this.isCrawlerEnabled() || !this.isSchedulerEnabled()) {
+    if (!this.isCrawlerEnabled() || !this.isSchedulerEnvEnabled()) {
       // Keep this fast/no-op by default to avoid surprising work on Render.
+      return;
+    }
+
+    const mode = await this.crawlerSettings.getSchedulerMode();
+    if (mode !== 'automatic') {
       return;
     }
 
@@ -61,7 +68,11 @@ export class CrawlerScheduler implements OnModuleInit {
         try {
           this.logger.log(`Crawling source: ${source.label} (ID: ${source.id})`);
           const results = await this.crawler.crawlSource(source.id);
-          this.logger.log(`Source ${source.id} results: ${JSON.stringify(results)}`);
+          const summary =
+            typeof results === 'object' && results
+              ? `created=${(results as any).created ?? '—'}, updated=${(results as any).updated ?? '—'}, unchanged=${(results as any).unchanged ?? '—'}, skipped=${(results as any).skipped ?? '—'}, errors=${Array.isArray((results as any).errors) ? (results as any).errors.length : '—'}`
+              : String(results);
+          this.logger.log(`Source ${source.id} crawl finished: ${summary}`);
         } catch (error) {
           this.logger.error(`Failed to crawl source ${source.id}: ${error.message}`);
         }
@@ -90,7 +101,12 @@ export class CrawlerScheduler implements OnModuleInit {
   // Check for stale sources daily
   @Cron(CronExpression.EVERY_DAY_AT_6AM)
   async checkStaleSources() {
-    if (!this.isCrawlerEnabled() || !this.isSchedulerEnabled()) {
+    if (!this.isCrawlerEnabled() || !this.isSchedulerEnvEnabled()) {
+      return;
+    }
+
+    const mode = await this.crawlerSettings.getSchedulerMode();
+    if (mode !== 'automatic') {
       return;
     }
 
