@@ -194,12 +194,16 @@ const transformCandidate = (data: any): CandidateProfile => {
     ...(data.region ? [data.region] : []),
   ];
 
-  const workExperienceItems = parseJsonArray<WorkExperienceItem>(data.workExperience);
-  const educationItems = parseJsonArray<EducationItem>(data.education);
+  const workExperienceItems = Array.isArray(data.workExperienceItems)
+    ? (data.workExperienceItems as WorkExperienceItem[])
+    : parseJsonArray<WorkExperienceItem>(data.workExperience);
+  const educationItems = Array.isArray(data.educationItems)
+    ? (data.educationItems as EducationItem[])
+    : parseJsonArray<EducationItem>(data.education);
   const rawWorkExperience = typeof data.workExperience === 'string' ? data.workExperience : undefined;
   const rawEducation = typeof data.education === 'string' ? data.education : undefined;
 
-  const certifications = normalizeCertifications(data.certifications);
+  const certifications = normalizeCertifications(data.certificationItems ?? data.certifications);
   const documents = normalizeDocuments(data.documents, data.cvUrl);
 
   return {

@@ -25,6 +25,9 @@ interface EducatorProfileData {
   workExperience: string;
   education: string;
   certifications: string[];
+  workExperienceItems?: WorkExperienceItem[];
+  educationItems?: EducationItem[];
+  certificationItems?: CertificationItem[];
   skills: string[];
   availability: string;
   cvUrl: string;
@@ -126,6 +129,9 @@ const EducatorProfilePage: React.FC = () => {
           workExperience: data.workExperience || '',
           education: data.education || '',
           certifications: Array.isArray(data.certifications) ? data.certifications : [],
+          workExperienceItems: Array.isArray(data.workExperienceItems) ? data.workExperienceItems : [],
+          educationItems: Array.isArray(data.educationItems) ? data.educationItems : [],
+          certificationItems: Array.isArray(data.certificationItems) ? data.certificationItems : [],
           skills: Array.isArray(data.skills) ? data.skills : [],
           availability: data.availability || '',
           cvUrl: data.cvUrl || '',
@@ -148,6 +154,9 @@ const EducatorProfilePage: React.FC = () => {
           workExperience: '',
           education: '',
           certifications: [],
+          workExperienceItems: [],
+          educationItems: [],
+          certificationItems: [],
           skills: [],
           availability: '',
           cvUrl: '',
@@ -362,8 +371,14 @@ const EducatorProfilePage: React.FC = () => {
     );
   }
 
-  const workExperienceItems = parseWorkExperience(profile.workExperience);
-  const educationItems = parseEducation(profile.education);
+  const workExperienceItems =
+    profile.workExperienceItems && profile.workExperienceItems.length > 0
+      ? profile.workExperienceItems
+      : parseWorkExperience(profile.workExperience);
+  const educationItems =
+    profile.educationItems && profile.educationItems.length > 0
+      ? profile.educationItems
+      : parseEducation(profile.education);
 
   const fullName = `${profile.firstName} ${profile.lastName}`.trim() || t('educatorProfilePage.unnamed', 'Unnamed Educator');
   const avatarUrl = profile.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=48CFAE&color=fff&size=128`;

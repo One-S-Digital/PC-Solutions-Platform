@@ -1,5 +1,5 @@
 import { apiService, ApiResponse } from './api';
-import { User } from '../types';
+import { User, WorkExperienceItem, EducationItem, CertificationItem } from '../types';
 import { API_ENDPOINTS } from './api-endpoints';
 
 export interface UserUpdateData {
@@ -9,6 +9,9 @@ export interface UserUpdateData {
   workExperience?: string;
   education?: string;
   certifications?: string[];
+  workExperienceItems?: WorkExperienceItem[];
+  educationItems?: EducationItem[];
+  certificationItems?: CertificationItem[];
   skills?: string[];
   availability?: string;
   cvUrl?: string;

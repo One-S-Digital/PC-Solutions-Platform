@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../contexts/AppContext';
 import { useNotifications } from '../contexts/NotificationContext';
 import { useAuthenticatedApi } from '../hooks/useAuthenticatedApi';
-import { UserRole, SettingsFormData } from '../types';
+import { UserRole, SettingsFormData, WorkExperienceItem, EducationItem, CertificationItem } from '../types';
 import { useTranslation } from 'react-i18next';
 import FoundationProfileForm from '../components/profile/edit/FoundationProfileForm';
 import EducatorProfileForm from '../components/profile/edit/EducatorProfileForm';
@@ -44,6 +44,50 @@ const parseAvailabilitySettings = (
 
   return createEmptyAvailabilitySettings();
 };
+
+const createTempId = (prefix: string) =>
+  `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
+const splitLines = (value: string) =>
+  value
+    .split(/\r?\n|- /g)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+const buildFallbackWorkExperienceItems = (value: string): WorkExperienceItem[] => {
+  if (!value || !value.trim()) return [];
+  return [
+    {
+      id: createTempId('legacy-work'),
+      jobTitle: '',
+      institutionName: '',
+      startDate: '',
+      endDate: '',
+      descriptionPoints: splitLines(value),
+    },
+  ];
+};
+
+const buildFallbackEducationItems = (value: string): EducationItem[] => {
+  if (!value || !value.trim()) return [];
+  return [
+    {
+      id: createTempId('legacy-edu'),
+      degree: '',
+      institutionName: '',
+      graduationYear: '',
+      description: value.trim(),
+    },
+  ];
+};
+
+const buildCertificationItemsFromNames = (names: string[]): CertificationItem[] =>
+  names.map((name, index) => ({
+    id: `cert-${index}-${Date.now()}`,
+    name,
+    issuingOrganization: '',
+    issueDate: '',
+  }));
 
 const ProfileEditPage: React.FC = () => {
   const { t } = useTranslation(['common', 'settings', 'dashboard']);
@@ -154,6 +198,21 @@ const ProfileEditPage: React.FC = () => {
       } else if (currentUser.role === UserRole.EDUCATOR) {
         const response = await request<{ success: boolean; data?: any }>('/settings/educator');
         const data = response.success && response.data ? response.data : ({} as any);
+        const workExperienceItems =
+          Array.isArray(data.workExperienceItems) && data.workExperienceItems.length > 0
+            ? data.workExperienceItems
+            : buildFallbackWorkExperienceItems(data.workExperience || '');
+        const educationItems =
+          Array.isArray(data.educationItems) && data.educationItems.length > 0
+            ? data.educationItems
+            : buildFallbackEducationItems(data.education || '');
+        const certificationItems =
+          Array.isArray(data.certificationItems) && data.certificationItems.length > 0
+            ? data.certificationItems
+            : buildCertificationItemsFromNames(
+                Array.isArray(data.certifications) ? data.certifications : [],
+              );
+
         roleSettings = {
           firstName: data.firstName || currentUser.firstName || '',
           lastName: data.lastName || currentUser.lastName || '',
@@ -167,6 +226,9 @@ const ProfileEditPage: React.FC = () => {
           workExperience: data.workExperience || '',
           education: data.education || '',
           certifications: Array.isArray(data.certifications) ? data.certifications : [],
+          workExperienceItems,
+          educationItems,
+          certificationItems,
           skills: Array.isArray(data.skills) ? data.skills : [],
           availability: data.availability || '',
           availabilitySettings: data.availabilitySettings,
@@ -294,6 +356,15 @@ const ProfileEditPage: React.FC = () => {
           }),
         });
       } else if (currentUser.role === UserRole.EDUCATOR) {
+        const certificationItems = Array.isArray(payload.certificationItems)
+          ? payload.certificationItems
+          : [];
+        const certificationNames =
+          certificationItems.length > 0
+            ? certificationItems.map((item: any) => item?.name).filter(Boolean)
+            : Array.isArray(payload.certifications)
+              ? payload.certifications
+              : [];
         const educatorPayload: Record<string, any> = {
           firstName: payload.firstName || '',
           lastName: payload.lastName || '',
@@ -306,7 +377,10 @@ const ProfileEditPage: React.FC = () => {
           cities: Array.isArray(payload.cities) ? payload.cities : [],
           workExperience: payload.workExperience || '',
           education: payload.education || '',
-          certifications: Array.isArray(payload.certifications) ? payload.certifications : [],
+          certifications: certificationNames,
+          workExperienceItems: Array.isArray(payload.workExperienceItems) ? payload.workExperienceItems : [],
+          educationItems: Array.isArray(payload.educationItems) ? payload.educationItems : [],
+          certificationItems,
           skills: Array.isArray(payload.skills) ? payload.skills : [],
           availability: payload.availability || '',
           cvUrl: payload.cvUrl || '',

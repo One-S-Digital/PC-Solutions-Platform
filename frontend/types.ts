@@ -32,6 +32,9 @@ export interface User {
   workExperience?: string;
   education?: string;
   certifications?: string[];
+  workExperienceItems?: WorkExperienceItem[];
+  educationItems?: EducationItem[];
+  certificationItems?: CertificationItem[];
   skills?: string[];
   availability?: string;
   cvUrl?: string;
@@ -929,6 +932,9 @@ interface BaseSettings {
     workExperience?: string;
     education?: string;
     certifications?: string[];
+    workExperienceItems?: WorkExperienceItem[];
+    educationItems?: EducationItem[];
+    certificationItems?: CertificationItem[];
     skills?: string[];
     availability?: string; // Legacy: simple text availability
     availabilitySettings?: EducatorAvailabilitySettings; // New: structured availability schedule
