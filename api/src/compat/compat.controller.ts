@@ -57,10 +57,13 @@ export class CompatController {
    * Build the marketplace visibility condition for organizations.
    * An organization is visible if it has an active subscription linked EITHER:
    * 1. Directly to the organization (via organizationId), OR
-   * 2. Through a member user (via userId -> UserOrganization -> User -> Subscription)
+   * 2. Through an ACTIVE member user (via userId -> UserOrganization -> User -> Subscription)
    * 
    * This handles both new subscriptions (with organizationId) and legacy subscriptions
    * (with only userId).
+   * 
+   * Note: Option 2 requires the member user to be active (isActive: true).
+   * An inactive user's subscription should not grant marketplace visibility.
    */
   private marketplaceVisibilityWhere(now: Date): Prisma.OrganizationWhereInput {
     const activeSubCondition = this.marketplaceActiveSubscriptionWhere(now);
@@ -73,11 +76,14 @@ export class CompatController {
             some: activeSubCondition,
           },
         },
-        // Option 2: Subscription linked through a member user
+        // Option 2: Subscription linked through an ACTIVE member user.
+        // Use { not: false } so legacy rows with null isActive are
+        // treated as active, consistent with the detail endpoint.
         {
           members: {
             some: {
               user: {
+                isActive: { not: false },
                 mainSubscriptions: {
                   some: activeSubCondition,
                 },
@@ -325,7 +331,7 @@ export class CompatController {
   async getCandidates() {
     try {
       const candidates = await this.prisma.user.findMany({
-        where: { role: UserRole.EDUCATOR },
+        where: { role: UserRole.EDUCATOR, isActive: { not: false } },
         orderBy: { createdAt: 'desc' },
         take: 100,
         include: {
@@ -443,7 +449,26 @@ export class CompatController {
   @Public()
   async getUsers() {
     try {
-      const users = await this.prisma.user.findMany({ orderBy: { createdAt: 'desc' }, take: 50 });
+      const users = await this.prisma.user.findMany({
+        // Use { not: false } (not strict true) so legacy rows with
+        // null isActive are treated as active, consistent with every
+        // other query in this file.
+        where: { isActive: { not: false } },
+        orderBy: { createdAt: 'desc' },
+        take: 50,
+        // Restrict fields returned on this public endpoint to avoid
+        // exposing sensitive data (email, phone, stripeCustomerId, etc.)
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          role: true,
+          createdAt: true,
+          shortBio: true,
+          skills: true,
+          availability: true,
+        },
+      });
       return { success: true, message: 'OK', data: users, timestamp: new Date().toISOString() };
     } catch (error) {
       return { success: false, message: 'Failed', error: String((error as Error).message || error), timestamp: new Date().toISOString() };
@@ -498,6 +523,32 @@ export class CompatController {
       if (isActive !== undefined) {
         where.isActive = isActive === 'true';
       }
+
+      // Defense in depth: also exclude organizations whose owner users are ALL inactive.
+      // This ensures that even if the cascade from user deactivation to organization
+      // deactivation didn't run (e.g. for pre-existing data), the organization won't appear.
+      where.AND = [
+        ...(where.AND || []),
+        {
+          OR: [
+            // Organization has at least one active member user.
+            // Use { not: false } instead of strict true so legacy rows
+            // with null/undefined isActive are treated as active,
+            // consistent with the detail endpoint's !== false check.
+            {
+              members: {
+                some: {
+                  user: { isActive: { not: false } },
+                },
+              },
+            },
+            // Allow organizations without any members (e.g. admin-created)
+            {
+              members: { none: {} },
+            },
+          ],
+        },
+      ];
       
       // Search filter
       if (search) {
@@ -631,6 +682,7 @@ export class CompatController {
                   lastName: true,
                   email: true,
                   role: true,
+                  isActive: true,
                   // Include user's subscriptions to check for user-based subscriptions
                   mainSubscriptions: {
                     where: activeSubWhere,
@@ -652,10 +704,27 @@ export class CompatController {
         return { success: false, message: 'Organization not found', timestamp: new Date().toISOString() };
       }
 
-      // Check if org has valid subscription either directly or through a member user
+      // Defense in depth: hide organizations whose member users are all inactive.
+      // This is checked separately from Organization.isActive to catch pre-existing
+      // data that wasn't cascaded when a user was deactivated.
+      const hasMembers = org.members && org.members.length > 0;
+      if (hasMembers) {
+        // Use !== false (not === true) so that legacy rows with
+        // undefined/null isActive are treated as active by default.
+        const hasActiveMember = org.members.some(
+          (member) => member.user?.isActive !== false,
+        );
+        if (!hasActiveMember && !this.canBypassMarketplaceSubscriptionGate(req?.user, org.id)) {
+          return { success: false, message: 'Organization not found', timestamp: new Date().toISOString() };
+        }
+      }
+
+      // Check if org has valid subscription either directly or through an active member user.
+      // Only count subscriptions from active members to prevent inactive users'
+      // subscriptions from granting marketplace visibility on the detail endpoint.
       const hasDirectSubscription = org.subscriptions && org.subscriptions.length > 0;
       const hasUserSubscription = org.members?.some(
-        member => member.user?.mainSubscriptions && member.user.mainSubscriptions.length > 0
+        member => member.user?.isActive !== false && member.user?.mainSubscriptions && member.user.mainSubscriptions.length > 0
       );
       const hasValidSubscription = hasDirectSubscription || hasUserSubscription;
 

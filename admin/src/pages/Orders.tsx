@@ -204,51 +204,51 @@ const Orders: React.FC = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {paginatedOrders.map((order) => (
                 <tr key={order.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4">
                       <div className="flex items-center">
-                        <div className="w-10 h-10 bg-swiss-teal/10 rounded-lg flex items-center justify-center">
+                        <div className="w-10 h-10 flex-shrink-0 bg-swiss-teal/10 rounded-lg flex items-center justify-center">
                           <Package className="h-5 w-5 text-swiss-teal" />
                         </div>
-                        <div className="ml-4">
+                        <div className="ml-4 min-w-0">
                           <div className="text-sm font-medium text-gray-900">#{order.id.substring(0,8)}</div>
-                          <div className="text-sm text-gray-500">{order.supplierName}</div>
+                          <div className="text-sm text-gray-500 break-words">{order.supplierName}</div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="text-sm text-gray-900 flex items-center">
-                          <User className="h-4 w-4 mr-1" />
-                          {order.foundation?.name || t('admin:orders.labels.noEmail', 'N/A')}
+                    <td className="px-6 py-4 max-w-xs">
+                      <div className="flex items-start">
+                        <div className="text-sm text-gray-900 flex items-start">
+                          <User className="h-4 w-4 mr-1 mt-0.5 flex-shrink-0" />
+                          <span className="break-words">{order.foundation?.name || t('admin:orders.labels.noEmail', 'N/A')}</span>
                         </div>
                       </div>
-                      <div className="text-sm text-gray-500 flex items-center">
-                        <Building2 className="h-3 w-3 mr-1" />
-                        {order.foundationOrg?.name || t('admin:orders.labels.noEmail', 'N/A')}
+                      <div className="text-sm text-gray-500 flex items-start">
+                        <Building2 className="h-3 w-3 mr-1 mt-0.5 flex-shrink-0" />
+                        <span className="break-words">{order.foundationOrg?.name || t('admin:orders.labels.noEmail', 'N/A')}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4 max-w-xs">
                       <div className="text-sm text-gray-900">{order.itemCount} {t('admin:orders.labels.items', 'items')}</div>
-                      <div className="text-sm text-gray-500">{order.itemsPreview}</div>
+                      <div className="text-sm text-gray-500 break-words">{order.itemsPreview}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4">
                       <div className="text-sm text-gray-900 flex items-center">
-                        <DollarSign className="h-4 w-4 mr-1" />
+                        <DollarSign className="h-4 w-4 mr-1 flex-shrink-0" />
                         {new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(order.totalAmount)}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${statusColors[order.status] || 'bg-gray-100 text-gray-800'}`}>
                         {order.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4">
                       <div className="text-sm text-gray-900 flex items-center">
-                        <Calendar className="h-4 w-4 mr-1" />
+                        <Calendar className="h-4 w-4 mr-1 flex-shrink-0" />
                         {new Date(order.requestDate).toLocaleDateString()}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <td className="px-6 py-4 text-right text-sm font-medium">
                       <Menu as="div" className="relative inline-block text-left">
                         <Menu.Button className="p-2 rounded-full hover:bg-gray-100">
                           <MoreVertical className="h-4 w-4" />

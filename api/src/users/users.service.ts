@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, ConflictException, ForbiddenException, Logger, BadRequestException } from '@nestjs/common';
-import { Prisma, UserRole } from '@prisma/client';
+import { Prisma, UserRole, SubscriptionStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -63,6 +63,76 @@ export class UsersService {
     const clerkSecretKey = this.configService.get<string>('CLERK_SECRET_KEY');
     if (clerkSecretKey) {
       this.clerk = createClerkClient({ secretKey: clerkSecretKey });
+    }
+  }
+
+  /** Subscription statuses that represent an "in-use" subscription. */
+  private static readonly LIVE_SUB_STATUSES = [
+    SubscriptionStatus.ACTIVE,
+    SubscriptionStatus.TRIAL,
+    SubscriptionStatus.GRACE_PERIOD,
+    SubscriptionStatus.PAST_DUE,
+  ];
+
+  /**
+   * Cascade deactivation to a user's organizations and subscriptions.
+   * Shared by the single-user `update()` (INACTIVE path) and `remove()` (soft-delete).
+   *
+   * Runs inside the caller-provided transaction client (`tx`).
+   */
+  private async cascadeUserDeactivation(
+    tx: Parameters<Parameters<PrismaService['$transaction']>[0]>[0],
+    profileUserId: string,
+    orgIds: string[],
+    cancellationReason: string,
+    logPrefix: string,
+    entityId: string,
+  ) {
+    // Deactivate related organizations
+    if (orgIds.length > 0) {
+      const orgDeactivateResult = await tx.organization.updateMany({
+        where: { id: { in: orgIds } },
+        data: { isActive: false },
+      });
+      this.logger.log(
+        `🏢 [${logPrefix}] Cascaded deactivation to ${orgDeactivateResult.count} organization(s) for user ${entityId}`,
+      );
+
+      // Cancel org-based subscriptions
+      const orgSubResult = await tx.subscription.updateMany({
+        where: {
+          organizationId: { in: orgIds },
+          status: { in: UsersService.LIVE_SUB_STATUSES },
+        },
+        data: {
+          status: SubscriptionStatus.CANCELLED,
+          canceledAt: new Date(),
+          cancellationReason,
+        },
+      });
+      if (orgSubResult.count > 0) {
+        this.logger.log(
+          `💳 [${logPrefix}] Cancelled ${orgSubResult.count} organization subscription(s) for user ${entityId}`,
+        );
+      }
+    }
+
+    // Cancel user-based subscriptions
+    const userSubResult = await tx.subscription.updateMany({
+      where: {
+        userId: profileUserId,
+        status: { in: UsersService.LIVE_SUB_STATUSES },
+      },
+      data: {
+        status: SubscriptionStatus.CANCELLED,
+        canceledAt: new Date(),
+        cancellationReason,
+      },
+    });
+    if (userSubResult.count > 0) {
+      this.logger.log(
+        `💳 [${logPrefix}] Cancelled ${userSubResult.count} user subscription(s) for user ${entityId}`,
+      );
     }
   }
 
@@ -1277,6 +1347,53 @@ export class UsersService {
           } else {
             userProfile = existingUser;
           }
+
+          // Cascade user active status to their organizations and subscriptions.
+          // When a user is deactivated, their organizations should also be hidden
+          // from the frontend so inactive users' profiles don't appear in listings.
+          // Their active subscriptions should also be suspended so the subscription
+          // status doesn't create a visibility loophole in marketplace gates.
+          if (updateUserDto.status !== undefined && existingUser) {
+            const userOrgLinks = await tx.userOrganization.findMany({
+              where: { userId: existingUser.id },
+              select: { organizationId: true },
+            });
+            const orgIds = userOrgLinks.map((link) => link.organizationId);
+
+            if (updateUserDto.status === 'INACTIVE') {
+              // cascadeUserDeactivation handles org deactivation + subscription cancellation
+              await this.cascadeUserDeactivation(
+                tx, existingUser.id, orgIds,
+                'User account deactivated by admin', 'UPDATE', id,
+              );
+            } else if (updateUserDto.status === 'ACTIVE' && orgIds.length > 0) {
+              // Only reactivate orgs where ALL member users are now active.
+              // This prevents blindly reactivating an org that another inactive
+              // member originally caused to be deactivated.
+              // Subscriptions are NOT auto-restored — an admin must manually
+              // re-activate them to prevent accidental billing issues.
+              const orgsWithInactiveMembers = await tx.userOrganization.findMany({
+                where: {
+                  organizationId: { in: orgIds },
+                  user: { isActive: false },
+                },
+                select: { organizationId: true },
+              });
+              const blockedOrgIds = new Set(orgsWithInactiveMembers.map((l) => l.organizationId));
+              const safeToReactivate = orgIds.filter((oid) => !blockedOrgIds.has(oid));
+
+              if (safeToReactivate.length > 0) {
+                const orgActivateResult = await tx.organization.updateMany({
+                  where: { id: { in: safeToReactivate } },
+                  data: { isActive: true },
+                });
+                this.logger.log(
+                  `🏢 [UPDATE] Cascaded user reactivation to ${orgActivateResult.count} organization(s) for user ${id}` +
+                    (blockedOrgIds.size > 0 ? ` (skipped ${blockedOrgIds.size} with other inactive members)` : ''),
+                );
+              }
+            }
+          }
         }
       }
 
@@ -1417,8 +1534,9 @@ export class UsersService {
     const updatedProfile = await this.prisma.$transaction(async (tx) => {
       const profile = await tx.user.findUnique({ where: { clerkId: appUser.clerkId } });
 
+      let result;
       if (profile) {
-        return tx.user.update({
+        result = await tx.user.update({
           where: { id: profile.id },
           data: {
             isActive: false,
@@ -1427,20 +1545,35 @@ export class UsersService {
             deactivatedReasonText: 'User suspended by admin',
           },
         });
+      } else {
+        // Ensure there is a profile row to enforce suspension in ClerkAuthGuard.
+        result = await tx.user.create({
+          data: {
+            clerkId: appUser.clerkId,
+            email: appUser.email,
+            role: appUser.role,
+            isActive: false,
+            deactivatedAt: now,
+            deactivatedReasonCode: 'ADMIN_SUSPENDED',
+            deactivatedReasonText: 'User suspended by admin',
+          },
+        });
       }
 
-      // Ensure there is a profile row to enforce suspension in ClerkAuthGuard.
-      return tx.user.create({
-        data: {
-          clerkId: appUser.clerkId,
-          email: appUser.email,
-          role: appUser.role,
-          isActive: false,
-          deactivatedAt: now,
-          deactivatedReasonCode: 'ADMIN_SUSPENDED',
-          deactivatedReasonText: 'User suspended by admin',
-        },
+      // Cascade suspension to organizations and subscriptions
+      const profileId = result.id;
+      const userOrgLinks = await tx.userOrganization.findMany({
+        where: { userId: profileId },
+        select: { organizationId: true },
       });
+      const orgIds = userOrgLinks.map((link) => link.organizationId);
+
+      await this.cascadeUserDeactivation(
+        tx, profileId, orgIds,
+        'User account suspended by admin', 'REMOVE', id,
+      );
+
+      return result;
     });
 
     // Return in User format for compatibility

@@ -188,7 +188,7 @@ const ParentLeads: React.FC = () => {
                 const displayEmail = lead.parent?.email || lead.contactEmail || t('admin:parentLeads.labels.noEmail', 'N/A')
                 return (
                 <tr key={lead.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4">
                     <div className="flex items-center">
                         <div className="h-10 w-10 flex-shrink-0">
                         <div className="h-10 w-10 rounded-full bg-swiss-teal flex items-center justify-center">
@@ -197,34 +197,34 @@ const ParentLeads: React.FC = () => {
                           </span>
                         </div>
                       </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{displayName}</div>
+                      <div className="ml-4 min-w-0">
+                        <div className="text-sm font-medium text-gray-900 break-words">{displayName}</div>
                         <div className="text-sm text-gray-500 flex items-center">
-                          <Mail className="h-3 w-3 mr-1" />
-                          {displayEmail}
+                          <Mail className="h-3 w-3 mr-1 flex-shrink-0" />
+                          <span className="break-all">{displayEmail}</span>
                         </div>
                         {lead.contactPhone && (
                         <div className="text-sm text-gray-500 flex items-center">
-                          <Phone className="h-3 w-3 mr-1" />
+                          <Phone className="h-3 w-3 mr-1 flex-shrink-0" />
                           {lead.contactPhone}
                         </div>
                         )}
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4">
                     <div className="text-sm text-gray-900 flex items-center">
-                      <Baby className="h-4 w-4 mr-1" />
+                      <Baby className="h-4 w-4 mr-1 flex-shrink-0" />
                       {lead.childAge} {t('admin:parentLeads.labels.yearsOld', 'years old')}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900 flex items-center">
-                      <MapPin className="h-4 w-4 mr-1" />
-                      {lead.canton} {lead.municipality && `- ${lead.municipality}`}
+                  <td className="px-6 py-4">
+                    <div className="text-sm text-gray-900 flex items-start">
+                      <MapPin className="h-4 w-4 mr-1 mt-0.5 flex-shrink-0" />
+                      <span className="break-words">{lead.canton} {lead.municipality && `- ${lead.municipality}`}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4">
                     <span
                       className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                         statusColors[lead.mainStatus as LeadMainStatus] || 'bg-gray-100 text-gray-800'
@@ -233,13 +233,13 @@ const ParentLeads: React.FC = () => {
                       {lead.mainStatus}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4">
                     <div className="text-sm text-gray-900 flex items-center">
-                      <Calendar className="h-4 w-4 mr-1" />
+                      <Calendar className="h-4 w-4 mr-1 flex-shrink-0" />
                       {new Date(lead.submissionDate).toLocaleDateString()}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <td className="px-6 py-4 text-right text-sm font-medium">
                     <Menu as="div" className="relative inline-block text-left">
                       <Menu.Button className="p-2 rounded-full hover:bg-gray-100">
                         <MoreVertical className="h-4 w-4" />
