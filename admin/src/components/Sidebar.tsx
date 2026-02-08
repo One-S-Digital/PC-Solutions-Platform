@@ -27,6 +27,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useSettings } from '../hooks/useSettings'
 import { useApiClient, apiService } from '../services/api'
 import { subscriptionService } from '../services/subscriptionService'
+import { getEffectiveSince, getLastVisited, isNewSince } from '../utils/notificationState'
 import { useTranslation } from 'react-i18next'
 
 interface SidebarProps {
@@ -60,12 +61,38 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
   const { settings } = useSettings()
   const { t } = useTranslation(['dashboard', 'admin', 'common'])
   const apiClient = useApiClient()
-  const recentWindowDays = 7
-  const recentFrom = useMemo(() => {
-    const date = new Date()
-    date.setDate(date.getDate() - recentWindowDays)
-    return date.toISOString()
-  }, [])
+  const isUsersPage = location.pathname.startsWith('/users')
+  const isProductsPage = location.pathname.startsWith('/products')
+  const isServicesPage = location.pathname.startsWith('/services')
+  const isSupportPage = location.pathname.startsWith('/support')
+  const isSubscriptionsPage = location.pathname.startsWith('/subscriptions')
+
+  const usersLastVisited = useMemo(
+    () => (isUsersPage ? new Date() : getLastVisited('users')),
+    [isUsersPage]
+  )
+  const productsLastVisited = useMemo(
+    () => (isProductsPage ? new Date() : getLastVisited('products')),
+    [isProductsPage]
+  )
+  const servicesLastVisited = useMemo(
+    () => (isServicesPage ? new Date() : getLastVisited('services')),
+    [isServicesPage]
+  )
+  const supportLastVisited = useMemo(
+    () => (isSupportPage ? new Date() : getLastVisited('support')),
+    [isSupportPage]
+  )
+  const subscriptionsLastVisited = useMemo(
+    () => (isSubscriptionsPage ? new Date() : getLastVisited('subscriptions')),
+    [isSubscriptionsPage]
+  )
+
+  const usersSince = useMemo(() => getEffectiveSince(usersLastVisited).toISOString(), [usersLastVisited])
+  const subscriptionsSince = useMemo(
+    () => getEffectiveSince(subscriptionsLastVisited).toISOString(),
+    [subscriptionsLastVisited]
+  )
 
   const { data: supportTicketsResponse } = useQuery({
     queryKey: ['support-ticket-notifications'],
@@ -74,9 +101,16 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
     staleTime: 30000,
   })
 
-  const { data: userStatsResponse } = useQuery({
-    queryKey: ['admin-user-stats'],
-    queryFn: () => apiService.getAdminUserStats(apiClient),
+  const { data: recentUsersResponse } = useQuery({
+    queryKey: ['sidebar-recent-users', usersSince],
+    queryFn: () =>
+      apiService.getAdminUsers(apiClient, {
+        page: 1,
+        limit: 1,
+        dateFrom: usersSince,
+        sortBy: 'createdAt',
+        sortOrder: 'desc',
+      }),
     enabled: !!apiClient,
     staleTime: 30000,
   })
@@ -96,28 +130,47 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
   })
 
   const { data: subscriptionRequestsResponse } = useQuery({
-    queryKey: ['subscription-request-notifications'],
-    queryFn: () => subscriptionService.getSubscriptionRequests(apiClient, { status: 'PENDING', page: 1, limit: 5 }),
+    queryKey: ['sidebar-subscription-request-badge', subscriptionsSince],
+    queryFn: () =>
+      subscriptionService.getSubscriptionRequests(apiClient, {
+        status: 'PENDING',
+        page: 1,
+        limit: 1,
+        dateFrom: subscriptionsSince,
+      }),
     enabled: !!apiClient,
     staleTime: 30000,
   })
 
   const { data: cancellationRequestsResponse } = useQuery({
-    queryKey: ['subscription-cancellation-request-notifications'],
-    queryFn: () => subscriptionService.getCancellationRequests(apiClient, { status: 'PENDING', page: 1, limit: 5 }),
+    queryKey: ['sidebar-subscription-cancellation-badge', subscriptionsSince],
+    queryFn: () =>
+      subscriptionService.getCancellationRequests(apiClient, {
+        status: 'PENDING',
+        page: 1,
+        limit: 1,
+        dateFrom: subscriptionsSince,
+      }),
     enabled: !!apiClient,
     staleTime: 30000,
   })
 
-  const supportCount = supportTicketsResponse?.data?.data?.length ?? 0
-  const userStats = (userStatsResponse as any)?.data?.data ?? (userStatsResponse as any)?.data ?? null
-  const recentUsersCount = userStats?.recentRegistrations ?? 0
+  const supportTickets = supportTicketsResponse?.data?.data || []
+  const supportCount = supportTickets.filter((ticket: any) =>
+    isNewSince(ticket.createdAt, supportLastVisited)
+  ).length
+
+  const recentUsersPayload = (recentUsersResponse as any)?.data?.data ?? (recentUsersResponse as any)?.data
+  const recentUsersCount = recentUsersPayload?.total ?? 0
 
   const products = productsResponse?.data?.data || []
   const services = servicesResponse?.data?.data || []
-  const recentCutoff = useMemo(() => new Date(recentFrom).getTime(), [recentFrom])
-  const recentProductsCount = products.filter((product: any) => new Date(product.createdAt).getTime() >= recentCutoff).length
-  const recentServicesCount = services.filter((service: any) => new Date(service.createdAt).getTime() >= recentCutoff).length
+  const recentProductsCount = products.filter((product: any) =>
+    isNewSince(product.createdAt, productsLastVisited)
+  ).length
+  const recentServicesCount = services.filter((service: any) =>
+    isNewSince(service.createdAt, servicesLastVisited)
+  ).length
 
   const subscriptionRequestsData = subscriptionRequestsResponse?.data?.data
   const subscriptionCount = subscriptionRequestsData?.total ?? subscriptionRequestsData?.requests?.length ?? 0

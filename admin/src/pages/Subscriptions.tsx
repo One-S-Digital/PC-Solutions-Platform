@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   CreditCard,
@@ -52,6 +52,7 @@ import { User } from '../types/api';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { useLocation } from 'react-router-dom';
+import { getEffectiveSince, getLastVisited, markVisited } from '../utils/notificationState';
 
 // Locale constant for currency formatting
 const CURRENCY_LOCALE = 'de-CH';
@@ -1942,6 +1943,12 @@ const Subscriptions: React.FC = () => {
   
   // Subscription Requests state
   const [viewMode, setViewMode] = useState<ViewMode>('subscriptions');
+  const [requestsLastVisited, setRequestsLastVisited] = useState<Date | null>(
+    () => getLastVisited('subscriptionRequests')
+  );
+  const [cancellationsLastVisited, setCancellationsLastVisited] = useState<Date | null>(
+    () => getLastVisited('subscriptionCancellations')
+  );
   const [requestStatusFilter, setRequestStatusFilter] = useState<string>('');
   const [cancellationStatusFilter, setCancellationStatusFilter] = useState<string>('');
   const [selectedRequest, setSelectedRequest] = useState<SubscriptionRequest | null>(null);
@@ -1957,6 +1964,14 @@ const Subscriptions: React.FC = () => {
   const location = useLocation();
 
   const selectedRoleFilter = selectedRole && Object.values(UserRole).includes(selectedRole as any) ? selectedRole : undefined;
+  const requestBadgeSince = useMemo(
+    () => getEffectiveSince(requestsLastVisited).toISOString(),
+    [requestsLastVisited]
+  );
+  const cancellationBadgeSince = useMemo(
+    () => getEffectiveSince(cancellationsLastVisited).toISOString(),
+    [cancellationsLastVisited]
+  );
 
   // Pagination for the user list (Subscriptions mode)
   const [userListPage, setUserListPage] = useState(1);
@@ -1977,6 +1992,19 @@ const Subscriptions: React.FC = () => {
       setViewMode(viewParam as ViewMode);
     }
   }, [location.search, viewMode]);
+
+  useEffect(() => {
+    if (viewMode === 'requests') {
+      const now = new Date();
+      markVisited('subscriptionRequests', now);
+      setRequestsLastVisited(now);
+    }
+    if (viewMode === 'cancellations') {
+      const now = new Date();
+      markVisited('subscriptionCancellations', now);
+      setCancellationsLastVisited(now);
+    }
+  }, [viewMode]);
 
   // User stats (DB) - used for role card totals
   const { data: userStatsResponse } = useQuery({
@@ -2042,6 +2070,30 @@ const Subscriptions: React.FC = () => {
     enabled: !!apiClient && viewMode === 'requests',
   });
 
+  const { data: pendingRequestsBadgeResponse } = useQuery({
+    queryKey: ['subscription-requests-badge', requestBadgeSince, selectedRoleFilter, 'PENDING'],
+    queryFn: () =>
+      subscriptionService.getSubscriptionRequests(apiClient, {
+        status: 'PENDING',
+        role: selectedRoleFilter || undefined,
+        limit: 1,
+        dateFrom: requestBadgeSince,
+      }),
+    enabled: !!apiClient,
+  });
+
+  const { data: underReviewRequestsBadgeResponse } = useQuery({
+    queryKey: ['subscription-requests-badge', requestBadgeSince, selectedRoleFilter, 'UNDER_REVIEW'],
+    queryFn: () =>
+      subscriptionService.getSubscriptionRequests(apiClient, {
+        status: 'UNDER_REVIEW',
+        role: selectedRoleFilter || undefined,
+        limit: 1,
+        dateFrom: requestBadgeSince,
+      }),
+    enabled: !!apiClient,
+  });
+
   // Fetch subscription cancellation requests
   const { data: cancellationRequestsResponse, isLoading: cancellationRequestsLoading } = useQuery({
     queryKey: ['subscription-cancellation-requests', cancellationStatusFilter, selectedRoleFilter],
@@ -2052,6 +2104,18 @@ const Subscriptions: React.FC = () => {
         limit: 100,
       }),
     enabled: !!apiClient && viewMode === 'cancellations',
+  });
+
+  const { data: cancellationBadgeResponse } = useQuery({
+    queryKey: ['subscription-cancellation-requests-badge', cancellationBadgeSince, selectedRoleFilter],
+    queryFn: () =>
+      subscriptionService.getCancellationRequests(apiClient, {
+        status: 'PENDING',
+        role: selectedRoleFilter || undefined,
+        limit: 1,
+        dateFrom: cancellationBadgeSince,
+      }),
+    enabled: !!apiClient,
   });
 
   // Fetch request analytics
@@ -2614,11 +2678,11 @@ const Subscriptions: React.FC = () => {
     setIsRequestDetailOpen(true);
   };
 
-  const pendingRequestsCount = requests.filter(
-    (r) => r.status === SubscriptionRequestStatus.PENDING || r.status === SubscriptionRequestStatus.UNDER_REVIEW
-  ).length;
+  const pendingRequestsCount =
+    (pendingRequestsBadgeResponse?.data?.data?.total ?? 0) +
+    (underReviewRequestsBadgeResponse?.data?.data?.total ?? 0);
 
-  const pendingCancellationRequestsCount = cancellationRequests.filter((r) => r.status === 'PENDING').length;
+  const pendingCancellationRequestsCount = cancellationBadgeResponse?.data?.data?.total ?? 0;
 
   // Stats cards
   const statsCards = [

@@ -7,6 +7,7 @@ import LanguageSwitcher from './design-system/LanguageSwitcher'
 import { useTranslation } from 'react-i18next'
 import { useApiClient, apiService } from '../services/api'
 import { subscriptionService } from '../services/subscriptionService'
+import { dismissNotification, getDismissedCount, isDismissed, isWithinWindow, markVisited } from '../utils/notificationState'
 
 interface HeaderProps {
   setSidebarOpen: (open: boolean) => void
@@ -19,6 +20,7 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
   const apiClient = useApiClient()
   const navigate = useNavigate()
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
+  const [dismissedVersion, setDismissedVersion] = useState(0)
   const notificationsRef = useRef<HTMLDivElement | null>(null)
   const notificationsButtonRef = useRef<HTMLButtonElement | null>(null)
   const recentWindowDays = 7
@@ -39,19 +41,12 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
     staleTime: 30000,
   })
 
-  const { data: userStatsResponse, isLoading: userStatsLoading } = useQuery({
-    queryKey: ['admin-user-stats'],
-    queryFn: () => apiService.getAdminUserStats(apiClient),
-    enabled: !!apiClient,
-    staleTime: 30000,
-  })
-
   const { data: recentUsersResponse, isLoading: usersLoading } = useQuery({
     queryKey: ['recent-user-notifications', recentFrom],
     queryFn: () =>
       apiService.getAdminUsers(apiClient, {
         page: 1,
-        limit: 5,
+        limit: 50,
         dateFrom: recentFrom,
         sortBy: 'createdAt',
         sortOrder: 'desc',
@@ -75,27 +70,53 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
   })
 
   const { data: subscriptionRequestsResponse, isLoading: requestsLoading } = useQuery({
-    queryKey: ['subscription-request-notifications'],
-    queryFn: () => subscriptionService.getSubscriptionRequests(apiClient, { status: 'PENDING', page: 1, limit: 5 }),
+    queryKey: ['subscription-request-notifications', recentFrom],
+    queryFn: () =>
+      subscriptionService.getSubscriptionRequests(apiClient, {
+        status: 'PENDING',
+        page: 1,
+        limit: 5,
+        dateFrom: recentFrom,
+      }),
     enabled: !!apiClient,
     staleTime: 30000,
   })
 
   const { data: cancellationRequestsResponse, isLoading: cancellationsLoading } = useQuery({
-    queryKey: ['subscription-cancellation-request-notifications'],
-    queryFn: () => subscriptionService.getCancellationRequests(apiClient, { status: 'PENDING', page: 1, limit: 5 }),
+    queryKey: ['subscription-cancellation-request-notifications', recentFrom],
+    queryFn: () =>
+      subscriptionService.getCancellationRequests(apiClient, {
+        status: 'PENDING',
+        page: 1,
+        limit: 5,
+        dateFrom: recentFrom,
+      }),
     enabled: !!apiClient,
     staleTime: 30000,
   })
 
   const supportTickets = useMemo(() => supportTicketsResponse?.data?.data || [], [supportTicketsResponse])
-  const supportCount = supportTickets.length
-  const supportItems = supportTickets.slice(0, 5)
+  const supportNotifications = useMemo(
+    () =>
+      supportTickets.filter(
+        (ticket: any) => isWithinWindow(ticket.createdAt) && !isDismissed('support', ticket.id)
+      ),
+    [supportTickets, dismissedVersion]
+  )
+  const supportCount = supportNotifications.length
+  const supportItems = supportNotifications.slice(0, 5)
 
-  const userStats = (userStatsResponse as any)?.data?.data ?? (userStatsResponse as any)?.data ?? null
   const recentUsersPayload = (recentUsersResponse as any)?.data?.data ?? (recentUsersResponse as any)?.data
   const recentUsers = Array.isArray(recentUsersPayload?.users) ? recentUsersPayload.users : []
-  const recentUsersCount = userStats?.recentRegistrations ?? recentUsers.length
+  const recentUsersNotifications = useMemo(
+    () =>
+      recentUsers.filter(
+        (recentUser: any) => isWithinWindow(recentUser.createdAt) && !isDismissed('users', recentUser.id)
+      ),
+    [recentUsers, dismissedVersion]
+  )
+  const recentUsersTotal = recentUsersPayload?.total ?? recentUsersNotifications.length
+  const recentUsersCount = Math.max(0, recentUsersTotal - getDismissedCount('users'))
 
   const products = useMemo(() => productsResponse?.data?.data || [], [productsResponse])
   const services = useMemo(() => servicesResponse?.data?.data || [], [servicesResponse])
@@ -108,20 +129,50 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
     () => services.filter((service: any) => new Date(service.createdAt).getTime() >= recentCutoff),
     [services, recentCutoff]
   )
-  const recentProductsCount = recentProducts.length
-  const recentServicesCount = recentServices.length
-  const recentProductItems = recentProducts.slice(0, 5)
-  const recentServiceItems = recentServices.slice(0, 5)
+  const recentProductNotifications = useMemo(
+    () =>
+      recentProducts.filter(
+        (product: any) => isWithinWindow(product.createdAt) && !isDismissed('products', product.id)
+      ),
+    [recentProducts, dismissedVersion]
+  )
+  const recentServiceNotifications = useMemo(
+    () =>
+      recentServices.filter(
+        (service: any) => isWithinWindow(service.createdAt) && !isDismissed('services', service.id)
+      ),
+    [recentServices, dismissedVersion]
+  )
+  const recentProductsCount = recentProductNotifications.length
+  const recentServicesCount = recentServiceNotifications.length
+  const recentProductItems = recentProductNotifications.slice(0, 5)
+  const recentServiceItems = recentServiceNotifications.slice(0, 5)
 
   const subscriptionRequestsData = subscriptionRequestsResponse?.data?.data
   const subscriptionRequests = subscriptionRequestsData?.requests || []
-  const subscriptionCount = subscriptionRequestsData?.total ?? subscriptionRequests.length
-  const subscriptionItems = subscriptionRequests.slice(0, 5)
+  const subscriptionNotifications = useMemo(
+    () =>
+      subscriptionRequests.filter(
+        (request: any) => isWithinWindow(request.createdAt) && !isDismissed('subscriptionRequests', request.id)
+      ),
+    [subscriptionRequests, dismissedVersion]
+  )
+  const subscriptionTotal = subscriptionRequestsData?.total ?? subscriptionNotifications.length
+  const subscriptionCount = Math.max(0, subscriptionTotal - getDismissedCount('subscriptionRequests'))
+  const subscriptionItems = subscriptionNotifications.slice(0, 5)
 
   const cancellationRequestsData = cancellationRequestsResponse?.data?.data
   const cancellationRequests = cancellationRequestsData?.requests || []
-  const cancellationCount = cancellationRequestsData?.total ?? cancellationRequests.length
-  const cancellationItems = cancellationRequests.slice(0, 5)
+  const cancellationNotifications = useMemo(
+    () =>
+      cancellationRequests.filter(
+        (request: any) => isWithinWindow(request.requestedAt) && !isDismissed('subscriptionCancellations', request.id)
+      ),
+    [cancellationRequests, dismissedVersion]
+  )
+  const cancellationTotal = cancellationRequestsData?.total ?? cancellationNotifications.length
+  const cancellationCount = Math.max(0, cancellationTotal - getDismissedCount('subscriptionCancellations'))
+  const cancellationItems = cancellationNotifications.slice(0, 5)
 
   const totalNotifications =
     supportCount +
@@ -132,7 +183,6 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
     recentServicesCount
   const isLoadingNotifications =
     supportLoading ||
-    userStatsLoading ||
     usersLoading ||
     productsLoading ||
     servicesLoading ||
@@ -271,6 +321,9 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
                             key={ticket.id}
                             type="button"
                             onClick={() => {
+                              dismissNotification('support', ticket.id)
+                              setDismissedVersion((value) => value + 1)
+                              markVisited('support')
                               navigate(`/support?ticket=${ticket.id}`)
                               setIsNotificationsOpen(false)
                             }}
@@ -293,10 +346,11 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
                     {supportCount > supportItems.length && (
                       <button
                         type="button"
-                        onClick={() => {
-                          navigate('/support')
-                          setIsNotificationsOpen(false)
-                        }}
+                            onClick={() => {
+                              markVisited('support')
+                              navigate('/support')
+                              setIsNotificationsOpen(false)
+                            }}
                         className="mt-2 text-xs text-blue-600 hover:text-blue-700"
                       >
                         {t('admin:notifications.viewAllSupport', { defaultValue: 'View all support tickets' })}
@@ -324,6 +378,9 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
                             key={recentUser.id}
                             type="button"
                             onClick={() => {
+                              dismissNotification('users', recentUser.id)
+                              setDismissedVersion((value) => value + 1)
+                              markVisited('users')
                               navigate('/users')
                               setIsNotificationsOpen(false)
                             }}
@@ -343,10 +400,11 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
                     {recentUsersCount > recentUsers.length && (
                       <button
                         type="button"
-                        onClick={() => {
-                          navigate('/users')
-                          setIsNotificationsOpen(false)
-                        }}
+                            onClick={() => {
+                              markVisited('users')
+                              navigate('/users')
+                              setIsNotificationsOpen(false)
+                            }}
                         className="mt-2 text-xs text-blue-600 hover:text-blue-700"
                       >
                         {t('admin:notifications.viewAllUsers', { defaultValue: 'View all users' })}
@@ -374,6 +432,9 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
                             key={product.id}
                             type="button"
                             onClick={() => {
+                              dismissNotification('products', product.id)
+                              setDismissedVersion((value) => value + 1)
+                              markVisited('products')
                               navigate('/products')
                               setIsNotificationsOpen(false)
                             }}
@@ -393,10 +454,11 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
                     {recentProductsCount > recentProductItems.length && (
                       <button
                         type="button"
-                        onClick={() => {
-                          navigate('/products')
-                          setIsNotificationsOpen(false)
-                        }}
+                            onClick={() => {
+                              markVisited('products')
+                              navigate('/products')
+                              setIsNotificationsOpen(false)
+                            }}
                         className="mt-2 text-xs text-blue-600 hover:text-blue-700"
                       >
                         {t('admin:notifications.viewAllProducts', { defaultValue: 'View all products' })}
@@ -424,6 +486,9 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
                             key={service.id}
                             type="button"
                             onClick={() => {
+                              dismissNotification('services', service.id)
+                              setDismissedVersion((value) => value + 1)
+                              markVisited('services')
                               navigate('/services')
                               setIsNotificationsOpen(false)
                             }}
@@ -443,10 +508,11 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
                     {recentServicesCount > recentServiceItems.length && (
                       <button
                         type="button"
-                        onClick={() => {
-                          navigate('/services')
-                          setIsNotificationsOpen(false)
-                        }}
+                            onClick={() => {
+                              markVisited('services')
+                              navigate('/services')
+                              setIsNotificationsOpen(false)
+                            }}
                         className="mt-2 text-xs text-blue-600 hover:text-blue-700"
                       >
                         {t('admin:notifications.viewAllServices', { defaultValue: 'View all services' })}
@@ -480,6 +546,10 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
                                 key={request.id}
                                 type="button"
                                 onClick={() => {
+                                  dismissNotification('subscriptionRequests', request.id)
+                                  setDismissedVersion((value) => value + 1)
+                                  markVisited('subscriptions')
+                                  markVisited('subscriptionRequests')
                                   navigate('/subscriptions?view=requests')
                                   setIsNotificationsOpen(false)
                                 }}
@@ -513,6 +583,10 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
                                 key={request.id}
                                 type="button"
                                 onClick={() => {
+                                  dismissNotification('subscriptionCancellations', request.id)
+                                  setDismissedVersion((value) => value + 1)
+                                  markVisited('subscriptions')
+                                  markVisited('subscriptionCancellations')
                                   navigate('/subscriptions?view=cancellations')
                                   setIsNotificationsOpen(false)
                                 }}
@@ -536,6 +610,7 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
                       <button
                         type="button"
                         onClick={() => {
+                          markVisited('subscriptions')
                           navigate('/subscriptions')
                           setIsNotificationsOpen(false)
                         }}
