@@ -423,6 +423,9 @@
       "notifications": "Notifications",
       "integrations": "Intégrations",
       "systemConfig": "Configuration système",
+      "designSystem": "Système de design",
+      "translations": "Traductions",
+      "systemMonitoring": "Surveillance du système",
       "branding": "Image de marque",
       "content": "Contenu",
       "general": "Général"
