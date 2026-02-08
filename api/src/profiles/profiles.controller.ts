@@ -1,7 +1,8 @@
 import { Controller, Get, Put, Post, Body, Param, UseGuards, Request, UnauthorizedException, NotFoundException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { PrismaService } from '../prisma/prisma.service';
-import { IsOptional, IsString, IsArray, IsUrl, IsInt, IsPositive, Min } from 'class-validator';
+import { IsOptional, IsString, IsArray, IsUrl, IsInt, IsPositive, Min, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -11,6 +12,18 @@ import { UsersService } from '../users/users.service';
 import { PrincipalService } from '../principal/principal.service';
 import { TranslationService } from '../translation/translation.service';
 import { FIELDS_BY_ENTITY } from '../translation/translation.config';
+import {
+  EducatorWorkExperienceItemDto,
+  EducatorEducationItemDto,
+  EducatorCertificationItemDto,
+} from '../settings/dto/educator-settings.dto';
+import {
+  formatEducationText,
+  formatWorkExperienceText,
+  normalizeCertificationItems,
+  normalizeEducationItems,
+  normalizeWorkExperienceItems,
+} from '../utils/educator-profile-items';
 
 export class UpdateProfileDto {
   @IsOptional()
@@ -37,6 +50,24 @@ export class UpdateProfileDto {
   @IsArray()
   @IsString({ each: true })
   certifications?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => EducatorWorkExperienceItemDto)
+  workExperienceItems?: EducatorWorkExperienceItemDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => EducatorEducationItemDto)
+  educationItems?: EducatorEducationItemDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => EducatorCertificationItemDto)
+  certificationItems?: EducatorCertificationItemDto[];
 
   @IsOptional()
   @IsArray()
@@ -256,6 +287,9 @@ export class ProfileController {
       where: { clerkId },
       include: {
         avatarAsset: true,
+        workExperienceItems: { orderBy: { sortOrder: 'asc' } },
+        educationItems: { orderBy: { sortOrder: 'asc' } },
+        certificationItems: { orderBy: { sortOrder: 'asc' } },
         organizations: {
           include: {
             organization: {
@@ -297,15 +331,38 @@ export class ProfileController {
 
     const userId = user.id;
 
+    const normalizedWorkExperienceItems = updateData.workExperienceItems
+      ? normalizeWorkExperienceItems(updateData.workExperienceItems)
+      : null;
+    const normalizedEducationItems = updateData.educationItems
+      ? normalizeEducationItems(updateData.educationItems)
+      : null;
+    const normalizedCertificationItems = updateData.certificationItems
+      ? normalizeCertificationItems(updateData.certificationItems)
+      : null;
+
+    const workExperienceText =
+      normalizedWorkExperienceItems !== null
+        ? formatWorkExperienceText(normalizedWorkExperienceItems)
+        : updateData.workExperience;
+    const educationText =
+      normalizedEducationItems !== null
+        ? formatEducationText(normalizedEducationItems)
+        : updateData.education;
+    const certificationNames =
+      normalizedCertificationItems !== null
+        ? normalizedCertificationItems.map((item) => item.name)
+        : updateData.certifications;
+
     const updatedUser = await this.prisma.user.update({
       where: { id: userId },
       data: {
         firstName: updateData.firstName ?? user.firstName,
         lastName: updateData.lastName ?? user.lastName,
         phoneNumber: updateData.phoneNumber ?? user.phoneNumber,
-        workExperience: updateData.workExperience ?? user.workExperience,
-        education: updateData.education ?? user.education,
-        certifications: updateData.certifications ?? user.certifications,
+        workExperience: workExperienceText ?? user.workExperience,
+        education: educationText ?? user.education,
+        certifications: certificationNames ?? user.certifications,
         skills: updateData.skills ?? user.skills,
         availability: updateData.availability ?? user.availability,
         cvUrl: updateData.cvUrl ?? user.cvUrl,
@@ -313,6 +370,56 @@ export class ProfileController {
         avatarAssetId: updateData.avatarAssetId !== undefined ? updateData.avatarAssetId : user.avatarAssetId,
       },
     });
+
+    if (normalizedWorkExperienceItems !== null) {
+      await this.prisma.educatorWorkExperience.deleteMany({ where: { userId } });
+      if (normalizedWorkExperienceItems.length > 0) {
+        await this.prisma.educatorWorkExperience.createMany({
+          data: normalizedWorkExperienceItems.map((item, index) => ({
+            userId,
+            jobTitle: item.jobTitle || 'Experience',
+            institutionName: item.institutionName || '',
+            startDate: item.startDate,
+            endDate: item.endDate,
+            descriptionPoints: item.descriptionPoints,
+            sortOrder: index,
+          })),
+        });
+      }
+    }
+
+    if (normalizedEducationItems !== null) {
+      await this.prisma.educatorEducation.deleteMany({ where: { userId } });
+      if (normalizedEducationItems.length > 0) {
+        await this.prisma.educatorEducation.createMany({
+          data: normalizedEducationItems.map((item, index) => ({
+            userId,
+            degree: item.degree || 'Education',
+            institutionName: item.institutionName || '',
+            graduationYear: item.graduationYear,
+            description: item.description,
+            sortOrder: index,
+          })),
+        });
+      }
+    }
+
+    if (normalizedCertificationItems !== null) {
+      await this.prisma.educatorCertification.deleteMany({ where: { userId } });
+      if (normalizedCertificationItems.length > 0) {
+        await this.prisma.educatorCertification.createMany({
+          data: normalizedCertificationItems.map((item, index) => ({
+            userId,
+            name: item.name,
+            issuingOrganization: item.issuingOrganization,
+            issueDate: item.issueDate,
+            expiryDate: item.expiryDate,
+            credentialUrl: item.credentialUrl,
+            sortOrder: index,
+          })),
+        });
+      }
+    }
 
     // Update user translations if shortBio was changed
     if (updateData.shortBio !== undefined) {

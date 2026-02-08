@@ -336,6 +336,9 @@ export class CompatController {
         take: 100,
         include: {
           avatarAsset: true,
+          workExperienceItems: { orderBy: { sortOrder: 'asc' } },
+          educationItems: { orderBy: { sortOrder: 'asc' } },
+          certificationItems: { orderBy: { sortOrder: 'asc' } },
         },
       });
 
@@ -361,6 +364,9 @@ export class CompatController {
         availabilityStatus: user.availability || 'Available',
         skills: user.skills,
         certifications: user.certifications,
+        workExperienceItems: user.workExperienceItems ?? [],
+        educationItems: user.educationItems ?? [],
+        certificationItems: user.certificationItems ?? [],
         shortBio: user.shortBio,
         candidatePoolVisible: user.candidatePoolVisible,
         createdAt: user.createdAt.toISOString(),

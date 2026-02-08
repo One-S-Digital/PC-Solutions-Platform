@@ -22,6 +22,13 @@ import { PrincipalService } from '../principal/principal.service';
 import { UploadService } from '../upload/upload.service';
 import { UpdateFoundationSettingsDto } from './dto/foundation-settings.dto';
 import { UpdateEducatorSettingsDto } from './dto/educator-settings.dto';
+import {
+  formatEducationText,
+  formatWorkExperienceText,
+  normalizeCertificationItems,
+  normalizeEducationItems,
+  normalizeWorkExperienceItems,
+} from '../utils/educator-profile-items';
 import { UpdateSupplierSettingsDto } from './dto/supplier-settings.dto';
 import { UpdateServiceProviderSettingsDto } from './dto/service-provider-settings.dto';
 import { UpdateParentSettingsDto } from './dto/parent-settings.dto';
@@ -363,6 +370,9 @@ export class SettingsController {
       avatarAsset: true, // Include avatar asset relation
       coverAsset: true, // Include cover asset relation
       contactInfo: true,
+      workExperienceItems: { orderBy: { sortOrder: 'asc' } },
+      educationItems: { orderBy: { sortOrder: 'asc' } },
+      certificationItems: { orderBy: { sortOrder: 'asc' } },
     });
 
     return {
@@ -378,6 +388,9 @@ export class SettingsController {
         workExperience: user.workExperience ?? '',
         education: user.education ?? '',
         certifications: user.certifications ?? [],
+        workExperienceItems: user.workExperienceItems ?? [],
+        educationItems: user.educationItems ?? [],
+        certificationItems: user.certificationItems ?? [],
         skills: user.skills ?? [],
         availability: user.availability ?? '',
         cvUrl: user.cvUrl ?? '',
@@ -422,6 +435,29 @@ export class SettingsController {
       typeof previousCvUrl === 'string' &&
       previousCvUrl.trim().length > 0;
 
+    const normalizedWorkExperienceItems = settings.workExperienceItems
+      ? normalizeWorkExperienceItems(settings.workExperienceItems)
+      : null;
+    const normalizedEducationItems = settings.educationItems
+      ? normalizeEducationItems(settings.educationItems)
+      : null;
+    const normalizedCertificationItems = settings.certificationItems
+      ? normalizeCertificationItems(settings.certificationItems)
+      : null;
+
+    const workExperienceText =
+      normalizedWorkExperienceItems !== null
+        ? formatWorkExperienceText(normalizedWorkExperienceItems)
+        : settings.workExperience;
+    const educationText =
+      normalizedEducationItems !== null
+        ? formatEducationText(normalizedEducationItems)
+        : settings.education;
+    const certificationNames =
+      normalizedCertificationItems !== null
+        ? normalizedCertificationItems.map((item) => item.name)
+        : settings.certifications;
+
     await this.prisma.$transaction(async (tx) => {
       // Validate asset ownership and kind before updating
       // Use accountId (AppUser.id) since Asset.uploadedById references AppUser
@@ -447,9 +483,9 @@ export class SettingsController {
           lastName: settings.lastName,
           email: settings.email,
           phoneNumber: settings.phoneNumber,
-          workExperience: settings.workExperience,
-          education: settings.education,
-          certifications: settings.certifications,
+          workExperience: workExperienceText,
+          education: educationText,
+          certifications: certificationNames,
           skills: settings.skills,
           availability: settings.availability,
           ...(settings.cvUrl !== undefined && { cvUrl: normalizedIncomingCvUrl }),
@@ -486,6 +522,62 @@ export class SettingsController {
           where: { id: accountId },
           data: { email: settings.email },
         });
+      }
+
+      if (normalizedWorkExperienceItems !== null) {
+        await tx.educatorWorkExperience.deleteMany({
+          where: { userId: profileId },
+        });
+        if (normalizedWorkExperienceItems.length > 0) {
+          await tx.educatorWorkExperience.createMany({
+            data: normalizedWorkExperienceItems.map((item, index) => ({
+              userId: profileId,
+              jobTitle: item.jobTitle || 'Experience',
+              institutionName: item.institutionName || '',
+              startDate: item.startDate,
+              endDate: item.endDate,
+              descriptionPoints: item.descriptionPoints,
+              sortOrder: index,
+            })),
+          });
+        }
+      }
+
+      if (normalizedEducationItems !== null) {
+        await tx.educatorEducation.deleteMany({
+          where: { userId: profileId },
+        });
+        if (normalizedEducationItems.length > 0) {
+          await tx.educatorEducation.createMany({
+            data: normalizedEducationItems.map((item, index) => ({
+              userId: profileId,
+              degree: item.degree || 'Education',
+              institutionName: item.institutionName || '',
+              graduationYear: item.graduationYear,
+              description: item.description,
+              sortOrder: index,
+            })),
+          });
+        }
+      }
+
+      if (normalizedCertificationItems !== null) {
+        await tx.educatorCertification.deleteMany({
+          where: { userId: profileId },
+        });
+        if (normalizedCertificationItems.length > 0) {
+          await tx.educatorCertification.createMany({
+            data: normalizedCertificationItems.map((item, index) => ({
+              userId: profileId,
+              name: item.name,
+              issuingOrganization: item.issuingOrganization,
+              issueDate: item.issueDate,
+              expiryDate: item.expiryDate,
+              credentialUrl: item.credentialUrl,
+              sortOrder: index,
+            })),
+          });
+        }
       }
     });
 

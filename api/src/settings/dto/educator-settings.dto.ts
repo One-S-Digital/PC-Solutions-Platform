@@ -5,10 +5,83 @@ import {
   IsObject,
   IsOptional,
   IsString,
+  IsUrl,
+  ValidateIf,
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { EducatorAvailabilitySettingsDto } from './educator-availability.dto';
+
+export class EducatorWorkExperienceItemDto {
+  @IsOptional()
+  @IsString()
+  id?: string;
+
+  @IsString()
+  jobTitle!: string;
+
+  @IsString()
+  institutionName!: string;
+
+  @IsOptional()
+  @IsString()
+  startDate?: string;
+
+  @IsOptional()
+  @IsString()
+  endDate?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  descriptionPoints?: string[];
+}
+
+export class EducatorEducationItemDto {
+  @IsOptional()
+  @IsString()
+  id?: string;
+
+  @IsString()
+  degree!: string;
+
+  @IsString()
+  institutionName!: string;
+
+  @IsOptional()
+  @IsString()
+  graduationYear?: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+}
+
+export class EducatorCertificationItemDto {
+  @IsOptional()
+  @IsString()
+  id?: string;
+
+  @IsString()
+  name!: string;
+
+  @IsOptional()
+  @IsString()
+  issuingOrganization?: string;
+
+  @IsOptional()
+  @IsString()
+  issueDate?: string;
+
+  @IsOptional()
+  @IsString()
+  expiryDate?: string;
+
+  @IsOptional()
+  @ValidateIf((value) => typeof value?.credentialUrl === 'string' && value.credentialUrl.trim().length > 0)
+  @IsUrl()
+  credentialUrl?: string;
+}
 
 export class UpdateEducatorSettingsDto {
   @IsOptional()
@@ -44,6 +117,24 @@ export class UpdateEducatorSettingsDto {
   @IsArray()
   @IsString({ each: true })
   certifications?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => EducatorWorkExperienceItemDto)
+  workExperienceItems?: EducatorWorkExperienceItemDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => EducatorEducationItemDto)
+  educationItems?: EducatorEducationItemDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => EducatorCertificationItemDto)
+  certificationItems?: EducatorCertificationItemDto[];
 
   @IsOptional()
   @IsArray()
