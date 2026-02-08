@@ -276,6 +276,17 @@ export class SupportGateway
   }
 
   /**
+   * Emit a reply deleted event to all clients in the ticket room
+   */
+  emitReplyDeleted(ticketId: string, replyId: string) {
+    this.server.to(`ticket:${ticketId}`).emit('supportTicket:replyDeleted', {
+      ticketId,
+      replyId,
+    });
+    this.logger.log(`Emitted replyDeleted for ticket ${ticketId}`);
+  }
+
+  /**
    * Emit ticket updated event (for list updates)
    */
   emitTicketUpdated(ticketId: string, ticket: any) {

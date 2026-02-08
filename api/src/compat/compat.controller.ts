@@ -106,10 +106,34 @@ export class CompatController {
 
   @Get('products')
   @Public()
-  async getProducts() {
+  async getProducts(
+    @Query('dateFrom') dateFrom?: string,
+    @Query('limit') limit?: string,
+  ) {
     try {
-      const products = await this.prisma.product.findMany({ orderBy: { createdAt: 'desc' }, take: 50 });
-      return { success: true, message: 'OK', data: products, timestamp: new Date().toISOString() };
+      const parsedLimit = limit ? Number.parseInt(limit, 10) : 50;
+      const take = Number.isFinite(parsedLimit) && parsedLimit > 0 ? parsedLimit : 50;
+      const where: Prisma.ProductWhereInput = {};
+
+      if (dateFrom) {
+        const parsedDate = new Date(dateFrom);
+        if (!Number.isNaN(parsedDate.getTime())) {
+          where.createdAt = { gte: parsedDate };
+        }
+      }
+
+      const [products, total] = await Promise.all([
+        this.prisma.product.findMany({ where, orderBy: { createdAt: 'desc' }, take }),
+        this.prisma.product.count({ where }),
+      ]);
+
+      return {
+        success: true,
+        message: 'OK',
+        data: products,
+        total,
+        timestamp: new Date().toISOString(),
+      };
     } catch (error) {
       return { success: false, message: 'Failed', error: String((error as Error).message || error), timestamp: new Date().toISOString() };
     }
@@ -117,10 +141,34 @@ export class CompatController {
 
   @Get('services')
   @Public()
-  async getServices() {
+  async getServices(
+    @Query('dateFrom') dateFrom?: string,
+    @Query('limit') limit?: string,
+  ) {
     try {
-      const services = await this.prisma.service.findMany({ orderBy: { createdAt: 'desc' }, take: 50 });
-      return { success: true, message: 'OK', data: services, timestamp: new Date().toISOString() };
+      const parsedLimit = limit ? Number.parseInt(limit, 10) : 50;
+      const take = Number.isFinite(parsedLimit) && parsedLimit > 0 ? parsedLimit : 50;
+      const where: Prisma.ServiceWhereInput = {};
+
+      if (dateFrom) {
+        const parsedDate = new Date(dateFrom);
+        if (!Number.isNaN(parsedDate.getTime())) {
+          where.createdAt = { gte: parsedDate };
+        }
+      }
+
+      const [services, total] = await Promise.all([
+        this.prisma.service.findMany({ where, orderBy: { createdAt: 'desc' }, take }),
+        this.prisma.service.count({ where }),
+      ]);
+
+      return {
+        success: true,
+        message: 'OK',
+        data: services,
+        total,
+        timestamp: new Date().toISOString(),
+      };
     } catch (error) {
       return { success: false, message: 'Failed', error: String((error as Error).message || error), timestamp: new Date().toISOString() };
     }

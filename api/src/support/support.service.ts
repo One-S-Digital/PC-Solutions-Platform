@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException, ForbiddenException, BadRequestException, Logger, Inject, Optional } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { SupportTicketResponse } from './dto/support.dto';
 import { MailgunService } from './mailgun.service';
@@ -11,13 +12,20 @@ const ALLOWED_STATUSES = ['OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED'] as const;
 @Injectable()
 export class SupportService {
   private readonly logger = new Logger(SupportService.name);
+  private readonly supportInbox: string;
 
   constructor(
     private prisma: PrismaService,
     private mailgunService: MailgunService,
     private emailTemplateService: EmailTemplateService,
+    private configService: ConfigService,
     @Optional() @Inject(SupportGateway) private supportGateway?: SupportGateway,
-  ) {}
+  ) {
+    this.supportInbox = this.configService.get<string>(
+      'SUPPORT_INBOX_EMAIL',
+      'support@procrechesolutions.com'
+    );
+  }
 
   /**
    * Create a new support ticket
@@ -250,6 +258,43 @@ export class SupportService {
   }
 
   /**
+   * Delete a ticket response (admin only)
+   */
+  async deleteResponse(
+    ticketId: string,
+    responseId: string,
+    adminUserId: string,
+  ): Promise<SupportTicketResponse> {
+    const response = await this.prisma.ticketResponse.findUnique({
+      where: { id: responseId },
+      select: { id: true, ticketId: true },
+    });
+
+    if (!response || response.ticketId !== ticketId) {
+      throw new NotFoundException(`Response with ID ${responseId} not found for ticket ${ticketId}`);
+    }
+
+    await this.prisma.ticketResponse.delete({
+      where: { id: responseId },
+    });
+
+    // Touch the ticket to update updatedAt
+    await this.prisma.supportTicket.update({
+      where: { id: ticketId },
+      data: { updatedAt: new Date() },
+    });
+
+    const updatedTicket = await this.getTicketById(ticketId, adminUserId, true);
+
+    if (this.supportGateway) {
+      this.supportGateway.emitReplyDeleted(ticketId, responseId);
+      this.supportGateway.emitTicketUpdated(ticketId, updatedTicket);
+    }
+
+    return updatedTicket;
+  }
+
+  /**
    * Update ticket status (admin only)
    */
   async updateTicketStatus(
@@ -459,12 +504,16 @@ export class SupportService {
       this.logger.error(`Failed to send confirmation email to ${user.email}: ${(error as Error).message}`);
     }
 
-    // 2. Send notification email to all admins
+    // 2. Send notification email to support team
     try {
       const adminEmails = await this.getAdminEmails();
-      
-      if (adminEmails.length === 0) {
-        this.logger.warn('No admin emails found - support team notification not sent');
+      const supportInbox = this.supportInbox;
+      const recipients = Array.from(
+        new Set([...(adminEmails || []), supportInbox].filter(Boolean))
+      );
+
+      if (recipients.length === 0) {
+        this.logger.warn('No support notification recipients found');
         return;
       }
 
@@ -486,7 +535,7 @@ export class SupportService {
       }
 
       // Send to each admin individually via Mailgun
-      const emailPromises = adminEmails.map(async (adminEmail) => {
+      const emailPromises = recipients.map(async (adminEmail) => {
         const payload = {
           ticketId: ticket.id,
           ticketSubject: ticket.subject,
@@ -524,7 +573,9 @@ export class SupportService {
 
       const results = await Promise.all(emailPromises);
       const successCount = results.filter(r => r.success).length;
-      this.logger.log(`Support team notification emails sent to ${successCount}/${adminEmails.length} admins for ticket ${ticket.id}`);
+      this.logger.log(
+        `Support team notification emails sent to ${successCount}/${recipients.length} recipients for ticket ${ticket.id}`
+      );
     } catch (error) {
       this.logger.error(`Failed to send support team notification emails: ${(error as Error).message}`);
     }
