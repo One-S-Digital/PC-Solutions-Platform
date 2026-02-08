@@ -1684,7 +1684,8 @@ export class UsersService {
     }
 
     try {
-      await this.prisma.$transaction(async (tx) => {
+      await this.prisma.$transaction(
+        async (tx) => {
         // Helper: run a deleteMany that might target a table not yet migrated.
         const safeDeleteMany = async (model: any, where: any): Promise<void> => {
           try {
@@ -1755,7 +1756,8 @@ export class UsersService {
 
           // E-learning
           await safeDeleteMany(tx.certificate, { userId: profile.id });
-          await safeDeleteMany(tx.discussionReply, { userId: profile.id });
+          // Note: DiscussionReply has onDelete: Cascade from CourseDiscussion,
+          // so deleting discussions auto-cascades to their replies.
           await safeDeleteMany(tx.courseDiscussion, { userId: profile.id });
           await safeDeleteMany(tx.courseEnrollment, { userId: profile.id });
 
@@ -1803,7 +1805,11 @@ export class UsersService {
           // Email logs (optional FK → SetNull)
           await safeUpdateMany(tx.emailLog, { userId: profile.id }, { userId: null });
 
-          // Audit logs (optional FK → SetNull)
+          // Audit logs (optional FK → SetNull).
+          // Nullifying actorId is intentional for hard-delete: the admin
+          // explicitly chose permanent removal.  The audit row itself is
+          // retained (action, timestamp, metadata) — only the actor
+          // linkage is severed so the User row can be dropped.
           await safeUpdateMany(tx.auditLog, { actorId: profile.id }, { actorId: null });
 
           // Platform settings last-updated-by (optional FK → SetNull)
@@ -1841,6 +1847,8 @@ export class UsersService {
         }
 
         if (profile) {
+          // userOrganization is a core table guaranteed to exist in every
+          // environment, so it does not need the P2021 safeDeleteMany guard.
           await tx.userOrganization.deleteMany({ where: { userId: profile.id } });
           await safeDeleteMany(tx.userContactInfo, { userId: profile.id });
           await tx.user.delete({ where: { id: profile.id } });
@@ -1850,7 +1858,12 @@ export class UsersService {
         }
 
         await tx.appUser.delete({ where: { id: appUser.id } });
-      });
+        },
+        // Force-delete performs ~35 sequential DB operations; increase
+        // the timeout well beyond Prisma's default 5 s to avoid spurious
+        // transaction timeouts on larger accounts.
+        { timeout: 30_000 },
+      );
     } catch (err: any) {
       // Log the full error so the specific FK constraint is visible in server logs.
       this.logger.error(`[HARD DELETE] Transaction failed for user ${id}`, {
@@ -1861,7 +1874,7 @@ export class UsersService {
 
       // Guard against FK races: even after a "clean" preflight, a dependent record may be
       // created before we delete, resulting in a FK constraint error. Translate to 409.
-      if (err?.code === 'P2003' || (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2003')) {
+      if (err?.code === 'P2003') {
         throw new ConflictException({
           message:
             'User cannot be hard-deleted because dependent records exist. Use soft delete, or manually purge dependent data first.',

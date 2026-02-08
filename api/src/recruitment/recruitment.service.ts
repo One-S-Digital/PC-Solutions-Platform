@@ -702,8 +702,11 @@ export class RecruitmentService {
         role: 'EDUCATOR',
         // Exclude suspended / inactive educators from matching results.
         isActive: { not: false },
+        // Only match educators who opted into the candidate pool,
+        // consistent with the findAllCandidates visibility filter.
+        candidatePoolVisible: true,
         // Add more sophisticated matching logic here
-        // For now, we'll return all active educators
+        // For now, we'll return all active, pool-visible educators
       },
       include: {
         applications: {
