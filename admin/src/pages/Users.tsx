@@ -1074,7 +1074,7 @@ const Users: React.FC = () => {
                 </tr>
               ) : users.map((user) => (
                 <tr key={user.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4">
                     <div className="flex items-center">
                       <div className="h-10 w-10 flex-shrink-0">
                         {user.avatarUrl ? (
@@ -1087,30 +1087,30 @@ const Users: React.FC = () => {
                           </div>
                         )}
                       </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{user.name || t('admin:users.labels.unknown', 'Unknown')}</div>
-                        <div className="text-sm text-gray-500">{user.email || t('admin:users.labels.noEmail', 'No email')}</div>
+                      <div className="ml-4 min-w-0">
+                        <div className="text-sm font-medium text-gray-900 break-words">{user.name || t('admin:users.labels.unknown', 'Unknown')}</div>
+                        <div className="text-sm text-gray-500 break-all">{user.email || t('admin:users.labels.noEmail', 'No email')}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${roleColors[user.role] || 'bg-gray-100 text-gray-800'}`}>
                       {user.role}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center text-sm text-gray-900">
+                  <td className="px-6 py-4 max-w-xs">
+                    <div className="flex items-start text-sm text-gray-900 break-words">
                       {user.orgName ? (
                         <>
-                          <Building2 className="h-4 w-4 mr-1 text-gray-400" />
-                          {user.orgName}
+                          <Building2 className="h-4 w-4 mr-1 mt-0.5 flex-shrink-0 text-gray-400" />
+                          <span className="break-words">{user.orgName}</span>
                         </>
                       ) : (
                         <span className="text-gray-400">{t('admin:users.labels.noOrganization', 'No organization')}</span>
                       )}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                       user.status === 'ACTIVE' 
                         ? 'bg-green-100 text-green-800'
@@ -1119,10 +1119,10 @@ const Users: React.FC = () => {
                       {user.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 text-sm text-gray-500">
                     {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : t('admin:users.labels.never', 'Never')}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <td className="px-6 py-4 text-right text-sm font-medium">
                     <Menu as="div" className="relative inline-block text-left">
                       <Menu.Button className="p-2 rounded-full hover:bg-gray-100">
                         <MoreVertical className="h-4 w-4" />
