@@ -288,10 +288,16 @@ export class UserManagementService {
         });
       }
 
-      case 'delete':
-        return this.prisma.user.deleteMany({
-          where: { id: { in: userIds } },
+      case 'delete': {
+        // Cascade cleanup before deleting user rows, otherwise orgs
+        // remain active and subscriptions become orphaned.
+        return this.prisma.$transaction(async (tx) => {
+          await this.cascadeDeactivation(tx, userIds, 'DELETE', 'User account deleted by admin');
+          return tx.user.deleteMany({
+            where: { id: { in: userIds } },
+          });
         });
+      }
 
       case 'changeRole':
         if (!newRole) {

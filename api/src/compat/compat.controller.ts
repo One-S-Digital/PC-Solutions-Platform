@@ -450,7 +450,10 @@ export class CompatController {
   async getUsers() {
     try {
       const users = await this.prisma.user.findMany({
-        where: { isActive: true },
+        // Use { not: false } (not strict true) so legacy rows with
+        // null isActive are treated as active, consistent with every
+        // other query in this file.
+        where: { isActive: { not: false } },
         orderBy: { createdAt: 'desc' },
         take: 50,
         // Restrict fields returned on this public endpoint to avoid
