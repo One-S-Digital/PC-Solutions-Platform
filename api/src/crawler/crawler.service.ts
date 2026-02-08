@@ -255,7 +255,6 @@ export class CrawlerService {
       }
       
       const current = queue.shift()!;
-      queuedUrls.delete(normalizeUrl(current.url));
       const normalizedUrl = normalizeUrl(current.url);
       
       // Skip if already visited

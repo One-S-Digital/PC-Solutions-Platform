@@ -38,7 +38,7 @@ export default function PolicyCrawlerPage() {
   const health: CrawlerHealth | null = (healthResp?.data ?? null) as any;
   const enabled = Boolean(health?.enabled);
   const schedulerMode: SchedulerMode = (health?.schedulerMode as SchedulerMode) || (health?.schedulerEnabled ? 'automatic' : 'manual');
-  const schedulerEnvEnabled = (health?.schedulerEnvEnabled ?? true) as boolean;
+  const schedulerEnvEnabled = (health?.schedulerEnvEnabled ?? false) as boolean;
   const canToggleScheduler = Boolean(apiClient) && schedulerEnvEnabled;
 
   const toggleSchedulerMutation = useMutation({
@@ -113,6 +113,15 @@ export default function PolicyCrawlerPage() {
               disabled={!canToggleScheduler || toggleSchedulerMutation.isPending || isLoading}
               onClick={() => {
                 const next: SchedulerMode = schedulerMode === 'automatic' ? 'manual' : 'automatic';
+                if (next === 'automatic') {
+                  const ok = window.confirm(
+                    t(
+                      'admin:policyCrawler.scheduler.confirmEnable',
+                      'Enable automatic scheduled crawls (runs daily at 3AM). Continue?',
+                    ),
+                  );
+                  if (!ok) return;
+                }
                 toggleSchedulerMutation.mutate(next);
               }}
               title={t(

@@ -68,7 +68,11 @@ export class CrawlerScheduler implements OnModuleInit {
         try {
           this.logger.log(`Crawling source: ${source.label} (ID: ${source.id})`);
           const results = await this.crawler.crawlSource(source.id);
-          this.logger.log(`Source ${source.id} results: ${JSON.stringify(results)}`);
+          const summary =
+            typeof results === 'object' && results
+              ? `created=${(results as any).created ?? '—'}, updated=${(results as any).updated ?? '—'}, unchanged=${(results as any).unchanged ?? '—'}, skipped=${(results as any).skipped ?? '—'}, errors=${Array.isArray((results as any).errors) ? (results as any).errors.length : '—'}`
+              : String(results);
+          this.logger.log(`Source ${source.id} crawl finished: ${summary}`);
         } catch (error) {
           this.logger.error(`Failed to crawl source ${source.id}: ${error.message}`);
         }

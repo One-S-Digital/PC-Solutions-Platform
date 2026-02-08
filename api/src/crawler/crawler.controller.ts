@@ -30,10 +30,13 @@ export class CrawlerController {
     const mode = await this.crawlerSettings.getSchedulerMode();
     const effectiveEnabled = envEnabled && mode === 'automatic' && this.isCrawlerEnabled();
     return {
-      enabled: effectiveEnabled,
-      envEnabled,
-      mode,
-      crawlerEnabled: this.isCrawlerEnabled(),
+      success: true,
+      data: {
+        enabled: effectiveEnabled,
+        envEnabled,
+        mode,
+        crawlerEnabled: this.isCrawlerEnabled(),
+      },
     };
   }
 

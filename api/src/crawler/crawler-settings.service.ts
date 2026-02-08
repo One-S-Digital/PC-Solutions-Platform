@@ -23,24 +23,19 @@ export class CrawlerSettingsService {
 
   async getSchedulerMode(): Promise<CrawlerSchedulerMode> {
     try {
-      const row = await this.prisma.systemSettings.findUnique({
+      // Use upsert to avoid races on first read.
+      const row = await this.prisma.systemSettings.upsert({
         where: { key: CrawlerSettingsService.SCHEDULER_MODE_KEY },
+        update: {},
+        create: {
+          key: CrawlerSettingsService.SCHEDULER_MODE_KEY,
+          value: 'manual',
+          description: 'Policy crawler scheduler mode (manual disables cron; automatic enables cron)',
+          category: 'crawler',
+          isEncrypted: false,
+          isPublic: false,
+        },
       });
-
-      if (!row) {
-        // Default to manual to avoid surprising background work.
-        await this.prisma.systemSettings.create({
-          data: {
-            key: CrawlerSettingsService.SCHEDULER_MODE_KEY,
-            value: 'manual',
-            description: 'Policy crawler scheduler mode (manual disables cron; automatic enables cron)',
-            category: 'crawler',
-            isEncrypted: false,
-            isPublic: false,
-          },
-        });
-        return 'manual';
-      }
 
       return this.normalizeMode(row.value);
     } catch (e: any) {

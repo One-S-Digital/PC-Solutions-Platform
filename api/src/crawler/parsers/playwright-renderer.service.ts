@@ -58,7 +58,11 @@ export class PlaywrightRendererService {
           } catch {
             // ignore
           }
-          return await route.continue();
+          try {
+            return await route.continue();
+          } catch {
+            // ignore – route may already be handled
+          }
         });
 
         await page.setExtraHTTPHeaders({
