@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { SubscriptionStatus } from '@prisma/client';
 import { UserRole } from '@workspace/types';
 import { AppLoggerService } from '../common/logger.service';
 
@@ -181,22 +182,34 @@ export class UserManagementService {
       this.logger.log(`🏢 [BULK ${label}] Cascaded deactivation to ${orgIds.length} organization(s)`);
 
       // Cancel org-based subscriptions
+      const liveStatuses = [
+        SubscriptionStatus.ACTIVE,
+        SubscriptionStatus.TRIAL,
+        SubscriptionStatus.GRACE_PERIOD,
+        SubscriptionStatus.PAST_DUE,
+      ];
       await tx.subscription.updateMany({
         where: {
           organizationId: { in: orgIds },
-          status: { in: ['ACTIVE', 'TRIAL', 'GRACE_PERIOD', 'PAST_DUE'] },
+          status: { in: liveStatuses },
         },
-        data: { status: 'CANCELLED', canceledAt: new Date(), cancellationReason },
+        data: { status: SubscriptionStatus.CANCELLED, canceledAt: new Date(), cancellationReason },
       });
     }
 
     // Cancel user-based subscriptions
+    const liveStatuses = [
+      SubscriptionStatus.ACTIVE,
+      SubscriptionStatus.TRIAL,
+      SubscriptionStatus.GRACE_PERIOD,
+      SubscriptionStatus.PAST_DUE,
+    ];
     await tx.subscription.updateMany({
       where: {
         userId: { in: userIds },
-        status: { in: ['ACTIVE', 'TRIAL', 'GRACE_PERIOD', 'PAST_DUE'] },
+        status: { in: liveStatuses },
       },
-      data: { status: 'CANCELLED', canceledAt: new Date(), cancellationReason },
+      data: { status: SubscriptionStatus.CANCELLED, canceledAt: new Date(), cancellationReason },
     });
   }
 
@@ -252,7 +265,12 @@ export class UserManagementService {
         return this.prisma.$transaction(async (tx) => {
           const result = await tx.user.updateMany({
             where: { id: { in: userIds } },
-            data: { isActive: false, deactivatedAt: new Date() },
+            data: {
+              isActive: false,
+              deactivatedAt: new Date(),
+              deactivatedReasonCode: 'ADMIN_DEACTIVATED',
+              deactivatedReasonText: 'User account deactivated by admin (bulk)',
+            },
           });
           await this.cascadeDeactivation(tx, userIds, 'DEACTIVATE', 'User account deactivated by admin');
           return result;
@@ -263,7 +281,12 @@ export class UserManagementService {
         return this.prisma.$transaction(async (tx) => {
           const result = await tx.user.updateMany({
             where: { id: { in: userIds } },
-            data: { isActive: false, deactivatedAt: new Date() },
+            data: {
+              isActive: false,
+              deactivatedAt: new Date(),
+              deactivatedReasonCode: 'ADMIN_SUSPENDED',
+              deactivatedReasonText: 'User account suspended by admin (bulk)',
+            },
           });
           await this.cascadeDeactivation(tx, userIds, 'SUSPEND', 'User account suspended by admin');
           return result;

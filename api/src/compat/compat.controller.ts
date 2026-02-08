@@ -76,12 +76,14 @@ export class CompatController {
             some: activeSubCondition,
           },
         },
-        // Option 2: Subscription linked through an ACTIVE member user
+        // Option 2: Subscription linked through an ACTIVE member user.
+        // Use { not: false } so legacy rows with null isActive are
+        // treated as active, consistent with the detail endpoint.
         {
           members: {
             some: {
               user: {
-                isActive: true,
+                isActive: { not: false },
                 mainSubscriptions: {
                   some: activeSubCondition,
                 },
@@ -451,6 +453,18 @@ export class CompatController {
         where: { isActive: true },
         orderBy: { createdAt: 'desc' },
         take: 50,
+        // Restrict fields returned on this public endpoint to avoid
+        // exposing sensitive data (email, phone, stripeCustomerId, etc.)
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          role: true,
+          createdAt: true,
+          shortBio: true,
+          skills: true,
+          availability: true,
+        },
       });
       return { success: true, message: 'OK', data: users, timestamp: new Date().toISOString() };
     } catch (error) {
@@ -514,11 +528,14 @@ export class CompatController {
         ...(where.AND || []),
         {
           OR: [
-            // Organization has at least one active member user
+            // Organization has at least one active member user.
+            // Use { not: false } instead of strict true so legacy rows
+            // with null/undefined isActive are treated as active,
+            // consistent with the detail endpoint's !== false check.
             {
               members: {
                 some: {
-                  user: { isActive: true },
+                  user: { isActive: { not: false } },
                 },
               },
             },
@@ -684,25 +701,27 @@ export class CompatController {
         return { success: false, message: 'Organization not found', timestamp: new Date().toISOString() };
       }
 
-      // Defense in depth: hide organizations whose owner users are all inactive.
+      // Defense in depth: hide organizations whose member users are all inactive.
       // This is checked separately from Organization.isActive to catch pre-existing
       // data that wasn't cascaded when a user was deactivated.
       const hasMembers = org.members && org.members.length > 0;
       if (hasMembers) {
         // Use !== false (not === true) so that legacy rows with
         // undefined/null isActive are treated as active by default.
-        const hasActiveOwner = org.members.some(
+        const hasActiveMember = org.members.some(
           (member) => member.user?.isActive !== false,
         );
-        if (!hasActiveOwner && !this.canBypassMarketplaceSubscriptionGate(req?.user, org.id)) {
+        if (!hasActiveMember && !this.canBypassMarketplaceSubscriptionGate(req?.user, org.id)) {
           return { success: false, message: 'Organization not found', timestamp: new Date().toISOString() };
         }
       }
 
-      // Check if org has valid subscription either directly or through a member user
+      // Check if org has valid subscription either directly or through an active member user.
+      // Only count subscriptions from active members to prevent inactive users'
+      // subscriptions from granting marketplace visibility on the detail endpoint.
       const hasDirectSubscription = org.subscriptions && org.subscriptions.length > 0;
       const hasUserSubscription = org.members?.some(
-        member => member.user?.mainSubscriptions && member.user.mainSubscriptions.length > 0
+        member => member.user?.isActive !== false && member.user?.mainSubscriptions && member.user.mainSubscriptions.length > 0
       );
       const hasValidSubscription = hasDirectSubscription || hasUserSubscription;
 

@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, ConflictException, ForbiddenException, Logger, BadRequestException } from '@nestjs/common';
-import { Prisma, UserRole } from '@prisma/client';
+import { Prisma, UserRole, SubscriptionStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -63,6 +63,76 @@ export class UsersService {
     const clerkSecretKey = this.configService.get<string>('CLERK_SECRET_KEY');
     if (clerkSecretKey) {
       this.clerk = createClerkClient({ secretKey: clerkSecretKey });
+    }
+  }
+
+  /** Subscription statuses that represent an "in-use" subscription. */
+  private static readonly LIVE_SUB_STATUSES = [
+    SubscriptionStatus.ACTIVE,
+    SubscriptionStatus.TRIAL,
+    SubscriptionStatus.GRACE_PERIOD,
+    SubscriptionStatus.PAST_DUE,
+  ];
+
+  /**
+   * Cascade deactivation to a user's organizations and subscriptions.
+   * Shared by the single-user `update()` (INACTIVE path) and `remove()` (soft-delete).
+   *
+   * Runs inside the caller-provided transaction client (`tx`).
+   */
+  private async cascadeUserDeactivation(
+    tx: Parameters<Parameters<PrismaService['$transaction']>[0]>[0],
+    profileUserId: string,
+    orgIds: string[],
+    cancellationReason: string,
+    logPrefix: string,
+    entityId: string,
+  ) {
+    // Deactivate related organizations
+    if (orgIds.length > 0) {
+      const orgDeactivateResult = await tx.organization.updateMany({
+        where: { id: { in: orgIds } },
+        data: { isActive: false },
+      });
+      this.logger.log(
+        `🏢 [${logPrefix}] Cascaded deactivation to ${orgDeactivateResult.count} organization(s) for user ${entityId}`,
+      );
+
+      // Cancel org-based subscriptions
+      const orgSubResult = await tx.subscription.updateMany({
+        where: {
+          organizationId: { in: orgIds },
+          status: { in: UsersService.LIVE_SUB_STATUSES },
+        },
+        data: {
+          status: SubscriptionStatus.CANCELLED,
+          canceledAt: new Date(),
+          cancellationReason,
+        },
+      });
+      if (orgSubResult.count > 0) {
+        this.logger.log(
+          `💳 [${logPrefix}] Cancelled ${orgSubResult.count} organization subscription(s) for user ${entityId}`,
+        );
+      }
+    }
+
+    // Cancel user-based subscriptions
+    const userSubResult = await tx.subscription.updateMany({
+      where: {
+        userId: profileUserId,
+        status: { in: UsersService.LIVE_SUB_STATUSES },
+      },
+      data: {
+        status: SubscriptionStatus.CANCELLED,
+        canceledAt: new Date(),
+        cancellationReason,
+      },
+    });
+    if (userSubResult.count > 0) {
+      this.logger.log(
+        `💳 [${logPrefix}] Cancelled ${userSubResult.count} user subscription(s) for user ${entityId}`,
+      );
     }
   }
 
@@ -1330,43 +1400,10 @@ export class UsersService {
             // Subscriptions are NOT auto-restored on reactivation — an admin must
             // manually re-activate them to prevent accidental billing issues.
             if (updateUserDto.status === 'INACTIVE') {
-              // User-based subscriptions (mainSubscriptions relation)
-              const userSubResult = await tx.subscription.updateMany({
-                where: {
-                  userId: existingUser.id,
-                  status: { in: ['ACTIVE', 'TRIAL', 'GRACE_PERIOD', 'PAST_DUE'] },
-                },
-                data: {
-                  status: 'CANCELLED',
-                  canceledAt: new Date(),
-                  cancellationReason: 'User account deactivated by admin',
-                },
-              });
-              if (userSubResult.count > 0) {
-                this.logger.log(
-                  `💳 [UPDATE] Cancelled ${userSubResult.count} user subscription(s) for deactivated user ${id}`,
-                );
-              }
-
-              // Organization-based subscriptions
-              if (orgIds.length > 0) {
-                const orgSubResult = await tx.subscription.updateMany({
-                  where: {
-                    organizationId: { in: orgIds },
-                    status: { in: ['ACTIVE', 'TRIAL', 'GRACE_PERIOD', 'PAST_DUE'] },
-                  },
-                  data: {
-                    status: 'CANCELLED',
-                    canceledAt: new Date(),
-                    cancellationReason: 'User account deactivated by admin',
-                  },
-                });
-                if (orgSubResult.count > 0) {
-                  this.logger.log(
-                    `💳 [UPDATE] Cancelled ${orgSubResult.count} organization subscription(s) for deactivated user ${id}`,
-                  );
-                }
-              }
+              await this.cascadeUserDeactivation(
+                tx, existingUser.id, orgIds,
+                'User account deactivated by admin', 'UPDATE', id,
+              );
             }
           }
         }
@@ -1535,58 +1572,18 @@ export class UsersService {
         });
       }
 
-      // Cascade suspension to user's organizations so they don't appear in frontend listings
+      // Cascade suspension to organizations and subscriptions
       const profileId = result.id;
       const userOrgLinks = await tx.userOrganization.findMany({
         where: { userId: profileId },
         select: { organizationId: true },
       });
       const orgIds = userOrgLinks.map((link) => link.organizationId);
-      if (orgIds.length > 0) {
-        const orgResult = await tx.organization.updateMany({
-          where: { id: { in: orgIds } },
-          data: { isActive: false },
-        });
-        this.logger.log(
-          `🏢 [REMOVE] Cascaded user suspension to ${orgResult.count} organization(s) for user ${id}`,
-        );
 
-        // Cancel organization-based subscriptions
-        const orgSubResult = await tx.subscription.updateMany({
-          where: {
-            organizationId: { in: orgIds },
-            status: { in: ['ACTIVE', 'TRIAL', 'GRACE_PERIOD', 'PAST_DUE'] },
-          },
-          data: {
-            status: 'CANCELLED',
-            canceledAt: now,
-            cancellationReason: 'User account suspended by admin',
-          },
-        });
-        if (orgSubResult.count > 0) {
-          this.logger.log(
-            `💳 [REMOVE] Cancelled ${orgSubResult.count} organization subscription(s) for suspended user ${id}`,
-          );
-        }
-      }
-
-      // Cancel user-based subscriptions
-      const userSubResult = await tx.subscription.updateMany({
-        where: {
-          userId: profileId,
-          status: { in: ['ACTIVE', 'TRIAL', 'GRACE_PERIOD', 'PAST_DUE'] },
-        },
-        data: {
-          status: 'CANCELLED',
-          canceledAt: now,
-          cancellationReason: 'User account suspended by admin',
-        },
-      });
-      if (userSubResult.count > 0) {
-        this.logger.log(
-          `💳 [REMOVE] Cancelled ${userSubResult.count} user subscription(s) for suspended user ${id}`,
-        );
-      }
+      await this.cascadeUserDeactivation(
+        tx, profileId, orgIds,
+        'User account suspended by admin', 'REMOVE', id,
+      );
 
       return result;
     });
