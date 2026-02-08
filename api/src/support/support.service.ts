@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException, ForbiddenException, BadRequestException, Logger, Inject, Optional } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { SupportTicketResponse } from './dto/support.dto';
 import { MailgunService } from './mailgun.service';
@@ -11,13 +12,20 @@ const ALLOWED_STATUSES = ['OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED'] as const;
 @Injectable()
 export class SupportService {
   private readonly logger = new Logger(SupportService.name);
+  private readonly supportInbox: string;
 
   constructor(
     private prisma: PrismaService,
     private mailgunService: MailgunService,
     private emailTemplateService: EmailTemplateService,
+    private configService: ConfigService,
     @Optional() @Inject(SupportGateway) private supportGateway?: SupportGateway,
-  ) {}
+  ) {
+    this.supportInbox = this.configService.get<string>(
+      'SUPPORT_INBOX_EMAIL',
+      'support@procrechesolutions.com'
+    );
+  }
 
   /**
    * Create a new support ticket
@@ -499,7 +507,7 @@ export class SupportService {
     // 2. Send notification email to support team
     try {
       const adminEmails = await this.getAdminEmails();
-      const supportInbox = 'support@procrechesolutions.com';
+      const supportInbox = this.supportInbox;
       const recipients = Array.from(
         new Set([...(adminEmails || []), supportInbox].filter(Boolean))
       );

@@ -371,7 +371,10 @@ export const apiService = {
 
   // Products
   // Note: GET list uses compat controller, CRUD operations use marketplace controller
-  getProducts: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Product[]>>('/compat/products'),
+  getProducts: (
+    apiClient: AxiosInstance,
+    params?: { dateFrom?: string; limit?: number }
+  ) => apiClient.get<ApiResponse<Product[]>>('/compat/products', { params }),
   getProductById: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Product>>(`/marketplace/products/${id}`),
   createProduct: (apiClient: AxiosInstance, productData: Partial<Product>) => apiClient.post<ApiResponse<Product>>('/marketplace/products', productData),
   updateProduct: (apiClient: AxiosInstance, id: string, productData: Partial<Product>) => apiClient.patch<ApiResponse<Product>>(`/marketplace/products/${id}`, productData),
@@ -379,7 +382,10 @@ export const apiService = {
 
   // Services
   // Note: GET list uses compat controller, CRUD operations use marketplace controller
-  getServices: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Service[]>>('/compat/services'),
+  getServices: (
+    apiClient: AxiosInstance,
+    params?: { dateFrom?: string; limit?: number }
+  ) => apiClient.get<ApiResponse<Service[]>>('/compat/services', { params }),
   getService: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Service>>(`/marketplace/services/${id}`),
   createService: (apiClient: AxiosInstance, serviceData: Partial<Service>) => apiClient.post<ApiResponse<Service>>('/marketplace/services', serviceData),
   updateService: (apiClient: AxiosInstance, id: string, serviceData: Partial<Service>) => apiClient.patch<ApiResponse<Service>>(`/marketplace/services/${id}`, serviceData),

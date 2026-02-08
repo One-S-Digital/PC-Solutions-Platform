@@ -2071,11 +2071,10 @@ const Subscriptions: React.FC = () => {
   });
 
   const { data: pendingRequestsBadgeResponse } = useQuery({
-    queryKey: ['subscription-requests-badge', requestBadgeSince, selectedRoleFilter, 'PENDING'],
+    queryKey: ['subscription-requests-badge', requestBadgeSince, 'PENDING'],
     queryFn: () =>
       subscriptionService.getSubscriptionRequests(apiClient, {
         status: 'PENDING',
-        role: selectedRoleFilter || undefined,
         limit: 1,
         dateFrom: requestBadgeSince,
       }),
@@ -2083,11 +2082,10 @@ const Subscriptions: React.FC = () => {
   });
 
   const { data: underReviewRequestsBadgeResponse } = useQuery({
-    queryKey: ['subscription-requests-badge', requestBadgeSince, selectedRoleFilter, 'UNDER_REVIEW'],
+    queryKey: ['subscription-requests-badge', requestBadgeSince, 'UNDER_REVIEW'],
     queryFn: () =>
       subscriptionService.getSubscriptionRequests(apiClient, {
         status: 'UNDER_REVIEW',
-        role: selectedRoleFilter || undefined,
         limit: 1,
         dateFrom: requestBadgeSince,
       }),
@@ -2107,11 +2105,10 @@ const Subscriptions: React.FC = () => {
   });
 
   const { data: cancellationBadgeResponse } = useQuery({
-    queryKey: ['subscription-cancellation-requests-badge', cancellationBadgeSince, selectedRoleFilter],
+    queryKey: ['subscription-cancellation-requests-badge', cancellationBadgeSince],
     queryFn: () =>
       subscriptionService.getCancellationRequests(apiClient, {
         status: 'PENDING',
-        role: selectedRoleFilter || undefined,
         limit: 1,
         dateFrom: cancellationBadgeSince,
       }),

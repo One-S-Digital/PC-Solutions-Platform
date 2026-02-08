@@ -1,21 +1,11 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useUser, useClerk } from '@clerk/clerk-react'
 import { Menu, Bell, User } from 'lucide-react'
-import { useQuery } from '@tanstack/react-query'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import LanguageSwitcher from './design-system/LanguageSwitcher'
 import { useTranslation } from 'react-i18next'
-import { useApiClient, apiService } from '../services/api'
-import { subscriptionService } from '../services/subscriptionService'
-import {
-  dismissNotification,
-  getDismissedCountSince,
-  getEffectiveSince,
-  getLastVisited,
-  isDismissed,
-  isNewSince,
-  markVisited,
-} from '../utils/notificationState'
+import { useNotificationData } from '../hooks/useNotificationData'
+import { dismissNotification, markVisited } from '../utils/notificationState'
 
 interface HeaderProps {
   setSidebarOpen: (open: boolean) => void
@@ -25,222 +15,25 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
   const { user } = useUser()
   const { signOut } = useClerk()
   const { t } = useTranslation(['dashboard','common','admin'])
-  const apiClient = useApiClient()
-  const location = useLocation()
   const navigate = useNavigate()
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
-  const [dismissedVersion, setDismissedVersion] = useState(0)
   const notificationsRef = useRef<HTMLDivElement | null>(null)
   const notificationsButtonRef = useRef<HTMLButtonElement | null>(null)
-  const getLatestVisited = (...dates: Array<Date | null>) => {
-    const valid = dates.filter(Boolean) as Date[]
-    if (valid.length === 0) return null
-    return new Date(Math.max(...valid.map(date => date.getTime())))
-  }
-
-  const supportLastVisited = useMemo(() => getLastVisited('support'), [location.pathname, dismissedVersion])
-  const usersLastVisited = useMemo(() => getLastVisited('users'), [location.pathname, dismissedVersion])
-  const productsLastVisited = useMemo(() => getLastVisited('products'), [location.pathname, dismissedVersion])
-  const servicesLastVisited = useMemo(() => getLastVisited('services'), [location.pathname, dismissedVersion])
-  const subscriptionsLastVisited = useMemo(() => getLastVisited('subscriptions'), [location.pathname, dismissedVersion])
-  const subscriptionRequestsLastVisited = useMemo(
-    () => getLatestVisited(subscriptionsLastVisited, getLastVisited('subscriptionRequests')),
-    [subscriptionsLastVisited, location.pathname, dismissedVersion]
-  )
-  const subscriptionCancellationsLastVisited = useMemo(
-    () => getLatestVisited(subscriptionsLastVisited, getLastVisited('subscriptionCancellations')),
-    [subscriptionsLastVisited, location.pathname, dismissedVersion]
-  )
-
-  const usersSince = useMemo(
-    () => getEffectiveSince(usersLastVisited).toISOString(),
-    [usersLastVisited]
-  )
-  const subscriptionRequestsSince = useMemo(
-    () => getEffectiveSince(subscriptionRequestsLastVisited).toISOString(),
-    [subscriptionRequestsLastVisited]
-  )
-  const subscriptionCancellationsSince = useMemo(
-    () => getEffectiveSince(subscriptionCancellationsLastVisited).toISOString(),
-    [subscriptionCancellationsLastVisited]
-  )
+  const notifications = useNotificationData()
 
   const handleSignOut = () => {
     signOut()
   }
 
-  const { data: supportTicketsResponse, isLoading: supportLoading } = useQuery({
-    queryKey: ['support-ticket-notifications'],
-    queryFn: () => apiService.getSupportTickets(apiClient, { status: 'OPEN' }),
-    enabled: !!apiClient,
-    staleTime: 30000,
-  })
+  const supportItems = notifications.support.items.slice(0, 5)
+  const userItems = notifications.users.items.slice(0, 5)
+  const productItems = notifications.products.items.slice(0, 5)
+  const serviceItems = notifications.services.items.slice(0, 5)
+  const subscriptionItems = notifications.subscriptions.requests.items.slice(0, 5)
+  const cancellationItems = notifications.subscriptions.cancellations.items.slice(0, 5)
 
-  const { data: recentUsersResponse, isLoading: usersLoading } = useQuery({
-    queryKey: ['recent-user-notifications', usersSince],
-    queryFn: () =>
-      apiService.getAdminUsers(apiClient, {
-        page: 1,
-        limit: 50,
-        dateFrom: usersSince,
-        sortBy: 'createdAt',
-        sortOrder: 'desc',
-      }),
-    enabled: !!apiClient,
-    staleTime: 30000,
-  })
-
-  const { data: productsResponse, isLoading: productsLoading } = useQuery({
-    queryKey: ['recent-product-notifications'],
-    queryFn: () => apiService.getProducts(apiClient),
-    enabled: !!apiClient,
-    staleTime: 30000,
-  })
-
-  const { data: servicesResponse, isLoading: servicesLoading } = useQuery({
-    queryKey: ['recent-service-notifications'],
-    queryFn: () => apiService.getServices(apiClient),
-    enabled: !!apiClient,
-    staleTime: 30000,
-  })
-
-  const { data: subscriptionRequestsResponse, isLoading: requestsLoading } = useQuery({
-    queryKey: ['subscription-request-notifications', subscriptionRequestsSince],
-    queryFn: () =>
-      subscriptionService.getSubscriptionRequests(apiClient, {
-        status: 'PENDING',
-        page: 1,
-        limit: 5,
-        dateFrom: subscriptionRequestsSince,
-      }),
-    enabled: !!apiClient,
-    staleTime: 30000,
-  })
-
-  const { data: cancellationRequestsResponse, isLoading: cancellationsLoading } = useQuery({
-    queryKey: ['subscription-cancellation-request-notifications', subscriptionCancellationsSince],
-    queryFn: () =>
-      subscriptionService.getCancellationRequests(apiClient, {
-        status: 'PENDING',
-        page: 1,
-        limit: 5,
-        dateFrom: subscriptionCancellationsSince,
-      }),
-    enabled: !!apiClient,
-    staleTime: 30000,
-  })
-
-  const supportTickets = useMemo(() => supportTicketsResponse?.data?.data || [], [supportTicketsResponse])
-  const supportNotifications = useMemo(
-    () =>
-      supportTickets.filter(
-        (ticket: any) =>
-          isNewSince(ticket.createdAt, supportLastVisited) && !isDismissed('support', ticket.id)
-      ),
-    [supportTickets, supportLastVisited, dismissedVersion]
-  )
-  const supportCount = supportNotifications.length
-  const supportItems = supportNotifications.slice(0, 5)
-
-  const recentUsersPayload = (recentUsersResponse as any)?.data?.data ?? (recentUsersResponse as any)?.data
-  const recentUsers = Array.isArray(recentUsersPayload?.users) ? recentUsersPayload.users : []
-  const recentUsersNotifications = useMemo(
-    () =>
-      recentUsers.filter(
-        (recentUser: any) =>
-          isNewSince(recentUser.createdAt, usersLastVisited) && !isDismissed('users', recentUser.id)
-      ),
-    [recentUsers, usersLastVisited, dismissedVersion]
-  )
-  const recentUsersTotal = recentUsersPayload?.total ?? recentUsersNotifications.length
-  const recentUsersCount = Math.max(
-    0,
-    recentUsersTotal - getDismissedCountSince('users', getEffectiveSince(usersLastVisited))
-  )
-
-  const products = useMemo(() => productsResponse?.data?.data || [], [productsResponse])
-  const services = useMemo(() => servicesResponse?.data?.data || [], [servicesResponse])
-  const recentProducts = useMemo(() => products, [products])
-  const recentServices = useMemo(() => services, [services])
-  const recentProductNotifications = useMemo(
-    () =>
-      recentProducts.filter(
-        (product: any) =>
-          isNewSince(product.createdAt, productsLastVisited) && !isDismissed('products', product.id)
-      ),
-    [recentProducts, productsLastVisited, dismissedVersion]
-  )
-  const recentServiceNotifications = useMemo(
-    () =>
-      recentServices.filter(
-        (service: any) =>
-          isNewSince(service.createdAt, servicesLastVisited) && !isDismissed('services', service.id)
-      ),
-    [recentServices, servicesLastVisited, dismissedVersion]
-  )
-  const recentProductsCount = recentProductNotifications.length
-  const recentServicesCount = recentServiceNotifications.length
-  const recentProductItems = recentProductNotifications.slice(0, 5)
-  const recentServiceItems = recentServiceNotifications.slice(0, 5)
-
-  const subscriptionRequestsData = subscriptionRequestsResponse?.data?.data
-  const subscriptionRequests = subscriptionRequestsData?.requests || []
-  const subscriptionNotifications = useMemo(
-    () =>
-      subscriptionRequests.filter(
-        (request: any) =>
-          isNewSince(request.createdAt, subscriptionRequestsLastVisited) &&
-          !isDismissed('subscriptionRequests', request.id)
-      ),
-    [subscriptionRequests, subscriptionRequestsLastVisited, dismissedVersion]
-  )
-  const subscriptionTotal = subscriptionRequestsData?.total ?? subscriptionNotifications.length
-  const subscriptionCount = Math.max(
-    0,
-    subscriptionTotal -
-      getDismissedCountSince(
-        'subscriptionRequests',
-        getEffectiveSince(subscriptionRequestsLastVisited)
-      )
-  )
-  const subscriptionItems = subscriptionNotifications.slice(0, 5)
-
-  const cancellationRequestsData = cancellationRequestsResponse?.data?.data
-  const cancellationRequests = cancellationRequestsData?.requests || []
-  const cancellationNotifications = useMemo(
-    () =>
-      cancellationRequests.filter(
-        (request: any) =>
-          isNewSince(request.requestedAt, subscriptionCancellationsLastVisited) &&
-          !isDismissed('subscriptionCancellations', request.id)
-      ),
-    [cancellationRequests, subscriptionCancellationsLastVisited, dismissedVersion]
-  )
-  const cancellationTotal = cancellationRequestsData?.total ?? cancellationNotifications.length
-  const cancellationCount = Math.max(
-    0,
-    cancellationTotal -
-      getDismissedCountSince(
-        'subscriptionCancellations',
-        getEffectiveSince(subscriptionCancellationsLastVisited)
-      )
-  )
-  const cancellationItems = cancellationNotifications.slice(0, 5)
-
-  const totalNotifications =
-    supportCount +
-    subscriptionCount +
-    cancellationCount +
-    recentUsersCount +
-    recentProductsCount +
-    recentServicesCount
-  const isLoadingNotifications =
-    supportLoading ||
-    usersLoading ||
-    productsLoading ||
-    servicesLoading ||
-    requestsLoading ||
-    cancellationsLoading
+  const totalNotifications = notifications.total
+  const isLoadingNotifications = notifications.isLoading
 
   useEffect(() => {
     if (!isNotificationsOpen) return
@@ -269,10 +62,6 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
       document.removeEventListener('keydown', handleEscape)
     }
   }, [isNotificationsOpen])
-
-  useEffect(() => {
-    setDismissedVersion((value) => value + 1)
-  }, [location.pathname])
 
   const formatTimestamp = (value?: string) => {
     if (!value) return ''
@@ -363,8 +152,8 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
                       <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
                         {t('admin:notifications.sections.support', { defaultValue: 'Support' })}
                       </h3>
-                      {supportCount > 0 && (
-                        <span className="text-xs text-gray-400">{supportCount}</span>
+                      {notifications.support.count > 0 && (
+                        <span className="text-xs text-gray-400">{notifications.support.count}</span>
                       )}
                     </div>
                     {supportItems.length === 0 ? (
@@ -379,7 +168,6 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
                             type="button"
                             onClick={() => {
                               dismissNotification('support', ticket.id)
-                              setDismissedVersion((value) => value + 1)
                               markVisited('support')
                               navigate(`/support?ticket=${ticket.id}`)
                               setIsNotificationsOpen(false)
@@ -400,7 +188,7 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
                         ))}
                       </div>
                     )}
-                    {supportCount > supportItems.length && (
+                    {notifications.support.count > supportItems.length && (
                       <button
                         type="button"
                             onClick={() => {
@@ -420,23 +208,22 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
                       <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
                         {t('admin:notifications.sections.users', { defaultValue: 'Users' })}
                       </h3>
-                      {recentUsersCount > 0 && (
-                        <span className="text-xs text-gray-400">{recentUsersCount}</span>
+                      {notifications.users.count > 0 && (
+                        <span className="text-xs text-gray-400">{notifications.users.count}</span>
                       )}
                     </div>
-                    {recentUsers.length === 0 ? (
+                    {userItems.length === 0 ? (
                       <p className="mt-2 text-sm text-gray-500">
                         {t('admin:notifications.usersEmpty', { defaultValue: 'No new users.' })}
                       </p>
                     ) : (
                       <div className="mt-2 space-y-2">
-                        {recentUsers.map((recentUser: any) => (
+                        {userItems.map((recentUser: any) => (
                           <button
                             key={recentUser.id}
                             type="button"
                             onClick={() => {
                               dismissNotification('users', recentUser.id)
-                              setDismissedVersion((value) => value + 1)
                               markVisited('users')
                               navigate('/users')
                               setIsNotificationsOpen(false)
@@ -454,14 +241,14 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
                         ))}
                       </div>
                     )}
-                    {recentUsersCount > recentUsers.length && (
+                    {notifications.users.count > userItems.length && (
                       <button
                         type="button"
-                            onClick={() => {
-                              markVisited('users')
-                              navigate('/users')
-                              setIsNotificationsOpen(false)
-                            }}
+                        onClick={() => {
+                          markVisited('users')
+                          navigate('/users')
+                          setIsNotificationsOpen(false)
+                        }}
                         className="mt-2 text-xs text-blue-600 hover:text-blue-700"
                       >
                         {t('admin:notifications.viewAllUsers', { defaultValue: 'View all users' })}
@@ -474,23 +261,22 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
                       <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
                         {t('admin:notifications.sections.products', { defaultValue: 'Products' })}
                       </h3>
-                      {recentProductsCount > 0 && (
-                        <span className="text-xs text-gray-400">{recentProductsCount}</span>
+                      {notifications.products.count > 0 && (
+                        <span className="text-xs text-gray-400">{notifications.products.count}</span>
                       )}
                     </div>
-                    {recentProductItems.length === 0 ? (
+                    {productItems.length === 0 ? (
                       <p className="mt-2 text-sm text-gray-500">
                         {t('admin:notifications.productsEmpty', { defaultValue: 'No new products.' })}
                       </p>
                     ) : (
                       <div className="mt-2 space-y-2">
-                        {recentProductItems.map((product: any) => (
+                        {productItems.map((product: any) => (
                           <button
                             key={product.id}
                             type="button"
                             onClick={() => {
                               dismissNotification('products', product.id)
-                              setDismissedVersion((value) => value + 1)
                               markVisited('products')
                               navigate('/products')
                               setIsNotificationsOpen(false)
@@ -508,14 +294,14 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
                         ))}
                       </div>
                     )}
-                    {recentProductsCount > recentProductItems.length && (
+                    {notifications.products.count > productItems.length && (
                       <button
                         type="button"
-                            onClick={() => {
-                              markVisited('products')
-                              navigate('/products')
-                              setIsNotificationsOpen(false)
-                            }}
+                        onClick={() => {
+                          markVisited('products')
+                          navigate('/products')
+                          setIsNotificationsOpen(false)
+                        }}
                         className="mt-2 text-xs text-blue-600 hover:text-blue-700"
                       >
                         {t('admin:notifications.viewAllProducts', { defaultValue: 'View all products' })}
@@ -528,23 +314,22 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
                       <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
                         {t('admin:notifications.sections.services', { defaultValue: 'Services' })}
                       </h3>
-                      {recentServicesCount > 0 && (
-                        <span className="text-xs text-gray-400">{recentServicesCount}</span>
+                      {notifications.services.count > 0 && (
+                        <span className="text-xs text-gray-400">{notifications.services.count}</span>
                       )}
                     </div>
-                    {recentServiceItems.length === 0 ? (
+                    {serviceItems.length === 0 ? (
                       <p className="mt-2 text-sm text-gray-500">
                         {t('admin:notifications.servicesEmpty', { defaultValue: 'No new services.' })}
                       </p>
                     ) : (
                       <div className="mt-2 space-y-2">
-                        {recentServiceItems.map((service: any) => (
+                        {serviceItems.map((service: any) => (
                           <button
                             key={service.id}
                             type="button"
                             onClick={() => {
                               dismissNotification('services', service.id)
-                              setDismissedVersion((value) => value + 1)
                               markVisited('services')
                               navigate('/services')
                               setIsNotificationsOpen(false)
@@ -562,14 +347,14 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
                         ))}
                       </div>
                     )}
-                    {recentServicesCount > recentServiceItems.length && (
+                    {notifications.services.count > serviceItems.length && (
                       <button
                         type="button"
-                            onClick={() => {
-                              markVisited('services')
-                              navigate('/services')
-                              setIsNotificationsOpen(false)
-                            }}
+                        onClick={() => {
+                          markVisited('services')
+                          navigate('/services')
+                          setIsNotificationsOpen(false)
+                        }}
                         className="mt-2 text-xs text-blue-600 hover:text-blue-700"
                       >
                         {t('admin:notifications.viewAllServices', { defaultValue: 'View all services' })}
@@ -582,8 +367,8 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
                       <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
                         {t('admin:notifications.sections.subscriptions', { defaultValue: 'Subscriptions' })}
                       </h3>
-                      {subscriptionCount + cancellationCount > 0 && (
-                        <span className="text-xs text-gray-400">{subscriptionCount + cancellationCount}</span>
+                      {notifications.subscriptions.count > 0 && (
+                        <span className="text-xs text-gray-400">{notifications.subscriptions.count}</span>
                       )}
                     </div>
 
@@ -604,7 +389,6 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
                                 type="button"
                                 onClick={() => {
                                   dismissNotification('subscriptionRequests', request.id)
-                                  setDismissedVersion((value) => value + 1)
                                   markVisited('subscriptions')
                                   markVisited('subscriptionRequests')
                                   navigate('/subscriptions?view=requests')
@@ -641,7 +425,6 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
                                 type="button"
                                 onClick={() => {
                                   dismissNotification('subscriptionCancellations', request.id)
-                                  setDismissedVersion((value) => value + 1)
                                   markVisited('subscriptions')
                                   markVisited('subscriptionCancellations')
                                   navigate('/subscriptions?view=cancellations')
@@ -663,7 +446,7 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
                       </div>
                     </div>
 
-                    {subscriptionCount + cancellationCount > 0 && (
+                    {notifications.subscriptions.count > 0 && (
                       <button
                         type="button"
                         onClick={() => {

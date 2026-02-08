@@ -19,7 +19,7 @@ const SettingsLayout: React.FC = () => {
   const location = useLocation()
   const navigate = useNavigate()
   
-  const tabs = [
+  const tabs = React.useMemo(() => [
     { name: t('admin:settings.tabs.general'), key: 'general', component: GeneralSettings },
     { name: t('admin:settings.tabs.branding'), key: 'branding', component: BrandingSettings },
     { name: t('admin:settings.tabs.content'), key: 'content', component: ContentSettings },
@@ -28,21 +28,21 @@ const SettingsLayout: React.FC = () => {
     { name: t('admin:settings.tabs.emailTemplates'), key: 'emailTemplates', component: EmailNotificationPage },
     { name: t('admin:settings.tabs.systemConfig'), key: 'systemConfig', component: SystemConfigurationPage },
     {
-      name: t('admin:settings.tabs.systemMonitoring', { defaultValue: 'System Monitoring' }),
+      name: t('admin:sidebar.systemMonitoring', { defaultValue: 'System Monitoring' }),
       key: 'systemMonitoring',
       component: SystemMonitorPage,
     },
     {
-      name: t('admin:settings.tabs.designSystem', { defaultValue: 'Design System' }),
+      name: t('admin:designSystem', { defaultValue: 'Design System' }),
       key: 'designSystem',
       component: DesignSystemPage,
     },
     {
-      name: t('admin:settings.tabs.translations', { defaultValue: 'Translations' }),
+      name: t('admin:translations', { defaultValue: 'Translations' }),
       key: 'translations',
       component: TranslationsPage,
     },
-  ]
+  ], [t])
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
@@ -80,7 +80,7 @@ function classNames(...classes: string[]) {
       <div className="bg-white rounded-card shadow-soft border border-gray-200">
         <Tab.Group selectedIndex={selectedIndex} onChange={handleTabChange}>
           <div className="border-b border-gray-200">
-            <Tab.List className="flex space-x-8 px-6">
+            <Tab.List className="flex space-x-8 px-6 overflow-x-auto whitespace-nowrap">
               {tabs.map((tab) => (
                 <Tab
                   key={tab.key}

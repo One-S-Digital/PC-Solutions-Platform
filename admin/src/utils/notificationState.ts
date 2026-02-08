@@ -1,6 +1,7 @@
 const STORAGE_KEY = 'adminNotificationState.v1'
 const EXPIRY_DAYS = 7
 const EXPIRY_MS = EXPIRY_DAYS * 24 * 60 * 60 * 1000
+export const NOTIFICATION_STATE_EVENT = 'notificationStateChanged'
 
 type NotificationState = {
   lastVisited: Record<string, string>
@@ -36,6 +37,11 @@ const saveState = (state: NotificationState) => {
   } catch {
     // Ignore storage errors
   }
+}
+
+const notifyStateChanged = () => {
+  if (!isBrowser()) return
+  window.dispatchEvent(new Event(NOTIFICATION_STATE_EVENT))
 }
 
 const pruneDismissed = (state: NotificationState, now = Date.now()) => {
@@ -91,6 +97,7 @@ export const markVisited = (section: string, at: Date = new Date()) => {
   const state = loadState()
   state.lastVisited[section] = at.toISOString()
   saveState(state)
+  notifyStateChanged()
 }
 
 export const dismissNotification = (section: string, id: string, at: Date = new Date()) => {
@@ -100,12 +107,14 @@ export const dismissNotification = (section: string, id: string, at: Date = new 
   state.dismissed[section] = state.dismissed[section] || {}
   state.dismissed[section][id] = at.toISOString()
   saveState(state)
+  notifyStateChanged()
 }
 
 export const isDismissed = (section: string, id: string) => {
   if (!section || !id) return false
   const state = loadState()
   pruneDismissed(state)
+  saveState(state)
   const dismissedAt = state.dismissed?.[section]?.[id]
   if (!dismissedAt) return false
   const ts = new Date(dismissedAt).getTime()
@@ -117,6 +126,7 @@ export const getDismissedCount = (section: string) => {
   if (!section) return 0
   const state = loadState()
   pruneDismissed(state)
+  saveState(state)
   const entries = state.dismissed?.[section]
   if (!entries) return 0
   return Object.keys(entries).length
@@ -126,6 +136,7 @@ export const getDismissedCountSince = (section: string, since: Date) => {
   if (!section) return 0
   const state = loadState()
   pruneDismissed(state)
+  saveState(state)
   const entries = state.dismissed?.[section]
   if (!entries) return 0
   const sinceTs = since.getTime()
