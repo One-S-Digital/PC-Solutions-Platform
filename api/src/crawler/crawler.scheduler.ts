@@ -2,13 +2,14 @@ import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
 import { CrawlerService } from './crawler.service';
+import { CrawlerSettingsService } from './crawler-settings.service';
 
 @Injectable()
 export class CrawlerScheduler implements OnModuleInit {
   private readonly logger = new Logger(CrawlerScheduler.name);
   private isRunning = false;
 
-  private isSchedulerEnabled(): boolean {
+  private isSchedulerEnvEnabled(): boolean {
     return process.env.CRAWLER_SCHEDULER_ENABLED === 'true';
   }
 
@@ -19,6 +20,7 @@ export class CrawlerScheduler implements OnModuleInit {
   constructor(
     private prisma: PrismaService,
     private crawler: CrawlerService,
+    private crawlerSettings: CrawlerSettingsService,
   ) {}
 
   async onModuleInit() {
@@ -28,8 +30,13 @@ export class CrawlerScheduler implements OnModuleInit {
   // Run every day at 3 AM
   @Cron(CronExpression.EVERY_DAY_AT_3AM)
   async runScheduledCrawls() {
-    if (!this.isCrawlerEnabled() || !this.isSchedulerEnabled()) {
+    if (!this.isCrawlerEnabled() || !this.isSchedulerEnvEnabled()) {
       // Keep this fast/no-op by default to avoid surprising work on Render.
+      return;
+    }
+
+    const mode = await this.crawlerSettings.getSchedulerMode();
+    if (mode !== 'automatic') {
       return;
     }
 
@@ -90,7 +97,12 @@ export class CrawlerScheduler implements OnModuleInit {
   // Check for stale sources daily
   @Cron(CronExpression.EVERY_DAY_AT_6AM)
   async checkStaleSources() {
-    if (!this.isCrawlerEnabled() || !this.isSchedulerEnabled()) {
+    if (!this.isCrawlerEnabled() || !this.isSchedulerEnvEnabled()) {
+      return;
+    }
+
+    const mode = await this.crawlerSettings.getSchedulerMode();
+    if (mode !== 'automatic') {
       return;
     }
 

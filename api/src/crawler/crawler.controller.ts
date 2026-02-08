@@ -6,7 +6,8 @@ import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '@prisma/client';
-import { CreateSourceDto, UpdateSourceDto, ReviewQueueQueryDto, IngestUrlsDto } from './dto/crawler.dto';
+import { CreateSourceDto, UpdateSourceDto, ReviewQueueQueryDto, IngestUrlsDto, UpdateSchedulerModeDto } from './dto/crawler.dto';
+import { CrawlerSettingsService } from './crawler-settings.service';
 
 @Controller('admin/crawler')
 @UseGuards(ClerkAuthGuard, RolesGuard)
@@ -20,7 +21,37 @@ export class CrawlerController {
     private crawlerScheduler: CrawlerScheduler,
     private crawlerService: CrawlerService,
     private prisma: PrismaService,
+    private crawlerSettings: CrawlerSettingsService,
   ) {}
+
+  @Get('scheduler')
+  async getSchedulerMode() {
+    const envEnabled = process.env.CRAWLER_SCHEDULER_ENABLED === 'true';
+    const mode = await this.crawlerSettings.getSchedulerMode();
+    const effectiveEnabled = envEnabled && mode === 'automatic' && this.isCrawlerEnabled();
+    return {
+      enabled: effectiveEnabled,
+      envEnabled,
+      mode,
+      crawlerEnabled: this.isCrawlerEnabled(),
+    };
+  }
+
+  @Patch('scheduler')
+  async updateSchedulerMode(@Body() dto: UpdateSchedulerModeDto) {
+    const mode = await this.crawlerSettings.setSchedulerMode(dto.mode);
+    const envEnabled = process.env.CRAWLER_SCHEDULER_ENABLED === 'true';
+    const effectiveEnabled = envEnabled && mode === 'automatic' && this.isCrawlerEnabled();
+    return {
+      success: true,
+      data: {
+        enabled: effectiveEnabled,
+        envEnabled,
+        mode,
+        crawlerEnabled: this.isCrawlerEnabled(),
+      },
+    };
+  }
 
   // Trigger manual crawl with input validation
   @Post('trigger/:sourceId')
@@ -232,12 +263,16 @@ export class CrawlerController {
   @Get('health')
   async getCrawlerHealth() {
     const enabled = this.isCrawlerEnabled();
-    const schedulerEnabled = process.env.CRAWLER_SCHEDULER_ENABLED === 'true';
+    const schedulerEnvEnabled = process.env.CRAWLER_SCHEDULER_ENABLED === 'true';
+    const schedulerMode = await this.crawlerSettings.getSchedulerMode();
+    const schedulerEnabled = enabled && schedulerEnvEnabled && schedulerMode === 'automatic';
 
     if (!enabled) {
       return {
         enabled,
         schedulerEnabled,
+        schedulerEnvEnabled,
+        schedulerMode,
         totalSources: 0,
         activeSources: 0,
         failedSources: 0,
@@ -269,6 +304,8 @@ export class CrawlerController {
     return {
       enabled,
       schedulerEnabled,
+      schedulerEnvEnabled,
+      schedulerMode,
       totalSources,
       activeSources,
       failedSources,
