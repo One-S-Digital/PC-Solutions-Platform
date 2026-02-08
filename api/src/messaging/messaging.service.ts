@@ -187,23 +187,27 @@ export class MessagingService {
         ];
       
       case UserRole.FOUNDATION:
-        // Foundation can message: FOUNDATION, ADMIN
+        // Foundation can message: FOUNDATION, PRODUCT_SUPPLIER, SERVICE_PROVIDER, ADMIN
         return [
           UserRole.FOUNDATION,
+          UserRole.PRODUCT_SUPPLIER,
+          UserRole.SERVICE_PROVIDER,
           UserRole.ADMIN,
         ];
       
       case UserRole.PRODUCT_SUPPLIER:
-        // Product Supplier can message: PRODUCT_SUPPLIER, ADMIN
+        // Product Supplier can message: PRODUCT_SUPPLIER, FOUNDATION, ADMIN
         return [
           UserRole.PRODUCT_SUPPLIER,
+          UserRole.FOUNDATION,
           UserRole.ADMIN,
         ];
       
       case UserRole.SERVICE_PROVIDER:
-        // Service Provider can message: SERVICE_PROVIDER, ADMIN
+        // Service Provider can message: SERVICE_PROVIDER, FOUNDATION, ADMIN
         return [
           UserRole.SERVICE_PROVIDER,
+          UserRole.FOUNDATION,
           UserRole.ADMIN,
         ];
       

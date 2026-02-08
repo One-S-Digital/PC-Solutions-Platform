@@ -314,6 +314,7 @@ export interface CandidateProfile {
     skills: string[];
     workExperience?: WorkExperienceItem[];
     education?: EducationItem[];
+    educationText?: string;
     certifications?: CertificationItem[];
     availabilityPreferences?: {
         days?: ('Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat' | 'Sun')[];
