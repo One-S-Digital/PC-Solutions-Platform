@@ -18,8 +18,16 @@ describe('serviceFormatting', () => {
     return dict[key] ?? fallback;
   }) as any;
 
+  it('returns undefined when no valid flexible category exists', () => {
+    expect(inferServiceCategoryFromFlexibleCategories(undefined)).toBeUndefined();
+    expect(inferServiceCategoryFromFlexibleCategories([null, '', '  '])).toBeUndefined();
+  });
+
   it('infers enum service category from known flexible labels', () => {
     expect(inferServiceCategoryFromFlexibleCategories(['IT & Technical Support'])).toBe(
+      ServiceCategory.IT_SUPPORT,
+    );
+    expect(inferServiceCategoryFromFlexibleCategories(['it & technical support'])).toBe(
       ServiceCategory.IT_SUPPORT,
     );
     expect(inferServiceCategoryFromFlexibleCategories(['Consulting'])).toBe(ServiceCategory.CONSULTING);
@@ -51,6 +59,11 @@ describe('serviceFormatting', () => {
       categories: [],
     });
     expect(label).toBe('Facilities Maintenance');
+  });
+
+  it('handles null/undefined service inputs', () => {
+    expect(formatServiceCategoryForService(t, null)).toBe('Other');
+    expect(formatServiceCategoryForService(t, undefined)).toBe('Other');
   });
 });
 

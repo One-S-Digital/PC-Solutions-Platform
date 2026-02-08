@@ -29,6 +29,25 @@ export const formatServiceCategory = (
 const normalizeFlexibleCategoryLabel = (value: string) =>
   value.trim().replace(/\s+/g, ' ').toLowerCase();
 
+const firstNonEmptyCategory = (
+  categories?: Array<string | null | undefined>,
+): string | undefined =>
+  (categories || []).find(
+    (c): c is string => typeof c === 'string' && c.trim().length > 0,
+  );
+
+// Only a subset of flexible labels correspond to the legacy enum values.
+// Everything else is intentionally left as a raw string label (custom categories
+// and extra suggestions like "Catering" are not representable in the enum).
+const FLEXIBLE_LABEL_TO_LEGACY_ENUM: Partial<Record<string, ServiceCategory>> = {
+  [normalizeFlexibleCategoryLabel('Cleaning & Maintenance')]: ServiceCategory.CLEANING,
+  [normalizeFlexibleCategoryLabel('IT & Technical Support')]: ServiceCategory.IT_SUPPORT,
+  [normalizeFlexibleCategoryLabel('Facilities Maintenance')]: ServiceCategory.MAINTENANCE,
+  [normalizeFlexibleCategoryLabel('Consulting')]: ServiceCategory.CONSULTING,
+  [normalizeFlexibleCategoryLabel('Training & Coaching')]: ServiceCategory.TRAINING,
+  [normalizeFlexibleCategoryLabel('Other')]: ServiceCategory.OTHER,
+};
+
 /**
  * Many parts of the app still render the legacy enum `service.category` (ServiceCategory),
  * but the newer UI stores user-selected categories in `service.categories` (string[]).
@@ -40,26 +59,11 @@ const normalizeFlexibleCategoryLabel = (value: string) =>
 export const inferServiceCategoryFromFlexibleCategories = (
   categories?: Array<string | null | undefined>,
 ): ServiceCategory | undefined => {
-  const first = (categories || []).find((c) => typeof c === 'string' && c.trim().length > 0);
+  const first = firstNonEmptyCategory(categories);
   if (!first) return undefined;
 
   const key = normalizeFlexibleCategoryLabel(first);
-  switch (key) {
-    case 'cleaning & maintenance':
-      return ServiceCategory.CLEANING;
-    case 'it & technical support':
-      return ServiceCategory.IT_SUPPORT;
-    case 'facilities maintenance':
-      return ServiceCategory.MAINTENANCE;
-    case 'consulting':
-      return ServiceCategory.CONSULTING;
-    case 'training & coaching':
-      return ServiceCategory.TRAINING;
-    case 'other':
-      return ServiceCategory.OTHER;
-    default:
-      return undefined;
-  }
+  return FLEXIBLE_LABEL_TO_LEGACY_ENUM[key];
 };
 
 export const formatServiceCategoryForService = (
@@ -73,7 +77,7 @@ export const formatServiceCategoryForService = (
     return formatServiceCategory(t, inferred);
   }
 
-  const firstFlexible = (service.categories || []).find((c) => typeof c === 'string' && c.trim().length > 0);
+  const firstFlexible = firstNonEmptyCategory(service.categories);
   if (firstFlexible) {
     // Preserve the original label as-entered (it may include punctuation like "&").
     return String(firstFlexible).trim();

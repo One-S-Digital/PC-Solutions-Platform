@@ -182,6 +182,12 @@ const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose
                               (v, i, arr) =>
                                 arr.findIndex((x) => x.toLowerCase() === v.toLowerCase()) === i,
                             ),
+                          category:
+                            inferServiceCategoryFromFlexibleCategories(
+                              (prev.categories || [])
+                                .filter((c) => c !== 'Other')
+                                .concat([resolvedName]),
+                            ) || ServiceCategory.OTHER,
                         }));
                         setCustomServiceCategory('');
                       } catch (e: any) {

@@ -7,7 +7,7 @@ import { Service, ServiceCategory, SERVICE_CATEGORIES } from '../../types';
 import ServiceUploadModal from '../../components/service-provider/ServiceUploadModal';
 import { useAppContext } from '../../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
-import { formatServiceCategoryForService, formatServiceDeliveryType } from '../../utils/serviceFormatting';
+import { formatServiceCategory, formatServiceCategoryForService, formatServiceDeliveryType } from '../../utils/serviceFormatting';
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { UploadedAsset } from '../../services/api';
