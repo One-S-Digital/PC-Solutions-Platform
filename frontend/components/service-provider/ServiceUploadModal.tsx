@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FormEvent } from 'react';
+import React, { useState, useEffect, FormEvent, useRef } from 'react';
 import { Service, ServiceCategory, SERVICE_DELIVERY_TYPES } from '../../types';
 import { STANDARD_INPUT_FIELD, SUGGESTED_SERVICE_CATEGORIES } from '../../constants';
 import Button from '../ui/Button';
@@ -43,6 +43,8 @@ const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose
 
   const [formData, setFormData] = useState<ServiceFormData>(initialFormState);
   const [file, setFile] = useState<File | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -68,6 +70,7 @@ const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose
         setFormData(initialFormState);
       }
       setFile(null);
+      setFileError(null);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, existingService]);
@@ -83,7 +86,35 @@ const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
+      const selectedFile = e.target.files[0];
+      const maxSizeMB = 5;
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/webp'];
+
+      if (!allowedTypes.includes(selectedFile.type)) {
+        setFile(null);
+        setFileError(
+          t('common:serviceUploadModal.errors.invalidImageType', {
+            defaultValue: 'Please select an image file.',
+          }),
+        );
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        return;
+      }
+
+      if (selectedFile.size > maxSizeMB * 1024 * 1024) {
+        setFile(null);
+        setFileError(
+          t('common:serviceUploadModal.errors.imageTooLarge', {
+            defaultValue: `Image must be less than ${maxSizeMB}MB.`,
+            max: maxSizeMB,
+          }),
+        );
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        return;
+      }
+
+      setFileError(null);
+      setFile(selectedFile);
     }
   };
 
@@ -93,7 +124,7 @@ const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose
         alert("Current user or organization ID is missing.");
         return;
     }
-    if (isSaving) {
+    if (isSaving || fileError) {
       return;
     }
     onSubmit(formData, file || undefined);
@@ -237,6 +268,7 @@ const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose
                         type="file"
                         className="sr-only"
                         onChange={handleFileChange}
+                        ref={fileInputRef}
                         // Keep this aligned with backend upload allowlist.
                         // (HEIC/AVIF are commonly unsupported in server-side type detection/allowlists.)
                         accept="image/png,image/jpeg,image/webp"
@@ -253,6 +285,7 @@ const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose
                 </div>
               </div>
                 {file && <p className="mt-2 text-sm text-gray-500"><PaperClipIcon className="w-4 h-4 inline mr-1"/> {t('common:contentUploadModal.fileUpload.selected', { fileName: file.name })}</p>}
+                {fileError && <p className="mt-2 text-sm text-swiss-coral">{fileError}</p>}
                 {formData.imageUrl && !file && <p className="mt-2 text-sm text-gray-500">{t('common:serviceUploadModal.currentImage')}: <a href={formData.imageUrl} target="_blank" rel="noopener noreferrer" className="text-swiss-mint hover:underline">{t('common:buttons.view')}</a></p>}
             </div>
           </div>
@@ -260,7 +293,7 @@ const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose
               <Button type="button" variant="light" onClick={onClose} disabled={!!isSaving}>
                 {t('common:buttons.cancel')}
               </Button>
-            <Button type="submit" variant="primary" className="bg-swiss-mint" disabled={!!isSaving}>
+            <Button type="submit" variant="primary" className="bg-swiss-mint" disabled={!!isSaving || !!fileError}>
                 {isSaving ? t('common:saving', 'Saving...') : existingService ? t('common:buttons.saveChanges') : t('common:buttons.add')}
             </Button>
           </div>

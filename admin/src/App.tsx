@@ -68,7 +68,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <FrontendSettingsManager />
-      <Toaster richColors position="top-right" closeButton />
+      <Toaster richColors position="top-right" closeButton style={{ zIndex: 9999 }} />
       <Routes>
         <Route path="/login" element={<AdminLoginPage />} />
         <Route path="/signup" element={<AdminSignupPage />} />

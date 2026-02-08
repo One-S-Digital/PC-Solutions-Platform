@@ -134,7 +134,7 @@ export const ToastContainer: React.FC<ToastContainerProps> = ({ toasts, onDismis
   return (
     <div
       aria-live="assertive"
-      className="pointer-events-none fixed inset-0 z-50 flex items-end justify-end px-4 py-6 sm:items-start sm:p-6"
+      className="pointer-events-none fixed inset-0 z-[9999] flex items-end justify-end px-4 py-6 sm:items-start sm:p-6"
     >
       <div className="flex w-full flex-col items-end space-y-4">
         {toasts.map((toast) => (

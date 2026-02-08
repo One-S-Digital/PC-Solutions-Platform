@@ -608,7 +608,16 @@
         "description": "Voir les métriques de la plateforme"
       }
     },
-    "contentUploadSuccess": "Contenu téléchargé avec succès !"
+    "contentUploadSuccess": "Contenu téléchargé avec succès !",
+    "policyCrawler": {
+      "label": "Exploration des politiques",
+      "enabled": "Activée",
+      "disabled": "Désactivée",
+      "manage": "Gérer"
+    }
+  },
+  "contentUpload": {
+    "fileTooLarge": "La taille du fichier dépasse la limite de {{max}} Mo."
   },
   "sidebar": {
     "version": "Gestion Backend v1.0",
@@ -645,14 +654,6 @@
     "status": {
       "enabled": "Activée",
       "disabled": "Désactivée"
-    }
-  },
-  "dashboard": {
-    "policyCrawler": {
-      "label": "Exploration des politiques",
-      "enabled": "Activée",
-      "disabled": "Désactivée",
-      "manage": "Gérer"
     }
   },
   "cantons": {
@@ -1314,11 +1315,6 @@
       "never": "Jamais"
     }
   },
-  "translations": {
-    "descriptionPlaceholder": "Description (facultatif)",
-    "versionPlaceholder": "Version (par exemple, v1.2.3)",
-    "searchPlaceholder": "Rechercher des clés ou des valeurs..."
-  },
   "jobListings": {
     "emptyState": {
       "description": "Essayez d'ajuster vos critères de recherche ou publiez une nouvelle offre.",
@@ -1385,7 +1381,11 @@
     "clickBrowse": "Cliquer pour parcourir ou glisser-déposer",
     "defaultHelp": "PDF, DOCX, MP4 (Max 50MB)",
     "dragDrop": "ou par glisser-déposer",
-    "selected": "Sélectionné"
+    "selected": "Sélectionné",
+    "errors": {
+      "sizeExceeded": "La taille du fichier dépasse la limite de {{max}} Mo.",
+      "invalidType": "Type de fichier invalide. Accepté : {{types}}"
+    }
   },
   "products": {
     "emptyState": {
@@ -1581,6 +1581,9 @@
     "title": "Messages",
     "searchPlaceholder": "Rechercher des conversations...",
     "typePlaceholder": "Tapez votre message...",
+    "errors": {
+      "fileTooLarge": "La taille du fichier dépasse la limite de {{max}} Mo."
+    },
     "emptyState": {
       "noConversations": "Aucune conversation trouvée",
       "tryAdjusting": "Essayez d'ajuster votre recherche",
@@ -1683,6 +1686,11 @@
   "translations": {
     "title": "Gestion des traductions",
     "subtitle": "Gérer les traductions d'interface utilisateur statiques",
+    "descriptionPlaceholder": "Description (facultatif)",
+    "versionPlaceholder": "Version (par exemple, v1.2.3)",
+    "errors": {
+      "fileTooLarge": "La taille du fichier dépasse la limite de {{max}} Mo."
+    },
     "tabs": {
       "translations": "Traductions",
       "auditLogs": "Journaux d'audit",

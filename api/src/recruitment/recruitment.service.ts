@@ -640,6 +640,9 @@ export class RecruitmentService {
       },
       include: {
         avatarAsset: true,
+        workExperienceItems: { orderBy: { sortOrder: 'asc' } },
+        educationItems: { orderBy: { sortOrder: 'asc' } },
+        certificationItems: { orderBy: { sortOrder: 'asc' } },
         applications: {
           include: {
             jobListing: {
@@ -670,6 +673,9 @@ export class RecruitmentService {
       },
       include: {
         avatarAsset: true,
+        workExperienceItems: { orderBy: { sortOrder: 'asc' } },
+        educationItems: { orderBy: { sortOrder: 'asc' } },
+        certificationItems: { orderBy: { sortOrder: 'asc' } },
         applications: {
           include: {
             jobListing: {
@@ -709,6 +715,9 @@ export class RecruitmentService {
         // For now, we'll return all active, pool-visible educators
       },
       include: {
+        workExperienceItems: { orderBy: { sortOrder: 'asc' } },
+        educationItems: { orderBy: { sortOrder: 'asc' } },
+        certificationItems: { orderBy: { sortOrder: 'asc' } },
         applications: {
           where: {
             jobListingId,

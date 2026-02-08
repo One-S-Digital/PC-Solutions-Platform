@@ -594,6 +594,7 @@
     "ratingText": "Bewertung",
     "ratingsReviewsTitle": "Bewertungen und Rezensionen",
     "requestServiceButton": "Service anfordern",
+    "viewServiceButton": "Service ansehen",
     "requestSubmittedAlert": "Serviceanfrage erfolgreich übermittelt",
     "reviewsPlaceholder": "Noch keine Bewertungen"
   },
@@ -693,9 +694,6 @@
     },
     "title": "Bestellungen und Anfragen",
     "updateError": "Status konnte nicht aktualisiert werden"
-  },
-  "supplierOrganisationProfilePage": {
-    "loadError": "Organisationsprofildetails konnten nicht geladen werden. Bitte versuchen Sie es erneut."
   },
   "supplierProductListingsPage": {
     "addProductButton": "Produkt hinzufügen",

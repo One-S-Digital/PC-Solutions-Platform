@@ -897,6 +897,18 @@ export default function Translations() {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    const maxSizeMB = 10;
+    if (file.size > maxSizeMB * 1024 * 1024) {
+      toast.error(
+        t('admin:translations.errors.fileTooLarge', {
+          defaultValue: `File size exceeds ${maxSizeMB}MB limit.`,
+          max: maxSizeMB,
+        })
+      );
+      event.target.value = '';
+      return;
+    }
+
     // Reset the input so the same file can be selected again
     event.target.value = '';
 

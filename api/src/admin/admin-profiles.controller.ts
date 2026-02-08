@@ -20,12 +20,26 @@ import {
   IsNumber,
   IsUrl,
   IsUUID,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole, OrganizationType, AssetKind } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import {
+  EducatorWorkExperienceItemDto,
+  EducatorEducationItemDto,
+  EducatorCertificationItemDto,
+} from '../settings/dto/educator-settings.dto';
+import {
+  formatEducationText,
+  formatWorkExperienceText,
+  normalizeCertificationItems,
+  normalizeEducationItems,
+  normalizeWorkExperienceItems,
+} from '../utils/educator-profile-items';
 
 // Valid organization types for validation
 const VALID_ORGANIZATION_TYPES = Object.values(OrganizationType);
@@ -82,6 +96,24 @@ class AdminUpdateUserProfileDto {
   @IsArray()
   @IsString({ each: true })
   certifications?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => EducatorWorkExperienceItemDto)
+  workExperienceItems?: EducatorWorkExperienceItemDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => EducatorEducationItemDto)
+  educationItems?: EducatorEducationItemDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => EducatorCertificationItemDto)
+  certificationItems?: EducatorCertificationItemDto[];
 
   @IsOptional()
   @IsArray()
@@ -267,6 +299,9 @@ export class AdminProfilesController {
         workExperience: user.workExperience ?? '',
         education: user.education ?? '',
         certifications: user.certifications ?? [],
+        workExperienceItems: user.workExperienceItems ?? [],
+        educationItems: user.educationItems ?? [],
+        certificationItems: user.certificationItems ?? [],
         skills: user.skills ?? [],
         availability: user.availability ?? '',
         cvUrl: user.cvUrl ?? '',
@@ -311,6 +346,9 @@ export class AdminProfilesController {
           avatarAsset: true,
           coverAsset: true,
           contactInfo: true,
+          workExperienceItems: { orderBy: { sortOrder: 'asc' } },
+          educationItems: { orderBy: { sortOrder: 'asc' } },
+          certificationItems: { orderBy: { sortOrder: 'asc' } },
           organizations: {
             include: {
               organization: {
@@ -340,6 +378,9 @@ export class AdminProfilesController {
         avatarAsset: true,
         coverAsset: true,
         contactInfo: true,
+        workExperienceItems: { orderBy: { sortOrder: 'asc' } },
+        educationItems: { orderBy: { sortOrder: 'asc' } },
+        certificationItems: { orderBy: { sortOrder: 'asc' } },
         organizations: {
           include: {
             organization: {
@@ -415,6 +456,29 @@ export class AdminProfilesController {
       clerkId = user.clerkId;
     }
 
+    const normalizedWorkExperienceItems = dto.workExperienceItems
+      ? normalizeWorkExperienceItems(dto.workExperienceItems)
+      : null;
+    const normalizedEducationItems = dto.educationItems
+      ? normalizeEducationItems(dto.educationItems)
+      : null;
+    const normalizedCertificationItems = dto.certificationItems
+      ? normalizeCertificationItems(dto.certificationItems)
+      : null;
+
+    const workExperienceText =
+      normalizedWorkExperienceItems !== null
+        ? formatWorkExperienceText(normalizedWorkExperienceItems)
+        : dto.workExperience;
+    const educationText =
+      normalizedEducationItems !== null
+        ? formatEducationText(normalizedEducationItems)
+        : dto.education;
+    const certificationNames =
+      normalizedCertificationItems !== null
+        ? normalizedCertificationItems.map((item) => item.name)
+        : dto.certifications;
+
     await this.prisma.$transaction(async (tx) => {
       // Update user profile
       await tx.user.update({
@@ -424,9 +488,9 @@ export class AdminProfilesController {
           lastName: dto.lastName,
           email: dto.email,
           phoneNumber: dto.phoneNumber,
-          workExperience: dto.workExperience,
-          education: dto.education,
-          certifications: dto.certifications,
+          workExperience: workExperienceText,
+          education: educationText,
+          certifications: certificationNames,
           skills: dto.skills,
           availability: dto.availability,
           cvUrl: dto.cvUrl,
@@ -464,6 +528,62 @@ export class AdminProfilesController {
           where: { clerkId },
           data: { email: dto.email },
         });
+      }
+
+      if (normalizedWorkExperienceItems !== null) {
+        await tx.educatorWorkExperience.deleteMany({
+          where: { userId: profileId },
+        });
+        if (normalizedWorkExperienceItems.length > 0) {
+          await tx.educatorWorkExperience.createMany({
+            data: normalizedWorkExperienceItems.map((item, index) => ({
+              userId: profileId,
+              jobTitle: item.jobTitle || 'Experience',
+              institutionName: item.institutionName || '',
+              startDate: item.startDate,
+              endDate: item.endDate,
+              descriptionPoints: item.descriptionPoints,
+              sortOrder: index,
+            })),
+          });
+        }
+      }
+
+      if (normalizedEducationItems !== null) {
+        await tx.educatorEducation.deleteMany({
+          where: { userId: profileId },
+        });
+        if (normalizedEducationItems.length > 0) {
+          await tx.educatorEducation.createMany({
+            data: normalizedEducationItems.map((item, index) => ({
+              userId: profileId,
+              degree: item.degree || 'Education',
+              institutionName: item.institutionName || '',
+              graduationYear: item.graduationYear,
+              description: item.description,
+              sortOrder: index,
+            })),
+          });
+        }
+      }
+
+      if (normalizedCertificationItems !== null) {
+        await tx.educatorCertification.deleteMany({
+          where: { userId: profileId },
+        });
+        if (normalizedCertificationItems.length > 0) {
+          await tx.educatorCertification.createMany({
+            data: normalizedCertificationItems.map((item, index) => ({
+              userId: profileId,
+              name: item.name,
+              issuingOrganization: item.issuingOrganization,
+              issueDate: item.issueDate,
+              expiryDate: item.expiryDate,
+              credentialUrl: item.credentialUrl,
+              sortOrder: index,
+            })),
+          });
+        }
       }
     });
 

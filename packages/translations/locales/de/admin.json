@@ -610,6 +610,9 @@
     },
     "contentUploadSuccess": "Inhalt erfolgreich hochgeladen!"
   },
+  "contentUpload": {
+    "fileTooLarge": "Dateigröße überschreitet das Limit von {{max}} MB."
+  },
   "sidebar": {
     "version": "Backend-Verwaltung v1.0",
     "adminLogo": "Admin-Logo",
@@ -1385,7 +1388,11 @@
     "clickBrowse": "Zum Durchsuchen klicken oder ziehen und ablegen",
     "defaultHelp": "PDF, DOCX, MP4 (maximal 50MB)",
     "dragDrop": "oder ziehen und ablegen",
-    "selected": "Ausgewählte"
+    "selected": "Ausgewählte",
+    "errors": {
+      "sizeExceeded": "Dateigröße überschreitet {{max}} MB.",
+      "invalidType": "Ungültiger Dateityp. Erlaubt: {{types}}"
+    }
   },
   "products": {
     "emptyState": {
@@ -1581,6 +1588,9 @@
     "title": "Nachrichten",
     "searchPlaceholder": "Konversationen suchen...",
     "typePlaceholder": "Geben Sie Ihre Nachricht ein...",
+    "errors": {
+      "fileTooLarge": "Dateigröße überschreitet das Limit von {{max}} MB."
+    },
     "emptyState": {
       "noConversations": "Keine Konversationen gefunden",
       "tryAdjusting": "Versuchen Sie, Ihre Suche anzupassen",
@@ -1683,6 +1693,9 @@
   "translations": {
     "title": "Übersetzungsverwaltung",
     "subtitle": "Statische UI-Übersetzungen verwalten",
+    "errors": {
+      "fileTooLarge": "Dateigröße überschreitet das Limit von {{max}} MB."
+    },
     "tabs": {
       "translations": "Übersetzungen",
       "auditLogs": "Auditprotokolle",

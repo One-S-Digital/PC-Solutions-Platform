@@ -14,6 +14,11 @@ import { ArrowLeftIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import Tabs from '../components/ui/Tabs';
 import { AvailabilityScheduler } from '../components/availability';
 import { EducatorAvailabilitySettings, createEmptyAvailabilitySettings } from '../types/availability';
+import {
+  certificationItemsFromNames,
+  fallbackEducationFromText,
+  fallbackWorkExperienceFromText,
+} from '../utils/educatorProfileHelpers';
 
 // Helper function to parse availability settings from various formats
 const parseAvailabilitySettings = (
@@ -44,6 +49,7 @@ const parseAvailabilitySettings = (
 
   return createEmptyAvailabilitySettings();
 };
+
 
 const ProfileEditPage: React.FC = () => {
   const { t } = useTranslation(['common', 'settings', 'dashboard']);
@@ -154,6 +160,21 @@ const ProfileEditPage: React.FC = () => {
       } else if (currentUser.role === UserRole.EDUCATOR) {
         const response = await request<{ success: boolean; data?: any }>('/settings/educator');
         const data = response.success && response.data ? response.data : ({} as any);
+        const workExperienceItems =
+          Array.isArray(data.workExperienceItems) && data.workExperienceItems.length > 0
+            ? data.workExperienceItems
+            : fallbackWorkExperienceFromText(data.workExperience || '');
+        const educationItems =
+          Array.isArray(data.educationItems) && data.educationItems.length > 0
+            ? data.educationItems
+            : fallbackEducationFromText(data.education || '');
+        const certificationItems =
+          Array.isArray(data.certificationItems) && data.certificationItems.length > 0
+            ? data.certificationItems
+            : certificationItemsFromNames(
+                Array.isArray(data.certifications) ? data.certifications : [],
+              );
+
         roleSettings = {
           firstName: data.firstName || currentUser.firstName || '',
           lastName: data.lastName || currentUser.lastName || '',
@@ -167,6 +188,9 @@ const ProfileEditPage: React.FC = () => {
           workExperience: data.workExperience || '',
           education: data.education || '',
           certifications: Array.isArray(data.certifications) ? data.certifications : [],
+          workExperienceItems,
+          educationItems,
+          certificationItems,
           skills: Array.isArray(data.skills) ? data.skills : [],
           availability: data.availability || '',
           availabilitySettings: data.availabilitySettings,
@@ -294,6 +318,15 @@ const ProfileEditPage: React.FC = () => {
           }),
         });
       } else if (currentUser.role === UserRole.EDUCATOR) {
+        const certificationItems = Array.isArray(payload.certificationItems)
+          ? payload.certificationItems
+          : [];
+        const certificationNames =
+          certificationItems.length > 0
+            ? certificationItems.map((item: any) => item?.name).filter(Boolean)
+            : Array.isArray(payload.certifications)
+              ? payload.certifications
+              : [];
         const educatorPayload: Record<string, any> = {
           firstName: payload.firstName || '',
           lastName: payload.lastName || '',
@@ -306,7 +339,10 @@ const ProfileEditPage: React.FC = () => {
           cities: Array.isArray(payload.cities) ? payload.cities : [],
           workExperience: payload.workExperience || '',
           education: payload.education || '',
-          certifications: Array.isArray(payload.certifications) ? payload.certifications : [],
+          certifications: certificationNames,
+          workExperienceItems: Array.isArray(payload.workExperienceItems) ? payload.workExperienceItems : [],
+          educationItems: Array.isArray(payload.educationItems) ? payload.educationItems : [],
+          certificationItems,
           skills: Array.isArray(payload.skills) ? payload.skills : [],
           availability: payload.availability || '',
           cvUrl: payload.cvUrl || '',

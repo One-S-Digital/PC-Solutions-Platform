@@ -25,6 +25,9 @@ interface EducatorProfileData {
   workExperience: string;
   education: string;
   certifications: string[];
+  workExperienceItems?: WorkExperienceItem[];
+  educationItems?: EducationItem[];
+  certificationItems?: CertificationItem[];
   skills: string[];
   availability: string;
   cvUrl: string;
@@ -126,6 +129,9 @@ const EducatorProfilePage: React.FC = () => {
           workExperience: data.workExperience || '',
           education: data.education || '',
           certifications: Array.isArray(data.certifications) ? data.certifications : [],
+          workExperienceItems: Array.isArray(data.workExperienceItems) ? data.workExperienceItems : [],
+          educationItems: Array.isArray(data.educationItems) ? data.educationItems : [],
+          certificationItems: Array.isArray(data.certificationItems) ? data.certificationItems : [],
           skills: Array.isArray(data.skills) ? data.skills : [],
           availability: data.availability || '',
           cvUrl: data.cvUrl || '',
@@ -148,6 +154,9 @@ const EducatorProfilePage: React.FC = () => {
           workExperience: '',
           education: '',
           certifications: [],
+          workExperienceItems: [],
+          educationItems: [],
+          certificationItems: [],
           skills: [],
           availability: '',
           cvUrl: '',
@@ -362,8 +371,16 @@ const EducatorProfilePage: React.FC = () => {
     );
   }
 
-  const workExperienceItems = parseWorkExperience(profile.workExperience);
-  const educationItems = parseEducation(profile.education);
+  const workExperienceItems =
+    profile.workExperienceItems && profile.workExperienceItems.length > 0
+      ? profile.workExperienceItems
+      : parseWorkExperience(profile.workExperience);
+  const educationItems =
+    profile.educationItems && profile.educationItems.length > 0
+      ? profile.educationItems
+      : parseEducation(profile.education);
+  const hasStructuredExperience = workExperienceItems.length > 0;
+  const hasStructuredEducation = educationItems.length > 0;
 
   const fullName = `${profile.firstName} ${profile.lastName}`.trim() || t('educatorProfilePage.unnamed', 'Unnamed Educator');
   const avatarUrl = profile.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=48CFAE&color=fff&size=128`;
@@ -649,7 +666,13 @@ const EducatorProfilePage: React.FC = () => {
           <SectionCard 
             titleKey="educatorProfilePage.experience.title" 
             icon={BriefcaseIcon}
-            onEdit={editingExperience ? handleCancelExperience : handleEditExperience}
+            onEdit={
+              hasStructuredExperience
+                ? undefined
+                : editingExperience
+                ? handleCancelExperience
+                : handleEditExperience
+            }
             isEditing={editingExperience}
           >
             {editingExperience ? (
@@ -676,18 +699,26 @@ const EducatorProfilePage: React.FC = () => {
             ) : (
               <div className="space-y-4">
                 {workExperienceItems.length > 0 ? (
-                  workExperienceItems.map((exp) => (
-                    <div key={exp.id} className="p-3 bg-gray-50 rounded-md">
-                      <h3 className="font-semibold text-swiss-charcoal">{exp.jobTitle}</h3>
-                      <p className="text-sm text-swiss-teal">{exp.institutionName}</p>
-                      <p className="text-xs text-gray-500">{exp.startDate} – {exp.endDate}</p>
-                      {exp.descriptionPoints && exp.descriptionPoints.length > 0 && (
-                        <ul className="list-disc list-inside text-sm text-gray-600 mt-1 space-y-0.5">
-                          {exp.descriptionPoints.map((point, i) => <li key={i}>{point}</li>)}
-                        </ul>
+                  <>
+                    {workExperienceItems.map((exp) => (
+                      <div key={exp.id} className="p-3 bg-gray-50 rounded-md">
+                        <h3 className="font-semibold text-swiss-charcoal">{exp.jobTitle}</h3>
+                        <p className="text-sm text-swiss-teal">{exp.institutionName}</p>
+                        <p className="text-xs text-gray-500">{exp.startDate} – {exp.endDate}</p>
+                        {exp.descriptionPoints && exp.descriptionPoints.length > 0 && (
+                          <ul className="list-disc list-inside text-sm text-gray-600 mt-1 space-y-0.5">
+                            {exp.descriptionPoints.map((point, i) => <li key={i}>{point}</li>)}
+                          </ul>
+                        )}
+                      </div>
+                    ))}
+                    <p className="text-xs text-gray-500">
+                      {t(
+                        'educatorProfilePage.experience.managedHint',
+                        'Structured experience entries are managed in the full profile editor.',
                       )}
-                    </div>
-                  ))
+                    </p>
+                  </>
                 ) : profile.workExperience ? (
                   <p className="text-gray-700 whitespace-pre-line">{profile.workExperience}</p>
                 ) : (
@@ -706,7 +737,13 @@ const EducatorProfilePage: React.FC = () => {
           <SectionCard 
             titleKey="educatorProfilePage.education.title" 
             icon={AcademicCapIcon}
-            onEdit={editingEducation ? handleCancelEducation : handleEditEducation}
+            onEdit={
+              hasStructuredEducation
+                ? undefined
+                : editingEducation
+                ? handleCancelEducation
+                : handleEditEducation
+            }
             isEditing={editingEducation}
           >
             {editingEducation ? (
@@ -733,14 +770,24 @@ const EducatorProfilePage: React.FC = () => {
             ) : (
               <div className="space-y-4">
                 {educationItems.length > 0 ? (
-                  educationItems.map((edu) => (
-                    <div key={edu.id} className="p-3 bg-gray-50 rounded-md">
-                      <h3 className="font-semibold text-swiss-charcoal">{edu.degree}</h3>
-                      <p className="text-sm text-swiss-teal">{edu.institutionName}</p>
-                      <p className="text-xs text-gray-500">{t('educatorProfilePage.education.graduated', 'Graduated')}: {edu.graduationYear}</p>
-                      {edu.description && <p className="text-sm text-gray-600 mt-1">{edu.description}</p>}
-                    </div>
-                  ))
+                  <>
+                    {educationItems.map((edu) => (
+                      <div key={edu.id} className="p-3 bg-gray-50 rounded-md">
+                        <h3 className="font-semibold text-swiss-charcoal">{edu.degree}</h3>
+                        <p className="text-sm text-swiss-teal">{edu.institutionName}</p>
+                        <p className="text-xs text-gray-500">
+                          {t('educatorProfilePage.education.graduated', 'Graduated')}: {edu.graduationYear}
+                        </p>
+                        {edu.description && <p className="text-sm text-gray-600 mt-1">{edu.description}</p>}
+                      </div>
+                    ))}
+                    <p className="text-xs text-gray-500">
+                      {t(
+                        'educatorProfilePage.education.managedHint',
+                        'Structured education entries are managed in the full profile editor.',
+                      )}
+                    </p>
+                  </>
                 ) : profile.education ? (
                   <p className="text-gray-700 whitespace-pre-line">{profile.education}</p>
                 ) : (

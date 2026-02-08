@@ -38,6 +38,7 @@ const ChatWindow: React.FC = () => {
     fileUrl: string;
     isImage: boolean;
   } | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const emojiPickerRef = useRef<HTMLDivElement>(null);
@@ -195,10 +196,19 @@ const ChatWindow: React.FC = () => {
 
     const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
     if (file.size > MAX_FILE_SIZE) {
-      alert(t('messages:errors.fileTooLarge', 'File size exceeds 50MB limit'));
+      setFileError(
+        t('messages:errors.fileTooLarge', {
+          defaultValue: 'File size exceeds 50MB limit',
+          max: 50,
+        }),
+      );
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
       return;
     }
 
+    setFileError(null);
     setIsUploading(true);
     try {
       const token = await getToken();
@@ -288,6 +298,7 @@ const ChatWindow: React.FC = () => {
 
   const handleRemovePendingFile = () => {
     setPendingFile(null);
+    setFileError(null);
   };
 
   const handleSendMessage = async (e: React.FormEvent) => {
@@ -447,6 +458,11 @@ const ChatWindow: React.FC = () => {
             </div>
           </div>
         )}
+        {fileError && (
+          <div className="px-4 pb-2 text-sm text-swiss-coral" role="alert">
+            {fileError}
+          </div>
+        )}
         
         <form onSubmit={handleSendMessage} className="p-4 flex items-center space-x-2">
           <input
@@ -514,7 +530,7 @@ const ChatWindow: React.FC = () => {
             size="md" 
             className="!p-2.5 disabled:opacity-50" 
             aria-label={t('common:buttons.sendMessage')}
-            disabled={isUploading || (!newMessage.trim() && !pendingFile)}
+            disabled={isUploading || (!newMessage.trim() && !pendingFile) || (!!fileError && !!pendingFile)}
           >
             <PaperAirplaneIcon className="w-5 h-5" />
           </Button>
