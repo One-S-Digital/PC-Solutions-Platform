@@ -1616,6 +1616,16 @@ export class UsersService {
 
     const profile = await this.prisma.user.findUnique({ where: { clerkId: appUser.clerkId } });
 
+    // Helper: safely count records in a table that might not exist yet (P2021).
+    const safeCount = async (query: Promise<number>): Promise<number> => {
+      try {
+        return await query;
+      } catch (error: any) {
+        if (error?.code === 'P2021') return 0;
+        throw error;
+      }
+    };
+
     // Preflight dependency counts. We only allow hard-delete for "clean" users
     // (typically newly created accounts) to avoid blowing away important history.
     const [
@@ -1630,20 +1640,20 @@ export class UsersService {
       supportTicketCount,
       ticketResponseCount,
     ] = await Promise.all([
-      this.prisma.asset.count({ where: { uploadedById: appUser.id } }),
-      this.prisma.course.count({ where: { createdBy: appUser.id } }),
-      profile ? this.prisma.userOrganization.count({ where: { userId: profile.id } }) : Promise.resolve(0),
-      profile ? this.prisma.userContactInfo.count({ where: { userId: profile.id } }) : Promise.resolve(0),
+      safeCount(this.prisma.asset.count({ where: { uploadedById: appUser.id } })),
+      safeCount(this.prisma.course.count({ where: { createdBy: appUser.id } })),
+      profile ? safeCount(this.prisma.userOrganization.count({ where: { userId: profile.id } })) : Promise.resolve(0),
+      profile ? safeCount(this.prisma.userContactInfo.count({ where: { userId: profile.id } })) : Promise.resolve(0),
       profile
-        ? this.prisma.message.count({
+        ? safeCount(this.prisma.message.count({
             where: { OR: [{ senderId: profile.id }, { receiverId: profile.id }] },
-          })
+          }))
         : Promise.resolve(0),
-      profile ? this.prisma.conversationParticipant.count({ where: { userId: profile.id } }) : Promise.resolve(0),
-      profile ? this.prisma.subscription.count({ where: { userId: profile.id } }) : Promise.resolve(0),
-      profile ? this.prisma.jobApplication.count({ where: { candidateId: profile.id } }) : Promise.resolve(0),
-      profile ? this.prisma.supportTicket.count({ where: { OR: [{ userId: profile.id }, { assignedTo: profile.id }] } }) : Promise.resolve(0),
-      profile ? this.prisma.ticketResponse.count({ where: { userId: profile.id } }) : Promise.resolve(0),
+      profile ? safeCount(this.prisma.conversationParticipant.count({ where: { userId: profile.id } })) : Promise.resolve(0),
+      profile ? safeCount(this.prisma.subscription.count({ where: { userId: profile.id } })) : Promise.resolve(0),
+      profile ? safeCount(this.prisma.jobApplication.count({ where: { candidateId: profile.id } })) : Promise.resolve(0),
+      profile ? safeCount(this.prisma.supportTicket.count({ where: { OR: [{ userId: profile.id }, { assignedTo: profile.id }] } })) : Promise.resolve(0),
+      profile ? safeCount(this.prisma.ticketResponse.count({ where: { userId: profile.id } })) : Promise.resolve(0),
     ]);
 
     // Allow deleting trivial link tables (memberships/contact) automatically,
@@ -1675,6 +1685,25 @@ export class UsersService {
 
     try {
       await this.prisma.$transaction(async (tx) => {
+        // Helper: run a deleteMany that might target a table not yet migrated.
+        const safeDeleteMany = async (model: any, where: any): Promise<void> => {
+          try {
+            await model.deleteMany({ where });
+          } catch (error: any) {
+            if (error?.code === 'P2021') return; // table does not exist
+            throw error;
+          }
+        };
+        // Helper: run an updateMany that might target a table not yet migrated.
+        const safeUpdateMany = async (model: any, where: any, data: any): Promise<void> => {
+          try {
+            await model.updateMany({ where, data });
+          } catch (error: any) {
+            if (error?.code === 'P2021') return; // table does not exist
+            throw error;
+          }
+        };
+
         // In force mode, aggressively delete dependent data so the user can be removed.
         if (force && profile) {
           // Track conversation IDs that might become orphaned after we remove this user's
@@ -1718,17 +1747,67 @@ export class UsersService {
           }
 
           // Jobs / support / subscriptions
-          await tx.jobApplication.deleteMany({ where: { candidateId: profile.id } });
-          await tx.ticketResponse.deleteMany({ where: { userId: profile.id } });
-          await tx.supportTicket.deleteMany({ where: { OR: [{ userId: profile.id }, { assignedTo: profile.id }] } });
-          await tx.userSubscription.deleteMany({ where: { userId: profile.id } });
-          await tx.subscription.deleteMany({ where: { userId: profile.id } });
+          await safeDeleteMany(tx.jobApplication, { candidateId: profile.id });
+          await safeDeleteMany(tx.ticketResponse, { userId: profile.id });
+          await safeDeleteMany(tx.supportTicket, { OR: [{ userId: profile.id }, { assignedTo: profile.id }] });
+          await safeDeleteMany(tx.userSubscription, { userId: profile.id });
+          await safeDeleteMany(tx.subscription, { userId: profile.id });
 
           // E-learning
-          await tx.certificate.deleteMany({ where: { userId: profile.id } });
-          await tx.discussionReply.deleteMany({ where: { userId: profile.id } });
-          await tx.courseDiscussion.deleteMany({ where: { userId: profile.id } });
-          await tx.courseEnrollment.deleteMany({ where: { userId: profile.id } });
+          await safeDeleteMany(tx.certificate, { userId: profile.id });
+          await safeDeleteMany(tx.discussionReply, { userId: profile.id });
+          await safeDeleteMany(tx.courseDiscussion, { userId: profile.id });
+          await safeDeleteMany(tx.courseEnrollment, { userId: profile.id });
+
+          // ── Relations that were previously missing, causing P2003 / 500 ──
+
+          // Licensing
+          await safeDeleteMany(tx.license, { userId: profile.id });
+
+          // Content moderation (moderatorId is required → Restrict)
+          await safeDeleteMany(tx.moderationAction, { moderatorId: profile.id });
+
+          // Notification preferences (userId is required → Restrict)
+          await safeDeleteMany(tx.userNotificationPreferences, { userId: profile.id });
+
+          // Admin content items created by the user (uploadedBy is required → Restrict)
+          await safeDeleteMany(tx.contentItem, { uploadedBy: profile.id });
+
+          // Policy alerts created by the user (createdBy is required → Restrict)
+          await safeDeleteMany(tx.policyAlert, { createdBy: profile.id });
+
+          // API keys created by the user (createdBy is required → Restrict)
+          await safeDeleteMany(tx.apiKey, { createdBy: profile.id });
+
+          // Webhooks created by the user (createdBy is required → Restrict).
+          // WebhookLog has onDelete: Cascade on webhookId, so deleting
+          // the webhook cascades to its logs automatically.
+          await safeDeleteMany(tx.webhook, { createdBy: profile.id });
+
+          // Calendar events the user created (createdBy is optional → SetNull,
+          // but clean up explicitly for data hygiene)
+          await safeUpdateMany(tx.calendarEvent, { createdBy: profile.id }, { createdBy: null });
+
+          // Subscription requests / cancellation requests (userId is optional → SetNull,
+          // but nullify explicitly to be safe)
+          await safeUpdateMany(tx.subscriptionRequest, { userId: profile.id }, { userId: null });
+          await safeUpdateMany(tx.subscriptionCancellationRequest, { userId: profile.id }, { userId: null });
+
+          // Vendor client marks (markedByUserId is optional → SetNull)
+          await safeUpdateMany(tx.vendorClient, { markedByUserId: profile.id }, { markedByUserId: null });
+
+          // Content moderation reports/reviews (optional FKs → SetNull)
+          await safeUpdateMany(tx.contentModeration, { reporterId: profile.id }, { reporterId: null });
+          await safeUpdateMany(tx.contentModeration, { moderatorId: profile.id }, { moderatorId: null });
+
+          // Email logs (optional FK → SetNull)
+          await safeUpdateMany(tx.emailLog, { userId: profile.id }, { userId: null });
+
+          // Audit logs (optional FK → SetNull)
+          await safeUpdateMany(tx.auditLog, { actorId: profile.id }, { actorId: null });
+
+          // Platform settings last-updated-by (optional FK → SetNull)
+          await safeUpdateMany(tx.platformSettings, { updatedBy: profile.id }, { updatedBy: null });
         }
 
         // If the AppUser has uploaded assets, we cannot delete it due to onDelete: Restrict.
@@ -1763,7 +1842,7 @@ export class UsersService {
 
         if (profile) {
           await tx.userOrganization.deleteMany({ where: { userId: profile.id } });
-          await tx.userContactInfo.deleteMany({ where: { userId: profile.id } });
+          await safeDeleteMany(tx.userContactInfo, { userId: profile.id });
           await tx.user.delete({ where: { id: profile.id } });
         } else {
           // Fall back to clerkId-based cleanup if profile row doesn't exist.
@@ -1773,22 +1852,27 @@ export class UsersService {
         await tx.appUser.delete({ where: { id: appUser.id } });
       });
     } catch (err: any) {
+      // Log the full error so the specific FK constraint is visible in server logs.
+      this.logger.error(`[HARD DELETE] Transaction failed for user ${id}`, {
+        code: err?.code,
+        meta: err?.meta,
+        message: err?.message,
+      });
+
       // Guard against FK races: even after a "clean" preflight, a dependent record may be
       // created before we delete, resulting in a FK constraint error. Translate to 409.
-      if (err?.code === 'P2003' || err instanceof Prisma.PrismaClientKnownRequestError) {
-        const code = err?.code;
-        if (code === 'P2003') {
-          throw new ConflictException({
-            message:
-              'User cannot be hard-deleted because dependent records exist. Use soft delete, or manually purge dependent data first.',
-            code: 'HARD_DELETE_BLOCKED',
-            blocking,
-            nonBlocking: {
-              orgMemberships: orgMembershipCount,
-              contactInfo: contactInfoCount,
-            },
-          });
-        }
+      if (err?.code === 'P2003' || (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2003')) {
+        throw new ConflictException({
+          message:
+            'User cannot be hard-deleted because dependent records exist. Use soft delete, or manually purge dependent data first.',
+          code: 'HARD_DELETE_BLOCKED',
+          detail: err?.meta?.field_name || err?.message,
+          blocking,
+          nonBlocking: {
+            orgMemberships: orgMembershipCount,
+            contactInfo: contactInfoCount,
+          },
+        });
       }
       throw err;
     }
