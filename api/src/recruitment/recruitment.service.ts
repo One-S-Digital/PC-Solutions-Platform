@@ -633,6 +633,10 @@ export class RecruitmentService {
       where: {
         ...where,
         role: 'EDUCATOR',
+        // Exclude suspended / inactive educators from the candidate pool.
+        // Use { not: false } so legacy rows with null isActive are treated
+        // as active, consistent with the rest of the codebase.
+        isActive: { not: false },
       },
       include: {
         avatarAsset: true,
@@ -652,7 +656,13 @@ export class RecruitmentService {
 
   async findCandidateById(id: string) {
     return this.prisma.user.findUnique({
-      where: { id },
+      where: {
+        id,
+        // Exclude suspended / inactive educators so their profile cannot
+        // be viewed individually either.  Uses { not: false } so legacy
+        // rows with null isActive are treated as active.
+        isActive: { not: false },
+      },
       include: {
         avatarAsset: true,
         applications: {
@@ -685,8 +695,10 @@ export class RecruitmentService {
     const candidates = await this.prisma.user.findMany({
       where: {
         role: 'EDUCATOR',
+        // Exclude suspended / inactive educators from matching results.
+        isActive: { not: false },
         // Add more sophisticated matching logic here
-        // For now, we'll return all educators
+        // For now, we'll return all active educators
       },
       include: {
         applications: {
