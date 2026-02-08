@@ -28,7 +28,7 @@ import { useOrganizationMessaging } from '../../hooks/useOrganizationMessaging';
 import ActiveClientToggle from '../../components/shared/ActiveClientToggle';
 import OrganizationDocumentsList from '../../components/profile/OrganizationDocumentsList';
 import PromoCodesDisplaySection from '../../components/profile/PromoCodesDisplaySection';
-import { formatServiceCategory, formatServiceDeliveryType, formatCategory } from '../../utils/serviceFormatting';
+import { formatServiceCategoryForService, formatServiceDeliveryType, formatCategory } from '../../utils/serviceFormatting';
 import { openExternalUrl, toExternalUrl } from '../../utils/url';
 import { organizationService } from '../../services/organizationService';
 
@@ -487,7 +487,7 @@ const PartnerDetailPage: React.FC = () => {
                           {service.title}
                         </h3>
                         <p className="text-xs text-gray-500">
-                          {formatServiceCategory(t, service.category)}
+                          {formatServiceCategoryForService(t, service)}
                           {service.deliveryType && <> • {formatServiceDeliveryType(t, service.deliveryType)}</>}
                         </p>
                         <p className="text-sm text-gray-600 mt-1 line-clamp-2">{service.description}</p>
