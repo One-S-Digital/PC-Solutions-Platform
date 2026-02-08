@@ -322,6 +322,7 @@ ON "public"."users" ((("availabilitySettings"->>'employmentType')));
 /**
  * Run one-off backfill for structured educator profile items.
  * NOTE: Temporary step requested for deployment; remove after build.
+ * TODO(EDU-BACKFILL-REMOVE): Remove this step after first successful deploy.
  */
 const runEducatorProfileBackfill = () => {
   if (envFlag(process.env.SKIP_EDUCATOR_PROFILE_BACKFILL)) {

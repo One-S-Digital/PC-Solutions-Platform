@@ -378,6 +378,9 @@ export class AdminProfilesController {
         avatarAsset: true,
         coverAsset: true,
         contactInfo: true,
+        workExperienceItems: { orderBy: { sortOrder: 'asc' } },
+        educationItems: { orderBy: { sortOrder: 'asc' } },
+        certificationItems: { orderBy: { sortOrder: 'asc' } },
         organizations: {
           include: {
             organization: {
@@ -443,11 +446,6 @@ export class AdminProfilesController {
       // Try by User.id (profileId)
       const user = await this.prisma.user.findUnique({
         where: { id },
-        include: {
-          workExperienceItems: { orderBy: { sortOrder: 'asc' } },
-          educationItems: { orderBy: { sortOrder: 'asc' } },
-          certificationItems: { orderBy: { sortOrder: 'asc' } },
-        },
       });
 
       if (!user) {

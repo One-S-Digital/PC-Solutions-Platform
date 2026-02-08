@@ -24,6 +24,7 @@ BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM information_schema.table_constraints
     WHERE constraint_name = 'educator_work_experiences_userId_fkey'
+      AND constraint_schema = current_schema()
   ) THEN
     ALTER TABLE "educator_work_experiences"
       ADD CONSTRAINT "educator_work_experiences_userId_fkey"
@@ -55,6 +56,7 @@ BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM information_schema.table_constraints
     WHERE constraint_name = 'educator_educations_userId_fkey'
+      AND constraint_schema = current_schema()
   ) THEN
     ALTER TABLE "educator_educations"
       ADD CONSTRAINT "educator_educations_userId_fkey"
@@ -87,6 +89,7 @@ BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM information_schema.table_constraints
     WHERE constraint_name = 'educator_certifications_userId_fkey'
+      AND constraint_schema = current_schema()
   ) THEN
     ALTER TABLE "educator_certifications"
       ADD CONSTRAINT "educator_certifications_userId_fkey"

@@ -6,11 +6,14 @@ import {
   IsOptional,
   IsString,
   IsUrl,
+  MaxArraySize,
   ValidateIf,
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { EducatorAvailabilitySettingsDto } from './educator-availability.dto';
+
+const MAX_EDUCATOR_ITEMS = 20;
 
 export class EducatorWorkExperienceItemDto {
   @IsOptional()
@@ -120,18 +123,21 @@ export class UpdateEducatorSettingsDto {
 
   @IsOptional()
   @IsArray()
+  @MaxArraySize(MAX_EDUCATOR_ITEMS)
   @ValidateNested({ each: true })
   @Type(() => EducatorWorkExperienceItemDto)
   workExperienceItems?: EducatorWorkExperienceItemDto[];
 
   @IsOptional()
   @IsArray()
+  @MaxArraySize(MAX_EDUCATOR_ITEMS)
   @ValidateNested({ each: true })
   @Type(() => EducatorEducationItemDto)
   educationItems?: EducatorEducationItemDto[];
 
   @IsOptional()
   @IsArray()
+  @MaxArraySize(MAX_EDUCATOR_ITEMS)
   @ValidateNested({ each: true })
   @Type(() => EducatorCertificationItemDto)
   certificationItems?: EducatorCertificationItemDto[];

@@ -116,71 +116,76 @@ async function main() {
   let createdCerts = 0;
 
   for (const educator of educators) {
-    const workItemsExist = educator.workExperienceItems.length > 0;
-    const educationItemsExist = educator.educationItems.length > 0;
-    const certItemsExist = educator.certificationItems.length > 0;
+    try {
+      const workItemsExist = educator.workExperienceItems.length > 0;
+      const educationItemsExist = educator.educationItems.length > 0;
+      const certItemsExist = educator.certificationItems.length > 0;
 
-    const workParsed = parseJsonArray<WorkExperienceInput>(educator.workExperience);
-    const educationParsed = parseJsonArray<EducationInput>(educator.education);
+      const workParsed = parseJsonArray<WorkExperienceInput>(educator.workExperience);
+      const educationParsed = parseJsonArray<EducationInput>(educator.education);
 
-    const normalizedWork = workParsed
-      ? normalizeWorkExperience(workParsed)
-      : educator.workExperience
-      ? fallbackWorkExperience(educator.workExperience)
-      : [];
-    const normalizedEducation = educationParsed
-      ? normalizeEducation(educationParsed)
-      : educator.education
-      ? fallbackEducation(educator.education)
-      : [];
+      const normalizedWork = workParsed
+        ? normalizeWorkExperience(workParsed)
+        : educator.workExperience
+        ? fallbackWorkExperience(educator.workExperience)
+        : [];
+      const normalizedEducation = educationParsed
+        ? normalizeEducation(educationParsed)
+        : educator.education
+        ? fallbackEducation(educator.education)
+        : [];
 
-    const certNames = Array.isArray(educator.certifications) ? educator.certifications : [];
+      const certNames = Array.isArray(educator.certifications) ? educator.certifications : [];
 
-    if (!workItemsExist && normalizedWork.length > 0) {
-      await prisma.educatorWorkExperience.createMany({
-        data: normalizedWork.map((item, index) => ({
-          userId: educator.id,
-          jobTitle: item.jobTitle || 'Experience',
-          institutionName: item.institutionName || '',
-          startDate: item.startDate || null,
-          endDate: item.endDate || null,
-          descriptionPoints: splitDescriptionPoints(item.descriptionPoints),
-          sortOrder: index,
-        })),
-      });
-      createdWork += normalizedWork.length;
+      if (!workItemsExist && normalizedWork.length > 0) {
+        await prisma.educatorWorkExperience.createMany({
+          data: normalizedWork.map((item, index) => ({
+            userId: educator.id,
+            jobTitle: item.jobTitle || 'Experience',
+            institutionName: item.institutionName || '',
+            startDate: item.startDate || null,
+            endDate: item.endDate || null,
+            descriptionPoints: Array.isArray(item.descriptionPoints) ? item.descriptionPoints : [],
+            sortOrder: index,
+          })),
+        });
+        createdWork += normalizedWork.length;
+      }
+
+      if (!educationItemsExist && normalizedEducation.length > 0) {
+        await prisma.educatorEducation.createMany({
+          data: normalizedEducation.map((item, index) => ({
+            userId: educator.id,
+            degree: item.degree || 'Education',
+            institutionName: item.institutionName || '',
+            graduationYear: item.graduationYear || null,
+            description: item.description || null,
+            sortOrder: index,
+          })),
+        });
+        createdEducation += normalizedEducation.length;
+      }
+
+      if (!certItemsExist && certNames.length > 0) {
+        await prisma.educatorCertification.createMany({
+          data: certNames.map((name, index) => ({
+            userId: educator.id,
+            name,
+            issuingOrganization: null,
+            issueDate: null,
+            expiryDate: null,
+            credentialUrl: null,
+            sortOrder: index,
+          })),
+        });
+        createdCerts += certNames.length;
+      }
+
+      processed += 1;
+    } catch (err) {
+      console.error(`Failed to backfill educator ${educator.id}:`, err);
+      process.exitCode = 1;
     }
-
-    if (!educationItemsExist && normalizedEducation.length > 0) {
-      await prisma.educatorEducation.createMany({
-        data: normalizedEducation.map((item, index) => ({
-          userId: educator.id,
-          degree: item.degree || 'Education',
-          institutionName: item.institutionName || '',
-          graduationYear: item.graduationYear || null,
-          description: item.description || null,
-          sortOrder: index,
-        })),
-      });
-      createdEducation += normalizedEducation.length;
-    }
-
-    if (!certItemsExist && certNames.length > 0) {
-      await prisma.educatorCertification.createMany({
-        data: certNames.map((name, index) => ({
-          userId: educator.id,
-          name,
-          issuingOrganization: null,
-          issueDate: null,
-          expiryDate: null,
-          credentialUrl: null,
-          sortOrder: index,
-        })),
-      });
-      createdCerts += certNames.length;
-    }
-
-    processed += 1;
   }
 
   console.log(

@@ -304,7 +304,7 @@ export class ProfileController {
     });
 
     if (!user) {
-      throw new Error('User not found');
+      throw new NotFoundException('User not found');
     }
 
     return {
@@ -354,72 +354,76 @@ export class ProfileController {
         ? normalizedCertificationItems.map((item) => item.name)
         : updateData.certifications;
 
-    const updatedUser = await this.prisma.user.update({
-      where: { id: userId },
-      data: {
-        firstName: updateData.firstName ?? user.firstName,
-        lastName: updateData.lastName ?? user.lastName,
-        phoneNumber: updateData.phoneNumber ?? user.phoneNumber,
-        workExperience: workExperienceText ?? user.workExperience,
-        education: educationText ?? user.education,
-        certifications: certificationNames ?? user.certifications,
-        skills: updateData.skills ?? user.skills,
-        availability: updateData.availability ?? user.availability,
-        cvUrl: updateData.cvUrl ?? user.cvUrl,
-        shortBio: updateData.shortBio !== undefined ? updateData.shortBio : user.shortBio,
-        avatarAssetId: updateData.avatarAssetId !== undefined ? updateData.avatarAssetId : user.avatarAssetId,
-      },
+    const updatedUser = await this.prisma.$transaction(async (tx) => {
+      const userRecord = await tx.user.update({
+        where: { id: userId },
+        data: {
+          firstName: updateData.firstName ?? user.firstName,
+          lastName: updateData.lastName ?? user.lastName,
+          phoneNumber: updateData.phoneNumber ?? user.phoneNumber,
+          workExperience: workExperienceText ?? user.workExperience,
+          education: educationText ?? user.education,
+          certifications: certificationNames ?? user.certifications,
+          skills: updateData.skills ?? user.skills,
+          availability: updateData.availability ?? user.availability,
+          cvUrl: updateData.cvUrl ?? user.cvUrl,
+          shortBio: updateData.shortBio !== undefined ? updateData.shortBio : user.shortBio,
+          avatarAssetId: updateData.avatarAssetId !== undefined ? updateData.avatarAssetId : user.avatarAssetId,
+        },
+      });
+
+      if (normalizedWorkExperienceItems !== null) {
+        await tx.educatorWorkExperience.deleteMany({ where: { userId } });
+        if (normalizedWorkExperienceItems.length > 0) {
+          await tx.educatorWorkExperience.createMany({
+            data: normalizedWorkExperienceItems.map((item, index) => ({
+              userId,
+              jobTitle: item.jobTitle || 'Experience',
+              institutionName: item.institutionName || '',
+              startDate: item.startDate,
+              endDate: item.endDate,
+              descriptionPoints: item.descriptionPoints,
+              sortOrder: index,
+            })),
+          });
+        }
+      }
+
+      if (normalizedEducationItems !== null) {
+        await tx.educatorEducation.deleteMany({ where: { userId } });
+        if (normalizedEducationItems.length > 0) {
+          await tx.educatorEducation.createMany({
+            data: normalizedEducationItems.map((item, index) => ({
+              userId,
+              degree: item.degree || 'Education',
+              institutionName: item.institutionName || '',
+              graduationYear: item.graduationYear,
+              description: item.description,
+              sortOrder: index,
+            })),
+          });
+        }
+      }
+
+      if (normalizedCertificationItems !== null) {
+        await tx.educatorCertification.deleteMany({ where: { userId } });
+        if (normalizedCertificationItems.length > 0) {
+          await tx.educatorCertification.createMany({
+            data: normalizedCertificationItems.map((item, index) => ({
+              userId,
+              name: item.name,
+              issuingOrganization: item.issuingOrganization,
+              issueDate: item.issueDate,
+              expiryDate: item.expiryDate,
+              credentialUrl: item.credentialUrl,
+              sortOrder: index,
+            })),
+          });
+        }
+      }
+
+      return userRecord;
     });
-
-    if (normalizedWorkExperienceItems !== null) {
-      await this.prisma.educatorWorkExperience.deleteMany({ where: { userId } });
-      if (normalizedWorkExperienceItems.length > 0) {
-        await this.prisma.educatorWorkExperience.createMany({
-          data: normalizedWorkExperienceItems.map((item, index) => ({
-            userId,
-            jobTitle: item.jobTitle || 'Experience',
-            institutionName: item.institutionName || '',
-            startDate: item.startDate,
-            endDate: item.endDate,
-            descriptionPoints: item.descriptionPoints,
-            sortOrder: index,
-          })),
-        });
-      }
-    }
-
-    if (normalizedEducationItems !== null) {
-      await this.prisma.educatorEducation.deleteMany({ where: { userId } });
-      if (normalizedEducationItems.length > 0) {
-        await this.prisma.educatorEducation.createMany({
-          data: normalizedEducationItems.map((item, index) => ({
-            userId,
-            degree: item.degree || 'Education',
-            institutionName: item.institutionName || '',
-            graduationYear: item.graduationYear,
-            description: item.description,
-            sortOrder: index,
-          })),
-        });
-      }
-    }
-
-    if (normalizedCertificationItems !== null) {
-      await this.prisma.educatorCertification.deleteMany({ where: { userId } });
-      if (normalizedCertificationItems.length > 0) {
-        await this.prisma.educatorCertification.createMany({
-          data: normalizedCertificationItems.map((item, index) => ({
-            userId,
-            name: item.name,
-            issuingOrganization: item.issuingOrganization,
-            issueDate: item.issueDate,
-            expiryDate: item.expiryDate,
-            credentialUrl: item.credentialUrl,
-            sortOrder: index,
-          })),
-        });
-      }
-    }
 
     // Update user translations if shortBio was changed
     if (updateData.shortBio !== undefined) {
