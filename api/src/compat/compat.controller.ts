@@ -331,7 +331,7 @@ export class CompatController {
   async getCandidates() {
     try {
       const candidates = await this.prisma.user.findMany({
-        where: { role: UserRole.EDUCATOR, isActive: true },
+        where: { role: UserRole.EDUCATOR, isActive: { not: false } },
         orderBy: { createdAt: 'desc' },
         take: 100,
         include: {

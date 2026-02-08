@@ -1360,50 +1360,38 @@ export class UsersService {
             });
             const orgIds = userOrgLinks.map((link) => link.organizationId);
 
-            if (orgIds.length > 0) {
-              if (updateUserDto.status === 'INACTIVE') {
-                const orgDeactivateResult = await tx.organization.updateMany({
-                  where: { id: { in: orgIds } },
-                  data: { isActive: false },
-                });
-                this.logger.log(
-                  `🏢 [UPDATE] Cascaded user deactivation to ${orgDeactivateResult.count} organization(s) for user ${id}`,
-                );
-              } else if (updateUserDto.status === 'ACTIVE') {
-                // Only reactivate orgs where ALL member users are now active.
-                // This prevents blindly reactivating an org that another inactive
-                // member originally caused to be deactivated.
-                const orgsWithInactiveMembers = await tx.userOrganization.findMany({
-                  where: {
-                    organizationId: { in: orgIds },
-                    user: { isActive: false },
-                  },
-                  select: { organizationId: true },
-                });
-                const blockedOrgIds = new Set(orgsWithInactiveMembers.map((l) => l.organizationId));
-                const safeToReactivate = orgIds.filter((oid) => !blockedOrgIds.has(oid));
-
-                if (safeToReactivate.length > 0) {
-                  const orgActivateResult = await tx.organization.updateMany({
-                    where: { id: { in: safeToReactivate } },
-                    data: { isActive: true },
-                  });
-                  this.logger.log(
-                    `🏢 [UPDATE] Cascaded user reactivation to ${orgActivateResult.count} organization(s) for user ${id}` +
-                      (blockedOrgIds.size > 0 ? ` (skipped ${blockedOrgIds.size} with other inactive members)` : ''),
-                  );
-                }
-              }
-            }
-
-            // Suspend active subscriptions when user is deactivated.
-            // Subscriptions are NOT auto-restored on reactivation — an admin must
-            // manually re-activate them to prevent accidental billing issues.
             if (updateUserDto.status === 'INACTIVE') {
+              // cascadeUserDeactivation handles org deactivation + subscription cancellation
               await this.cascadeUserDeactivation(
                 tx, existingUser.id, orgIds,
                 'User account deactivated by admin', 'UPDATE', id,
               );
+            } else if (updateUserDto.status === 'ACTIVE' && orgIds.length > 0) {
+              // Only reactivate orgs where ALL member users are now active.
+              // This prevents blindly reactivating an org that another inactive
+              // member originally caused to be deactivated.
+              // Subscriptions are NOT auto-restored — an admin must manually
+              // re-activate them to prevent accidental billing issues.
+              const orgsWithInactiveMembers = await tx.userOrganization.findMany({
+                where: {
+                  organizationId: { in: orgIds },
+                  user: { isActive: false },
+                },
+                select: { organizationId: true },
+              });
+              const blockedOrgIds = new Set(orgsWithInactiveMembers.map((l) => l.organizationId));
+              const safeToReactivate = orgIds.filter((oid) => !blockedOrgIds.has(oid));
+
+              if (safeToReactivate.length > 0) {
+                const orgActivateResult = await tx.organization.updateMany({
+                  where: { id: { in: safeToReactivate } },
+                  data: { isActive: true },
+                });
+                this.logger.log(
+                  `🏢 [UPDATE] Cascaded user reactivation to ${orgActivateResult.count} organization(s) for user ${id}` +
+                    (blockedOrgIds.size > 0 ? ` (skipped ${blockedOrgIds.size} with other inactive members)` : ''),
+                );
+              }
             }
           }
         }

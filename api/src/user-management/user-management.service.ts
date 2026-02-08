@@ -174,6 +174,13 @@ export class UserManagementService {
     });
     const orgIds = [...new Set(orgLinks.map((link) => link.organizationId))];
 
+    const liveStatuses = [
+      SubscriptionStatus.ACTIVE,
+      SubscriptionStatus.TRIAL,
+      SubscriptionStatus.GRACE_PERIOD,
+      SubscriptionStatus.PAST_DUE,
+    ];
+
     if (orgIds.length > 0) {
       await tx.organization.updateMany({
         where: { id: { in: orgIds } },
@@ -182,12 +189,6 @@ export class UserManagementService {
       this.logger.log(`🏢 [BULK ${label}] Cascaded deactivation to ${orgIds.length} organization(s)`);
 
       // Cancel org-based subscriptions
-      const liveStatuses = [
-        SubscriptionStatus.ACTIVE,
-        SubscriptionStatus.TRIAL,
-        SubscriptionStatus.GRACE_PERIOD,
-        SubscriptionStatus.PAST_DUE,
-      ];
       await tx.subscription.updateMany({
         where: {
           organizationId: { in: orgIds },
@@ -198,12 +199,6 @@ export class UserManagementService {
     }
 
     // Cancel user-based subscriptions
-    const liveStatuses = [
-      SubscriptionStatus.ACTIVE,
-      SubscriptionStatus.TRIAL,
-      SubscriptionStatus.GRACE_PERIOD,
-      SubscriptionStatus.PAST_DUE,
-    ];
     await tx.subscription.updateMany({
       where: {
         userId: { in: userIds },
