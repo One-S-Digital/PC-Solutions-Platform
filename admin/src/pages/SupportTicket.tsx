@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -7,6 +7,7 @@ import {
   CheckCircle,
   LifeBuoy,
   Tag,
+  Trash2,
   User,
   UserCheck,
 } from 'lucide-react';
@@ -17,7 +18,7 @@ import LoadingSpinner from '../components/ui/LoadingSpinner';
 import SupportReplyComposer from '../components/support/SupportReplyComposer';
 import { useSupportThread } from '../hooks/useSupportThread';
 import { useApiClient, apiService } from '../services/api';
-import { SupportTicket as SupportTicketType, TicketPriority, TicketStatus } from '../types';
+import { SupportTicket as SupportTicketType, TicketPriority, TicketStatus, UserRole } from '../types';
 import { getTicketPriorityColor, getTicketStatusColor, getTicketStatusIcon } from '../utils/supportTicketUi';
 
 const SupportTicket: React.FC = () => {
@@ -27,6 +28,7 @@ const SupportTicket: React.FC = () => {
   const queryClient = useQueryClient();
   const { t } = useTranslation(['common', 'admin']);
   const { user } = useUser();
+  const [deletingReplyId, setDeletingReplyId] = useState<string | null>(null);
 
   const currentUserId = user?.id || '';
 
@@ -57,7 +59,7 @@ const SupportTicket: React.FC = () => {
     }
   }, [queryClient, resolvedTicketId]);
 
-  const { replies, sendReply, messagesEndRef, scrollContainerRef } = useSupportThread({
+  const { replies, sendReply, deleteReply, messagesEndRef, scrollContainerRef } = useSupportThread({
     ticketId: resolvedTicketId || null,
     userId: currentUserId,
     onTicketUpdate: handleTicketUpdate,
@@ -101,6 +103,33 @@ const SupportTicket: React.FC = () => {
       await queryClient.invalidateQueries({ queryKey: ['support-ticket', resolvedTicketId] });
     },
     [sendReply, queryClient, resolvedTicketId]
+  );
+
+  const canDeleteMessages =
+    currentUser?.role === UserRole.ADMIN || currentUser?.role === UserRole.SUPER_ADMIN;
+
+  const handleDeleteReply = useCallback(
+    async (replyId: string) => {
+      if (!canDeleteMessages) return;
+      const confirmed = window.confirm(
+        t('admin:support.confirmDeleteMessage', {
+          defaultValue: 'Delete this message? This action cannot be undone.',
+        })
+      );
+      if (!confirmed) return;
+
+      setDeletingReplyId(replyId);
+      try {
+        await deleteReply(replyId);
+        await queryClient.invalidateQueries({ queryKey: ['support-tickets'] });
+        await queryClient.invalidateQueries({ queryKey: ['support-ticket', resolvedTicketId] });
+      } catch (error) {
+        console.error('Failed to delete reply:', error);
+      } finally {
+        setDeletingReplyId(null);
+      }
+    },
+    [canDeleteMessages, deleteReply, queryClient, resolvedTicketId, t]
   );
 
   const showComposer = useMemo(() => {
@@ -225,7 +254,9 @@ const SupportTicket: React.FC = () => {
                 </div>
 
                 {/* Responses */}
-                {replies.map((response) => (
+                {replies.map((response) => {
+                  const isTemp = response.id.startsWith('temp-');
+                  return (
                   <div
                     key={response.id}
                     className={`border-l-4 ${response.isStaff ? 'border-green-500' : 'border-gray-300'} pl-4`}
@@ -239,13 +270,27 @@ const SupportTicket: React.FC = () => {
                           </span>
                         )}
                       </span>
-                      <span className="text-xs text-gray-500">
-                        {new Date(response.createdAt).toLocaleString()}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-gray-500">
+                          {new Date(response.createdAt).toLocaleString()}
+                        </span>
+                        {canDeleteMessages && !isTemp && (
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteReply(response.id)}
+                            disabled={deletingReplyId === response.id}
+                            className="text-gray-400 hover:text-red-600 disabled:opacity-50"
+                            aria-label={t('admin:support.deleteMessage', { defaultValue: 'Delete message' })}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        )}
+                      </div>
                     </div>
                     <p className="text-sm text-gray-700 whitespace-pre-wrap">{response.message}</p>
                   </div>
-                ))}
+                );
+                })}
                 <div ref={messagesEndRef} />
               </div>
             </div>

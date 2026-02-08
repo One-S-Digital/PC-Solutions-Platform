@@ -250,6 +250,43 @@ export class SupportService {
   }
 
   /**
+   * Delete a ticket response (admin only)
+   */
+  async deleteResponse(
+    ticketId: string,
+    responseId: string,
+    adminUserId: string,
+  ): Promise<SupportTicketResponse> {
+    const response = await this.prisma.ticketResponse.findUnique({
+      where: { id: responseId },
+      select: { id: true, ticketId: true },
+    });
+
+    if (!response || response.ticketId !== ticketId) {
+      throw new NotFoundException(`Response with ID ${responseId} not found for ticket ${ticketId}`);
+    }
+
+    await this.prisma.ticketResponse.delete({
+      where: { id: responseId },
+    });
+
+    // Touch the ticket to update updatedAt
+    await this.prisma.supportTicket.update({
+      where: { id: ticketId },
+      data: { updatedAt: new Date() },
+    });
+
+    const updatedTicket = await this.getTicketById(ticketId, adminUserId, true);
+
+    if (this.supportGateway) {
+      this.supportGateway.emitReplyDeleted(ticketId, responseId);
+      this.supportGateway.emitTicketUpdated(ticketId, updatedTicket);
+    }
+
+    return updatedTicket;
+  }
+
+  /**
    * Update ticket status (admin only)
    */
   async updateTicketStatus(

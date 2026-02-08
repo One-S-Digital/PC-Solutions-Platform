@@ -896,6 +896,9 @@ export const apiService = {
   respondToTicket: (apiClient: AxiosInstance, ticketId: string, message: string) =>
     apiClient.post<ApiResponse<any>>(`/support/tickets/${ticketId}/respond`, { message }),
 
+  deleteSupportTicketResponse: (apiClient: AxiosInstance, ticketId: string, responseId: string) =>
+    apiClient.delete<ApiResponse<any>>(`/support/admin/tickets/${ticketId}/responses/${responseId}`),
+
   getSupportTicketStats: (apiClient: AxiosInstance) =>
     apiClient.get<ApiResponse<any>>('/support/admin/stats'),
 
