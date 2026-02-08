@@ -81,6 +81,7 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
   const [showAvatarCropper, setShowAvatarCropper] = useState(false);
   const [selectedAvatarFile, setSelectedAvatarFile] = useState<File | null>(null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
 
   // Initialize form fields from settings
@@ -139,8 +140,26 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
     const file = e.target.files?.[0];
     if (!file) return;
     
+    setAvatarError(null);
     if (!file.type.startsWith('image/')) {
-      alert(t('settings:educatorProfile.invalidImageType', 'Please select an image file'));
+      setAvatarError(t('settings:educatorProfile.invalidImageType', 'Please select an image file'));
+      if (avatarInputRef.current) {
+        avatarInputRef.current.value = '';
+      }
+      return;
+    }
+
+    const maxAvatarSizeMB = 10;
+    if (file.size > maxAvatarSizeMB * 1024 * 1024) {
+      setAvatarError(
+        t('settings:educatorProfile.avatarTooLarge', {
+          defaultValue: `Image must be less than ${maxAvatarSizeMB}MB.`,
+          max: maxAvatarSizeMB,
+        }),
+      );
+      if (avatarInputRef.current) {
+        avatarInputRef.current.value = '';
+      }
       return;
     }
     
@@ -263,6 +282,9 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
               <p className="mt-1 text-xs text-gray-500">
                 {t('settings:educatorProfile.avatarHint', 'JPG, PNG or GIF. Will be cropped to 256×256px')}
               </p>
+              {avatarError && (
+                <p className="mt-1 text-xs text-swiss-coral">{avatarError}</p>
+              )}
             </div>
           </div>
         </div>

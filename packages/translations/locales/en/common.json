@@ -274,7 +274,8 @@
       "dragAndDrop": "or drag and drop",
       "eLearningAllowedTypes": "Supported formats: PDF, MP4, MP3, ZIP",
       "hrPolicyAllowedTypes": "Supported formats: PDF, DOC, DOCX, XLS, XLSX, CSV, ODS",
-      "selected": "{{fileName}} selected"
+      "selected": "{{fileName}} selected",
+      "fileTooLarge": "File size exceeds {{max}}MB limit."
     },
     "labels": {
       "accessRoles": "Access Roles",
@@ -680,11 +681,19 @@
     "uploadButton": "Upload",
     "uploadFile": "Upload File",
     "uploadedFiles": "uploaded Files",
-    "uploading": "Uploading"
+    "uploading": "Uploading",
+    "maxSize": "Max {{max}}MB",
+    "errors": {
+      "fileTooLarge": "File size exceeds {{max}}MB."
+    }
   },
   "fileUploadZone": {
     "defaultLabel": "default",
-    "dragAndDrop": "Drag and drop files here"
+    "dragAndDrop": "Drag and drop files here",
+    "errors": {
+      "sizeExceeded": "File size exceeds {{max}}MB.",
+      "invalidType": "Invalid file type. Accepted: {{types}}"
+    }
   },
   "filters": {
     "all": "All",
@@ -1812,6 +1821,10 @@
     "currentImage": "Current image",
     "editTitle": "Edit Service",
     "imageHelpText": "Upload a JPG or PNG (max 5 MB). This image appears on your marketplace card.",
+    "errors": {
+      "invalidImageType": "Please select an image file.",
+      "imageTooLarge": "Image must be less than {{max}}MB."
+    },
     "labels": {
       "availability": "Availability & schedule",
       "categories": "categories",

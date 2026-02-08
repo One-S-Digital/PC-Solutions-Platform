@@ -545,7 +545,7 @@ export default function Content() {
     // Simple toast implementation - you can replace with a proper toast library
     const toast = document.createElement('div');
     const bgColor = type === 'success' ? 'bg-green-500' : type === 'info' ? 'bg-blue-500' : 'bg-red-500';
-    toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg ${bgColor} text-white z-50 transition-opacity duration-300`;
+    toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg ${bgColor} text-white z-[9999] transition-opacity duration-300`;
     toast.textContent = message;
     document.body.appendChild(toast);
     setTimeout(() => {

@@ -111,6 +111,7 @@ const Messaging: React.FC = () => {
     fileUrl: string;
     isImage: boolean;
   } | null>(null)
+  const [fileError, setFileError] = useState<string | null>(null)
   const [previewFile, setPreviewFile] = useState<{
     fileUrl: string;
     fileName: string;
@@ -438,10 +439,19 @@ const Messaging: React.FC = () => {
 
     const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
     if (file.size > MAX_FILE_SIZE) {
-      alert(t('admin:messaging.errors.fileTooLarge', 'File size exceeds 50MB limit'));
+      setFileError(
+        t('admin:messaging.errors.fileTooLarge', {
+          defaultValue: 'File size exceeds 50MB limit',
+          max: 50,
+        }),
+      )
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
       return;
     }
 
+    setFileError(null)
     setIsUploading(true);
     try {
       const token = await getToken();
@@ -544,6 +554,7 @@ const Messaging: React.FC = () => {
 
   const handleRemovePendingFile = () => {
     setPendingFile(null);
+    setFileError(null);
   };
 
   // Handle message edit
@@ -1198,6 +1209,11 @@ const Messaging: React.FC = () => {
                   </div>
                 </div>
               )}
+              {fileError && (
+                <div className="px-4 pb-2 text-sm text-red-600" role="alert">
+                  {fileError}
+                </div>
+              )}
               
               <div className="p-4 flex items-center space-x-2">
                 <input
@@ -1253,7 +1269,7 @@ const Messaging: React.FC = () => {
                 </div>
                 <button
                   onClick={handleSendMessage}
-                  disabled={isUploading || (!newMessage.trim() && !pendingFile)}
+                  disabled={isUploading || (!newMessage.trim() && !pendingFile) || !!fileError}
                   className="bg-swiss-mint hover:bg-swiss-teal disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded-lg flex items-center transition-colors"
                   aria-label={t('admin:messaging.send', 'Send')}
                 >

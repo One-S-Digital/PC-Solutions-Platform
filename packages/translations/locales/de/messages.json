@@ -14,7 +14,7 @@
     "selectConversation": "Wählen Sie eine Konversation aus, um mit dem Nachrichtenaustausch zu beginnen"
   },
   "errors": {
-    "fileTooLarge": "file Too Large"
+    "fileTooLarge": "Dateigröße überschreitet das Limit von {{max}} MB."
   },
   "filters": {
     "all": "Alle",

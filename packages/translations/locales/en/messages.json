@@ -14,7 +14,7 @@
     "selectConversation": "Select a conversation to start messaging"
   },
   "errors": {
-    "fileTooLarge": "file Too Large"
+    "fileTooLarge": "File size exceeds {{max}}MB limit."
   },
   "filters": {
     "all": "All",

@@ -255,7 +255,8 @@
       "dragAndDrop": "oder per Drag & Drop ablegen",
       "eLearningAllowedTypes": "Unterstützte Formate: PDF, MP4, MP3, ZIP",
       "hrPolicyAllowedTypes": "Unterstützte Formate: PDF, DOC, DOCX, XLS, XLSX, CSV, ODS",
-      "selected": "{{fileName}} ausgewählt"
+      "selected": "{{fileName}} ausgewählt",
+      "fileTooLarge": "Dateigröße überschreitet das Limit von {{max}} MB."
     },
     "labels": {
       "accessRoles": "Zugriffsrollen",
@@ -652,11 +653,19 @@
     "uploadButton": "Hochladen",
     "uploadFile": "Datei hochladen",
     "uploadedFiles": "uploaded Files",
-    "uploading": "Wird hochgeladen"
+    "uploading": "Wird hochgeladen",
+    "maxSize": "Max {{max}} MB",
+    "errors": {
+      "fileTooLarge": "Dateigröße überschreitet {{max}} MB."
+    }
   },
   "fileUploadZone": {
     "defaultLabel": "default",
-    "dragAndDrop": "Dateien hierher ziehen und ablegen"
+    "dragAndDrop": "Dateien hierher ziehen und ablegen",
+    "errors": {
+      "sizeExceeded": "Dateigröße überschreitet {{max}} MB.",
+      "invalidType": "Ungültiger Dateityp. Erlaubt: {{types}}"
+    }
   },
   "filters": {
     "all": "Alle",
@@ -1811,6 +1820,10 @@
     "currentImage": "Aktuelles Bild",
     "editTitle": "Service bearbeiten",
     "imageHelpText": "Hilfetext für Bild",
+    "errors": {
+      "invalidImageType": "Bitte wählen Sie eine Bilddatei aus.",
+      "imageTooLarge": "Das Bild muss kleiner als {{max}} MB sein."
+    },
     "labels": {
       "availability": "Verfügbarkeit",
       "categories": "categories",

@@ -594,6 +594,9 @@
     },
     "contentUploadSuccess": "Content uploaded successfully!"
   },
+  "contentUpload": {
+    "fileTooLarge": "File size exceeds {{max}}MB limit."
+  },
   "sidebar": {
     "version": "Backend Management v1.0",
     "adminLogo": "Admin Logo",
@@ -1356,7 +1359,11 @@
     "clickBrowse": "Click to browse or drag and drop",
     "defaultHelp": "PDF, DOCX, MP4 (Max 50MB)",
     "dragDrop": "or drag and drop",
-    "selected": "Selected"
+    "selected": "Selected",
+    "errors": {
+      "sizeExceeded": "File size exceeds {{max}}MB.",
+      "invalidType": "Invalid file type. Accepted: {{types}}"
+    }
   },
   "products": {
     "emptyState": {
@@ -1552,6 +1559,9 @@
     "title": "Messages",
     "searchPlaceholder": "Search conversations...",
     "typePlaceholder": "Type your message...",
+    "errors": {
+      "fileTooLarge": "File size exceeds {{max}}MB limit."
+    },
     "emptyState": {
       "noConversations": "No conversations found",
       "tryAdjusting": "Try adjusting your search",
@@ -1654,6 +1664,9 @@
   "translations": {
     "title": "Translation Management",
     "subtitle": "Manage static UI translations",
+    "errors": {
+      "fileTooLarge": "File size exceeds {{max}}MB limit."
+    },
     "tabs": {
       "translations": "Translations",
       "auditLogs": "Audit Logs",

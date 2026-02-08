@@ -249,7 +249,8 @@
       "dragAndDrop": "ou glisser-déposer",
       "eLearningAllowedTypes": "Formats acceptés : PDF, MP4, MP3, ZIP",
       "hrPolicyAllowedTypes": "Formats acceptés : PDF, DOC, DOCX, XLS, XLSX, CSV, ODS",
-      "selected": "{{fileName}} sélectionné"
+      "selected": "{{fileName}} sélectionné",
+      "fileTooLarge": "La taille du fichier dépasse la limite de {{max}} Mo."
     },
     "labels": {
       "accessRoles": "Rôles d'accès",
@@ -645,11 +646,19 @@
     "uploadButton": "Télécharger",
     "uploadFile": "Télécharger un fichier",
     "uploadedFiles": "uploaded Files",
-    "uploading": "Téléchargement en cours"
+    "uploading": "Téléchargement en cours",
+    "maxSize": "Max {{max}} Mo",
+    "errors": {
+      "fileTooLarge": "La taille du fichier dépasse {{max}} Mo."
+    }
   },
   "fileUploadZone": {
     "defaultLabel": "default",
-    "dragAndDrop": "Glissez-déposez les fichiers ici"
+    "dragAndDrop": "Glissez-déposez les fichiers ici",
+    "errors": {
+      "sizeExceeded": "La taille du fichier dépasse {{max}} Mo.",
+      "invalidType": "Type de fichier invalide. Accepté : {{types}}"
+    }
   },
   "filters": {
     "all": "Tous",
@@ -1788,6 +1797,10 @@
     "currentImage": "Image actuelle",
     "editTitle": "Modifier le service",
     "imageHelpText": "Texte d'aide pour l'image",
+    "errors": {
+      "invalidImageType": "Veuillez sélectionner un fichier image.",
+      "imageTooLarge": "L’image doit être inférieure à {{max}} Mo."
+    },
     "labels": {
       "availability": "Disponibilité",
       "categories": "categories",

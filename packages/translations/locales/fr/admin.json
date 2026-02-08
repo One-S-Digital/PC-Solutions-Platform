@@ -607,6 +607,9 @@
     },
     "contentUploadSuccess": "Contenu téléchargé avec succès !"
   },
+  "contentUpload": {
+    "fileTooLarge": "La taille du fichier dépasse la limite de {{max}} Mo."
+  },
   "sidebar": {
     "version": "Gestion Backend v1.0",
     "adminLogo": "Logo Admin",
@@ -1364,7 +1367,11 @@
     "clickBrowse": "Cliquer pour parcourir ou glisser-déposer",
     "defaultHelp": "PDF, DOCX, MP4 (Max 50MB)",
     "dragDrop": "ou par glisser-déposer",
-    "selected": "Sélectionné"
+    "selected": "Sélectionné",
+    "errors": {
+      "sizeExceeded": "La taille du fichier dépasse {{max}} Mo.",
+      "invalidType": "Type de fichier invalide. Accepté : {{types}}"
+    }
   },
   "products": {
     "emptyState": {
@@ -1560,6 +1567,9 @@
     "title": "Messages",
     "searchPlaceholder": "Rechercher des conversations...",
     "typePlaceholder": "Tapez votre message...",
+    "errors": {
+      "fileTooLarge": "La taille du fichier dépasse la limite de {{max}} Mo."
+    },
     "emptyState": {
       "noConversations": "Aucune conversation trouvée",
       "tryAdjusting": "Essayez d'ajuster votre recherche",
@@ -1662,6 +1672,9 @@
   "translations": {
     "title": "Gestion des traductions",
     "subtitle": "Gérer les traductions d'interface utilisateur statiques",
+    "errors": {
+      "fileTooLarge": "La taille du fichier dépasse la limite de {{max}} Mo."
+    },
     "tabs": {
       "translations": "Traductions",
       "auditLogs": "Journaux d'audit",

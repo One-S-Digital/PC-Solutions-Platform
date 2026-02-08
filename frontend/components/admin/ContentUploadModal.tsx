@@ -101,6 +101,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
 
   const [formData, setFormData] = useState<FormData>(getInitialFormState());
   const [file, setFile] = useState<File | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [videoSourceType, setVideoSourceType] = useState<'upload' | 'url'>('upload'); // For video upload vs URL
@@ -146,6 +147,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
         setFormData(getInitialFormState());
       }
       setFile(null);
+      setFileError(null);
       setUploadProgress(0);
       setIsUploading(false);
       setCustomCategory('');
@@ -191,7 +193,20 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
+      const selectedFile = e.target.files[0];
+      const maxSizeMB = contentType === 'e-learning' ? 500 : 50;
+      if (selectedFile.size > maxSizeMB * 1024 * 1024) {
+        setFile(null);
+        setFileError(
+          t('common:contentUploadModal.fileUpload.fileTooLarge', {
+            defaultValue: `File size exceeds ${maxSizeMB}MB limit.`,
+            max: maxSizeMB,
+          }),
+        );
+        return;
+      }
+      setFileError(null);
+      setFile(selectedFile);
       setUploadProgress(0);
     }
   };
@@ -225,6 +240,9 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (fileError) {
+      return;
+    }
     setIsUploading(true);
     setUploadProgress(0);
 
@@ -698,6 +716,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
                   </div>
                 </div>
                 {file && <p className="mt-2 text-sm text-gray-500"><PaperClipIcon className="w-4 h-4 inline mr-1"/> {t('common:contentUploadModal.fileUpload.selected', { fileName: file.name })}</p>}
+                {fileError && <p className="mt-2 text-sm text-swiss-coral">{fileError}</p>}
               </div>
             )}
             
@@ -709,7 +728,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
           </div>
           <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
             <Button type="button" variant="light" onClick={onClose} disabled={isUploading}>{t('common:buttons.cancel')}</Button>
-            <Button type="submit" variant="primary" className="bg-swiss-mint" disabled={isUploading}>
+            <Button type="submit" variant="primary" className="bg-swiss-mint" disabled={isUploading || !!fileError}>
               {isUploading ? t('common:contentUploadModal.buttons.uploading') : (existingContent ? t('common:buttons.saveChanges') : t('common:contentUploadModal.buttons.upload'))}
             </Button>
           </div>

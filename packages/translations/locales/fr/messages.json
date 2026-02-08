@@ -14,7 +14,7 @@
     "selectConversation": "Sélectionnez une conversation pour commencer à envoyer des messages"
   },
   "errors": {
-    "fileTooLarge": "file Too Large"
+    "fileTooLarge": "La taille du fichier dépasse la limite de {{max}} Mo."
   },
   "filters": {
     "all": "Tous",

@@ -10,13 +10,15 @@ interface FileUploadModalProps {
   onClose: () => void;
   assetKind?: string; // DOCUMENT, AVATAR, LOGO, etc.
   onUploadComplete?: (assets: any[]) => void;
+  maxFileSizeMB?: number;
 }
 
 const FileUploadModal: React.FC<FileUploadModalProps> = ({ 
   isOpen, 
   onClose, 
   assetKind = 'DOCUMENT',
-  onUploadComplete 
+  onUploadComplete,
+  maxFileSizeMB = 5,
 }) => {
   const { t } = useTranslation(['dashboard', 'common']);
   const { addUserFile } = useAppContext();
@@ -28,8 +30,20 @@ const FileUploadModal: React.FC<FileUploadModalProps> = ({
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
-      setFilesToUpload(Array.from(event.target.files));
-      setUploadError(null);
+      const files = Array.from(event.target.files);
+      const maxBytes = maxFileSizeMB * 1024 * 1024;
+      const invalidFiles = files.filter(file => file.size > maxBytes);
+      if (invalidFiles.length > 0) {
+        setUploadError(
+          t('common:fileUploadModal.errors.fileTooLarge', {
+            defaultValue: `File size exceeds ${maxFileSizeMB}MB.`,
+            max: maxFileSizeMB,
+          })
+        );
+      } else {
+        setUploadError(null);
+      }
+      setFilesToUpload(invalidFiles.length ? [] : files);
     }
   };
   
@@ -37,8 +51,20 @@ const FileUploadModal: React.FC<FileUploadModalProps> = ({
     event.preventDefault();
     event.stopPropagation();
     if (event.dataTransfer.files) {
-        setFilesToUpload(Array.from(event.dataTransfer.files));
-        setUploadError(null);
+        const files = Array.from(event.dataTransfer.files);
+        const maxBytes = maxFileSizeMB * 1024 * 1024;
+        const invalidFiles = files.filter(file => file.size > maxBytes);
+        if (invalidFiles.length > 0) {
+          setUploadError(
+            t('common:fileUploadModal.errors.fileTooLarge', {
+              defaultValue: `File size exceeds ${maxFileSizeMB}MB.`,
+              max: maxFileSizeMB,
+            })
+          );
+        } else {
+          setUploadError(null);
+        }
+        setFilesToUpload(invalidFiles.length ? [] : files);
     }
   };
   
@@ -48,7 +74,7 @@ const FileUploadModal: React.FC<FileUploadModalProps> = ({
   };
 
   const handleUpload = async () => {
-    if (filesToUpload.length === 0) return;
+    if (filesToUpload.length === 0 || uploadError) return;
     
     setIsUploading(true);
     setUploadError(null);
@@ -116,7 +142,9 @@ const FileUploadModal: React.FC<FileUploadModalProps> = ({
                 </label>
                 <p className="pl-1">{t('fileUploadModal.dragAndDrop')}</p>
               </div>
-              <p className="text-xs text-gray-500">{t('fileUploadModal.fileTypes')}</p>
+              <p className="text-xs text-gray-500">
+                {t('fileUploadModal.fileTypes')} {t('common:fileUploadModal.maxSize', { defaultValue: `Max ${maxFileSizeMB}MB`, max: maxFileSizeMB })}
+              </p>
             </div>
           </div>
           {filesToUpload.length > 0 && (
@@ -151,7 +179,7 @@ const FileUploadModal: React.FC<FileUploadModalProps> = ({
         </div>
         <div className="px-6 py-4 bg-gray-50 text-right space-x-2">
           <Button variant="light" onClick={onClose} disabled={isUploading}>{t('common:buttons.cancel')}</Button>
-          <Button variant="primary" onClick={handleUpload} disabled={filesToUpload.length === 0 || isUploading}>
+          <Button variant="primary" onClick={handleUpload} disabled={filesToUpload.length === 0 || isUploading || !!uploadError}>
             {isUploading ? t('fileUploadModal.uploading') : t('fileUploadModal.uploadButton', { count: filesToUpload.length })}
           </Button>
         </div>

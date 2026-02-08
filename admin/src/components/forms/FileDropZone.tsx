@@ -26,6 +26,7 @@ const FileDropZone: React.FC<FileDropZoneProps> = ({
 }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const [isDragging, setIsDragging] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const openFileDialog = () => {
     if (disabled) return
@@ -38,10 +39,19 @@ const FileDropZone: React.FC<FileDropZoneProps> = ({
       const file = files[0]
 
       if (maxSizeMB && file.size > maxSizeMB * 1024 * 1024) {
-        alert(`File size exceeds ${maxSizeMB}MB limit.`)
+        const message = `File size exceeds ${maxSizeMB}MB limit.`
+        setError(message)
+        if (fileInputRef.current) {
+          fileInputRef.current.setCustomValidity(message)
+          fileInputRef.current.value = ''
+        }
         return
       }
 
+      setError(null)
+      if (fileInputRef.current) {
+        fileInputRef.current.setCustomValidity('')
+      }
       onFileSelect(file)
     },
     [maxSizeMB, onFileSelect]
@@ -92,6 +102,7 @@ const FileDropZone: React.FC<FileDropZoneProps> = ({
           onChange={(event) => handleFiles(event.target.files)}
           accept={accept}
           disabled={disabled}
+          aria-invalid={!!error}
         />
         {selectedFile ? (
           <div className="flex flex-col items-center text-center space-y-2">
@@ -126,6 +137,7 @@ const FileDropZone: React.FC<FileDropZoneProps> = ({
         )}
       </div>
       {maxSizeMB && <p className="text-xs text-gray-400">Maximum file size: {maxSizeMB}MB</p>}
+      {error && <p className="text-xs text-swiss-coral">{error}</p>}
     </div>
   )
 }
