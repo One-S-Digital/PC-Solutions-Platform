@@ -51,6 +51,7 @@ import { UserRole } from '../types';
 import { User } from '../types/api';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import { useLocation } from 'react-router-dom';
 
 // Locale constant for currency formatting
 const CURRENCY_LOCALE = 'de-CH';
@@ -1953,6 +1954,7 @@ const Subscriptions: React.FC = () => {
   const apiClient = useApiClient();
   const { t } = useTranslation(['common', 'admin']);
   const queryClient = useQueryClient();
+  const location = useLocation();
 
   const selectedRoleFilter = selectedRole && Object.values(UserRole).includes(selectedRole as any) ? selectedRole : undefined;
 
@@ -1963,6 +1965,18 @@ const Subscriptions: React.FC = () => {
   React.useEffect(() => {
     setUserListPage(1);
   }, [selectedRoleFilter, searchQuery, userListPageSize]);
+
+  React.useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const viewParam = params.get('view');
+    if (
+      viewParam &&
+      viewParam !== viewMode &&
+      ['subscriptions', 'requests', 'cancellations', 'settings'].includes(viewParam)
+    ) {
+      setViewMode(viewParam as ViewMode);
+    }
+  }, [location.search, viewMode]);
 
   // User stats (DB) - used for role card totals
   const { data: userStatsResponse } = useQuery({

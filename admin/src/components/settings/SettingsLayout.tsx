@@ -10,6 +10,9 @@ import NotificationSettings from './NotificationSettings'
 import IntegrationSettings from './IntegrationSettings'
 import EmailNotificationPage from '../../pages/EmailNotificationPage'
 import SystemConfigurationPage from '../../pages/SystemConfigurationPage'
+import SystemMonitorPage from '../../pages/SystemMonitor'
+import DesignSystemPage from '../../pages/DesignSystem'
+import TranslationsPage from '../../pages/Translations'
 
 const SettingsLayout: React.FC = () => {
   const { t } = useTranslation(['admin', 'common'])
@@ -24,6 +27,21 @@ const SettingsLayout: React.FC = () => {
     { name: t('admin:settings.tabs.integrations'), key: 'integrations', component: IntegrationSettings },
     { name: t('admin:settings.tabs.emailTemplates'), key: 'emailTemplates', component: EmailNotificationPage },
     { name: t('admin:settings.tabs.systemConfig'), key: 'systemConfig', component: SystemConfigurationPage },
+    {
+      name: t('admin:settings.tabs.systemMonitoring', { defaultValue: 'System Monitoring' }),
+      key: 'systemMonitoring',
+      component: SystemMonitorPage,
+    },
+    {
+      name: t('admin:settings.tabs.designSystem', { defaultValue: 'Design System' }),
+      key: 'designSystem',
+      component: DesignSystemPage,
+    },
+    {
+      name: t('admin:settings.tabs.translations', { defaultValue: 'Translations' }),
+      key: 'translations',
+      component: TranslationsPage,
+    },
   ]
 
 function classNames(...classes: string[]) {

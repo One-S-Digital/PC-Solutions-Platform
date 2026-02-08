@@ -1,8 +1,12 @@
-import React from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useUser, useClerk } from '@clerk/clerk-react'
 import { Menu, Bell, User } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 import LanguageSwitcher from './design-system/LanguageSwitcher'
 import { useTranslation } from 'react-i18next'
+import { useApiClient, apiService } from '../services/api'
+import { subscriptionService } from '../services/subscriptionService'
 
 interface HeaderProps {
   setSidebarOpen: (open: boolean) => void
@@ -11,10 +15,102 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
   const { user } = useUser()
   const { signOut } = useClerk()
-  const { t } = useTranslation(['dashboard','common'])
+  const { t } = useTranslation(['dashboard','common','admin'])
+  const apiClient = useApiClient()
+  const navigate = useNavigate()
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
+  const notificationsRef = useRef<HTMLDivElement | null>(null)
+  const notificationsButtonRef = useRef<HTMLButtonElement | null>(null)
 
   const handleSignOut = () => {
     signOut()
+  }
+
+  const { data: supportTicketsResponse, isLoading: supportLoading } = useQuery({
+    queryKey: ['support-ticket-notifications'],
+    queryFn: () => apiService.getSupportTickets(apiClient, { status: 'OPEN' }),
+    enabled: !!apiClient,
+    staleTime: 30000,
+  })
+
+  const { data: subscriptionRequestsResponse, isLoading: requestsLoading } = useQuery({
+    queryKey: ['subscription-request-notifications'],
+    queryFn: () => subscriptionService.getSubscriptionRequests(apiClient, { status: 'PENDING', page: 1, limit: 5 }),
+    enabled: !!apiClient,
+    staleTime: 30000,
+  })
+
+  const { data: cancellationRequestsResponse, isLoading: cancellationsLoading } = useQuery({
+    queryKey: ['subscription-cancellation-request-notifications'],
+    queryFn: () => subscriptionService.getCancellationRequests(apiClient, { status: 'PENDING', page: 1, limit: 5 }),
+    enabled: !!apiClient,
+    staleTime: 30000,
+  })
+
+  const supportTickets = useMemo(() => supportTicketsResponse?.data?.data || [], [supportTicketsResponse])
+  const supportCount = supportTickets.length
+  const supportItems = supportTickets.slice(0, 5)
+
+  const subscriptionRequestsData = subscriptionRequestsResponse?.data?.data
+  const subscriptionRequests = subscriptionRequestsData?.requests || []
+  const subscriptionCount = subscriptionRequestsData?.total ?? subscriptionRequests.length
+  const subscriptionItems = subscriptionRequests.slice(0, 5)
+
+  const cancellationRequestsData = cancellationRequestsResponse?.data?.data
+  const cancellationRequests = cancellationRequestsData?.requests || []
+  const cancellationCount = cancellationRequestsData?.total ?? cancellationRequests.length
+  const cancellationItems = cancellationRequests.slice(0, 5)
+
+  const totalNotifications = supportCount + subscriptionCount + cancellationCount
+  const isLoadingNotifications = supportLoading || requestsLoading || cancellationsLoading
+
+  useEffect(() => {
+    if (!isNotificationsOpen) return
+
+    const handleOutsideClick = (event: MouseEvent) => {
+      const target = event.target as Node
+      if (
+        notificationsRef.current?.contains(target) ||
+        notificationsButtonRef.current?.contains(target)
+      ) {
+        return
+      }
+      setIsNotificationsOpen(false)
+    }
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsNotificationsOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleOutsideClick)
+    document.addEventListener('keydown', handleEscape)
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick)
+      document.removeEventListener('keydown', handleEscape)
+    }
+  }, [isNotificationsOpen])
+
+  const formatTimestamp = (value?: string) => {
+    if (!value) return ''
+    const date = new Date(value)
+    if (Number.isNaN(date.getTime())) return ''
+    return date.toLocaleString()
+  }
+
+  const formatRequestContact = (request: any) => {
+    if (request?.contactName) return request.contactName
+    const fullName = `${request?.user?.firstName || ''} ${request?.user?.lastName || ''}`.trim()
+    if (fullName) return fullName
+    return request?.contactEmail || request?.user?.email || t('common:unknown', 'Unknown')
+  }
+
+  const formatCancellationContact = (request: any) => {
+    if (request?.organization?.name) return request.organization.name
+    const fullName = `${request?.user?.firstName || ''} ${request?.user?.lastName || ''}`.trim()
+    if (fullName) return fullName
+    return request?.user?.email || t('common:unknown', 'Unknown')
   }
 
   return (
@@ -37,9 +133,200 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
 
         <div className="flex items-center space-x-4">
           <LanguageSwitcher />
-          <button className="p-2 text-gray-400 hover:text-gray-500">
-            <Bell className="h-5 w-5" />
-          </button>
+          <div className="relative">
+            <button
+              ref={notificationsButtonRef}
+              type="button"
+              onClick={() => setIsNotificationsOpen((open) => !open)}
+              className="relative p-2 text-gray-400 hover:text-gray-500"
+              aria-haspopup="true"
+              aria-expanded={isNotificationsOpen}
+              aria-label={t('admin:notifications.toggle', { defaultValue: 'Toggle notifications' })}
+            >
+              <Bell className="h-5 w-5" />
+              {totalNotifications > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 inline-flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] h-4 min-w-[16px] px-1">
+                  {totalNotifications > 9 ? '9+' : totalNotifications}
+                </span>
+              )}
+            </button>
+
+            {isNotificationsOpen && (
+              <div
+                ref={notificationsRef}
+                className="absolute right-0 mt-2 w-[420px] bg-white border border-gray-200 rounded-lg shadow-lg z-50"
+              >
+                <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+                  <span className="text-sm font-semibold text-gray-900">
+                    {t('admin:notifications.title', { defaultValue: 'Notifications' })}
+                  </span>
+                  <span className="text-xs text-gray-500">
+                    {isLoadingNotifications
+                      ? t('common:loading', 'Loading...')
+                      : t('admin:notifications.count', {
+                          defaultValue: '{{count}} new',
+                          count: totalNotifications,
+                        })}
+                  </span>
+                </div>
+
+                <div className="max-h-[420px] overflow-y-auto divide-y divide-gray-100">
+                  <div className="px-4 py-3">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                        {t('admin:notifications.sections.support', { defaultValue: 'Support' })}
+                      </h3>
+                      {supportCount > 0 && (
+                        <span className="text-xs text-gray-400">{supportCount}</span>
+                      )}
+                    </div>
+                    {supportItems.length === 0 ? (
+                      <p className="mt-2 text-sm text-gray-500">
+                        {t('admin:notifications.supportEmpty', { defaultValue: 'No new support tickets.' })}
+                      </p>
+                    ) : (
+                      <div className="mt-2 space-y-2">
+                        {supportItems.map((ticket: any) => (
+                          <button
+                            key={ticket.id}
+                            type="button"
+                            onClick={() => {
+                              navigate(`/support?ticket=${ticket.id}`)
+                              setIsNotificationsOpen(false)
+                            }}
+                            className="w-full text-left p-2 rounded-lg hover:bg-gray-50"
+                          >
+                            <div className="text-sm font-medium text-gray-900 truncate">
+                              {ticket.subject}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {ticket.user
+                                ? `${ticket.user.firstName || ''} ${ticket.user.lastName || ''}`.trim() ||
+                                  ticket.user.email
+                                : t('common:unknown', 'Unknown')}
+                              {ticket.createdAt ? ` • ${formatTimestamp(ticket.createdAt)}` : ''}
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    {supportCount > supportItems.length && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigate('/support')
+                          setIsNotificationsOpen(false)
+                        }}
+                        className="mt-2 text-xs text-blue-600 hover:text-blue-700"
+                      >
+                        {t('admin:notifications.viewAllSupport', { defaultValue: 'View all support tickets' })}
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="px-4 py-3">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                        {t('admin:notifications.sections.subscriptions', { defaultValue: 'Subscriptions' })}
+                      </h3>
+                      {subscriptionCount > 0 && (
+                        <span className="text-xs text-gray-400">{subscriptionCount}</span>
+                      )}
+                    </div>
+                    {subscriptionItems.length === 0 ? (
+                      <p className="mt-2 text-sm text-gray-500">
+                        {t('admin:notifications.subscriptionsEmpty', { defaultValue: 'No new subscription requests.' })}
+                      </p>
+                    ) : (
+                      <div className="mt-2 space-y-2">
+                        {subscriptionItems.map((request: any) => (
+                          <button
+                            key={request.id}
+                            type="button"
+                            onClick={() => {
+                              navigate('/subscriptions?view=requests')
+                              setIsNotificationsOpen(false)
+                            }}
+                            className="w-full text-left p-2 rounded-lg hover:bg-gray-50"
+                          >
+                            <div className="text-sm font-medium text-gray-900 truncate">
+                              {formatRequestContact(request)}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {request.plan?.name || t('common:notAvailable', 'N/A')}
+                              {request.createdAt ? ` • ${formatTimestamp(request.createdAt)}` : ''}
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    {subscriptionCount > subscriptionItems.length && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigate('/subscriptions?view=requests')
+                          setIsNotificationsOpen(false)
+                        }}
+                        className="mt-2 text-xs text-blue-600 hover:text-blue-700"
+                      >
+                        {t('admin:notifications.viewAllRequests', { defaultValue: 'View all requests' })}
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="px-4 py-3">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                        {t('admin:notifications.sections.cancellations', { defaultValue: 'Cancellation Requests' })}
+                      </h3>
+                      {cancellationCount > 0 && (
+                        <span className="text-xs text-gray-400">{cancellationCount}</span>
+                      )}
+                    </div>
+                    {cancellationItems.length === 0 ? (
+                      <p className="mt-2 text-sm text-gray-500">
+                        {t('admin:notifications.cancellationsEmpty', { defaultValue: 'No new cancellation requests.' })}
+                      </p>
+                    ) : (
+                      <div className="mt-2 space-y-2">
+                        {cancellationItems.map((request: any) => (
+                          <button
+                            key={request.id}
+                            type="button"
+                            onClick={() => {
+                              navigate('/subscriptions?view=cancellations')
+                              setIsNotificationsOpen(false)
+                            }}
+                            className="w-full text-left p-2 rounded-lg hover:bg-gray-50"
+                          >
+                            <div className="text-sm font-medium text-gray-900 truncate">
+                              {formatCancellationContact(request)}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {request.subscription?.plan?.name || t('common:notAvailable', 'N/A')}
+                              {request.requestedAt ? ` • ${formatTimestamp(request.requestedAt)}` : ''}
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    {cancellationCount > cancellationItems.length && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigate('/subscriptions?view=cancellations')
+                          setIsNotificationsOpen(false)
+                        }}
+                        className="mt-2 text-xs text-blue-600 hover:text-blue-700"
+                      >
+                        {t('admin:notifications.viewAllCancellations', { defaultValue: 'View all cancellations' })}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
           
           <div className="flex items-center space-x-3">
             <div className="text-sm">
