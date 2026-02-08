@@ -51,7 +51,7 @@ interface CandidateWithSource extends CandidateDocument {
 interface RecursiveCrawlResult {
   visitedPages: Set<string>;
   documentCandidates: CandidateWithSource[];
-  subpageCandidates: CandidateWithSource[];
+  subpagesDiscovered: number;
 }
 
 export interface CandidateScanResult {
@@ -92,6 +92,8 @@ export interface ScanSourceResult {
 
 /** Maximum file size for PDF downloads (50MB) */
 const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024;
+/** Maximum HTML page size to download (5MB) */
+const MAX_HTML_SIZE_BYTES = 5 * 1024 * 1024;
 
 @Injectable()
 export class CrawlerService {
@@ -148,10 +150,9 @@ export class CrawlerService {
   ): Promise<RecursiveCrawlResult> {
     const visitedPages = new Set<string>();
     const documentCandidates: CandidateWithSource[] = [];
-    const subpageCandidates: CandidateWithSource[] = [];
-    
-    // Queue of pages to visit: [url, depth]
-    const queue: Array<{ url: string; depth: number }> = [{ url: startUrl, depth: 0 }];
+    let subpagesDiscovered = 0;
+    const documentCandidateUrls = new Set<string>();
+    const queuedUrls = new Set<string>();
     
     // Track crawl start time for timeout
     const crawlStartTime = Date.now();
@@ -175,6 +176,10 @@ export class CrawlerService {
         return url;
       }
     };
+
+    // Queue of pages to visit: [url, depth]
+    const queue: Array<{ url: string; depth: number }> = [{ url: startUrl, depth: 0 }];
+    queuedUrls.add(normalizeUrl(startUrl));
 
     // Check if URL is within the same domain/subdomain
     const isSameDomain = (url: string): boolean => {
@@ -250,6 +255,7 @@ export class CrawlerService {
       }
       
       const current = queue.shift()!;
+      queuedUrls.delete(normalizeUrl(current.url));
       const normalizedUrl = normalizeUrl(current.url);
       
       // Skip if already visited
@@ -298,7 +304,8 @@ export class CrawlerService {
           // 2. It's an HTML page that passed the subpage filter (i.e., not navigation)
           // This ensures HTML policy pages are also collected as candidates
           if (isDocument || isSubpage) {
-            if (!documentCandidates.some(c => normalizeUrl(c.url) === candidateNormalized)) {
+            if (!documentCandidateUrls.has(candidateNormalized)) {
+              documentCandidateUrls.add(candidateNormalized);
               documentCandidates.push({
                 ...candidate,
                 sourcePage: current.url,
@@ -310,15 +317,10 @@ export class CrawlerService {
           // Also add to traversal queue if it's a subpage and we haven't reached max depth
           if (!isDocument && isSubpage && current.depth < maxDepth) {
             if (!visitedPages.has(candidateNormalized) && isSameDomain(candidate.url)) {
-              // Check if already in queue
-              const inQueue = queue.some(q => normalizeUrl(q.url) === candidateNormalized);
-              if (!inQueue) {
+              if (!queuedUrls.has(candidateNormalized)) {
                 queue.push({ url: candidate.url, depth: current.depth + 1 });
-                subpageCandidates.push({
-                  ...candidate,
-                  sourcePage: current.url,
-                  depth: current.depth,
-                });
+                queuedUrls.add(candidateNormalized);
+                subpagesDiscovered++;
               }
             }
           }
@@ -345,7 +347,7 @@ export class CrawlerService {
     return {
       visitedPages,
       documentCandidates,
-      subpageCandidates,
+      subpagesDiscovered,
     };
   }
 
@@ -415,7 +417,7 @@ export class CrawlerService {
       );
       
       pagesCrawled = crawlResult.visitedPages.size;
-      subpagesDiscovered = crawlResult.subpageCandidates.length;
+      subpagesDiscovered = crawlResult.subpagesDiscovered;
       
       // Convert CandidateWithSource back to CandidateDocument
       extracted = crawlResult.documentCandidates.map(c => ({
@@ -754,7 +756,7 @@ export class CrawlerService {
         
         this.logger.log(
           `Recursive crawl for ${source.label}: crawled ${results.pagesCrawled} pages, ` +
-          `discovered ${crawlResult.subpageCandidates.length} subpages, ` +
+          `discovered ${crawlResult.subpagesDiscovered} subpages, ` +
           `found ${allCandidates.length} document candidates`
         );
       } else {
@@ -1123,6 +1125,9 @@ export class CrawlerService {
         if (response.status >= 300 && response.status < 400) {
           const location = response.headers.get('location');
           if (location) {
+            // IMPORTANT: cancel the response body before following redirects.
+            // If we don't, Undici can keep the stream/sockets around and memory can grow over time.
+            await this.disposeResponse(response);
             if (i === maxRedirects) {
               throw new Error(`Too many redirects (>${maxRedirects}) for URL: ${url}`);
             }
@@ -1165,9 +1170,31 @@ export class CrawlerService {
     }
   }
 
-  private async fetchHeaders(url: string): Promise<HttpHeaders> {
+  private async disposeResponse(response: Response): Promise<void> {
     try {
-      const response = await this.fetchWithValidatedRedirects(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const body: any = (response as any).body;
+      if (!body) return;
+      if (typeof body.cancel === 'function') {
+        await body.cancel();
+        return;
+      }
+      if (typeof body.getReader === 'function') {
+        // Best-effort fallback
+        const reader = body.getReader();
+        if (reader?.cancel) {
+          await reader.cancel();
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  private async fetchHeaders(url: string): Promise<HttpHeaders> {
+    let response: Response | null = null;
+    try {
+      response = await this.fetchWithValidatedRedirects(
         url,
         {
           method: 'HEAD',
@@ -1188,7 +1215,10 @@ export class CrawlerService {
         contentLength: response.headers.get('content-length') || '0',
       };
     } finally {
-      // no-op: timeout handled inside fetchWithValidatedRedirects
+      // Ensure we release any body (some servers send bodies even for HEAD).
+      if (response) {
+        await this.disposeResponse(response);
+      }
     }
   }
 
@@ -1224,6 +1254,18 @@ export class CrawlerService {
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const contentType = response.headers.get('content-type') || '';
+      if (contentType && !contentType.includes('text/html') && !contentType.includes('application/xhtml+xml')) {
+        await this.disposeResponse(response);
+        throw new Error(`Unexpected content-type for HTML fetch: ${contentType}`);
+      }
+
+      const contentLength = response.headers.get('content-length');
+      if (contentLength && parseInt(contentLength, 10) > MAX_HTML_SIZE_BYTES) {
+        await this.disposeResponse(response);
+        throw new Error(`HTML page too large (${contentLength} bytes) - max allowed is ${MAX_HTML_SIZE_BYTES} bytes`);
       }
 
       this.logger.debug(`Successfully fetched ${url}, content length: ${response.headers.get('content-length') || 'unknown'}`);
