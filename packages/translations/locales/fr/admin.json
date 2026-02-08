@@ -423,6 +423,9 @@
       "notifications": "Notifications",
       "integrations": "Intégrations",
       "systemConfig": "Configuration système",
+      "designSystem": "Système de design",
+      "translations": "Traductions",
+      "systemMonitoring": "Surveillance du système",
       "branding": "Image de marque",
       "content": "Contenu",
       "general": "Général"
@@ -1269,6 +1272,24 @@
       "warning": " ? Cette action est irréversible et supprimera définitivement toutes les données associées.",
       "deleting": "Suppression...",
       "delete": "Supprimer l'utilisateur"
+    },
+    "elevateUser": {
+      "title": "Promouvoir en administrateur",
+      "elevate": "Promouvoir en administrateur",
+      "changeRole": "Changer le rôle d'administrateur",
+      "selectRole": "Sélectionner le rôle d'administrateur",
+      "currentRole": "Rôle actuel :",
+      "adminDescription": "Peut gérer les utilisateurs, le contenu et les organisations",
+      "superAdminDescription": "Accès complet au système, y compris la gestion des rôles",
+      "reason": "Raison de la promotion",
+      "reasonPlaceholder": "Expliquez pourquoi cet utilisateur a besoin de privilèges d'administrateur...",
+      "reasonRequired": "Veuillez fournir une raison pour cette promotion de rôle",
+      "reasonHint": "Cette raison sera enregistrée dans le journal d'audit.",
+      "elevating": "Promotion...",
+      "confirm": "Promouvoir l'utilisateur",
+      "failed": "Échec de la promotion de l'utilisateur",
+      "alreadyAdmin": "Remarque :",
+      "alreadyAdminMessage": "Cet utilisateur a déjà un rôle d'administrateur. Vous pouvez modifier son niveau de rôle ci-dessous."
     },
     "table": {
       "user": "Utilisateur",

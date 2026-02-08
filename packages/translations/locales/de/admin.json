@@ -423,6 +423,9 @@
       "notifications": "Benachrichtigungen",
       "integrations": "Integrationen",
       "systemConfig": "Systemkonfiguration",
+      "designSystem": "Designsystem",
+      "translations": "Übersetzungen",
+      "systemMonitoring": "Systemüberwachung",
       "branding": "Branding",
       "content": "Inhalt",
       "general": "Allgemein"
@@ -1269,6 +1272,24 @@
       "warning": " ? Diese Aktion kann nicht rückgängig gemacht werden und entfernt dauerhaft alle zugehörigen Daten.",
       "deleting": "Löschen...",
       "delete": "Benutzer löschen"
+    },
+    "elevateUser": {
+      "title": "Zum Admin hochstufen",
+      "elevate": "Zum Admin hochstufen",
+      "changeRole": "Admin-Rolle ändern",
+      "selectRole": "Admin-Rolle auswählen",
+      "currentRole": "Aktuelle Rolle:",
+      "adminDescription": "Kann Benutzer, Inhalte und Organisationen verwalten",
+      "superAdminDescription": "Voller Systemzugriff einschließlich Rollenverwaltung",
+      "reason": "Grund der Hochstufung",
+      "reasonPlaceholder": "Erläutern Sie, warum dieser Benutzer Administratorrechte benötigt...",
+      "reasonRequired": "Bitte geben Sie einen Grund für diese Rollenhochstufung an",
+      "reasonHint": "Dieser Grund wird im Audit-Protokoll aufgezeichnet.",
+      "elevating": "Hochstufung...",
+      "confirm": "Benutzer hochstufen",
+      "failed": "Benutzer konnte nicht hochgestuft werden",
+      "alreadyAdmin": "Hinweis:",
+      "alreadyAdminMessage": "Dieser Benutzer hat bereits eine Admin-Rolle. Sie können die Rollenstufe unten ändern."
     },
     "table": {
       "user": "Benutzer",

@@ -76,6 +76,10 @@
     "viewDetailsFor": "Voir les détails pour {{name}}",
     "welcome": "Bienvenue, {{name}} !"
   },
+  "eLearningPage": {
+    "title": "Éléments d'apprentissage en ligne",
+    "searchPlaceholder": "Rechercher du contenu..."
+  },
   "educatorApplicationsPage": {
     "emptyState": "Aucune candidature trouvée",
     "footerNote": "Les candidatures sont mises à jour en temps réel",
@@ -253,6 +257,12 @@
   "jobsPosted": "offres d'emploi publiées",
   "live": "Live",
   "loadingStats": "Chargement des statistiques de la plate-forme...",
+  "marketplacePage": {
+    "searchPlaceholder": "Rechercher des partenaires..."
+  },
+  "navbar": {
+    "searchPlaceholder": "Rechercher..."
+  },
   "orderRequestDetailModal": {
     "date": "Date",
     "foundation": "Fondation",
@@ -384,6 +394,10 @@
         "a": "La plupart des crèches répondent dans les 2-3 jours ouvrables. Vous pouvez suivre le statut de vos demandes dans votre tableau de bord.",
         "q": "À quelle rapidité vais-je recevoir des réponses ?"
       }
+    },
+    "ticketForm": {
+      "messagePlaceholder": "Veuillez fournir des informations détaillées sur votre problème",
+      "subjectPlaceholder": "Brève description de votre problème"
     }
   },
   "platformSummary": "Résumé de la plate-forme",
@@ -394,9 +408,31 @@
   "productsAvailable": "produits dans le catalogue",
   "recruitmentPage": {
     "subtitle": "Gérer les offres d'emploi et trouver des candidats qualifiés",
-    "title": "Recrutement"
+    "title": "Recrutement",
+    "candidatePool": {
+      "searchPlaceholder": "Rechercher des candidats..."
+    },
+    "jobOffers": {
+      "searchPlaceholder": "Rechercher des offres d'emploi..."
+    },
+    "jobPostModal": {
+      "benefitPlaceholder": "Avantage",
+      "qualificationPlaceholder": "Qualification",
+      "requirementPlaceholder": "Exigence",
+      "responsibilityPlaceholder": "Responsabilité",
+      "salaryRangePlaceholder": "ex., CHF 4,500 - 5,500"
+    },
+    "supportPage": {
+      "ticketForm": {
+        "messagePlaceholder": "Veuillez fournir des informations détaillées sur votre problème",
+        "subjectPlaceholder": "Brève description de votre problème"
+      }
+    }
   },
   "registeredUsers": "utilisateurs enregistrés dans la plate-forme",
+  "usersPage": {
+    "searchPlaceholder": "Rechercher des utilisateurs..."
+  },
   "serviceProviderAnalyticsPage": {
     "mockChartText": "Visualisation de graphique {{type}} simulée",
     "requestDistributionByCanton": "Répartition des demandes par canton",
@@ -465,6 +501,10 @@
         "a": "Mettez à jour votre calendrier de disponibilité dans Paramètres > Contact et réservation. Vous pouvez définir vos heures et jours de travail préférés.",
         "q": "Comment mettre à jour ma disponibilité ?"
       }
+    },
+    "ticketForm": {
+      "messagePlaceholder": "Veuillez fournir des informations détaillées sur votre problème",
+      "subjectPlaceholder": "Brève description de votre problème"
     },
     "ticketSubmittedAlert": "Ticket de support soumis avec succès"
   },
@@ -847,6 +887,11 @@
     },
     "ticketSubmittedAlert": "Ticket de support soumis avec succès"
   },
+  "hrProceduresPage": {
+    "backToCategoriesButton": "Retour aux catégories",
+    "searchPlaceholder": "Rechercher des documents...",
+    "title": "Documents RH"
+  },
   "inquiryDetailModal": {
     "actions": {
       "contacted": "Marquer comme contacté",
@@ -912,6 +957,13 @@
     "notProvided": "Non fourni",
     "saveButton": "Enregistrer le profil",
     "sections": {
+      "branding": {
+        "coverImageLabel": "Image de couverture",
+        "logoLabel": "Logo",
+        "pedagogyStatementLabel": "Déclaration pédagogique",
+        "pedagogyStatementPlaceholder": "Décrivez votre approche éducative et votre philosophie...",
+        "title": "Image de marque et identité"
+      },
       "contact": {
         "title": "Contact et localisation"
       },
@@ -926,7 +978,19 @@
       "metadata": {
         "title": "Métadonnées de l'organisation"
       },
+      "online": {
+        "acceptingLeadsLabel": "Acceptation de nouveaux leads",
+        "bookingLinkLabel": "Lien de réservation",
+        "bookingLinkPlaceholder": "https://votre-systeme-de-reservation.com",
+        "socialMediaLinkLabel": "Liens de réseaux sociaux",
+        "socialMediaLinkPlaceholder": "Facebook, Instagram, LinkedIn...",
+        "title": "Présence en ligne"
+      },
       "operations": {
+        "contactInfoLabel": "Informations de contact",
+        "contactInfoPlaceholder": "Téléphone, e-mail, adresse...",
+        "openingHoursLabel": "Heures d'ouverture",
+        "openingHoursPlaceholder": "ex., lundi-vendredi 7:00-18:00",
         "title": "Opérations"
       }
     },

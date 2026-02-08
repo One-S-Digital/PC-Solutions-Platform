@@ -77,6 +77,10 @@
     "viewDetailsFor": "Details anzeigen für {{name}}",
     "welcome": "Willkommen zurück, {{name}}!"
   },
+  "eLearningPage": {
+    "title": "E-Learning-Artikel",
+    "searchPlaceholder": "Inhalte suchen..."
+  },
   "educatorApplicationsPage": {
     "emptyState": "Keine Bewerbungen gefunden",
     "footerNote": "Bewerbungen werden in Echtzeit aktualisiert",
@@ -254,6 +258,12 @@
   "jobsPosted": "Stellenanzeigen veröffentlicht",
   "live": "Live",
   "loadingStats": "Laden der Plattformstatistiken...",
+  "marketplacePage": {
+    "searchPlaceholder": "Partner suchen..."
+  },
+  "navbar": {
+    "searchPlaceholder": "Suchen..."
+  },
   "orderRequestDetailModal": {
     "date": "Datum",
     "foundation": "Stiftung",
@@ -385,6 +395,10 @@
         "a": "Die meisten Krippen antworten innerhalb von 2-3 Werktagen. Sie können den Status Ihrer Anfragen in Ihrem Dashboard verfolgen.",
         "q": "Wie schnell erhalte ich Antworten?"
       }
+    },
+    "ticketForm": {
+      "messagePlaceholder": "Bitte geben Sie detaillierte Informationen zu Ihrem Problem an",
+      "subjectPlaceholder": "Kurze Beschreibung Ihres Problems"
     }
   },
   "platformSummary": "Plattform Zusammenfassung",
@@ -394,10 +408,32 @@
   },
   "productsAvailable": "Produkte im Katalog",
   "recruitmentPage": {
-    "subtitle": "Manage job postings and find qualified candidates",
-    "title": "Recruitment"
+    "subtitle": "Stellenanzeigen verwalten und qualifizierte Kandidaten finden",
+    "title": "Rekrutierung",
+    "candidatePool": {
+      "searchPlaceholder": "Kandidaten suchen..."
+    },
+    "jobOffers": {
+      "searchPlaceholder": "Stellenangebote suchen..."
+    },
+    "jobPostModal": {
+      "benefitPlaceholder": "Vorteil",
+      "qualificationPlaceholder": "Qualifikation",
+      "requirementPlaceholder": "Anforderung",
+      "responsibilityPlaceholder": "Verantwortung",
+      "salaryRangePlaceholder": "z.B. CHF 4.500 - 5.500"
+    },
+    "supportPage": {
+      "ticketForm": {
+        "messagePlaceholder": "Bitte geben Sie detaillierte Informationen zu Ihrem Problem an",
+        "subjectPlaceholder": "Kurze Beschreibung Ihres Problems"
+      }
+    }
   },
   "registeredUsers": "registrierte Nutzer auf der Plattform",
+  "usersPage": {
+    "searchPlaceholder": "Benutzer suchen..."
+  },
   "serviceProviderAnalyticsPage": {
     "mockChartText": "Simulierte {{type}} Diagrammvisualisierung",
     "requestDistributionByCanton": "Verteilung der Anfragen nach Kanton",
@@ -466,6 +502,10 @@
         "a": "Aktualisieren Sie Ihren Verfügbarkeitskalender in Einstellungen > Kontakt und Buchung. Sie können Ihre bevorzugten Arbeitszeiten und -tage festlegen.",
         "q": "Wie aktualisiere ich meine Verfügbarkeit?"
       }
+    },
+    "ticketForm": {
+      "messagePlaceholder": "Bitte geben Sie detaillierte Informationen zu Ihrem Problem an",
+      "subjectPlaceholder": "Kurze Beschreibung Ihres Problems"
     },
     "ticketSubmittedAlert": "Support-Ticket erfolgreich übermittelt"
   },
@@ -817,6 +857,11 @@
     },
     "ticketSubmittedAlert": "Support-Ticket erfolgreich übermittelt"
   },
+  "hrProceduresPage": {
+    "backToCategoriesButton": "Zurück zu Kategorien",
+    "searchPlaceholder": "Dokumente suchen...",
+    "title": "HR-Dokumente"
+  },
   "inquiryDetailModal": {
     "actions": {
       "contacted": "Als kontaktiert markieren",
@@ -882,6 +927,13 @@
     "notProvided": "Nicht angegeben",
     "saveButton": "Profil speichern",
     "sections": {
+      "branding": {
+        "coverImageLabel": "Titelbild",
+        "logoLabel": "Logo",
+        "pedagogyStatementLabel": "Pädagogisches Leitbild",
+        "pedagogyStatementPlaceholder": "Beschreiben Sie Ihren pädagogischen Ansatz und Ihre Philosophie...",
+        "title": "Branding und Identität"
+      },
       "contact": {
         "title": "Kontakt und Standort"
       },
@@ -896,7 +948,19 @@
       "metadata": {
         "title": "Organisationsmetadaten"
       },
+      "online": {
+        "acceptingLeadsLabel": "Neue Leads annehmen",
+        "bookingLinkLabel": "Buchungslink",
+        "bookingLinkPlaceholder": "https://ihr-buchungssystem.com",
+        "socialMediaLinkLabel": "Social-Media-Links",
+        "socialMediaLinkPlaceholder": "Facebook, Instagram, LinkedIn...",
+        "title": "Online-Präsenz"
+      },
       "operations": {
+        "contactInfoLabel": "Kontaktinformationen",
+        "contactInfoPlaceholder": "Telefon, E-Mail, Adresse...",
+        "openingHoursLabel": "Öffnungszeiten",
+        "openingHoursPlaceholder": "z.B. Montag-Freitag 7:00-18:00",
         "title": "Betrieb"
       }
     },
