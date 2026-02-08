@@ -15,7 +15,7 @@ interface ServiceRequestModalProps {
 }
 
 const ServiceRequestModal: React.FC<ServiceRequestModalProps> = ({ service, isOpen, onClose, onSubmitRequest }) => {
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t } = useTranslation(['common', 'marketplace']);
   const [preferredDate, setPreferredDate] = useState('');
   const [notes, setNotes] = useState('');
 
@@ -40,7 +40,12 @@ const ServiceRequestModal: React.FC<ServiceRequestModalProps> = ({ service, isOp
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity duration-300 ease-in-out" role="dialog" aria-modal="true" aria-labelledby="serviceRequestModalTitle">
       <Card className="w-full max-w-lg bg-white p-0 shadow-xl rounded-lg overflow-hidden">
         <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
-          <h2 id="serviceRequestModalTitle" className="text-xl font-semibold text-swiss-charcoal">Request Service: {service.title}</h2>
+          <h2 id="serviceRequestModalTitle" className="text-xl font-semibold text-swiss-charcoal">
+            {t('common:serviceRequestModal.title', {
+              serviceName: service.title,
+              defaultValue: `Request Service: ${service.title}`,
+            })}
+          </h2>
           <button onClick={onClose} className="p-1 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors" aria-label="Close modal">
             <XMarkIcon className="w-6 h-6" />
           </button>
@@ -49,7 +54,9 @@ const ServiceRequestModal: React.FC<ServiceRequestModalProps> = ({ service, isOp
         <form onSubmit={handleSubmit}>
           <div className="p-6 space-y-4">
             <div>
-              <label htmlFor="serviceNameModal" className="block text-sm font-medium text-gray-700 mb-1">Service</label>
+              <label htmlFor="serviceNameModal" className="block text-sm font-medium text-gray-700 mb-1">
+                {t('common:serviceRequestModal.serviceLabel', 'Service')}
+              </label>
               <input
                 type="text"
                 id="serviceNameModal"
@@ -59,17 +66,21 @@ const ServiceRequestModal: React.FC<ServiceRequestModalProps> = ({ service, isOp
               />
             </div>
             <div>
-              <label htmlFor="providerNameModal" className="block text-sm font-medium text-gray-700 mb-1">Provider</label>
+              <label htmlFor="providerNameModal" className="block text-sm font-medium text-gray-700 mb-1">
+                {t('common:serviceRequestModal.providerLabel', 'Provider')}
+              </label>
               <input
                 type="text"
                 id="providerNameModal"
-                value={service.providerName}
+                value={service.providerName ?? ''}
                 readOnly
                 className={`${STANDARD_INPUT_FIELD} bg-gray-100 cursor-not-allowed`}
               />
             </div>
             <div>
-              <label htmlFor="preferredDateModal" className="block text-sm font-medium text-gray-700 mb-1">{t("serviceRequestModal.preferredDateLabel")}</label>
+              <label htmlFor="preferredDateModal" className="block text-sm font-medium text-gray-700 mb-1">
+                {t('common:serviceRequestModal.preferredDateLabel')}
+              </label>
               <div className="relative">
                 <input
                     type="date"
@@ -82,7 +93,9 @@ const ServiceRequestModal: React.FC<ServiceRequestModalProps> = ({ service, isOp
               </div>
             </div>
             <div>
-              <label htmlFor="notesModal" className="block text-sm font-medium text-gray-700 mb-1">{t("serviceRequestModal.notesLabel")}</label>
+              <label htmlFor="notesModal" className="block text-sm font-medium text-gray-700 mb-1">
+                {t('common:serviceRequestModal.notesLabel')}
+              </label>
               <textarea
                 id="notesModal"
                 value={notes}
@@ -95,7 +108,7 @@ const ServiceRequestModal: React.FC<ServiceRequestModalProps> = ({ service, isOp
           </div>
           <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
             <Button type="button" variant="light" onClick={onClose}>{t('common:buttons.cancel')}</Button>
-            <Button type="submit" variant="secondary">{t("serviceRequestModal.submitButton")}</Button>
+            <Button type="submit" variant="secondary">{t('common:serviceRequestModal.submitButton')}</Button>
           </div>
         </form>
       </Card>

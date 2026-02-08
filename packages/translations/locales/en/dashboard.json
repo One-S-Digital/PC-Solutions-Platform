@@ -1007,6 +1007,7 @@
     "ratingText": "Rating",
     "ratingsReviewsTitle": "Ratings & Reviews",
     "requestServiceButton": "Request Service",
+    "viewServiceButton": "View Service",
     "requestSubmittedAlert": "Service request submitted successfully",
     "reviewsPlaceholder": "No reviews yet"
   },

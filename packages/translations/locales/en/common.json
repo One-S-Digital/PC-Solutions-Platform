@@ -1778,9 +1778,18 @@
     "viewDaycareProfile": "View Daycare Profile"
   },
   "serviceRequestModal": {
-    "notesLabel": "No tes",
+    "title": "Request Service: {{serviceName}}",
+    "serviceLabel": "Service",
+    "providerLabel": "Provider",
+    "notesLabel": "Notes",
     "preferredDateLabel": "Preferred Date",
-    "submitButton": "Submit Button"
+    "submitButton": "Submit Request"
+  },
+  "serviceViewModal": {
+    "title": "Service Details",
+    "providerLabel": "Provider",
+    "availabilityLabel": "Availability",
+    "priceLabel": "Price"
   },
   "serviceStatus": {
     "active": "Active",

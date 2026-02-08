@@ -1777,9 +1777,18 @@
     "viewDaycareProfile": "Kita-Profil anzeigen"
   },
   "serviceRequestModal": {
+    "title": "Service anfragen: {{serviceName}}",
+    "serviceLabel": "Service",
+    "providerLabel": "Anbieter",
     "notesLabel": "Notizen",
     "preferredDateLabel": "Bevorzugtes Datum",
-    "submitButton": "Absenden-Schaltfläche"
+    "submitButton": "Anfrage senden"
+  },
+  "serviceViewModal": {
+    "title": "Service-Details",
+    "providerLabel": "Anbieter",
+    "availabilityLabel": "Verfügbarkeit",
+    "priceLabel": "Preis"
   },
   "serviceStatus": {
     "active": "Aktiv",

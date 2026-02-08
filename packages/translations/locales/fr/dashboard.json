@@ -553,6 +553,7 @@
     "ratingText": "Note",
     "ratingsReviewsTitle": "Notes et avis",
     "requestServiceButton": "Demander un service",
+    "viewServiceButton": "Voir le service",
     "requestSubmittedAlert": "Demande de service soumise avec succès",
     "reviewsPlaceholder": "Aucun avis pour le moment"
   },

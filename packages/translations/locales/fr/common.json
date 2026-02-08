@@ -1754,9 +1754,18 @@
     "viewDaycareProfile": "Voir le profil de la garderie"
   },
   "serviceRequestModal": {
+    "title": "Demander un service : {{serviceName}}",
+    "serviceLabel": "Service",
+    "providerLabel": "Prestataire",
     "notesLabel": "Notes",
     "preferredDateLabel": "Date préférée",
-    "submitButton": "Bouton Soumettre"
+    "submitButton": "Envoyer la demande"
+  },
+  "serviceViewModal": {
+    "title": "Détails du service",
+    "providerLabel": "Prestataire",
+    "availabilityLabel": "Disponibilité",
+    "priceLabel": "Prix"
   },
   "serviceStatus": {
     "active": "Actif",
