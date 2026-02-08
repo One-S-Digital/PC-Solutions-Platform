@@ -11,6 +11,7 @@
  * 3. Runs migration recovery/fix script
  * 4. Deploys pending migrations
  * 5. Verifies critical tables exist
+ * 6. Backfills structured educator profile items (temporary)
  * 
  * Usage:
  *   node scripts/prebuild-complete-db-setup.mjs
@@ -19,6 +20,7 @@
  *   DATABASE_URL - Required: PostgreSQL connection string
  *   SKIP_DB_SETUP - Optional: Set to 'true' to skip this script
  *   SKIP_PRISMA_MIGRATIONS - Optional: Set to 'true' to skip migrations
+ *   SKIP_EDUCATOR_PROFILE_BACKFILL - Optional: Set to 'true' to skip one-off backfill
  */
 
 import { spawnSync, spawn } from 'node:child_process';
@@ -202,6 +204,10 @@ const verifyCriticalTables = () => {
     'static_translations',
     'messages',
     'promo_codes',
+    // Structured educator profile items
+    'educator_work_experiences',
+    'educator_educations',
+    'educator_certifications',
   ];
   
   const sql = `
@@ -314,6 +320,28 @@ ON "public"."users" ((("availabilitySettings"->>'employmentType')));
 };
 
 /**
+ * Run one-off backfill for structured educator profile items.
+ * NOTE: Temporary step requested for deployment; remove after build.
+ */
+const runEducatorProfileBackfill = () => {
+  if (envFlag(process.env.SKIP_EDUCATOR_PROFILE_BACKFILL)) {
+    log('SKIP_EDUCATOR_PROFILE_BACKFILL is set. Skipping educator profile backfill.');
+    return;
+  }
+
+  log('Running educator profile backfill (one-off)...');
+  const backfillScript = path.join('scripts', 'backfill-educator-profile-items.ts');
+  const result = runCommand('npx', ['ts-node', backfillScript]);
+
+  if (!result.success) {
+    warn('Educator profile backfill failed (continuing).');
+    return;
+  }
+
+  success('Educator profile backfill completed');
+};
+
+/**
  * Print database status summary
  */
 const printStatusSummary = () => {
@@ -359,6 +387,9 @@ const main = async () => {
     
     // Step 6: Verify new availability column
     verifyEducatorAvailabilityColumn();
+
+    // Step 7: One-off backfill for structured educator profile items
+    runEducatorProfileBackfill();
     
     // Print summary
     printStatusSummary();
