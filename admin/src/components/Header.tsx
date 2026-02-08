@@ -21,6 +21,12 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
   const notificationsRef = useRef<HTMLDivElement | null>(null)
   const notificationsButtonRef = useRef<HTMLButtonElement | null>(null)
+  const recentWindowDays = 7
+  const recentFrom = useMemo(() => {
+    const date = new Date()
+    date.setDate(date.getDate() - recentWindowDays)
+    return date.toISOString()
+  }, [])
 
   const handleSignOut = () => {
     signOut()
@@ -29,6 +35,41 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
   const { data: supportTicketsResponse, isLoading: supportLoading } = useQuery({
     queryKey: ['support-ticket-notifications'],
     queryFn: () => apiService.getSupportTickets(apiClient, { status: 'OPEN' }),
+    enabled: !!apiClient,
+    staleTime: 30000,
+  })
+
+  const { data: userStatsResponse, isLoading: userStatsLoading } = useQuery({
+    queryKey: ['admin-user-stats'],
+    queryFn: () => apiService.getAdminUserStats(apiClient),
+    enabled: !!apiClient,
+    staleTime: 30000,
+  })
+
+  const { data: recentUsersResponse, isLoading: usersLoading } = useQuery({
+    queryKey: ['recent-user-notifications', recentFrom],
+    queryFn: () =>
+      apiService.getAdminUsers(apiClient, {
+        page: 1,
+        limit: 5,
+        dateFrom: recentFrom,
+        sortBy: 'createdAt',
+        sortOrder: 'desc',
+      }),
+    enabled: !!apiClient,
+    staleTime: 30000,
+  })
+
+  const { data: productsResponse, isLoading: productsLoading } = useQuery({
+    queryKey: ['recent-product-notifications'],
+    queryFn: () => apiService.getProducts(apiClient),
+    enabled: !!apiClient,
+    staleTime: 30000,
+  })
+
+  const { data: servicesResponse, isLoading: servicesLoading } = useQuery({
+    queryKey: ['recent-service-notifications'],
+    queryFn: () => apiService.getServices(apiClient),
     enabled: !!apiClient,
     staleTime: 30000,
   })
@@ -51,6 +92,27 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
   const supportCount = supportTickets.length
   const supportItems = supportTickets.slice(0, 5)
 
+  const userStats = (userStatsResponse as any)?.data?.data ?? (userStatsResponse as any)?.data ?? null
+  const recentUsersPayload = (recentUsersResponse as any)?.data?.data ?? (recentUsersResponse as any)?.data
+  const recentUsers = Array.isArray(recentUsersPayload?.users) ? recentUsersPayload.users : []
+  const recentUsersCount = userStats?.recentRegistrations ?? recentUsers.length
+
+  const products = useMemo(() => productsResponse?.data?.data || [], [productsResponse])
+  const services = useMemo(() => servicesResponse?.data?.data || [], [servicesResponse])
+  const recentCutoff = useMemo(() => new Date(recentFrom).getTime(), [recentFrom])
+  const recentProducts = useMemo(
+    () => products.filter((product: any) => new Date(product.createdAt).getTime() >= recentCutoff),
+    [products, recentCutoff]
+  )
+  const recentServices = useMemo(
+    () => services.filter((service: any) => new Date(service.createdAt).getTime() >= recentCutoff),
+    [services, recentCutoff]
+  )
+  const recentProductsCount = recentProducts.length
+  const recentServicesCount = recentServices.length
+  const recentProductItems = recentProducts.slice(0, 5)
+  const recentServiceItems = recentServices.slice(0, 5)
+
   const subscriptionRequestsData = subscriptionRequestsResponse?.data?.data
   const subscriptionRequests = subscriptionRequestsData?.requests || []
   const subscriptionCount = subscriptionRequestsData?.total ?? subscriptionRequests.length
@@ -61,8 +123,21 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
   const cancellationCount = cancellationRequestsData?.total ?? cancellationRequests.length
   const cancellationItems = cancellationRequests.slice(0, 5)
 
-  const totalNotifications = supportCount + subscriptionCount + cancellationCount
-  const isLoadingNotifications = supportLoading || requestsLoading || cancellationsLoading
+  const totalNotifications =
+    supportCount +
+    subscriptionCount +
+    cancellationCount +
+    recentUsersCount +
+    recentProductsCount +
+    recentServicesCount
+  const isLoadingNotifications =
+    supportLoading ||
+    userStatsLoading ||
+    usersLoading ||
+    productsLoading ||
+    servicesLoading ||
+    requestsLoading ||
+    cancellationsLoading
 
   useEffect(() => {
     if (!isNotificationsOpen) return
@@ -111,6 +186,11 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
     const fullName = `${request?.user?.firstName || ''} ${request?.user?.lastName || ''}`.trim()
     if (fullName) return fullName
     return request?.user?.email || t('common:unknown', 'Unknown')
+  }
+
+  const formatUserName = (userData: any) => {
+    const fullName = `${userData?.firstName || ''} ${userData?.lastName || ''}`.trim()
+    return fullName || userData?.email || t('common:unknown', 'Unknown')
   }
 
   return (
@@ -227,49 +307,49 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
                   <div className="px-4 py-3">
                     <div className="flex items-center justify-between">
                       <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                        {t('admin:notifications.sections.subscriptions', { defaultValue: 'Subscriptions' })}
+                        {t('admin:notifications.sections.users', { defaultValue: 'Users' })}
                       </h3>
-                      {subscriptionCount > 0 && (
-                        <span className="text-xs text-gray-400">{subscriptionCount}</span>
+                      {recentUsersCount > 0 && (
+                        <span className="text-xs text-gray-400">{recentUsersCount}</span>
                       )}
                     </div>
-                    {subscriptionItems.length === 0 ? (
+                    {recentUsers.length === 0 ? (
                       <p className="mt-2 text-sm text-gray-500">
-                        {t('admin:notifications.subscriptionsEmpty', { defaultValue: 'No new subscription requests.' })}
+                        {t('admin:notifications.usersEmpty', { defaultValue: 'No new users.' })}
                       </p>
                     ) : (
                       <div className="mt-2 space-y-2">
-                        {subscriptionItems.map((request: any) => (
+                        {recentUsers.map((recentUser: any) => (
                           <button
-                            key={request.id}
+                            key={recentUser.id}
                             type="button"
                             onClick={() => {
-                              navigate('/subscriptions?view=requests')
+                              navigate('/users')
                               setIsNotificationsOpen(false)
                             }}
                             className="w-full text-left p-2 rounded-lg hover:bg-gray-50"
                           >
                             <div className="text-sm font-medium text-gray-900 truncate">
-                              {formatRequestContact(request)}
+                              {formatUserName(recentUser)}
                             </div>
                             <div className="text-xs text-gray-500">
-                              {request.plan?.name || t('common:notAvailable', 'N/A')}
-                              {request.createdAt ? ` • ${formatTimestamp(request.createdAt)}` : ''}
+                              {recentUser.email || t('common:unknown', 'Unknown')}
+                              {recentUser.createdAt ? ` • ${formatTimestamp(recentUser.createdAt)}` : ''}
                             </div>
                           </button>
                         ))}
                       </div>
                     )}
-                    {subscriptionCount > subscriptionItems.length && (
+                    {recentUsersCount > recentUsers.length && (
                       <button
                         type="button"
                         onClick={() => {
-                          navigate('/subscriptions?view=requests')
+                          navigate('/users')
                           setIsNotificationsOpen(false)
                         }}
                         className="mt-2 text-xs text-blue-600 hover:text-blue-700"
                       >
-                        {t('admin:notifications.viewAllRequests', { defaultValue: 'View all requests' })}
+                        {t('admin:notifications.viewAllUsers', { defaultValue: 'View all users' })}
                       </button>
                     )}
                   </div>
@@ -277,49 +357,191 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
                   <div className="px-4 py-3">
                     <div className="flex items-center justify-between">
                       <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                        {t('admin:notifications.sections.cancellations', { defaultValue: 'Cancellation Requests' })}
+                        {t('admin:notifications.sections.products', { defaultValue: 'Products' })}
                       </h3>
-                      {cancellationCount > 0 && (
-                        <span className="text-xs text-gray-400">{cancellationCount}</span>
+                      {recentProductsCount > 0 && (
+                        <span className="text-xs text-gray-400">{recentProductsCount}</span>
                       )}
                     </div>
-                    {cancellationItems.length === 0 ? (
+                    {recentProductItems.length === 0 ? (
                       <p className="mt-2 text-sm text-gray-500">
-                        {t('admin:notifications.cancellationsEmpty', { defaultValue: 'No new cancellation requests.' })}
+                        {t('admin:notifications.productsEmpty', { defaultValue: 'No new products.' })}
                       </p>
                     ) : (
                       <div className="mt-2 space-y-2">
-                        {cancellationItems.map((request: any) => (
+                        {recentProductItems.map((product: any) => (
                           <button
-                            key={request.id}
+                            key={product.id}
                             type="button"
                             onClick={() => {
-                              navigate('/subscriptions?view=cancellations')
+                              navigate('/products')
                               setIsNotificationsOpen(false)
                             }}
                             className="w-full text-left p-2 rounded-lg hover:bg-gray-50"
                           >
                             <div className="text-sm font-medium text-gray-900 truncate">
-                              {formatCancellationContact(request)}
+                              {product.title || t('common:unknown', 'Unknown')}
                             </div>
                             <div className="text-xs text-gray-500">
-                              {request.subscription?.plan?.name || t('common:notAvailable', 'N/A')}
-                              {request.requestedAt ? ` • ${formatTimestamp(request.requestedAt)}` : ''}
+                              {product.supplierName || t('common:notAvailable', 'N/A')}
+                              {product.createdAt ? ` • ${formatTimestamp(product.createdAt)}` : ''}
                             </div>
                           </button>
                         ))}
                       </div>
                     )}
-                    {cancellationCount > cancellationItems.length && (
+                    {recentProductsCount > recentProductItems.length && (
                       <button
                         type="button"
                         onClick={() => {
-                          navigate('/subscriptions?view=cancellations')
+                          navigate('/products')
                           setIsNotificationsOpen(false)
                         }}
                         className="mt-2 text-xs text-blue-600 hover:text-blue-700"
                       >
-                        {t('admin:notifications.viewAllCancellations', { defaultValue: 'View all cancellations' })}
+                        {t('admin:notifications.viewAllProducts', { defaultValue: 'View all products' })}
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="px-4 py-3">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                        {t('admin:notifications.sections.services', { defaultValue: 'Services' })}
+                      </h3>
+                      {recentServicesCount > 0 && (
+                        <span className="text-xs text-gray-400">{recentServicesCount}</span>
+                      )}
+                    </div>
+                    {recentServiceItems.length === 0 ? (
+                      <p className="mt-2 text-sm text-gray-500">
+                        {t('admin:notifications.servicesEmpty', { defaultValue: 'No new services.' })}
+                      </p>
+                    ) : (
+                      <div className="mt-2 space-y-2">
+                        {recentServiceItems.map((service: any) => (
+                          <button
+                            key={service.id}
+                            type="button"
+                            onClick={() => {
+                              navigate('/services')
+                              setIsNotificationsOpen(false)
+                            }}
+                            className="w-full text-left p-2 rounded-lg hover:bg-gray-50"
+                          >
+                            <div className="text-sm font-medium text-gray-900 truncate">
+                              {service.title || t('common:unknown', 'Unknown')}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {service.providerName || t('common:notAvailable', 'N/A')}
+                              {service.createdAt ? ` • ${formatTimestamp(service.createdAt)}` : ''}
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    {recentServicesCount > recentServiceItems.length && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigate('/services')
+                          setIsNotificationsOpen(false)
+                        }}
+                        className="mt-2 text-xs text-blue-600 hover:text-blue-700"
+                      >
+                        {t('admin:notifications.viewAllServices', { defaultValue: 'View all services' })}
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="px-4 py-3">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                        {t('admin:notifications.sections.subscriptions', { defaultValue: 'Subscriptions' })}
+                      </h3>
+                      {subscriptionCount + cancellationCount > 0 && (
+                        <span className="text-xs text-gray-400">{subscriptionCount + cancellationCount}</span>
+                      )}
+                    </div>
+
+                    <div className="mt-2 space-y-3">
+                      <div>
+                        <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                          {t('admin:notifications.subsections.requests', { defaultValue: 'Requests' })}
+                        </p>
+                        {subscriptionItems.length === 0 ? (
+                          <p className="mt-1 text-sm text-gray-500">
+                            {t('admin:notifications.subscriptionsEmpty', { defaultValue: 'No new subscription requests.' })}
+                          </p>
+                        ) : (
+                          <div className="mt-2 space-y-2">
+                            {subscriptionItems.map((request: any) => (
+                              <button
+                                key={request.id}
+                                type="button"
+                                onClick={() => {
+                                  navigate('/subscriptions?view=requests')
+                                  setIsNotificationsOpen(false)
+                                }}
+                                className="w-full text-left p-2 rounded-lg hover:bg-gray-50"
+                              >
+                                <div className="text-sm font-medium text-gray-900 truncate">
+                                  {formatRequestContact(request)}
+                                </div>
+                                <div className="text-xs text-gray-500">
+                                  {request.plan?.name || t('common:notAvailable', 'N/A')}
+                                  {request.createdAt ? ` • ${formatTimestamp(request.createdAt)}` : ''}
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      <div>
+                        <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                          {t('admin:notifications.subsections.cancellations', { defaultValue: 'Cancellations' })}
+                        </p>
+                        {cancellationItems.length === 0 ? (
+                          <p className="mt-1 text-sm text-gray-500">
+                            {t('admin:notifications.cancellationsEmpty', { defaultValue: 'No new cancellation requests.' })}
+                          </p>
+                        ) : (
+                          <div className="mt-2 space-y-2">
+                            {cancellationItems.map((request: any) => (
+                              <button
+                                key={request.id}
+                                type="button"
+                                onClick={() => {
+                                  navigate('/subscriptions?view=cancellations')
+                                  setIsNotificationsOpen(false)
+                                }}
+                                className="w-full text-left p-2 rounded-lg hover:bg-gray-50"
+                              >
+                                <div className="text-sm font-medium text-gray-900 truncate">
+                                  {formatCancellationContact(request)}
+                                </div>
+                                <div className="text-xs text-gray-500">
+                                  {request.subscription?.plan?.name || t('common:notAvailable', 'N/A')}
+                                  {request.requestedAt ? ` • ${formatTimestamp(request.requestedAt)}` : ''}
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {subscriptionCount + cancellationCount > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigate('/subscriptions')
+                          setIsNotificationsOpen(false)
+                        }}
+                        className="mt-3 text-xs text-blue-600 hover:text-blue-700"
+                      >
+                        {t('admin:notifications.viewAllSubscriptions', { defaultValue: 'View subscriptions' })}
                       </button>
                     )}
                   </div>

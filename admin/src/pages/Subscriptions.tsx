@@ -2704,7 +2704,7 @@ const Subscriptions: React.FC = () => {
             <ClipboardList className="w-4 h-4" />
             {t('admin:subscriptions.tabs.requests', 'Subscription Requests')}
             {pendingRequestsCount > 0 && (
-              <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-red-100 text-red-800">
+              <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-red-500 text-white">
                 {pendingRequestsCount}
               </span>
             )}
@@ -2724,7 +2724,7 @@ const Subscriptions: React.FC = () => {
             <XCircle className="w-4 h-4" />
             {t('admin:subscriptions.tabs.cancellations', 'Cancellation Requests')}
             {pendingCancellationRequestsCount > 0 && (
-              <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-red-100 text-red-800">
+              <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-red-500 text-white">
                 {pendingCancellationRequestsCount}
               </span>
             )}

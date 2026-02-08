@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useMemo } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { Dialog, Transition } from '@headlessui/react'
 import {
@@ -23,7 +23,10 @@ import {
   FileSearch,
 } from 'lucide-react'
 import { clsx } from 'clsx'
+import { useQuery } from '@tanstack/react-query'
 import { useSettings } from '../hooks/useSettings'
+import { useApiClient, apiService } from '../services/api'
+import { subscriptionService } from '../services/subscriptionService'
 import { useTranslation } from 'react-i18next'
 
 interface SidebarProps {
@@ -56,6 +59,79 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
   const location = useLocation()
   const { settings } = useSettings()
   const { t } = useTranslation(['dashboard', 'admin', 'common'])
+  const apiClient = useApiClient()
+  const recentWindowDays = 7
+  const recentFrom = useMemo(() => {
+    const date = new Date()
+    date.setDate(date.getDate() - recentWindowDays)
+    return date.toISOString()
+  }, [])
+
+  const { data: supportTicketsResponse } = useQuery({
+    queryKey: ['support-ticket-notifications'],
+    queryFn: () => apiService.getSupportTickets(apiClient, { status: 'OPEN' }),
+    enabled: !!apiClient,
+    staleTime: 30000,
+  })
+
+  const { data: userStatsResponse } = useQuery({
+    queryKey: ['admin-user-stats'],
+    queryFn: () => apiService.getAdminUserStats(apiClient),
+    enabled: !!apiClient,
+    staleTime: 30000,
+  })
+
+  const { data: productsResponse } = useQuery({
+    queryKey: ['recent-product-notifications'],
+    queryFn: () => apiService.getProducts(apiClient),
+    enabled: !!apiClient,
+    staleTime: 30000,
+  })
+
+  const { data: servicesResponse } = useQuery({
+    queryKey: ['recent-service-notifications'],
+    queryFn: () => apiService.getServices(apiClient),
+    enabled: !!apiClient,
+    staleTime: 30000,
+  })
+
+  const { data: subscriptionRequestsResponse } = useQuery({
+    queryKey: ['subscription-request-notifications'],
+    queryFn: () => subscriptionService.getSubscriptionRequests(apiClient, { status: 'PENDING', page: 1, limit: 5 }),
+    enabled: !!apiClient,
+    staleTime: 30000,
+  })
+
+  const { data: cancellationRequestsResponse } = useQuery({
+    queryKey: ['subscription-cancellation-request-notifications'],
+    queryFn: () => subscriptionService.getCancellationRequests(apiClient, { status: 'PENDING', page: 1, limit: 5 }),
+    enabled: !!apiClient,
+    staleTime: 30000,
+  })
+
+  const supportCount = supportTicketsResponse?.data?.data?.length ?? 0
+  const userStats = (userStatsResponse as any)?.data?.data ?? (userStatsResponse as any)?.data ?? null
+  const recentUsersCount = userStats?.recentRegistrations ?? 0
+
+  const products = productsResponse?.data?.data || []
+  const services = servicesResponse?.data?.data || []
+  const recentCutoff = useMemo(() => new Date(recentFrom).getTime(), [recentFrom])
+  const recentProductsCount = products.filter((product: any) => new Date(product.createdAt).getTime() >= recentCutoff).length
+  const recentServicesCount = services.filter((service: any) => new Date(service.createdAt).getTime() >= recentCutoff).length
+
+  const subscriptionRequestsData = subscriptionRequestsResponse?.data?.data
+  const subscriptionCount = subscriptionRequestsData?.total ?? subscriptionRequestsData?.requests?.length ?? 0
+  const cancellationRequestsData = cancellationRequestsResponse?.data?.data
+  const cancellationCount = cancellationRequestsData?.total ?? cancellationRequestsData?.requests?.length ?? 0
+  const subscriptionsBadgeCount = subscriptionCount + cancellationCount
+
+  const navBadgeCounts: Record<string, number> = {
+    users: recentUsersCount,
+    products: recentProductsCount,
+    services: recentServicesCount,
+    subscriptions: subscriptionsBadgeCount,
+    support: supportCount,
+  }
 
   const getAdminLogo = () => {
     if (settings?.adminLogoAsset?.publicUrl) {
@@ -82,24 +158,32 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
         {/* Main Navigation */}
         {navigation.map((item) => {
           const isActive = location.pathname === item.href
+          const badgeCount = navBadgeCounts[item.key] || 0
           return (
             <NavLink
               key={item.key}
               to={item.href}
               className={clsx(
-                'group flex items-center px-4 py-2.5 text-sm rounded-button transition-colors duration-150 ease-in-out',
+                'group flex items-center justify-between px-4 py-2.5 text-sm rounded-button transition-colors duration-150 ease-in-out',
                 isActive
                   ? 'bg-swiss-mint/10 text-swiss-mint font-medium'
                   : 'text-gray-600 hover:bg-gray-100 hover:text-swiss-charcoal'
               )}
             >
-              <item.icon
-                className={clsx(
-                  'w-5 h-5 mr-3',
-                  isActive ? 'text-swiss-mint' : 'text-gray-400 group-hover:text-swiss-mint'
-                )}
-              />
-              {t(`admin:sidebar.${item.key}`, item.key)}
+              <span className="flex items-center">
+                <item.icon
+                  className={clsx(
+                    'w-5 h-5 mr-3',
+                    isActive ? 'text-swiss-mint' : 'text-gray-400 group-hover:text-swiss-mint'
+                  )}
+                />
+                {t(`admin:sidebar.${item.key}`, item.key)}
+              </span>
+              {badgeCount > 0 && (
+                <span className="ml-auto inline-flex items-center justify-center rounded-full bg-red-500 text-white text-[11px] min-w-[18px] h-5 px-1.5">
+                  {badgeCount > 99 ? '99+' : badgeCount}
+                </span>
+              )}
             </NavLink>
           )
         })}
