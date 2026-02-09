@@ -78,6 +78,7 @@ export function initSentry() {
       'BadRequestException',
       // Prisma known errors
       'P2002', // Unique constraint violation
+      'P2011', // Null constraint violation (usually input validation)
       'P2025', // Record not found
     ],
   });
