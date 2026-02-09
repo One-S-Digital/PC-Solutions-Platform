@@ -66,6 +66,34 @@ export function initSentry() {
           return breadcrumb;
         });
       }
+
+      // Improve debuggability for unhandled `AggregateError`s (commonly emitted by Node networking
+      // when multiple connection attempts fail). These sometimes arrive with an empty message/value,
+      // which makes the Sentry issue hard to action.
+      try {
+        const original = hint?.originalException as unknown;
+        const firstException = event.exception?.values?.[0];
+
+        const hasEmptyValue =
+          firstException &&
+          (!firstException.value || (typeof firstException.value === 'string' && firstException.value.trim() === ''));
+
+        if (hasEmptyValue && original instanceof AggregateError) {
+          const errors = (original as any).errors;
+          const parts: string[] = Array.isArray(errors)
+            ? errors
+                .map((e: any) => (e instanceof Error ? e.message : String(e)))
+                .map((s) => (typeof s === 'string' ? s.trim() : ''))
+                .filter(Boolean)
+            : [];
+
+          if (parts.length > 0) {
+            firstException!.value = parts.slice(0, 5).join(' | ');
+          }
+        }
+      } catch {
+        // Never let Sentry sanitization/enrichment throw.
+      }
       
       return event;
     },
