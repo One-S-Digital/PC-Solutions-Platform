@@ -154,47 +154,76 @@ export class TranslationService {
       }
     }
 
-    // Try to enqueue async translation job, but fall back to synchronous translation if queue fails/missing
-    let queueSucceeded = false;
-    if (this.translationQueue) {
-      try {
-        await this.translationQueue.add(
-          'translate-entity',
-          {
-            entityType,
-            entityId,
-            sourceLang: detection.lang,
-          },
-          {
-            attempts: 3,
-            backoff: {
-              type: 'exponential',
-              delay: 2000,
-            },
-            removeOnComplete: true,
-            removeOnFail: false,
-          },
-        );
-        this.logger.log(`Enqueued translation job for ${entityType}:${entityId}`);
-        queueSucceeded = true;
-      } catch (error) {
-        this.logger.warn(`Failed to enqueue translation job: ${error.message}, falling back to DeepL`);
-        queueSucceeded = false;
-      }
-    }
+    // Fire-and-forget: enqueue translation job without blocking the save response.
+    // Translation happens asynchronously - the user doesn't need to wait for it.
+    this.enqueueTranslationAsync(entityType, entityId, detection.lang);
+  }
 
-    if (!queueSucceeded) {
-      this.logger.error(`Failed to enqueue translation for ${entityType}:${entityId} - attempting inline translation fallback`);
-      if (this.deepLService?.isAvailable()) {
+  /**
+   * Enqueue translation job asynchronously (fire-and-forget).
+   * This method never blocks the caller - all errors are caught internally.
+   */
+  private enqueueTranslationAsync(
+    entityType: string,
+    entityId: string,
+    sourceLang: string,
+  ): void {
+    // Use setImmediate to ensure this runs outside the current call stack
+    // so the save response returns immediately
+    setImmediate(async () => {
+      let queueSucceeded = false;
+
+      if (this.translationQueue) {
         try {
-          await this.translateEntity(entityType, entityId);
-        } catch (inlineError) {
-          this.logger.error(`Inline translation fallback failed for ${entityType}:${entityId}: ${inlineError.message}`);
+          // Wrap queue.add() in a timeout to prevent long Redis connection waits
+          const QUEUE_TIMEOUT_MS = 5000;
+          await Promise.race([
+            this.translationQueue.add(
+              'translate-entity',
+              { entityType, entityId, sourceLang },
+              {
+                attempts: 3,
+                backoff: { type: 'exponential', delay: 2000 },
+                removeOnComplete: true,
+                removeOnFail: false,
+              },
+            ),
+            new Promise((_, reject) =>
+              setTimeout(
+                () => reject(new Error('Translation queue add timed out')),
+                QUEUE_TIMEOUT_MS,
+              ),
+            ),
+          ]);
+          this.logger.log(`Enqueued translation job for ${entityType}:${entityId}`);
+          queueSucceeded = true;
+        } catch (error) {
+          this.logger.warn(
+            `Failed to enqueue translation job for ${entityType}:${entityId}: ${error.message}, falling back to inline DeepL`,
+          );
+          queueSucceeded = false;
         }
-      } else {
-        this.logger.error(`DeepL unavailable; translations for ${entityType}:${entityId} will remain pending until queue is restored`);
       }
-    }
+
+      if (!queueSucceeded) {
+        this.logger.warn(
+          `Queue unavailable for ${entityType}:${entityId} - attempting inline translation fallback`,
+        );
+        if (this.deepLService?.isAvailable()) {
+          try {
+            await this.translateEntity(entityType, entityId);
+          } catch (inlineError) {
+            this.logger.error(
+              `Inline translation fallback failed for ${entityType}:${entityId}: ${inlineError.message}`,
+            );
+          }
+        } else {
+          this.logger.warn(
+            `DeepL unavailable; translations for ${entityType}:${entityId} will remain pending until queue is restored`,
+          );
+        }
+      }
+    });
   }
 
   /**
@@ -494,84 +523,13 @@ export class TranslationService {
       }
     }
     
-    // Queue incorrect translations for background fix (non-blocking)
-    if (hasIncorrectTranslations) {
-      if (!this.translationQueue) {
-        this.logger.error(`Translation queue not available for fixing ${entityType}:${entityId} - incorrect translations will NOT be fixed!`);
-      } else {
-        try {
-          const jobPromise = this.translationQueue.add(
-            'translate-entity',
-            { entityType, entityId },
-            { removeOnComplete: true, removeOnFail: false }
-          );
-          
-          jobPromise.then((job) => {
-            this.logger.log(`✅ Successfully queued translation fix job ${job.id} for ${entityType}:${entityId}`);
-          }).catch((error) => {
-            this.logger.error(`❌ Failed to queue translation fix for ${entityType}:${entityId}: ${error.message}`, error.stack);
-          });
-        } catch (error) {
-          this.logger.error(`❌ Exception while queuing translation fix for ${entityType}:${entityId}: ${error.message}`, error.stack);
-        }
-      }
-    }
-
-    // According to plan: resolveEntity should ONLY return existing translations
-    // Missing translations should be queued for background processing (non-blocking)
-    // This ensures API responses are fast and translations happen async via queue
-    // Always queue translations for missing languages, regardless of target language
-    // This ensures English translations are created for German/French sources, etc.
-    if (hasMissingTranslations) {
-      this.logger.log(`Missing translations detected for ${entityType}:${entityId} in ${lang}, queuing for background processing`);
-      
-      // Queue translation job for background processing (non-blocking)
-      if (!this.translationQueue) {
-        this.logger.error(`Translation queue not available for ${entityType}:${entityId} - attempting inline translation fallback`);
-        if (this.deepLService?.isAvailable()) {
-          try {
-            await this.translateEntity(entityType, entityId);
-          } catch (inlineError) {
-            this.logger.error(`Inline translation fallback failed for ${entityType}:${entityId}: ${inlineError.message}`);
-          }
-        }
-        return result;
-      }
-      
-      // Log that we're attempting to queue
-      this.logger.debug(`Attempting to queue translation job for ${entityType}:${entityId}`);
-      
-      try {
-        const jobPromise = this.translationQueue.add(
-          'translate-entity',
-          { entityType, entityId },
-          { 
-            attempts: 3,
-            backoff: {
-              type: 'exponential',
-              delay: 2000,
-            },
-            removeOnComplete: true,
-            removeOnFail: false,
-          }
-        );
-        
-        // Handle both promise resolution and errors
-        jobPromise
-          .then((job) => {
-            this.logger.log(`✅ Successfully queued translation job ${job?.id || 'unknown'} for ${entityType}:${entityId}`);
-          })
-          .catch((error) => {
-            this.logger.error(`❌ Failed to queue translation for ${entityType}:${entityId}: ${error?.message || String(error)}`, error?.stack);
-          });
-          
-        // Also check if it's already rejected synchronously
-        if (jobPromise && typeof (jobPromise as any).catch === 'function') {
-          // Promise exists, will be handled by .then/.catch above
-        }
-      } catch (error) {
-        this.logger.error(`❌ Exception while queuing translation for ${entityType}:${entityId}: ${error?.message || String(error)}`, error?.stack);
-      }
+    // Queue missing/incorrect translations for background fix (non-blocking, fire-and-forget)
+    if (hasIncorrectTranslations || hasMissingTranslations) {
+      this.enqueueTranslationAsync(
+        entityType,
+        entityId,
+        sourceRecord?.sourceLang || this.defaultLang,
+      );
     }
 
     return result;

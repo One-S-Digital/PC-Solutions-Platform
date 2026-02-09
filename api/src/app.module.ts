@@ -79,6 +79,16 @@ import {
         host: process.env.REDIS_HOST || 'localhost',
         port: parseInt(process.env.REDIS_PORT || '6379'),
         password: process.env.REDIS_PASSWORD,
+        maxRetriesPerRequest: 3,
+        connectTimeout: 5000,
+        retryStrategy(times: number) {
+          if (times > 3) {
+            // Stop retrying after 3 attempts - don't block the application
+            return null;
+          }
+          return Math.min(times * 500, 2000);
+        },
+        enableReadyCheck: false,
       },
     }),
     ThrottlerModule.forRoot([

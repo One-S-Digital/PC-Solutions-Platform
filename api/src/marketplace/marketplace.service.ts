@@ -95,7 +95,7 @@ export class MarketplaceService {
       },
     });
 
-    // Save translatable fields and trigger translation
+    // Trigger translation asynchronously - don't block the save response
     const translatableFields = FIELDS_BY_ENTITY.product || ['title', 'description'];
     const translationPayload: Record<string, any> = {
       title: product.title,
@@ -103,12 +103,14 @@ export class MarketplaceService {
     };
 
     if (translationPayload.title || translationPayload.description) {
-      await this.translationService.saveEntityWithTranslations(
+      this.translationService.saveEntityWithTranslations(
         'product',
         product.id,
         translationPayload,
         translatableFields,
-      );
+      ).catch((err) => {
+        console.error(`Background translation failed for product:${product.id}:`, err.message);
+      });
     }
 
     return product;
@@ -241,7 +243,7 @@ export class MarketplaceService {
       },
     });
 
-    // Update translations if translatable fields changed
+    // Trigger translation asynchronously - don't block the save response
     const translatableFields = FIELDS_BY_ENTITY.product || ['title', 'description'];
     const hasTranslatableChanges =
       updateProductDto.title !== undefined ||
@@ -253,12 +255,14 @@ export class MarketplaceService {
         description: product.description || '',
       };
 
-      await this.translationService.saveEntityWithTranslations(
+      this.translationService.saveEntityWithTranslations(
         'product',
         product.id,
         translationPayload,
         translatableFields,
-      );
+      ).catch((err) => {
+        console.error(`Background translation failed for product:${product.id}:`, err.message);
+      });
     }
 
     return product;
@@ -286,6 +290,7 @@ export class MarketplaceService {
       },
     });
 
+    // Trigger translation asynchronously - don't block the save response
     const translatableFields = FIELDS_BY_ENTITY.service || ['title', 'description'];
     const translationPayload: Record<string, any> = {
       title: service.title,
@@ -293,12 +298,15 @@ export class MarketplaceService {
     };
 
     if (translationPayload.title || translationPayload.description) {
-      await this.translationService.saveEntityWithTranslations(
+      this.translationService.saveEntityWithTranslations(
         'service',
         service.id,
         translationPayload,
         translatableFields,
-      );
+      ).catch((err) => {
+        // Log but don't block the response
+        console.error(`Background translation failed for service:${service.id}:`, err.message);
+      });
     }
 
     return this.normalizeServiceProviderIdForFrontend(service);
@@ -441,6 +449,7 @@ export class MarketplaceService {
       },
     });
 
+    // Trigger translation asynchronously - don't block the save response
     const translatableFields = FIELDS_BY_ENTITY.service || ['title', 'description'];
     const hasTranslatableChanges =
       updateServiceDto.title !== undefined ||
@@ -452,12 +461,14 @@ export class MarketplaceService {
         description: service.description || '',
       };
 
-      await this.translationService.saveEntityWithTranslations(
+      this.translationService.saveEntityWithTranslations(
         'service',
         service.id,
         translationPayload,
         translatableFields,
-      );
+      ).catch((err) => {
+        console.error(`Background translation failed for service:${service.id}:`, err.message);
+      });
     }
 
     return this.normalizeServiceProviderIdForFrontend(service);
