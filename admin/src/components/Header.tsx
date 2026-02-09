@@ -21,6 +21,7 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
   const notificationsButtonRef = useRef<HTMLButtonElement | null>(null)
   const notifications = useNotificationData()
   const faviconBaseHrefRef = useRef<string | null>(null)
+  const faviconUpdateIdRef = useRef(0)
 
   const handleSignOut = () => {
     signOut()
@@ -66,6 +67,8 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
 
   useEffect(() => {
     if (typeof document === 'undefined') return
+    const updateId = faviconUpdateIdRef.current + 1
+    faviconUpdateIdRef.current = updateId
     const link =
       (document.querySelector("link[rel~='icon']") as HTMLLinkElement | null) ||
       (() => {
@@ -111,6 +114,7 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
     }
 
     const applyCanvas = () => {
+      if (faviconUpdateIdRef.current !== updateId) return
       try {
         link.href = canvas.toDataURL('image/png')
       } catch {
@@ -119,6 +123,7 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
     }
 
     const drawFallback = () => {
+      if (faviconUpdateIdRef.current !== updateId) return
       ctx.clearRect(0, 0, size, size)
       ctx.fillStyle = '#FFFFFF'
       ctx.fillRect(0, 0, size, size)
@@ -134,6 +139,7 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
     const image = new Image()
     image.crossOrigin = 'anonymous'
     image.onload = () => {
+      if (faviconUpdateIdRef.current !== updateId) return
       ctx.clearRect(0, 0, size, size)
       try {
         ctx.drawImage(image, 0, 0, size, size)
@@ -145,6 +151,7 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
       applyCanvas()
     }
     image.onerror = () => {
+      if (faviconUpdateIdRef.current !== updateId) return
       drawFallback()
     }
     image.src = baseHref
