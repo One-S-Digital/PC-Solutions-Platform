@@ -4,6 +4,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CustomThrottlerGuard } from './common/guards/custom-throttler.guard';
 import { BullModule } from '@nestjs/bull';
+import { sharedRedisOptions } from './common/redis.config';
 import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -75,21 +76,7 @@ import {
     }),
     ScheduleModule.forRoot(),
     BullModule.forRoot({
-      redis: {
-        host: process.env.REDIS_HOST || 'localhost',
-        port: parseInt(process.env.REDIS_PORT || '6379'),
-        password: process.env.REDIS_PASSWORD,
-        maxRetriesPerRequest: 3,
-        connectTimeout: 5000,
-        retryStrategy(times: number) {
-          if (times > 3) {
-            // Stop retrying after 3 attempts - don't block the application
-            return null;
-          }
-          return Math.min(times * 500, 2000);
-        },
-        enableReadyCheck: false,
-      },
+      redis: sharedRedisOptions,
     }),
     ThrottlerModule.forRoot([
       {

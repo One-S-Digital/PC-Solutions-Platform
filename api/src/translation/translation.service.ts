@@ -177,6 +177,7 @@ export class TranslationService {
         try {
           // Wrap queue.add() in a timeout to prevent long Redis connection waits
           const QUEUE_TIMEOUT_MS = 5000;
+          let timeoutHandle: ReturnType<typeof setTimeout>;
           await Promise.race([
             this.translationQueue.add(
               'translate-entity',
@@ -187,9 +188,11 @@ export class TranslationService {
                 removeOnComplete: true,
                 removeOnFail: false,
               },
-            ),
+            ).finally(() => {
+              clearTimeout(timeoutHandle);
+            }),
             new Promise((_, reject) =>
-              setTimeout(
+              timeoutHandle = setTimeout(
                 () => reject(new Error('Translation queue add timed out')),
                 QUEUE_TIMEOUT_MS,
               ),
@@ -197,9 +200,10 @@ export class TranslationService {
           ]);
           this.logger.log(`Enqueued translation job for ${entityType}:${entityId}`);
           queueSucceeded = true;
-        } catch (error) {
+        } catch (error: unknown) {
+          const message = error instanceof Error ? error.message : String(error);
           this.logger.warn(
-            `Failed to enqueue translation job for ${entityType}:${entityId}: ${error.message}, falling back to inline DeepL`,
+            `Failed to enqueue translation job for ${entityType}:${entityId}: ${message}, falling back to inline DeepL`,
           );
           queueSucceeded = false;
         }
@@ -212,9 +216,10 @@ export class TranslationService {
         if (this.deepLService?.isAvailable()) {
           try {
             await this.translateEntity(entityType, entityId);
-          } catch (inlineError) {
+          } catch (inlineError: unknown) {
+            const message = inlineError instanceof Error ? inlineError.message : String(inlineError);
             this.logger.error(
-              `Inline translation fallback failed for ${entityType}:${entityId}: ${inlineError.message}`,
+              `Inline translation fallback failed for ${entityType}:${entityId}: ${message}`,
             );
           }
         } else {

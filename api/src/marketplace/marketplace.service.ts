@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -14,6 +14,8 @@ import { PromoCodesService } from '../promo-codes/promo-codes.service';
 
 @Injectable()
 export class MarketplaceService {
+  private readonly logger = new Logger(MarketplaceService.name);
+
   constructor(
     private prisma: PrismaService,
     private csvProcessingService: CsvProcessingService,
@@ -108,8 +110,9 @@ export class MarketplaceService {
         product.id,
         translationPayload,
         translatableFields,
-      ).catch((err) => {
-        console.error(`Background translation failed for product:${product.id}:`, err.message);
+      ).catch((err: unknown) => {
+        const message = err instanceof Error ? err.message : String(err);
+        this.logger.error(`Background translation failed for product:${product.id}: ${message}`);
       });
     }
 
@@ -260,8 +263,9 @@ export class MarketplaceService {
         product.id,
         translationPayload,
         translatableFields,
-      ).catch((err) => {
-        console.error(`Background translation failed for product:${product.id}:`, err.message);
+      ).catch((err: unknown) => {
+        const message = err instanceof Error ? err.message : String(err);
+        this.logger.error(`Background translation failed for product:${product.id}: ${message}`);
       });
     }
 
@@ -303,9 +307,9 @@ export class MarketplaceService {
         service.id,
         translationPayload,
         translatableFields,
-      ).catch((err) => {
-        // Log but don't block the response
-        console.error(`Background translation failed for service:${service.id}:`, err.message);
+      ).catch((err: unknown) => {
+        const message = err instanceof Error ? err.message : String(err);
+        this.logger.error(`Background translation failed for service:${service.id}: ${message}`);
       });
     }
 
@@ -466,8 +470,9 @@ export class MarketplaceService {
         service.id,
         translationPayload,
         translatableFields,
-      ).catch((err) => {
-        console.error(`Background translation failed for service:${service.id}:`, err.message);
+      ).catch((err: unknown) => {
+        const message = err instanceof Error ? err.message : String(err);
+        this.logger.error(`Background translation failed for service:${service.id}: ${message}`);
       });
     }
 
