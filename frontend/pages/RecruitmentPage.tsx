@@ -216,6 +216,7 @@ const RecruitmentPage: React.FC = () => {
     currentUser,
     toggleFavoriteCandidate,
     isCandidateFavorite,
+    favoriteCandidateIds,
   } = useAppContext();
   const {
     listJobListings,
@@ -241,6 +242,7 @@ const RecruitmentPage: React.FC = () => {
   const [candidateRegionFilter, setCandidateRegionFilter] = useState('');
   const [candidateContractTypeFilter, setCandidateContractTypeFilter] = useState<JobContractType | ''>('');
   const [candidateAvailabilityDateFilter, setCandidateAvailabilityDateFilter] = useState('');
+  const [showFavoriteCandidatesOnly, setShowFavoriteCandidatesOnly] = useState(false);
 
   // Pagination
   const [jobsPage, setJobsPage] = useState(1);
@@ -415,7 +417,9 @@ const RecruitmentPage: React.FC = () => {
               })()
             : true;
 
-          return matchesSearch && matchesRole && matchesRegion && matchesContract && matchesAvailabilityDate;
+          const matchesFavorites = !showFavoriteCandidatesOnly || favoriteCandidateIds.includes(candidate.id);
+
+          return matchesSearch && matchesRole && matchesRegion && matchesContract && matchesAvailabilityDate && matchesFavorites;
         },
       ),
     [
@@ -425,6 +429,8 @@ const RecruitmentPage: React.FC = () => {
       candidateRegionFilter,
       candidateContractTypeFilter,
       candidateAvailabilityDateFilter,
+      showFavoriteCandidatesOnly,
+      favoriteCandidateIds,
     ],
   );
 
@@ -741,6 +747,17 @@ const RecruitmentPage: React.FC = () => {
           <Button variant="outline" leftIcon={FunnelIcon} onClick={() => setShowFilters((prev) => !prev)}>
             {t('recruitment:buttons.filters')}
           </Button>
+          <Button
+            variant={showFavoriteCandidatesOnly ? 'secondary' : 'outline'}
+            leftIcon={StarIcon}
+            aria-pressed={showFavoriteCandidatesOnly}
+            onClick={() => {
+              setShowFavoriteCandidatesOnly((prev) => !prev);
+              setCandidatesPage(1);
+            }}
+          >
+            {t('recruitment:candidatePool.favorites', 'Favorites')}
+          </Button>
         </div>
       </div>
       {showFilters && (
@@ -835,6 +852,7 @@ const RecruitmentPage: React.FC = () => {
                 setCandidateRegionFilter('');
                 setCandidateAvailabilityDateFilter('');
                 setCandidateContractTypeFilter('');
+                setShowFavoriteCandidatesOnly(false);
                 setCandidatesPage(1);
               }}
             >

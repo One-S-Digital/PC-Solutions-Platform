@@ -23,6 +23,7 @@
   },
   "candidatePool": {
     "emptyState": "Pas de candidats disponibles dans la réserve",
+    "favorites": "Favoris",
     "filterTitle": "Filtrer les candidats",
     "noCandidates": "Pas de candidats disponibles",
     "searchPlaceholder": "Rechercher des candidats...",
