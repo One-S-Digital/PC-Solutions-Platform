@@ -20,6 +20,7 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
   const notificationsRef = useRef<HTMLDivElement | null>(null)
   const notificationsButtonRef = useRef<HTMLButtonElement | null>(null)
   const notifications = useNotificationData()
+  const faviconBaseHrefRef = useRef<string | null>(null)
 
   const handleSignOut = () => {
     signOut()
@@ -62,6 +63,92 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
       document.removeEventListener('keydown', handleEscape)
     }
   }, [isNotificationsOpen])
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return
+    const link =
+      (document.querySelector("link[rel~='icon']") as HTMLLinkElement | null) ||
+      (() => {
+        const created = document.createElement('link')
+        created.rel = 'icon'
+        document.head.appendChild(created)
+        return created
+      })()
+
+    if (link.href && !link.href.startsWith('data:')) {
+      faviconBaseHrefRef.current = link.href
+    }
+
+    const baseHref = faviconBaseHrefRef.current || link.href
+    if (!notifications.total || notifications.total <= 0) {
+      if (baseHref) {
+        link.href = baseHref
+      }
+      return
+    }
+
+    const countText = notifications.total > 9 ? '9+' : `${notifications.total}`
+    const size = 32
+    const canvas = document.createElement('canvas')
+    canvas.width = size
+    canvas.height = size
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    const drawBadge = () => {
+      const radius = 10
+      const centerX = size - radius
+      const centerY = radius
+      ctx.fillStyle = '#EF4444'
+      ctx.beginPath()
+      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2)
+      ctx.fill()
+      ctx.fillStyle = '#FFFFFF'
+      ctx.font = 'bold 12px sans-serif'
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.fillText(countText, centerX, centerY)
+    }
+
+    const applyCanvas = () => {
+      try {
+        link.href = canvas.toDataURL('image/png')
+      } catch {
+        if (baseHref) link.href = baseHref
+      }
+    }
+
+    const drawFallback = () => {
+      ctx.clearRect(0, 0, size, size)
+      ctx.fillStyle = '#FFFFFF'
+      ctx.fillRect(0, 0, size, size)
+      drawBadge()
+      applyCanvas()
+    }
+
+    if (!baseHref) {
+      drawFallback()
+      return
+    }
+
+    const image = new Image()
+    image.crossOrigin = 'anonymous'
+    image.onload = () => {
+      ctx.clearRect(0, 0, size, size)
+      try {
+        ctx.drawImage(image, 0, 0, size, size)
+      } catch {
+        ctx.fillStyle = '#FFFFFF'
+        ctx.fillRect(0, 0, size, size)
+      }
+      drawBadge()
+      applyCanvas()
+    }
+    image.onerror = () => {
+      drawFallback()
+    }
+    image.src = baseHref
+  }, [notifications.total])
 
   const formatTimestamp = (value?: string) => {
     if (!value) return ''
