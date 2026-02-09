@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -14,6 +14,8 @@ import { PromoCodesService } from '../promo-codes/promo-codes.service';
 
 @Injectable()
 export class MarketplaceService {
+  private readonly logger = new Logger(MarketplaceService.name);
+
   constructor(
     private prisma: PrismaService,
     private csvProcessingService: CsvProcessingService,
@@ -95,7 +97,7 @@ export class MarketplaceService {
       },
     });
 
-    // Save translatable fields and trigger translation
+    // Trigger translation asynchronously - don't block the save response
     const translatableFields = FIELDS_BY_ENTITY.product || ['title', 'description'];
     const translationPayload: Record<string, any> = {
       title: product.title,
@@ -103,12 +105,15 @@ export class MarketplaceService {
     };
 
     if (translationPayload.title || translationPayload.description) {
-      await this.translationService.saveEntityWithTranslations(
+      this.translationService.saveEntityWithTranslations(
         'product',
         product.id,
         translationPayload,
         translatableFields,
-      );
+      ).catch((err: unknown) => {
+        const message = err instanceof Error ? err.message : String(err);
+        this.logger.error(`Background translation failed for product:${product.id}: ${message}`);
+      });
     }
 
     return product;
@@ -241,7 +246,7 @@ export class MarketplaceService {
       },
     });
 
-    // Update translations if translatable fields changed
+    // Trigger translation asynchronously - don't block the save response
     const translatableFields = FIELDS_BY_ENTITY.product || ['title', 'description'];
     const hasTranslatableChanges =
       updateProductDto.title !== undefined ||
@@ -253,12 +258,15 @@ export class MarketplaceService {
         description: product.description || '',
       };
 
-      await this.translationService.saveEntityWithTranslations(
+      this.translationService.saveEntityWithTranslations(
         'product',
         product.id,
         translationPayload,
         translatableFields,
-      );
+      ).catch((err: unknown) => {
+        const message = err instanceof Error ? err.message : String(err);
+        this.logger.error(`Background translation failed for product:${product.id}: ${message}`);
+      });
     }
 
     return product;
@@ -286,6 +294,7 @@ export class MarketplaceService {
       },
     });
 
+    // Trigger translation asynchronously - don't block the save response
     const translatableFields = FIELDS_BY_ENTITY.service || ['title', 'description'];
     const translationPayload: Record<string, any> = {
       title: service.title,
@@ -293,12 +302,15 @@ export class MarketplaceService {
     };
 
     if (translationPayload.title || translationPayload.description) {
-      await this.translationService.saveEntityWithTranslations(
+      this.translationService.saveEntityWithTranslations(
         'service',
         service.id,
         translationPayload,
         translatableFields,
-      );
+      ).catch((err: unknown) => {
+        const message = err instanceof Error ? err.message : String(err);
+        this.logger.error(`Background translation failed for service:${service.id}: ${message}`);
+      });
     }
 
     return this.normalizeServiceProviderIdForFrontend(service);
@@ -441,6 +453,7 @@ export class MarketplaceService {
       },
     });
 
+    // Trigger translation asynchronously - don't block the save response
     const translatableFields = FIELDS_BY_ENTITY.service || ['title', 'description'];
     const hasTranslatableChanges =
       updateServiceDto.title !== undefined ||
@@ -452,12 +465,15 @@ export class MarketplaceService {
         description: service.description || '',
       };
 
-      await this.translationService.saveEntityWithTranslations(
+      this.translationService.saveEntityWithTranslations(
         'service',
         service.id,
         translationPayload,
         translatableFields,
-      );
+      ).catch((err: unknown) => {
+        const message = err instanceof Error ? err.message : String(err);
+        this.logger.error(`Background translation failed for service:${service.id}: ${message}`);
+      });
     }
 
     return this.normalizeServiceProviderIdForFrontend(service);
