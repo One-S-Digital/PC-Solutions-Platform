@@ -56,11 +56,7 @@ export class WebhooksController {
     }
   }
 
-  @Post('stripe')
-  @HttpCode(HttpStatus.OK)
-  async stripeWebhook(@Body() payload: any) {
-    // Stripe webhook handling implementation
-    this.logger.log('Received Stripe webhook');
-    return { success: true };
-  }
+  // Stripe webhooks are handled by BillingModule's WebhookController
+  // which properly verifies Stripe signatures via constructEvent().
+  // Do NOT add an unverified Stripe endpoint here.
 }
