@@ -25,9 +25,7 @@ export class WebhooksController {
     @Headers('svix-signature') svixSignature: string,
   ) {
     try {
-      this.logger.log(`🔔 [WEBHOOK] Received Clerk webhook: ${payload.type} | ClerkId: ${payload.data?.id}`);
-      this.logger.log(`📦 [WEBHOOK] Payload: ${JSON.stringify(payload).substring(0, 500)}`);
-      this.logger.log(`🔐 [WEBHOOK] Headers: svixId=${svixId}, svixTimestamp=${svixTimestamp}, svixSignature=${svixSignature ? 'present' : 'missing'}`);
+      this.logger.log(`[WEBHOOK] Received Clerk webhook: ${payload.type} | ClerkId: ${payload.data?.id}`);
       
       // Verify webhook signature (implement proper verification)
       const verified = await this.webhooksService.verifyClerkWebhook(
@@ -50,17 +48,13 @@ export class WebhooksController {
       this.logger.log(`🎉 [WEBHOOK] Successfully processed Clerk webhook: ${payload.type}`);
       return { success: true };
     } catch (error) {
-      this.logger.error(`🔴 [WEBHOOK] Failed to process Clerk webhook: ${error.message}`);
-      this.logger.error(error.stack);
-      return { success: false, error: error.message };
+      const err = error instanceof Error ? error : new Error(String(error));
+      this.logger.error(`[WEBHOOK] Failed to process Clerk webhook: ${err.message}`, err.stack);
+      return { success: false };
     }
   }
 
-  @Post('stripe')
-  @HttpCode(HttpStatus.OK)
-  async stripeWebhook(@Body() payload: any) {
-    // Stripe webhook handling implementation
-    this.logger.log('Received Stripe webhook');
-    return { success: true };
-  }
+  // Stripe webhooks are handled by BillingModule's WebhookController
+  // which properly verifies Stripe signatures via constructEvent().
+  // Do NOT add an unverified Stripe endpoint here.
 }

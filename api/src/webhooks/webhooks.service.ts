@@ -17,8 +17,8 @@ export class WebhooksService {
   ): Promise<boolean> {
     const secret = process.env.CLERK_WEBHOOK_SECRET;
     if (!secret) {
-      this.logger.warn('CLERK_WEBHOOK_SECRET not configured');
-      return true; // Skip verification in development
+      this.logger.error('CLERK_WEBHOOK_SECRET not configured — rejecting webhook');
+      return false;
     }
 
     try {
@@ -58,11 +58,7 @@ export class WebhooksService {
     const clerkId = userData.id;
     
     try {
-      this.logger.log(`🔵 [USER-CREATED] Creating user: ${clerkId} (attempt ${retryCount + 1}/${maxRetries + 1})`);
-      this.logger.log(`📋 [USER-CREATED] Full userData: ${JSON.stringify(userData, null, 2)}`);
-      this.logger.log(`📧 [USER-CREATED] Email: ${userData.email_addresses?.[0]?.email_address}`);
-      this.logger.log(`👤 [USER-CREATED] Name: ${userData.first_name} ${userData.last_name}`);
-      this.logger.log(`🏷️  [USER-CREATED] Metadata: unsafe=${JSON.stringify(userData.unsafe_metadata)}, public=${JSON.stringify(userData.public_metadata)}`);
+      this.logger.log(`[USER-CREATED] Creating user: ${clerkId} (attempt ${retryCount + 1}/${maxRetries + 1})`);
       
       // Check if user already exists
       const existingAppUser = await this.usersService.findAppUserByClerkId(clerkId);

@@ -831,7 +831,6 @@ export class CompatController {
   }
 
   @Post('organizations')
-  @Public()
   async createOrganization(@Body() data: any) {
     try {
       // Map type string to OrganizationType enum
@@ -864,7 +863,6 @@ export class CompatController {
   }
 
   @Put('organizations/:id')
-  @Public()
   async updateOrganization(@Param('id') id: string, @Body() data: any) {
     try {
       const updateData: any = {};
@@ -900,7 +898,6 @@ export class CompatController {
   }
 
   @Delete('organizations/:id')
-  @Public()
   async deleteOrganization(@Param('id') id: string) {
     try {
       // First check if organization exists

@@ -63,34 +63,21 @@ export class AllExceptionsFilter implements ExceptionFilter {
       if (errorObj.cause) errorDetails.cause = errorObj.cause;
     }
 
-    // Log full error details
-    this.logger.error('🔍 [DEBUG] Exception caught - Full Details', errorDetails);
-
-    // Also log in a more readable format
-    console.error('🔍 [DEBUG] ========== EXCEPTION DETAILS ==========');
-    console.error('🔍 [DEBUG] Status:', status);
-    console.error('🔍 [DEBUG] Message:', message);
-    console.error('🔍 [DEBUG] Path:', request?.url);
-    console.error('🔍 [DEBUG] Method:', request?.method);
-    if (exception instanceof Error) {
-      console.error('🔍 [DEBUG] Error Name:', exception.name);
-      console.error('🔍 [DEBUG] Error Message:', exception.message);
-      console.error('🔍 [DEBUG] Error Stack:', exception.stack);
+    // Log error details (verbose output only in non-production)
+    if (process.env.NODE_ENV !== 'production') {
+      this.logger.error('Exception caught - Full Details', errorDetails);
+    } else {
+      // Production: log minimal details without PII
+      // Strip query string from URL to avoid logging sensitive parameters
+      const safePath = request?.url?.split('?')[0];
+      this.logger.error('Exception', {
+        status,
+        path: safePath,
+        method: request?.method,
+        errorName: exception instanceof Error ? exception.name : undefined,
+        prismaCode: (exception as any)?.code,
+      });
     }
-    if ((exception as any)?.code) {
-      console.error('🔍 [DEBUG] Prisma Code:', (exception as any).code);
-      try {
-        console.error('🔍 [DEBUG] Prisma Meta:', JSON.stringify((exception as any).meta, null, 2));
-      } catch {
-        console.error('🔍 [DEBUG] Prisma Meta: [Unable to stringify]');
-      }
-    }
-    try {
-      console.error('🔍 [DEBUG] Full Error Object:', JSON.stringify(exception, Object.getOwnPropertyNames(exception), 2));
-    } catch {
-      console.error('🔍 [DEBUG] Full Error Object: [Circular reference or non-serializable]');
-    }
-    console.error('🔍 [DEBUG] ========================================');
 
     // Set CORS headers to match main.ts configuration
     // This ensures error responses include CORS headers, preventing browser CORS errors

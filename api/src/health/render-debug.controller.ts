@@ -62,19 +62,19 @@ export class RenderDebugController {
 
     if (db.connected) {
       try {
-        const rows = (await this.prisma.$queryRawUnsafe(
-          `SELECT migration_name, finished_at
-           FROM "_prisma_migrations"
-           WHERE finished_at IS NOT NULL
-           ORDER BY finished_at DESC
-           LIMIT 1`,
-        )) as Array<{ migration_name: string; finished_at: Date }>;
+        const rows = (await this.prisma.$queryRaw`
+          SELECT migration_name, finished_at
+          FROM "_prisma_migrations"
+          WHERE finished_at IS NOT NULL
+          ORDER BY finished_at DESC
+          LIMIT 1
+        `) as Array<{ migration_name: string; finished_at: Date }>;
 
-        const countRows = (await this.prisma.$queryRawUnsafe(
-          `SELECT COUNT(*)::int AS count
-           FROM "_prisma_migrations"
-           WHERE finished_at IS NOT NULL`,
-        )) as Array<{ count: number }>;
+        const countRows = (await this.prisma.$queryRaw`
+          SELECT COUNT(*)::int AS count
+          FROM "_prisma_migrations"
+          WHERE finished_at IS NOT NULL
+        `) as Array<{ count: number }>;
 
         db.prismaMigrations.tableExists = true;
         db.prismaMigrations.appliedCount = countRows?.[0]?.count ?? 0;
