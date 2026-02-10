@@ -57,6 +57,19 @@ export class MarketplaceService {
 
   // Product Management
   async createProduct(createProductDto: CreateProductDto, supplierId: string) {
+    // Defensive validation:
+    // - Global ValidationPipe should enforce this, but we also guard here to ensure we never hit
+    //   Prisma null-constraint errors (which show up as 500s + Sentry noise).
+    const normalizedTitle =
+      typeof (createProductDto as any)?.title === 'string'
+        ? ((createProductDto as any).title as string).trim()
+        : '';
+    if (!normalizedTitle) {
+      throw new BadRequestException('Product title is required');
+    }
+    // Ensure we don't persist whitespace-only titles.
+    (createProductDto as any).title = normalizedTitle;
+
     const {
       imageAssetId,
       deliveryFees,
@@ -68,39 +81,74 @@ export class MarketplaceService {
     const toJsonValue = <T>(value: T | undefined) =>
       value === undefined ? undefined : (value as unknown as Prisma.InputJsonValue);
 
-    const product = await this.prisma.product.create({
-      data: {
-        ...productData,
-        ...(toJsonValue(deliveryFees) !== undefined && {
-          deliveryFees: toJsonValue(deliveryFees),
-        }),
-        ...(toJsonValue(volumePricing) !== undefined && {
-          volumePricing: toJsonValue(volumePricing),
-        }),
-        ...(toJsonValue(variants) !== undefined && {
-          variants: toJsonValue(variants),
-        }),
-        supplier: {
-          connect: { id: supplierId },
+    let product: any;
+    try {
+      product = await this.prisma.product.create({
+        data: {
+          ...productData,
+          ...(toJsonValue(deliveryFees) !== undefined && {
+            deliveryFees: toJsonValue(deliveryFees),
+          }),
+          ...(toJsonValue(volumePricing) !== undefined && {
+            volumePricing: toJsonValue(volumePricing),
+          }),
+          ...(toJsonValue(variants) !== undefined && {
+            variants: toJsonValue(variants),
+          }),
+          supplier: {
+            connect: { id: supplierId },
+          },
+          ...(imageAssetId
+            ? {
+                imageAsset: {
+                  connect: { id: imageAssetId },
+                },
+              }
+            : {}),
         },
-        ...(imageAssetId
-          ? {
-              imageAsset: {
-                connect: { id: imageAssetId },
-              },
-            }
-          : {}),
-      },
-      include: {
-        supplier: true,
-        imageAsset: true,
-      },
-    });
+        include: {
+          supplier: true,
+          imageAsset: true,
+        },
+      });
+    } catch (error: unknown) {
+      // Convert common input-related Prisma errors into 400s.
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        // P2011: Null constraint violation
+        if (error.code === 'P2011') {
+          const metaConstraint = (error.meta as any)?.constraint;
+          const fieldsFromMeta = Array.isArray(metaConstraint)
+            ? metaConstraint.filter((x) => typeof x === 'string')
+            : typeof metaConstraint === 'string'
+              ? [metaConstraint]
+              : [];
+
+          const fieldsFromMessage =
+            fieldsFromMeta.length > 0
+              ? []
+              : (() => {
+                  const m = /fields:\\s*\\(([^)]*)\\)/i.exec(error.message);
+                  if (!m?.[1]) return [];
+                  return m[1]
+                    .split(',')
+                    .map((s) => s.replace(/[`\\s]/g, '').trim())
+                    .filter(Boolean);
+                })();
+
+          const fields = [...new Set([...fieldsFromMeta, ...fieldsFromMessage])];
+          const detail =
+            fields.length > 0 ? `Missing required product fields: ${fields.join(', ')}` : undefined;
+
+          throw new BadRequestException(detail ?? 'Missing required product fields');
+        }
+      }
+      throw error;
+    }
 
     // Trigger translation asynchronously - don't block the save response
     const translatableFields = FIELDS_BY_ENTITY.product || ['title', 'description'];
     const translationPayload: Record<string, any> = {
-      title: product.title,
+      title: (product as any)?.title ?? (product as any)?.name ?? '',
       description: product.description || '',
     };
 
