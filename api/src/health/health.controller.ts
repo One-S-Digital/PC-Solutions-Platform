@@ -92,6 +92,7 @@ export class HealthController {
             timestamp: new Date().toISOString(),
           };
         }
+        throw error;
       }
       
       return {
@@ -138,13 +139,13 @@ export class HealthController {
         this.prisma.user.findMany({
           take: 5,
           orderBy: { createdAt: 'desc' },
-          select: { id: true, clerkId: true, email: true, role: true, createdAt: true },
+          select: { id: true, role: true, createdAt: true },
         }).catch(() => []),
         // @ts-ignore - model exists in schema
         this.prisma.appUser.findMany({
           take: 5,
           orderBy: { createdAt: 'desc' },
-          select: { id: true, clerkId: true, role: true, createdAt: true, email: true },
+          select: { id: true, role: true, createdAt: true },
         }).catch(() => []),
         this.prisma.frontendSettings.findFirst({
           include: {

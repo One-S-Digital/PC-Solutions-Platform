@@ -48,7 +48,8 @@ export class WebhooksController {
       this.logger.log(`🎉 [WEBHOOK] Successfully processed Clerk webhook: ${payload.type}`);
       return { success: true };
     } catch (error) {
-      this.logger.error(`[WEBHOOK] Failed to process Clerk webhook: ${error.message}`, error.stack);
+      const err = error instanceof Error ? error : new Error(String(error));
+      this.logger.error(`[WEBHOOK] Failed to process Clerk webhook: ${err.message}`, err.stack);
       return { success: false };
     }
   }
