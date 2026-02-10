@@ -37,14 +37,13 @@ export class HealthController {
       // Check if users table exists
       let tablesExist = false;
       try {
-        const userCount = await this.prisma.user.count();
+        await this.prisma.user.count();
         tablesExist = true;
         
         return {
           status: 'healthy',
           database: 'connected',
           tables: 'initialized',
-          userCount,
           timestamp: new Date().toISOString(),
         };
       } catch (error) {
@@ -192,10 +191,10 @@ export class HealthController {
         },
       };
     } catch (error) {
+      this.logger.error('Snapshot failed', error instanceof Error ? error.stack : String(error));
       return {
         success: false,
         message: 'Snapshot failed',
-        error: error instanceof Error ? error.message : String(error),
         timestamp: new Date().toISOString(),
       };
     }

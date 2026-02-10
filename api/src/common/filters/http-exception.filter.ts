@@ -68,9 +68,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
       this.logger.error('Exception caught - Full Details', errorDetails);
     } else {
       // Production: log minimal details without PII
+      // Strip query string from URL to avoid logging sensitive parameters
+      const safePath = request?.url?.split('?')[0];
       this.logger.error('Exception', {
         status,
-        path: request?.url,
+        path: safePath,
         method: request?.method,
         errorName: exception instanceof Error ? exception.name : undefined,
         prismaCode: (exception as any)?.code,

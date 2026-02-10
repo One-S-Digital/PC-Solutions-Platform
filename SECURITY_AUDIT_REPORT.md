@@ -202,4 +202,19 @@ Lines: 834 (create), 867 (update), 903 (delete)
 
 ---
 
+## Post-Review Hardening
+
+After code review (Codex + CodeRabbit), additional hardening was applied:
+
+- **CSP updated**: Added `hcaptcha.com` and `*.hcaptcha.com` domains to `script-src`, `connect-src`, and `frame-src` to prevent breaking CAPTCHA on login/signup pages
+- **Nginx `add_header` inheritance**: Added `X-Content-Type-Options` to static asset location blocks (nginx drops server-level headers when a location block defines its own)
+- **Webhook PII leak**: Removed payload body and Svix header logging from `WebhooksController`
+- **Error message leak**: Webhook error responses no longer expose internal `error.message`
+- **Health data exposure**: Removed `userCount` from public `/health/database` endpoint
+- **Exception filter path sanitization**: Production logs now strip query strings from request URLs
+- **AssetUploader React idiom**: Replaced imperative DOM manipulation with React state (`previewError`) for image error fallback
+- **Snapshot error leak**: Admin-only snapshot endpoint no longer returns raw error messages to client
+
+---
+
 *All fixes are applied in this branch. See individual commits for details.*
