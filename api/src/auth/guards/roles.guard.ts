@@ -44,24 +44,6 @@ export class RolesGuard implements CanActivate {
     }
 
     const userContext = request.context;
-    
-    // Development mode bypass (keeping for now)
-    const isDevelopment = process.env.NODE_ENV !== 'production';
-    if (isDevelopment && !userContext) {
-      console.log('🔧 Development mode: Bypassing roles guard for', request.url);
-      return true;
-    }
-    
-    // Debug
-     
-    console.log('🔐 RolesGuard Debug:', {
-      url: request.url,
-      requiredRoles,
-      allowPending,
-      hasContext: !!userContext,
-      context: userContext,
-      isDevelopment,
-    });
 
     if (!userContext) {
       throw new ForbiddenException('User context not found');

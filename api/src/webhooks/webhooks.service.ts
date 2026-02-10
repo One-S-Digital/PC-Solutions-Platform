@@ -17,8 +17,8 @@ export class WebhooksService {
   ): Promise<boolean> {
     const secret = process.env.CLERK_WEBHOOK_SECRET;
     if (!secret) {
-      this.logger.warn('CLERK_WEBHOOK_SECRET not configured');
-      return true; // Skip verification in development
+      this.logger.error('CLERK_WEBHOOK_SECRET not configured — rejecting webhook');
+      return false;
     }
 
     try {

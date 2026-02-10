@@ -1,7 +1,11 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Public } from '../auth/decorators/public.decorator';
 import { PrismaService } from '../prisma/prisma.service';
+import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '@prisma/client';
 
 @ApiTags('health')
 @Controller('health')
@@ -105,8 +109,9 @@ export class HealthController {
   }
 
   @Get('snapshot')
-  @Public()
-  @ApiOperation({ summary: 'Database snapshot (sanitized)' })
+  @UseGuards(ClerkAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
+  @ApiOperation({ summary: 'Database snapshot (admin only)' })
   @ApiResponse({ status: 200, description: 'Returns counts and sample data' })
   async snapshot() {
     try {
@@ -197,8 +202,9 @@ export class HealthController {
   }
 
   @Get('users')
-  @Public()
-  @ApiOperation({ summary: 'List users (sanitized, queryable)' })
+  @UseGuards(ClerkAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
+  @ApiOperation({ summary: 'List users (admin only)' })
   @ApiResponse({ status: 200, description: 'Returns users' })
   async listUsers(
     @Query('email') email?: string,
@@ -221,8 +227,9 @@ export class HealthController {
   }
 
   @Get('app-users')
-  @Public()
-  @ApiOperation({ summary: 'List AppUsers (sanitized, queryable)' })
+  @UseGuards(ClerkAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
+  @ApiOperation({ summary: 'List AppUsers (admin only)' })
   @ApiResponse({ status: 200, description: 'Returns app users' })
   async listAppUsers(
     @Query('clerkId') clerkId?: string,
