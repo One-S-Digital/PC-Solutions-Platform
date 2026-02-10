@@ -15,10 +15,10 @@ import { PrismaService } from '../prisma/prisma.service';
 @WebSocketGateway({
   cors: {
     origin: [
-      process.env.FRONTEND_URL || 'http://localhost:3000',
-      process.env.ADMIN_URL || 'http://localhost:3001',
+      process.env.APP_ORIGIN || process.env.FRONTEND_URL || 'http://localhost:3000',
+      process.env.ADMIN_ORIGIN || process.env.ADMIN_URL || 'http://localhost:3001',
       ...(process.env.NODE_ENV === 'development' ? ['http://localhost:5174'] : []),
-    ],
+    ].filter(Boolean),
     credentials: true,
   },
   namespace: '/support',
