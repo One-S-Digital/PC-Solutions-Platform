@@ -140,6 +140,10 @@
       "oauthStep1": "Étape 1 : Connexion",
       "oauthStep2": "Étape 2 : Complétez vos informations"
     },
+    "leadSubmissionAccount": {
+      "title": "Suivez votre demande au même endroit",
+      "message": "Créez maintenant votre compte parent et votre récente demande de garde d'enfants sera liée automatiquement."
+    },
     "detailsTitle": "Entrez vos détails pour {{role}}",
     "termsLabel": "J'accepte les termes et conditions",
     "termsLink": "Conditions générales d'utilisation",
@@ -185,6 +189,10 @@
     "wrongAccount": "Mauvais compte ? Déconnectez-vous et réessayez.",
     "message": "Vous êtes connecté à Google. Il vous suffit de compléter les informations de votre profil ci-dessous pour terminer la configuration de votre compte.",
     "title": "Nous y sommes presque !"
+  },
+  "leadSubmissionAccount": {
+    "title": "Suivez votre demande au même endroit",
+    "message": "Créez maintenant votre compte parent et votre récente demande de garde d'enfants sera liée automatiquement."
   },
   "roles": {
     "productSupplier": {

@@ -49,7 +49,9 @@ test('parent lead form validates and submits to backend', async ({ page }) => {
 
   // Unauthenticated users should be prompted to create an account after submitting.
   await expect(
-    page.getByRole('button', { name: /create account to track enquiry/i }),
+    page.getByRole('button', {
+      name: /create account to track enquiry|créer un compte pour suivre la demande|konto erstellen, um anfrage zu verfolgen/i,
+    }),
   ).toBeVisible();
 });
 

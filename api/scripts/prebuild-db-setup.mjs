@@ -817,6 +817,71 @@ WHERE NOT EXISTS (
 };
 
 /**
+ * Ensure parent lead to user account linking schema exists.
+ * Matches migration `20260211090000_link_parent_leads_to_users`.
+ */
+const ensureParentLeadAccountLink = () => {
+  const sql = `
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM information_schema.tables
+    WHERE table_schema = 'public'
+      AND table_name = 'parent_leads'
+  ) THEN
+    -- Add ownership column if missing
+    ALTER TABLE "public"."parent_leads"
+      ADD COLUMN IF NOT EXISTS "parentUserId" TEXT;
+
+    -- Backfill by matching lead email to users.email (case-insensitive)
+    IF EXISTS (
+      SELECT 1
+      FROM information_schema.tables
+      WHERE table_schema = 'public'
+        AND table_name = 'users'
+    ) THEN
+      UPDATE "public"."parent_leads" AS pl
+      SET "parentUserId" = u."id"
+      FROM "public"."users" AS u
+      WHERE pl."parentUserId" IS NULL
+        AND u."email" IS NOT NULL
+        AND LOWER(TRIM(pl."parentEmail")) = LOWER(TRIM(u."email"));
+
+      -- Add FK only once
+      IF NOT EXISTS (
+        SELECT 1
+        FROM pg_constraint
+        WHERE conname = 'parent_leads_parentUserId_fkey'
+      ) THEN
+        ALTER TABLE "public"."parent_leads"
+          ADD CONSTRAINT "parent_leads_parentUserId_fkey"
+          FOREIGN KEY ("parentUserId") REFERENCES "public"."users"("id")
+          ON DELETE SET NULL
+          ON UPDATE CASCADE;
+      END IF;
+    END IF;
+
+    -- Add index only once
+    IF NOT EXISTS (
+      SELECT 1
+      FROM pg_indexes
+      WHERE schemaname = 'public'
+        AND indexname = 'parent_leads_parentUserId_idx'
+    ) THEN
+      CREATE INDEX "parent_leads_parentUserId_idx"
+      ON "public"."parent_leads"("parentUserId");
+    END IF;
+  END IF;
+END $$;
+`;
+
+  log('Ensuring parent_leads.parentUserId ownership link exists...');
+  runSql(sql);
+  log('✅ Parent lead account-link schema verified.');
+};
+
+/**
  * Ensure all translation infrastructure tables exist.
  * Matches migration `20251114140526_add_i18n_translation_tables`.
  * CRITICAL: Fixes admin translation page 500 error when static_translations table is missing.
@@ -1149,6 +1214,35 @@ const main = async () => {
     try {
       forceMarkMigrationRolledBack('20251221000002_add_email_grace_period_setting');
       ensureEmailGracePeriodSetting();
+    } catch (e2) {
+      error(`❌ Could not prepare for migration: ${e2.message}`);
+    }
+  }
+
+  // Parent lead account linking (lead ownership to parent profile)
+  // Strategy:
+  // 1. Clear failed migration state (mark as rolled-back) so Prisma can re-run it
+  // 2. Ensure schema exists so migration apply remains resilient
+  try {
+    log('🔧 Preparing for parent lead account-link migration...');
+
+    let cleared = await resolveMigration('rolled-back', '20260211090000_link_parent_leads_to_users');
+    if (!cleared) {
+      log('⚠️  Standard resolve failed, force-marking as rolled-back...');
+      cleared = forceMarkMigrationRolledBack('20260211090000_link_parent_leads_to_users');
+    }
+    if (cleared) {
+      log('✅ Migration cleared from failed state. Prisma will re-run it.');
+    }
+
+    ensureParentLeadAccountLink();
+    log('✅ Parent lead account-link schema prepared.');
+    log('📋 Prisma migrate deploy will now run this migration and mark it complete.');
+  } catch (e) {
+    warn(`⚠️  Parent lead account-link preparation failed: ${e.message}`);
+    try {
+      forceMarkMigrationRolledBack('20260211090000_link_parent_leads_to_users');
+      ensureParentLeadAccountLink();
     } catch (e2) {
       error(`❌ Could not prepare for migration: ${e2.message}`);
     }

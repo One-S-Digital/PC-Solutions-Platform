@@ -140,6 +140,10 @@
       "oauthStep1": "Step 1: Sign in",
       "oauthStep2": "Step 2: Complete your details"
     },
+    "leadSubmissionAccount": {
+      "title": "Track your enquiry in one place",
+      "message": "Create your parent account now and your recent childcare enquiry will be linked automatically."
+    },
     "detailsTitle": "Enter Your Details for {{role}}",
     "termsLabel": "I accept the terms and conditions",
     "termsLink": "Terms and Conditions",
@@ -185,6 +189,10 @@
     "wrongAccount": "Wrong account? Sign out and try again.",
     "message": "You're signed in with Google. Just complete your profile details below to finish setting up your account.",
     "title": "Almost there!"
+  },
+  "leadSubmissionAccount": {
+    "title": "Track your enquiry in one place",
+    "message": "Create your parent account now and your recent childcare enquiry will be linked automatically."
   },
   "roles": {
     "productSupplier": {
