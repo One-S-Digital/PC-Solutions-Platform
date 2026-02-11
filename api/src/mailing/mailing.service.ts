@@ -197,6 +197,11 @@ export class MailingService {
     const where = this.buildRecipientWhere(filters);
     const skip = (clampedPage - 1) * clampedPageSize;
 
+    // Diagnostic: log the generated WHERE clause on first page request
+    if (clampedPage === 1) {
+      this.logger.debug(`Preview query WHERE: ${JSON.stringify(where)}`);
+    }
+
     const orderByMap: Record<string, Prisma.UserOrderByWithRelationInput> = {
       email: { email: sortOrder },
       name: { firstName: sortOrder },
@@ -225,6 +230,22 @@ export class MailingService {
         },
       }),
     ]);
+
+    // Diagnostic: when count is zero on page 1, log total users for context
+    if (count === 0 && clampedPage === 1) {
+      const [totalUsers, nonAdminUsers] = await Promise.all([
+        this.prisma.user.count(),
+        this.prisma.user.count({
+          where: {
+            role: { notIn: [UserRole.SUPER_ADMIN, UserRole.ADMIN] },
+            email: { not: null },
+          },
+        }),
+      ]);
+      this.logger.warn(
+        `Preview returned 0 recipients — total users in DB: ${totalUsers}, non-admin users with email: ${nonAdminUsers}`,
+      );
+    }
 
     const rows = users.map((u) => ({
       id: u.id,

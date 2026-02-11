@@ -14,24 +14,31 @@ export class MailingTransportService {
   private adapter: MailingTransportAdapter | null = null;
 
   constructor() {
-    const smtp = new SmtpTransport();
-    const mailgun = new MailgunTransport();
-    const sendgrid = new SendGridTransport();
+    try {
+      const smtp = new SmtpTransport();
+      const mailgun = new MailgunTransport();
+      const sendgrid = new SendGridTransport();
 
-    if (smtp.isConfigured()) {
-      this.adapter = smtp;
-    } else if (mailgun.isConfigured()) {
-      this.adapter = mailgun;
-    } else if (sendgrid.isConfigured()) {
-      this.adapter = sendgrid;
-    }
+      if (smtp.isConfigured()) {
+        this.adapter = smtp;
+      } else if (mailgun.isConfigured()) {
+        this.adapter = mailgun;
+      } else if (sendgrid.isConfigured()) {
+        this.adapter = sendgrid;
+      }
 
-    if (this.adapter) {
-      this.logger.log(`Mailing transport initialised: ${this.adapter.getProviderName()}`);
-    } else {
-      this.logger.warn(
-        'No mailing transport configured. Set MAILING_SMTP_HOST, MAILGUN_API_KEY, or SENDGRID_API_KEY.',
+      if (this.adapter) {
+        this.logger.log(`Mailing transport initialised: ${this.adapter.getProviderName()}`);
+      } else {
+        this.logger.warn(
+          'No mailing transport configured. Set MAILING_SMTP_HOST, MAILGUN_API_KEY, or SENDGRID_API_KEY.',
+        );
+      }
+    } catch (error: any) {
+      this.logger.error(
+        `Failed to initialise mailing transports: ${error?.message || error}`,
       );
+      // Don't crash — preview/export/segment features still work without a send transport
     }
   }
 
