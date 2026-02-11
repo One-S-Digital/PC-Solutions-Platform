@@ -113,7 +113,6 @@ export class EmailNotificationService {
         subject: this.processTemplate(template.subject, notification.payload),
         html: this.processTemplate(template.htmlContent, notification.payload),
         text: this.processTemplate(template.textContent, notification.payload),
-        templateId: template.id,
         categories: [notification.event],
         customArgs: {
           event: notification.event,
