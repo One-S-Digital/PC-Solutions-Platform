@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Logger,
 } from '@nestjs/common';
+import { getProductionAllowedOrigins, normalizeOrigin } from '../cors';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -94,19 +95,25 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     // Set CORS headers to match main.ts configuration
     // This ensures error responses include CORS headers, preventing browser CORS errors
-    const origin = request.headers.origin;
-    const allowedOrigins = process.env.NODE_ENV === 'production' 
-      ? [
-          'https://app.procrechesolutions.com', 
-          'https://admin.procrechesolutions.com'
-        ]
-      : true;
+    const origin = normalizeOrigin(request.headers.origin);
+    const allowedOrigins = process.env.NODE_ENV === 'production'
+      ? getProductionAllowedOrigins()
+      : null;
 
-    if (allowedOrigins === true || (origin && Array.isArray(allowedOrigins) && allowedOrigins.includes(origin))) {
-      response.setHeader('Access-Control-Allow-Origin', origin || (allowedOrigins === true ? '*' : (Array.isArray(allowedOrigins) ? allowedOrigins[0] : '*')));
+    // Only set Access-Control-Allow-Origin when we have an Origin header. Using '*' with credentials breaks CORS.
+    const originAllowed =
+      !!origin &&
+      (process.env.NODE_ENV !== 'production' || (Array.isArray(allowedOrigins) && allowedOrigins.includes(origin)));
+
+    if (originAllowed) {
+      response.setHeader('Vary', 'Origin');
+      response.setHeader('Access-Control-Allow-Origin', origin);
       response.setHeader('Access-Control-Allow-Credentials', 'true');
       response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
-      response.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, svix-id, svix-timestamp, svix-signature');
+      response.setHeader(
+        'Access-Control-Allow-Headers',
+        'Content-Type, Authorization, X-Requested-With, Accept, svix-id, svix-timestamp, svix-signature, X-Trace-Id',
+      );
     }
 
     response.status(status).json({
