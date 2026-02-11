@@ -211,6 +211,16 @@ const SignupPage: React.FC = () => {
       return;
     }
 
+    // Wait for auth context to settle so we don't disable the signed-in redirect path.
+    if (isAuthLoading) {
+      return;
+    }
+
+    // Existing authenticated users should continue through the normal redirect guard.
+    if (isSignedIn && currentUser) {
+      return;
+    }
+
     setSelectedRole((prev) => prev ?? SignupRole.PARENT);
     setCurrentStep(2);
     setHasStartedSignup(true);
@@ -219,7 +229,14 @@ const SignupPage: React.FC = () => {
       email: leadSignupEmail || prev.email,
       contactPerson: leadSignupName || prev.contactPerson,
     }));
-  }, [isLeadSubmissionSignup, leadSignupEmail, leadSignupName]);
+  }, [
+    isLeadSubmissionSignup,
+    leadSignupEmail,
+    leadSignupName,
+    isAuthLoading,
+    isSignedIn,
+    currentUser,
+  ]);
 
   const rolesConfig: { role: SignupRole; nameKey: string; icon: React.ElementType; subtitleKey?: string }[] = [
     { role: SignupRole.FOUNDATION, nameKey: 'role.foundation', icon: BuildingOffice2Icon },

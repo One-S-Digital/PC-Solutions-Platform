@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailTemplateService } from './email-template.service';
 import * as sgMail from '@sendgrid/mail';
+import { createHash } from 'crypto';
 
 export interface EmailNotification {
   event: string;
@@ -74,6 +75,7 @@ export class EmailNotificationService {
   async sendNotification(notification: EmailNotification): Promise<boolean> {
     let user: any = null;
     let template: any = null;
+    const recipientIdentifier = this.hashRecipient(notification.recipient);
     
     try {
       // Check if user has email notifications enabled
@@ -84,10 +86,10 @@ export class EmailNotificationService {
 
       if (!user) {
         if (!notification.allowUnknownRecipient) {
-          this.logger.warn(`User not found for email: ${notification.recipient}`);
+          this.logger.warn(`User not found for recipient hash: ${recipientIdentifier}`);
           return false;
         }
-        this.logger.log(`Sending transactional email to non-user recipient: ${notification.recipient}`);
+        this.logger.log(`Sending transactional email to non-user recipient hash: ${recipientIdentifier}`);
       }
 
       // Check notification preferences
@@ -111,7 +113,7 @@ export class EmailNotificationService {
           name: process.env.FROM_NAME || 'Pro Crèche Solutions',
         },
         subject: this.processTemplate(template.subject, notification.payload),
-        html: this.processTemplate(template.htmlContent, notification.payload),
+        html: this.processTemplate(template.htmlContent, notification.payload, { escapeHtml: true }),
         text: this.processTemplate(template.textContent, notification.payload),
         categories: [notification.event],
         customArgs: {
@@ -134,11 +136,16 @@ export class EmailNotificationService {
         payload: notification.payload,
       });
 
-      this.logger.log(`Email sent successfully to ${notification.recipient} for event ${notification.event}`);
+      this.logger.log(
+        `Email sent successfully for event ${notification.event} (recipient hash: ${recipientIdentifier})`,
+      );
       return true;
 
     } catch (error) {
-      this.logger.error(`Failed to send email notification: ${(error as Error).message}`, (error as Error).stack);
+      this.logger.error(
+        `Failed to send email notification for event ${notification.event} (recipient hash: ${recipientIdentifier}): ${(error as Error).message}`,
+        (error as Error).stack,
+      );
       
       // Log failed email
       await this.logEmail({
@@ -365,16 +372,47 @@ export class EmailNotificationService {
     return true; // Default to sending if category not found
   }
 
-  private processTemplate(template: string, payload: any): string {
+  private processTemplate(
+    template: string,
+    payload: any,
+    options?: {
+      escapeHtml?: boolean;
+    },
+  ): string {
     let processed = template;
+    const values = payload && typeof payload === 'object' ? payload : {};
     
     // Replace template variables
-    Object.keys(payload).forEach(key => {
-      const regex = new RegExp(`{{${key}}}`, 'g');
-      processed = processed.replace(regex, payload[key] || '');
+    Object.keys(values).forEach((key) => {
+      const regex = new RegExp(`{{${this.escapeRegExp(key)}}}`, 'g');
+      const value = values[key];
+      const normalizedValue = value === null || value === undefined ? '' : String(value);
+      const replacement = options?.escapeHtml ? this.escapeHtml(normalizedValue) : normalizedValue;
+      processed = processed.replace(regex, replacement);
     });
 
     return processed;
+  }
+
+  private escapeRegExp(value: string): string {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  private escapeHtml(value: string): string {
+    return value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  private hashRecipient(email: string): string {
+    const normalized = email?.trim().toLowerCase();
+    if (!normalized) {
+      return 'unknown';
+    }
+    return createHash('sha256').update(normalized).digest('hex').slice(0, 12);
   }
 
   private async logEmail(data: {

@@ -239,7 +239,7 @@ export class EmailTemplateService {
             <ul>
               <li><strong>Reference:</strong> {{enquiryReference}}</li>
               <li><strong>Submitted at:</strong> {{submittedAt}}</li>
-              <li><strong>Child age:</strong> {{childAge}} months</li>
+              <li><strong>Child age:</strong> {{childAge}}</li>
               <li><strong>Preferred location:</strong> {{location}}</li>
             </ul>
             <p><strong>Details:</strong></p>
@@ -263,7 +263,7 @@ export class EmailTemplateService {
           Enquiry Summary:
           - Reference: {{enquiryReference}}
           - Submitted at: {{submittedAt}}
-          - Child age: {{childAge}} months
+          - Child age: {{childAge}}
           - Preferred location: {{location}}
 
           Details:
@@ -656,7 +656,7 @@ export class EmailTemplateService {
             <ul>
               <li><strong>Reference:</strong> {{enquiryReference}}</li>
               <li><strong>Submitted at:</strong> {{submittedAt}}</li>
-              <li><strong>Child age:</strong> {{childAge}} months</li>
+              <li><strong>Child age:</strong> {{childAge}}</li>
               <li><strong>Preferred location:</strong> {{location}}</li>
             </ul>
             <p><strong>Details:</strong></p>
@@ -680,7 +680,7 @@ export class EmailTemplateService {
           Enquiry Summary:
           - Reference: {{enquiryReference}}
           - Submitted at: {{submittedAt}}
-          - Child age: {{childAge}} months
+          - Child age: {{childAge}}
           - Preferred location: {{location}}
           
           Details:

@@ -63,12 +63,8 @@ export class ClerkWebhookController {
       hasWebhookSecret,
       hasClerkClient,
       timestamp: new Date().toISOString(),
-      webhookSecretLength: this.webhookSecret?.length || 0,
-      webhookSecretPrefix: this.webhookSecret ? this.webhookSecret.substring(0, 12) + '...' : 'MISSING',
       environmentCheck: {
         hasEnvVar: !!process.env.CLERK_WEBHOOK_SECRET,
-        envVarLength: process.env.CLERK_WEBHOOK_SECRET?.length || 0,
-        envVarPrefix: process.env.CLERK_WEBHOOK_SECRET ? process.env.CLERK_WEBHOOK_SECRET.substring(0, 12) + '...' : 'MISSING',
       }
     });
     
@@ -77,12 +73,8 @@ export class ClerkWebhookController {
       timestamp: new Date().toISOString(),
       webhookConfigured: hasWebhookSecret,
       clerkClientConfigured: hasClerkClient,
-      webhookSecretLength: this.webhookSecret?.length || 0,
-      webhookSecretPrefix: this.webhookSecret ? this.webhookSecret.substring(0, 12) + '...' : 'MISSING',
       environmentCheck: {
         hasEnvVar: !!process.env.CLERK_WEBHOOK_SECRET,
-        envVarLength: process.env.CLERK_WEBHOOK_SECRET?.length || 0,
-        envVarPrefix: process.env.CLERK_WEBHOOK_SECRET ? process.env.CLERK_WEBHOOK_SECRET.substring(0, 12) + '...' : 'MISSING',
       },
       message: hasWebhookSecret && hasClerkClient 
         ? 'Webhook is properly configured' 
@@ -187,13 +179,10 @@ ${'='.repeat(100)}`);
     console.log(`🔑 [E2E DEBUG ${requestId}] WEBHOOK SECRET ANALYSIS:`, {
       secretConfigured: !!this.webhookSecret,
       secretLength: this.webhookSecret?.length || 0,
-      secretPrefix: this.webhookSecret ? this.webhookSecret.substring(0, 12) + '...' : '❌ MISSING',
-      secretSuffix: this.webhookSecret ? '...' + this.webhookSecret.substring(this.webhookSecret.length - 4) : 'N/A',
       secretStartsWithWhsec: this.webhookSecret?.startsWith('whsec_') || false,
       environmentCheck: {
         hasEnvVar: !!process.env.CLERK_WEBHOOK_SECRET,
         envVarLength: process.env.CLERK_WEBHOOK_SECRET?.length || 0,
-        envVarPrefix: process.env.CLERK_WEBHOOK_SECRET ? process.env.CLERK_WEBHOOK_SECRET.substring(0, 12) + '...' : '❌ MISSING',
       }
     });
 
@@ -258,8 +247,6 @@ ${'='.repeat(100)}`);
       verificationInputs: {
         secretConfigured: !!this.webhookSecret,
         secretLength: this.webhookSecret.length,
-        secretPrefix: this.webhookSecret.substring(0, 12) + '...',
-        secretSuffix: '...' + this.webhookSecret.substring(this.webhookSecret.length - 4),
         bodyExists: !!req.body,
         bodyType: typeof req.body,
         bodyLength: req.body ? (typeof req.body === 'string' ? req.body.length : JSON.stringify(req.body).length) : 0,
@@ -323,7 +310,6 @@ ${'='.repeat(100)}`);
         svixId,
         svixTimestamp,
         svixSignature: svixSignature?.substring(0, 50) + '...',
-        secretPrefix: this.webhookSecret.substring(0, 12) + '...',
         secretLength: this.webhookSecret.length,
       });
       console.error(`❌ [E2E DEBUG ${requestId}] POSSIBLE CAUSES:`);
@@ -759,7 +745,15 @@ ${'='.repeat(100)}`);
     }
 
     // Systematically attach historical parent leads to newly created parent accounts.
-    await this.linkParentLeadsToUser(profileUserId, primaryEmail, validRole as UserRole);
+    try {
+      await this.linkParentLeadsToUser(profileUserId, primaryEmail, validRole as UserRole);
+    } catch (error: any) {
+      this.logger.error(
+        `Failed to link parent leads for user ${profileUserId ?? 'unknown'} (${primaryEmail || 'no-email'}): ${error?.message || String(error)}`,
+        error?.stack,
+      );
+      // Do not throw; user creation should remain successful.
+    }
     
     // E2E DEBUG: Clerk API sync with comprehensive logging
     try {

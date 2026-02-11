@@ -295,7 +295,8 @@ BEGIN
       FROM "public"."users" AS u
       WHERE pl."parentUserId" IS NULL
         AND u."email" IS NOT NULL
-        AND LOWER(TRIM(pl."parentEmail")) = LOWER(TRIM(u."email"));
+        AND LOWER(TRIM(pl."parentEmail")) = LOWER(TRIM(u."email"))
+        AND u."role" = 'PARENT';
 
       IF NOT EXISTS (
         SELECT 1 FROM pg_constraint

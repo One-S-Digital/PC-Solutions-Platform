@@ -11,7 +11,8 @@ SET "parentUserId" = u."id"
 FROM "users" AS u
 WHERE pl."parentUserId" IS NULL
   AND u."email" IS NOT NULL
-  AND LOWER(TRIM(pl."parentEmail")) = LOWER(TRIM(u."email"));
+  AND LOWER(TRIM(pl."parentEmail")) = LOWER(TRIM(u."email"))
+  AND u."role" = 'PARENT';
 
 CREATE INDEX IF NOT EXISTS "parent_leads_parentUserId_idx"
 ON "parent_leads"("parentUserId");

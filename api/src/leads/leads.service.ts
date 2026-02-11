@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
-import { ParentLead } from '@prisma/client';
+import { ParentLead, UserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateParentLeadDto } from './dto/create-parent-lead.dto';
 import { UpdateParentLeadDto } from './dto/update-parent-lead.dto';
@@ -58,6 +58,7 @@ export class LeadsService {
             equals: parentEmail,
             mode: 'insensitive',
           },
+          role: UserRole.PARENT,
         },
         select: { id: true },
       });
@@ -146,26 +147,35 @@ export class LeadsService {
     )}&leadName=${encodeURIComponent(lead.parentName)}`;
     const enquiriesUrl = `${frontendUrl}/parent/enquiries`;
 
-    const sent = await this.emailNotificationService.sendNotification({
-      event: 'parent_lead_confirmation',
-      recipient: lead.parentEmail,
-      allowUnknownRecipient: true,
-      bypassPreferences: true,
-      payload: {
-        parentName: lead.parentName,
-        enquiryReference: lead.id.slice(0, 8).toUpperCase(),
-        submittedAt: lead.createdAt.toISOString(),
-        childAge: lead.childAge,
-        location: lead.preferredLocation || 'Not specified',
-        message: lead.message || lead.specialRequirements || 'No additional details provided.',
-        accountSetupUrl,
-        enquiriesUrl,
-      },
-    });
+    try {
+      const sent = await this.emailNotificationService.sendNotification({
+        event: 'parent_lead_confirmation',
+        recipient: lead.parentEmail,
+        allowUnknownRecipient: true,
+        bypassPreferences: true,
+        payload: {
+          parentName: lead.parentName,
+          enquiryReference: lead.id.slice(0, 8).toUpperCase(),
+          submittedAt: lead.createdAt.toISOString(),
+          childAge: lead.childAge,
+          location: lead.preferredLocation || 'Not specified',
+          message: lead.message || lead.specialRequirements || 'No additional details provided.',
+          accountSetupUrl,
+          enquiriesUrl,
+        },
+      });
 
-    if (!sent) {
-      this.logger.warn(
-        `Parent lead confirmation email could not be sent for lead ${lead.id}`,
+      if (!sent) {
+        this.logger.warn(
+          `Parent lead confirmation email could not be sent for lead ${lead.id}`,
+          'LeadsService',
+          { leadId: lead.id, recipient: lead.parentEmail },
+        );
+      }
+    } catch (error: any) {
+      this.logger.error(
+        `Parent lead confirmation email failed for lead ${lead.id}: ${error?.message || String(error)}`,
+        error?.stack,
         'LeadsService',
         { leadId: lead.id, recipient: lead.parentEmail },
       );

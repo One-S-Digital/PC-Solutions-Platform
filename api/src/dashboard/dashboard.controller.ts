@@ -744,27 +744,28 @@ export class DashboardController {
       }
     };
 
-    const [user, messagesUnread] = await Promise.all([
-      profileUserId
-        ? this.prisma.user.findUnique({
-            where: { id: profileUserId },
+    const user = profileUserId
+      ? await this.prisma.user.findUnique({
+          where: { id: profileUserId },
+          select: { id: true, email: true },
+        })
+      : clerkUserId
+        ? await this.prisma.user.findUnique({
+            where: { clerkId: clerkUserId },
             select: { id: true, email: true },
           })
-        : clerkUserId
-          ? this.prisma.user.findUnique({
-              where: { clerkId: clerkUserId },
-              select: { id: true, email: true },
-            })
-          : null,
-      safeCount(
-        this.prisma.message.count({
-          where: {
-            receiverId: profileUserId || '',
-            isRead: false,
-          },
-        }),
-      ),
-    ]);
+        : null;
+
+    const messagesUnread = user?.id
+      ? await safeCount(
+          this.prisma.message.count({
+            where: {
+              receiverId: user.id,
+              isRead: false,
+            },
+          }),
+        )
+      : 0;
 
     // Get leads submitted by this parent
     const leadConditions: any[] = [];
