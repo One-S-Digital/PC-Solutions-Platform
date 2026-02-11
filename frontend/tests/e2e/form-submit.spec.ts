@@ -15,7 +15,6 @@ test('parent lead form validates and submits to backend', async ({ page }) => {
   // Fill child information
   // Select first available canton option (avoid relying on specific value encoding)
   await page.selectOption('select[name="canton"]', { index: 1 });
-  await page.fill('input[name="municipality"]', 'Lausanne');
   await page.fill('input[name="childAge"]', '2');
   await page.fill('input[name="desiredStartDate"]', '2024-03-01');
 
