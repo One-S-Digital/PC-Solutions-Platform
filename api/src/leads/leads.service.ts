@@ -153,12 +153,13 @@ export class LeadsService {
   }
 
   private async sendParentLeadConfirmationEmail(lead: ParentLead): Promise<void> {
-    const frontendUrl = this.getFrontendBaseUrl();
-    const accountSetupUrl = `${frontendUrl}/signup?fromLead=1&role=parent`;
-    const enquiriesUrl = `${frontendUrl}/parent/enquiries`;
-    const recipientHash = this.hashRecipient(lead.parentEmail);
-
+    let recipientHash = 'unknown';
     try {
+      const frontendUrl = this.getFrontendBaseUrl();
+      const accountSetupUrl = `${frontendUrl}/signup?fromLead=1&role=parent`;
+      const enquiriesUrl = `${frontendUrl}/parent/enquiries`;
+      recipientHash = this.hashRecipient(lead.parentEmail);
+
       const sent = await this.emailNotificationService.sendNotification({
         event: 'parent_lead_confirmation',
         recipient: lead.parentEmail,
