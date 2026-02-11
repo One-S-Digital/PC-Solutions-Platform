@@ -46,6 +46,11 @@ test('parent lead form validates and submits to backend', async ({ page }) => {
   expect(seenPayload).toBeTruthy();
   expect(seenPayload.contactName).toBe('Jane Doe');
   expect(seenPayload.contactEmail).toBe('jane@example.com');
+
+  // Unauthenticated users should be prompted to create an account after submitting.
+  await expect(
+    page.getByRole('button', { name: /create account to track enquiry/i }),
+  ).toBeVisible();
 });
 
 test('signup form validates required fields', async ({ page }) => {
