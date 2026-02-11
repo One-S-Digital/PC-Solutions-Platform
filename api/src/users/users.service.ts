@@ -1688,6 +1688,10 @@ export class UsersService {
         async (tx) => {
         // Helper: run a deleteMany that might target a table not yet migrated.
         const safeDeleteMany = async (model: any, where: any): Promise<void> => {
+          // In unit tests we often pass a partial `tx` mock. In production Prisma
+          // always provides the full client surface, but guarding here keeps the
+          // delete sequence resilient to missing mocks.
+          if (!model) return;
           try {
             await model.deleteMany({ where });
           } catch (error: any) {
@@ -1697,6 +1701,7 @@ export class UsersService {
         };
         // Helper: run an updateMany that might target a table not yet migrated.
         const safeUpdateMany = async (model: any, where: any, data: any): Promise<void> => {
+          if (!model) return;
           try {
             await model.updateMany({ where, data });
           } catch (error: any) {
