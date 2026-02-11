@@ -5,6 +5,7 @@ import {
   Mail, Plus, Download, Send, Save, Trash2, RefreshCw, Users, BarChart3,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 
 import { useApiClient, apiService } from '../services/api'
 import { MailingFilters, MailingPreviewResponse, MailingSegment } from '../types/api'
@@ -20,10 +21,10 @@ import SendProgressOverlay from '../components/mailing/SendProgressOverlay'
 
 type Tab = 'build' | 'segments' | 'campaigns'
 
-const TABS: { key: Tab; label: string; icon: React.ElementType }[] = [
-  { key: 'build', label: 'Build a List', icon: Users },
-  { key: 'segments', label: 'Segments', icon: Save },
-  { key: 'campaigns', label: 'Campaigns', icon: BarChart3 },
+const TAB_KEYS: { key: Tab; labelKey: string; icon: React.ElementType }[] = [
+  { key: 'build', labelKey: 'admin:mailing.tabs.build', icon: Users },
+  { key: 'segments', labelKey: 'admin:mailing.tabs.segments', icon: Save },
+  { key: 'campaigns', labelKey: 'admin:mailing.tabs.campaigns', icon: BarChart3 },
 ]
 
 const statusBadge = (status: string) => {
@@ -42,6 +43,7 @@ const statusBadge = (status: string) => {
 }
 
 const MailingListPage: React.FC = () => {
+  const { t } = useTranslation(['admin'])
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const apiClient = useApiClient()
@@ -103,7 +105,7 @@ const MailingListPage: React.FC = () => {
     setActionLoading(true)
     try {
       await apiService.mailingCreateSegment(apiClient, { name, description, filters })
-      toast.success('Segment saved')
+      toast.success(t('admin:mailing.segment.saved'))
       setSaveModalOpen(false)
       queryClient.invalidateQueries({ queryKey: ['mailing-segments'] })
     } catch (err: any) {
@@ -163,10 +165,10 @@ const MailingListPage: React.FC = () => {
   }, [apiClient, filters])
 
   const handleDeleteSegment = useCallback(async (id: string) => {
-    if (!confirm('Delete this segment?')) return
+    if (!confirm(t('admin:mailing.segment.deleteConfirm'))) return
     try {
       await apiService.mailingDeleteSegment(apiClient, id)
-      toast.success('Segment deleted')
+      toast.success(t('admin:mailing.segment.deleted'))
       queryClient.invalidateQueries({ queryKey: ['mailing-segments'] })
     } catch (err: any) {
       toast.error(err?.response?.data?.message || 'Failed to delete')
@@ -185,8 +187,8 @@ const MailingListPage: React.FC = () => {
         <div className="flex items-center gap-3">
           <Mail className="w-7 h-7 text-blue-600" />
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Mailing Lists</h1>
-            <p className="text-sm text-gray-500">Build, save, export, and email your contact lists</p>
+            <h1 className="text-2xl font-bold text-gray-900">{t('admin:mailing.title')}</h1>
+            <p className="text-sm text-gray-500">{t('admin:mailing.subtitle')}</p>
           </div>
         </div>
       </div>
@@ -194,7 +196,7 @@ const MailingListPage: React.FC = () => {
       {/* Tabs */}
       <div className="border-b border-gray-200">
         <nav className="flex gap-6">
-          {TABS.map((tab) => (
+          {TAB_KEYS.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
@@ -205,7 +207,7 @@ const MailingListPage: React.FC = () => {
               }`}
             >
               <tab.icon className="w-4 h-4" />
-              {tab.label}
+              {t(tab.labelKey)}
             </button>
           ))}
         </nav>
@@ -240,21 +242,21 @@ const MailingListPage: React.FC = () => {
                     disabled={!preview?.count}
                     className="flex items-center gap-1.5 px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-40"
                   >
-                    <Save className="w-4 h-4" /> Save Segment
+                    <Save className="w-4 h-4" /> {t('admin:mailing.actions.saveSegment')}
                   </button>
                   <button
                     onClick={() => setExportModalOpen(true)}
                     disabled={!preview?.count}
                     className="flex items-center gap-1.5 px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-40"
                   >
-                    <Download className="w-4 h-4" /> Export
+                    <Download className="w-4 h-4" /> {t('admin:mailing.actions.export')}
                   </button>
                   <button
                     onClick={() => setComposeModalOpen(true)}
                     disabled={!preview?.count}
                     className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
                   >
-                    <Send className="w-4 h-4" /> Send Email
+                    <Send className="w-4 h-4" /> {t('admin:mailing.actions.sendEmail')}
                   </button>
                 </div>
               </div>
@@ -283,12 +285,12 @@ const MailingListPage: React.FC = () => {
           ) : !segmentsData?.segments?.length ? (
             <div className="text-center py-16 text-gray-400">
               <Save className="w-10 h-10 mx-auto mb-3 text-gray-300" />
-              <p>No saved segments yet</p>
+              <p>{t('admin:mailing.segment.noSegments')}</p>
               <button
                 onClick={() => setActiveTab('build')}
                 className="mt-3 text-sm text-blue-600 hover:text-blue-800"
               >
-                Build your first list
+                {t('admin:mailing.segment.buildFirst')}
               </button>
             </div>
           ) : (
@@ -324,7 +326,7 @@ const MailingListPage: React.FC = () => {
                           onClick={async () => {
                             await apiService.mailingRefreshSegment(apiClient, seg.id)
                             queryClient.invalidateQueries({ queryKey: ['mailing-segments'] })
-                            toast.success('Size refreshed')
+                            toast.success(t('admin:mailing.segment.sizeRefreshed'))
                           }}
                           className="p-1 text-gray-400 hover:text-gray-600"
                           title="Refresh size"
@@ -356,12 +358,12 @@ const MailingListPage: React.FC = () => {
           ) : !campaignsData?.campaigns?.length ? (
             <div className="text-center py-16 text-gray-400">
               <Send className="w-10 h-10 mx-auto mb-3 text-gray-300" />
-              <p>No campaigns yet</p>
+              <p>{t('admin:mailing.campaign.noCampaigns')}</p>
               <button
                 onClick={() => setActiveTab('build')}
                 className="mt-3 text-sm text-blue-600 hover:text-blue-800"
               >
-                Build a list and send your first email
+                {t('admin:mailing.campaign.noCampaignsHint')}
               </button>
             </div>
           ) : (

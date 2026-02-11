@@ -206,6 +206,9 @@ const verifyCriticalTables = () => {
     'educator_work_experiences',
     'educator_educations',
     'educator_certifications',
+    // Mailing list feature
+    'mailing_segments',
+    'mailing_campaigns',
   ];
   
   const sql = `
