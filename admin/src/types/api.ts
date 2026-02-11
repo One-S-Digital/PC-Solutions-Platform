@@ -1,15 +1,19 @@
 import { UserRole, UserStatus, StockStatus, ServiceCategory, ServiceDeliveryType } from './';
 
-import {
-  CandidateProfile,
-  Course,
-  PolicyDocument,
-  PolicyAlert,
-  ParentLead as BaseParentLead,
-  Order as BaseOrder,
-  OrderRequest as BaseOrderRequest,
-  LineItem,
-} from '../../../types';
+// PolicyAlert type for the api service (aligned with @workspace/types definition)
+export interface PolicyAlert {
+  id: string;
+  title: string;
+  message: string;
+  alertType: string;
+  regions: string[];
+  isActive: boolean;
+  startDate?: string;
+  endDate?: string;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 // Add FrontendSettings interface
 export interface FrontendSettings {
@@ -277,19 +281,93 @@ export interface FileTypeInfo {
   examples: string;
 }
 
-export interface ParentLead extends BaseParentLead {
+export interface ParentLead {
+  id: string;
+  parentName: string;
+  parentEmail: string;
+  parentPhone?: string | null;
+  parentUserId?: string | null;
+  childName: string;
+  childAge: number;
+  message?: string | null;
+  foundationId?: string | null;
+  preferredLocation?: string | null;
+  preferredCities?: string[];
+  preferredLanguages?: string[];
+  specialRequirements?: string | null;
+  source?: string | null;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
   parent?: {
+    id?: string;
     name?: string;
     email?: string;
-  };
+  } | null;
 }
 
-export interface Order extends BaseOrder {
+export interface Order {
+  id: string;
+  organizationId?: string;
+  status: string;
+  totalAmount?: number;
+  createdAt: string | Date;
+  updatedAt?: string | Date;
+  items?: LineItem[];
   foundation?: { name: string };
   foundationOrg?: { name: string };
+  supplierId?: string | null;
+  supplierName?: string | null;
 }
 
-export type OrderRequest = BaseOrderRequest;
+export interface OrderRequest {
+  id: string;
+  status: string;
+  createdAt: string | Date;
+}
+
+export interface LineItem {
+  productId?: string;
+  productName?: string;
+  quantity: number;
+  unitPrice?: number;
+  imageUrl?: string | null;
+}
+
+export interface CandidateProfile {
+  id: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  skills?: string[];
+  certifications?: string[];
+  workExperience?: string;
+  education?: string;
+  availability?: string;
+  shortBio?: string;
+}
+
+export interface Course {
+  id: string;
+  title: string;
+  description?: string;
+  status?: string;
+  createdAt?: string;
+}
+
+export interface PolicyDocument {
+  id: string;
+  title: string;
+  category?: string;
+  status?: string;
+  language?: string;
+  country?: string;
+  region?: string;
+  isCritical?: boolean;
+  updatedAt?: string;
+  fileUrl?: string;
+  tags?: string[];
+}
 
 export interface Conversation {
   id: string;
@@ -463,7 +541,7 @@ export interface LegacyUploadResult {
   mimeType: string;
 }
 
-export type { Course, PolicyDocument, PolicyAlert, FrontendSettings, LineItem };
+// FrontendSettings is already exported as an interface above
 
 // ========================
 // Mailing List Types

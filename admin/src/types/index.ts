@@ -43,10 +43,11 @@ export enum ServiceDeliveryType {
 
 export enum LeadMainStatus {
   NEW = 'NEW',
+  ASSIGNED = 'ASSIGNED',
   PROCESSING = 'PROCESSING',
-  PARENT_ACTION_REQUIRED = 'PARENT_ACTION_REQUIRED',
-  CLOSED_ENROLLED = 'CLOSED_ENROLLED',
-  CLOSED_OTHER = 'CLOSED_OTHER',
+  CONTACTED = 'CONTACTED',
+  CONVERTED = 'CONVERTED',
+  CLOSED = 'CLOSED',
 }
 
 // Support Ticket Types
