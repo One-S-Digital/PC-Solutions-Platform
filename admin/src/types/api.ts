@@ -1,7 +1,19 @@
 import { UserRole, UserStatus, StockStatus, ServiceCategory, ServiceDeliveryType } from './';
 
-// PolicyAlert re-exported from @workspace/types for use by api service
-export type { PolicyAlert } from '@workspace/types';
+// PolicyAlert type for the api service (aligned with @workspace/types definition)
+export interface PolicyAlert {
+  id: string;
+  title: string;
+  message: string;
+  alertType: string;
+  regions: string[];
+  isActive: boolean;
+  startDate?: string;
+  endDate?: string;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 // Add FrontendSettings interface
 export interface FrontendSettings {
@@ -529,7 +541,7 @@ export interface LegacyUploadResult {
   mimeType: string;
 }
 
-export type { FrontendSettings };
+// FrontendSettings is already exported as an interface above
 
 // ========================
 // Mailing List Types
