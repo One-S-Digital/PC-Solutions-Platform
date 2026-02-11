@@ -40,11 +40,13 @@ const ParentLeads: React.FC = () => {
     return leads.filter((lead) => {
       const query = searchQuery.toLowerCase()
       const matchesSearch =
-        lead.contactName?.toLowerCase().includes(query) ||
-        lead.contactEmail?.toLowerCase().includes(query) ||
+        !query ||
+        lead.parentName?.toLowerCase().includes(query) ||
+        lead.parentEmail?.toLowerCase().includes(query) ||
         lead.parent?.name?.toLowerCase().includes(query) ||
-        lead.parent?.email?.toLowerCase().includes(query)
-      const matchesStatus = !selectedStatus || lead.mainStatus === selectedStatus
+        lead.parent?.email?.toLowerCase().includes(query) ||
+        lead.childName?.toLowerCase().includes(query)
+      const matchesStatus = !selectedStatus || lead.status === selectedStatus
       return matchesSearch && matchesStatus
     })
   }, [leads, searchQuery, selectedStatus])
@@ -71,10 +73,11 @@ const ParentLeads: React.FC = () => {
 
   const statusColors: Record<LeadMainStatus, string> = {
     [LeadMainStatus.NEW]: 'bg-blue-100 text-blue-800',
+    [LeadMainStatus.ASSIGNED]: 'bg-indigo-100 text-indigo-800',
     [LeadMainStatus.PROCESSING]: 'bg-yellow-100 text-yellow-800',
-    [LeadMainStatus.PARENT_ACTION_REQUIRED]: 'bg-orange-100 text-orange-800',
-    [LeadMainStatus.CLOSED_ENROLLED]: 'bg-green-100 text-green-800',
-    [LeadMainStatus.CLOSED_OTHER]: 'bg-gray-100 text-gray-800',
+    [LeadMainStatus.CONTACTED]: 'bg-orange-100 text-orange-800',
+    [LeadMainStatus.CONVERTED]: 'bg-green-100 text-green-800',
+    [LeadMainStatus.CLOSED]: 'bg-gray-100 text-gray-800',
   }
 
   if (isLoading) {
@@ -184,8 +187,10 @@ const ParentLeads: React.FC = () => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {paginatedLeads.map((lead) => {
-                const displayName = lead.parent?.name || lead.contactName || t('admin:parentLeads.labels.unknown', 'Unknown')
-                const displayEmail = lead.parent?.email || lead.contactEmail || t('admin:parentLeads.labels.noEmail', 'N/A')
+                const displayName = lead.parent?.name || lead.parentName || t('admin:parentLeads.labels.unknown', 'Unknown')
+                const displayEmail = lead.parent?.email || lead.parentEmail || t('admin:parentLeads.labels.noEmail', 'N/A')
+                const locationParts = [lead.preferredLocation, ...(lead.preferredCities || [])].filter(Boolean)
+                const locationDisplay = locationParts.length > 0 ? locationParts.join(' - ') : t('admin:parentLeads.labels.noLocation', 'N/A')
                 return (
                 <tr key={lead.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
@@ -203,10 +208,10 @@ const ParentLeads: React.FC = () => {
                           <Mail className="h-3 w-3 mr-1 flex-shrink-0" />
                           <span className="break-all">{displayEmail}</span>
                         </div>
-                        {lead.contactPhone && (
+                        {lead.parentPhone && (
                         <div className="text-sm text-gray-500 flex items-center">
                           <Phone className="h-3 w-3 mr-1 flex-shrink-0" />
-                          {lead.contactPhone}
+                          {lead.parentPhone}
                         </div>
                         )}
                       </div>
@@ -217,26 +222,29 @@ const ParentLeads: React.FC = () => {
                       <Baby className="h-4 w-4 mr-1 flex-shrink-0" />
                       {lead.childAge} {t('admin:parentLeads.labels.yearsOld', 'years old')}
                     </div>
+                    {lead.childName && (
+                      <div className="text-sm text-gray-500">{lead.childName}</div>
+                    )}
                   </td>
                   <td className="px-6 py-4">
                     <div className="text-sm text-gray-900 flex items-start">
                       <MapPin className="h-4 w-4 mr-1 mt-0.5 flex-shrink-0" />
-                      <span className="break-words">{lead.canton} {lead.municipality && `- ${lead.municipality}`}</span>
+                      <span className="break-words">{locationDisplay}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <span
                       className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        statusColors[lead.mainStatus as LeadMainStatus] || 'bg-gray-100 text-gray-800'
+                        statusColors[lead.status as LeadMainStatus] || 'bg-gray-100 text-gray-800'
                       }`}
                     >
-                      {lead.mainStatus}
+                      {lead.status}
                     </span>
                   </td>
                   <td className="px-6 py-4">
                     <div className="text-sm text-gray-900 flex items-center">
                       <Calendar className="h-4 w-4 mr-1 flex-shrink-0" />
-                      {new Date(lead.submissionDate).toLocaleDateString()}
+                      {new Date(lead.createdAt).toLocaleDateString()}
                     </div>
                   </td>
                   <td className="px-6 py-4 text-right text-sm font-medium">

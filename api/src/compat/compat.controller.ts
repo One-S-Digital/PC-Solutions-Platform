@@ -932,8 +932,45 @@ export class CompatController {
   @Public()
   async getParentLeads() {
     try {
-      const leads = await this.prisma.parentLead.findMany({ orderBy: { createdAt: 'desc' }, take: 50 });
-      return { success: true, message: 'OK', data: leads, timestamp: new Date().toISOString() };
+      const leads = await this.prisma.parentLead.findMany({
+        orderBy: { createdAt: 'desc' },
+        take: 200,
+        include: {
+          parentUser: {
+            select: { id: true, firstName: true, lastName: true, email: true },
+          },
+        },
+      });
+
+      const formattedLeads = leads.map((lead) => ({
+        id: lead.id,
+        parentName: lead.parentName,
+        parentEmail: lead.parentEmail,
+        parentPhone: lead.parentPhone,
+        parentUserId: lead.parentUserId,
+        childName: lead.childName,
+        childAge: lead.childAge,
+        message: lead.message,
+        foundationId: lead.foundationId,
+        preferredLocation: lead.preferredLocation,
+        preferredCities: lead.preferredCities,
+        preferredLanguages: lead.preferredLanguages,
+        specialRequirements: lead.specialRequirements,
+        source: lead.source,
+        status: lead.status,
+        createdAt: lead.createdAt.toISOString(),
+        updatedAt: lead.updatedAt.toISOString(),
+        // Include linked parent user info for display in admin
+        parent: lead.parentUser
+          ? {
+              id: lead.parentUser.id,
+              name: [lead.parentUser.firstName, lead.parentUser.lastName].filter(Boolean).join(' ') || lead.parentUser.email,
+              email: lead.parentUser.email,
+            }
+          : null,
+      }));
+
+      return { success: true, message: 'OK', data: formattedLeads, timestamp: new Date().toISOString() };
     } catch (error) {
       // If table missing, return empty silently to avoid 500 in admin
       return { success: true, message: 'OK', data: [], timestamp: new Date().toISOString() };
