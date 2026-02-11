@@ -57,16 +57,6 @@ export class MailingService {
     // Always exclude users without an email
     andConditions.push({ email: { not: null } });
 
-    // Exclude unsubscribed by default
-    if (filters.excludeUnsubscribed !== false) {
-      andConditions.push({
-        OR: [
-          { notificationPreferences: null },
-          { notificationPreferences: { marketing: true } },
-        ],
-      });
-    }
-
     // A) Role filters -------------------------------------------
     const roleCondition: Prisma.EnumUserRoleFilter = {};
 
@@ -140,11 +130,23 @@ export class MailingService {
       });
     }
 
-    // E) Marketing opt-in ----------------------------------------
+    // E) Marketing opt-in / unsubscribed --------------------------
+    // FIX: marketingOptIn and excludeUnsubscribed must not produce contradictory
+    // WHERE conditions. When marketingOptIn is explicitly set, it takes precedence
+    // and the default excludeUnsubscribed logic is skipped.
     if (filters.marketingOptIn === true) {
       andConditions.push({ notificationPreferences: { marketing: true } });
     } else if (filters.marketingOptIn === false) {
+      // Explicitly requesting opted-out users — skip excludeUnsubscribed
       andConditions.push({ notificationPreferences: { marketing: false } });
+    } else if (filters.excludeUnsubscribed !== false) {
+      // Default: exclude unsubscribed (only when marketingOptIn is not explicitly set)
+      andConditions.push({
+        OR: [
+          { notificationPreferences: null },
+          { notificationPreferences: { marketing: true } },
+        ],
+      });
     }
 
     // F) Date ranges ----------------------------------------------
@@ -740,7 +742,7 @@ export class MailingService {
         sentThisBatch++;
       } else {
         failedThisBatch++;
-        this.logger.warn(`Failed to send to ${recipient.email}: ${result.error}`);
+        this.logger.warn(`Failed to send to user ${recipient.id}: ${result.error}`);
       }
 
       // Inter-email delay

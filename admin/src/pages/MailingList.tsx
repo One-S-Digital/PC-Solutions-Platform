@@ -324,9 +324,13 @@ const MailingListPage: React.FC = () => {
                         </button>
                         <button
                           onClick={async () => {
-                            await apiService.mailingRefreshSegment(apiClient, seg.id)
-                            queryClient.invalidateQueries({ queryKey: ['mailing-segments'] })
-                            toast.success(t('admin:mailing.segment.sizeRefreshed'))
+                            try {
+                              await apiService.mailingRefreshSegment(apiClient, seg.id)
+                              queryClient.invalidateQueries({ queryKey: ['mailing-segments'] })
+                              toast.success(t('admin:mailing.segment.sizeRefreshed'))
+                            } catch (err: any) {
+                              toast.error(err?.response?.data?.message || 'Failed to refresh segment size')
+                            }
                           }}
                           className="p-1 text-gray-400 hover:text-gray-600"
                           title="Refresh size"

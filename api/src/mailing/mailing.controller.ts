@@ -11,6 +11,7 @@ import {
   Request,
   Res,
   Logger,
+  BadRequestException,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
@@ -33,6 +34,15 @@ export class MailingController {
   private readonly logger = new Logger(MailingController.name);
 
   constructor(private readonly mailingService: MailingService) {}
+
+  /** Extract admin user ID from request context, or throw if missing. */
+  private getAdminId(req: any): string {
+    const adminId = req.context?.userId || req.user?.id;
+    if (!adminId) {
+      throw new BadRequestException('Unable to determine admin user ID from request context');
+    }
+    return adminId;
+  }
 
   /* ================================================================ */
   /*  PREVIEW                                                          */
@@ -57,7 +67,7 @@ export class MailingController {
   @Post('segments')
   @ApiOperation({ summary: 'Create a saved segment' })
   async createSegment(@Body() body: CreateSegmentDto, @Request() req: any) {
-    const adminId = req.context?.userId || req.user?.id || 'unknown';
+    const adminId = this.getAdminId(req);
     return this.mailingService.createSegment(body.name, body.filters, adminId, body.description);
   }
 
@@ -109,7 +119,7 @@ export class MailingController {
     @Request() req: any,
     @Res() res: Response,
   ) {
-    const adminId = req.context?.userId || req.user?.id || 'unknown';
+    const adminId = this.getAdminId(req);
     const filters = await this.mailingService.resolveFilters(body.filters, body.segmentId);
 
     const result = await this.mailingService.exportRecipients(
@@ -134,13 +144,20 @@ export class MailingController {
       return res.send(csv);
     }
 
-    // XLSX format
+    // XLSX format — separate the require from the write so we only
+    // fall back to CSV when the module is missing, not on write errors.
+    let ExcelJS: any;
     try {
-      const ExcelJS = require('exceljs');
+      ExcelJS = require('exceljs');
+    } catch {
+      this.logger.warn('exceljs not installed, falling back to CSV export');
+    }
+
+    if (ExcelJS) {
       const workbook = new ExcelJS.Workbook();
       const worksheet = workbook.addWorksheet('Recipients');
 
-      worksheet.columns = result.columns.map((col) => ({
+      worksheet.columns = result.columns.map((col: string) => ({
         header: col,
         key: col,
         width: 20,
@@ -158,18 +175,17 @@ export class MailingController {
 
       await workbook.xlsx.write(res);
       return res.end();
-    } catch {
-      // exceljs not available, fall back to CSV
-      this.logger.warn('exceljs not available, falling back to CSV');
-      const header = result.columns.join(',');
-      const csvRows = result.rows.map((row) =>
-        result.columns.map((col) => `"${(row[col] || '').replace(/"/g, '""')}"`).join(','),
-      );
-      const csv = [header, ...csvRows].join('\n');
-      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-      res.setHeader('Content-Disposition', `attachment; filename="${filename}.csv"`);
-      return res.send(csv);
     }
+
+    // CSV fallback (when exceljs not available or format is CSV)
+    const header = result.columns.join(',');
+    const csvRows = result.rows.map((row) =>
+      result.columns.map((col) => `"${(row[col] || '').replace(/"/g, '""').replace(/[\r\n]+/g, ' ')}"`).join(','),
+    );
+    const csv = [header, ...csvRows].join('\n');
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}.csv"`);
+    return res.send(csv);
   }
 
   @Get('export/columns')
@@ -185,7 +201,7 @@ export class MailingController {
   @Post('campaigns')
   @ApiOperation({ summary: 'Create a campaign' })
   async createCampaign(@Body() body: CreateCampaignDto, @Request() req: any) {
-    const adminId = req.context?.userId || req.user?.id || 'unknown';
+    const adminId = this.getAdminId(req);
     return this.mailingService.createCampaign(
       body.subject,
       body.bodyHtml,
@@ -223,7 +239,7 @@ export class MailingController {
   @Post('campaigns/:id/cancel')
   @ApiOperation({ summary: 'Cancel a campaign' })
   async cancelCampaign(@Param('id') id: string, @Request() req: any) {
-    const adminId = req.context?.userId || req.user?.id || 'unknown';
+    const adminId = this.getAdminId(req);
     await this.mailingService.cancelCampaign(id, adminId);
     return { success: true, message: 'Campaign cancelled' };
   }
