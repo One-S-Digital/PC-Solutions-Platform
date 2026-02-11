@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { SettingsFormData, UserRole } from '../../../types';
+import { SettingsFormData, UserRole, WorkExperienceItem, EducationItem, CertificationItem } from '../../../types';
 import { STANDARD_INPUT_FIELD, SWISS_CANTONS } from '../../../constants';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
 import ImageCropperModal from '../../shared/ImageCropperModal';
@@ -22,8 +22,15 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../../contexts/AppContext';
 import { useAuthenticatedApi } from '../../../hooks/useAuthenticatedApi';
+import {
+  certificationItemsFromNames,
+  createTempId,
+  fallbackEducationFromText,
+  fallbackWorkExperienceFromText,
+} from '../../../utils/educatorProfileHelpers';
 
 // Helper function to parse availability settings from various formats
 const parseAvailabilitySettings = (value: EducatorAvailabilitySettings | string | undefined): EducatorAvailabilitySettings => {
@@ -53,25 +60,32 @@ const parseAvailabilitySettings = (value: EducatorAvailabilitySettings | string 
   return createEmptyAvailabilitySettings();
 };
 
-interface EducatorProfileSettingsProps {
-  settings: SettingsFormData;
-  onChange: (field: keyof SettingsFormData, value: any) => void;
-  userRole: UserRole;
-}
+const parseLegacyItems = <T,>(value: unknown): T[] => {
+  const normalize = (items: unknown[]): T[] =>
+    items.filter((item) => item && typeof item === 'object') as T[];
 
-const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ settings, onChange, userRole }) => {
-  const { t } = useTranslation(['dashboard', 'common', 'settings']);
-  const { currentUser } = useAppContext();
-  const { upload } = useAuthenticatedApi();
-  
-  // Avatar cropping state
-  const [showAvatarCropper, setShowAvatarCropper] = useState(false);
-  const [selectedAvatarFile, setSelectedAvatarFile] = useState<File | null>(null);
-  const [uploadingAvatar, setUploadingAvatar] = useState(false);
-  const avatarInputRef = useRef<HTMLInputElement>(null);
+  if (Array.isArray(value)) {
+    return normalize(value);
+  }
+  if (typeof value === 'string' && value.trim().length > 0) {
+    try {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) ? normalize(parsed as unknown[]) : [];
+    } catch {
+      return [];
+    }
+  }
+  return [];
+};
 
-  // Initialize form fields from settings
-  const [profileData, setProfileData] = useState({
+const buildProfileData = (settings: SettingsFormData, currentUser: any) => {
+  const parsedWorkItems = parseLegacyItems<WorkExperienceItem>(settings.workExperienceItems);
+  const parsedWorkLegacy = parseLegacyItems<WorkExperienceItem>(settings.workExperience);
+  const parsedEducationItems = parseLegacyItems<EducationItem>(settings.educationItems);
+  const parsedEducationLegacy = parseLegacyItems<EducationItem>(settings.education);
+  const parsedCertItems = parseLegacyItems<CertificationItem>(settings.certificationItems);
+
+  return {
     firstName: settings.firstName || currentUser?.firstName || '',
     lastName: settings.lastName || currentUser?.lastName || '',
     email: settings.email || currentUser?.email || '',
@@ -82,30 +96,69 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
     workExperience: settings.workExperience || '',
     education: settings.education || '',
     certifications: Array.isArray(settings.certifications) ? settings.certifications : [],
+    workExperienceItems:
+      parsedWorkItems.length > 0
+        ? parsedWorkItems
+        : parsedWorkLegacy.length > 0
+          ? parsedWorkLegacy
+          : fallbackWorkExperienceFromText(settings.workExperience || ''),
+    educationItems:
+      parsedEducationItems.length > 0
+        ? parsedEducationItems
+        : parsedEducationLegacy.length > 0
+          ? parsedEducationLegacy
+          : fallbackEducationFromText(settings.education || ''),
+    certificationItems:
+      parsedCertItems.length > 0
+        ? parsedCertItems
+        : certificationItemsFromNames(
+            Array.isArray(settings.certifications) ? settings.certifications : [],
+          ),
     skills: Array.isArray(settings.skills) ? settings.skills : [],
     availability: settings.availability || '',
     cvUrl: settings.cvUrl || '',
     avatarAssetId: settings.avatarAssetId || '',
-  });
+  };
+};
+
+interface EducatorProfileSettingsProps {
+  settings: SettingsFormData;
+  onChange: (field: keyof SettingsFormData, value: any) => void;
+  userRole: UserRole;
+}
+
+const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ settings, onChange, userRole }) => {
+  const { t } = useTranslation(['dashboard', 'common', 'settings']);
+  const { currentUser } = useAppContext();
+  const { upload, request } = useAuthenticatedApi();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const openDeleteFilesHelp = () => {
+    const params = new URLSearchParams(location.search);
+    params.set('help', 'delete-files');
+    const nextSearch = params.toString();
+    navigate(
+      { pathname: location.pathname, search: nextSearch ? `?${nextSearch}` : '' },
+      { replace: false },
+    );
+  };
+  
+  // Avatar cropping state
+  const [showAvatarCropper, setShowAvatarCropper] = useState(false);
+  const [selectedAvatarFile, setSelectedAvatarFile] = useState<File | null>(null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+
+  // Initialize form fields from settings
+  const [profileData, setProfileData] = useState(() =>
+    buildProfileData(settings, currentUser),
+  );
 
   // Sync when settings change
   useEffect(() => {
-    setProfileData({
-      firstName: settings.firstName || currentUser?.firstName || '',
-      lastName: settings.lastName || currentUser?.lastName || '',
-      email: settings.email || currentUser?.email || '',
-      phoneNumber: settings.phoneNumber || '',
-      jobRole: (settings as any).jobRole || '',
-      region: (settings as any).region || '',
-      shortBio: settings.shortBio || '',
-      workExperience: settings.workExperience || '',
-      education: settings.education || '',
-      certifications: Array.isArray(settings.certifications) ? settings.certifications : [],
-      skills: Array.isArray(settings.skills) ? settings.skills : [],
-      availability: settings.availability || '',
-      cvUrl: settings.cvUrl || '',
-      avatarAssetId: settings.avatarAssetId || '',
-    });
+    setProfileData(buildProfileData(settings, currentUser));
   }, [settings, currentUser]);
 
   const handleFieldChange = (field: keyof typeof profileData, value: any) => {
@@ -117,8 +170,108 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
     handleFieldChange('skills', newSkills);
   };
 
-  const handleCertificationsChange = (newCertifications: string[]) => {
-    handleFieldChange('certifications', newCertifications);
+  const handleAddWorkExperience = () => {
+    const nextItems = [
+      ...(profileData.workExperienceItems || []),
+      {
+        id: createTempId('work'),
+        jobTitle: '',
+        institutionName: '',
+        startDate: '',
+        endDate: '',
+        descriptionPoints: [],
+      },
+    ];
+    handleFieldChange('workExperienceItems', nextItems);
+  };
+
+  const handleUpdateWorkExperience = (
+    index: number,
+    field: keyof WorkExperienceItem,
+    value: string | string[],
+  ) => {
+    const nextItems = [...(profileData.workExperienceItems || [])];
+    const current = nextItems[index];
+    if (!current) return;
+    nextItems[index] = {
+      ...current,
+      [field]: value,
+    } as WorkExperienceItem;
+    handleFieldChange('workExperienceItems', nextItems);
+  };
+
+  const handleRemoveWorkExperience = (index: number) => {
+    const nextItems = (profileData.workExperienceItems || []).filter((_, i) => i !== index);
+    handleFieldChange('workExperienceItems', nextItems);
+  };
+
+  const handleAddEducation = () => {
+    const nextItems = [
+      ...(profileData.educationItems || []),
+      {
+        id: createTempId('edu'),
+        degree: '',
+        institutionName: '',
+        graduationYear: '',
+        description: '',
+      },
+    ];
+    handleFieldChange('educationItems', nextItems);
+  };
+
+  const handleUpdateEducation = (
+    index: number,
+    field: keyof EducationItem,
+    value: string,
+  ) => {
+    const nextItems = [...(profileData.educationItems || [])];
+    const current = nextItems[index];
+    if (!current) return;
+    nextItems[index] = {
+      ...current,
+      [field]: value,
+    } as EducationItem;
+    handleFieldChange('educationItems', nextItems);
+  };
+
+  const handleRemoveEducation = (index: number) => {
+    const nextItems = (profileData.educationItems || []).filter((_, i) => i !== index);
+    handleFieldChange('educationItems', nextItems);
+  };
+
+  const handleAddCertification = () => {
+    const nextItems = [
+      ...(profileData.certificationItems || []),
+      {
+        id: createTempId('cert'),
+        name: '',
+        issuingOrganization: '',
+        issueDate: '',
+        expiryDate: '',
+        credentialUrl: '',
+      },
+    ];
+    handleFieldChange('certificationItems', nextItems);
+  };
+
+  const handleUpdateCertification = (
+    index: number,
+    field: keyof CertificationItem,
+    value: string,
+  ) => {
+    const nextItems = [...(profileData.certificationItems || [])];
+    const current = nextItems[index];
+    if (!current) return;
+    nextItems[index] = {
+      ...current,
+      [field]: value,
+    } as CertificationItem;
+    handleFieldChange('certificationItems', nextItems);
+  };
+
+  const handleRemoveCertification = (index: number) => {
+    const nextItems = (profileData.certificationItems || []).filter((_, i) => i !== index);
+    handleFieldChange('certificationItems', nextItems);
   };
 
   // Avatar handlers
@@ -126,8 +279,26 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
     const file = e.target.files?.[0];
     if (!file) return;
     
+    setAvatarError(null);
     if (!file.type.startsWith('image/')) {
-      alert(t('settings:educatorProfile.invalidImageType', 'Please select an image file'));
+      setAvatarError(t('settings:educatorProfile.invalidImageType', 'Please select an image file'));
+      if (avatarInputRef.current) {
+        avatarInputRef.current.value = '';
+      }
+      return;
+    }
+
+    const maxAvatarSizeMB = 10;
+    if (file.size > maxAvatarSizeMB * 1024 * 1024) {
+      setAvatarError(
+        t('settings:educatorProfile.avatarTooLarge', {
+          defaultValue: `Image must be less than ${maxAvatarSizeMB}MB.`,
+          max: maxAvatarSizeMB,
+        }),
+      );
+      if (avatarInputRef.current) {
+        avatarInputRef.current.value = '';
+      }
       return;
     }
     
@@ -172,9 +343,28 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
     }
   };
 
-  const handleRemoveCv = () => {
-    handleFieldChange('cvUrl', '');
-    onChange('cvAssetId', '');
+  const handleRemoveCv = async () => {
+    const confirmed = window.confirm(
+      t(
+        'settings:educatorProfile.confirmDeleteCv',
+        'Delete your CV permanently? This cannot be undone.',
+      ),
+    );
+    if (!confirmed) return;
+
+    try {
+      await request('/settings/educator/cv', { method: 'DELETE' });
+      handleFieldChange('cvUrl', '');
+      onChange('cvAssetId', '');
+    } catch (e: any) {
+      console.error('CV delete failed:', e);
+      alert(
+        t(
+          'settings:educatorProfile.deleteCvFailed',
+          'Failed to delete CV. Please try again.',
+        ),
+      );
+    }
   };
 
   // Use avatarUrl from settings (computed from asset relation on backend)
@@ -231,6 +421,9 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
               <p className="mt-1 text-xs text-gray-500">
                 {t('settings:educatorProfile.avatarHint', 'JPG, PNG or GIF. Will be cropped to 256×256px')}
               </p>
+              {avatarError && (
+                <p className="mt-1 text-xs text-swiss-coral">{avatarError}</p>
+              )}
             </div>
           </div>
         </div>
@@ -405,23 +598,111 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
             <BriefcaseIcon className="w-5 h-5 mr-2 text-swiss-mint" />
             {t('settings:educatorProfile.workExperience', 'Work Experience')}
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4">
-            <label htmlFor="workExperience" className="form-label">
-              {t('settings:educatorProfile.workExperienceLabel', 'Work Experience')}
-            </label>
-            <div className="form-input-container">
-              <textarea
-                id="workExperience"
-                rows={6}
-                value={profileData.workExperience}
-                onChange={(e) => handleFieldChange('workExperience', e.target.value)}
-                className={STANDARD_INPUT_FIELD}
-                placeholder={t('settings:educatorProfile.workExperiencePlaceholder', 'Describe your work experience...')}
-              />
-              <p className="mt-1 text-xs text-gray-500">
-                {t('settings:educatorProfile.workExperienceHint', 'You can use JSON format or plain text')}
+          <div className="space-y-4">
+            {(profileData.workExperienceItems || []).length > 0 ? (
+              (profileData.workExperienceItems || []).map((item, index) => (
+                <div key={item.id} className="rounded-lg border border-gray-200 p-4 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-semibold text-gray-700">
+                      {t('settings:educatorProfile.workExperienceFields.itemLabel', {
+                        defaultValue: `Experience ${index + 1}`,
+                        index: index + 1,
+                      })}
+                    </p>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleRemoveWorkExperience(index)}
+                    >
+                      {t('common:buttons.remove', 'Remove')}
+                    </Button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {t('settings:educatorProfile.workExperienceFields.jobTitle', 'Job title')}
+                      </label>
+                      <input
+                        type="text"
+                        value={item.jobTitle || ''}
+                        onChange={(e) =>
+                          handleUpdateWorkExperience(index, 'jobTitle', e.target.value)
+                        }
+                        className={STANDARD_INPUT_FIELD}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {t('settings:educatorProfile.workExperienceFields.institutionName', 'Institution')}
+                      </label>
+                      <input
+                        type="text"
+                        value={item.institutionName || ''}
+                        onChange={(e) =>
+                          handleUpdateWorkExperience(index, 'institutionName', e.target.value)
+                        }
+                        className={STANDARD_INPUT_FIELD}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {t('settings:educatorProfile.workExperienceFields.startDate', 'Start date')}
+                      </label>
+                      <input
+                        type="month"
+                        value={item.startDate || ''}
+                        onChange={(e) =>
+                          handleUpdateWorkExperience(index, 'startDate', e.target.value)
+                        }
+                        className={STANDARD_INPUT_FIELD}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {t('settings:educatorProfile.workExperienceFields.endDate', 'End date')}
+                      </label>
+                      <input
+                        type="month"
+                        value={item.endDate || ''}
+                        onChange={(e) =>
+                          handleUpdateWorkExperience(index, 'endDate', e.target.value)
+                        }
+                        className={STANDARD_INPUT_FIELD}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      {t('settings:educatorProfile.workExperienceFields.descriptionPoints', 'Highlights')}
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={(item.descriptionPoints || []).join('\n')}
+                      onChange={(e) =>
+                        handleUpdateWorkExperience(
+                          index,
+                          'descriptionPoints',
+                          e.target.value
+                            .split(/\r?\n/)
+                            .map((line) => line.trim())
+                            .filter(Boolean),
+                        )
+                      }
+                      className={STANDARD_INPUT_FIELD}
+                      placeholder={t('settings:educatorProfile.workExperienceFields.descriptionPlaceholder', 'Add one highlight per line')}
+                    />
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-gray-500">
+                {t('settings:educatorProfile.workExperienceFields.emptyState', 'No experience added yet.')}
               </p>
-            </div>
+            )}
+            <Button type="button" variant="outline" onClick={handleAddWorkExperience}>
+              {t('settings:educatorProfile.workExperienceFields.addButton', 'Add experience')}
+            </Button>
           </div>
         </div>
 
@@ -433,23 +714,90 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
             <AcademicCapIcon className="w-5 h-5 mr-2 text-swiss-mint" />
             {t('settings:educatorProfile.education', 'Education')}
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4">
-            <label htmlFor="education" className="form-label">
-              {t('settings:educatorProfile.educationLabel', 'Education')}
-            </label>
-            <div className="form-input-container">
-              <textarea
-                id="education"
-                rows={6}
-                value={profileData.education}
-                onChange={(e) => handleFieldChange('education', e.target.value)}
-                className={STANDARD_INPUT_FIELD}
-                placeholder={t('settings:educatorProfile.educationPlaceholder', 'List your educational background...')}
-              />
-              <p className="mt-1 text-xs text-gray-500">
-                {t('settings:educatorProfile.educationHint', 'You can use JSON format or plain text')}
+          <div className="space-y-4">
+            {(profileData.educationItems || []).length > 0 ? (
+              (profileData.educationItems || []).map((item, index) => (
+                <div key={item.id} className="rounded-lg border border-gray-200 p-4 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-semibold text-gray-700">
+                      {t('settings:educatorProfile.educationFields.itemLabel', {
+                        defaultValue: `Education ${index + 1}`,
+                        index: index + 1,
+                      })}
+                    </p>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleRemoveEducation(index)}
+                    >
+                      {t('common:buttons.remove', 'Remove')}
+                    </Button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {t('settings:educatorProfile.educationFields.degree', 'Degree')}
+                      </label>
+                      <input
+                        type="text"
+                        value={item.degree || ''}
+                        onChange={(e) => handleUpdateEducation(index, 'degree', e.target.value)}
+                        className={STANDARD_INPUT_FIELD}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {t('settings:educatorProfile.educationFields.institutionName', 'Institution')}
+                      </label>
+                      <input
+                        type="text"
+                        value={item.institutionName || ''}
+                        onChange={(e) =>
+                          handleUpdateEducation(index, 'institutionName', e.target.value)
+                        }
+                        className={STANDARD_INPUT_FIELD}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {t('settings:educatorProfile.educationFields.graduationYear', 'Graduation year')}
+                      </label>
+                      <input
+                        type="text"
+                        value={item.graduationYear || ''}
+                        onChange={(e) =>
+                          handleUpdateEducation(index, 'graduationYear', e.target.value)
+                        }
+                        className={STANDARD_INPUT_FIELD}
+                        placeholder={t('settings:educatorProfile.educationFields.graduationYearPlaceholder', 'e.g., 2024')}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      {t('settings:educatorProfile.educationFields.description', 'Details')}
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={item.description || ''}
+                      onChange={(e) =>
+                        handleUpdateEducation(index, 'description', e.target.value)
+                      }
+                      className={STANDARD_INPUT_FIELD}
+                      placeholder={t('settings:educatorProfile.educationFields.descriptionPlaceholder', 'Add notes or coursework')}
+                    />
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-gray-500">
+                {t('settings:educatorProfile.educationFields.emptyState', 'No education added yet.')}
               </p>
-            </div>
+            )}
+            <Button type="button" variant="outline" onClick={handleAddEducation}>
+              {t('settings:educatorProfile.educationFields.addButton', 'Add education')}
+            </Button>
           </div>
         </div>
 
@@ -461,21 +809,102 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
             <StarIcon className="w-5 h-5 mr-2 text-swiss-mint" />
             {t('settings:educatorProfile.certifications', 'Certifications')}
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-form-layout gap-x-6 gap-y-4">
-            <label htmlFor="certifications" className="form-label">
-              {t('settings:educatorProfile.certificationsLabel', 'Certifications')}
-            </label>
-            <div className="form-input-container">
-              <ChipInput
-                selectedChips={Array.isArray(profileData.certifications) ? profileData.certifications : []}
-                onChange={handleCertificationsChange}
-                placeholder={t('settings:educatorProfile.certificationsPlaceholder', 'e.g., CPR Certified, Early Childhood Education Certificate')}
-                allowCustomValues={true}
-              />
-              <p className="mt-1 text-xs text-gray-500">
-                {t('settings:educatorProfile.certificationsHint', 'Type and press Enter to add certifications')}
+          <div className="space-y-4">
+            {(profileData.certificationItems || []).length > 0 ? (
+              (profileData.certificationItems || []).map((item, index) => (
+                <div key={item.id} className="rounded-lg border border-gray-200 p-4 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-semibold text-gray-700">
+                      {t('settings:educatorProfile.certificationFields.itemLabel', {
+                        defaultValue: `Certification ${index + 1}`,
+                        index: index + 1,
+                      })}
+                    </p>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleRemoveCertification(index)}
+                    >
+                      {t('common:buttons.remove', 'Remove')}
+                    </Button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {t('settings:educatorProfile.certificationFields.name', 'Certification')}
+                      </label>
+                      <input
+                        type="text"
+                        value={item.name || ''}
+                        onChange={(e) => handleUpdateCertification(index, 'name', e.target.value)}
+                        className={STANDARD_INPUT_FIELD}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {t('settings:educatorProfile.certificationFields.issuingOrganization', 'Issuing organization')}
+                      </label>
+                      <input
+                        type="text"
+                        value={item.issuingOrganization || ''}
+                        onChange={(e) =>
+                          handleUpdateCertification(index, 'issuingOrganization', e.target.value)
+                        }
+                        className={STANDARD_INPUT_FIELD}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {t('settings:educatorProfile.certificationFields.issueDate', 'Issue date')}
+                      </label>
+                      <input
+                        type="month"
+                        value={item.issueDate || ''}
+                        onChange={(e) =>
+                          handleUpdateCertification(index, 'issueDate', e.target.value)
+                        }
+                        className={STANDARD_INPUT_FIELD}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {t('settings:educatorProfile.certificationFields.expiryDate', 'Expiry date')}
+                      </label>
+                      <input
+                        type="month"
+                        value={item.expiryDate || ''}
+                        onChange={(e) =>
+                          handleUpdateCertification(index, 'expiryDate', e.target.value)
+                        }
+                        className={STANDARD_INPUT_FIELD}
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {t('settings:educatorProfile.certificationFields.credentialUrl', 'Credential URL')}
+                      </label>
+                      <input
+                        type="url"
+                        value={item.credentialUrl || ''}
+                        onChange={(e) =>
+                          handleUpdateCertification(index, 'credentialUrl', e.target.value)
+                        }
+                        className={STANDARD_INPUT_FIELD}
+                        placeholder="https://"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-gray-500">
+                {t('settings:educatorProfile.certificationFields.emptyState', 'No certifications added yet.')}
               </p>
-            </div>
+            )}
+            <Button type="button" variant="outline" onClick={handleAddCertification}>
+              {t('settings:educatorProfile.certificationFields.addButton', 'Add certification')}
+            </Button>
           </div>
         </div>
 
@@ -544,6 +973,13 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
               <p className="mt-2 text-xs text-gray-500">
                 {t('settings:educatorProfile.cvHint', 'Accepted formats: PDF, DOC, DOCX (Max 5MB). This will be shared with foundations when you apply for jobs.')}
               </p>
+              <button
+                type="button"
+                onClick={openDeleteFilesHelp}
+                className="text-xs text-swiss-teal hover:underline mt-2"
+              >
+                {t('settings:educatorProfile.deleteHelpCta', 'How do I delete files?')}
+              </button>
             </div>
           </div>
         </div>

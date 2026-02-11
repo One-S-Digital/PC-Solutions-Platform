@@ -202,6 +202,10 @@ const verifyCriticalTables = () => {
     'static_translations',
     'messages',
     'promo_codes',
+    // Structured educator profile items
+    'educator_work_experiences',
+    'educator_educations',
+    'educator_certifications',
   ];
   
   const sql = `
@@ -312,6 +316,7 @@ ON "public"."users" ((("availabilitySettings"->>'employmentType')));
     log('It should be created by migration 20251217100000_add_educator_availability_settings');
   }
 };
+
 
 /**
  * Ensure required Postgres extensions exist for migrations.
@@ -424,6 +429,7 @@ const main = async () => {
     
     // Step 6: Verify new availability column
     verifyEducatorAvailabilityColumn();
+
     
     // Print summary
     printStatusSummary();

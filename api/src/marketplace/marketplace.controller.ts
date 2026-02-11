@@ -75,8 +75,12 @@ export class MarketplaceController {
   // Service endpoints
   @Post('services')
   @Roles(UserRole.SERVICE_PROVIDER, UserRole.ADMIN, UserRole.SUPER_ADMIN)
-  createService(@Body() createServiceDto: CreateServiceDto, @Request() req) {
-    const providerId = req.user.serviceProviderId;
+  async createService(@Body() createServiceDto: CreateServiceDto, @Request() req) {
+    const organizationId: string | undefined = req.user?.organizationId;
+    if (!organizationId) {
+      throw new ForbiddenException('Organization context not found for this user');
+    }
+    const providerId = await this.marketplaceService.ensureServiceProviderIdForOrganization(organizationId);
     return this.marketplaceService.createService(createServiceDto, providerId);
   }
   @Get('services')

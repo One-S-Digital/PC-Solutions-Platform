@@ -152,11 +152,13 @@ const EducatorProfileViewPage: React.FC = () => {
     skills,
     workExperience,
     education,
+    educationText,
     certifications,
     availabilityPreferences,
     documents,
     email,
     phone,
+    experience,
   } = candidate;
 
   const isOwnProfile = currentUser?.id === candidate.id;
@@ -265,6 +267,8 @@ const EducatorProfileViewPage: React.FC = () => {
                     )}
                   </div>
                 ))
+              ) : experience ? (
+                <p className="text-sm text-gray-600 whitespace-pre-line">{experience}</p>
               ) : (
                 <p className="text-sm text-gray-500">
                   {t('profile:educator.noExperience', 'No experience listed yet.')}
@@ -286,6 +290,8 @@ const EducatorProfileViewPage: React.FC = () => {
                     {edu.description && <p className="text-sm text-gray-600 mt-1">{edu.description}</p>}
                   </div>
                 ))
+              ) : educationText ? (
+                <p className="text-sm text-gray-600 whitespace-pre-line">{educationText}</p>
               ) : (
                 <p className="text-sm text-gray-500">
                   {t('profile:educator.noEducation', 'No education details yet.')}
@@ -300,11 +306,16 @@ const EducatorProfileViewPage: React.FC = () => {
                 certifications.map((cert, index) => (
                   <div key={index} className="p-3 bg-gray-50 rounded-md">
                     <h3 className="font-semibold text-swiss-charcoal">{cert.name}</h3>
-                    <p className="text-sm text-swiss-teal">{cert.issuingOrganization}</p>
-                    <p className="text-xs text-gray-500">
-                      {t('profile:educator.issued', 'Issued')}: {cert.issueDate}
-                      {cert.expiryDate && ` - ${t('profile:educator.expires', 'Expires')}: ${cert.expiryDate}`}
-                    </p>
+                    {cert.issuingOrganization && (
+                      <p className="text-sm text-swiss-teal">{cert.issuingOrganization}</p>
+                    )}
+                    {(cert.issueDate || cert.expiryDate) && (
+                      <p className="text-xs text-gray-500">
+                        {cert.issueDate && `${t('profile:educator.issued', 'Issued')}: ${cert.issueDate}`}
+                        {cert.issueDate && cert.expiryDate && ' • '}
+                        {cert.expiryDate && `${t('profile:educator.expires', 'Expires')}: ${cert.expiryDate}`}
+                      </p>
+                    )}
                     {cert.credentialUrl && (
                       <a
                         href={cert.credentialUrl}

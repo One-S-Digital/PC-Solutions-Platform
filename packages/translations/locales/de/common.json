@@ -245,6 +245,8 @@
       "normal": "Normal"
     },
     "error": {
+      "invalidCategory": "Bitte wählen Sie eine gültige Kategorie aus",
+      "saveCategoryFailed": "Kategorie konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.",
       "selectFileOrLink": "Bitte wählen Sie eine Datei aus oder geben Sie einen Link an"
     },
     "fileUpload": {
@@ -253,7 +255,8 @@
       "dragAndDrop": "oder per Drag & Drop ablegen",
       "eLearningAllowedTypes": "Unterstützte Formate: PDF, MP4, MP3, ZIP",
       "hrPolicyAllowedTypes": "Unterstützte Formate: PDF, DOC, DOCX, XLS, XLSX, CSV, ODS",
-      "selected": "{{fileName}} ausgewählt"
+      "selected": "{{fileName}} ausgewählt",
+      "fileTooLarge": "Dateigröße überschreitet das Limit von {{max}} MB."
     },
     "labels": {
       "accessRoles": "Zugriffsrollen",
@@ -285,6 +288,7 @@
       "duration": "Dauer",
       "externalLink": "Externer Link",
       "linkUrl": "Link-URL",
+      "otherCategory": "Andere (bitte angeben)",
       "version": "Version"
     },
     "statusOptions": {
@@ -629,7 +633,9 @@
       "rename": "Umbenennen"
     },
     "adminUploadNote": "Ihre Dateien ansehen und herunterladen",
-    "confirmDelete": "Sind Sie sicher, dass Sie diese Datei löschen möchten?",
+    "confirmDelete": "Diese Datei dauerhaft löschen? Dies kann nicht rückgängig gemacht werden.",
+    "deleteError": "Datei konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.",
+    "deleteHelpCta": "Wie kann ich Dateien löschen?",
     "downloadError": "Datei konnte nicht heruntergeladen werden. Bitte versuchen Sie es erneut.",
     "emptyState": {
       "message": "Ihre Dateien erscheinen hier, sobald sie hochgeladen sind",
@@ -647,11 +653,20 @@
     "uploadButton": "Hochladen",
     "uploadFile": "Datei hochladen",
     "uploadedFiles": "uploaded Files",
-    "uploading": "Wird hochgeladen"
+    "uploading": "Wird hochgeladen",
+    "maxSize": "Max {{max}} MB",
+    "errors": {
+      "fileTooLarge": "Dateigröße überschreitet {{max}} MB."
+    }
   },
   "fileUploadZone": {
     "defaultLabel": "default",
-    "dragAndDrop": "Dateien hierher ziehen und ablegen"
+    "dragAndDrop": "Dateien hierher ziehen und ablegen",
+    "errors": {
+      "sizeExceeded": "Dateigröße überschreitet {{max}} MB.",
+      "invalidType": "Ungültiger Dateityp. Erlaubt: {{types}}",
+      "uploadFailed": "Upload fehlgeschlagen. Bitte versuchen Sie es erneut."
+    }
   },
   "filters": {
     "all": "Alle",
@@ -1497,6 +1512,9 @@
     "url": "https://example.com",
     "vatNumber": "vat Number"
   },
+  "chipInput": {
+    "pressEnterHint": "Tippen und zum Hinzufügen Enter drücken."
+  },
   "policyAlertModal": {
     "labels": {
       "displayEndDate": "Enddatum anzeigen",
@@ -1769,9 +1787,18 @@
     "viewDaycareProfile": "Kita-Profil anzeigen"
   },
   "serviceRequestModal": {
+    "title": "Service anfragen: {{serviceName}}",
+    "serviceLabel": "Service",
+    "providerLabel": "Anbieter",
     "notesLabel": "Notizen",
     "preferredDateLabel": "Bevorzugtes Datum",
-    "submitButton": "Absenden-Schaltfläche"
+    "submitButton": "Anfrage senden"
+  },
+  "serviceViewModal": {
+    "title": "Service-Details",
+    "providerLabel": "Anbieter",
+    "availabilityLabel": "Verfügbarkeit",
+    "priceLabel": "Preis"
   },
   "serviceStatus": {
     "active": "Aktiv",
@@ -1794,6 +1821,10 @@
     "currentImage": "Aktuelles Bild",
     "editTitle": "Service bearbeiten",
     "imageHelpText": "Hilfetext für Bild",
+    "errors": {
+      "invalidImageType": "Bitte wählen Sie eine Bilddatei aus.",
+      "imageTooLarge": "Das Bild muss kleiner als {{max}} MB sein."
+    },
     "labels": {
       "availability": "Verfügbarkeit",
       "categories": "categories",
@@ -2064,6 +2095,7 @@
     }
   },
   "showPassword": "Passwort anzeigen",
+  "saving": "Speichern...",
   "sidebar": {
     "ordersAppointments": "orders Appointments"
   },
@@ -2351,5 +2383,6 @@
   "viewAll": "Anzeigen Alle",
   "welcome": "Willkommen",
   "welcomeBack": "Willkommen Zurück!",
+  "saving": "Wird gespeichert...",
   "description": "Beschreibung"
 }

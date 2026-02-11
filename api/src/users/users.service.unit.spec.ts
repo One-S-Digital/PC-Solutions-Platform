@@ -38,9 +38,16 @@ describe('UsersService.remove (soft delete)', () => {
       },
       userOrganization: {
         deleteMany: jest.fn().mockResolvedValue({ count: 1 }),
+        findMany: jest.fn().mockResolvedValue([{ organizationId: 'org-id-1' }]),
       },
       userContactInfo: {
         deleteMany: jest.fn().mockResolvedValue({ count: 1 }),
+      },
+      organization: {
+        updateMany: jest.fn().mockResolvedValue({ count: 1 }),
+      },
+      subscription: {
+        updateMany: jest.fn().mockResolvedValue({ count: 0 }),
       },
       appUser: {
         update: jest.fn(),
@@ -71,6 +78,42 @@ describe('UsersService.remove (soft delete)', () => {
         data: expect.objectContaining({
           isActive: false,
           deactivatedReasonCode: 'ADMIN_SUSPENDED',
+        }),
+      }),
+    );
+    // Cascade: organizations should be deactivated along with the user
+    expect(tx.userOrganization.findMany).toHaveBeenCalledWith({
+      where: { userId: profile.id },
+      select: { organizationId: true },
+    });
+    expect(tx.organization.updateMany).toHaveBeenCalledWith({
+      where: { id: { in: ['org-id-1'] } },
+      data: { isActive: false },
+    });
+    // Cascade: subscriptions should be cancelled for the suspended user
+    // subscription.updateMany is called twice: once for org-based, once for user-based
+    expect(tx.subscription.updateMany).toHaveBeenCalledTimes(2);
+    expect(tx.subscription.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          organizationId: { in: ['org-id-1'] },
+          status: { in: ['ACTIVE', 'TRIAL', 'GRACE_PERIOD', 'PAST_DUE'] },
+        }),
+        data: expect.objectContaining({
+          status: 'CANCELLED',
+          cancellationReason: 'User account suspended by admin',
+        }),
+      }),
+    );
+    expect(tx.subscription.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          userId: profile.id,
+          status: { in: ['ACTIVE', 'TRIAL', 'GRACE_PERIOD', 'PAST_DUE'] },
+        }),
+        data: expect.objectContaining({
+          status: 'CANCELLED',
+          cancellationReason: 'User account suspended by admin',
         }),
       }),
     );

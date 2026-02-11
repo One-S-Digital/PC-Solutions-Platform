@@ -304,7 +304,19 @@ export const apiService = {
     apiClient: AxiosInstance,
     params?: { page?: number; limit?: number; search?: string; role?: string },
   ) => apiClient.get<ApiResponse<any>>('/users', { params }),
-  getAdminUsers: (apiClient: AxiosInstance, params?: { page?: number; limit?: number; search?: string; role?: string }) => 
+  getAdminUsers: (
+    apiClient: AxiosInstance,
+    params?: {
+      page?: number;
+      limit?: number;
+      search?: string;
+      role?: string;
+      dateFrom?: string;
+      dateTo?: string;
+      sortBy?: string;
+      sortOrder?: 'asc' | 'desc';
+    }
+  ) =>
     apiClient.get<ApiResponse<{ users: User[]; total: number; page: number; limit: number; totalPages: number }>>('/admin/users', { params }),
   getAdminUserStats: (apiClient: AxiosInstance) =>
     apiClient.get<any>('/admin/users/stats'),
@@ -359,7 +371,10 @@ export const apiService = {
 
   // Products
   // Note: GET list uses compat controller, CRUD operations use marketplace controller
-  getProducts: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Product[]>>('/compat/products'),
+  getProducts: (
+    apiClient: AxiosInstance,
+    params?: { dateFrom?: string; limit?: number }
+  ) => apiClient.get<ApiResponse<Product[]>>('/compat/products', { params }),
   getProductById: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Product>>(`/marketplace/products/${id}`),
   createProduct: (apiClient: AxiosInstance, productData: Partial<Product>) => apiClient.post<ApiResponse<Product>>('/marketplace/products', productData),
   updateProduct: (apiClient: AxiosInstance, id: string, productData: Partial<Product>) => apiClient.patch<ApiResponse<Product>>(`/marketplace/products/${id}`, productData),
@@ -367,7 +382,10 @@ export const apiService = {
 
   // Services
   // Note: GET list uses compat controller, CRUD operations use marketplace controller
-  getServices: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Service[]>>('/compat/services'),
+  getServices: (
+    apiClient: AxiosInstance,
+    params?: { dateFrom?: string; limit?: number }
+  ) => apiClient.get<ApiResponse<Service[]>>('/compat/services', { params }),
   getService: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Service>>(`/marketplace/services/${id}`),
   createService: (apiClient: AxiosInstance, serviceData: Partial<Service>) => apiClient.post<ApiResponse<Service>>('/marketplace/services', serviceData),
   updateService: (apiClient: AxiosInstance, id: string, serviceData: Partial<Service>) => apiClient.patch<ApiResponse<Service>>(`/marketplace/services/${id}`, serviceData),
@@ -403,7 +421,7 @@ export const apiService = {
   deleteJobListing: (apiClient: AxiosInstance, id: string) => apiClient.delete<ApiResponse<null>>(`/compat/job-listings/${id}`),
 
   // Candidates
-  getCandidates: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Candidate[]>>('/compat/candidates'),
+  getCandidates: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Candidate[]>>('/compat/candidates?includeHidden=true'),
   createCandidate: (apiClient: AxiosInstance, candidateData: {
     firstName: string;
     lastName: string;
@@ -895,6 +913,9 @@ export const apiService = {
 
   respondToTicket: (apiClient: AxiosInstance, ticketId: string, message: string) =>
     apiClient.post<ApiResponse<any>>(`/support/tickets/${ticketId}/respond`, { message }),
+
+  deleteSupportTicketResponse: (apiClient: AxiosInstance, ticketId: string, responseId: string) =>
+    apiClient.delete<ApiResponse<any>>(`/support/admin/tickets/${ticketId}/responses/${responseId}`),
 
   getSupportTicketStats: (apiClient: AxiosInstance) =>
     apiClient.get<ApiResponse<any>>('/support/admin/stats'),

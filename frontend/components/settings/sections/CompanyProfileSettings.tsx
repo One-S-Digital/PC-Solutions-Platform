@@ -71,12 +71,14 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
   // Logo cropping state
   const [showLogoCropper, setShowLogoCropper] = useState(false);
   const [selectedLogoFile, setSelectedLogoFile] = useState<File | null>(null);
+  const [logoError, setLogoError] = useState<string | null>(null);
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const logoInputRef = useRef<HTMLInputElement>(null);
   
   // Cover cropping state
   const [showCoverCropper, setShowCoverCropper] = useState(false);
   const [selectedCoverFile, setSelectedCoverFile] = useState<File | null>(null);
+  const [coverError, setCoverError] = useState<string | null>(null);
   const [uploadingCover, setUploadingCover] = useState(false);
   const coverInputRef = useRef<HTMLInputElement>(null);
   
@@ -122,8 +124,26 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
     const file = e.target.files?.[0];
     if (!file) return;
     
+    setLogoError(null);
     if (!file.type.startsWith('image/')) {
-      alert(t('settings:companyProfile.invalidImageType', 'Please select an image file'));
+      setLogoError(t('settings:companyProfile.invalidImageType', 'Please select an image file'));
+      if (logoInputRef.current) {
+        logoInputRef.current.value = '';
+      }
+      return;
+    }
+
+    const maxLogoSizeMB = 10;
+    if (file.size > maxLogoSizeMB * 1024 * 1024) {
+      setLogoError(
+        t('settings:companyProfile.logoTooLarge', {
+          defaultValue: `Logo must be less than ${maxLogoSizeMB}MB.`,
+          max: maxLogoSizeMB,
+        }),
+      );
+      if (logoInputRef.current) {
+        logoInputRef.current.value = '';
+      }
       return;
     }
     
@@ -165,8 +185,26 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
     const file = e.target.files?.[0];
     if (!file) return;
     
+    setCoverError(null);
     if (!file.type.startsWith('image/')) {
-      alert(t('settings:companyProfile.invalidImageType', 'Please select an image file'));
+      setCoverError(t('settings:companyProfile.invalidImageType', 'Please select an image file'));
+      if (coverInputRef.current) {
+        coverInputRef.current.value = '';
+      }
+      return;
+    }
+
+    const maxCoverSizeMB = 15;
+    if (file.size > maxCoverSizeMB * 1024 * 1024) {
+      setCoverError(
+        t('settings:companyProfile.coverTooLarge', {
+          defaultValue: `Cover image must be less than ${maxCoverSizeMB}MB.`,
+          max: maxCoverSizeMB,
+        }),
+      );
+      if (coverInputRef.current) {
+        coverInputRef.current.value = '';
+      }
       return;
     }
     
@@ -260,6 +298,9 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                   <p className="mt-1 text-xs text-gray-500">
                     {t('settings:companyProfile.logoHint', 'JPG, PNG or GIF. Will be cropped to 256×256px')}
                   </p>
+                  {logoError && (
+                    <p className="mt-1 text-xs text-swiss-coral">{logoError}</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -310,6 +351,9 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                   <p className="mt-1 text-xs text-gray-500">
                     {t('settings:companyProfile.coverHint', 'Recommended: 1600×400px')}
                   </p>
+                  {coverError && (
+                    <p className="mt-1 text-xs text-swiss-coral">{coverError}</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -573,6 +617,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                     onChange={(categories) => onChange('productCategories', categories)}
                     placeholder={t('settings:companyProfile.productCategoriesPlaceholder', 'Type or select categories...')}
                     allowCustomValues={true}
+                    showEnterHint={false}
                   />
                   {hasOtherProductCategory && (
                     <div className="mt-2 flex items-center gap-2">
@@ -700,6 +745,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                     onChange={(categories) => onChange('serviceCategories', categories)}
                     placeholder={t('settings:companyProfile.serviceCategoriesPlaceholder', 'Type or select categories...')}
                     allowCustomValues={true}
+                    showEnterHint={false}
                   />
                   {hasOtherServiceCategory && (
                     <div className="mt-2 flex items-center gap-2">

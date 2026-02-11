@@ -12,6 +12,13 @@ interface ChipInputProps<T extends string> {
   maxChips?: number;
   allowCustomValues?: boolean; // If true and no availableOptions, input acts as a tag adder
   onInputValueChange?: (value: string) => void; // Reports unconfirmed typed input (e.g., before pressing Enter)
+  /**
+   * When true, show helper text under the input (useful to explain "Press Enter to add").
+   * Defaults to `allowCustomValues`.
+   */
+  showEnterHint?: boolean;
+  /** Optional override for helper text */
+  enterHintText?: string;
 }
 
 const ChipInput = <T extends string>({
@@ -22,12 +29,16 @@ const ChipInput = <T extends string>({
   maxChips,
   allowCustomValues = !availableOptions || availableOptions.length === 0, // Default to true if no options are provided (or options list is empty)
   onInputValueChange,
+  showEnterHint,
+  enterHintText,
 }: ChipInputProps<T>): React.ReactElement => {
   const { t } = useTranslation(['common']);
   const [inputValue, setInputValue] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   
   const placeholderText = placeholder || t('common:placeholders.typeorselect');
+  const shouldShowHint = (showEnterHint ?? allowCustomValues) && !(maxChips !== undefined && selectedChips.length >= maxChips);
+  const hintText = enterHintText ?? t('common:chipInput.pressEnterHint', 'Press Enter to add.');
 
   const setInputValueAndReport = (nextValue: string) => {
     setInputValue(nextValue);
@@ -108,6 +119,9 @@ const ChipInput = <T extends string>({
             </li>
           ))}
         </ul>
+      )}
+      {shouldShowHint && (
+        <p className="text-xs text-gray-500 mt-1">{hintText}</p>
       )}
     </div>
   );

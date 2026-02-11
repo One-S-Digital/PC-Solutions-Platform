@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   CreditCard,
@@ -51,6 +51,8 @@ import { UserRole } from '../types';
 import { User } from '../types/api';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import { useLocation } from 'react-router-dom';
+import { getEffectiveSince, getLastVisited, markVisited } from '../utils/notificationState';
 
 // Locale constant for currency formatting
 const CURRENCY_LOCALE = 'de-CH';
@@ -1941,6 +1943,12 @@ const Subscriptions: React.FC = () => {
   
   // Subscription Requests state
   const [viewMode, setViewMode] = useState<ViewMode>('subscriptions');
+  const [requestsLastVisited, setRequestsLastVisited] = useState<Date | null>(
+    () => getLastVisited('subscriptionRequests')
+  );
+  const [cancellationsLastVisited, setCancellationsLastVisited] = useState<Date | null>(
+    () => getLastVisited('subscriptionCancellations')
+  );
   const [requestStatusFilter, setRequestStatusFilter] = useState<string>('');
   const [cancellationStatusFilter, setCancellationStatusFilter] = useState<string>('');
   const [selectedRequest, setSelectedRequest] = useState<SubscriptionRequest | null>(null);
@@ -1953,8 +1961,17 @@ const Subscriptions: React.FC = () => {
   const apiClient = useApiClient();
   const { t } = useTranslation(['common', 'admin']);
   const queryClient = useQueryClient();
+  const location = useLocation();
 
   const selectedRoleFilter = selectedRole && Object.values(UserRole).includes(selectedRole as any) ? selectedRole : undefined;
+  const requestBadgeSince = useMemo(
+    () => getEffectiveSince(requestsLastVisited).toISOString(),
+    [requestsLastVisited]
+  );
+  const cancellationBadgeSince = useMemo(
+    () => getEffectiveSince(cancellationsLastVisited).toISOString(),
+    [cancellationsLastVisited]
+  );
 
   // Pagination for the user list (Subscriptions mode)
   const [userListPage, setUserListPage] = useState(1);
@@ -1963,6 +1980,31 @@ const Subscriptions: React.FC = () => {
   React.useEffect(() => {
     setUserListPage(1);
   }, [selectedRoleFilter, searchQuery, userListPageSize]);
+
+  React.useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const viewParam = params.get('view');
+    if (
+      viewParam &&
+      viewParam !== viewMode &&
+      ['subscriptions', 'requests', 'cancellations', 'settings'].includes(viewParam)
+    ) {
+      setViewMode(viewParam as ViewMode);
+    }
+  }, [location.search, viewMode]);
+
+  useEffect(() => {
+    if (viewMode === 'requests') {
+      const now = new Date();
+      markVisited('subscriptionRequests', now);
+      setRequestsLastVisited(now);
+    }
+    if (viewMode === 'cancellations') {
+      const now = new Date();
+      markVisited('subscriptionCancellations', now);
+      setCancellationsLastVisited(now);
+    }
+  }, [viewMode]);
 
   // User stats (DB) - used for role card totals
   const { data: userStatsResponse } = useQuery({
@@ -2028,6 +2070,28 @@ const Subscriptions: React.FC = () => {
     enabled: !!apiClient && viewMode === 'requests',
   });
 
+  const { data: pendingRequestsBadgeResponse } = useQuery({
+    queryKey: ['subscription-requests-badge', requestBadgeSince, 'PENDING'],
+    queryFn: () =>
+      subscriptionService.getSubscriptionRequests(apiClient, {
+        status: 'PENDING',
+        limit: 1,
+        dateFrom: requestBadgeSince,
+      }),
+    enabled: !!apiClient,
+  });
+
+  const { data: underReviewRequestsBadgeResponse } = useQuery({
+    queryKey: ['subscription-requests-badge', requestBadgeSince, 'UNDER_REVIEW'],
+    queryFn: () =>
+      subscriptionService.getSubscriptionRequests(apiClient, {
+        status: 'UNDER_REVIEW',
+        limit: 1,
+        dateFrom: requestBadgeSince,
+      }),
+    enabled: !!apiClient,
+  });
+
   // Fetch subscription cancellation requests
   const { data: cancellationRequestsResponse, isLoading: cancellationRequestsLoading } = useQuery({
     queryKey: ['subscription-cancellation-requests', cancellationStatusFilter, selectedRoleFilter],
@@ -2038,6 +2102,17 @@ const Subscriptions: React.FC = () => {
         limit: 100,
       }),
     enabled: !!apiClient && viewMode === 'cancellations',
+  });
+
+  const { data: cancellationBadgeResponse } = useQuery({
+    queryKey: ['subscription-cancellation-requests-badge', cancellationBadgeSince],
+    queryFn: () =>
+      subscriptionService.getCancellationRequests(apiClient, {
+        status: 'PENDING',
+        limit: 1,
+        dateFrom: cancellationBadgeSince,
+      }),
+    enabled: !!apiClient,
   });
 
   // Fetch request analytics
@@ -2600,11 +2675,11 @@ const Subscriptions: React.FC = () => {
     setIsRequestDetailOpen(true);
   };
 
-  const pendingRequestsCount = requests.filter(
-    (r) => r.status === SubscriptionRequestStatus.PENDING || r.status === SubscriptionRequestStatus.UNDER_REVIEW
-  ).length;
+  const pendingRequestsCount =
+    (pendingRequestsBadgeResponse?.data?.data?.total ?? 0) +
+    (underReviewRequestsBadgeResponse?.data?.data?.total ?? 0);
 
-  const pendingCancellationRequestsCount = cancellationRequests.filter((r) => r.status === 'PENDING').length;
+  const pendingCancellationRequestsCount = cancellationBadgeResponse?.data?.data?.total ?? 0;
 
   // Stats cards
   const statsCards = [
@@ -2690,7 +2765,7 @@ const Subscriptions: React.FC = () => {
             <ClipboardList className="w-4 h-4" />
             {t('admin:subscriptions.tabs.requests', 'Subscription Requests')}
             {pendingRequestsCount > 0 && (
-              <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-red-100 text-red-800">
+              <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-red-500 text-white">
                 {pendingRequestsCount}
               </span>
             )}
@@ -2710,7 +2785,7 @@ const Subscriptions: React.FC = () => {
             <XCircle className="w-4 h-4" />
             {t('admin:subscriptions.tabs.cancellations', 'Cancellation Requests')}
             {pendingCancellationRequestsCount > 0 && (
-              <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-red-100 text-red-800">
+              <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-red-500 text-white">
                 {pendingCancellationRequestsCount}
               </span>
             )}

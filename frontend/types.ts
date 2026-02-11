@@ -32,6 +32,9 @@ export interface User {
   workExperience?: string;
   education?: string;
   certifications?: string[];
+  workExperienceItems?: WorkExperienceItem[];
+  educationItems?: EducationItem[];
+  certificationItems?: CertificationItem[];
   skills?: string[];
   availability?: string;
   cvUrl?: string;
@@ -314,6 +317,7 @@ export interface CandidateProfile {
     skills: string[];
     workExperience?: WorkExperienceItem[];
     education?: EducationItem[];
+    educationText?: string;
     certifications?: CertificationItem[];
     availabilityPreferences?: {
         days?: ('Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat' | 'Sun')[];
@@ -928,6 +932,9 @@ interface BaseSettings {
     workExperience?: string;
     education?: string;
     certifications?: string[];
+    workExperienceItems?: WorkExperienceItem[];
+    educationItems?: EducationItem[];
+    certificationItems?: CertificationItem[];
     skills?: string[];
     availability?: string; // Legacy: simple text availability
     availabilitySettings?: EducatorAvailabilitySettings; // New: structured availability schedule

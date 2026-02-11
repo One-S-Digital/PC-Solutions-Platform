@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -14,6 +14,8 @@ import { PromoCodesService } from '../promo-codes/promo-codes.service';
 
 @Injectable()
 export class MarketplaceService {
+  private readonly logger = new Logger(MarketplaceService.name);
+
   constructor(
     private prisma: PrismaService,
     private csvProcessingService: CsvProcessingService,
@@ -21,8 +23,53 @@ export class MarketplaceService {
     private promoCodesService: PromoCodesService,
   ) {}
 
+  /**
+   * Compatibility layer for frontend expectations:
+   * - Prisma `Service.providerId` is a ServiceProvider.id
+   * - Frontend historically treats `providerId` as Organization.id
+   *
+   * So we expose `providerId` as the organizationId when available.
+   */
+  private normalizeServiceProviderIdForFrontend<T extends { providerId: string; provider?: any }>(
+    service: T,
+  ): T {
+    const providerOrgId = service?.provider?.organizationId;
+    if (providerOrgId && typeof providerOrgId === 'string') {
+      return { ...service, providerId: providerOrgId };
+    }
+    return service;
+  }
+
+  /**
+   * Services belong to `ServiceProvider` (not directly to `Organization`).
+   * For SERVICE_PROVIDER users we only reliably have `organizationId` in `req.user`,
+   * so we resolve (and create if missing) the matching ServiceProvider record here.
+   */
+  async ensureServiceProviderIdForOrganization(organizationId: string): Promise<string> {
+    const provider = await this.prisma.serviceProvider.upsert({
+      where: { organizationId },
+      update: {},
+      create: { organizationId },
+      select: { id: true },
+    });
+    return provider.id;
+  }
+
   // Product Management
   async createProduct(createProductDto: CreateProductDto, supplierId: string) {
+    // Defensive validation:
+    // - Global ValidationPipe should enforce this, but we also guard here to ensure we never hit
+    //   Prisma null-constraint errors (which show up as 500s + Sentry noise).
+    const normalizedTitle =
+      typeof (createProductDto as any)?.title === 'string'
+        ? ((createProductDto as any).title as string).trim()
+        : '';
+    if (!normalizedTitle) {
+      throw new BadRequestException('Product title is required');
+    }
+    // Ensure we don't persist whitespace-only titles.
+    (createProductDto as any).title = normalizedTitle;
+
     const {
       imageAssetId,
       deliveryFees,
@@ -34,49 +81,87 @@ export class MarketplaceService {
     const toJsonValue = <T>(value: T | undefined) =>
       value === undefined ? undefined : (value as unknown as Prisma.InputJsonValue);
 
-    const product = await this.prisma.product.create({
-      data: {
-        ...productData,
-        ...(toJsonValue(deliveryFees) !== undefined && {
-          deliveryFees: toJsonValue(deliveryFees),
-        }),
-        ...(toJsonValue(volumePricing) !== undefined && {
-          volumePricing: toJsonValue(volumePricing),
-        }),
-        ...(toJsonValue(variants) !== undefined && {
-          variants: toJsonValue(variants),
-        }),
-        supplier: {
-          connect: { id: supplierId },
+    let product: any;
+    try {
+      product = await this.prisma.product.create({
+        data: {
+          ...productData,
+          ...(toJsonValue(deliveryFees) !== undefined && {
+            deliveryFees: toJsonValue(deliveryFees),
+          }),
+          ...(toJsonValue(volumePricing) !== undefined && {
+            volumePricing: toJsonValue(volumePricing),
+          }),
+          ...(toJsonValue(variants) !== undefined && {
+            variants: toJsonValue(variants),
+          }),
+          supplier: {
+            connect: { id: supplierId },
+          },
+          ...(imageAssetId
+            ? {
+                imageAsset: {
+                  connect: { id: imageAssetId },
+                },
+              }
+            : {}),
         },
-        ...(imageAssetId
-          ? {
-              imageAsset: {
-                connect: { id: imageAssetId },
-              },
-            }
-          : {}),
-      },
-      include: {
-        supplier: true,
-        imageAsset: true,
-      },
-    });
+        include: {
+          supplier: true,
+          imageAsset: true,
+        },
+      });
+    } catch (error: unknown) {
+      // Convert common input-related Prisma errors into 400s.
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        // P2011: Null constraint violation
+        if (error.code === 'P2011') {
+          const metaConstraint = (error.meta as any)?.constraint;
+          const fieldsFromMeta = Array.isArray(metaConstraint)
+            ? metaConstraint.filter((x) => typeof x === 'string')
+            : typeof metaConstraint === 'string'
+              ? [metaConstraint]
+              : [];
 
-    // Save translatable fields and trigger translation
+          const fieldsFromMessage =
+            fieldsFromMeta.length > 0
+              ? []
+              : (() => {
+                  const m = /fields:\\s*\\(([^)]*)\\)/i.exec(error.message);
+                  if (!m?.[1]) return [];
+                  return m[1]
+                    .split(',')
+                    .map((s) => s.replace(/[`\\s]/g, '').trim())
+                    .filter(Boolean);
+                })();
+
+          const fields = [...new Set([...fieldsFromMeta, ...fieldsFromMessage])];
+          const detail =
+            fields.length > 0 ? `Missing required product fields: ${fields.join(', ')}` : undefined;
+
+          throw new BadRequestException(detail ?? 'Missing required product fields');
+        }
+      }
+      throw error;
+    }
+
+    // Trigger translation asynchronously - don't block the save response
     const translatableFields = FIELDS_BY_ENTITY.product || ['title', 'description'];
     const translationPayload: Record<string, any> = {
-      title: product.title,
+      title: (product as any)?.title ?? (product as any)?.name ?? '',
       description: product.description || '',
     };
 
     if (translationPayload.title || translationPayload.description) {
-      await this.translationService.saveEntityWithTranslations(
+      this.translationService.saveEntityWithTranslations(
         'product',
         product.id,
         translationPayload,
         translatableFields,
-      );
+      ).catch((err: unknown) => {
+        const message = err instanceof Error ? err.message : String(err);
+        this.logger.error(`Background translation failed for product:${product.id}: ${message}`);
+      });
     }
 
     return product;
@@ -209,7 +294,7 @@ export class MarketplaceService {
       },
     });
 
-    // Update translations if translatable fields changed
+    // Trigger translation asynchronously - don't block the save response
     const translatableFields = FIELDS_BY_ENTITY.product || ['title', 'description'];
     const hasTranslatableChanges =
       updateProductDto.title !== undefined ||
@@ -221,12 +306,15 @@ export class MarketplaceService {
         description: product.description || '',
       };
 
-      await this.translationService.saveEntityWithTranslations(
+      this.translationService.saveEntityWithTranslations(
         'product',
         product.id,
         translationPayload,
         translatableFields,
-      );
+      ).catch((err: unknown) => {
+        const message = err instanceof Error ? err.message : String(err);
+        this.logger.error(`Background translation failed for product:${product.id}: ${message}`);
+      });
     }
 
     return product;
@@ -254,6 +342,7 @@ export class MarketplaceService {
       },
     });
 
+    // Trigger translation asynchronously - don't block the save response
     const translatableFields = FIELDS_BY_ENTITY.service || ['title', 'description'];
     const translationPayload: Record<string, any> = {
       title: service.title,
@@ -261,15 +350,18 @@ export class MarketplaceService {
     };
 
     if (translationPayload.title || translationPayload.description) {
-      await this.translationService.saveEntityWithTranslations(
+      this.translationService.saveEntityWithTranslations(
         'service',
         service.id,
         translationPayload,
         translatableFields,
-      );
+      ).catch((err: unknown) => {
+        const message = err instanceof Error ? err.message : String(err);
+        this.logger.error(`Background translation failed for service:${service.id}: ${message}`);
+      });
     }
 
-    return service;
+    return this.normalizeServiceProviderIdForFrontend(service);
   }
 
   async findAllServices(filters?: {
@@ -340,18 +432,19 @@ export class MarketplaceService {
             filters.lang!,
           );
 
-          return {
+          const withTranslations = {
             ...service,
             title: translatedFields.title || service.title,
             description: translatedFields.description || service.description,
           };
+          return this.normalizeServiceProviderIdForFrontend(withTranslations);
         }),
       );
 
       return servicesWithTranslations;
     }
 
-    return services;
+    return services.map((service) => this.normalizeServiceProviderIdForFrontend(service));
   }
 
   async findServiceById(id: string, lang?: string) {
@@ -384,14 +477,15 @@ export class MarketplaceService {
         lang,
       );
 
-      return {
+      const withTranslations = {
         ...service,
         title: translatedFields.title || service.title,
         description: translatedFields.description || service.description,
       };
+      return this.normalizeServiceProviderIdForFrontend(withTranslations);
     }
 
-    return service;
+    return this.normalizeServiceProviderIdForFrontend(service);
   }
 
   async updateService(id: string, updateServiceDto: UpdateServiceDto) {
@@ -407,6 +501,7 @@ export class MarketplaceService {
       },
     });
 
+    // Trigger translation asynchronously - don't block the save response
     const translatableFields = FIELDS_BY_ENTITY.service || ['title', 'description'];
     const hasTranslatableChanges =
       updateServiceDto.title !== undefined ||
@@ -418,15 +513,18 @@ export class MarketplaceService {
         description: service.description || '',
       };
 
-      await this.translationService.saveEntityWithTranslations(
+      this.translationService.saveEntityWithTranslations(
         'service',
         service.id,
         translationPayload,
         translatableFields,
-      );
+      ).catch((err: unknown) => {
+        const message = err instanceof Error ? err.message : String(err);
+        this.logger.error(`Background translation failed for service:${service.id}: ${message}`);
+      });
     }
 
-    return service;
+    return this.normalizeServiceProviderIdForFrontend(service);
   }
 
   async deleteService(id: string) {

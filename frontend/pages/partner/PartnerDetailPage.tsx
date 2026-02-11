@@ -6,6 +6,7 @@ import { useCart } from '../../contexts/CartContext';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import ServiceRequestModal from '../../components/marketplace/ServiceRequestModal';
+import ServiceViewModal from '../../components/marketplace/ServiceViewModal';
 import QuantityInput from '../../components/ui/QuantityInput';
 import { 
   ArrowLeftIcon, 
@@ -19,6 +20,7 @@ import {
   PlusCircleIcon, 
   ListBulletIcon, 
   ArrowTopRightOnSquareIcon,
+  EyeIcon,
   WrenchScrewdriverIcon,
   ArrowPathIcon,
   UserCircleIcon
@@ -28,7 +30,7 @@ import { useOrganizationMessaging } from '../../hooks/useOrganizationMessaging';
 import ActiveClientToggle from '../../components/shared/ActiveClientToggle';
 import OrganizationDocumentsList from '../../components/profile/OrganizationDocumentsList';
 import PromoCodesDisplaySection from '../../components/profile/PromoCodesDisplaySection';
-import { formatServiceCategory, formatServiceDeliveryType, formatCategory } from '../../utils/serviceFormatting';
+import { formatServiceCategoryForService, formatServiceDeliveryType, formatCategory } from '../../utils/serviceFormatting';
 import { openExternalUrl, toExternalUrl } from '../../utils/url';
 import { organizationService } from '../../services/organizationService';
 
@@ -141,6 +143,8 @@ const PartnerDetailPage: React.FC = () => {
 
   const [isServiceRequestModalOpen, setIsServiceRequestModalOpen] = useState(false);
   const [selectedServiceForRequest, setSelectedServiceForRequest] = useState<Service | null>(null);
+  const [isServiceViewModalOpen, setIsServiceViewModalOpen] = useState(false);
+  const [selectedServiceForView, setSelectedServiceForView] = useState<Service | null>(null);
   
   const [serviceRequests, setServiceRequests] = useState<ServiceRequest[]>([]);
 
@@ -160,7 +164,11 @@ const PartnerDetailPage: React.FC = () => {
         setProducts(partnerData.products || []);
         setServices([]);
       } else if (partnerData.type === OrganizationType.SERVICE_PROVIDER) {
-        setServices(partnerData.services || []);
+        const normalizedServices = (partnerData.services || []).map(service => ({
+          ...service,
+          providerName: service.providerName || partnerData.name,
+        }));
+        setServices(normalizedServices);
         setProducts([]);
       }
     } catch (err) {
@@ -177,6 +185,7 @@ const PartnerDetailPage: React.FC = () => {
   
   const isFoundationUser = currentUser?.role === UserRole.FOUNDATION;
   const isVendorUser = currentUser?.role === UserRole.PRODUCT_SUPPLIER || currentUser?.role === UserRole.SERVICE_PROVIDER;
+  const isAdminOrSuperAdmin = currentUser?.role === UserRole.ADMIN || currentUser?.role === UserRole.SUPER_ADMIN;
   
   const isSupplier = partner?.type === OrganizationType.PRODUCT_SUPPLIER;
   const isServiceProvider = partner?.type === OrganizationType.SERVICE_PROVIDER;
@@ -194,6 +203,16 @@ const PartnerDetailPage: React.FC = () => {
     }
     setSelectedServiceForRequest(service);
     setIsServiceRequestModalOpen(true);
+  };
+
+  const handleOpenServiceViewModal = (service: Service) => {
+    setSelectedServiceForView(service);
+    setIsServiceViewModalOpen(true);
+  };
+
+  const handleRequestServiceFromView = (service: Service) => {
+    setIsServiceViewModalOpen(false);
+    handleOpenServiceRequestModal(service);
   };
 
   const handleSubmitServiceRequest = (requestData: Omit<ServiceRequest, 'id' | 'requestDate' | 'status' | 'foundationId' | 'foundationOrgId' | 'providerId' | 'serviceName' | 'serviceId'>) => {
@@ -329,7 +348,7 @@ const PartnerDetailPage: React.FC = () => {
                 ))}
             </div>
           </div>
-          {isFoundationUser && (
+          {(isFoundationUser || isAdminOrSuperAdmin) && (
             <div className="mt-4 sm:mt-0 sm:ml-auto flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 items-center flex-shrink-0">
               <Button 
                 variant="outline" 
@@ -487,7 +506,7 @@ const PartnerDetailPage: React.FC = () => {
                           {service.title}
                         </h3>
                         <p className="text-xs text-gray-500">
-                          {formatServiceCategory(t, service.category)}
+                          {formatServiceCategoryForService(t, service)}
                           {service.deliveryType && <> • {formatServiceDeliveryType(t, service.deliveryType)}</>}
                         </p>
                         <p className="text-sm text-gray-600 mt-1 line-clamp-2">{service.description}</p>
@@ -498,17 +517,26 @@ const PartnerDetailPage: React.FC = () => {
                           <p className="text-md font-semibold text-swiss-mint mt-1.5">CHF {service.price}</p>
                         )}
                       </div>
-                      {isFoundationUser && (
-                        <Button 
-                          variant="secondary" 
-                          size="sm" 
-                          leftIcon={PlusCircleIcon} 
-                          onClick={() => handleOpenServiceRequestModal(service)} 
-                          className="mt-2 sm:mt-0 sm:ml-auto flex-shrink-0"
+                      <div className="mt-2 sm:mt-0 sm:ml-auto flex flex-col sm:flex-row gap-2 flex-shrink-0">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          leftIcon={EyeIcon}
+                          onClick={() => handleOpenServiceViewModal(service)}
                         >
-                          {t('partnerDetailPage.requestServiceButton')}
+                          {t('partnerDetailPage.viewServiceButton', 'View Service')}
                         </Button>
-                      )}
+                        {isFoundationUser && (
+                          <Button 
+                            variant="secondary" 
+                            size="sm" 
+                            leftIcon={PlusCircleIcon} 
+                            onClick={() => handleOpenServiceRequestModal(service)} 
+                          >
+                            {t('partnerDetailPage.requestServiceButton')}
+                          </Button>
+                        )}
+                      </div>
                     </Card>
                   ))}
                 </div>
@@ -533,6 +561,16 @@ const PartnerDetailPage: React.FC = () => {
         onClose={() => setIsServiceRequestModalOpen(false)}
         service={selectedServiceForRequest}
         onSubmitRequest={handleSubmitServiceRequest}
+      />
+      <ServiceViewModal
+        isOpen={isServiceViewModalOpen}
+        service={selectedServiceForView}
+        onClose={() => {
+          setIsServiceViewModalOpen(false);
+          setSelectedServiceForView(null);
+        }}
+        onRequestService={handleRequestServiceFromView}
+        providerName={partner?.name}
       />
     </div>
   );

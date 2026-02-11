@@ -23,6 +23,7 @@
   },
   "candidatePool": {
     "emptyState": "Keine Kandidaten im Pool verfügbar",
+    "favorites": "Favoriten",
     "filterTitle": "Kandidaten filtern",
     "noCandidates": "Keine Kandidaten verfügbar",
     "searchPlaceholder": "Kandidaten suchen...",

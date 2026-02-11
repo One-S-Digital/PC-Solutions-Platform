@@ -276,10 +276,10 @@ const Support: React.FC = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <User className="h-4 w-4 text-gray-400 mr-2" />
-                        <div className="text-sm text-gray-900">
+                    <td className="px-6 py-4">
+                      <div className="flex items-start">
+                        <User className="h-4 w-4 text-gray-400 mr-2 mt-0.5 flex-shrink-0" />
+                        <div className="text-sm text-gray-900 break-words">
                           {ticket.user
                             ? `${ticket.user.firstName || ''} ${ticket.user.lastName || ''}`.trim() ||
                               ticket.user.email
@@ -287,12 +287,12 @@ const Support: React.FC = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
+                    <td className="px-6 py-4">
+                      <div className="flex items-start">
                         {ticket.assignee ? (
                           <>
-                            <UserCheck className="h-4 w-4 text-green-600 mr-2" />
-                            <div className="text-sm text-gray-900">
+                            <UserCheck className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                            <div className="text-sm text-gray-900 break-words">
                               {`${ticket.assignee.firstName || ''} ${ticket.assignee.lastName || ''}`.trim() ||
                                 ticket.assignee.email ||
                                 t('admin:support.staff')}
@@ -303,7 +303,7 @@ const Support: React.FC = () => {
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4">
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getTicketPriorityColor(
                           ticket.priority
@@ -312,7 +312,7 @@ const Support: React.FC = () => {
                         {ticket.priority}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4">
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getTicketStatusColor(
                           ticket.status
@@ -322,13 +322,13 @@ const Support: React.FC = () => {
                         {ticket.status.replace('_', ' ')}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4">
                       <div className="flex items-center text-sm text-gray-500">
-                        <Calendar className="h-4 w-4 mr-1" />
+                        <Calendar className="h-4 w-4 mr-1 flex-shrink-0" />
                         {new Date(ticket.createdAt).toLocaleDateString()}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                    <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center gap-2">
                         <select
                           className="px-2 py-1 border border-gray-300 rounded-md text-xs focus:ring-2 focus:ring-blue-500 focus:border-transparent"

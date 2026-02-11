@@ -18,6 +18,8 @@ export class MimeValidationService {
   private readonly allowedExtensions: string[];
   private readonly allowedMimeTypes: string[];
   private readonly maxFileSize: number;
+  private readonly officeZipExtensions = new Set(['docx', 'xlsx', 'pptx']);
+  private readonly officeLegacyExtensions = new Set(['doc', 'xls', 'ppt']);
 
   constructor(private configService: ConfigService) {
     // Default extensions include video formats for e-learning content
@@ -30,15 +32,42 @@ export class MimeValidationService {
     // Default MIME types include video formats for e-learning content
     // Note: AVI files can be detected as either video/x-msvideo or video/vnd.avi depending on the file-type library version
     const defaultMimeTypes = 'application/pdf,image/png,image/jpeg,image/webp,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,video/mp4,video/quicktime,video/webm,video/x-msvideo,video/vnd.avi,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv,application/csv,application/vnd.oasis.opendocument.spreadsheet';
-    this.allowedMimeTypes = (this.configService.get<string>('UPLOAD_ALLOWED_MIME') || defaultMimeTypes)
+    const configuredAllowedMime = this.configService.get<string>('UPLOAD_ALLOWED_MIME');
+    const baseAllowedMimeTypes = (configuredAllowedMime || defaultMimeTypes)
       .split(',')
       .map(mime => mime.trim().toLowerCase())
       .filter(Boolean);
+
+    /**
+     * Production config foot-gun prevention:
+     * If operators configure UPLOAD_ALLOWED_EXT but forget to include the corresponding
+     * canonical MIME types in UPLOAD_ALLOWED_MIME, valid files can be rejected.
+     *
+     * Example from your logs: .docx detected as
+     * application/vnd.openxmlformats-officedocument.wordprocessingml.document
+     * but rejected because that MIME wasn't present in the configured allowed list.
+     *
+     * To keep security intact while avoiding false rejections, we expand the allowed MIME set
+     * with canonical MIME types inferred from the allowed extensions.
+     */
+    const inferredFromExtensions: string[] = [];
+    for (const ext of this.allowedExtensions) {
+      // mime-types lookup expects a filename
+      const inferred = mime.lookup(`file.${ext}`);
+      if (typeof inferred === 'string' && inferred.trim().length > 0) {
+        inferredFromExtensions.push(inferred.toLowerCase());
+      }
+    }
+
+    this.allowedMimeTypes = Array.from(new Set([...baseAllowedMimeTypes, ...inferredFromExtensions]));
     
     // Default max file size is 100MB to support video uploads
     this.maxFileSize = Number(this.configService.get<string>('UPLOAD_MAX_MB') || '100') * 1024 * 1024;
     
-    this.logger.log(`MIME validation configured: ${this.allowedExtensions.length} extensions, ${this.allowedMimeTypes.length} MIME types, max ${this.maxFileSize / (1024 * 1024)}MB`);
+    const expandedMimeCount = this.allowedMimeTypes.length - baseAllowedMimeTypes.length;
+    this.logger.log(
+      `MIME validation configured: ${this.allowedExtensions.length} extensions, ${this.allowedMimeTypes.length} MIME types${expandedMimeCount > 0 ? ` (+${expandedMimeCount} inferred)` : ''}, max ${this.maxFileSize / (1024 * 1024)}MB`,
+    );
   }
 
   /**
@@ -58,8 +87,61 @@ export class MimeValidationService {
     const originalMimeType = mime.lookup(originalName) || '';
 
     // Get detected extension and MIME type
-    const detectedExt = fileType?.ext || originalExt;
-    const detectedMimeType = fileType?.mime || originalMimeType;
+    let detectedExt = fileType?.ext || originalExt;
+    let detectedMimeType = fileType?.mime || originalMimeType;
+
+    /**
+     * Special-case handling for Microsoft Office formats:
+     * - Modern Office files (.docx/.xlsx/.pptx) are ZIP containers, and `file-type`
+     *   often reports them as application/zip. We validate that the ZIP contains
+     *   expected OOXML entries, then treat the detected type as the original.
+     * - Legacy Office files (.doc/.xls/.ppt) are Compound File Binary (CFB) and may be
+     *   detected generically; if the buffer matches the CFB signature, we treat the
+     *   detected type as the original.
+     */
+    const normalizedOriginalExt = originalExt.toLowerCase();
+    const normalizedDetectedMime = (detectedMimeType || '').toLowerCase();
+    const normalizedDetectedExt = (detectedExt || '').toLowerCase();
+
+    if (
+      this.officeZipExtensions.has(normalizedOriginalExt) &&
+      (normalizedDetectedMime === 'application/zip' || normalizedDetectedExt === 'zip')
+    ) {
+      const ooxmlCheck = this.validateOfficeOpenXmlZipContainer(buffer, normalizedOriginalExt as 'docx' | 'xlsx' | 'pptx');
+      if (!ooxmlCheck.isValid) {
+        return {
+          isValid: false,
+          detectedExt,
+          detectedMimeType,
+          originalExt,
+          originalMimeType,
+          reason: ooxmlCheck.reason,
+        };
+      }
+
+      // Treat the detected type as the original intended OOXML type
+      detectedExt = originalExt;
+      detectedMimeType = originalMimeType;
+    }
+
+    if (
+      this.officeLegacyExtensions.has(normalizedOriginalExt) &&
+      (normalizedDetectedExt === 'cfb' || normalizedDetectedMime === 'application/x-cfb')
+    ) {
+      if (!this.isCompoundFileBinary(buffer)) {
+        return {
+          isValid: false,
+          detectedExt,
+          detectedMimeType,
+          originalExt,
+          originalMimeType,
+          reason: "Invalid legacy Office document structure (expected Compound File Binary format)",
+        };
+      }
+
+      detectedExt = originalExt;
+      detectedMimeType = originalMimeType;
+    }
 
     // Validate detected types
     const isValidExt = this.allowedExtensions.includes(detectedExt.toLowerCase());
@@ -90,6 +172,60 @@ export class MimeValidationService {
     this.logger.log(`MIME validation for '${originalName}': ${result.isValid ? 'VALID' : 'INVALID'} - ${result.reason || 'OK'}`);
     
     return result;
+  }
+
+  /**
+   * Validate OOXML files (docx/xlsx/pptx) when detected as a generic ZIP.
+   * This is a lightweight structural check that avoids full ZIP parsing.
+   * It looks for key entry names which are stored as plain strings in ZIP metadata.
+   */
+  private validateOfficeOpenXmlZipContainer(
+    buffer: Buffer,
+    extension: 'docx' | 'xlsx' | 'pptx',
+  ): { isValid: boolean; reason?: string } {
+    // ZIP local file header signature "PK\x03\x04"
+    const isZip = buffer.length >= 4 && buffer[0] === 0x50 && buffer[1] === 0x4b && buffer[2] === 0x03 && buffer[3] === 0x04;
+    if (!isZip) {
+      return { isValid: false, reason: 'Invalid Office document: expected ZIP container' };
+    }
+
+    // All OOXML files should include [Content_Types].xml
+    const hasContentTypes = buffer.indexOf(Buffer.from('[Content_Types].xml')) !== -1;
+    if (!hasContentTypes) {
+      return { isValid: false, reason: 'Invalid Office document: missing [Content_Types].xml' };
+    }
+
+    // Minimal type-specific markers
+    const markers: Record<typeof extension, string[]> = {
+      docx: ['word/document.xml', 'word/'],
+      xlsx: ['xl/workbook.xml', 'xl/'],
+      pptx: ['ppt/presentation.xml', 'ppt/'],
+    };
+
+    const hasAnyMarker = markers[extension].some((m) => buffer.indexOf(Buffer.from(m)) !== -1);
+    if (!hasAnyMarker) {
+      return { isValid: false, reason: `Invalid Office document: missing expected ${extension.toUpperCase()} content` };
+    }
+
+    return { isValid: true };
+  }
+
+  /**
+   * Check for Compound File Binary signature (used by legacy Office .doc/.xls/.ppt).
+   * Signature bytes: D0 CF 11 E0 A1 B1 1A E1
+   */
+  private isCompoundFileBinary(buffer: Buffer): boolean {
+    if (buffer.length < 8) return false;
+    return (
+      buffer[0] === 0xd0 &&
+      buffer[1] === 0xcf &&
+      buffer[2] === 0x11 &&
+      buffer[3] === 0xe0 &&
+      buffer[4] === 0xa1 &&
+      buffer[5] === 0xb1 &&
+      buffer[6] === 0x1a &&
+      buffer[7] === 0xe1
+    );
   }
 
   /**

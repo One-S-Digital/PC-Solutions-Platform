@@ -423,6 +423,9 @@
       "notifications": "Notifications",
       "integrations": "Intégrations",
       "systemConfig": "Configuration système",
+      "designSystem": "Système de design",
+      "translations": "Traductions",
+      "systemMonitoring": "Surveillance du système",
       "branding": "Image de marque",
       "content": "Contenu",
       "general": "Général"
@@ -605,7 +608,16 @@
         "description": "Voir les métriques de la plateforme"
       }
     },
-    "contentUploadSuccess": "Contenu téléchargé avec succès !"
+    "contentUploadSuccess": "Contenu téléchargé avec succès !",
+    "policyCrawler": {
+      "label": "Exploration des politiques",
+      "enabled": "Activée",
+      "disabled": "Désactivée",
+      "manage": "Gérer"
+    }
+  },
+  "contentUpload": {
+    "fileTooLarge": "La taille du fichier dépasse la limite de {{max}} Mo."
   },
   "sidebar": {
     "version": "Gestion Backend v1.0",
@@ -642,14 +654,6 @@
     "status": {
       "enabled": "Activée",
       "disabled": "Désactivée"
-    }
-  },
-  "dashboard": {
-    "policyCrawler": {
-      "label": "Exploration des politiques",
-      "enabled": "Activée",
-      "disabled": "Désactivée",
-      "manage": "Gérer"
     }
   },
   "cantons": {
@@ -1270,6 +1274,24 @@
       "deleting": "Suppression...",
       "delete": "Supprimer l'utilisateur"
     },
+    "elevateUser": {
+      "title": "Promouvoir en administrateur",
+      "elevate": "Promouvoir en administrateur",
+      "changeRole": "Changer le rôle d'administrateur",
+      "selectRole": "Sélectionner le rôle d'administrateur",
+      "currentRole": "Rôle actuel :",
+      "adminDescription": "Peut gérer les utilisateurs, le contenu et les organisations",
+      "superAdminDescription": "Accès complet au système, y compris la gestion des rôles",
+      "reason": "Raison de la promotion",
+      "reasonPlaceholder": "Expliquez pourquoi cet utilisateur a besoin de privilèges d'administrateur...",
+      "reasonRequired": "Veuillez fournir une raison pour cette promotion de rôle",
+      "reasonHint": "Cette raison sera enregistrée dans le journal d'audit.",
+      "elevating": "Promotion...",
+      "confirm": "Promouvoir l'utilisateur",
+      "failed": "Échec de la promotion de l'utilisateur",
+      "alreadyAdmin": "Remarque :",
+      "alreadyAdminMessage": "Cet utilisateur a déjà un rôle d'administrateur. Vous pouvez modifier son niveau de rôle ci-dessous."
+    },
     "table": {
       "user": "Utilisateur",
       "role": "Rôle",
@@ -1292,11 +1314,6 @@
       "noOrganization": "Aucune organisation",
       "never": "Jamais"
     }
-  },
-  "translations": {
-    "descriptionPlaceholder": "Description (facultatif)",
-    "versionPlaceholder": "Version (par exemple, v1.2.3)",
-    "searchPlaceholder": "Rechercher des clés ou des valeurs..."
   },
   "jobListings": {
     "emptyState": {
@@ -1364,7 +1381,11 @@
     "clickBrowse": "Cliquer pour parcourir ou glisser-déposer",
     "defaultHelp": "PDF, DOCX, MP4 (Max 50MB)",
     "dragDrop": "ou par glisser-déposer",
-    "selected": "Sélectionné"
+    "selected": "Sélectionné",
+    "errors": {
+      "sizeExceeded": "La taille du fichier dépasse la limite de {{max}} Mo.",
+      "invalidType": "Type de fichier invalide. Accepté : {{types}}"
+    }
   },
   "products": {
     "emptyState": {
@@ -1560,6 +1581,9 @@
     "title": "Messages",
     "searchPlaceholder": "Rechercher des conversations...",
     "typePlaceholder": "Tapez votre message...",
+    "errors": {
+      "fileTooLarge": "La taille du fichier dépasse la limite de {{max}} Mo."
+    },
     "emptyState": {
       "noConversations": "Aucune conversation trouvée",
       "tryAdjusting": "Essayez d'ajuster votre recherche",
@@ -1662,6 +1686,11 @@
   "translations": {
     "title": "Gestion des traductions",
     "subtitle": "Gérer les traductions d'interface utilisateur statiques",
+    "descriptionPlaceholder": "Description (facultatif)",
+    "versionPlaceholder": "Version (par exemple, v1.2.3)",
+    "errors": {
+      "fileTooLarge": "La taille du fichier dépasse la limite de {{max}} Mo."
+    },
     "tabs": {
       "translations": "Traductions",
       "auditLogs": "Journaux d'audit",

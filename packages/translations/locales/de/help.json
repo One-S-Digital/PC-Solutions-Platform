@@ -165,6 +165,11 @@
       "description": "Wie Sie Ihre Kontosicherheit und Authentifizierung verwalten.",
       "content": "<strong>Konto & Sicherheit öffnen</strong><br/><br/>1. Klicken Sie in der Seitenleiste auf <strong>Einstellungen</strong><br/>2. Öffnen Sie <strong>Konto & Sicherheit</strong><br/><br/><strong>Hier können Sie</strong><br/><br/>• Ihr Passwort ändern<br/>• Ihre E-Mail-Adresse ändern<br/>• Verbundene Konten verwalten (falls verfügbar)<br/><br/><strong>Sicherheitstipps</strong><br/><br/>• Verwenden Sie ein starkes, einzigartiges Passwort<br/>• Halten Sie Ihre E-Mail-Adresse aktuell<br/>• Melden Sie sich auf gemeinsam genutzten Geräten ab"
     },
+    "deleteFiles": {
+      "title": "Dateien & Dokumente löschen",
+      "description": "So löschen Sie hochgeladene Dateien wie Lebensläufe, Kataloge und Dokumente dauerhaft.",
+      "content": "<strong>Wichtig</strong><br/><br/>Das Löschen einer Datei ist dauerhaft. Einmal gelöscht, kann sie nicht wiederhergestellt werden.<br/><br/><strong>Datei in der Dateigalerie löschen</strong><br/><br/>1. Öffnen Sie die <strong>Dateigalerie</strong><br/>2. Suchen Sie die Datei, die Sie entfernen möchten<br/>3. Klicken Sie auf das <strong>Papierkorb-/Löschen</strong>-Symbol<br/>4. Bestätigen Sie das Löschen<br/><br/><strong>CV/Lebenslauf löschen (Erzieher)</strong><br/><br/>1. Gehen Sie zu <strong>Einstellungen → Profil bearbeiten</strong><br/>2. Scrollen Sie zu <strong>CV / Lebenslauf</strong><br/>3. Klicken Sie auf <strong>Entfernen</strong> und bestätigen Sie<br/><br/><strong>Kataloge / Profil-Dokumente löschen (Lieferanten & Dienstleister)</strong><br/><br/>1. Gehen Sie zu <strong>Einstellungen → Profil bearbeiten</strong><br/>2. Öffnen Sie <strong>Dokumente & Kataloge</strong><br/>3. Klicken Sie beim gewünschten Dokument auf <strong>Löschen</strong> (Papierkorb)<br/><br/><strong>Tipp</strong><br/><br/>Wenn Sie ein Dokument nur vorübergehend ausblenden möchten, entfernen Sie es aus dem Profil und laden Sie es später erneut hoch."
+    },
     "notificationSettings": {
       "title": "Benachrichtigungseinstellungen",
       "description": "Wie Sie Ihre E-Mail- und Plattformbenachrichtigungen verwalten.",

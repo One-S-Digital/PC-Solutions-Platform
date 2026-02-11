@@ -423,6 +423,9 @@
       "notifications": "Benachrichtigungen",
       "integrations": "Integrationen",
       "systemConfig": "Systemkonfiguration",
+      "designSystem": "Designsystem",
+      "translations": "Übersetzungen",
+      "systemMonitoring": "Systemüberwachung",
       "branding": "Branding",
       "content": "Inhalt",
       "general": "Allgemein"
@@ -606,6 +609,9 @@
       }
     },
     "contentUploadSuccess": "Inhalt erfolgreich hochgeladen!"
+  },
+  "contentUpload": {
+    "fileTooLarge": "Dateigröße überschreitet das Limit von {{max}} MB."
   },
   "sidebar": {
     "version": "Backend-Verwaltung v1.0",
@@ -1270,6 +1276,24 @@
       "deleting": "Löschen...",
       "delete": "Benutzer löschen"
     },
+    "elevateUser": {
+      "title": "Zum Admin hochstufen",
+      "elevate": "Zum Admin hochstufen",
+      "changeRole": "Admin-Rolle ändern",
+      "selectRole": "Admin-Rolle auswählen",
+      "currentRole": "Aktuelle Rolle:",
+      "adminDescription": "Kann Benutzer, Inhalte und Organisationen verwalten",
+      "superAdminDescription": "Voller Systemzugriff einschließlich Rollenverwaltung",
+      "reason": "Grund der Hochstufung",
+      "reasonPlaceholder": "Erläutern Sie, warum dieser Benutzer Administratorrechte benötigt...",
+      "reasonRequired": "Bitte geben Sie einen Grund für diese Rollenhochstufung an",
+      "reasonHint": "Dieser Grund wird im Audit-Protokoll aufgezeichnet.",
+      "elevating": "Hochstufung...",
+      "confirm": "Benutzer hochstufen",
+      "failed": "Benutzer konnte nicht hochgestuft werden",
+      "alreadyAdmin": "Hinweis:",
+      "alreadyAdminMessage": "Dieser Benutzer hat bereits eine Admin-Rolle. Sie können die Rollenstufe unten ändern."
+    },
     "table": {
       "user": "Benutzer",
       "role": "Rolle",
@@ -1364,7 +1388,11 @@
     "clickBrowse": "Zum Durchsuchen klicken oder ziehen und ablegen",
     "defaultHelp": "PDF, DOCX, MP4 (maximal 50MB)",
     "dragDrop": "oder ziehen und ablegen",
-    "selected": "Ausgewählte"
+    "selected": "Ausgewählte",
+    "errors": {
+      "sizeExceeded": "Dateigröße überschreitet {{max}} MB.",
+      "invalidType": "Ungültiger Dateityp. Erlaubt: {{types}}"
+    }
   },
   "products": {
     "emptyState": {
@@ -1560,6 +1588,9 @@
     "title": "Nachrichten",
     "searchPlaceholder": "Konversationen suchen...",
     "typePlaceholder": "Geben Sie Ihre Nachricht ein...",
+    "errors": {
+      "fileTooLarge": "Dateigröße überschreitet das Limit von {{max}} MB."
+    },
     "emptyState": {
       "noConversations": "Keine Konversationen gefunden",
       "tryAdjusting": "Versuchen Sie, Ihre Suche anzupassen",
@@ -1662,6 +1693,9 @@
   "translations": {
     "title": "Übersetzungsverwaltung",
     "subtitle": "Statische UI-Übersetzungen verwalten",
+    "errors": {
+      "fileTooLarge": "Dateigröße überschreitet das Limit von {{max}} MB."
+    },
     "tabs": {
       "translations": "Übersetzungen",
       "auditLogs": "Auditprotokolle",

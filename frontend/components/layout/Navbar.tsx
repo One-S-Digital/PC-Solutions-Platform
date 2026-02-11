@@ -4,7 +4,7 @@ import { useAppContext } from '../../contexts/AppContext';
 import { useCart } from '../../contexts/CartContext';
 import { useMessaging } from '../../contexts/MessagingContext';
 import { ICON_INPUT_FIELD } from '../../constants';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import OrderSummaryDrawer from '../cart/OrderSummaryDrawer';
 import HelpModal from '../help/HelpModal';
 import { UserRole, AppNotification } from '../../types';
@@ -28,6 +28,28 @@ const Navbar: React.FC<NavbarProps> = ({ onMobileMenuToggle }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const helpArticleId = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    return params.get('help') || '';
+  }, [location.search]);
+
+  const effectiveHelpOpen = isHelpModalOpen || !!helpArticleId;
+
+  const handleCloseHelpModal = () => {
+    setIsHelpModalOpen(false);
+
+    if (helpArticleId) {
+      const params = new URLSearchParams(location.search);
+      params.delete('help');
+      const nextSearch = params.toString();
+      navigate(
+        { pathname: location.pathname, search: nextSearch ? `?${nextSearch}` : '' },
+        { replace: true },
+      );
+    }
+  };
 
   const cartItemCount = getCartItemCount();
 
@@ -208,7 +230,11 @@ const Navbar: React.FC<NavbarProps> = ({ onMobileMenuToggle }) => {
         </div>
       </header>
       <OrderSummaryDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
-      <HelpModal isOpen={isHelpModalOpen} onClose={() => setIsHelpModalOpen(false)} />
+      <HelpModal
+        isOpen={effectiveHelpOpen}
+        onClose={handleCloseHelpModal}
+        initialArticleId={helpArticleId || undefined}
+      />
     </>
   );
 };

@@ -14,12 +14,8 @@ import {
   FileText,
   MessageSquare,
   Settings,
-  Monitor,
-  Mail,
   X,
   Shield,
-  Palette,
-  Globe,
   Handshake,
   LifeBuoy,
   CreditCard,
@@ -28,6 +24,7 @@ import {
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useSettings } from '../hooks/useSettings'
+import { useNotificationData } from '../hooks/useNotificationData'
 import { useTranslation } from 'react-i18next'
 
 interface SidebarProps {
@@ -52,9 +49,6 @@ const navigation = [
   { key: 'discountTerminations', href: '/discount-terminations', icon: Tag },
   { key: 'subscriptions', href: '/subscriptions', icon: CreditCard },
   { key: 'policyCrawler', href: '/policy-crawler', icon: FileSearch },
-  { key: 'systemMonitoring', href: '/system', icon: Monitor },
-  { key: 'translations', href: '/translations', icon: Globe },
-  { key: 'designSystem', href: '/design-system', icon: Palette },
   { key: 'settings', href: '/settings', icon: Settings },
 ]
 
@@ -63,6 +57,15 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
   const location = useLocation()
   const { settings } = useSettings()
   const { t } = useTranslation(['dashboard', 'admin', 'common'])
+  const notifications = useNotificationData()
+
+  const navBadgeCounts: Record<string, number> = {
+    users: notifications.users.count,
+    products: notifications.products.count,
+    services: notifications.services.count,
+    subscriptions: notifications.subscriptions.count,
+    support: notifications.support.count,
+  }
 
   const getAdminLogo = () => {
     if (settings?.adminLogoAsset?.publicUrl) {
@@ -89,24 +92,32 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
         {/* Main Navigation */}
         {navigation.map((item) => {
           const isActive = location.pathname === item.href
+          const badgeCount = navBadgeCounts[item.key] || 0
           return (
             <NavLink
               key={item.key}
               to={item.href}
               className={clsx(
-                'group flex items-center px-4 py-2.5 text-sm rounded-button transition-colors duration-150 ease-in-out',
+                'group flex items-center justify-between px-4 py-2.5 text-sm rounded-button transition-colors duration-150 ease-in-out',
                 isActive
                   ? 'bg-swiss-mint/10 text-swiss-mint font-medium'
                   : 'text-gray-600 hover:bg-gray-100 hover:text-swiss-charcoal'
               )}
             >
-              <item.icon
-                className={clsx(
-                  'w-5 h-5 mr-3',
-                  isActive ? 'text-swiss-mint' : 'text-gray-400 group-hover:text-swiss-mint'
-                )}
-              />
-              {t(`admin:sidebar.${item.key}`, item.key)}
+              <span className="flex items-center">
+                <item.icon
+                  className={clsx(
+                    'w-5 h-5 mr-3',
+                    isActive ? 'text-swiss-mint' : 'text-gray-400 group-hover:text-swiss-mint'
+                  )}
+                />
+                {t(`admin:sidebar.${item.key}`, item.key)}
+              </span>
+              {badgeCount > 0 && (
+                <span className="ml-auto inline-flex items-center justify-center rounded-full bg-red-500 text-white text-[11px] min-w-[18px] h-5 px-1.5">
+                  {badgeCount > 99 ? '99+' : badgeCount}
+                </span>
+              )}
             </NavLink>
           )
         })}

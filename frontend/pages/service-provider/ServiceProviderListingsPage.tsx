@@ -7,10 +7,11 @@ import { Service, ServiceCategory, SERVICE_CATEGORIES } from '../../types';
 import ServiceUploadModal from '../../components/service-provider/ServiceUploadModal';
 import { useAppContext } from '../../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
-import { formatServiceCategory, formatServiceDeliveryType } from '../../utils/serviceFormatting';
+import { formatServiceCategory, formatServiceCategoryForService, formatServiceDeliveryType } from '../../utils/serviceFormatting';
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { UploadedAsset } from '../../services/api';
+import { useNotifications } from '../../contexts/NotificationContext';
 
 interface ServiceCardProps {
   service: Service;
@@ -20,7 +21,7 @@ interface ServiceCardProps {
 
 const ProviderServiceCard: React.FC<ServiceCardProps> = ({ service, onEdit, onDelete }) => {
     const { t } = useTranslation(['dashboard', 'common']);
-    const categoryLabel = formatServiceCategory(t, service.category);
+    const categoryLabel = formatServiceCategoryForService(t, service);
     const deliveryLabel = formatServiceDeliveryType(t, service.deliveryType);
     return (
         <Card className="flex flex-col group" hoverEffect>
@@ -48,14 +49,28 @@ const ServiceProviderListingsPage: React.FC = () => {
   const { t } = useTranslation(['dashboard', 'common']);
   const { currentUser } = useAppContext();
   const { authenticatedRequest } = useAuthenticatedApi();
+  const { showToast } = useNotifications();
   
   const [serviceListings, setServiceListings] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState<ServiceCategory | 'All'>('All');
+
+  const normalizeServiceFromApi = useCallback((service: any): Service => {
+    const providerOrgId = service?.provider?.organizationId;
+    return {
+      ...service,
+      // For UI compatibility, treat providerId as the organizationId when available.
+      providerId: providerOrgId || service.providerId,
+      providerName: service?.provider?.organization?.name || service.providerName,
+      // providerLogo is not always included by this endpoint; preserve if present.
+      providerLogo: service.providerLogo,
+    } as Service;
+  }, []);
 
   const fetchServices = useCallback(async () => {
     if (!currentUser?.orgId) {
@@ -67,10 +82,11 @@ const ServiceProviderListingsPage: React.FC = () => {
     setError(null);
 
     try {
-      const response = await authenticatedRequest<Service[]>('/marketplace/services');
+      const response = await authenticatedRequest<any[]>('/marketplace/services');
       if (response.success && response.data) {
+        const normalized = response.data.map(normalizeServiceFromApi);
         // Filter to only services belonging to this provider
-        const myServices = response.data.filter(s => s.providerId === currentUser.orgId);
+        const myServices = normalized.filter((s) => s.providerId === currentUser.orgId);
         setServiceListings(myServices);
       }
     } catch (err) {
@@ -79,7 +95,7 @@ const ServiceProviderListingsPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [currentUser?.orgId, authenticatedRequest, t]);
+  }, [currentUser?.orgId, authenticatedRequest, normalizeServiceFromApi, t]);
 
   useEffect(() => {
     fetchServices();
@@ -107,75 +123,126 @@ const ServiceProviderListingsPage: React.FC = () => {
       return;
     }
 
-    const providerId = currentUser.orgId;
-    const providerName = currentUser.orgName;
-    const providerLogo = currentUser.avatarUrl;
-
     try {
+      setIsSaving(true);
       // Upload file if provided
       let imageUrl = editingService?.imageUrl;
       if (file) {
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('assetKind', 'DOCUMENT'); // Using DOCUMENT kind for service images
+        // Store as an image asset (not a generic document)
+        formData.append('assetKind', 'PRODUCT_IMAGE');
         
-        const uploadResponse = await authenticatedRequest<{ asset: UploadedAsset }>('/upload/file', {
+        const uploadResponse = await authenticatedRequest<any>('/upload/file', {
           method: 'POST',
           body: formData,
           headers: {}, // Let browser set Content-Type for FormData
         });
         
-        if (uploadResponse.success && uploadResponse.asset) {
-          imageUrl = uploadResponse.asset.publicUrl;
+        const uploadedAsset: UploadedAsset | undefined =
+          (uploadResponse as any)?.asset ?? (uploadResponse as any)?.data?.asset;
+
+        if (!uploadResponse.success) {
+          throw new Error((uploadResponse as any)?.message || 'Image upload failed');
+        }
+        if (uploadedAsset?.publicUrl) {
+          imageUrl = uploadedAsset.publicUrl;
+        } else {
+          throw new Error('Image upload succeeded but no URL was returned');
         }
       }
 
+      let didSave = false;
       if (editingService) {
         // Update existing service
-        const response = await authenticatedRequest<Service>(`/marketplace/services/${editingService.id}`, {
-          method: 'PATCH',
-          body: JSON.stringify({
-            ...data,
-            imageUrl,
-          }),
+        // IMPORTANT: Only send fields supported by UpdateServiceDto.
+        // Never send `id`, `provider*`, timestamps, or nested provider objects,
+        // because backend ValidationPipe forbids non-whitelisted properties.
+        const updateServiceData: Record<string, unknown> = {
+          title: data.title,
+          description: data.description,
+          category: data.category,
+          categories: data.categories,
+          price: typeof (data as any).price === 'string' ? Number((data as any).price) : (data as any).price,
+          isActive: (data as any).isActive,
+          priceInfo: (data as any).priceInfo,
+          availability: (data as any).availability,
+          deliveryType: (data as any).deliveryType,
+          tags: (data as any).tags,
+          imageUrl,
+        };
+
+        // Remove undefined and NaN (for numeric fields) to keep payload clean.
+        Object.keys(updateServiceData).forEach((k) => {
+          const v = (updateServiceData as any)[k];
+          if (v === undefined) delete (updateServiceData as any)[k];
+          if (typeof v === 'number' && Number.isNaN(v)) delete (updateServiceData as any)[k];
         });
 
-        if (response.success && response.data) {
-          setServiceListings(prev =>
-            prev.map(s => s.id === editingService.id ? response.data! : s)
-          );
+        const response = await authenticatedRequest<Service>(`/marketplace/services/${editingService.id}`, {
+          method: 'PATCH',
+          body: JSON.stringify(updateServiceData),
+        });
+
+        if (!response.success || !response.data) {
+          throw new Error((response as any)?.message || 'Failed to save service');
         }
+
+        setServiceListings(prev =>
+          prev.map(s => s.id === editingService.id ? normalizeServiceFromApi(response.data!) : s)
+        );
+        showToast({
+          type: 'success',
+          title: t('common:saveSuccess', 'Saved'),
+        });
+        didSave = true;
       } else {
         // Add new service
         const newServiceData = {
-          providerId,
-          providerName,
-          providerLogo,
           title: data.title || t('dashboard:serviceProviderListingsPage.defaultTitle', 'Untitled Service'),
           description: data.description || '',
           category: data.category || ServiceCategory.OTHER,
+          categories: data.categories || [],
+          price: data.price,
           availability: data.availability || t('dashboard:serviceProviderListingsPage.defaultAvailability', 'By appointment'),
           tags: data.tags || [],
-          deliveryType: data.deliveryType || t('dashboard:serviceProviderListingsPage.defaultDeliveryType', 'On-site'),
+          // IMPORTANT: use canonical backend values, not translated strings.
+          deliveryType: data.deliveryType || 'On-site',
           priceInfo: data.priceInfo || t('dashboard:serviceProviderListingsPage.defaultPriceInfo', 'Contact for quote'),
           imageUrl,
-          isActive: true,
-          ...data,
         };
 
-        const response = await authenticatedRequest<Service>('/marketplace/services', {
+        const response = await authenticatedRequest<any>('/marketplace/services', {
           method: 'POST',
           body: JSON.stringify(newServiceData),
         });
 
-        if (response.success && response.data) {
-          setServiceListings(prev => [response.data!, ...prev]);
+        if (!response.success || !response.data) {
+          throw new Error((response as any)?.message || 'Failed to save service');
         }
+
+        setServiceListings((prev) => [normalizeServiceFromApi(response.data), ...prev]);
+        showToast({
+          type: 'success',
+          title: t('common:saveSuccess', 'Saved'),
+        });
+        didSave = true;
       }
-      handleCloseModal();
+
+      if (didSave) {
+        handleCloseModal();
+      }
     } catch (err) {
       console.error('Failed to save service:', err);
-      alert(t('dashboard:serviceProviderListingsPage.saveError', 'Failed to save service'));
+      const errMsg = err instanceof Error ? err.message : String(err);
+      showToast({
+        type: 'error',
+        title: t('dashboard:serviceProviderListingsPage.saveError', 'Failed to save service'),
+        message: errMsg,
+        duration: 8000,
+      });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -280,6 +347,7 @@ const ServiceProviderListingsPage: React.FC = () => {
         onClose={handleCloseModal}
         onSubmit={handleServiceSubmit}
         existingService={editingService}
+        isSaving={isSaving}
       />
     </div>
   );

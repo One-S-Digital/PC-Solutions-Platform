@@ -633,9 +633,16 @@ export class RecruitmentService {
       where: {
         ...where,
         role: 'EDUCATOR',
+        // Exclude suspended / inactive educators from the candidate pool.
+        // Use { not: false } so legacy rows with null isActive are treated
+        // as active, consistent with the rest of the codebase.
+        isActive: { not: false },
       },
       include: {
         avatarAsset: true,
+        workExperienceItems: { orderBy: { sortOrder: 'asc' } },
+        educationItems: { orderBy: { sortOrder: 'asc' } },
+        certificationItems: { orderBy: { sortOrder: 'asc' } },
         applications: {
           include: {
             jobListing: {
@@ -650,11 +657,25 @@ export class RecruitmentService {
     });
   }
 
-  async findCandidateById(id: string) {
+  async findCandidateById(id: string, options?: { visibleOnly?: boolean }) {
     return this.prisma.user.findUnique({
-      where: { id },
+      where: {
+        id,
+        // Exclude suspended / inactive educators so their profile cannot
+        // be viewed individually either.  Uses { not: false } so legacy
+        // rows with null isActive are treated as active.
+        isActive: { not: false },
+        // When visibleOnly is set, only return educators who opted into
+        // the candidate pool.  This prevents foundation users from viewing
+        // profiles of educators who removed themselves from the pool
+        // (e.g. via a previously bookmarked URL).
+        ...(options?.visibleOnly ? { candidatePoolVisible: true } : {}),
+      },
       include: {
         avatarAsset: true,
+        workExperienceItems: { orderBy: { sortOrder: 'asc' } },
+        educationItems: { orderBy: { sortOrder: 'asc' } },
+        certificationItems: { orderBy: { sortOrder: 'asc' } },
         applications: {
           include: {
             jobListing: {
@@ -685,10 +706,18 @@ export class RecruitmentService {
     const candidates = await this.prisma.user.findMany({
       where: {
         role: 'EDUCATOR',
+        // Exclude suspended / inactive educators from matching results.
+        isActive: { not: false },
+        // Only match educators who opted into the candidate pool,
+        // consistent with the findAllCandidates visibility filter.
+        candidatePoolVisible: true,
         // Add more sophisticated matching logic here
-        // For now, we'll return all educators
+        // For now, we'll return all active, pool-visible educators
       },
       include: {
+        workExperienceItems: { orderBy: { sortOrder: 'asc' } },
+        educationItems: { orderBy: { sortOrder: 'asc' } },
+        certificationItems: { orderBy: { sortOrder: 'asc' } },
         applications: {
           where: {
             jobListingId,

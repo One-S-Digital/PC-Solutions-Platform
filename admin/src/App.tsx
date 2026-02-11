@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from 'sonner';
 import { AdminLayout } from './components/AdminLayout';
 import { AdminLoginPage, AdminSignupPage, AdminProtectedRoute } from './components/auth/AdminAuthComponents';
 import { useSettings } from './hooks/useSettings';
@@ -16,10 +17,7 @@ import ParentLeadsPage from './pages/ParentLeads';
 import OrdersPage from './pages/Orders';
 import ContentPage from './pages/Content';
 import MessagingPage from './pages/Messaging';
-import SystemMonitorPage from './pages/SystemMonitor';
 import SettingsPage from './pages/Settings';
-import DesignSystemPage from './pages/DesignSystem';
-import TranslationsPage from './pages/Translations';
 import AccessDeniedPage from './pages/AccessDenied';
 import SupportPage from './pages/Support';
 import SupportTicketPage from './pages/SupportTicket';
@@ -70,6 +68,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <FrontendSettingsManager />
+      <Toaster richColors position="top-right" closeButton style={{ zIndex: 9999 }} />
       <Routes>
         <Route path="/login" element={<AdminLoginPage />} />
         <Route path="/signup" element={<AdminSignupPage />} />
@@ -105,10 +104,10 @@ function App() {
           {/* Policy crawler (always visible; status is indicated inside) */}
           <Route path="policy-crawler/*" element={<PolicyCrawlerPage />} />
 
-          <Route path="system" element={<SystemMonitorPage />} />
-          <Route path="translations" element={<TranslationsPage />} />
+          <Route path="system" element={<Navigate to="/settings?tab=systemMonitoring" replace />} />
+          <Route path="translations" element={<Navigate to="/settings?tab=translations" replace />} />
           <Route path="settings" element={<SettingsPage />} />
-          <Route path="design-system" element={<DesignSystemPage />} />
+          <Route path="design-system" element={<Navigate to="/settings?tab=designSystem" replace />} />
 
           <Route index element={<Navigate to="/dashboard" />} />
         </Route>

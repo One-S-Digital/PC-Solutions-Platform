@@ -308,7 +308,7 @@ const Candidates: React.FC = () => {
                 const isInPool = Boolean(candidate.candidatePoolVisible)
                 return (
                   <tr key={candidate.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4">
                       <div className="flex items-center">
                         <div className="h-10 w-10 flex-shrink-0">
                           <div className="h-10 w-10 rounded-full bg-swiss-teal flex items-center justify-center">
@@ -317,21 +317,21 @@ const Candidates: React.FC = () => {
                             </span>
                           </div>
                         </div>
-                        <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">{name}</div>
+                        <div className="ml-4 min-w-0">
+                          <div className="text-sm font-medium text-gray-900 break-words">{name}</div>
                           <div className="text-sm text-gray-500 flex items-center">
-                            <Mail className="h-3 w-3 mr-1" />
-                            {email}
+                            <Mail className="h-3 w-3 mr-1 flex-shrink-0" />
+                            <span className="break-all">{email}</span>
                           </div>
                           <div className="text-sm text-gray-500 flex items-center">
-                            <Phone className="h-3 w-3 mr-1" />
+                            <Phone className="h-3 w-3 mr-1 flex-shrink-0" />
                             {phone}
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{position}</div>
+                    <td className="px-6 py-4">
+                      <div className="text-sm text-gray-900 break-words">{position}</div>
                     </td>
                     <td className="px-6 py-4 align-top">
                       <span
@@ -342,7 +342,7 @@ const Candidates: React.FC = () => {
                         {status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4">
                       <span
                         className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                           isInPool ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-700'
@@ -353,13 +353,13 @@ const Candidates: React.FC = () => {
                           : t('admin:candidates.poolStatus.outOfPool', 'Not in pool')}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4">
                       <div className="text-sm text-gray-900 flex items-center">
-                        <Calendar className="h-4 w-4 mr-1" />
+                        <Calendar className="h-4 w-4 mr-1 flex-shrink-0" />
                         {appliedDate ? new Date(appliedDate).toLocaleDateString() : ''}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <td className="px-6 py-4 text-right text-sm font-medium">
                       <Menu as="div" className="relative inline-block text-left">
                         <Menu.Button className="p-2 rounded-full hover:bg-gray-100">
                           <MoreVertical className="h-4 w-4" />

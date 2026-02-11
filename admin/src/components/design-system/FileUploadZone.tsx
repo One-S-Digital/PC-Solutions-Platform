@@ -25,13 +25,25 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
   const [fileName, setFileName] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const setValidationError = (message: string | null) => {
+    setError(message);
+    if (fileInputRef.current) {
+      fileInputRef.current.setCustomValidity(message || '');
+    }
+  };
+
   const handleFile = (file: File | null) => {
     if (!file) return;
-    setError(null);
+    setValidationError(null);
     setFileName(null);
 
     if (maxFileSizeMB && file.size > maxFileSizeMB * 1024 * 1024) {
-      setError(`File size exceeds ${maxFileSizeMB}MB.`);
+      setValidationError(
+        t('admin:fileUpload.errors.sizeExceeded', {
+          defaultValue: `File size exceeds ${maxFileSizeMB}MB.`,
+          max: maxFileSizeMB,
+        })
+      );
       return;
     }
 
@@ -52,7 +64,12 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
       });
 
       if (!isAccepted) {
-        setError(`Invalid file type. Accepted: ${acceptedMimeTypes.replace(/\/\*/g, '')}`);
+        setValidationError(
+          t('admin:fileUpload.errors.invalidType', {
+            defaultValue: `Invalid file type. Accepted: ${acceptedMimeTypes.replace(/\/\*/g, '')}`,
+            types: acceptedMimeTypes.replace(/\/\*/g, ''),
+          })
+        );
         return;
       }
     }
@@ -133,6 +150,7 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
         accept={acceptedMimeTypes}
         multiple={multiple}
         onChange={handleChange}
+        aria-invalid={!!error}
       />
       {fileName && !error && (
         <p className="mt-2 text-sm text-green-600 flex items-center">

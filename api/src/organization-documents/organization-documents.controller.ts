@@ -166,14 +166,14 @@ export class OrganizationDocumentsController {
     @Request() req,
     @Param('id', ParseUUIDPipe) documentId: string,
   ) {
-    const { profileId } = this.getContext(req);
+    const { profileId, accountId } = this.getContext(req);
 
     const organizationId = await this.organizationDocumentsService.getUserOrganizationId(profileId);
     if (!organizationId) {
       throw new BadRequestException('No organization found for this user');
     }
 
-    await this.organizationDocumentsService.deleteDocument(documentId, organizationId);
+    await this.organizationDocumentsService.deleteDocument(documentId, organizationId, accountId);
 
     return {
       success: true,

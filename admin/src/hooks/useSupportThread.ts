@@ -21,6 +21,11 @@ export function useSupportThread({
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const repliesRef = useRef<TicketResponse[]>([]);
+
+  useEffect(() => {
+    repliesRef.current = replies;
+  }, [replies]);
 
   // WebSocket for real-time updates
   const { isConnected: isSocketConnectedActual } = useSupportSocket({
@@ -28,6 +33,9 @@ export function useSupportThread({
     userId,
     onNewReply: (reply) => {
       appendReply(reply);
+    },
+    onReplyDeleted: (replyId) => {
+      removeReply(replyId);
     },
     onTicketUpdate: () => {
       onTicketUpdate?.();
@@ -46,6 +54,23 @@ export function useSupportThread({
         (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
       );
       return updated;
+    });
+  }, []);
+
+  const removeReply = useCallback((replyId: string) => {
+    setReplies(prev => prev.filter(r => r.id !== replyId));
+  }, []);
+
+  const mergeServerReplies = useCallback((serverReplies: TicketResponse[], tempId?: string) => {
+    setReplies(prev => {
+      const filteredPrev = tempId ? prev.filter(r => r.id !== tempId) : prev;
+      const existingMap = new Map(filteredPrev.map(r => [r.id, r]));
+      serverReplies.forEach(reply => {
+        existingMap.set(reply.id, reply);
+      });
+      return Array.from(existingMap.values()).sort(
+        (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      );
     });
   }, []);
 
@@ -93,14 +118,7 @@ export function useSupportThread({
       
       if (response.data?.data) {
         const updatedTicket = response.data.data;
-        // Replace temp reply with actual reply
-        const actualReply = updatedTicket.responses[updatedTicket.responses.length - 1];
-        setReplies(prev => {
-          const filtered = prev.filter(r => r.id !== tempReply.id);
-          return [...filtered, actualReply].sort(
-            (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-          );
-        });
+        mergeServerReplies(updatedTicket.responses || [], tempReply.id);
       } else {
         // Remove temp reply on error
         setReplies(prev => prev.filter(r => r.id !== tempReply.id));
@@ -111,7 +129,26 @@ export function useSupportThread({
       setReplies(prev => prev.filter(r => r.id !== tempReply.id));
       throw error;
     }
-  }, [ticketId, apiClient, appendReply, messagesEndRef]);
+  }, [ticketId, apiClient, appendReply, mergeServerReplies, messagesEndRef]);
+
+  const deleteReply = useCallback(async (replyId: string): Promise<void> => {
+    if (!ticketId) throw new Error('No ticket selected');
+    const previousReplies = repliesRef.current;
+    removeReply(replyId);
+
+    try {
+      const response = await apiService.deleteSupportTicketResponse(apiClient, ticketId, replyId);
+      if (response.data?.data) {
+        const updatedTicket = response.data.data;
+        mergeReplies(updatedTicket.responses || []);
+      } else {
+        throw new Error('Failed to delete reply');
+      }
+    } catch (error) {
+      setReplies(previousReplies);
+      throw error;
+    }
+  }, [ticketId, apiClient, removeReply, mergeReplies]);
 
   // Load initial replies when ticket changes
   useEffect(() => {
@@ -170,6 +207,7 @@ export function useSupportThread({
     replies,
     loading,
     sendReply,
+    deleteReply,
     messagesEndRef,
     scrollContainerRef,
   };

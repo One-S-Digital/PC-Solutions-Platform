@@ -342,19 +342,74 @@ export class UploadService {
    * Returns asset if user has access, throws error otherwise
    */
   async verifyFileAccess(storageKey: string, appUserId: string) {
-    const asset = await this.prisma.asset.findFirst({
-      where: { storageKey },
-      include: {
-        uploader: {
-          select: {
-            id: true,
-            email: true,
-            clerkId: true,
-            role: true,
+    let asset: any;
+    let catalogQueryFailed = false;
+
+    try {
+      // Try the full query including catalog relations
+      asset = await this.prisma.asset.findFirst({
+        where: { storageKey },
+        include: {
+          uploader: {
+            select: {
+              id: true,
+              email: true,
+              clerkId: true,
+              role: true,
+            },
+          },
+          organizationDocuments: {
+            where: { isActive: true },
+            select: {
+              id: true,
+              organizationId: true,
+              documentType: true,
+            },
+          },
+          catalogPdfs: {
+            where: { isActive: true },
+            select: { id: true, supplierId: true },
+          },
+          catalogCsvs: {
+            where: { isActive: true },
+            select: { id: true, supplierId: true },
           },
         },
-      },
-    });
+      });
+    } catch (error: any) {
+      // Handle case where catalogs table doesn't exist yet (P2021)
+      // This allows non-catalog file downloads to continue working
+      if (error?.code === 'P2021' && error?.meta?.table?.includes('catalogs')) {
+        this.logger.warn(
+          'Catalogs table does not exist yet. Falling back to query without catalog relations. Run migrations to fix this permanently.',
+        );
+        catalogQueryFailed = true;
+
+        asset = await this.prisma.asset.findFirst({
+          where: { storageKey },
+          include: {
+            uploader: {
+              select: {
+                id: true,
+                email: true,
+                clerkId: true,
+                role: true,
+              },
+            },
+            organizationDocuments: {
+              where: { isActive: true },
+              select: {
+                id: true,
+                organizationId: true,
+                documentType: true,
+              },
+            },
+          },
+        });
+      } else {
+        throw error;
+      }
+    }
 
     if (!asset) {
       throw new NotFoundException('File not found');
@@ -369,12 +424,19 @@ export class UploadService {
     // Allow access if:
     // 1. User is the uploader
     // 2. User is SUPER_ADMIN or ADMIN
-    // 3. File is public (if you have a public flag - not implemented here)
+    // 3. File is linked to an active public organization document
+    // 4. File is linked to an active catalog (PDF/CSV)
     const isOwner = asset.uploadedById === appUserId;
     const isAdmin = requestingUser?.role === 'SUPER_ADMIN' || requestingUser?.role === 'ADMIN';
+    const isOrganizationDocument = asset.organizationDocuments?.length > 0;
+    const isCatalogAsset = catalogQueryFailed
+      ? false
+      : (asset.catalogPdfs?.length || 0) > 0 || (asset.catalogCsvs?.length || 0) > 0;
 
-    if (!isOwner && !isAdmin) {
-      this.logger.warn(`Access denied to file ${storageKey} for user ${appUserId}`);
+    if (!isOwner && !isAdmin && !isOrganizationDocument && !isCatalogAsset) {
+      this.logger.warn(
+        `Access denied to file ${storageKey} for user ${appUserId} (owner=${isOwner}, admin=${isAdmin}, orgDoc=${isOrganizationDocument}, catalog=${isCatalogAsset})`,
+      );
       throw new ForbiddenException('Access denied to this file');
     }
 

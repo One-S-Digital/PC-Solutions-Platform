@@ -35,15 +35,27 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const setValidationError = (message: string | null) => {
+    setError(message);
+    if (fileInputRef.current) {
+      fileInputRef.current.setCustomValidity(message || '');
+    }
+  };
+
   const handleFile = async (file: File | null) => {
     if (!file) return;
-    setError(null);
+    setValidationError(null);
     setFileName(null);
     setUploadSuccess(false);
 
     // Validate file size
     if (maxFileSizeMB && file.size > maxFileSizeMB * 1024 * 1024) {
-      setError(`File size exceeds ${maxFileSizeMB}MB.`);
+      setValidationError(
+        t('common:fileUploadZone.errors.sizeExceeded', {
+          defaultValue: `File size exceeds ${maxFileSizeMB}MB.`,
+          max: maxFileSizeMB,
+        })
+      );
       return;
     }
 
@@ -64,7 +76,12 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
       });
 
       if (!isAccepted) {
-        setError(`Invalid file type. Accepted: ${acceptedMimeTypes.replace(/\/\*/g, '')}`);
+        setValidationError(
+          t('common:fileUploadZone.errors.invalidType', {
+            defaultValue: `Invalid file type. Accepted: ${acceptedMimeTypes.replace(/\/\*/g, '')}`,
+            types: acceptedMimeTypes.replace(/\/\*/g, ''),
+          })
+        );
         return;
       }
     }
@@ -88,10 +105,19 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
             onUploadSuccess(response.asset);
           }
         } else {
-          setError('Upload failed. Please try again.');
+          setValidationError(
+            t('common:fileUploadZone.errors.uploadFailed', {
+              defaultValue: 'Upload failed. Please try again.',
+            }),
+          );
         }
       } catch (err: any) {
-        setError(err.message || 'Upload failed. Please try again.');
+        setValidationError(
+          err.message ||
+            t('common:fileUploadZone.errors.uploadFailed', {
+              defaultValue: 'Upload failed. Please try again.',
+            }),
+        );
       } finally {
         setIsUploading(false);
       }
@@ -195,9 +221,10 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
         accept={acceptedMimeTypes}
         multiple={multiple}
         onChange={handleChange}
+        aria-invalid={!!error}
       />
       {error && (
-        <div className="mt-2 flex items-center text-sm text-swiss-coral">
+        <div className="mt-2 flex items-center text-sm text-swiss-coral" role="alert">
           <XCircleIcon className="h-4 w-4 mr-1" />
           {error}
         </div>

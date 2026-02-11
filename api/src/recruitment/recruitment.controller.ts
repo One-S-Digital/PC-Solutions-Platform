@@ -186,20 +186,32 @@ export class RecruitmentController {
     @Request() req?,
   ) {
     const skillsArray = skills ? skills.split(',') : undefined;
+    // Only admins should see educators who opted out of the candidate pool.
+    // All other roles (currently only FOUNDATION reaches here) see pool-
+    // visible candidates only.
     const viewerRole = req?.context?.role ?? req?.user?.role;
-    const visibleOnly = viewerRole === UserRole.FOUNDATION;
+    const isAdmin =
+      viewerRole === UserRole.ADMIN || viewerRole === UserRole.SUPER_ADMIN;
     return this.recruitmentService.findAllCandidates({
       role,
       skills: skillsArray,
       location,
       search,
-      visibleOnly,
+      visibleOnly: !isAdmin,
     });
   }
 
   @Get('candidates/:id')
-  async findCandidateById(@Param('id') id: string) {
-    const candidate = await this.recruitmentService.findCandidateById(id);
+  async findCandidateById(@Param('id') id: string, @Request() req?) {
+    // Non-admin users should only be able to view profiles of educators
+    // who opted into the candidate pool (candidatePoolVisible: true).
+    // Admins can view any educator profile for management purposes.
+    const viewerRole = req?.context?.role ?? req?.user?.role;
+    const isAdmin =
+      viewerRole === UserRole.ADMIN || viewerRole === UserRole.SUPER_ADMIN;
+    const candidate = await this.recruitmentService.findCandidateById(id, {
+      visibleOnly: !isAdmin,
+    });
     if (!candidate) {
       throw new NotFoundException('Candidate not found');
     }

@@ -470,6 +470,7 @@ export interface ApiResponse<T> {
   success: boolean;
   message: string;
   data: T;
+  total?: number;
   pagination?: {
     page: number;
     limit: number;

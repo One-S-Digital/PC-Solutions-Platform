@@ -6,6 +6,7 @@ interface UseSupportSocketOptions {
   ticketId: string | null;
   userId: string;
   onNewReply?: (reply: any) => void;
+  onReplyDeleted?: (replyId: string) => void;
   onTicketUpdate?: (ticket: any) => void;
 }
 
@@ -13,6 +14,7 @@ export function useSupportSocket({
   ticketId,
   userId,
   onNewReply,
+  onReplyDeleted,
   onTicketUpdate,
 }: UseSupportSocketOptions) {
   const { getToken, isSignedIn } = useAuth();
@@ -23,10 +25,12 @@ export function useSupportSocket({
   
   // Store callbacks in refs to avoid recreating socket on callback changes
   const onNewReplyRef = useRef(onNewReply);
+  const onReplyDeletedRef = useRef(onReplyDeleted);
   const onTicketUpdateRef = useRef(onTicketUpdate);
   
   useEffect(() => {
     onNewReplyRef.current = onNewReply;
+    onReplyDeletedRef.current = onReplyDeleted;
     onTicketUpdateRef.current = onTicketUpdate;
   });
 
@@ -140,6 +144,12 @@ export function useSupportSocket({
         socket.on('supportTicket:replyCreated', (data: { ticketId: string; reply: any }) => {
           if (data.ticketId === ticketId && onNewReplyRef.current) {
             onNewReplyRef.current(data.reply);
+          }
+        });
+
+        socket.on('supportTicket:replyDeleted', (data: { ticketId: string; replyId: string }) => {
+          if (data.ticketId === ticketId && onReplyDeletedRef.current) {
+            onReplyDeletedRef.current(data.replyId);
           }
         });
 

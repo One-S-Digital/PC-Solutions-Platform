@@ -238,7 +238,7 @@ const DiscountTerminationsPage: React.FC = () => {
             onClick={handleCreate}
             disabled={upsertMutation.isPending}
             variant="primary"
-            leftIcon={<Plus className="w-4 h-4" />}
+            leftIcon={Plus}
           >
             {upsertMutation.isPending ? t('common:saving', 'Saving...') : t('common:add', 'Add / Update')}
           </Button>
@@ -294,7 +294,7 @@ const DiscountTerminationsPage: React.FC = () => {
                         size="sm"
                         onClick={() => markTerminated(vc)}
                         disabled={upsertMutation.isPending}
-                        leftIcon={<CheckCircle2 className="w-4 h-4" />}
+                        leftIcon={CheckCircle2}
                       >
                         {t('admin:admin.discountTerminations.actions.markCompleted', 'Mark Completed')}
                       </Button>

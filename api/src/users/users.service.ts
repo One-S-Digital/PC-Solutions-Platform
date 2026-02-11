@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, ConflictException, ForbiddenException, Logger, BadRequestException } from '@nestjs/common';
-import { Prisma, UserRole } from '@prisma/client';
+import { Prisma, UserRole, SubscriptionStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -63,6 +63,76 @@ export class UsersService {
     const clerkSecretKey = this.configService.get<string>('CLERK_SECRET_KEY');
     if (clerkSecretKey) {
       this.clerk = createClerkClient({ secretKey: clerkSecretKey });
+    }
+  }
+
+  /** Subscription statuses that represent an "in-use" subscription. */
+  private static readonly LIVE_SUB_STATUSES = [
+    SubscriptionStatus.ACTIVE,
+    SubscriptionStatus.TRIAL,
+    SubscriptionStatus.GRACE_PERIOD,
+    SubscriptionStatus.PAST_DUE,
+  ];
+
+  /**
+   * Cascade deactivation to a user's organizations and subscriptions.
+   * Shared by the single-user `update()` (INACTIVE path) and `remove()` (soft-delete).
+   *
+   * Runs inside the caller-provided transaction client (`tx`).
+   */
+  private async cascadeUserDeactivation(
+    tx: Parameters<Parameters<PrismaService['$transaction']>[0]>[0],
+    profileUserId: string,
+    orgIds: string[],
+    cancellationReason: string,
+    logPrefix: string,
+    entityId: string,
+  ) {
+    // Deactivate related organizations
+    if (orgIds.length > 0) {
+      const orgDeactivateResult = await tx.organization.updateMany({
+        where: { id: { in: orgIds } },
+        data: { isActive: false },
+      });
+      this.logger.log(
+        `🏢 [${logPrefix}] Cascaded deactivation to ${orgDeactivateResult.count} organization(s) for user ${entityId}`,
+      );
+
+      // Cancel org-based subscriptions
+      const orgSubResult = await tx.subscription.updateMany({
+        where: {
+          organizationId: { in: orgIds },
+          status: { in: UsersService.LIVE_SUB_STATUSES },
+        },
+        data: {
+          status: SubscriptionStatus.CANCELLED,
+          canceledAt: new Date(),
+          cancellationReason,
+        },
+      });
+      if (orgSubResult.count > 0) {
+        this.logger.log(
+          `💳 [${logPrefix}] Cancelled ${orgSubResult.count} organization subscription(s) for user ${entityId}`,
+        );
+      }
+    }
+
+    // Cancel user-based subscriptions
+    const userSubResult = await tx.subscription.updateMany({
+      where: {
+        userId: profileUserId,
+        status: { in: UsersService.LIVE_SUB_STATUSES },
+      },
+      data: {
+        status: SubscriptionStatus.CANCELLED,
+        canceledAt: new Date(),
+        cancellationReason,
+      },
+    });
+    if (userSubResult.count > 0) {
+      this.logger.log(
+        `💳 [${logPrefix}] Cancelled ${userSubResult.count} user subscription(s) for user ${entityId}`,
+      );
     }
   }
 
@@ -1277,6 +1347,53 @@ export class UsersService {
           } else {
             userProfile = existingUser;
           }
+
+          // Cascade user active status to their organizations and subscriptions.
+          // When a user is deactivated, their organizations should also be hidden
+          // from the frontend so inactive users' profiles don't appear in listings.
+          // Their active subscriptions should also be suspended so the subscription
+          // status doesn't create a visibility loophole in marketplace gates.
+          if (updateUserDto.status !== undefined && existingUser) {
+            const userOrgLinks = await tx.userOrganization.findMany({
+              where: { userId: existingUser.id },
+              select: { organizationId: true },
+            });
+            const orgIds = userOrgLinks.map((link) => link.organizationId);
+
+            if (updateUserDto.status === 'INACTIVE') {
+              // cascadeUserDeactivation handles org deactivation + subscription cancellation
+              await this.cascadeUserDeactivation(
+                tx, existingUser.id, orgIds,
+                'User account deactivated by admin', 'UPDATE', id,
+              );
+            } else if (updateUserDto.status === 'ACTIVE' && orgIds.length > 0) {
+              // Only reactivate orgs where ALL member users are now active.
+              // This prevents blindly reactivating an org that another inactive
+              // member originally caused to be deactivated.
+              // Subscriptions are NOT auto-restored — an admin must manually
+              // re-activate them to prevent accidental billing issues.
+              const orgsWithInactiveMembers = await tx.userOrganization.findMany({
+                where: {
+                  organizationId: { in: orgIds },
+                  user: { isActive: false },
+                },
+                select: { organizationId: true },
+              });
+              const blockedOrgIds = new Set(orgsWithInactiveMembers.map((l) => l.organizationId));
+              const safeToReactivate = orgIds.filter((oid) => !blockedOrgIds.has(oid));
+
+              if (safeToReactivate.length > 0) {
+                const orgActivateResult = await tx.organization.updateMany({
+                  where: { id: { in: safeToReactivate } },
+                  data: { isActive: true },
+                });
+                this.logger.log(
+                  `🏢 [UPDATE] Cascaded user reactivation to ${orgActivateResult.count} organization(s) for user ${id}` +
+                    (blockedOrgIds.size > 0 ? ` (skipped ${blockedOrgIds.size} with other inactive members)` : ''),
+                );
+              }
+            }
+          }
         }
       }
 
@@ -1417,8 +1534,9 @@ export class UsersService {
     const updatedProfile = await this.prisma.$transaction(async (tx) => {
       const profile = await tx.user.findUnique({ where: { clerkId: appUser.clerkId } });
 
+      let result;
       if (profile) {
-        return tx.user.update({
+        result = await tx.user.update({
           where: { id: profile.id },
           data: {
             isActive: false,
@@ -1427,20 +1545,35 @@ export class UsersService {
             deactivatedReasonText: 'User suspended by admin',
           },
         });
+      } else {
+        // Ensure there is a profile row to enforce suspension in ClerkAuthGuard.
+        result = await tx.user.create({
+          data: {
+            clerkId: appUser.clerkId,
+            email: appUser.email,
+            role: appUser.role,
+            isActive: false,
+            deactivatedAt: now,
+            deactivatedReasonCode: 'ADMIN_SUSPENDED',
+            deactivatedReasonText: 'User suspended by admin',
+          },
+        });
       }
 
-      // Ensure there is a profile row to enforce suspension in ClerkAuthGuard.
-      return tx.user.create({
-        data: {
-          clerkId: appUser.clerkId,
-          email: appUser.email,
-          role: appUser.role,
-          isActive: false,
-          deactivatedAt: now,
-          deactivatedReasonCode: 'ADMIN_SUSPENDED',
-          deactivatedReasonText: 'User suspended by admin',
-        },
+      // Cascade suspension to organizations and subscriptions
+      const profileId = result.id;
+      const userOrgLinks = await tx.userOrganization.findMany({
+        where: { userId: profileId },
+        select: { organizationId: true },
       });
+      const orgIds = userOrgLinks.map((link) => link.organizationId);
+
+      await this.cascadeUserDeactivation(
+        tx, profileId, orgIds,
+        'User account suspended by admin', 'REMOVE', id,
+      );
+
+      return result;
     });
 
     // Return in User format for compatibility
@@ -1483,6 +1616,16 @@ export class UsersService {
 
     const profile = await this.prisma.user.findUnique({ where: { clerkId: appUser.clerkId } });
 
+    // Helper: safely count records in a table that might not exist yet (P2021).
+    const safeCount = async (query: Promise<number>): Promise<number> => {
+      try {
+        return await query;
+      } catch (error: any) {
+        if (error?.code === 'P2021') return 0;
+        throw error;
+      }
+    };
+
     // Preflight dependency counts. We only allow hard-delete for "clean" users
     // (typically newly created accounts) to avoid blowing away important history.
     const [
@@ -1497,20 +1640,20 @@ export class UsersService {
       supportTicketCount,
       ticketResponseCount,
     ] = await Promise.all([
-      this.prisma.asset.count({ where: { uploadedById: appUser.id } }),
-      this.prisma.course.count({ where: { createdBy: appUser.id } }),
-      profile ? this.prisma.userOrganization.count({ where: { userId: profile.id } }) : Promise.resolve(0),
-      profile ? this.prisma.userContactInfo.count({ where: { userId: profile.id } }) : Promise.resolve(0),
+      safeCount(this.prisma.asset.count({ where: { uploadedById: appUser.id } })),
+      safeCount(this.prisma.course.count({ where: { createdBy: appUser.id } })),
+      profile ? safeCount(this.prisma.userOrganization.count({ where: { userId: profile.id } })) : Promise.resolve(0),
+      profile ? safeCount(this.prisma.userContactInfo.count({ where: { userId: profile.id } })) : Promise.resolve(0),
       profile
-        ? this.prisma.message.count({
+        ? safeCount(this.prisma.message.count({
             where: { OR: [{ senderId: profile.id }, { receiverId: profile.id }] },
-          })
+          }))
         : Promise.resolve(0),
-      profile ? this.prisma.conversationParticipant.count({ where: { userId: profile.id } }) : Promise.resolve(0),
-      profile ? this.prisma.subscription.count({ where: { userId: profile.id } }) : Promise.resolve(0),
-      profile ? this.prisma.jobApplication.count({ where: { candidateId: profile.id } }) : Promise.resolve(0),
-      profile ? this.prisma.supportTicket.count({ where: { OR: [{ userId: profile.id }, { assignedTo: profile.id }] } }) : Promise.resolve(0),
-      profile ? this.prisma.ticketResponse.count({ where: { userId: profile.id } }) : Promise.resolve(0),
+      profile ? safeCount(this.prisma.conversationParticipant.count({ where: { userId: profile.id } })) : Promise.resolve(0),
+      profile ? safeCount(this.prisma.subscription.count({ where: { userId: profile.id } })) : Promise.resolve(0),
+      profile ? safeCount(this.prisma.jobApplication.count({ where: { candidateId: profile.id } })) : Promise.resolve(0),
+      profile ? safeCount(this.prisma.supportTicket.count({ where: { OR: [{ userId: profile.id }, { assignedTo: profile.id }] } })) : Promise.resolve(0),
+      profile ? safeCount(this.prisma.ticketResponse.count({ where: { userId: profile.id } })) : Promise.resolve(0),
     ]);
 
     // Allow deleting trivial link tables (memberships/contact) automatically,
@@ -1541,7 +1684,27 @@ export class UsersService {
     }
 
     try {
-      await this.prisma.$transaction(async (tx) => {
+      await this.prisma.$transaction(
+        async (tx) => {
+        // Helper: run a deleteMany that might target a table not yet migrated.
+        const safeDeleteMany = async (model: any, where: any): Promise<void> => {
+          try {
+            await model.deleteMany({ where });
+          } catch (error: any) {
+            if (error?.code === 'P2021') return; // table does not exist
+            throw error;
+          }
+        };
+        // Helper: run an updateMany that might target a table not yet migrated.
+        const safeUpdateMany = async (model: any, where: any, data: any): Promise<void> => {
+          try {
+            await model.updateMany({ where, data });
+          } catch (error: any) {
+            if (error?.code === 'P2021') return; // table does not exist
+            throw error;
+          }
+        };
+
         // In force mode, aggressively delete dependent data so the user can be removed.
         if (force && profile) {
           // Track conversation IDs that might become orphaned after we remove this user's
@@ -1585,17 +1748,72 @@ export class UsersService {
           }
 
           // Jobs / support / subscriptions
-          await tx.jobApplication.deleteMany({ where: { candidateId: profile.id } });
-          await tx.ticketResponse.deleteMany({ where: { userId: profile.id } });
-          await tx.supportTicket.deleteMany({ where: { OR: [{ userId: profile.id }, { assignedTo: profile.id }] } });
-          await tx.userSubscription.deleteMany({ where: { userId: profile.id } });
-          await tx.subscription.deleteMany({ where: { userId: profile.id } });
+          await safeDeleteMany(tx.jobApplication, { candidateId: profile.id });
+          await safeDeleteMany(tx.ticketResponse, { userId: profile.id });
+          await safeDeleteMany(tx.supportTicket, { OR: [{ userId: profile.id }, { assignedTo: profile.id }] });
+          await safeDeleteMany(tx.userSubscription, { userId: profile.id });
+          await safeDeleteMany(tx.subscription, { userId: profile.id });
 
           // E-learning
-          await tx.certificate.deleteMany({ where: { userId: profile.id } });
-          await tx.discussionReply.deleteMany({ where: { userId: profile.id } });
-          await tx.courseDiscussion.deleteMany({ where: { userId: profile.id } });
-          await tx.courseEnrollment.deleteMany({ where: { userId: profile.id } });
+          await safeDeleteMany(tx.certificate, { userId: profile.id });
+          // Note: DiscussionReply has onDelete: Cascade from CourseDiscussion,
+          // so deleting discussions auto-cascades to their replies.
+          await safeDeleteMany(tx.courseDiscussion, { userId: profile.id });
+          await safeDeleteMany(tx.courseEnrollment, { userId: profile.id });
+
+          // ── Relations that were previously missing, causing P2003 / 500 ──
+
+          // Licensing
+          await safeDeleteMany(tx.license, { userId: profile.id });
+
+          // Content moderation (moderatorId is required → Restrict)
+          await safeDeleteMany(tx.moderationAction, { moderatorId: profile.id });
+
+          // Notification preferences (userId is required → Restrict)
+          await safeDeleteMany(tx.userNotificationPreferences, { userId: profile.id });
+
+          // Admin content items created by the user (uploadedBy is required → Restrict)
+          await safeDeleteMany(tx.contentItem, { uploadedBy: profile.id });
+
+          // Policy alerts created by the user (createdBy is required → Restrict)
+          await safeDeleteMany(tx.policyAlert, { createdBy: profile.id });
+
+          // API keys created by the user (createdBy is required → Restrict)
+          await safeDeleteMany(tx.apiKey, { createdBy: profile.id });
+
+          // Webhooks created by the user (createdBy is required → Restrict).
+          // WebhookLog has onDelete: Cascade on webhookId, so deleting
+          // the webhook cascades to its logs automatically.
+          await safeDeleteMany(tx.webhook, { createdBy: profile.id });
+
+          // Calendar events the user created (createdBy is optional → SetNull,
+          // but clean up explicitly for data hygiene)
+          await safeUpdateMany(tx.calendarEvent, { createdBy: profile.id }, { createdBy: null });
+
+          // Subscription requests / cancellation requests (userId is optional → SetNull,
+          // but nullify explicitly to be safe)
+          await safeUpdateMany(tx.subscriptionRequest, { userId: profile.id }, { userId: null });
+          await safeUpdateMany(tx.subscriptionCancellationRequest, { userId: profile.id }, { userId: null });
+
+          // Vendor client marks (markedByUserId is optional → SetNull)
+          await safeUpdateMany(tx.vendorClient, { markedByUserId: profile.id }, { markedByUserId: null });
+
+          // Content moderation reports/reviews (optional FKs → SetNull)
+          await safeUpdateMany(tx.contentModeration, { reporterId: profile.id }, { reporterId: null });
+          await safeUpdateMany(tx.contentModeration, { moderatorId: profile.id }, { moderatorId: null });
+
+          // Email logs (optional FK → SetNull)
+          await safeUpdateMany(tx.emailLog, { userId: profile.id }, { userId: null });
+
+          // Audit logs (optional FK → SetNull).
+          // Nullifying actorId is intentional for hard-delete: the admin
+          // explicitly chose permanent removal.  The audit row itself is
+          // retained (action, timestamp, metadata) — only the actor
+          // linkage is severed so the User row can be dropped.
+          await safeUpdateMany(tx.auditLog, { actorId: profile.id }, { actorId: null });
+
+          // Platform settings last-updated-by (optional FK → SetNull)
+          await safeUpdateMany(tx.platformSettings, { updatedBy: profile.id }, { updatedBy: null });
         }
 
         // If the AppUser has uploaded assets, we cannot delete it due to onDelete: Restrict.
@@ -1629,8 +1847,10 @@ export class UsersService {
         }
 
         if (profile) {
+          // userOrganization is a core table guaranteed to exist in every
+          // environment, so it does not need the P2021 safeDeleteMany guard.
           await tx.userOrganization.deleteMany({ where: { userId: profile.id } });
-          await tx.userContactInfo.deleteMany({ where: { userId: profile.id } });
+          await safeDeleteMany(tx.userContactInfo, { userId: profile.id });
           await tx.user.delete({ where: { id: profile.id } });
         } else {
           // Fall back to clerkId-based cleanup if profile row doesn't exist.
@@ -1638,24 +1858,34 @@ export class UsersService {
         }
 
         await tx.appUser.delete({ where: { id: appUser.id } });
-      });
+        },
+        // Force-delete performs ~35 sequential DB operations; increase
+        // the timeout well beyond Prisma's default 5 s to avoid spurious
+        // transaction timeouts on larger accounts.
+        { timeout: 30_000 },
+      );
     } catch (err: any) {
+      // Log the full error so the specific FK constraint is visible in server logs.
+      this.logger.error(`[HARD DELETE] Transaction failed for user ${id}`, {
+        code: err?.code,
+        meta: err?.meta,
+        message: err?.message,
+      });
+
       // Guard against FK races: even after a "clean" preflight, a dependent record may be
       // created before we delete, resulting in a FK constraint error. Translate to 409.
-      if (err?.code === 'P2003' || err instanceof Prisma.PrismaClientKnownRequestError) {
-        const code = err?.code;
-        if (code === 'P2003') {
-          throw new ConflictException({
-            message:
-              'User cannot be hard-deleted because dependent records exist. Use soft delete, or manually purge dependent data first.',
-            code: 'HARD_DELETE_BLOCKED',
-            blocking,
-            nonBlocking: {
-              orgMemberships: orgMembershipCount,
-              contactInfo: contactInfoCount,
-            },
-          });
-        }
+      if (err?.code === 'P2003') {
+        throw new ConflictException({
+          message:
+            'User cannot be hard-deleted because dependent records exist. Use soft delete, or manually purge dependent data first.',
+          code: 'HARD_DELETE_BLOCKED',
+          detail: err?.meta?.field_name || err?.message,
+          blocking,
+          nonBlocking: {
+            orgMemberships: orgMembershipCount,
+            contactInfo: contactInfoCount,
+          },
+        });
       }
       throw err;
     }

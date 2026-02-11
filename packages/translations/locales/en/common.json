@@ -264,6 +264,8 @@
       "normal": "Normal"
     },
     "error": {
+      "invalidCategory": "Please select a valid category",
+      "saveCategoryFailed": "Failed to save category. Please try again.",
       "selectFileOrLink": "Please select a file or provide a link"
     },
     "fileUpload": {
@@ -272,7 +274,8 @@
       "dragAndDrop": "or drag and drop",
       "eLearningAllowedTypes": "Supported formats: PDF, MP4, MP3, ZIP",
       "hrPolicyAllowedTypes": "Supported formats: PDF, DOC, DOCX, XLS, XLSX, CSV, ODS",
-      "selected": "{{fileName}} selected"
+      "selected": "{{fileName}} selected",
+      "fileTooLarge": "File size exceeds {{max}}MB limit."
     },
     "labels": {
       "accessRoles": "Access Roles",
@@ -304,6 +307,7 @@
       "duration": "Duration",
       "externalLink": "External Link",
       "linkUrl": "Link Url",
+      "otherCategory": "Other (please specify)",
       "version": "Version"
     },
     "statusOptions": {
@@ -657,7 +661,9 @@
       "rename": "Rename"
     },
     "adminUploadNote": "View and download your files",
-    "confirmDelete": "Are you sure you want to delete this file?",
+    "confirmDelete": "Delete this file permanently? This cannot be undone.",
+    "deleteError": "Failed to delete file. Please try again.",
+    "deleteHelpCta": "How do I delete files?",
     "downloadError": "Failed to download file. Please try again.",
     "emptyState": {
       "message": "Your files will appear here once uploaded",
@@ -675,11 +681,20 @@
     "uploadButton": "Upload",
     "uploadFile": "Upload File",
     "uploadedFiles": "uploaded Files",
-    "uploading": "Uploading"
+    "uploading": "Uploading",
+    "maxSize": "Max {{max}}MB",
+    "errors": {
+      "fileTooLarge": "File size exceeds {{max}}MB."
+    }
   },
   "fileUploadZone": {
     "defaultLabel": "default",
-    "dragAndDrop": "Drag and drop files here"
+    "dragAndDrop": "Drag and drop files here",
+    "errors": {
+      "sizeExceeded": "File size exceeds {{max}}MB.",
+      "invalidType": "Invalid file type. Accepted: {{types}}",
+      "uploadFailed": "Upload failed. Please try again."
+    }
   },
   "filters": {
     "all": "All",
@@ -1507,6 +1522,9 @@
     "url": "https://example.com",
     "vatNumber": "vat Number"
   },
+  "chipInput": {
+    "pressEnterHint": "Type and press Enter to add."
+  },
   "policyAlertModal": {
     "labels": {
       "displayEndDate": "Display End Date",
@@ -1770,9 +1788,18 @@
     "viewDaycareProfile": "View Daycare Profile"
   },
   "serviceRequestModal": {
-    "notesLabel": "No tes",
+    "title": "Request Service: {{serviceName}}",
+    "serviceLabel": "Service",
+    "providerLabel": "Provider",
+    "notesLabel": "Notes",
     "preferredDateLabel": "Preferred Date",
-    "submitButton": "Submit Button"
+    "submitButton": "Submit Request"
+  },
+  "serviceViewModal": {
+    "title": "Service Details",
+    "providerLabel": "Provider",
+    "availabilityLabel": "Availability",
+    "priceLabel": "Price"
   },
   "serviceStatus": {
     "active": "Active",
@@ -1795,6 +1822,10 @@
     "currentImage": "Current image",
     "editTitle": "Edit Service",
     "imageHelpText": "Upload a JPG or PNG (max 5 MB). This image appears on your marketplace card.",
+    "errors": {
+      "invalidImageType": "Please select an image file.",
+      "imageTooLarge": "Image must be less than {{max}}MB."
+    },
     "labels": {
       "availability": "Availability & schedule",
       "categories": "categories",
@@ -2066,6 +2097,7 @@
     }
   },
   "showPassword": "Show password",
+  "saving": "Saving...",
   "sidebar": {
     "ordersAppointments": "orders Appointments"
   },
@@ -2349,5 +2381,6 @@
   "viewAll": "view All",
   "welcome": "Welcome",
   "welcomeBack": "Welcome back!",
+  "saving": "Saving...",
   "description": "Description"
 }

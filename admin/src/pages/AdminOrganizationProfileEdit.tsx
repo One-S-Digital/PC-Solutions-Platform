@@ -41,7 +41,7 @@ interface OrganizationProfile {
   description: string;
   vatNumber: string;
   languages: string[];
-  website: string;
+  websiteUrl: string;
   logoUrl: string | null;
   logoAssetId: string | null;
   coverImageUrl: string | null;
@@ -119,7 +119,8 @@ const AdminOrganizationProfileEdit: React.FC = () => {
         description: profile.description || '',
         vatNumber: profile.vatNumber || '',
         languages: profile.languages || [],
-        website: profile.website || '',
+        // Backend canonical field is `websiteUrl` (older admin UIs used `website`)
+        websiteUrl: profile.websiteUrl || (profile as any).website || '',
         capacity: profile.capacity || 0,
         pedagogy: profile.pedagogy || [],
         productCategory: profile.productCategory || '',
@@ -373,8 +374,8 @@ const AdminOrganizationProfileEdit: React.FC = () => {
               </label>
               <input
                 type="url"
-                value={formData.website || ''}
-                onChange={(e) => handleChange('website', e.target.value)}
+                value={formData.websiteUrl || ''}
+                onChange={(e) => handleChange('websiteUrl', e.target.value)}
                 className={STANDARD_INPUT_FIELD}
                 placeholder="https://example.com"
               />

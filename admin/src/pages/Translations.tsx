@@ -897,6 +897,18 @@ export default function Translations() {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    const maxSizeMB = 10;
+    if (file.size > maxSizeMB * 1024 * 1024) {
+      toast.error(
+        t('admin:translations.errors.fileTooLarge', {
+          defaultValue: `File size exceeds ${maxSizeMB}MB limit.`,
+          max: maxSizeMB,
+        })
+      );
+      event.target.value = '';
+      return;
+    }
+
     // Reset the input so the same file can be selected again
     event.target.value = '';
 
@@ -1487,7 +1499,7 @@ export default function Translations() {
 
                   return (
                     <tr key={`${item.namespace}:${item.key}`} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 whitespace-nowrap text-sm">
+                      <td className="px-4 py-3 text-sm">
                         {hasReviewable && (
                           <input
                             type="checkbox"
@@ -1506,10 +1518,10 @@ export default function Translations() {
                           />
                         )}
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
+                      <td className="px-4 py-3 text-sm font-medium text-gray-900 break-words">
                         {item.namespace}
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm font-mono text-gray-600">
+                      <td className="px-4 py-3 text-sm font-mono text-gray-600 break-all max-w-xs">
                         {item.key}
                       </td>
                       {LANGUAGES.map((lang) => {
@@ -1612,7 +1624,7 @@ export default function Translations() {
                           </td>
                         );
                       })}
-                      <td className="px-4 py-3 whitespace-nowrap text-sm">
+                      <td className="px-4 py-3 text-sm">
                         <div className="flex items-center gap-3">
                           <button
                             onClick={() => copyKeyToClipboard(item.namespace, item.key)}
@@ -1949,17 +1961,17 @@ export default function Translations() {
                     ) : (
                       issues.map((issue) => (
                         <tr key={issueRowId(issue)} className="hover:bg-gray-50">
-                          <td className="px-4 py-3 whitespace-nowrap text-sm">
+                          <td className="px-4 py-3 text-sm">
                             <input
                               type="checkbox"
                               checked={isIssueRowSelected(issue)}
                               onChange={() => toggleIssueRowSelection(issue)}
                             />
                           </td>
-                          <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
+                          <td className="px-4 py-3 text-sm font-medium text-gray-900">
                             {issue.namespace}
                           </td>
-                          <td className="px-4 py-3 whitespace-nowrap text-sm font-mono text-gray-600">
+                          <td className="px-4 py-3 text-sm font-mono text-gray-600 break-all max-w-xs">
                             {issue.key}
                           </td>
                           <td className="px-4 py-3 text-sm text-gray-800">
@@ -1974,7 +1986,7 @@ export default function Translations() {
                               <span className="text-orange-700">{issue.value}</span>
                             )}
                           </td>
-                          <td className="px-4 py-3 whitespace-nowrap text-sm">
+                          <td className="px-4 py-3 text-sm">
                             {issue.type === 'missing' ? (
                               <span className="inline-flex items-center px-2 py-1 text-xs rounded bg-red-50 text-red-700 border border-red-200">
                                 {t('admin:translations.issues.types.missing', 'Missing translation')}
@@ -1985,7 +1997,7 @@ export default function Translations() {
                               </span>
                             )}
                           </td>
-                          <td className="px-4 py-3 whitespace-nowrap text-sm">
+                          <td className="px-4 py-3 text-sm">
                             <div className="flex gap-2 flex-wrap">
                               <button
                                 onClick={() => openIssueInEditor(issue)}
@@ -2113,22 +2125,22 @@ export default function Translations() {
                 ) : (
                   auditLogsResponse?.data?.data?.map((log: any) => (
                     <tr key={log.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-4 py-3 text-sm text-gray-900">
                         {new Date(log.createdAt).toLocaleString()}
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-4 py-3 text-sm text-gray-900">
                         {log.action}
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-4 py-3 text-sm text-gray-900">
                         {log.namespace || '-'}
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm font-mono text-gray-600">
+                      <td className="px-4 py-3 text-sm font-mono text-gray-600 break-all max-w-xs">
                         {log.key || '-'}
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-4 py-3 text-sm text-gray-900">
                         {log.lang}
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-4 py-3 text-sm text-gray-900">
                         {log.userId}
                       </td>
                     </tr>

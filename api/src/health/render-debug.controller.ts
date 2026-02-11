@@ -2,6 +2,8 @@ import { Controller, Get, Headers, NotFoundException, Query } from '@nestjs/comm
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from '../auth/decorators/public.decorator';
 import { PrismaService } from '../prisma/prisma.service';
+import * as os from 'node:os';
+import * as v8 from 'node:v8';
 
 @ApiTags('health')
 @Controller('health')
@@ -36,6 +38,8 @@ export class RenderDebugController {
       null;
 
     const databaseUrlSet = !!process.env.DATABASE_URL;
+    const mem = process.memoryUsage();
+    const heap = v8.getHeapStatistics();
 
     const db: Record<string, any> = {
       databaseUrlSet,
@@ -94,6 +98,21 @@ export class RenderDebugController {
           commit,
           node: process.version,
           uptimeSeconds: Math.round(process.uptime()),
+        },
+        memory: {
+          // Process memory (bytes)
+          rss: mem.rss,
+          heapTotal: mem.heapTotal,
+          heapUsed: mem.heapUsed,
+          external: mem.external,
+          arrayBuffers: (mem as any).arrayBuffers ?? null,
+          // V8 heap stats (bytes)
+          v8HeapSizeLimit: heap.heap_size_limit,
+          v8TotalAvailableSize: heap.total_available_size,
+          v8MallocedMemory: heap.malloced_memory,
+          // Host memory (bytes)
+          hostTotalMem: os.totalmem(),
+          hostFreeMem: os.freemem(),
         },
         env: {
           NODE_ENV: process.env.NODE_ENV || null,

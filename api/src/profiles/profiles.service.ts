@@ -15,6 +15,9 @@ export class ProfilesService {
     return this.prisma.user.findUnique({
       where: { id: userId },
       include: {
+        workExperienceItems: { orderBy: { sortOrder: 'asc' } },
+        educationItems: { orderBy: { sortOrder: 'asc' } },
+        certificationItems: { orderBy: { sortOrder: 'asc' } },
         organizations: {
           include: {
             organization: true
@@ -91,6 +94,9 @@ export class ProfilesService {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
       include: {
+        workExperienceItems: { orderBy: { sortOrder: 'asc' } },
+        educationItems: { orderBy: { sortOrder: 'asc' } },
+        certificationItems: { orderBy: { sortOrder: 'asc' } },
         organizations: {
           include: {
             organization: true
@@ -121,6 +127,9 @@ export class ProfilesService {
           workExperience: user.workExperience,
           education: user.education,
           certifications: user.certifications,
+          workExperienceItems: user.workExperienceItems,
+          educationItems: user.educationItems,
+          certificationItems: user.certificationItems,
           skills: user.skills,
           availability: user.availability,
           cvUrl: user.cvUrl,

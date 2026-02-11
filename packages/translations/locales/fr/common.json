@@ -239,6 +239,8 @@
       "normal": "Normal"
     },
     "error": {
+      "invalidCategory": "Veuillez sélectionner une catégorie valide",
+      "saveCategoryFailed": "Impossible d’enregistrer la catégorie. Veuillez réessayer.",
       "selectFileOrLink": "Veuillez sélectionner un fichier ou fournir un lien"
     },
     "fileUpload": {
@@ -247,7 +249,8 @@
       "dragAndDrop": "ou glisser-déposer",
       "eLearningAllowedTypes": "Formats acceptés : PDF, MP4, MP3, ZIP",
       "hrPolicyAllowedTypes": "Formats acceptés : PDF, DOC, DOCX, XLS, XLSX, CSV, ODS",
-      "selected": "{{fileName}} sélectionné"
+      "selected": "{{fileName}} sélectionné",
+      "fileTooLarge": "La taille du fichier dépasse la limite de {{max}} Mo."
     },
     "labels": {
       "accessRoles": "Rôles d'accès",
@@ -279,6 +282,7 @@
       "duration": "Durée",
       "externalLink": "Lien externe",
       "linkUrl": "URL du lien",
+      "otherCategory": "Autre (à préciser)",
       "version": "Version"
     },
     "statusOptions": {
@@ -622,7 +626,9 @@
       "rename": "Renommer"
     },
     "adminUploadNote": "Consultez et téléchargez vos fichiers",
-    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce fichier ?",
+    "confirmDelete": "Supprimer définitivement ce fichier ? Cette action est irréversible.",
+    "deleteError": "Échec de la suppression du fichier. Veuillez réessayer.",
+    "deleteHelpCta": "Comment supprimer des fichiers ?",
     "downloadError": "Échec du téléchargement du fichier. Veuillez réessayer.",
     "emptyState": {
       "message": "Vos fichiers apparaîtront ici une fois téléchargés",
@@ -640,11 +646,20 @@
     "uploadButton": "Télécharger",
     "uploadFile": "Télécharger un fichier",
     "uploadedFiles": "uploaded Files",
-    "uploading": "Téléchargement en cours"
+    "uploading": "Téléchargement en cours",
+    "maxSize": "Max {{max}} Mo",
+    "errors": {
+      "fileTooLarge": "La taille du fichier dépasse {{max}} Mo."
+    }
   },
   "fileUploadZone": {
     "defaultLabel": "default",
-    "dragAndDrop": "Glissez-déposez les fichiers ici"
+    "dragAndDrop": "Glissez-déposez les fichiers ici",
+    "errors": {
+      "sizeExceeded": "La taille du fichier dépasse {{max}} Mo.",
+      "invalidType": "Type de fichier invalide. Accepté : {{types}}",
+      "uploadFailed": "Échec du téléchargement. Veuillez réessayer."
+    }
   },
   "filters": {
     "all": "Tous",
@@ -1480,6 +1495,9 @@
     "url": "https://example.com",
     "vatNumber": "vat Number"
   },
+  "chipInput": {
+    "pressEnterHint": "Tapez puis appuyez sur Entrée pour ajouter."
+  },
   "policyAlertModal": {
     "labels": {
       "displayEndDate": "Date de fin d'affichage",
@@ -1746,9 +1764,18 @@
     "viewDaycareProfile": "Voir le profil de la garderie"
   },
   "serviceRequestModal": {
+    "title": "Demander un service : {{serviceName}}",
+    "serviceLabel": "Service",
+    "providerLabel": "Prestataire",
     "notesLabel": "Notes",
     "preferredDateLabel": "Date préférée",
-    "submitButton": "Bouton Soumettre"
+    "submitButton": "Envoyer la demande"
+  },
+  "serviceViewModal": {
+    "title": "Détails du service",
+    "providerLabel": "Prestataire",
+    "availabilityLabel": "Disponibilité",
+    "priceLabel": "Prix"
   },
   "serviceStatus": {
     "active": "Actif",
@@ -1771,6 +1798,10 @@
     "currentImage": "Image actuelle",
     "editTitle": "Modifier le service",
     "imageHelpText": "Texte d'aide pour l'image",
+    "errors": {
+      "invalidImageType": "Veuillez sélectionner un fichier image.",
+      "imageTooLarge": "L’image doit être inférieure à {{max}} Mo."
+    },
     "labels": {
       "availability": "Disponibilité",
       "categories": "categories",
@@ -2065,6 +2096,7 @@
     }
   },
   "showPassword": "Afficher le mot de passe",
+  "saving": "Enregistrement...",
   "sidebar": {
     "ordersAppointments": "orders Appointments"
   },
@@ -2349,5 +2381,6 @@
   "viewAll": "Voir Tous",
   "welcome": "Bienvener",
   "welcomeBack": "Bon retour !",
+  "saving": "Enregistrement...",
   "description": "Description"
 }

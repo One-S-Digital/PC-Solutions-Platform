@@ -39,18 +39,45 @@ export class PlaywrightRendererService {
           '--no-sandbox',
           '--disable-setuid-sandbox',
           '--disable-dev-shm-usage',
+          '--disable-gpu',
         ],
       });
 
       try {
-        const page = await browser.newPage();
+        const context = await browser.newContext();
+        const page = await context.newPage();
+
+        // Reduce memory/network usage: block non-essential resources.
+        // Keep scripts enabled so JS-heavy pages can still render.
+        await page.route('**/*', async (route) => {
+          try {
+            const type = route.request().resourceType();
+            if (type === 'image' || type === 'media' || type === 'font' || type === 'stylesheet') {
+              return await route.abort();
+            }
+          } catch {
+            // ignore
+          }
+          try {
+            return await route.continue();
+          } catch {
+            // ignore – route may already be handled
+          }
+        });
+
         await page.setExtraHTTPHeaders({
           'User-Agent': 'ProCreche-PolicyCrawler/1.0 (policy-updates@procreche.ch)',
         });
 
-        // Wait for network idle to catch most JS-driven content.
-        await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
-        return await page.content();
+        // Use DOMContentLoaded first to avoid waiting forever on analytics/long-polling.
+        await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+        // Best-effort: give the page a short window to settle.
+        await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => undefined);
+
+        const html = await page.content();
+        await page.close().catch(() => undefined);
+        await context.close().catch(() => undefined);
+        return html;
       } finally {
         await browser.close();
       }

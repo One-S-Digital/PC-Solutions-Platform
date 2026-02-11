@@ -30,6 +30,9 @@ export function useSupportThread({
     onNewReply: (reply) => {
       appendReply(reply);
     },
+    onReplyDeleted: (replyId) => {
+      removeReply(replyId);
+    },
     onTicketUpdate: () => {
       onTicketUpdate?.();
     },
@@ -48,6 +51,10 @@ export function useSupportThread({
       );
       return updated;
     });
+  }, []);
+
+  const removeReply = useCallback((replyId: string) => {
+    setReplies(prev => prev.filter(r => r.id !== replyId));
   }, []);
 
   // Merge server replies (from polling or initial load)

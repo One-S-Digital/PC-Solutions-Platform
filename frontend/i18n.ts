@@ -73,6 +73,41 @@ const stripPrefixes = (obj: unknown): unknown => {
   return obj;
 };
 
+const isPlainObject = (value: unknown): value is Record<string, unknown> =>
+  !!value && typeof value === 'object' && !Array.isArray(value);
+
+const mergeTranslations = (base: unknown, override: unknown): unknown => {
+  if (Array.isArray(override)) {
+    return override.length > 0 ? override : base;
+  }
+
+  if (Array.isArray(base) && !Array.isArray(override)) {
+    if (override === undefined || override === null) return base;
+    if (typeof override === 'string' && override.trim().length === 0) return base;
+    return override;
+  }
+
+  if (isPlainObject(base) || isPlainObject(override)) {
+    const baseObj = isPlainObject(base) ? base : {};
+    const overrideObj = isPlainObject(override) ? override : {};
+    const result: Record<string, unknown> = {};
+    const keys = new Set([...Object.keys(baseObj), ...Object.keys(overrideObj)]);
+
+    for (const key of keys) {
+      const merged = mergeTranslations(baseObj[key], overrideObj[key]);
+      if (merged !== undefined) {
+        result[key] = merged;
+      }
+    }
+
+    return result;
+  }
+
+  if (override === undefined || override === null) return base;
+  if (typeof override === 'string' && override.trim().length === 0) return base;
+  return override;
+};
+
 // Build fallback resources from discovered modules
 // Structure: { en: { common: {...}, auth: {...} }, fr: {...}, de: {...} }
 const fallbackResources: Record<string, Record<string, unknown>> = {};
@@ -272,6 +307,12 @@ i18n
 
           let data = await response.json();
           data = stripPrefixes(data);
+
+          // Merge API translations with bundled defaults to avoid empty strings
+          const bundledFallback = getBundledTranslations();
+          if (bundledFallback) {
+            data = mergeTranslations(bundledFallback, data);
+          }
           
           // If the namespace is 'content' and the API data has a 'content' wrapper, unwrap it
           if (ns === 'content' && data && typeof data === 'object' && 'content' in data) {

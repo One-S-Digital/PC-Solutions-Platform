@@ -5,16 +5,13 @@ import { DeepLService } from './deepl.service';
 import { TranslationMemoryService } from './translation-memory.service';
 import { CostTrackingService } from './cost-tracking.service';
 import { PrismaModule } from '../prisma/prisma.module';
+import { sharedRedisOptions } from '../common/redis.config';
 
 @Module({
   imports: [
     BullModule.registerQueue({
       name: 'translation',
-      redis: {
-        host: process.env.REDIS_HOST || 'localhost',
-        port: parseInt(process.env.REDIS_PORT || '6379'),
-        password: process.env.REDIS_PASSWORD,
-      },
+      redis: sharedRedisOptions,
       defaultJobOptions: {
         attempts: 3,
         backoff: {

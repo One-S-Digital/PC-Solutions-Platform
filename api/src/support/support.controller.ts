@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Patch,
+  Delete,
   Body,
   Param,
   Query,
@@ -132,6 +133,20 @@ export class SupportController {
     const userId = assigneeId || req.context.profileUserId; // Use profileUserId (User table ID) not appUserId (AppUser table ID)
     const ticket = await this.supportService.assignTicket(ticketId, userId);
     return wrapResponse(ticket, 'Ticket assigned successfully');
+  }
+
+  @Delete('admin/tickets/:ticketId/responses/:responseId')
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @ApiOperation({ summary: 'Delete a ticket response (admin)' })
+  @ApiResponse({ status: 200, description: 'Response deleted successfully' })
+  async deleteTicketResponse(
+    @Request() req,
+    @Param('ticketId') ticketId: string,
+    @Param('responseId') responseId: string,
+  ) {
+    const adminUserId = req.context.profileUserId;
+    const ticket = await this.supportService.deleteResponse(ticketId, responseId, adminUserId);
+    return wrapResponse(ticket, 'Response deleted successfully');
   }
 
   @Get('admin/stats')

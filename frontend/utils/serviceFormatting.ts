@@ -1,5 +1,5 @@
 import { TFunction } from 'i18next';
-import { ServiceCategory, ServiceDeliveryType } from '../types';
+import { Service, ServiceCategory, ServiceDeliveryType } from '../types';
 
 export const humanize = (value: string) =>
   value
@@ -24,6 +24,66 @@ export const formatServiceCategory = (
 
   const normalizedKey = String(category).toUpperCase();
   return t(`common:serviceCategories.${normalizedKey}`, humanize(String(category)));
+};
+
+const normalizeFlexibleCategoryLabel = (value: string) =>
+  value.trim().replace(/\s+/g, ' ').toLowerCase();
+
+const firstNonEmptyCategory = (
+  categories?: Array<string | null | undefined>,
+): string | undefined =>
+  (categories || []).find(
+    (c): c is string => typeof c === 'string' && c.trim().length > 0,
+  );
+
+// Only a subset of flexible labels correspond to the legacy enum values.
+// Everything else is intentionally left as a raw string label (custom categories
+// and extra suggestions like "Catering" are not representable in the enum).
+const FLEXIBLE_LABEL_TO_LEGACY_ENUM: Partial<Record<string, ServiceCategory>> = {
+  [normalizeFlexibleCategoryLabel('Cleaning & Maintenance')]: ServiceCategory.CLEANING,
+  [normalizeFlexibleCategoryLabel('IT & Technical Support')]: ServiceCategory.IT_SUPPORT,
+  [normalizeFlexibleCategoryLabel('Facilities Maintenance')]: ServiceCategory.MAINTENANCE,
+  [normalizeFlexibleCategoryLabel('Consulting')]: ServiceCategory.CONSULTING,
+  [normalizeFlexibleCategoryLabel('Training & Coaching')]: ServiceCategory.TRAINING,
+  [normalizeFlexibleCategoryLabel('Other')]: ServiceCategory.OTHER,
+};
+
+/**
+ * Many parts of the app still render the legacy enum `service.category` (ServiceCategory),
+ * but the newer UI stores user-selected categories in `service.categories` (string[]).
+ *
+ * This helper maps known flexible labels back to the legacy enum so we can:
+ * - display the translated label via `common:serviceCategories.*`
+ * - avoid everything falling back to the modal's default enum (historically `CLEANING`)
+ */
+export const inferServiceCategoryFromFlexibleCategories = (
+  categories?: Array<string | null | undefined>,
+): ServiceCategory | undefined => {
+  const first = firstNonEmptyCategory(categories);
+  if (!first) return undefined;
+
+  const key = normalizeFlexibleCategoryLabel(first);
+  return FLEXIBLE_LABEL_TO_LEGACY_ENUM[key];
+};
+
+export const formatServiceCategoryForService = (
+  t: TFunction,
+  service?: Pick<Service, 'category' | 'categories'> | null,
+) => {
+  if (!service) return formatServiceCategory(t, null);
+
+  const inferred = inferServiceCategoryFromFlexibleCategories(service.categories);
+  if (inferred) {
+    return formatServiceCategory(t, inferred);
+  }
+
+  const firstFlexible = firstNonEmptyCategory(service.categories);
+  if (firstFlexible) {
+    // Preserve the original label as-entered (it may include punctuation like "&").
+    return String(firstFlexible).trim();
+  }
+
+  return formatServiceCategory(t, service.category);
 };
 
 export const formatServiceDeliveryType = (
