@@ -5,6 +5,7 @@ import { CreateParentLeadDto } from './dto/create-parent-lead.dto';
 import { UpdateParentLeadDto } from './dto/update-parent-lead.dto';
 import { AppLoggerService } from '../common/logger.service';
 import { EmailNotificationService } from '../email-notification/email-notification.service';
+import { createHash } from 'crypto';
 
 export type LeadResponseStatus = 'INTERESTED' | 'NOT_INTERESTED' | 'NEEDS_MORE_INFO' | 'ENROLLED';
 
@@ -50,6 +51,7 @@ export class LeadsService {
   async createParentLead(createParentLeadDto: CreateParentLeadDto) {
     const parentEmail = createParentLeadDto.parentEmail.trim().toLowerCase();
     const parentName = createParentLeadDto.parentName.trim();
+    const parentEmailHash = this.hashRecipient(parentEmail);
 
     const [linkedParentUser, lead] = await this.prisma.$transaction(async (tx) => {
       const existingParentUser = await tx.user.findFirst({
@@ -88,7 +90,7 @@ export class LeadsService {
       this.logger.log(
         `Linked lead ${lead.id} to parent user ${linkedParentUser.id} during creation`,
         'LeadsService',
-        { leadId: lead.id, parentUserId: linkedParentUser.id, parentEmail },
+        { leadId: lead.id, parentUserId: linkedParentUser.id, parentEmailHash },
       );
     }
 
@@ -106,6 +108,7 @@ export class LeadsService {
     if (!normalizedEmail) {
       return 0;
     }
+    const parentEmailHash = this.hashRecipient(normalizedEmail);
 
     const result = await this.prisma.parentLead.updateMany({
       where: {
@@ -124,7 +127,7 @@ export class LeadsService {
       this.logger.log(
         `Linked ${result.count} existing lead(s) to parent account ${parentUserId}`,
         'LeadsService',
-        { parentUserId, parentEmail: normalizedEmail, linkedCount: result.count },
+        { parentUserId, parentEmailHash, linkedCount: result.count },
       );
     }
 
@@ -133,6 +136,14 @@ export class LeadsService {
 
   private normalizeStringArray(values?: string[]): string[] {
     return Array.from(new Set((values || []).map((value) => value.trim()).filter(Boolean)));
+  }
+
+  private hashRecipient(email: string): string {
+    const normalized = email?.trim().toLowerCase();
+    if (!normalized) {
+      return 'unknown';
+    }
+    return createHash('sha256').update(normalized).digest('hex').slice(0, 12);
   }
 
   private getFrontendBaseUrl(): string {
@@ -146,6 +157,7 @@ export class LeadsService {
       lead.parentEmail,
     )}&leadName=${encodeURIComponent(lead.parentName)}`;
     const enquiriesUrl = `${frontendUrl}/parent/enquiries`;
+    const recipientHash = this.hashRecipient(lead.parentEmail);
 
     try {
       const sent = await this.emailNotificationService.sendNotification({
@@ -169,7 +181,7 @@ export class LeadsService {
         this.logger.warn(
           `Parent lead confirmation email could not be sent for lead ${lead.id}`,
           'LeadsService',
-          { leadId: lead.id, recipient: lead.parentEmail },
+          { leadId: lead.id, recipientHash },
         );
       }
     } catch (error: any) {
@@ -177,7 +189,7 @@ export class LeadsService {
         `Parent lead confirmation email failed for lead ${lead.id}: ${error?.message || String(error)}`,
         error?.stack,
         'LeadsService',
-        { leadId: lead.id, recipient: lead.parentEmail },
+        { leadId: lead.id, recipientHash },
       );
     }
   }

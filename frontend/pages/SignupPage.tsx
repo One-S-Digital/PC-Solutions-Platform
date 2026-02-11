@@ -51,8 +51,8 @@ const SignupPage: React.FC = () => {
   const isLeadSubmissionSignup = Boolean(
     leadSignupState?.fromLeadSubmission || searchParams.get('fromLead') === '1',
   );
-  const leadSignupEmail = leadSignupState?.contactEmail || searchParams.get('leadEmail') || '';
-  const leadSignupName = leadSignupState?.contactName || searchParams.get('leadName') || '';
+  const leadSignupEmail = leadSignupState?.contactEmail || '';
+  const leadSignupName = leadSignupState?.contactName || '';
 
   // Detect if this is a user who needs to complete their profile (signed in but no backend user)
   // This can happen for:
@@ -73,6 +73,25 @@ const SignupPage: React.FC = () => {
       console.warn('Failed to load frontend settings:', settingsError);
     }
   }, [settingsError]);
+
+  // Strip sensitive lead params from URL if present to avoid PII in browser history.
+  useEffect(() => {
+    const hasSensitiveLeadParams = searchParams.has('leadEmail') || searchParams.has('leadName');
+    if (!hasSensitiveLeadParams) {
+      return;
+    }
+
+    const sanitizedParams = new URLSearchParams(searchParams);
+    sanitizedParams.delete('leadEmail');
+    sanitizedParams.delete('leadName');
+    const sanitizedSearch = sanitizedParams.toString();
+    const sanitizedUrl = sanitizedSearch ? `${location.pathname}?${sanitizedSearch}` : location.pathname;
+
+    navigate(sanitizedUrl, {
+      replace: true,
+      state: location.state,
+    });
+  }, [location.pathname, location.state, navigate, searchParams]);
 
   // Webhook status hook - no clerkId param needed, uses authenticated session
   const { error: webhookErrorFromHook, startPolling, checkWebhookStatus } = useWebhookStatus();
@@ -211,6 +230,11 @@ const SignupPage: React.FC = () => {
       return;
     }
 
+    // Only auto-advance once; subsequent navigation is user-driven.
+    if (hasStartedSignup) {
+      return;
+    }
+
     // Wait for auth context to settle so we don't disable the signed-in redirect path.
     if (isAuthLoading) {
       return;
@@ -233,6 +257,7 @@ const SignupPage: React.FC = () => {
     isLeadSubmissionSignup,
     leadSignupEmail,
     leadSignupName,
+    hasStartedSignup,
     isAuthLoading,
     isSignedIn,
     currentUser,
@@ -1050,10 +1075,6 @@ const SignupPage: React.FC = () => {
 
                 {showVerificationStep && (
                   <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    {(() => {
-                      
-                      return null;
-                    })()}
                     {webhookStatus === 'processing' ? (
                       <VerificationProgress 
                         status={webhookStatus} 
