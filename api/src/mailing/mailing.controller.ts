@@ -19,6 +19,7 @@ import { UserRole } from '@prisma/client';
 
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { Public } from '../auth/decorators/public.decorator';
 import { MailingService, EXPORTABLE_COLUMNS } from './mailing.service';
 import { PreviewRequestDto } from './dto/preview.dto';
 import { CreateSegmentDto, UpdateSegmentDto } from './dto/segment.dto';
@@ -42,6 +43,17 @@ export class MailingController {
       throw new BadRequestException('Unable to determine admin user ID from request context');
     }
     return adminId;
+  }
+
+  /* ================================================================ */
+  /*  HEALTH (public — verifies routes are registered)                 */
+  /* ================================================================ */
+
+  @Get('health')
+  @Public()
+  @ApiOperation({ summary: 'Mailing module health check' })
+  async health() {
+    return { status: 'ok', module: 'mailing', timestamp: new Date().toISOString() };
   }
 
   /* ================================================================ */
