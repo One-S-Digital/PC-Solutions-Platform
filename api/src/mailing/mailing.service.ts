@@ -66,9 +66,9 @@ export class MailingService {
     const roleCondition: Prisma.EnumUserRoleFilter = {};
 
     // Always exclude admin/super_admin from recipient lists
-    const alwaysExclude = [UserRole.SUPER_ADMIN, UserRole.ADMIN];
-    const userExclude = filters.excludeRoles?.length
-      ? [...new Set([...alwaysExclude, ...filters.excludeRoles])]
+    const alwaysExclude: UserRole[] = [UserRole.SUPER_ADMIN, UserRole.ADMIN];
+    const userExclude: UserRole[] = filters.excludeRoles?.length
+      ? ([...new Set([...alwaysExclude, ...(filters.excludeRoles as UserRole[])])])
       : alwaysExclude;
     roleCondition.notIn = userExclude;
 
@@ -603,7 +603,12 @@ export class MailingService {
       throw new BadRequestException('No email transport configured');
     }
 
-    const filters = (campaign.filtersJson || campaign.segment?.filtersJson) as unknown as MailingFiltersDto;
+    // Resolve filters from the campaign itself or from the associated segment
+    let filters: MailingFiltersDto | null = campaign.filtersJson as unknown as MailingFiltersDto | null;
+    if (!filters && campaign.segmentId) {
+      const segment = await this.prisma.mailingSegment.findUnique({ where: { id: campaign.segmentId } });
+      filters = segment?.filtersJson as unknown as MailingFiltersDto | null;
+    }
     if (!filters) {
       throw new BadRequestException('Campaign has no filter configuration');
     }

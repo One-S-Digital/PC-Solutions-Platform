@@ -21,6 +21,7 @@ import {
   CreditCard,
   Tag,
   FileSearch,
+  Mail,
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useSettings } from '../hooks/useSettings'
@@ -48,6 +49,7 @@ const navigation = [
   { key: 'support', href: '/support', icon: LifeBuoy },
   { key: 'discountTerminations', href: '/discount-terminations', icon: Tag },
   { key: 'subscriptions', href: '/subscriptions', icon: CreditCard },
+  { key: 'mailingLists', href: '/mailing', icon: Mail },
   { key: 'policyCrawler', href: '/policy-crawler', icon: FileSearch },
   { key: 'settings', href: '/settings', icon: Settings },
 ]

@@ -465,6 +465,127 @@ export interface LegacyUploadResult {
 
 export type { Course, PolicyDocument, PolicyAlert, FrontendSettings, LineItem };
 
+// ========================
+// Mailing List Types
+// ========================
+
+export interface MailingFilters {
+  roles?: string[];
+  excludeRoles?: string[];
+  isActive?: boolean;
+  hasSubscription?: boolean;
+  subscriptionStatuses?: string[];
+  subscriptionTiers?: string[];
+  renewalDateFrom?: string;
+  renewalDateTo?: string;
+  cantons?: string[];
+  cities?: string[];
+  languages?: string[];
+  marketingOptIn?: boolean;
+  excludeUnsubscribed?: boolean;
+  createdFrom?: string;
+  createdTo?: string;
+  lastActiveFrom?: string;
+  lastActiveTo?: string;
+  search?: string;
+}
+
+export interface MailingPreviewRow {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  orgName: string | null;
+  canton: string | null;
+  isActive: boolean;
+  hasSubscription: boolean;
+  marketingOptIn: boolean;
+}
+
+export interface MailingPreviewResponse {
+  count: number;
+  rows: MailingPreviewRow[];
+  warnings: string[];
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export interface MailingSegment {
+  id: string;
+  name: string;
+  description: string | null;
+  filtersJson: MailingFilters;
+  estimatedSize: number | null;
+  lastComputedAt: string | null;
+  createdById: string;
+  createdAt: string;
+  updatedAt: string;
+  _count?: { campaigns: number };
+}
+
+export interface MailingSegmentListResponse {
+  segments: MailingSegment[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export type MailingCampaignStatus = 'DRAFT' | 'SENDING' | 'SENT' | 'FAILED' | 'CANCELLED';
+
+export interface MailingCampaignSummary {
+  id: string;
+  subject: string;
+  status: MailingCampaignStatus;
+  totalEstimated: number;
+  sentCount: number;
+  failedCount: number;
+  segmentName: string | null;
+  createdAt: string;
+  sentAt: string | null;
+  completedAt: string | null;
+}
+
+export interface MailingCampaignDetail {
+  id: string;
+  subject: string;
+  bodyHtml: string;
+  bodyText: string | null;
+  segmentId: string | null;
+  filtersJson: MailingFilters | null;
+  status: MailingCampaignStatus;
+  totalEstimated: number;
+  sentCount: number;
+  failedCount: number;
+  cursor: string | null;
+  createdById: string;
+  sentAt: string | null;
+  completedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  segment?: { name: string } | null;
+}
+
+export interface MailingCampaignListResponse {
+  campaigns: MailingCampaignSummary[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export interface MailingSendBatchResponse {
+  sentCountThisBatch: number;
+  failedCountThisBatch: number;
+  totalSentSoFar: number;
+  totalFailedSoFar: number;
+  nextCursor: string | null;
+  done: boolean;
+  totalEstimated: number;
+}
+
 
 export interface ApiResponse<T> {
   success: boolean;

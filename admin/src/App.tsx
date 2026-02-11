@@ -27,6 +27,8 @@ import PolicyCrawlerPage from './pages/PolicyCrawler';
 import AdminUserProfileEdit from './pages/AdminUserProfileEdit';
 import AdminOrganizationProfileEdit from './pages/AdminOrganizationProfileEdit';
 import ResetPassword from './pages/ResetPassword';
+import MailingListPage from './pages/MailingList';
+import MailingCampaignDetailPage from './pages/MailingCampaignDetail';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -100,6 +102,9 @@ function App() {
           <Route path="support/tickets/:ticketId" element={<SupportTicketPage />} />
           <Route path="discount-terminations" element={<DiscountTerminationsPage />} />
           <Route path="subscriptions" element={<SubscriptionsPage />} />
+
+          <Route path="mailing" element={<MailingListPage />} />
+          <Route path="mailing/campaigns/:id" element={<MailingCampaignDetailPage />} />
 
           {/* Policy crawler (always visible; status is indicated inside) */}
           <Route path="policy-crawler/*" element={<PolicyCrawlerPage />} />
