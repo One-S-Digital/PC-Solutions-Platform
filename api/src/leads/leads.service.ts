@@ -94,7 +94,8 @@ export class LeadsService {
       );
     }
 
-    await this.sendParentLeadConfirmationEmail(lead);
+    // Fire-and-forget: the email sender catches/logs its own errors.
+    void this.sendParentLeadConfirmationEmail(lead);
 
     return lead;
   }
@@ -153,9 +154,7 @@ export class LeadsService {
 
   private async sendParentLeadConfirmationEmail(lead: ParentLead): Promise<void> {
     const frontendUrl = this.getFrontendBaseUrl();
-    const accountSetupUrl = `${frontendUrl}/signup?fromLead=1&role=parent&leadEmail=${encodeURIComponent(
-      lead.parentEmail,
-    )}&leadName=${encodeURIComponent(lead.parentName)}`;
+    const accountSetupUrl = `${frontendUrl}/signup?fromLead=1&role=parent`;
     const enquiriesUrl = `${frontendUrl}/parent/enquiries`;
     const recipientHash = this.hashRecipient(lead.parentEmail);
 
