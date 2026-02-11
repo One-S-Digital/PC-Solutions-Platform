@@ -375,23 +375,68 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
   }, [language]);
 
   const submitParentLead = useCallback(async (leadData: Omit<ParentLead, 'id' | 'submissionDate' | 'mainStatus' | 'assignedFoundations' | 'responses'| 'parentId'>) => {
+    const preferredCities = Array.from(
+      new Set(
+        [...(leadData.preferredCities || []), leadData.municipality || '']
+          .map((city) => city.trim())
+          .filter(Boolean),
+      ),
+    );
+
+    const metadataMessageParts: string[] = [];
+    if (leadData.municipality?.trim()) {
+      metadataMessageParts.push(`Municipality: ${leadData.municipality.trim()}`);
+    }
+    if (leadData.desiredStartDate?.trim()) {
+      metadataMessageParts.push(`Desired start date: ${leadData.desiredStartDate.trim()}`);
+    }
+
+    // Legacy form fields don't include childName/message directly.
+    // Normalize them into the backend lead schema so submissions always persist.
+    const normalizedPayload = {
+      parentName: leadData.contactName.trim(),
+      parentEmail: leadData.contactEmail.trim(),
+      parentPhone: leadData.contactPhone?.trim() || undefined,
+      childName: `${leadData.contactName.trim() || 'Parent'}'s child`,
+      childAge: leadData.childAge,
+      preferredLocation: leadData.canton.trim(),
+      preferredCities: preferredCities.length > 0 ? preferredCities : undefined,
+      specialRequirements: leadData.specialNeeds?.trim() || undefined,
+      message: metadataMessageParts.length > 0 ? metadataMessageParts.join('\n') : undefined,
+      status: 'NEW',
+    };
+
     try {
-      const response = await authenticatedRequest<ParentLead>('/compat/parent-leads', {
-        method: 'POST',
-        body: JSON.stringify({
-          ...leadData,
-          mainStatus: LeadMainStatus.NEW,
-        }),
-      });
-      
-      if (response.success && response.data) {
-        setLeads(prevLeads => [response.data!, ...prevLeads]);
+      const response = await apiService.post<any>('/leads/parent-leads', normalizedPayload);
+
+      if (!response.success || !response.data) {
+        throw new Error(response.message || 'Failed to submit lead');
       }
+
+      const createdLead: ParentLead = {
+        id: response.data.id || `lead-${Date.now()}`,
+        parentId: '',
+        canton: leadData.canton,
+        municipality: leadData.municipality,
+        preferredCities,
+        childAge: leadData.childAge,
+        desiredStartDate: leadData.desiredStartDate,
+        specialNeeds: leadData.specialNeeds,
+        contactName: leadData.contactName,
+        contactEmail: leadData.contactEmail,
+        contactPhone: leadData.contactPhone,
+        submissionDate: response.data.createdAt || new Date().toISOString(),
+        mainStatus: LeadMainStatus.NEW,
+        assignedFoundations: [],
+        responses: [],
+      };
+
+      setLeads((prevLeads) => [createdLead, ...prevLeads]);
     } catch (error) {
       console.error('Failed to submit lead:', error);
       throw error;
     }
-  }, [authenticatedRequest]);
+  }, []);
 
   const submitServiceRequest = useCallback(async (requestData: Omit<ServiceRequest, 'id' | 'requestDate' | 'status' | 'foundationId' | 'foundationOrgId'>) => {
     if (!currentUser || !currentUser.orgId) {
