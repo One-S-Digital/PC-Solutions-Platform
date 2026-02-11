@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { X, Send, Eye } from 'lucide-react'
+import DOMPurify from 'dompurify'
 
 interface Props {
   isOpen: boolean
@@ -62,7 +63,7 @@ const ComposeEmailModal: React.FC<Props> = ({ isOpen, onClose, onSend, loading, 
             {showPreview ? (
               <div
                 className="border border-gray-300 rounded-md p-3 min-h-[200px] text-sm bg-white prose prose-sm max-w-none"
-                dangerouslySetInnerHTML={{ __html: bodyHtml }}
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(bodyHtml) }}
               />
             ) : (
               <textarea

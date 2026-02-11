@@ -1,12 +1,17 @@
-import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, BadRequestException, NotFoundException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { MailingTransportService } from './mailing-transport.service';
 import { MailingFiltersDto } from './dto/mailing-filters.dto';
 import { UserRole, Prisma, MailingCampaignStatus } from '@prisma/client';
+import * as crypto from 'crypto';
 
 const MAX_RECIPIENTS_PER_CAMPAIGN = 2000;
+const MAX_EXPORT_ROWS = 10_000;
+const MAX_PAGE_SIZE = 100;
+const MAX_SEARCH_LENGTH = 200;
 const DEFAULT_BATCH_SIZE = 100;
 const INTER_EMAIL_DELAY_MS = parseInt(process.env.MAILING_SMTP_RATE_LIMIT_MS || '100', 10);
+const UNSUBSCRIBE_SECRET = process.env.MAILING_UNSUBSCRIBE_SECRET || process.env.CLERK_SECRET_KEY || 'mailing-default-secret';
 
 /** All columns that can appear in an export. */
 export const EXPORTABLE_COLUMNS = [
@@ -158,7 +163,8 @@ export class MailingService {
 
     // G) Search ---------------------------------------------------
     if (filters.search?.trim()) {
-      const term = filters.search.trim();
+      // SEC: limit search length to prevent excessive DB load
+      const term = filters.search.trim().slice(0, MAX_SEARCH_LENGTH);
       andConditions.push({
         OR: [
           { email: { contains: term, mode: 'insensitive' } },
@@ -182,8 +188,12 @@ export class MailingService {
     sort = 'email',
     sortOrder: 'asc' | 'desc' = 'asc',
   ) {
+    // SEC: clamp page size to prevent unbounded DB queries
+    const clampedPageSize = Math.min(Math.max(1, pageSize), MAX_PAGE_SIZE);
+    const clampedPage = Math.max(1, page);
+
     const where = this.buildRecipientWhere(filters);
-    const skip = (page - 1) * pageSize;
+    const skip = (clampedPage - 1) * clampedPageSize;
 
     const orderByMap: Record<string, Prisma.UserOrderByWithRelationInput> = {
       email: { email: sortOrder },
@@ -197,7 +207,7 @@ export class MailingService {
       this.prisma.user.findMany({
         where,
         skip,
-        take: pageSize,
+        take: clampedPageSize,
         orderBy: orderByMap[sort] || { email: sortOrder },
         include: {
           organizations: {
@@ -245,9 +255,9 @@ export class MailingService {
       count,
       rows,
       warnings,
-      page,
-      pageSize,
-      totalPages: Math.ceil(count / pageSize),
+      page: clampedPage,
+      pageSize: clampedPageSize,
+      totalPages: Math.ceil(count / clampedPageSize),
     };
   }
 
@@ -352,9 +362,11 @@ export class MailingService {
 
     const where = this.buildRecipientWhere(filters);
 
+    // SEC: cap export to prevent OOM on very large datasets
     const users = await this.prisma.user.findMany({
       where,
       orderBy: { email: 'asc' },
+      take: MAX_EXPORT_ROWS,
       include: {
         organizations: {
           take: 1,
@@ -491,14 +503,17 @@ export class MailingService {
       );
     }
 
+    // SEC: sanitize HTML to remove script tags, event handlers, and dangerous elements
+    const sanitisedHtml = this.sanitiseHtml(bodyHtml);
+
     // Auto-generate plain text if not provided
     const plainText =
-      bodyText || bodyHtml.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+      bodyText || sanitisedHtml.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
 
     const campaign = await this.prisma.mailingCampaign.create({
       data: {
-        subject,
-        bodyHtml,
+        subject: subject.slice(0, 998), // SEC: limit subject length (RFC 2822 max 998 chars)
+        bodyHtml: sanitisedHtml,
         bodyText: plainText,
         segmentId: segmentId || null,
         filtersJson: resolvedFilters as any,
@@ -634,12 +649,21 @@ export class MailingService {
       },
     });
 
-    // Mark campaign as SENDING on first batch
+    // SEC: optimistic concurrency — prevent duplicate batch sends from parallel requests
+    // Only one request should transition DRAFT -> SENDING; others will see SENDING and proceed safely
+    // The cursor-based pagination prevents duplicate emails even if two batches run concurrently
     if (campaign.status === MailingCampaignStatus.DRAFT) {
-      await this.prisma.mailingCampaign.update({
-        where: { id: campaignId },
+      const updated = await this.prisma.mailingCampaign.updateMany({
+        where: { id: campaignId, status: MailingCampaignStatus.DRAFT },
         data: { status: MailingCampaignStatus.SENDING, sentAt: new Date() },
       });
+      if (updated.count === 0) {
+        // Another request already transitioned this campaign — re-fetch and continue
+        const refreshed = await this.getCampaign(campaignId);
+        if (refreshed.status !== MailingCampaignStatus.SENDING) {
+          throw new ConflictException('Campaign status changed unexpectedly');
+        }
+      }
     }
 
     let sentThisBatch = 0;
@@ -657,8 +681,12 @@ export class MailingService {
         continue;
       }
 
-      // Personalise
+      // SEC: generate signed unsubscribe token (HMAC) so users cannot forge unsubscribe URLs for others
       const org = recipient.organizations[0]?.organization;
+      const unsubToken = this.signUnsubscribeToken(recipient.id, campaignId);
+      const unsubscribeUrl = `${unsubscribeBaseUrl}/unsubscribe?token=${unsubToken}`;
+
+      // Personalise
       const personalised = this.personalise(campaign.bodyHtml, {
         firstName: recipient.firstName || '',
         lastName: recipient.lastName || '',
@@ -666,7 +694,7 @@ export class MailingService {
         role: recipient.role,
         orgName: org?.name || '',
         canton: org?.canton || '',
-        unsubscribeUrl: `${unsubscribeBaseUrl}/unsubscribe?uid=${recipient.id}&cid=${campaignId}`,
+        unsubscribeUrl,
       });
 
       const personalisedText = this.personalise(campaign.bodyText || '', {
@@ -676,11 +704,11 @@ export class MailingService {
         role: recipient.role,
         orgName: org?.name || '',
         canton: org?.canton || '',
-        unsubscribeUrl: `${unsubscribeBaseUrl}/unsubscribe?uid=${recipient.id}&cid=${campaignId}`,
+        unsubscribeUrl,
       });
 
       // Append compliance footer
-      const htmlWithFooter = this.appendFooter(personalised, `${unsubscribeBaseUrl}/unsubscribe?uid=${recipient.id}&cid=${campaignId}`);
+      const htmlWithFooter = this.appendFooter(personalised, unsubscribeUrl);
 
       const result = await this.transport.sendEmail({
         to: recipient.email,
@@ -759,23 +787,84 @@ export class MailingService {
   private personalise(template: string, vars: Record<string, string>): string {
     let result = template;
     for (const [key, value] of Object.entries(vars)) {
-      result = result.replace(new RegExp(`\\{\\{${key}\\}\\}`, 'g'), value || '');
+      // SEC: only replace known token names (alphanumeric) to prevent regex injection
+      if (/^[a-zA-Z0-9_]+$/.test(key)) {
+        result = result.replace(new RegExp(`\\{\\{${key}\\}\\}`, 'g'), value || '');
+      }
     }
     return result;
   }
 
+  /** SEC: strip dangerous HTML tags and attributes to prevent stored XSS in campaign emails. */
+  private sanitiseHtml(html: string): string {
+    // Remove <script> tags and contents
+    let cleaned = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+    // Remove event handler attributes (onclick, onerror, onload, etc.)
+    cleaned = cleaned.replace(/\s+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]*)/gi, '');
+    // Remove javascript: protocol URLs
+    cleaned = cleaned.replace(/href\s*=\s*["']?\s*javascript:/gi, 'href="');
+    cleaned = cleaned.replace(/src\s*=\s*["']?\s*javascript:/gi, 'src="');
+    // Remove <iframe>, <object>, <embed>, <form>, <input> tags
+    cleaned = cleaned.replace(/<\/?(iframe|object|embed|form|input|button|textarea)\b[^>]*>/gi, '');
+    // Remove data: URI in src attributes (can be used for XSS)
+    cleaned = cleaned.replace(/src\s*=\s*["']?\s*data:/gi, 'src="');
+    return cleaned;
+  }
+
+  /** SEC: create HMAC-signed unsubscribe token encoding userId + campaignId. */
+  signUnsubscribeToken(userId: string, campaignId: string): string {
+    const payload = `${userId}:${campaignId}`;
+    const hmac = crypto.createHmac('sha256', UNSUBSCRIBE_SECRET).update(payload).digest('hex');
+    // Token format: base64url(userId:campaignId):hmac
+    const encoded = Buffer.from(payload).toString('base64url');
+    return `${encoded}.${hmac}`;
+  }
+
+  /** SEC: verify an unsubscribe token and extract userId + campaignId. Returns null if invalid. */
+  verifyUnsubscribeToken(token: string): { userId: string; campaignId: string } | null {
+    const parts = token.split('.');
+    if (parts.length !== 2) return null;
+    const [encoded, hmac] = parts;
+    try {
+      const payload = Buffer.from(encoded, 'base64url').toString('utf8');
+      const expectedHmac = crypto.createHmac('sha256', UNSUBSCRIBE_SECRET).update(payload).digest('hex');
+      // SEC: timing-safe comparison to prevent timing attacks
+      if (!crypto.timingSafeEqual(Buffer.from(hmac, 'hex'), Buffer.from(expectedHmac, 'hex'))) {
+        return null;
+      }
+      const [userId, campaignId] = payload.split(':');
+      if (!userId || !campaignId) return null;
+      return { userId, campaignId };
+    } catch {
+      return null;
+    }
+  }
+
   private appendFooter(html: string, unsubscribeUrl: string): string {
     const fromAddr = this.transport.getFromAddress();
+    // SEC: escape from-address values to prevent HTML injection via env vars
+    const escapedName = this.escapeHtml(fromAddr.name);
+    const escapedEmail = this.escapeHtml(fromAddr.email);
+    const escapedUrl = this.escapeHtml(unsubscribeUrl);
     const footer = `
       <div style="margin-top:32px;padding-top:16px;border-top:1px solid #e5e7eb;font-size:12px;color:#6b7280;text-align:center;">
-        <p>${fromAddr.name} &mdash; ${fromAddr.email}</p>
-        <p><a href="${unsubscribeUrl}" style="color:#6b7280;text-decoration:underline;">Unsubscribe</a></p>
+        <p>${escapedName} &mdash; ${escapedEmail}</p>
+        <p><a href="${escapedUrl}" style="color:#6b7280;text-decoration:underline;">Unsubscribe</a></p>
       </div>`;
     // Insert before closing body or append
     if (html.includes('</body>')) {
       return html.replace('</body>', `${footer}</body>`);
     }
     return html + footer;
+  }
+
+  private escapeHtml(str: string): string {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 
   /** Resolve filters: either from a segment or from the provided filters directly. */

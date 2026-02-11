@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   ArrowLeft, Send, XCircle, CheckCircle, AlertTriangle, Clock, Loader2, Mail,
 } from 'lucide-react'
+import DOMPurify from 'dompurify'
 import { toast } from 'sonner'
 
 import { useApiClient, apiService } from '../services/api'
@@ -171,7 +172,7 @@ const MailingCampaignDetailPage: React.FC = () => {
           </div>
           <div
             className="border rounded-lg p-4 bg-white prose prose-sm max-w-none"
-            dangerouslySetInnerHTML={{ __html: campaign.bodyHtml }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(campaign.bodyHtml) }}
           />
         </div>
       </Card>
