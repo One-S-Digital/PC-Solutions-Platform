@@ -130,6 +130,18 @@ const ParentLeadFormPage: React.FC = () => {
     }
   };
 
+  const handleCreateParentAccount = () => {
+    navigate('/signup', {
+      state: {
+        leadSubmission: {
+          fromLeadSubmission: true,
+          contactName: formData.contactName.trim(),
+          contactEmail: formData.contactEmail.trim(),
+        },
+      },
+    });
+  };
+
   const BackButton = ({ maxWidthClass }: { maxWidthClass: string }) => (
     <div className={`w-full ${maxWidthClass} mb-4 self-start`}>
       <Button
@@ -166,7 +178,23 @@ const ParentLeadFormPage: React.FC = () => {
               <p className="text-gray-600 mb-6">
                 {t('parentLeadForm:messages.success')}
               </p>
-              <Button variant="primary" onClick={() => navigate('/login')}>{t('common:buttons.goToLogin')}</Button>
+              <p className="text-sm text-gray-500 mb-6">
+                {t(
+                  'parentLeadForm:messages.createAccountPrompt',
+                  'Create a parent account to track responses and manage your enquiry.',
+                )}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Button variant="primary" onClick={handleCreateParentAccount}>
+                  {t(
+                    'parentLeadForm:buttons.createAccountToTrack',
+                    'Create Account to Track Enquiry',
+                  )}
+                </Button>
+                <Button variant="light" onClick={() => navigate('/login')}>
+                  {t('common:buttons.goToLogin')}
+                </Button>
+              </div>
             </>
           ) : (
             <>

@@ -289,6 +289,9 @@ model User {
   // Vendor client management (discount terminations)
   vendorClientMarks VendorClient[]
 
+  // Parent lead ownership (links enquiries to parent accounts)
+  parentLeads ParentLead[] @relation("UserParentLeads")
+
   // Structured educator profile items
   workExperienceItems EducatorWorkExperience[]
   educationItems      EducatorEducation[]
@@ -1054,6 +1057,7 @@ model ParentLead {
   parentName   String
   parentEmail  String
   parentPhone  String?
+  parentUserId String?
   childName    String
   childAge     Int
   message      String?
@@ -1073,10 +1077,12 @@ model ParentLead {
   updatedAt DateTime @updatedAt
 
   // Relations
+  parentUser          User?                    @relation("UserParentLeads", fields: [parentUserId], references: [id], onDelete: SetNull)
   foundationResponses FoundationLeadResponse[]
 
   @@index([status])
   @@index([foundationId])
+  @@index([parentUserId])
   @@map("parent_leads")
 }
 

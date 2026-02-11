@@ -640,6 +640,7 @@ ${'='.repeat(100)}`);
     console.log(`💾 [E2E DEBUG] STARTING DATABASE OPERATIONS...`);
 
     let appUser: any;
+    let profileUserId: string | null = null;
 
     try {
       await this.prisma.$transaction(async (tx) => {
@@ -687,6 +688,7 @@ ${'='.repeat(100)}`);
           update: userUpdateData,
           create: userCreateData,
         });
+        profileUserId = user.id;
 
         // Create organization and link user for organization-based roles
         const orgBasedRoles: UserRole[] = [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER];
@@ -755,6 +757,9 @@ ${'='.repeat(100)}`);
       });
       throw error;
     }
+
+    // Systematically attach historical parent leads to newly created parent accounts.
+    await this.linkParentLeadsToUser(profileUserId, primaryEmail, validRole as UserRole);
     
     // E2E DEBUG: Clerk API sync with comprehensive logging
     try {
@@ -984,6 +989,44 @@ ${'='.repeat(100)}`);
     }
     
     this.logger.log(`✅ [handleUserDeleted] User deletion complete: ${clerkId}`);
+  }
+
+  /**
+   * Systematically links historical parent lead submissions to the newly created parent account.
+   * Safe to run multiple times and only links currently unowned leads.
+   */
+  private async linkParentLeadsToUser(
+    profileUserId: string | null,
+    email: string | null | undefined,
+    role: UserRole,
+  ) {
+    if (role !== UserRole.PARENT || !profileUserId || !email) {
+      return;
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail) {
+      return;
+    }
+
+    const result = await this.prisma.parentLead.updateMany({
+      where: {
+        parentUserId: null,
+        parentEmail: {
+          equals: normalizedEmail,
+          mode: 'insensitive',
+        },
+      },
+      data: {
+        parentUserId: profileUserId,
+      },
+    });
+
+    if (result.count > 0) {
+      this.logger.log(
+        `✅ [LEAD LINK] Linked ${result.count} lead(s) to parent account ${profileUserId}`,
+      );
+    }
   }
 
   private isValidRole(role: any): boolean {

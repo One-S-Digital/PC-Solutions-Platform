@@ -727,7 +727,8 @@ export class DashboardController {
   @ApiOperation({ summary: 'Get parent dashboard stats' })
   @ApiResponse({ status: 200, description: 'Stats retrieved successfully' })
   async getParentStats(@Request() req) {
-    const userId = req.context.userId;
+    const profileUserId = req.context?.profileUserId as string | undefined;
+    const clerkUserId = (req.context?.clerkUserId || req.context?.userId) as string | undefined;
 
     // Helper to safely execute queries that might fail due to missing tables
     const safeCount = async (query: Promise<number>): Promise<number> => {
@@ -744,14 +745,21 @@ export class DashboardController {
     };
 
     const [user, messagesUnread] = await Promise.all([
-      this.prisma.user.findUnique({
-        where: { id: userId },
-        select: { email: true },
-      }),
+      profileUserId
+        ? this.prisma.user.findUnique({
+            where: { id: profileUserId },
+            select: { id: true, email: true },
+          })
+        : clerkUserId
+          ? this.prisma.user.findUnique({
+              where: { clerkId: clerkUserId },
+              select: { id: true, email: true },
+            })
+          : null,
       safeCount(
         this.prisma.message.count({
           where: {
-            receiverId: userId,
+            receiverId: profileUserId || '',
             isRead: false,
           },
         }),
@@ -759,9 +767,27 @@ export class DashboardController {
     ]);
 
     // Get leads submitted by this parent
-    const applicationsSent = await this.prisma.parentLead.count({
-      where: { parentEmail: user?.email || '' },
-    });
+    const leadConditions: any[] = [];
+    if (user?.id) {
+      leadConditions.push({ parentUserId: user.id });
+    }
+    if (user?.email) {
+      leadConditions.push({
+        parentEmail: {
+          equals: user.email,
+          mode: 'insensitive' as const,
+        },
+      });
+    }
+
+    const applicationsSent =
+      leadConditions.length > 0
+        ? await this.prisma.parentLead.count({
+            where: {
+              OR: leadConditions,
+            },
+          })
+        : 0;
 
     const stats = {
       applicationsSent,

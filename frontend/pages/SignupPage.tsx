@@ -1,5 +1,5 @@
 import React, { useState, FormEvent, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSignUp, useAuth, useUser } from '@clerk/clerk-react';
 import { SignupRole, SignupFormData, SwissCanton, SupportedLanguage, UserRole } from '../types';
@@ -26,9 +26,19 @@ const SIGNUP_ROLE_TO_USER_ROLE: Record<SignupRole, UserRole> = {
   [SignupRole.PARENT]: UserRole.PARENT,
 };
 
+interface LeadSignupState {
+  leadSubmission?: {
+    fromLeadSubmission?: boolean;
+    contactName?: string;
+    contactEmail?: string;
+  };
+}
+
 const SignupPage: React.FC = () => {
   const { t } = useTranslation(['signup', 'common']);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
   const { signUp, isLoaded, setActive } = useSignUp();
   const { isSignedIn, getToken } = useAuth();
   const { user: clerkUser } = useUser();
@@ -37,6 +47,12 @@ const SignupPage: React.FC = () => {
   const homePath = getHomePath(currentUser);
   const logoUrl = settings?.logoAsset?.publicUrl;
   const showLogoFallback = !settingsLoading && !logoUrl;
+  const leadSignupState = (location.state as LeadSignupState | null)?.leadSubmission;
+  const isLeadSubmissionSignup = Boolean(
+    leadSignupState?.fromLeadSubmission || searchParams.get('fromLead') === '1',
+  );
+  const leadSignupEmail = leadSignupState?.contactEmail || searchParams.get('leadEmail') || '';
+  const leadSignupName = leadSignupState?.contactName || searchParams.get('leadName') || '';
 
   // Detect if this is a user who needs to complete their profile (signed in but no backend user)
   // This can happen for:
@@ -187,6 +203,23 @@ const SignupPage: React.FC = () => {
       }));
     }
   }, [needsProfileCompletion, clerkUser]);
+
+  // Parent lead submission flow:
+  // auto-select Parent role and prefill contact data so account setup is one step away.
+  useEffect(() => {
+    if (!isLeadSubmissionSignup) {
+      return;
+    }
+
+    setSelectedRole((prev) => prev ?? SignupRole.PARENT);
+    setCurrentStep(2);
+    setHasStartedSignup(true);
+    setFormData((prev) => ({
+      ...prev,
+      email: leadSignupEmail || prev.email,
+      contactPerson: leadSignupName || prev.contactPerson,
+    }));
+  }, [isLeadSubmissionSignup, leadSignupEmail, leadSignupName]);
 
   const rolesConfig: { role: SignupRole; nameKey: string; icon: React.ElementType; subtitleKey?: string }[] = [
     { role: SignupRole.FOUNDATION, nameKey: 'role.foundation', icon: BuildingOffice2Icon },
@@ -798,6 +831,22 @@ const SignupPage: React.FC = () => {
 
             {currentStep === 2 && selectedRole && (
               <>
+                {isLeadSubmissionSignup && !emailConflictError && !needsProfileCompletion && (
+                  <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-md">
+                    <p className="text-sm text-green-800">
+                      <strong>
+                        {t('signup:leadSubmissionAccount.title', 'Track your enquiry in one place')}
+                      </strong>
+                    </p>
+                    <p className="text-xs text-green-700 mt-1">
+                      {t(
+                        'signup:leadSubmissionAccount.message',
+                        'Create your parent account now and your recent childcare enquiry will be linked automatically.',
+                      )}
+                    </p>
+                  </div>
+                )}
+
                 {/* Email conflict error - account already exists with different auth method */}
                 {emailConflictError && (
                   <div className="mb-4 p-4 bg-amber-50 border border-amber-300 rounded-lg">

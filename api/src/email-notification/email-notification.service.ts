@@ -11,6 +11,16 @@ export interface EmailNotification {
   templateId?: string;
   scheduledAt?: Date;
   priority?: 'low' | 'normal' | 'high';
+  /**
+   * Allows sending to recipients that are not yet platform users.
+   * Useful for transactional emails sent before account creation.
+   */
+  allowUnknownRecipient?: boolean;
+  /**
+   * When true, skips user notification preference checks.
+   * Intended for mandatory transactional communications.
+   */
+  bypassPreferences?: boolean;
 }
 
 export interface EmailTemplate {
@@ -73,12 +83,15 @@ export class EmailNotificationService {
       });
 
       if (!user) {
-        this.logger.warn(`User not found for email: ${notification.recipient}`);
-        return false;
+        if (!notification.allowUnknownRecipient) {
+          this.logger.warn(`User not found for email: ${notification.recipient}`);
+          return false;
+        }
+        this.logger.log(`Sending transactional email to non-user recipient: ${notification.recipient}`);
       }
 
       // Check notification preferences
-      if (!this.shouldSendNotification(user, notification.event)) {
+      if (user && !notification.bypassPreferences && !this.shouldSendNotification(user, notification.event)) {
         this.logger.log(`Notification skipped for user ${user.id} due to preferences`);
         return false;
       }
@@ -103,8 +116,8 @@ export class EmailNotificationService {
         templateId: template.id,
         categories: [notification.event],
         customArgs: {
-          userId: user.id,
           event: notification.event,
+          ...(user?.id ? { userId: user.id } : {}),
         },
       };
 
@@ -113,7 +126,7 @@ export class EmailNotificationService {
       
       // Log the email
       await this.logEmail({
-        userId: user.id,
+        userId: user?.id,
         event: notification.event,
         recipient: notification.recipient,
         templateId: template.id,
@@ -337,7 +350,7 @@ export class EmailNotificationService {
       jobRecruitment: ['job_application_received', 'application_status_update', 'job_match'],
       messaging: ['new_message', 'group_message', 'message_mention'],
       marketplace: ['order_confirmation', 'order_status_update', 'payment_confirmation'],
-      leadManagement: ['lead_assignment', 'lead_status_update', 'follow_up_reminder'],
+      leadManagement: ['lead_assignment', 'lead_status_update', 'follow_up_reminder', 'parent_lead_confirmation'],
       subscription: ['subscription_activation', 'payment_reminder', 'subscription_change'],
       contentModeration: ['content_approval', 'content_flagged', 'moderation_required'],
       systemAdmin: ['system_maintenance', 'system_alert', 'security_alert'],

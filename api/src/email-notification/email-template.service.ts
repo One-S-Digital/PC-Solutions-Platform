@@ -215,6 +215,71 @@ export class EmailTemplateService {
         `.trim(),
         isActive: true,
       },
+      {
+        name: 'Parent lead confirmation',
+        event: 'parent_lead_confirmation',
+        subject: 'We received your childcare enquiry ({{enquiryReference}})',
+        category: 'leadManagement',
+        variables: [
+          'parentName',
+          'enquiryReference',
+          'submittedAt',
+          'childAge',
+          'location',
+          'message',
+          'accountSetupUrl',
+          'enquiriesUrl',
+        ],
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Your enquiry has been received</h2>
+            <p>Hello {{parentName}},</p>
+            <p>Thank you for submitting your childcare enquiry. We have received it successfully.</p>
+            <p><strong>Enquiry Summary:</strong></p>
+            <ul>
+              <li><strong>Reference:</strong> {{enquiryReference}}</li>
+              <li><strong>Submitted at:</strong> {{submittedAt}}</li>
+              <li><strong>Child age:</strong> {{childAge}} months</li>
+              <li><strong>Preferred location:</strong> {{location}}</li>
+            </ul>
+            <p><strong>Details:</strong></p>
+            <p style="background-color: #F3F4F6; padding: 12px; border-radius: 6px;">{{message}}</p>
+            <p>To track replies and manage your enquiry, set up your parent account:</p>
+            <div style="text-align: center; margin: 24px 0;">
+              <a href="{{accountSetupUrl}}" style="background-color: #14B8A6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Create Parent Account</a>
+            </div>
+            <p>If you already have an account, you can track enquiries here:</p>
+            <p><a href="{{enquiriesUrl}}">{{enquiriesUrl}}</a></p>
+            <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+          </div>
+        `.trim(),
+        textContent: `
+          Your enquiry has been received
+
+          Hello {{parentName}},
+
+          Thank you for submitting your childcare enquiry. We have received it successfully.
+
+          Enquiry Summary:
+          - Reference: {{enquiryReference}}
+          - Submitted at: {{submittedAt}}
+          - Child age: {{childAge}} months
+          - Preferred location: {{location}}
+
+          Details:
+          {{message}}
+
+          To track replies and manage your enquiry, set up your parent account:
+          {{accountSetupUrl}}
+
+          If you already have an account, you can track enquiries here:
+          {{enquiriesUrl}}
+
+          Best regards,
+          The Pro Crèche Solutions Team
+        `.trim(),
+        isActive: true,
+      },
     ];
   }
 
@@ -575,6 +640,57 @@ export class EmailTemplateService {
           View lead details: {{leadUrl}}
           
           Please respond to this enquiry as soon as possible to maximize your chances of enrollment.
+          
+          Best regards,
+          The Pro Crèche Solutions Team
+        `,
+      },
+      parent_lead_confirmation: {
+        subject: 'We received your childcare enquiry ({{enquiryReference}})',
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Your enquiry has been received</h2>
+            <p>Hello {{parentName}},</p>
+            <p>Thank you for submitting your childcare enquiry. We have received it successfully.</p>
+            <p><strong>Enquiry Summary:</strong></p>
+            <ul>
+              <li><strong>Reference:</strong> {{enquiryReference}}</li>
+              <li><strong>Submitted at:</strong> {{submittedAt}}</li>
+              <li><strong>Child age:</strong> {{childAge}} months</li>
+              <li><strong>Preferred location:</strong> {{location}}</li>
+            </ul>
+            <p><strong>Details:</strong></p>
+            <p style="background-color: #F3F4F6; padding: 12px; border-radius: 6px;">{{message}}</p>
+            <p>To track replies and manage your enquiry, set up your parent account:</p>
+            <div style="text-align: center; margin: 24px 0;">
+              <a href="{{accountSetupUrl}}" style="background-color: #14B8A6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Create Parent Account</a>
+            </div>
+            <p>If you already have an account, you can track enquiries here:</p>
+            <p><a href="{{enquiriesUrl}}">{{enquiriesUrl}}</a></p>
+            <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+          </div>
+        `,
+        textContent: `
+          Your enquiry has been received
+          
+          Hello {{parentName}},
+          
+          Thank you for submitting your childcare enquiry. We have received it successfully.
+          
+          Enquiry Summary:
+          - Reference: {{enquiryReference}}
+          - Submitted at: {{submittedAt}}
+          - Child age: {{childAge}} months
+          - Preferred location: {{location}}
+          
+          Details:
+          {{message}}
+          
+          To track replies and manage your enquiry, set up your parent account:
+          {{accountSetupUrl}}
+          
+          If you already have an account, you can track enquiries here:
+          {{enquiriesUrl}}
           
           Best regards,
           The Pro Crèche Solutions Team
