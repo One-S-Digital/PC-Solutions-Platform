@@ -22,6 +22,21 @@ function parseRedisPort(value: string | undefined, fallback = DEFAULT_REDIS_PORT
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
+function parseBoolean(value: string | undefined): boolean | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  const normalized = value.trim().toLowerCase();
+  if (['true', '1', 'yes', 'on'].includes(normalized)) {
+    return true;
+  }
+  if (['false', '0', 'no', 'off'].includes(normalized)) {
+    return false;
+  }
+  return undefined;
+}
+
 function parseRedisDb(pathname: string): number | undefined {
   if (!pathname || pathname === '/') {
     return undefined;
@@ -31,63 +46,114 @@ function parseRedisDb(pathname: string): number | undefined {
   return Number.isFinite(parsed) ? parsed : undefined;
 }
 
-function resolveRedisBaseOptions(): RedisBaseOptions | null {
-  const queueToggle = process.env.REDIS_QUEUE_ENABLED ?? process.env.REDIS_ENABLED;
-  if (queueToggle === 'false') {
-    return null;
+interface RedisResolution {
+  enabled: boolean;
+  options: RedisBaseOptions | null;
+  reason: string;
+}
+
+function resolveRedisConfiguration(): RedisResolution {
+  const queueToggleRaw = process.env.REDIS_QUEUE_ENABLED ?? process.env.REDIS_ENABLED;
+  const queueToggle = parseBoolean(queueToggleRaw);
+  if (queueToggle === false) {
+    return {
+      enabled: false,
+      options: null,
+      reason: 'disabled via REDIS_QUEUE_ENABLED/REDIS_ENABLED',
+    };
   }
 
   const redisUrl = process.env.REDIS_URL?.trim();
+  let hasInvalidRedisUrl = false;
   if (redisUrl) {
     try {
       const parsed = new URL(redisUrl);
+      if (parsed.protocol !== 'redis:' && parsed.protocol !== 'rediss:') {
+        throw new Error('Invalid Redis URL protocol');
+      }
+
       const username = parsed.username ? decodeURIComponent(parsed.username) : undefined;
       const password = parsed.password ? decodeURIComponent(parsed.password) : undefined;
 
       return {
-        host: parsed.hostname,
-        port: parseRedisPort(parsed.port),
-        username: username || process.env.REDIS_USERNAME,
-        password: password || process.env.REDIS_PASSWORD,
-        db: parseRedisDb(parsed.pathname),
-        ...(parsed.protocol === 'rediss:' ? { tls: {} } : {}),
+        enabled: true,
+        options: {
+          host: parsed.hostname,
+          port: parseRedisPort(parsed.port),
+          username: username || process.env.REDIS_USERNAME,
+          password: password || process.env.REDIS_PASSWORD,
+          db: parseRedisDb(parsed.pathname),
+          ...(parsed.protocol === 'rediss:' ? { tls: {} } : {}),
+        },
+        reason: 'configured via REDIS_URL',
       };
     } catch {
-      // Invalid REDIS_URL; fall back to host/port env handling below.
+      hasInvalidRedisUrl = true;
     }
   }
 
   const redisHost = process.env.REDIS_HOST?.trim();
   if (redisHost) {
     return {
-      host: redisHost,
-      port: parseRedisPort(process.env.REDIS_PORT),
-      username: process.env.REDIS_USERNAME,
-      password: process.env.REDIS_PASSWORD,
+      enabled: true,
+      options: {
+        host: redisHost,
+        port: parseRedisPort(process.env.REDIS_PORT),
+        username: process.env.REDIS_USERNAME,
+        password: process.env.REDIS_PASSWORD,
+      },
+      reason: 'configured via REDIS_HOST/REDIS_PORT',
     };
   }
 
-  // Keep localhost fallback for local development only.
-  if (process.env.NODE_ENV !== 'production' || queueToggle === 'true') {
+  // Only allow implicit localhost fallback in explicit dev/test environments.
+  const nodeEnv = (process.env.NODE_ENV ?? '').toLowerCase();
+  const isDevelopmentLike = nodeEnv === 'development' || nodeEnv === 'test';
+  if (isDevelopmentLike) {
     return {
-      host: 'localhost',
-      port: parseRedisPort(process.env.REDIS_PORT),
-      username: process.env.REDIS_USERNAME,
-      password: process.env.REDIS_PASSWORD,
+      enabled: true,
+      options: {
+        host: 'localhost',
+        port: parseRedisPort(process.env.REDIS_PORT),
+        username: process.env.REDIS_USERNAME,
+        password: process.env.REDIS_PASSWORD,
+      },
+      reason: 'localhost fallback for development/test',
     };
   }
 
-  // Production without explicit Redis configuration should not start queue workers.
-  return null;
+  if (hasInvalidRedisUrl) {
+    return {
+      enabled: false,
+      options: null,
+      reason: 'invalid REDIS_URL and REDIS_HOST not configured',
+    };
+  }
+
+  if (queueToggle === true) {
+    return {
+      enabled: false,
+      options: null,
+      reason: 'REDIS queue requested but REDIS_URL/REDIS_HOST missing',
+    };
+  }
+
+  return {
+    enabled: false,
+    options: null,
+    reason: 'Redis queue disabled (no Redis configuration)',
+  };
 }
 
-const resolvedRedisBaseOptions = resolveRedisBaseOptions();
+const redisResolution = resolveRedisConfiguration();
+const resolvedRedisBaseOptions = redisResolution.options;
 
 /**
  * Whether Redis-backed queues should be initialized.
  * In production, queues are disabled unless Redis is explicitly configured.
  */
-export const isRedisQueueEnabled = resolvedRedisBaseOptions !== null;
+export const isRedisQueueEnabled = redisResolution.enabled;
+export const redisQueueStatusReason = redisResolution.reason;
 
 export const sharedRedisOptions = {
   host: resolvedRedisBaseOptions?.host ?? 'localhost',

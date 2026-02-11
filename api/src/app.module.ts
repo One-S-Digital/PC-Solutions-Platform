@@ -1,10 +1,10 @@
-import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
+import { Module, MiddlewareConsumer, NestModule, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CustomThrottlerGuard } from './common/guards/custom-throttler.guard';
 import { BullModule } from '@nestjs/bull';
-import { isRedisQueueEnabled, sharedRedisOptions } from './common/redis.config';
+import { isRedisQueueEnabled, redisQueueStatusReason, sharedRedisOptions } from './common/redis.config';
 import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -167,7 +167,20 @@ const bullImports = isRedisQueueEnabled
     MaintenanceModeMiddleware,
   ],
 })
-export class AppModule implements NestModule {
+export class AppModule implements NestModule, OnModuleInit {
+  private readonly logger = new Logger(AppModule.name);
+
+  onModuleInit() {
+    if (isRedisQueueEnabled) {
+      this.logger.log(
+        `Redis queue enabled (${sharedRedisOptions.host}:${sharedRedisOptions.port})`,
+      );
+      return;
+    }
+
+    this.logger.warn(`Redis queue disabled: ${redisQueueStatusReason}`);
+  }
+
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(RequestIdMiddleware, BuildInfoMiddleware, RenderDebugLoggerMiddleware, RequestLoggerMiddleware)
