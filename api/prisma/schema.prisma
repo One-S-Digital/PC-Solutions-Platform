@@ -2528,3 +2528,68 @@ model SeedRecord {
   
   @@map("seed_records")
 }
+
+// =====================================
+// Mailing List Feature
+// =====================================
+
+enum MailingCampaignStatus {
+  DRAFT
+  SENDING
+  SENT
+  FAILED
+  CANCELLED
+}
+
+model MailingSegment {
+  id             String    @id @default(uuid())
+  name           String
+  description    String?   @db.Text
+  filtersJson    Json      @map("filters_json")
+  createdById    String    @map("created_by_id")
+  estimatedSize  Int?      @map("estimated_size")
+  lastComputedAt DateTime? @map("last_computed_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  campaigns MailingCampaign[]
+
+  @@index([createdById])
+  @@map("mailing_segments")
+}
+
+model MailingCampaign {
+  id             String                @id @default(uuid())
+  subject        String
+  bodyHtml       String                @db.Text @map("body_html")
+  bodyText       String?               @db.Text @map("body_text")
+
+  // Recipient source (one must be set)
+  segmentId      String?               @map("segment_id")
+  filtersJson    Json?                 @map("filters_json")
+
+  // Status & progress
+  status         MailingCampaignStatus @default(DRAFT)
+  totalEstimated Int                   @default(0) @map("total_estimated")
+  sentCount      Int                   @default(0) @map("sent_count")
+  failedCount    Int                   @default(0) @map("failed_count")
+  cursor         String?
+
+  // Admin tracking
+  createdById    String                @map("created_by_id")
+  sentAt         DateTime?             @map("sent_at")
+  completedAt    DateTime?             @map("completed_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  segment MailingSegment? @relation(fields: [segmentId], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([createdById])
+  @@index([segmentId])
+  @@map("mailing_campaigns")
+}
