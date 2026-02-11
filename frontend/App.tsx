@@ -35,6 +35,7 @@ const devLog = (...args: any[]) => {
 import PartnersPage from './pages/PartnersPage';
 import LoginPage from './pages/LoginPage'; // New Login Page
 import SignupPage from './pages/SignupPage'; // New Signup Page Placeholder
+import ChooseOrganizationPage from './pages/ChooseOrganizationPage';
 import ParentLeadFormPage from './pages/ParentLeadFormPage';
 import ParentEnquiriesPage from './pages/parent/ParentEnquiriesPage';
 import FoundationLeadsPage from './pages/foundation/FoundationLeadsPage';
@@ -594,6 +595,7 @@ const App: React.FC = () => {
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
             <Route path="/reset-password" element={<Navigate to="/login" replace />} />
+            <Route path="/choose-organization" element={<Navigate to="/login" replace />} />
 
             {/* Protected routes: always redirect to login in E2E */}
             <Route path="/dashboard" element={<Navigate to="/login" replace />} />
@@ -624,6 +626,7 @@ const App: React.FC = () => {
                 <Route path="/partners" element={<PublicPartnersPage />} />
                 <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
                 <Route path="/reset-password" element={<ResetPasswordPage />} />
+                <Route path="/choose-organization" element={<ChooseOrganizationPage />} />
                 <Route path="/*" element={<ProtectedLayout />} />
               </Routes>
             </SubscriptionProvider>

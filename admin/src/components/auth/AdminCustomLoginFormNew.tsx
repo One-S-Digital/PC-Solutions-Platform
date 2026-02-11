@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { useSignIn, useAuth, useUser } from '@clerk/clerk-react';
+import { useSignIn, useAuth, useUser, useClerk } from '@clerk/clerk-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, Link } from 'react-router-dom';
 import { SquaresPlusIcon, EyeIcon, EyeSlashIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
-import toast from 'react-hot-toast';
 import { useSettings } from '../../hooks/useSettings';
 import Card from '../design-system/Card';
 import Button from '../design-system/Button';
@@ -26,6 +25,7 @@ export default function AdminCustomLoginForm() {
   const navigate = useNavigate();
   const { signIn, isLoaded, setActive } = useSignIn();
   const { isSignedIn, isLoaded: authLoaded } = useAuth();
+  const { signOut } = useClerk();
   const { user } = useUser();
   const { settings } = useSettings();
   
@@ -66,9 +66,17 @@ export default function AdminCustomLoginForm() {
       if (result.status === 'complete') {
         // User signed in successfully, activate session and redirect to admin dashboard
         try {
-          // Immediately activate session and navigate - no re-render in between
-          await setActive({ session: result.createdSessionId });
-          navigate('/dashboard');
+          // Immediately activate session and handle any pending session tasks (e.g. choose-organization)
+          await setActive({
+            session: result.createdSessionId,
+            navigate: async ({ session }) => {
+              if (session.currentTask?.key === 'choose-organization') {
+                navigate('/choose-organization', { replace: true });
+                return;
+              }
+              navigate('/dashboard', { replace: true });
+            },
+          });
         } catch (setActiveError: any) {
           console.error('Session activation failed:', setActiveError);
           setError(t('auth:errors.sessionActivationFailed'));
@@ -153,10 +161,13 @@ export default function AdminCustomLoginForm() {
   const handleSignOut = async () => {
     setIsSigningOut(true);
     try {
-      // Navigate to homepage after sign out
-      navigate('/login');
+      await signOut();
+      navigate('/login', { replace: true });
     } catch (error) {
       console.error('Sign out error:', error);
+      setError(t('auth:errors.signOutFailed', 'Sign out failed. Please try again.'));
+      // Best-effort escape hatch: force navigation even if sign-out fails.
+      window.location.href = '/login';
     } finally {
       setIsSigningOut(false);
     }

@@ -137,8 +137,16 @@ const ResetPasswordPage: React.FC = () => {
       if (attempt.status === 'needs_new_password' || signIn.status === 'needs_new_password') {
         const resetAttempt = await signIn.resetPassword({ password });
         if (resetAttempt.status === 'complete') {
-          await setActive({ session: resetAttempt.createdSessionId });
-          navigate('/dashboard', { replace: true });
+          await setActive({
+            session: resetAttempt.createdSessionId,
+            navigate: async ({ session }) => {
+              if (session.currentTask?.key === 'choose-organization') {
+                navigate('/choose-organization', { replace: true });
+                return;
+              }
+              navigate('/dashboard', { replace: true });
+            },
+          });
           return;
         }
         setError(t('common:errors.unknown', 'An unknown error occurred'));
@@ -146,8 +154,16 @@ const ResetPasswordPage: React.FC = () => {
       }
 
       if (attempt.status === 'complete') {
-        await setActive({ session: attempt.createdSessionId });
-        navigate('/dashboard', { replace: true });
+        await setActive({
+          session: attempt.createdSessionId,
+          navigate: async ({ session }) => {
+            if (session.currentTask?.key === 'choose-organization') {
+              navigate('/choose-organization', { replace: true });
+              return;
+            }
+            navigate('/dashboard', { replace: true });
+          },
+        });
         return;
       }
 

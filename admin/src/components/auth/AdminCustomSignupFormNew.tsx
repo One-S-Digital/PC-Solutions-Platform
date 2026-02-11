@@ -125,7 +125,14 @@ export default function AdminCustomSignupForm() {
 
       if (result.status === 'complete') {
         try {
-          await setActive({ session: result.createdSessionId });
+          await setActive({
+            session: result.createdSessionId,
+            navigate: async ({ session }) => {
+              if (session.currentTask?.key === 'choose-organization') {
+                navigate('/choose-organization', { replace: true });
+              }
+            },
+          });
           setCurrentStep(3);
         } catch (setActiveError: any) {
           console.error('Session activation failed:', setActiveError);
@@ -187,7 +194,14 @@ export default function AdminCustomSignupForm() {
       
       if (result.status === 'complete') {
         try {
-          await setActive({ session: result.createdSessionId });
+          await setActive({
+            session: result.createdSessionId,
+            navigate: async ({ session }) => {
+              if (session.currentTask?.key === 'choose-organization') {
+                navigate('/choose-organization', { replace: true });
+              }
+            },
+          });
           setCurrentStep(3);
         } catch (setActiveError: any) {
           console.error('Session activation failed:', setActiveError);

@@ -27,6 +27,7 @@ import PolicyCrawlerPage from './pages/PolicyCrawler';
 import AdminUserProfileEdit from './pages/AdminUserProfileEdit';
 import AdminOrganizationProfileEdit from './pages/AdminOrganizationProfileEdit';
 import ResetPassword from './pages/ResetPassword';
+import ChooseOrganization from './pages/ChooseOrganization';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -73,6 +74,7 @@ function App() {
         <Route path="/login" element={<AdminLoginPage />} />
         <Route path="/signup" element={<AdminSignupPage />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/choose-organization" element={<ChooseOrganization />} />
         <Route path="/access-denied" element={<AccessDeniedPage />} />
         <Route
           path="/"

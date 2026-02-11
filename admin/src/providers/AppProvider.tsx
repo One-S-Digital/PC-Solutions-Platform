@@ -26,7 +26,12 @@ export function AppProvider({ children }: AppProviderProps) {
       publishableKey={clerkPubKey}
       signInUrl="/login"
       signUpUrl="/signup"
+      afterSignInUrl="/dashboard"
+      afterSignUpUrl="/dashboard"
       afterSignOutUrl="/login"
+      taskUrls={{
+        'choose-organization': '/choose-organization',
+      }}
     >
       {children}
     </ClerkProvider>

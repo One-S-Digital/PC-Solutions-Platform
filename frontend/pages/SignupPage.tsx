@@ -498,7 +498,14 @@ const SignupPage: React.FC = () => {
 
         if (result.status === 'complete') {
           try {
-            await setActive({ session: result.createdSessionId });
+            await setActive({
+              session: result.createdSessionId,
+              navigate: async ({ session }) => {
+                if (session.currentTask?.key === 'choose-organization') {
+                  navigate('/choose-organization', { replace: true });
+                }
+              },
+            });
             setSuccessRedirect(getSuccessRedirectForRole());
             setCurrentStep(3);
           } catch (setActiveError: any) {
@@ -593,7 +600,14 @@ const SignupPage: React.FC = () => {
 
         try {
           console.log('[Signup Debug] handleVerification: activating session');
-          await setActive({ session: result.createdSessionId });
+          await setActive({
+            session: result.createdSessionId,
+            navigate: async ({ session }) => {
+              if (session.currentTask?.key === 'choose-organization') {
+                navigate('/choose-organization', { replace: true });
+              }
+            },
+          });
           console.log('[Signup Debug] handleVerification: session activated successfully');
         } catch (activationError: any) {
           console.error('Session activation failed after verification:', activationError);

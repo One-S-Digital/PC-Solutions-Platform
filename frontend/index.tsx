@@ -25,11 +25,11 @@ if (!rootElement) {
 const AppWithProviders = () => {
   return (
     <I18nextProvider i18n={i18nInstance}>
-      <AuthProvider>
-        <BrowserRouter>
+      <BrowserRouter>
+        <AuthProvider>
           <App />
-        </BrowserRouter>
-      </AuthProvider>
+        </AuthProvider>
+      </BrowserRouter>
     </I18nextProvider>
   );
 };

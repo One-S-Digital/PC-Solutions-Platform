@@ -115,11 +115,17 @@ const LoginPage: React.FC = () => {
 
       if (result.status === 'complete') {
         try {
-          // Immediately activate session and navigate - no re-render in between
-          await setActive({ session: result.createdSessionId });
-          
-          // Navigate immediately - proper render gating prevents Active Session UI from showing
-          navigate('/dashboard', { replace: true });
+          // Immediately activate session and handle any pending session tasks (e.g. choose-organization)
+          await setActive({
+            session: result.createdSessionId,
+            navigate: async ({ session }) => {
+              if (session.currentTask?.key === 'choose-organization') {
+                navigate('/choose-organization', { replace: true });
+                return;
+              }
+              navigate('/dashboard', { replace: true });
+            },
+          });
         } catch (setActiveError: any) {
           console.error('Session activation failed:', setActiveError);
           setError(t('common:loginPage.sessionActivationFailed'));
