@@ -37,6 +37,16 @@ function parseBoolean(value: string | undefined): boolean | undefined {
   return undefined;
 }
 
+function isLoopbackHost(host: string): boolean {
+  const normalized = host.trim().toLowerCase();
+  return (
+    normalized === 'localhost' ||
+    normalized === '127.0.0.1' ||
+    normalized === '::1' ||
+    normalized === '0.0.0.0'
+  );
+}
+
 function parseRedisDb(pathname: string): number | undefined {
   if (!pathname || pathname === '/') {
     return undefined;
@@ -55,6 +65,10 @@ interface RedisResolution {
 function resolveRedisConfiguration(): RedisResolution {
   const queueToggleRaw = process.env.REDIS_QUEUE_ENABLED ?? process.env.REDIS_ENABLED;
   const queueToggle = parseBoolean(queueToggleRaw);
+  const nodeEnv = (process.env.NODE_ENV ?? '').toLowerCase();
+  const isDevelopmentLike = nodeEnv === 'development' || nodeEnv === 'test';
+  const allowLocalRedis = parseBoolean(process.env.ALLOW_LOCAL_REDIS) === true;
+
   if (queueToggle === false) {
     return {
       enabled: false,
@@ -70,6 +84,13 @@ function resolveRedisConfiguration(): RedisResolution {
       const parsed = new URL(redisUrl);
       if (parsed.protocol !== 'redis:' && parsed.protocol !== 'rediss:') {
         throw new Error('Invalid Redis URL protocol');
+      }
+      if (!allowLocalRedis && !isDevelopmentLike && isLoopbackHost(parsed.hostname)) {
+        return {
+          enabled: false,
+          options: null,
+          reason: 'REDIS_URL points to loopback host in non-dev environment',
+        };
       }
 
       const username = parsed.username ? decodeURIComponent(parsed.username) : undefined;
@@ -94,6 +115,14 @@ function resolveRedisConfiguration(): RedisResolution {
 
   const redisHost = process.env.REDIS_HOST?.trim();
   if (redisHost) {
+    if (!allowLocalRedis && !isDevelopmentLike && isLoopbackHost(redisHost)) {
+      return {
+        enabled: false,
+        options: null,
+        reason: 'REDIS_HOST is loopback in non-dev environment',
+      };
+    }
+
     return {
       enabled: true,
       options: {
@@ -107,8 +136,6 @@ function resolveRedisConfiguration(): RedisResolution {
   }
 
   // Only allow implicit localhost fallback in explicit dev/test environments.
-  const nodeEnv = (process.env.NODE_ENV ?? '').toLowerCase();
-  const isDevelopmentLike = nodeEnv === 'development' || nodeEnv === 'test';
   if (isDevelopmentLike) {
     return {
       enabled: true,
