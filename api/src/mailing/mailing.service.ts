@@ -233,13 +233,15 @@ export class MailingService {
 
     // Diagnostic: when count is zero on page 1, log total users for context
     if (count === 0 && clampedPage === 1) {
-      const totalUsers = await this.prisma.user.count();
-      const nonAdminUsers = await this.prisma.user.count({
-        where: {
-          role: { notIn: [UserRole.SUPER_ADMIN, UserRole.ADMIN] },
-          email: { not: null },
-        },
-      });
+      const [totalUsers, nonAdminUsers] = await Promise.all([
+        this.prisma.user.count(),
+        this.prisma.user.count({
+          where: {
+            role: { notIn: [UserRole.SUPER_ADMIN, UserRole.ADMIN] },
+            email: { not: null },
+          },
+        }),
+      ]);
       this.logger.warn(
         `Preview returned 0 recipients — total users in DB: ${totalUsers}, non-admin users with email: ${nonAdminUsers}`,
       );

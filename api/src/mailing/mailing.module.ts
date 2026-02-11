@@ -15,6 +15,6 @@ export class MailingModule implements OnModuleInit {
   private readonly logger = new Logger(MailingModule.name);
 
   onModuleInit() {
-    this.logger.log('MailingModule initialised — routes registered under /api/admin/mailing');
+    this.logger.log('MailingModule initialised — controller routes registered');
   }
 }

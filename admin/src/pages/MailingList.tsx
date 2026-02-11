@@ -42,6 +42,13 @@ const statusBadge = (status: string) => {
   )
 }
 
+/** Don't retry on 404 (endpoint not deployed), 401/403 (auth/permission). */
+const noRetryOnClientError = (failureCount: number, error: any) => {
+  const status = error?.response?.status
+  if (status === 404 || status === 401 || status === 403) return false
+  return failureCount < 2
+}
+
 const MailingListPage: React.FC = () => {
   const { t } = useTranslation(['admin'])
   const navigate = useNavigate()
@@ -75,12 +82,7 @@ const MailingListPage: React.FC = () => {
       return res.data
     },
     enabled: activeTab === 'build',
-    retry: (failureCount, error: any) => {
-      // Don't retry on 404 (endpoint not deployed yet) or 403/401
-      const status = error?.response?.status
-      if (status === 404 || status === 401 || status === 403) return false
-      return failureCount < 2
-    },
+    retry: noRetryOnClientError,
   })
 
   // Segments query
@@ -91,10 +93,7 @@ const MailingListPage: React.FC = () => {
       return res.data
     },
     enabled: activeTab === 'segments',
-    retry: (failureCount, error: any) => {
-      if (error?.response?.status === 404) return false
-      return failureCount < 2
-    },
+    retry: noRetryOnClientError,
   })
 
   // Campaigns query
@@ -105,10 +104,7 @@ const MailingListPage: React.FC = () => {
       return res.data
     },
     enabled: activeTab === 'campaigns',
-    retry: (failureCount, error: any) => {
-      if (error?.response?.status === 404) return false
-      return failureCount < 2
-    },
+    retry: noRetryOnClientError,
   })
 
   // Reset preview page when filters change
@@ -238,25 +234,29 @@ const MailingListPage: React.FC = () => {
           {/* Preview area */}
           <div className="flex-1 min-w-0">
             {/* Error banner when API endpoint is unavailable */}
-            {previewError && (
+            {previewError && (() => {
+              const previewStatus = (previewError as any)?.response?.status
+              const is404 = previewStatus === 404
+              return (
               <Card className="mb-4 p-4 border-red-200 bg-red-50">
                 <div className="flex items-center gap-3 text-red-700">
                   <Mail className="w-5 h-5 shrink-0" />
                   <div>
                     <p className="font-medium text-sm">
-                      {(previewError as any)?.response?.status === 404
+                      {is404
                         ? t('admin:mailing.errors.endpointNotAvailable', 'Mailing API endpoint is not available. The server may need to be redeployed.')
                         : t('admin:mailing.errors.previewFailed', 'Failed to load recipient preview. Please try again later.')}
                     </p>
                     <p className="text-xs mt-1 text-red-600">
-                      {(previewError as any)?.response?.status === 404
-                        ? 'POST /api/admin/mailing/preview returned 404'
+                      {is404
+                        ? t('admin:mailing.errors.endpointNotAvailableDetail', 'The mailing service endpoint is not registered. A redeployment may be required.')
                         : (previewError as any)?.message || 'Unknown error'}
                     </p>
                   </div>
                 </div>
               </Card>
-            )}
+              )
+            })()}
 
             {/* Action bar */}
             <Card className="mb-4 p-4">
