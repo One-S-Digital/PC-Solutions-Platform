@@ -105,24 +105,42 @@ export class LeadsController {
   @ApiOperation({ summary: 'Get leads for the current parent user' })
   @ApiResponse({ status: 200, description: 'Parent leads retrieved successfully' })
   async getMyParentLeads(@Request() req) {
-    const userId = req.context.userId;
+    const profileUserId = req.context?.profileUserId as string | undefined;
+    const clerkUserId = (req.context?.clerkUserId || req.context?.userId) as string | undefined;
 
-    // Get the user to find their email
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: { id: true, email: true },
-    });
+    // Resolve the profile user reliably (request.context.userId is Clerk ID, not users.id).
+    const user = profileUserId
+      ? await this.prisma.user.findUnique({
+          where: { id: profileUserId },
+          select: { id: true, email: true },
+        })
+      : clerkUserId
+        ? await this.prisma.user.findUnique({
+            where: { clerkId: clerkUserId },
+            select: { id: true, email: true },
+          })
+        : null;
 
     if (!user) {
       return wrapErrorResponse('User not found');
     }
 
-    // Get leads where the parent email matches
-    // TODO: Add parentId field check when that becomes available
+    const leadWhere: any = {
+      OR: [{ parentUserId: user.id }],
+    };
+
+    if (user.email) {
+      leadWhere.OR.push({
+        parentEmail: {
+          equals: user.email,
+          mode: 'insensitive' as const,
+        },
+      });
+    }
+
+    // Include both explicit account-linked leads and email-matched historical leads.
     const leads = await this.prisma.parentLead.findMany({
-      where: {
-        parentEmail: user.email,
-      },
+      where: leadWhere,
       include: {
         foundationResponses: {
           include: {
@@ -148,6 +166,7 @@ export class LeadsController {
       preferredLanguages: lead.preferredLanguages,
       specialRequirements: lead.specialRequirements,
       status: lead.status,
+      parentUserId: lead.parentUserId,
       createdAt: lead.createdAt.toISOString(),
       updatedAt: lead.updatedAt.toISOString(),
       foundationResponses: lead.foundationResponses.map((r) => ({

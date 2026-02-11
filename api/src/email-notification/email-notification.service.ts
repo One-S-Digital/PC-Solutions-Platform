@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailTemplateService } from './email-template.service';
 import * as sgMail from '@sendgrid/mail';
+import { createHash } from 'crypto';
 
 export interface EmailNotification {
   event: string;
@@ -11,6 +12,16 @@ export interface EmailNotification {
   templateId?: string;
   scheduledAt?: Date;
   priority?: 'low' | 'normal' | 'high';
+  /**
+   * Allows sending to recipients that are not yet platform users.
+   * Useful for transactional emails sent before account creation.
+   */
+  allowUnknownRecipient?: boolean;
+  /**
+   * When true, skips user notification preference checks.
+   * Intended for mandatory transactional communications.
+   */
+  bypassPreferences?: boolean;
 }
 
 export interface EmailTemplate {
@@ -64,6 +75,7 @@ export class EmailNotificationService {
   async sendNotification(notification: EmailNotification): Promise<boolean> {
     let user: any = null;
     let template: any = null;
+    const recipientIdentifier = this.hashRecipient(notification.recipient);
     
     try {
       // Check if user has email notifications enabled
@@ -73,12 +85,15 @@ export class EmailNotificationService {
       });
 
       if (!user) {
-        this.logger.warn(`User not found for email: ${notification.recipient}`);
-        return false;
+        if (!notification.allowUnknownRecipient) {
+          this.logger.warn(`User not found for recipient hash: ${recipientIdentifier}`);
+          return false;
+        }
+        this.logger.log(`Sending transactional email to non-user recipient hash: ${recipientIdentifier}`);
       }
 
       // Check notification preferences
-      if (!this.shouldSendNotification(user, notification.event)) {
+      if (user && !notification.bypassPreferences && !this.shouldSendNotification(user, notification.event)) {
         this.logger.log(`Notification skipped for user ${user.id} due to preferences`);
         return false;
       }
@@ -98,13 +113,12 @@ export class EmailNotificationService {
           name: process.env.FROM_NAME || 'Pro Crèche Solutions',
         },
         subject: this.processTemplate(template.subject, notification.payload),
-        html: this.processTemplate(template.htmlContent, notification.payload),
+        html: this.processTemplate(template.htmlContent, notification.payload, { escapeHtml: true }),
         text: this.processTemplate(template.textContent, notification.payload),
-        templateId: template.id,
         categories: [notification.event],
         customArgs: {
-          userId: user.id,
           event: notification.event,
+          ...(user?.id ? { userId: user.id } : {}),
         },
       };
 
@@ -113,7 +127,7 @@ export class EmailNotificationService {
       
       // Log the email
       await this.logEmail({
-        userId: user.id,
+        userId: user?.id,
         event: notification.event,
         recipient: notification.recipient,
         templateId: template.id,
@@ -122,11 +136,16 @@ export class EmailNotificationService {
         payload: notification.payload,
       });
 
-      this.logger.log(`Email sent successfully to ${notification.recipient} for event ${notification.event}`);
+      this.logger.log(
+        `Email sent successfully for event ${notification.event} (recipient hash: ${recipientIdentifier})`,
+      );
       return true;
 
     } catch (error) {
-      this.logger.error(`Failed to send email notification: ${(error as Error).message}`, (error as Error).stack);
+      this.logger.error(
+        `Failed to send email notification for event ${notification.event} (recipient hash: ${recipientIdentifier}): ${(error as Error).message}`,
+        (error as Error).stack,
+      );
       
       // Log failed email
       await this.logEmail({
@@ -337,7 +356,7 @@ export class EmailNotificationService {
       jobRecruitment: ['job_application_received', 'application_status_update', 'job_match'],
       messaging: ['new_message', 'group_message', 'message_mention'],
       marketplace: ['order_confirmation', 'order_status_update', 'payment_confirmation'],
-      leadManagement: ['lead_assignment', 'lead_status_update', 'follow_up_reminder'],
+      leadManagement: ['lead_assignment', 'lead_status_update', 'follow_up_reminder', 'parent_lead_confirmation'],
       subscription: ['subscription_activation', 'payment_reminder', 'subscription_change'],
       contentModeration: ['content_approval', 'content_flagged', 'moderation_required'],
       systemAdmin: ['system_maintenance', 'system_alert', 'security_alert'],
@@ -353,16 +372,47 @@ export class EmailNotificationService {
     return true; // Default to sending if category not found
   }
 
-  private processTemplate(template: string, payload: any): string {
+  private processTemplate(
+    template: string,
+    payload: any,
+    options?: {
+      escapeHtml?: boolean;
+    },
+  ): string {
     let processed = template;
+    const values = payload && typeof payload === 'object' ? payload : {};
     
     // Replace template variables
-    Object.keys(payload).forEach(key => {
-      const regex = new RegExp(`{{${key}}}`, 'g');
-      processed = processed.replace(regex, payload[key] || '');
+    Object.keys(values).forEach((key) => {
+      const regex = new RegExp(`{{${this.escapeRegExp(key)}}}`, 'g');
+      const value = values[key];
+      const normalizedValue = value === null || value === undefined ? '' : String(value);
+      const replacement = options?.escapeHtml ? this.escapeHtml(normalizedValue) : normalizedValue;
+      processed = processed.replace(regex, replacement);
     });
 
     return processed;
+  }
+
+  private escapeRegExp(value: string): string {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  private escapeHtml(value: string): string {
+    return value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  private hashRecipient(email: string): string {
+    const normalized = email?.trim().toLowerCase();
+    if (!normalized) {
+      return 'unknown';
+    }
+    return createHash('sha256').update(normalized).digest('hex').slice(0, 12);
   }
 
   private async logEmail(data: {

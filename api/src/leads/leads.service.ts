@@ -1,8 +1,11 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { ParentLead, UserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateParentLeadDto } from './dto/create-parent-lead.dto';
 import { UpdateParentLeadDto } from './dto/update-parent-lead.dto';
 import { AppLoggerService } from '../common/logger.service';
+import { EmailNotificationService } from '../email-notification/email-notification.service';
+import { createHash } from 'crypto';
 
 export type LeadResponseStatus = 'INTERESTED' | 'NOT_INTERESTED' | 'NEEDS_MORE_INFO' | 'ENROLLED';
 
@@ -41,13 +44,154 @@ export class LeadsService {
   constructor(
     private prisma: PrismaService,
     private readonly logger: AppLoggerService,
+    private readonly emailNotificationService: EmailNotificationService,
   ) {}
 
   // Parent Lead Management
   async createParentLead(createParentLeadDto: CreateParentLeadDto) {
-    return this.prisma.parentLead.create({
-      data: createParentLeadDto,
+    const parentEmail = createParentLeadDto.parentEmail.trim().toLowerCase();
+    const parentName = createParentLeadDto.parentName.trim();
+    const parentEmailHash = this.hashRecipient(parentEmail);
+
+    const [linkedParentUser, lead] = await this.prisma.$transaction(async (tx) => {
+      const existingParentUser = await tx.user.findFirst({
+        where: {
+          email: {
+            equals: parentEmail,
+            mode: 'insensitive',
+          },
+          role: UserRole.PARENT,
+        },
+        select: { id: true },
+      });
+
+      const createdLead = await tx.parentLead.create({
+        data: {
+          parentName,
+          parentEmail,
+          parentPhone: createParentLeadDto.parentPhone?.trim() || undefined,
+          childName: createParentLeadDto.childName.trim(),
+          childAge: createParentLeadDto.childAge,
+          message: createParentLeadDto.message?.trim() || undefined,
+          preferredLocation: createParentLeadDto.preferredLocation?.trim() || undefined,
+          preferredCities: this.normalizeStringArray(createParentLeadDto.preferredCities),
+          preferredLanguages: this.normalizeStringArray(createParentLeadDto.preferredLanguages),
+          specialRequirements: createParentLeadDto.specialRequirements?.trim() || undefined,
+          foundationId: createParentLeadDto.foundationId,
+          status: createParentLeadDto.status || undefined,
+          parentUserId: existingParentUser?.id,
+        },
+      });
+
+      return [existingParentUser, createdLead] as const;
     });
+
+    if (linkedParentUser?.id) {
+      this.logger.log(
+        `Linked lead ${lead.id} to parent user ${linkedParentUser.id} during creation`,
+        'LeadsService',
+        { leadId: lead.id, parentUserId: linkedParentUser.id, parentEmailHash },
+      );
+    }
+
+    // Fire-and-forget: the email sender catches/logs its own errors.
+    void this.sendParentLeadConfirmationEmail(lead);
+
+    return lead;
+  }
+
+  /**
+   * Systematically links orphan leads to a parent account by email.
+   * Called after account creation/profile completion and safe to run repeatedly.
+   */
+  async linkLeadsToParentAccount(parentUserId: string, parentEmail: string): Promise<number> {
+    const normalizedEmail = parentEmail.trim().toLowerCase();
+    if (!normalizedEmail) {
+      return 0;
+    }
+    const parentEmailHash = this.hashRecipient(normalizedEmail);
+
+    const result = await this.prisma.parentLead.updateMany({
+      where: {
+        parentUserId: null,
+        parentEmail: {
+          equals: normalizedEmail,
+          mode: 'insensitive',
+        },
+      },
+      data: {
+        parentUserId,
+      },
+    });
+
+    if (result.count > 0) {
+      this.logger.log(
+        `Linked ${result.count} existing lead(s) to parent account ${parentUserId}`,
+        'LeadsService',
+        { parentUserId, parentEmailHash, linkedCount: result.count },
+      );
+    }
+
+    return result.count;
+  }
+
+  private normalizeStringArray(values?: string[]): string[] {
+    return Array.from(new Set((values || []).map((value) => value.trim()).filter(Boolean)));
+  }
+
+  private hashRecipient(email: string): string {
+    const normalized = email?.trim().toLowerCase();
+    if (!normalized) {
+      return 'unknown';
+    }
+    return createHash('sha256').update(normalized).digest('hex').slice(0, 12);
+  }
+
+  private getFrontendBaseUrl(): string {
+    const configuredUrl = process.env.FRONTEND_URL || 'http://localhost:3001';
+    return configuredUrl.trim().replace(/\/+$/g, '');
+  }
+
+  private async sendParentLeadConfirmationEmail(lead: ParentLead): Promise<void> {
+    let recipientHash = 'unknown';
+    try {
+      const frontendUrl = this.getFrontendBaseUrl();
+      const accountSetupUrl = `${frontendUrl}/signup?fromLead=1&role=parent`;
+      const enquiriesUrl = `${frontendUrl}/parent/enquiries`;
+      recipientHash = this.hashRecipient(lead.parentEmail);
+
+      const sent = await this.emailNotificationService.sendNotification({
+        event: 'parent_lead_confirmation',
+        recipient: lead.parentEmail,
+        allowUnknownRecipient: true,
+        bypassPreferences: true,
+        payload: {
+          parentName: lead.parentName,
+          enquiryReference: lead.id.slice(0, 8).toUpperCase(),
+          submittedAt: lead.createdAt.toISOString(),
+          childAge: lead.childAge,
+          location: lead.preferredLocation || 'Not specified',
+          message: lead.message || lead.specialRequirements || 'No additional details provided.',
+          accountSetupUrl,
+          enquiriesUrl,
+        },
+      });
+
+      if (!sent) {
+        this.logger.warn(
+          `Parent lead confirmation email could not be sent for lead ${lead.id}`,
+          'LeadsService',
+          { leadId: lead.id, recipientHash },
+        );
+      }
+    } catch (error: any) {
+      this.logger.error(
+        `Parent lead confirmation email failed for lead ${lead.id}: ${error?.message || String(error)}`,
+        error?.stack,
+        'LeadsService',
+        { leadId: lead.id, recipientHash },
+      );
+    }
   }
 
   async findAllParentLeads(filters?: {
