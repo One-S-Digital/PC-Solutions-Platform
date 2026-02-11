@@ -929,18 +929,29 @@ export class CompatController {
   }
 
   @Get('parent-leads')
-  @Public()
-  async getParentLeads() {
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  async getParentLeads(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
     try {
-      const leads = await this.prisma.parentLead.findMany({
-        orderBy: { createdAt: 'desc' },
-        take: 200,
-        include: {
-          parentUser: {
-            select: { id: true, firstName: true, lastName: true, email: true },
+      const pageNum = Math.max(1, parseInt(page || '1', 10) || 1);
+      const limitNum = Math.min(200, Math.max(1, parseInt(limit || '200', 10) || 200));
+      const skip = (pageNum - 1) * limitNum;
+
+      const [leads, total] = await Promise.all([
+        this.prisma.parentLead.findMany({
+          orderBy: { createdAt: 'desc' },
+          take: limitNum,
+          skip,
+          include: {
+            parentUser: {
+              select: { id: true, firstName: true, lastName: true, email: true },
+            },
           },
-        },
-      });
+        }),
+        this.prisma.parentLead.count(),
+      ]);
 
       const formattedLeads = leads.map((lead) => ({
         id: lead.id,
@@ -970,9 +981,22 @@ export class CompatController {
           : null,
       }));
 
-      return { success: true, message: 'OK', data: formattedLeads, timestamp: new Date().toISOString() };
+      return {
+        success: true,
+        message: 'OK',
+        data: formattedLeads,
+        total,
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          total,
+          totalPages: Math.ceil(total / limitNum),
+        },
+        timestamp: new Date().toISOString(),
+      };
     } catch (error) {
-      // If table missing, return empty silently to avoid 500 in admin
+      // Return empty to avoid 500 in admin (e.g. table missing during migration)
+      console.error('getParentLeads error:', (error as Error).message);
       return { success: true, message: 'OK', data: [], timestamp: new Date().toISOString() };
     }
   }

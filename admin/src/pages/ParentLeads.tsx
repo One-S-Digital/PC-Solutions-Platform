@@ -218,10 +218,12 @@ const ParentLeads: React.FC = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4">
+                    {lead.childAge != null && (
                     <div className="text-sm text-gray-900 flex items-center">
                       <Baby className="h-4 w-4 mr-1 flex-shrink-0" />
                       {lead.childAge} {t('admin:parentLeads.labels.yearsOld', 'years old')}
                     </div>
+                    )}
                     {lead.childName && (
                       <div className="text-sm text-gray-500">{lead.childName}</div>
                     )}
