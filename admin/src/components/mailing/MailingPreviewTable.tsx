@@ -63,11 +63,12 @@ const MailingPreviewTable: React.FC<Props> = ({ rows, loading, count, page, tota
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Organization</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Canton</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mailing</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-100">
             {rows.map((row) => (
-              <tr key={row.id} className="hover:bg-gray-50">
+              <tr key={row.id} className={`hover:bg-gray-50 ${row.mailingListOptOut ? 'opacity-60' : ''}`}>
                 <td className="px-4 py-3 text-sm text-gray-900 truncate max-w-[200px]">{row.email}</td>
                 <td className="px-4 py-3 text-sm text-gray-700">
                   {row.firstName} {row.lastName}
@@ -78,6 +79,11 @@ const MailingPreviewTable: React.FC<Props> = ({ rows, loading, count, page, tota
                 <td className="px-4 py-3">
                   <span className={`text-xs px-2 py-0.5 rounded-full ${row.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                     {row.isActive ? 'Active' : 'Inactive'}
+                  </span>
+                </td>
+                <td className="px-4 py-3">
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${row.mailingListOptOut ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
+                    {row.mailingListOptOut ? 'Unsubscribed' : 'Subscribed'}
                   </span>
                 </td>
               </tr>

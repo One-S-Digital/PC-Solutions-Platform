@@ -177,6 +177,7 @@ export class PrincipalService {
       newRequestEmailToggle: prefs.leadManagement,
       digestRadio: digest,
       promoRedemptionAlertsToggle: prefs.marketing,
+      mailingListOptOut: prefs.mailingListOptOut,
     };
   }
 
@@ -186,6 +187,7 @@ export class PrincipalService {
       newRequestEmailToggle?: boolean;
       digestRadio?: 'Daily' | 'Weekly' | 'None';
       promoRedemptionAlertsToggle?: boolean;
+      mailingListOptOut?: boolean;
     },
   ) {
     const frequencyMap: Record<'Daily' | 'Weekly' | 'None', string> = {
@@ -206,12 +208,14 @@ export class PrincipalService {
       update: {
         leadManagement: data.newRequestEmailToggle,
         marketing: data.promoRedemptionAlertsToggle,
+        mailingListOptOut: data.mailingListOptOut,
         frequency: data.digestRadio ? frequencyMap[data.digestRadio] : undefined,
       },
       create: {
         userId,
         leadManagement: data.newRequestEmailToggle ?? true,
-        marketing: data.promoRedemptionAlertsToggle ?? true, // Default to opted-in; users can opt out explicitly
+        marketing: data.promoRedemptionAlertsToggle ?? true,
+        mailingListOptOut: data.mailingListOptOut ?? false,
         frequency: data.digestRadio ? frequencyMap[data.digestRadio] : 'immediate',
       },
     });
@@ -220,6 +224,7 @@ export class PrincipalService {
       newRequestEmailToggle: updated.leadManagement,
       digestRadio: updated.frequency ? reverseMap[updated.frequency] ?? 'Daily' : 'Daily',
       promoRedemptionAlertsToggle: updated.marketing,
+      mailingListOptOut: updated.mailingListOptOut,
     };
   }
 }
