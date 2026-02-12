@@ -2190,6 +2190,7 @@
     "subtitle": "Créer, sauvegarder, exporter et envoyer des emails à vos listes de contacts",
     "tabs": {
       "build": "Créer une liste",
+      "lists": "Listes personnalisées",
       "segments": "Segments",
       "campaigns": "Campagnes"
     },

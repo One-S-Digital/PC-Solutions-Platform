@@ -2,13 +2,13 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
-  Mail, Plus, Download, Send, Save, Trash2, RefreshCw, Users, BarChart3,
+  Mail, Plus, Download, Send, Save, Trash2, RefreshCw, Users, BarChart3, List, UserPlus,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
 
 import { useApiClient, apiService } from '../services/api'
-import { MailingFilters, MailingPreviewResponse, MailingSegment } from '../types/api'
+import { MailingFilters, MailingPreviewResponse, MailingSegment, MailingCustomList } from '../types/api'
 import { useDebouncedValue } from '../hooks/useDebouncedValue'
 import Card from '../components/design-system/Card'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
@@ -18,11 +18,13 @@ import SaveSegmentModal from '../components/mailing/SaveSegmentModal'
 import ExportModal from '../components/mailing/ExportModal'
 import ComposeEmailModal from '../components/mailing/ComposeEmailModal'
 import SendProgressOverlay from '../components/mailing/SendProgressOverlay'
+import AddToListModal from '../components/mailing/AddToListModal'
 
-type Tab = 'build' | 'segments' | 'campaigns'
+type Tab = 'build' | 'segments' | 'campaigns' | 'lists'
 
 const TAB_KEYS: { key: Tab; labelKey: string; icon: React.ElementType }[] = [
   { key: 'build', labelKey: 'admin:mailing.tabs.build', icon: Users },
+  { key: 'lists', labelKey: 'admin:mailing.tabs.lists', icon: List },
   { key: 'segments', labelKey: 'admin:mailing.tabs.segments', icon: Save },
   { key: 'campaigns', labelKey: 'admin:mailing.tabs.campaigns', icon: BarChart3 },
 ]
@@ -69,8 +71,19 @@ const MailingListPage: React.FC = () => {
   const [saveModalOpen, setSaveModalOpen] = useState(false)
   const [exportModalOpen, setExportModalOpen] = useState(false)
   const [composeModalOpen, setComposeModalOpen] = useState(false)
+  const [addToListModalOpen, setAddToListModalOpen] = useState(false)
   const [sendingCampaignId, setSendingCampaignId] = useState<string | null>(null)
   const [actionLoading, setActionLoading] = useState(false)
+  const [selectedUserIds, setSelectedUserIds] = useState<Set<string>>(new Set())
+
+  const toggleSelectUser = useCallback((id: string) => {
+    setSelectedUserIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }, [])
 
   // Preview query — disable retries for 404 (route not yet deployed)
   const { data: preview, isLoading: previewLoading, error: previewError } = useQuery<MailingPreviewResponse>({
@@ -86,6 +99,21 @@ const MailingListPage: React.FC = () => {
     enabled: activeTab === 'build',
     retry: noRetryOnClientError,
   })
+
+  const toggleSelectAllOnPage = useCallback(() => {
+    if (!preview?.rows) return
+    const pageIds = preview.rows.map((r) => r.id)
+    setSelectedUserIds((prev) => {
+      const allSelected = pageIds.every((id) => prev.has(id))
+      const next = new Set(prev)
+      if (allSelected) {
+        pageIds.forEach((id) => next.delete(id))
+      } else {
+        pageIds.forEach((id) => next.add(id))
+      }
+      return next
+    })
+  }, [preview?.rows])
 
   // Segments query
   const { data: segmentsData, isLoading: segmentsLoading } = useQuery({
@@ -109,8 +137,22 @@ const MailingListPage: React.FC = () => {
     retry: noRetryOnClientError,
   })
 
+  // Custom Lists query
+  const { data: customListsData, isLoading: customListsLoading } = useQuery({
+    queryKey: ['mailing-custom-lists'],
+    queryFn: async () => {
+      const res = await apiService.mailingListCustomLists(apiClient, { pageSize: 100 })
+      return res.data
+    },
+    enabled: activeTab === 'lists' || addToListModalOpen,
+    retry: noRetryOnClientError,
+  })
+
   // Reset preview page when filters change
   useEffect(() => { setPreviewPage(1) }, [debouncedFilters])
+
+  // Clear selection when filters or page change
+  useEffect(() => { setSelectedUserIds(new Set()) }, [debouncedFilters, previewPage])
 
   // ---- Actions ----
   const handleSaveSegment = useCallback(async (name: string, description: string) => {
@@ -274,6 +316,14 @@ const MailingListPage: React.FC = () => {
                   )}
                 </div>
                 <div className="flex items-center gap-2">
+                  {selectedUserIds.size > 0 && (
+                    <button
+                      onClick={() => setAddToListModalOpen(true)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+                    >
+                      <UserPlus className="w-4 h-4" /> {t('admin:mailing.actions.addToList', 'Add to List')} ({selectedUserIds.size})
+                    </button>
+                  )}
                   <button
                     onClick={() => setSaveModalOpen(true)}
                     disabled={!preview?.count}
@@ -308,6 +358,9 @@ const MailingListPage: React.FC = () => {
                 page={previewPage}
                 totalPages={preview?.totalPages || 1}
                 onPageChange={setPreviewPage}
+                selectedIds={selectedUserIds}
+                onToggleSelect={toggleSelectUser}
+                onToggleSelectAll={toggleSelectAllOnPage}
               />
             </Card>
           </div>
@@ -444,7 +497,90 @@ const MailingListPage: React.FC = () => {
         </Card>
       )}
 
+      {/* CUSTOM LISTS tab */}
+      {activeTab === 'lists' && (
+        <Card className="overflow-hidden">
+          {customListsLoading ? (
+            <div className="flex justify-center py-16"><LoadingSpinner /></div>
+          ) : (
+            <>
+              <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+                <h3 className="text-sm font-semibold text-gray-700">
+                  {t('admin:mailing.customLists.title', 'Custom Lists')}
+                  {customListsData?.total ? ` (${customListsData.total})` : ''}
+                </h3>
+                <button
+                  onClick={() => setAddToListModalOpen(true)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                >
+                  <Plus className="w-4 h-4" /> {t('admin:mailing.customLists.createNewList', 'Create new list')}
+                </button>
+              </div>
+              {!customListsData?.lists?.length ? (
+                <div className="text-center py-16 text-gray-400">
+                  <List className="w-10 h-10 mx-auto mb-3 text-gray-300" />
+                  <p>{t('admin:mailing.customLists.noLists', 'No custom lists yet')}</p>
+                  <p className="text-sm mt-1 text-gray-400">
+                    {t('admin:mailing.customLists.noListsHint', 'Select users in the Build tab and click "Add to List" to create one')}
+                  </p>
+                </div>
+              ) : (
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Members</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Last Updated</th>
+                      <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {customListsData.lists.map((list: MailingCustomList) => (
+                      <tr key={list.id} className="hover:bg-gray-50">
+                        <td className="px-4 py-3">
+                          <div className="text-sm font-medium text-gray-900">{list.name}</div>
+                          {list.description && <div className="text-xs text-gray-500 truncate max-w-xs">{list.description}</div>}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-600">{list._count?.members?.toLocaleString() || 0}</td>
+                        <td className="px-4 py-3 text-sm text-gray-500">{new Date(list.updatedAt).toLocaleDateString()}</td>
+                        <td className="px-4 py-3 text-right">
+                          <button
+                            onClick={async () => {
+                              if (!confirm(t('admin:mailing.customLists.deleteConfirm', 'Delete this list?'))) return
+                              try {
+                                await apiService.mailingDeleteCustomList(apiClient, list.id)
+                                toast.success(t('admin:mailing.customLists.deleted', 'List deleted'))
+                                queryClient.invalidateQueries({ queryKey: ['mailing-custom-lists'] })
+                              } catch (err: any) {
+                                toast.error(err?.response?.data?.message || 'Failed to delete')
+                              }
+                            }}
+                            className="p-1 text-gray-400 hover:text-red-600"
+                            title="Delete"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </>
+          )}
+        </Card>
+      )}
+
       {/* Modals */}
+      <AddToListModal
+        isOpen={addToListModalOpen}
+        onClose={() => setAddToListModalOpen(false)}
+        selectedUserIds={Array.from(selectedUserIds)}
+        onComplete={() => {
+          setSelectedUserIds(new Set())
+          queryClient.invalidateQueries({ queryKey: ['mailing-custom-lists'] })
+        }}
+      />
       <SaveSegmentModal
         isOpen={saveModalOpen}
         onClose={() => setSaveModalOpen(false)}

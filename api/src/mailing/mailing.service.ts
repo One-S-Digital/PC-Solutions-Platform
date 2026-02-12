@@ -912,4 +912,114 @@ export class MailingService {
     if (filters) return filters;
     throw new BadRequestException('Either filters or segmentId is required');
   }
+
+  /* ================================================================ */
+  /*  CUSTOM LISTS                                                     */
+  /* ================================================================ */
+
+  async createCustomList(name: string, createdById: string, description?: string) {
+    return this.prisma.mailingCustomList.create({
+      data: { name, description, createdById },
+      include: { _count: { select: { members: true } } },
+    });
+  }
+
+  async listCustomLists(page = 1, pageSize = 50) {
+    const skip = (page - 1) * pageSize;
+    const [lists, total] = await Promise.all([
+      this.prisma.mailingCustomList.findMany({
+        skip,
+        take: pageSize,
+        orderBy: { updatedAt: 'desc' },
+        include: { _count: { select: { members: true } } },
+      }),
+      this.prisma.mailingCustomList.count(),
+    ]);
+    return { lists, total, page, pageSize, totalPages: Math.ceil(total / pageSize) };
+  }
+
+  async getCustomList(id: string) {
+    const list = await this.prisma.mailingCustomList.findUnique({
+      where: { id },
+      include: { _count: { select: { members: true } } },
+    });
+    if (!list) throw new NotFoundException('Custom list not found');
+    return list;
+  }
+
+  async updateCustomList(id: string, data: { name?: string; description?: string }) {
+    await this.getCustomList(id);
+    return this.prisma.mailingCustomList.update({
+      where: { id },
+      data,
+      include: { _count: { select: { members: true } } },
+    });
+  }
+
+  async deleteCustomList(id: string) {
+    await this.getCustomList(id);
+    return this.prisma.mailingCustomList.delete({ where: { id } });
+  }
+
+  async addUsersToCustomList(listId: string, userIds: string[]) {
+    await this.getCustomList(listId);
+    // SEC: limit batch size
+    const clampedIds = userIds.slice(0, 500);
+    const results = await Promise.allSettled(
+      clampedIds.map((userId) =>
+        this.prisma.mailingCustomListMember.upsert({
+          where: { listId_userId: { listId, userId } },
+          update: {},
+          create: { listId, userId },
+        }),
+      ),
+    );
+    const added = results.filter((r) => r.status === 'fulfilled').length;
+    return { added, total: clampedIds.length };
+  }
+
+  async removeUsersFromCustomList(listId: string, userIds: string[]) {
+    await this.getCustomList(listId);
+    const deleted = await this.prisma.mailingCustomListMember.deleteMany({
+      where: { listId, userId: { in: userIds } },
+    });
+    return { removed: deleted.count };
+  }
+
+  async getCustomListMembers(listId: string, page = 1, pageSize = 20) {
+    await this.getCustomList(listId);
+    const skip = (page - 1) * pageSize;
+    const [members, total] = await Promise.all([
+      this.prisma.mailingCustomListMember.findMany({
+        where: { listId },
+        skip,
+        take: pageSize,
+        orderBy: { addedAt: 'desc' },
+        include: {
+          user: {
+            select: {
+              id: true, email: true, firstName: true, lastName: true,
+              role: true, isActive: true,
+            },
+          },
+        },
+      }),
+      this.prisma.mailingCustomListMember.count({ where: { listId } }),
+    ]);
+    return {
+      members: members.map((m) => ({
+        id: m.user.id,
+        email: m.user.email,
+        firstName: m.user.firstName || '',
+        lastName: m.user.lastName || '',
+        role: m.user.role,
+        isActive: m.user.isActive,
+        addedAt: m.addedAt.toISOString(),
+      })),
+      total,
+      page,
+      pageSize,
+      totalPages: Math.ceil(total / pageSize),
+    };
+  }
 }

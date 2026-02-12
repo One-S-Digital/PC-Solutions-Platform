@@ -2195,6 +2195,7 @@
     "subtitle": "Kontaktlisten erstellen, speichern, exportieren und E-Mails versenden",
     "tabs": {
       "build": "Liste erstellen",
+      "lists": "Benutzerdefinierte Listen",
       "segments": "Segmente",
       "campaigns": "Kampagnen"
     },

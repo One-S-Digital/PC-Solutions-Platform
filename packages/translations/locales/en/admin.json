@@ -2188,6 +2188,7 @@
     "subtitle": "Build, save, export, and email your contact lists",
     "tabs": {
       "build": "Build a List",
+      "lists": "Custom Lists",
       "segments": "Segments",
       "campaigns": "Campaigns"
     },
@@ -2260,7 +2261,27 @@
     "actions": {
       "saveSegment": "Save Segment",
       "export": "Export",
-      "sendEmail": "Send Email"
+      "sendEmail": "Send Email",
+      "addToList": "Add to List"
+    },
+    "customLists": {
+      "title": "Custom Lists",
+      "addToList": "Add to List",
+      "selectedCount": "{{count}} user(s) selected",
+      "existingLists": "Existing Lists",
+      "members": "members",
+      "createNew": "Create New List",
+      "createNewList": "Create new list",
+      "namePlaceholder": "List name",
+      "descPlaceholder": "Description (optional)",
+      "creating": "Creating...",
+      "createAndAdd": "Create & Add Users",
+      "addedToList": "Added {{count}} user(s) to \"{{name}}\"",
+      "createdAndAdded": "Created \"{{name}}\" and added {{count}} user(s)",
+      "noLists": "No custom lists yet",
+      "noListsHint": "Select users in the Build tab and click \"Add to List\" to create one",
+      "deleteConfirm": "Delete this list?",
+      "deleted": "List deleted"
     },
     "segment": {
       "saveTitle": "Save Segment",

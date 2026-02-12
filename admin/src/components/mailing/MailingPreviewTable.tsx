@@ -9,6 +9,9 @@ interface Props {
   page: number
   totalPages: number
   onPageChange: (page: number) => void
+  selectedIds: Set<string>
+  onToggleSelect: (id: string) => void
+  onToggleSelectAll: () => void
 }
 
 const roleBadge = (role: string) => {
@@ -33,7 +36,10 @@ const roleBadge = (role: string) => {
   )
 }
 
-const MailingPreviewTable: React.FC<Props> = ({ rows, loading, count, page, totalPages, onPageChange }) => {
+const MailingPreviewTable: React.FC<Props> = ({
+  rows, loading, count, page, totalPages, onPageChange,
+  selectedIds, onToggleSelect, onToggleSelectAll,
+}) => {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
@@ -51,12 +57,22 @@ const MailingPreviewTable: React.FC<Props> = ({ rows, loading, count, page, tota
     )
   }
 
+  const allPageSelected = rows.length > 0 && rows.every((r) => selectedIds.has(r.id))
+
   return (
     <div>
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
+              <th className="px-3 py-3 w-10">
+                <input
+                  type="checkbox"
+                  checked={allPageSelected}
+                  onChange={onToggleSelectAll}
+                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+              </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
@@ -68,7 +84,18 @@ const MailingPreviewTable: React.FC<Props> = ({ rows, loading, count, page, tota
           </thead>
           <tbody className="bg-white divide-y divide-gray-100">
             {rows.map((row) => (
-              <tr key={row.id} className={`hover:bg-gray-50 ${row.mailingListOptOut ? 'opacity-60' : ''}`}>
+              <tr
+                key={row.id}
+                className={`hover:bg-gray-50 ${row.mailingListOptOut ? 'opacity-60' : ''} ${selectedIds.has(row.id) ? 'bg-blue-50' : ''}`}
+              >
+                <td className="px-3 py-3">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.has(row.id)}
+                    onChange={() => onToggleSelect(row.id)}
+                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  />
+                </td>
                 <td className="px-4 py-3 text-sm text-gray-900 truncate max-w-[200px]">{row.email}</td>
                 <td className="px-4 py-3 text-sm text-gray-700">
                   {row.firstName} {row.lastName}

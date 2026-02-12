@@ -297,6 +297,9 @@ model User {
   educationItems      EducatorEducation[]
   certificationItems  EducatorCertification[]
 
+  // Mailing custom list memberships
+  mailingCustomListMemberships MailingCustomListMember[]
+
   @@map("users")
 }
 
@@ -2595,4 +2598,36 @@ model MailingCampaign {
   @@index([createdById])
   @@index([segmentId])
   @@map("mailing_campaigns")
+}
+
+// Custom mailing lists — admin-curated static lists of users
+model MailingCustomList {
+  id          String @id @default(uuid())
+  name        String
+  description String? @db.Text
+  createdById String @map("created_by_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  members MailingCustomListMember[]
+
+  @@index([createdById])
+  @@map("mailing_custom_lists")
+}
+
+model MailingCustomListMember {
+  id     String @id @default(uuid())
+  listId String @map("list_id")
+  userId String @map("user_id")
+
+  addedAt DateTime @default(now()) @map("added_at")
+
+  list MailingCustomList @relation(fields: [listId], references: [id], onDelete: Cascade)
+  user User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([listId, userId])
+  @@index([listId])
+  @@index([userId])
+  @@map("mailing_custom_list_members")
 }

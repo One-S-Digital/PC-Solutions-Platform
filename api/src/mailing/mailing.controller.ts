@@ -255,4 +255,72 @@ export class MailingController {
     await this.mailingService.cancelCampaign(id, adminId);
     return { success: true, message: 'Campaign cancelled' };
   }
+
+  /* ================================================================ */
+  /*  CUSTOM LISTS                                                     */
+  /* ================================================================ */
+
+  @Post('custom-lists')
+  @ApiOperation({ summary: 'Create a custom mailing list' })
+  async createCustomList(@Body() body: { name: string; description?: string }, @Request() req: any) {
+    const adminId = this.getAdminId(req);
+    return this.mailingService.createCustomList(body.name, adminId, body.description);
+  }
+
+  @Get('custom-lists')
+  @ApiOperation({ summary: 'List custom mailing lists' })
+  async listCustomLists(
+    @Query('page') page?: string,
+    @Query('pageSize') pageSize?: string,
+  ) {
+    return this.mailingService.listCustomLists(
+      page ? parseInt(page, 10) : 1,
+      pageSize ? parseInt(pageSize, 10) : 50,
+    );
+  }
+
+  @Get('custom-lists/:id')
+  @ApiOperation({ summary: 'Get custom list detail' })
+  async getCustomList(@Param('id') id: string) {
+    return this.mailingService.getCustomList(id);
+  }
+
+  @Put('custom-lists/:id')
+  @ApiOperation({ summary: 'Update a custom list' })
+  async updateCustomList(@Param('id') id: string, @Body() body: { name?: string; description?: string }) {
+    return this.mailingService.updateCustomList(id, body);
+  }
+
+  @Delete('custom-lists/:id')
+  @ApiOperation({ summary: 'Delete a custom list' })
+  async deleteCustomList(@Param('id') id: string) {
+    await this.mailingService.deleteCustomList(id);
+    return { success: true, message: 'Custom list deleted' };
+  }
+
+  @Post('custom-lists/:id/members')
+  @ApiOperation({ summary: 'Add users to a custom list' })
+  async addUsersToCustomList(@Param('id') id: string, @Body() body: { userIds: string[] }) {
+    return this.mailingService.addUsersToCustomList(id, body.userIds);
+  }
+
+  @Delete('custom-lists/:id/members')
+  @ApiOperation({ summary: 'Remove users from a custom list' })
+  async removeUsersFromCustomList(@Param('id') id: string, @Body() body: { userIds: string[] }) {
+    return this.mailingService.removeUsersFromCustomList(id, body.userIds);
+  }
+
+  @Get('custom-lists/:id/members')
+  @ApiOperation({ summary: 'List members of a custom list' })
+  async getCustomListMembers(
+    @Param('id') id: string,
+    @Query('page') page?: string,
+    @Query('pageSize') pageSize?: string,
+  ) {
+    return this.mailingService.getCustomListMembers(
+      id,
+      page ? parseInt(page, 10) : 1,
+      pageSize ? parseInt(pageSize, 10) : 20,
+    );
+  }
 }
