@@ -223,23 +223,23 @@ const MailingFilterPanel: React.FC<Props> = ({ filters, onChange }) => {
               <div>
                 <label className="text-xs text-gray-500 block mb-1">Tier</label>
                 <div className="flex flex-wrap gap-1">
-                  {SUBSCRIPTION_TIERS.map((t) => (
+                  {SUBSCRIPTION_TIERS.map((tier) => (
                     <button
-                      key={t}
+                      key={tier}
                       onClick={() => {
                         const current = filters.subscriptionTiers || []
-                        const next = current.includes(t)
-                          ? current.filter((x) => x !== t)
-                          : [...current, t]
+                        const next = current.includes(tier)
+                          ? current.filter((x) => x !== tier)
+                          : [...current, tier]
                         update({ subscriptionTiers: next.length > 0 ? next : undefined })
                       }}
                       className={`text-xs px-2 py-0.5 rounded-full border ${
-                        filters.subscriptionTiers?.includes(t)
+                        filters.subscriptionTiers?.includes(tier)
                           ? 'bg-blue-100 border-blue-300 text-blue-700'
                           : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
                       }`}
                     >
-                      {t}
+                      {tier}
                     </button>
                   ))}
                 </div>

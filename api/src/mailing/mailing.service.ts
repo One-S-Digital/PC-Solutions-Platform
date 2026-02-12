@@ -276,8 +276,10 @@ export class MailingService {
     if (filters.excludeUnsubscribed === false) {
       const optedOut = await this.prisma.user.count({
         where: {
-          ...where,
-          notificationPreferences: { mailingListOptOut: true },
+          AND: [
+            where,
+            { notificationPreferences: { mailingListOptOut: true } },
+          ],
         },
       });
       if (optedOut > 0) {

@@ -2229,8 +2229,6 @@
       "communication": "Communication",
       "excludeUnsubscribed": "Exclure les désabonnés",
       "marketingOptIn": "Tout statut d'inscription",
-      "marketingOptInOnly": "Inscrits au marketing uniquement",
-      "marketingOptOutOnly": "Désinscrits du marketing uniquement",
       "dateRanges": "Plages de dates",
       "createdAfter": "Créé après",
       "createdBefore": "Créé avant",

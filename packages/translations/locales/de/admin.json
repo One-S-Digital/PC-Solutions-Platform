@@ -2234,8 +2234,6 @@
       "communication": "Kommunikation",
       "excludeUnsubscribed": "Abgemeldete ausschliessen",
       "marketingOptIn": "Beliebiger Opt-in-Status",
-      "marketingOptInOnly": "Nur Marketing-Anmeldungen",
-      "marketingOptOutOnly": "Nur Marketing-Abmeldungen",
       "dateRanges": "Datumsbereiche",
       "createdAfter": "Erstellt nach",
       "createdBefore": "Erstellt vor",
