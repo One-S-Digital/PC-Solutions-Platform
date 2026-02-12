@@ -1769,6 +1769,9 @@ model UserNotificationPreferences {
   systemAdmin       Boolean @default(true)
   marketing         Boolean @default(true)
 
+  // Mailing list opt-out — only true when user explicitly unsubscribes
+  mailingListOptOut  Boolean @default(false) @map("mailing_list_opt_out")
+
   // Frequency settings
   frequency String @default("immediate") // immediate, daily, weekly
 

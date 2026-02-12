@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { ChevronDown, ChevronRight, X } from 'lucide-react'
 import { MailingFilters } from '../../types/api'
+import { useTranslation } from 'react-i18next'
 
 const ROLES = [
   { value: 'FOUNDATION', label: 'Foundation / Daycare' },
@@ -42,6 +43,8 @@ const Section: React.FC<{ title: string; children: React.ReactNode; defaultOpen?
 }
 
 const MailingFilterPanel: React.FC<Props> = ({ filters, onChange }) => {
+  const { t } = useTranslation(['admin'])
+
   const update = (partial: Partial<MailingFilters>) => {
     onChange({ ...filters, ...partial })
   }
@@ -56,21 +59,92 @@ const MailingFilterPanel: React.FC<Props> = ({ filters, onChange }) => {
     ([k, v]) => v !== undefined && k !== 'excludeUnsubscribed',
   ).length
 
+  // Derive audience mode from current filter state
+  const audienceMode: 'all' | 'subscribed' | 'unsubscribed' =
+    filters.marketingOptIn === false
+      ? 'unsubscribed'
+      : filters.excludeUnsubscribed === true
+        ? 'subscribed'
+        : 'all'
+
+  const setAudienceMode = (mode: 'all' | 'subscribed' | 'unsubscribed') => {
+    switch (mode) {
+      case 'all':
+        update({ excludeUnsubscribed: false, marketingOptIn: undefined })
+        break
+      case 'subscribed':
+        update({ excludeUnsubscribed: true, marketingOptIn: undefined })
+        break
+      case 'unsubscribed':
+        update({ excludeUnsubscribed: false, marketingOptIn: false })
+        break
+    }
+  }
+
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-gray-800">Filters</h3>
+        <h3 className="text-sm font-semibold text-gray-800">{t('admin:mailing.filters.title', 'Filters')}</h3>
         {activeFilterCount > 0 && (
           <button
-            onClick={() => onChange({ excludeUnsubscribed: true })}
+            onClick={() => onChange({ excludeUnsubscribed: false })}
             className="text-xs text-red-500 hover:text-red-700 flex items-center gap-1"
           >
-            <X className="w-3 h-3" /> Clear all
+            <X className="w-3 h-3" /> {t('admin:mailing.filters.clearAll', 'Clear all')}
           </button>
         )}
       </div>
 
-      <Section title="Role / Account Type" defaultOpen>
+      {/* Audience type — always visible at top */}
+      <Section title={t('admin:mailing.filters.audience', 'Audience')} defaultOpen>
+        <div className="space-y-1.5">
+          {([
+            {
+              value: 'all' as const,
+              label: t('admin:mailing.filters.audienceAll', 'All users'),
+              desc: t('admin:mailing.filters.audienceAllDesc', 'Broadcasts, service notices, required updates'),
+            },
+            {
+              value: 'subscribed' as const,
+              label: t('admin:mailing.filters.audienceSubscribed', 'Newsletter subscribers'),
+              desc: t('admin:mailing.filters.audienceSubscribedDesc', 'Only users who opted in to marketing'),
+            },
+            {
+              value: 'unsubscribed' as const,
+              label: t('admin:mailing.filters.audienceUnsubscribed', 'Unsubscribed only'),
+              desc: t('admin:mailing.filters.audienceUnsubscribedDesc', 'Users who opted out of marketing'),
+            },
+          ]).map((opt) => (
+            <label
+              key={opt.value}
+              className={`flex items-start gap-2 text-sm cursor-pointer rounded-md p-2 -mx-2 transition-colors ${
+                audienceMode === opt.value ? 'bg-blue-50' : 'hover:bg-gray-50'
+              }`}
+            >
+              <input
+                type="radio"
+                name="audienceMode"
+                checked={audienceMode === opt.value}
+                onChange={() => setAudienceMode(opt.value)}
+                className="mt-0.5 border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <div>
+                <span className={`font-medium ${audienceMode === opt.value ? 'text-blue-700' : 'text-gray-700'}`}>
+                  {opt.label}
+                </span>
+                <p className="text-xs text-gray-500 mt-0.5">{opt.desc}</p>
+              </div>
+            </label>
+          ))}
+        </div>
+        {audienceMode === 'all' && (
+          <div className="mt-2 p-2 bg-amber-50 border border-amber-200 rounded text-xs text-amber-700">
+            {t('admin:mailing.filters.audienceAllWarning', 'Includes users who opted out of marketing emails. Use for essential service communications only.')}
+          </div>
+        )}
+      </Section>
+
+      <Section title={t('admin:mailing.filters.role', 'Role / Account Type')} defaultOpen>
         <div className="space-y-1.5">
           {ROLES.map((role) => (
             <label key={role.value} className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
@@ -149,23 +223,23 @@ const MailingFilterPanel: React.FC<Props> = ({ filters, onChange }) => {
               <div>
                 <label className="text-xs text-gray-500 block mb-1">Tier</label>
                 <div className="flex flex-wrap gap-1">
-                  {SUBSCRIPTION_TIERS.map((t) => (
+                  {SUBSCRIPTION_TIERS.map((tier) => (
                     <button
-                      key={t}
+                      key={tier}
                       onClick={() => {
                         const current = filters.subscriptionTiers || []
-                        const next = current.includes(t)
-                          ? current.filter((x) => x !== t)
-                          : [...current, t]
+                        const next = current.includes(tier)
+                          ? current.filter((x) => x !== tier)
+                          : [...current, tier]
                         update({ subscriptionTiers: next.length > 0 ? next : undefined })
                       }}
                       className={`text-xs px-2 py-0.5 rounded-full border ${
-                        filters.subscriptionTiers?.includes(t)
+                        filters.subscriptionTiers?.includes(tier)
                           ? 'bg-blue-100 border-blue-300 text-blue-700'
                           : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
                       }`}
                     >
-                      {t}
+                      {tier}
                     </button>
                   ))}
                 </div>
@@ -233,30 +307,7 @@ const MailingFilterPanel: React.FC<Props> = ({ filters, onChange }) => {
         </div>
       </Section>
 
-      <Section title="Communication">
-        <div className="space-y-2">
-          <label className="flex items-center gap-2 text-sm text-gray-600">
-            <input
-              type="checkbox"
-              checked={filters.excludeUnsubscribed !== false}
-              onChange={(e) => update({ excludeUnsubscribed: e.target.checked })}
-              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-            />
-            Exclude unsubscribed
-          </label>
-          <select
-            value={filters.marketingOptIn === undefined ? '' : String(filters.marketingOptIn)}
-            onChange={(e) =>
-              update({ marketingOptIn: e.target.value === '' ? undefined : e.target.value === 'true' })
-            }
-            className="w-full text-sm border border-gray-300 rounded-md px-2 py-1.5 focus:ring-blue-500 focus:border-blue-500"
-          >
-            <option value="">Any opt-in status</option>
-            <option value="true">Marketing opted-in only</option>
-            <option value="false">Marketing opted-out only</option>
-          </select>
-        </div>
-      </Section>
+      {/* Communication section replaced by Audience selector at top */}
 
       <Section title="Date Ranges">
         <div className="space-y-2">

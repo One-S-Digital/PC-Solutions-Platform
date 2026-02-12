@@ -2216,11 +2216,17 @@
       "cities": "Cities (comma-separated)",
       "citiesPlaceholder": "Lausanne, Geneva...",
       "languages": "Languages",
+      "audience": "Audience",
+      "audienceAll": "All users",
+      "audienceAllDesc": "Broadcasts, service notices, required updates",
+      "audienceAllWarning": "Includes users who opted out of marketing emails. Use for essential service communications only.",
+      "audienceSubscribed": "Newsletter subscribers",
+      "audienceSubscribedDesc": "Only users who opted in to marketing",
+      "audienceUnsubscribed": "Unsubscribed only",
+      "audienceUnsubscribedDesc": "Users who opted out of marketing",
       "communication": "Communication",
       "excludeUnsubscribed": "Exclude unsubscribed",
       "marketingOptIn": "Any opt-in status",
-      "marketingOptInOnly": "Marketing opted-in only",
-      "marketingOptOutOnly": "Marketing opted-out only",
       "dateRanges": "Date Ranges",
       "createdAfter": "Created after",
       "createdBefore": "Created before",
@@ -2245,6 +2251,11 @@
         "active": "Active",
         "inactive": "Inactive"
       }
+    },
+    "errors": {
+      "endpointNotAvailable": "Mailing API endpoint is not available. The server may need to be redeployed.",
+      "endpointNotAvailableDetail": "The mailing service endpoint is not registered. A redeployment may be required.",
+      "previewFailed": "Failed to load recipient preview. Please try again later."
     },
     "actions": {
       "saveSegment": "Save Segment",

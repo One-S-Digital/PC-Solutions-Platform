@@ -130,24 +130,34 @@ export class MailingService {
       });
     }
 
-    // E) Marketing opt-in / unsubscribed --------------------------
-    // FIX: marketingOptIn and excludeUnsubscribed must not produce contradictory
-    // WHERE conditions. When marketingOptIn is explicitly set, it takes precedence
-    // and the default excludeUnsubscribed logic is skipped.
+    // E) Mailing list opt-out / unsubscribed -----------------------
+    // Uses the explicit `mailingListOptOut` field (default false).
+    // Users are only excluded when they specifically unsubscribe via
+    // their notification settings or an unsubscribe link.
+    // The legacy `marketingOptIn` filter is kept for backward compat.
     if (filters.marketingOptIn === true) {
-      andConditions.push({ notificationPreferences: { marketing: true } });
-    } else if (filters.marketingOptIn === false) {
-      // Explicitly requesting opted-out users — skip excludeUnsubscribed
-      andConditions.push({ notificationPreferences: { marketing: false } });
-    } else if (filters.excludeUnsubscribed !== false) {
-      // Default: exclude unsubscribed (only when marketingOptIn is not explicitly set)
+      // Show only users who have NOT opted out of the mailing list
       andConditions.push({
         OR: [
           { notificationPreferences: null },
-          { notificationPreferences: { marketing: true } },
+          { notificationPreferences: { mailingListOptOut: false } },
+        ],
+      });
+    } else if (filters.marketingOptIn === false) {
+      // Explicitly requesting opted-out users
+      andConditions.push({ notificationPreferences: { mailingListOptOut: true } });
+    } else if (filters.excludeUnsubscribed !== false) {
+      // Default when "Newsletter subscribers" audience is selected:
+      // exclude users who explicitly unsubscribed from the mailing list
+      andConditions.push({
+        OR: [
+          { notificationPreferences: null },
+          { notificationPreferences: { mailingListOptOut: false } },
         ],
       });
     }
+    // When excludeUnsubscribed === false (All Users / Broadcast mode):
+    // no mailing-list filter is applied — everyone is included.
 
     // F) Date ranges ----------------------------------------------
     if (filters.createdFrom || filters.createdTo) {
@@ -226,7 +236,7 @@ export class MailingService {
             take: 1,
             select: { status: true },
           },
-          notificationPreferences: { select: { marketing: true } },
+          notificationPreferences: { select: { marketing: true, mailingListOptOut: true } },
         },
       }),
     ]);
@@ -258,6 +268,7 @@ export class MailingService {
       isActive: u.isActive,
       hasSubscription: u.mainSubscriptions.length > 0,
       marketingOptIn: u.notificationPreferences?.marketing !== false,
+      mailingListOptOut: u.notificationPreferences?.mailingListOptOut === true,
     }));
 
     // Warnings
@@ -265,12 +276,14 @@ export class MailingService {
     if (filters.excludeUnsubscribed === false) {
       const optedOut = await this.prisma.user.count({
         where: {
-          ...where,
-          notificationPreferences: { marketing: false },
+          AND: [
+            where,
+            { notificationPreferences: { mailingListOptOut: true } },
+          ],
         },
       });
       if (optedOut > 0) {
-        warnings.push(`Includes ${optedOut} contact(s) who opted out of marketing emails`);
+        warnings.push(`Includes ${optedOut} contact(s) who unsubscribed from the mailing list`);
       }
     }
 

@@ -579,6 +579,7 @@ export interface MailingPreviewRow {
   isActive: boolean;
   hasSubscription: boolean;
   marketingOptIn: boolean;
+  mailingListOptOut: boolean;
 }
 
 export interface MailingPreviewResponse {

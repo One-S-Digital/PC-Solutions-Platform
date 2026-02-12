@@ -116,7 +116,7 @@ export class PrincipalService {
         subscription: true,
         contentModeration: false,
         systemAdmin: false,
-        marketing: false,
+        marketing: true, // Default to opted-in; users can opt out explicitly
         frequency: 'immediate',
         quietHoursEnabled: false,
       },
@@ -177,6 +177,7 @@ export class PrincipalService {
       newRequestEmailToggle: prefs.leadManagement,
       digestRadio: digest,
       promoRedemptionAlertsToggle: prefs.marketing,
+      mailingListOptOut: prefs.mailingListOptOut,
     };
   }
 
@@ -186,6 +187,7 @@ export class PrincipalService {
       newRequestEmailToggle?: boolean;
       digestRadio?: 'Daily' | 'Weekly' | 'None';
       promoRedemptionAlertsToggle?: boolean;
+      mailingListOptOut?: boolean;
     },
   ) {
     const frequencyMap: Record<'Daily' | 'Weekly' | 'None', string> = {
@@ -201,17 +203,31 @@ export class PrincipalService {
       immediate: 'Daily', // fallback
     };
 
+    // Sync: when promoRedemptionAlertsToggle is explicitly set to false and
+    // mailingListOptOut was not explicitly provided, automatically opt the
+    // user out of the mailing list too. This prevents the scenario where a
+    // user disables promo emails in settings but still appears in mailing
+    // audiences because mailingListOptOut remains false.
+    const resolvedMailingListOptOut =
+      data.mailingListOptOut !== undefined
+        ? data.mailingListOptOut
+        : data.promoRedemptionAlertsToggle === false
+          ? true
+          : undefined;
+
     const updated = await this.prisma.userNotificationPreferences.upsert({
       where: { userId },
       update: {
         leadManagement: data.newRequestEmailToggle,
         marketing: data.promoRedemptionAlertsToggle,
+        mailingListOptOut: resolvedMailingListOptOut,
         frequency: data.digestRadio ? frequencyMap[data.digestRadio] : undefined,
       },
       create: {
         userId,
         leadManagement: data.newRequestEmailToggle ?? true,
-        marketing: data.promoRedemptionAlertsToggle ?? false,
+        marketing: data.promoRedemptionAlertsToggle ?? true,
+        mailingListOptOut: resolvedMailingListOptOut ?? false,
         frequency: data.digestRadio ? frequencyMap[data.digestRadio] : 'immediate',
       },
     });
@@ -220,6 +236,7 @@ export class PrincipalService {
       newRequestEmailToggle: updated.leadManagement,
       digestRadio: updated.frequency ? reverseMap[updated.frequency] ?? 'Daily' : 'Daily',
       promoRedemptionAlertsToggle: updated.marketing,
+      mailingListOptOut: updated.mailingListOptOut,
     };
   }
 }
