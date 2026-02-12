@@ -60,7 +60,9 @@ const MailingListPage: React.FC = () => {
   const setActiveTab = (tab: Tab) => setSearchParams({ tab })
 
   // ---- Build a List state ----
-  const [filters, setFilters] = useState<MailingFilters>({ excludeUnsubscribed: true })
+  // Default: show all users (broadcast mode). Admin can switch to
+  // "Newsletter subscribers" in the Audience filter to exclude opted-out users.
+  const [filters, setFilters] = useState<MailingFilters>({ excludeUnsubscribed: false })
   const debouncedFilters = useDebouncedValue(filters, 400)
   const [previewPage, setPreviewPage] = useState(1)
 
