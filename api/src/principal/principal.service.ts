@@ -116,7 +116,7 @@ export class PrincipalService {
         subscription: true,
         contentModeration: false,
         systemAdmin: false,
-        marketing: false,
+        marketing: true, // Default to opted-in; users can opt out explicitly
         frequency: 'immediate',
         quietHoursEnabled: false,
       },
@@ -211,7 +211,7 @@ export class PrincipalService {
       create: {
         userId,
         leadManagement: data.newRequestEmailToggle ?? true,
-        marketing: data.promoRedemptionAlertsToggle ?? false,
+        marketing: data.promoRedemptionAlertsToggle ?? true, // Default to opted-in; users can opt out explicitly
         frequency: data.digestRadio ? frequencyMap[data.digestRadio] : 'immediate',
       },
     });
