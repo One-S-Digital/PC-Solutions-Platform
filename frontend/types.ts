@@ -518,6 +518,7 @@ export enum PolicyType {
     STANDARD = 'Standard',
     DIRECTIVE = 'Directive',
     LAW = 'Law',
+    COMPLIANCE_PROCEDURE = 'Compliance Procedure',
 }
 export const POLICY_TYPES_ENUM = Object.values(PolicyType);
 
