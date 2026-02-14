@@ -13,6 +13,12 @@ export const SWISS_CANTONS = [
   'Ticino', 'Uri', 'Valais', 'Vaud', 'Zug', 'Zürich'
 ] as const;
 
+// Sentinel value meaning "applies to all regions/cantons".
+export const ALL_REGIONS_OPTION = 'All' as const;
+
+// Convenience list for selects where users can choose to cover all cantons.
+export const SWISS_CANTONS_WITH_ALL = [ALL_REGIONS_OPTION, ...SWISS_CANTONS] as const;
+
 export const SERVICE_CATEGORIES = [
   'Legal', 'Catering', 'Cleaning', 'Workshops', 'IT_Support', 'Consulting', 
   'Maintenance', 'Photography', 'Staff_Training', 'Landscaping', 'Other'

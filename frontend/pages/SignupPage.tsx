@@ -3,7 +3,7 @@ import { useNavigate, Link, useLocation, useSearchParams } from 'react-router-do
 import { useTranslation } from 'react-i18next';
 import { useSignUp, useAuth, useUser } from '@clerk/clerk-react';
 import { SignupRole, SignupFormData, SwissCanton, SupportedLanguage, UserRole } from '../types';
-import { APP_NAME, STANDARD_INPUT_FIELD, SWISS_CANTONS, HCAPTCHA_SITE_KEY, HCAPTCHA_THEME, HCAPTCHA_SIZE } from '../constants';
+import { APP_NAME, STANDARD_INPUT_FIELD, SWISS_CANTONS_WITH_ALL, HCAPTCHA_SITE_KEY, HCAPTCHA_THEME, HCAPTCHA_SIZE } from '../constants';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import Captcha from '../components/ui/Captcha';
@@ -1003,7 +1003,7 @@ const SignupPage: React.FC = () => {
                     )}
                     
                       {requiresOrganizationDetails && renderField('phone', 'labels.phone', 'tel', true, 'placeholders.phone')}
-                      {requiresOrganizationDetails && renderField('canton', 'labels.canton', 'select', true, undefined, SWISS_CANTONS)}
+                      {requiresOrganizationDetails && renderField('canton', 'labels.canton', 'select', true, undefined, SWISS_CANTONS_WITH_ALL)}
 
                     {selectedRole === SignupRole.FOUNDATION && renderField('capacity', 'labels.capacity', 'number', true)}
                     {selectedRole === SignupRole.SUPPLIER && renderField('category', 'labels.category', 'text', true, 'placeholders.category')}

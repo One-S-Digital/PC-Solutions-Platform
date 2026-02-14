@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useAppContext } from '../contexts/AppContext';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
-import { APP_NAME, STANDARD_INPUT_FIELD, SWISS_CANTONS } from '../constants'; 
+import { APP_NAME, STANDARD_INPUT_FIELD, SWISS_CANTONS_WITH_ALL, ALL_REGIONS_OPTION } from '../constants'; 
 import { ArrowLeftIcon, SquaresPlusIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { useNavigate, Link } from 'react-router-dom'; // Import Link
 import { UserRole } from '../types'; 
@@ -258,7 +258,11 @@ const ParentLeadFormPage: React.FC = () => {
             <label htmlFor="canton" className="block text-sm font-medium text-gray-700 mb-1">{t('parentLeadForm:labels.canton')}</label>
             <select name="canton" id="canton" value={formData.canton} onChange={handleChange} required className={STANDARD_INPUT_FIELD}>
               <option value="">{t('parentLeadForm:placeholders.canton')}</option>
-              {SWISS_CANTONS.map(c => <option key={c} value={c}>{c}</option>)}
+              {SWISS_CANTONS_WITH_ALL.map(c => (
+                <option key={c} value={c}>
+                  {c === ALL_REGIONS_OPTION ? t('common:filters.all', 'All') : c}
+                </option>
+              ))}
             </select>
           </div>
 

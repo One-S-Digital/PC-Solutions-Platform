@@ -1,10 +1,10 @@
 
 import React, { useState, useEffect, FormEvent } from 'react';
-import { PolicyAlert, PolicyAlertType, SWISS_CANTONS } from '../../types';
+import { PolicyAlert, PolicyAlertType } from '../../types';
 import Button from '../ui/Button';
 import Card from '../ui/Card';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { STANDARD_INPUT_FIELD } from '../../constants'; // Import constant
+import { ALL_REGIONS_OPTION, STANDARD_INPUT_FIELD, SWISS_CANTONS_WITH_ALL } from '../../constants'; // Import constant
 import { useTranslation } from 'react-i18next';
 
 interface PolicyAlertModalProps {
@@ -20,7 +20,7 @@ const PolicyAlertModal: React.FC<PolicyAlertModalProps> = ({ isOpen, onClose, on
     title: '',
     message: '',
     type: PolicyAlertType.INFO,
-    regionScope: 'All',
+    regionScope: ALL_REGIONS_OPTION,
     isActive: true,
     displayStartDate: '',
     displayEndDate: '',
@@ -67,7 +67,7 @@ const PolicyAlertModal: React.FC<PolicyAlertModalProps> = ({ isOpen, onClose, on
 
   if (!isOpen) return null;
 
-  const cantonOptions = ['All', ...SWISS_CANTONS];
+  const cantonOptions = SWISS_CANTONS_WITH_ALL;
 
   return (
     <div className={`fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} role="dialog" aria-modal="true" aria-labelledby="policyAlertModalTitle">
@@ -101,7 +101,7 @@ const PolicyAlertModal: React.FC<PolicyAlertModalProps> = ({ isOpen, onClose, on
               <div>
                 <label htmlFor="regionScope" className="block text-sm font-medium text-gray-700">{t("policyAlertModal.labels.regionScope")} *</label>
                 <select name="regionScope" id="regionScope" value={formData.regionScope} onChange={handleChange} required className={`${STANDARD_INPUT_FIELD} mt-1`}>
-                  {cantonOptions.map(canton => <option key={canton} value={canton}>{canton === 'All' ? t('common:filters.all') : canton}</option>)}
+                  {cantonOptions.map(canton => <option key={canton} value={canton}>{canton === ALL_REGIONS_OPTION ? t('common:filters.all') : canton}</option>)}
                 </select>
               </div>
             </div>

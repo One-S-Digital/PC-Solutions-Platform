@@ -4,6 +4,12 @@ import { UserRole, User, Product, Service, JobListing, CandidateProfile, Partner
 // Re-export SWISS_CANTONS so it can be imported from this module
 export { SWISS_CANTONS, SERVICE_CATEGORIES, SERVICE_DELIVERY_TYPES };
 
+// Sentinel value meaning "applies to all regions/cantons".
+export const ALL_REGIONS_OPTION = 'All' as const;
+
+// Convenience list for selects where users can choose to cover all cantons.
+export const SWISS_CANTONS_WITH_ALL = [ALL_REGIONS_OPTION, ...SWISS_CANTONS] as const;
+
 export const APP_NAME = "Pro Crèche Solutions";
 
 // hCaptcha Configuration

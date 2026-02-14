@@ -19,8 +19,10 @@ export class PolicyAlertsService {
 
     const where: any = {};
 
-    if (region) {
-      where.regions = { has: region };
+    // Treat "All" as a UI sentinel meaning "no region filter".
+    // When a specific region is selected, also include alerts that apply to all regions.
+    if (region && region !== 'All') {
+      where.regions = { hasSome: [region, 'All'] };
     }
 
     if (alertType) {
@@ -164,7 +166,9 @@ export class PolicyAlertsService {
   async getPolicyAlertsByRegion(region: string): Promise<PolicyAlert[]> {
     return this.prisma.policyAlert.findMany({
       where: {
-        regions: { has: region },
+        ...(region && region !== 'All'
+          ? { regions: { hasSome: [region, 'All'] } }
+          : {}),
         isActive: true,
         OR: [
           { endDate: null },
