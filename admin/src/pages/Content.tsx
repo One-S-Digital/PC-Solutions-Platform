@@ -75,19 +75,22 @@ export default function Content() {
   // Pagination state
   const [eLearningPagination, setELearningPagination] = useState<PaginationInfo>({
     page: 1,
-    limit: 12,
+    // Show ~2 rows on desktop (3 columns => 6 cards)
+    limit: 6,
     total: 0,
     totalPages: 0,
   });
   const [hrPagination, setHrPagination] = useState<PaginationInfo>({
     page: 1,
-    limit: 12,
+    // Show ~2 rows on desktop (3 columns => 6 cards)
+    limit: 6,
     total: 0,
     totalPages: 0,
   });
   const [policyPagination, setPolicyPagination] = useState<PaginationInfo>({
     page: 1,
-    limit: 12,
+    // Show ~2 rows on desktop (3 columns => 6 cards)
+    limit: 6,
     total: 0,
     totalPages: 0,
   });
