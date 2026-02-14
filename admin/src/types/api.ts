@@ -158,12 +158,16 @@ export interface Service {
   providerName: string;
   providerLogo?: string;
   description: string;
-  category: ServiceCategory; // Legacy single category
+  /**
+   * Service category (admin historically used a UI enum; backend uses uppercase enum strings).
+   * Keep this widened so admin UIs can send/receive API-compatible values.
+   */
+  category: ServiceCategory | string;
   categories?: string[]; // New: flexible category tags
   availability: string;
   tags: string[];
   imageUrl?: string;
-  deliveryType?: ServiceDeliveryType;
+  deliveryType?: ServiceDeliveryType | string;
   priceInfo?: string;
   /** When false, item is blocked/hidden from marketplace */
   isActive?: boolean;

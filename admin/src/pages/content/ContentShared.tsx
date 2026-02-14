@@ -118,6 +118,7 @@ export function Pagination({
   totalPages: number
   onPageChange: (page: number) => void
 }) {
+  const { t } = useTranslation(['common'])
   const pages = useMemo(() => {
     if (totalPages <= 1) return []
 
@@ -143,7 +144,7 @@ export function Pagination({
         type="button"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        aria-label="Previous page"
+        aria-label={t('common:pagination.previous', 'Previous page')}
         className="px-3 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
       >
         <ChevronLeftIcon className="h-5 w-5" />
@@ -158,7 +159,11 @@ export function Pagination({
           >
             1
           </button>
-          {startPage > 2 && <span className="px-2">...</span>}
+          {startPage > 2 && (
+            <span className="px-2" aria-hidden="true">
+              …
+            </span>
+          )}
         </>
       )}
 
@@ -177,7 +182,11 @@ export function Pagination({
 
       {endPage < totalPages && (
         <>
-          {endPage < totalPages - 1 && <span className="px-2">...</span>}
+          {endPage < totalPages - 1 && (
+            <span className="px-2" aria-hidden="true">
+              …
+            </span>
+          )}
           <button
             type="button"
             onClick={() => onPageChange(totalPages)}
@@ -192,7 +201,7 @@ export function Pagination({
         type="button"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        aria-label="Next page"
+        aria-label={t('common:pagination.next', 'Next page')}
         className="px-3 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
       >
         <ChevronRightIcon className="h-5 w-5" />

@@ -90,10 +90,10 @@ const EditServiceModal: React.FC<EditServiceModalProps> = ({
     if (!isOpen || !service) return
     setTitle(service.title ?? '')
     setDescription(service.description ?? '')
-    setCategory(normalizeCategory((service as any).category))
+    setCategory(normalizeCategory(service.category))
     setPriceInfo(service.priceInfo ?? '')
     setAvailability(service.availability ?? '')
-    setDeliveryType(normalizeDeliveryType((service as any).deliveryType))
+    setDeliveryType(normalizeDeliveryType(service.deliveryType))
     setTagsText(Array.isArray(service.tags) ? service.tags.join(', ') : '')
     setIsActive(service.isActive !== false)
     setError(null)
@@ -103,9 +103,18 @@ const EditServiceModal: React.FC<EditServiceModalProps> = ({
     if (!tagsText.trim()) return []
     return tagsText
       .split(',')
-      .map((t) => t.trim())
+      .map((tag) => tag.trim())
       .filter(Boolean)
   }, [tagsText])
+
+  useEffect(() => {
+    if (!isOpen) return
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [isOpen, onClose])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -125,11 +134,11 @@ const EditServiceModal: React.FC<EditServiceModalProps> = ({
       title: title.trim(),
       description: description.trim() || undefined,
       // Important: backend expects @workspace/types ServiceCategory values (e.g. CLEANING, IT_SUPPORT)
-      category: category as any,
+      category,
       priceInfo: priceInfo.trim() || undefined,
       availability: availability.trim() || undefined,
       // Important: backend expects 'On-site' | 'Remote' | 'Hybrid'
-      deliveryType: deliveryType as any,
+      deliveryType,
       tags,
       isActive,
     }
@@ -148,8 +157,18 @@ const EditServiceModal: React.FC<EditServiceModalProps> = ({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="w-full max-w-2xl bg-white shadow-xl rounded-lg overflow-hidden">
+    <div
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+      role="dialog"
+      aria-modal="true"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) onClose()
+      }}
+    >
+      <div
+        className="w-full max-w-2xl bg-white shadow-xl rounded-lg overflow-hidden"
+        onMouseDown={(e) => e.stopPropagation()}
+      >
         <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
           <div className="min-w-0">
             <h2 className="text-xl font-semibold text-gray-900">
