@@ -22,19 +22,19 @@ export default function Content() {
         <div className="p-4 border-b border-gray-200">
           <div className="flex gap-2 overflow-x-auto">
             <NavLink
-              to="/content/e-learning"
+              to="e-learning"
               className={({ isActive }) => `${tabBase} ${isActive ? tabActive : tabInactive}`}
             >
               {t('admin:content.eLearning.title', 'E-Learning')}
             </NavLink>
             <NavLink
-              to="/content/hr-documents"
+              to="hr-documents"
               className={({ isActive }) => `${tabBase} ${isActive ? tabActive : tabInactive}`}
             >
               {t('admin:content.hrDocuments.title', 'HR Documents')}
             </NavLink>
             <NavLink
-              to="/content/state-policies"
+              to="state-policies"
               className={({ isActive }) => `${tabBase} ${isActive ? tabActive : tabInactive}`}
             >
               {t('admin:content.statePolicies.title', 'State Policies')}

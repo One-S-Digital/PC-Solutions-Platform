@@ -17,7 +17,6 @@ export default function StatePoliciesPage() {
   const apiClient = useApiClient()
 
   const defaultCountry = COUNTRIES_FOR_POLICIES[0]
-  const defaultRegion = (REGIONS_BY_COUNTRY[defaultCountry] ?? [])[0] ?? ''
 
   const [country, setCountry] = useState<string>(defaultCountry)
   const [region, setRegion] = useState<string>('')
@@ -31,7 +30,7 @@ export default function StatePoliciesPage() {
   const [isLoading, setIsLoading] = useState(false)
 
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [editingContent, setEditingContent] = useState<any>(null)
+  const [editingContent, setEditingContent] = useState<UploadedContent | null>(null)
   const [preview, setPreview] = useState<UploadedContent | null>(null)
 
   const regionOptions = useMemo(() => REGIONS_BY_COUNTRY[country] ?? [], [country])
@@ -44,7 +43,7 @@ export default function StatePoliciesPage() {
   }, [country, region, regionOptions])
 
   const fetchContent = useCallback(
-    async (page = pagination.page) => {
+    async (page: number) => {
       setIsLoading(true)
       try {
         const currentLang = i18n.language || 'en'
@@ -73,7 +72,7 @@ export default function StatePoliciesPage() {
         setIsLoading(false)
       }
     },
-    [apiClient, pagination.page, pagination.limit, debouncedSearch, country, region, status, criticalOnly],
+    [apiClient, pagination.limit, debouncedSearch, country, region, status, criticalOnly],
   )
 
   useEffect(() => {

@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next'
 import { STANDARD_INPUT_FIELD } from '../../constants/design-system'
 import LoadingSpinner from '../ui/LoadingSpinner'
 import { Service } from '../../types/api'
-import { ServiceCategory, ServiceDeliveryType } from '../../types'
 
 export interface EditServiceModalProps {
   isOpen: boolean
@@ -12,6 +11,60 @@ export interface EditServiceModalProps {
   service: Service | null
   onSave: (payload: { id: string; data: Partial<Service> }) => Promise<void>
   isLoading: boolean
+}
+
+// Backend expects these exact enum/string values (see api/src/marketplace/dto/create-service.dto.ts)
+const API_SERVICE_CATEGORIES = ['CLEANING', 'IT_SUPPORT', 'MAINTENANCE', 'CONSULTING', 'TRAINING', 'OTHER'] as const
+type ApiCategory = (typeof API_SERVICE_CATEGORIES)[number]
+
+const API_DELIVERY_TYPES = ['On-site', 'Remote', 'Hybrid'] as const
+type ApiDeliveryType = (typeof API_DELIVERY_TYPES)[number]
+
+const CATEGORY_LABELS: Record<string, string> = {
+  CLEANING: 'Cleaning',
+  IT_SUPPORT: 'IT Support',
+  MAINTENANCE: 'Maintenance',
+  CONSULTING: 'Consulting',
+  TRAINING: 'Training',
+  OTHER: 'Other',
+}
+
+const normalizeCategory = (value: unknown): ApiCategory => {
+  const raw = String(value ?? '').trim()
+  if (!raw) return 'OTHER'
+
+  const normalized = raw.toUpperCase().replace(/[\s-]+/g, '_')
+  if ((API_SERVICE_CATEGORIES as readonly string[]).includes(normalized)) return normalized as ApiCategory
+
+  // Legacy admin values
+  const legacyMap: Record<string, ApiCategory> = {
+    CLEANING: 'CLEANING',
+    IT_SUPPORT: 'IT_SUPPORT',
+    IT: 'IT_SUPPORT',
+    IT_SUPPORT_SUPPORT: 'IT_SUPPORT',
+    MAINTENANCE: 'MAINTENANCE',
+    CONSULTING: 'CONSULTING',
+    TRAINING: 'TRAINING',
+    STAFF_TRAINING: 'TRAINING',
+    WORKSHOPS: 'TRAINING',
+    OTHER: 'OTHER',
+  }
+  return legacyMap[normalized] ?? 'OTHER'
+}
+
+const normalizeDeliveryType = (value: unknown): ApiDeliveryType => {
+  const raw = String(value ?? '').trim()
+  if (!raw) return 'On-site'
+
+  // Backend valid values
+  if ((API_DELIVERY_TYPES as readonly string[]).includes(raw)) return raw as ApiDeliveryType
+
+  // Legacy admin enum values
+  const norm = raw.toLowerCase().replace(/[\s_]+/g, '-')
+  if (norm === 'on-site' || norm === 'onsite') return 'On-site'
+  if (norm === 'remote') return 'Remote'
+  if (norm === 'hybrid') return 'Hybrid'
+  return 'On-site'
 }
 
 const EditServiceModal: React.FC<EditServiceModalProps> = ({
@@ -26,10 +79,10 @@ const EditServiceModal: React.FC<EditServiceModalProps> = ({
 
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
-  const [category, setCategory] = useState<ServiceCategory | string>(ServiceCategory.Other)
+  const [category, setCategory] = useState<ApiCategory>('OTHER')
   const [priceInfo, setPriceInfo] = useState('')
   const [availability, setAvailability] = useState('')
-  const [deliveryType, setDeliveryType] = useState<ServiceDeliveryType | string>(ServiceDeliveryType.On_site)
+  const [deliveryType, setDeliveryType] = useState<ApiDeliveryType>('On-site')
   const [tagsText, setTagsText] = useState('')
   const [isActive, setIsActive] = useState(true)
 
@@ -37,10 +90,10 @@ const EditServiceModal: React.FC<EditServiceModalProps> = ({
     if (!isOpen || !service) return
     setTitle(service.title ?? '')
     setDescription(service.description ?? '')
-    setCategory((service.category as any) ?? ServiceCategory.Other)
+    setCategory(normalizeCategory((service as any).category))
     setPriceInfo(service.priceInfo ?? '')
     setAvailability(service.availability ?? '')
-    setDeliveryType((service.deliveryType as any) ?? ServiceDeliveryType.On_site)
+    setDeliveryType(normalizeDeliveryType((service as any).deliveryType))
     setTagsText(Array.isArray(service.tags) ? service.tags.join(', ') : '')
     setIsActive(service.isActive !== false)
     setError(null)
@@ -71,9 +124,11 @@ const EditServiceModal: React.FC<EditServiceModalProps> = ({
     const updateData: Partial<Service> = {
       title: title.trim(),
       description: description.trim() || undefined,
+      // Important: backend expects @workspace/types ServiceCategory values (e.g. CLEANING, IT_SUPPORT)
       category: category as any,
       priceInfo: priceInfo.trim() || undefined,
       availability: availability.trim() || undefined,
+      // Important: backend expects 'On-site' | 'Remote' | 'Hybrid'
       deliveryType: deliveryType as any,
       tags,
       isActive,
@@ -168,12 +223,12 @@ const EditServiceModal: React.FC<EditServiceModalProps> = ({
                   <select
                     className={STANDARD_INPUT_FIELD}
                     value={String(category)}
-                    onChange={(e) => setCategory(e.target.value)}
+                    onChange={(e) => setCategory(e.target.value as ApiCategory)}
                     disabled={isLoading}
                   >
-                    {Object.values(ServiceCategory).map((c) => (
+                    {API_SERVICE_CATEGORIES.map((c) => (
                       <option key={c} value={c}>
-                        {c}
+                        {t(`admin:servicesPage.categories.${c}`, CATEGORY_LABELS[c] ?? c)}
                       </option>
                     ))}
                   </select>
@@ -186,12 +241,12 @@ const EditServiceModal: React.FC<EditServiceModalProps> = ({
                   <select
                     className={STANDARD_INPUT_FIELD}
                     value={String(deliveryType)}
-                    onChange={(e) => setDeliveryType(e.target.value)}
+                    onChange={(e) => setDeliveryType(e.target.value as ApiDeliveryType)}
                     disabled={isLoading}
                   >
-                    {Object.values(ServiceDeliveryType).map((d) => (
+                    {API_DELIVERY_TYPES.map((d) => (
                       <option key={d} value={d}>
-                        {d}
+                        {t(`admin:servicesPage.deliveryTypes.${d}`, d)}
                       </option>
                     ))}
                   </select>

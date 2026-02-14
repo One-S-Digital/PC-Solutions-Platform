@@ -29,9 +29,9 @@ import AdminOrganizationProfileEdit from './pages/AdminOrganizationProfileEdit';
 import ResetPassword from './pages/ResetPassword';
 import MailingListPage from './pages/MailingList';
 import MailingCampaignDetailPage from './pages/MailingCampaignDetail';
-import ELearningContentPage from './pages/content/ELearningContentPage'
-import HrDocumentsPage from './pages/content/HrDocumentsPage'
-import StatePoliciesPage from './pages/content/StatePoliciesPage'
+import ELearningContentPage from './pages/content/ELearningContentPage';
+import HrDocumentsPage from './pages/content/HrDocumentsPage';
+import StatePoliciesPage from './pages/content/StatePoliciesPage';
 
 // Create a client
 const queryClient = new QueryClient({

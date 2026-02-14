@@ -327,6 +327,20 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
 
   const selectFile = (selectedFile: File, resetInput?: () => void) => {
     const maxSizeMB = contentType === 'e-learning' ? 500 : 50;
+    const allowedExtensions = contentType === 'e-learning'
+      ? ['.pdf', '.mp4', '.docx']
+      : ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.csv', '.ods'];
+    const fileName = selectedFile.name.toLowerCase();
+    if (!allowedExtensions.some((ext) => fileName.endsWith(ext))) {
+      setFile(null);
+      setFileError(
+        t('admin:contentUpload.invalidFileType', {
+          defaultValue: `Unsupported file type. Allowed: ${allowedExtensions.join(', ')}`,
+        }),
+      );
+      resetInput?.();
+      return;
+    }
     if (selectedFile.size > maxSizeMB * 1024 * 1024) {
       setFile(null);
       setFileError(

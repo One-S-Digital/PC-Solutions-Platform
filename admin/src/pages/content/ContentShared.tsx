@@ -143,6 +143,7 @@ export function Pagination({
         type="button"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
+        aria-label="Previous page"
         className="px-3 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
       >
         <ChevronLeftIcon className="h-5 w-5" />
@@ -191,6 +192,7 @@ export function Pagination({
         type="button"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
+        aria-label="Next page"
         className="px-3 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
       >
         <ChevronRightIcon className="h-5 w-5" />

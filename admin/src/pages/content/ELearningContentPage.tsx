@@ -26,12 +26,12 @@ export default function ELearningContentPage() {
   const [isLoading, setIsLoading] = useState(false)
 
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [editingContent, setEditingContent] = useState<any>(null)
+  const [editingContent, setEditingContent] = useState<UploadedContent | null>(null)
 
   const [preview, setPreview] = useState<UploadedContent | null>(null)
 
   const fetchContent = useCallback(
-    async (page = pagination.page) => {
+    async (page: number) => {
       setIsLoading(true)
       try {
         const currentLang = i18n.language || 'en'
@@ -58,7 +58,7 @@ export default function ELearningContentPage() {
         setIsLoading(false)
       }
     },
-    [apiClient, pagination.page, pagination.limit, debouncedSearch, category, status],
+    [apiClient, pagination.limit, debouncedSearch, category, status],
   )
 
   // Reset to page 1 when filters/search change
