@@ -128,6 +128,7 @@ const SimpleAssetUploader: React.FC<SimpleAssetUploaderProps> = ({
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
+    e.stopPropagation()
     setDragOver(false)
     
     const files = Array.from(e.dataTransfer.files)
@@ -193,16 +194,27 @@ const SimpleAssetUploader: React.FC<SimpleAssetUploaderProps> = ({
         onDrop={handleDrop}
         onDragOver={(e) => {
           e.preventDefault()
+          e.stopPropagation()
           setDragOver(true)
         }}
-        onDragLeave={() => setDragOver(false)}
+        onDragLeave={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          const next = e.relatedTarget as Node | null
+          if (next && e.currentTarget.contains(next)) return
+          setDragOver(false)
+        }}
+        onClick={() => {
+          if (isUploading) return
+          fileInputRef.current?.click()
+        }}
       >
         <input
           ref={fileInputRef}
           type="file"
           accept={accept}
           onChange={handleFileInputChange}
-          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          className="hidden"
           disabled={isUploading}
         />
         

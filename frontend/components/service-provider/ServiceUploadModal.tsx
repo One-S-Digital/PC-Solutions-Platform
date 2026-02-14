@@ -45,6 +45,38 @@ const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose
   const [file, setFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isFileDragOver, setIsFileDragOver] = useState(false);
+
+  const selectImageFile = (selectedFile: File, resetInput?: () => void) => {
+    const maxSizeMB = 5;
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/webp'];
+
+    if (!allowedTypes.includes(selectedFile.type)) {
+      setFile(null);
+      setFileError(
+        t('common:serviceUploadModal.errors.invalidImageType', {
+          defaultValue: 'Please select an image file.',
+        }),
+      );
+      resetInput?.();
+      return;
+    }
+
+    if (selectedFile.size > maxSizeMB * 1024 * 1024) {
+      setFile(null);
+      setFileError(
+        t('common:serviceUploadModal.errors.imageTooLarge', {
+          defaultValue: `Image must be less than ${maxSizeMB}MB.`,
+          max: maxSizeMB,
+        }),
+      );
+      resetInput?.();
+      return;
+    }
+
+    setFileError(null);
+    setFile(selectedFile);
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -85,37 +117,45 @@ const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const selectedFile = e.target.files[0];
-      const maxSizeMB = 5;
-      const allowedTypes = ['image/png', 'image/jpeg', 'image/webp'];
+    const selectedFile = e.target.files?.[0];
+    if (!selectedFile) return;
+    selectImageFile(selectedFile, () => {
+      e.target.value = '';
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    });
+  };
 
-      if (!allowedTypes.includes(selectedFile.type)) {
-        setFile(null);
-        setFileError(
-          t('common:serviceUploadModal.errors.invalidImageType', {
-            defaultValue: 'Please select an image file.',
-          }),
-        );
-        if (fileInputRef.current) fileInputRef.current.value = '';
-        return;
-      }
+  const handleImageDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isSaving) return;
+    setIsFileDragOver(true);
+  };
 
-      if (selectedFile.size > maxSizeMB * 1024 * 1024) {
-        setFile(null);
-        setFileError(
-          t('common:serviceUploadModal.errors.imageTooLarge', {
-            defaultValue: `Image must be less than ${maxSizeMB}MB.`,
-            max: maxSizeMB,
-          }),
-        );
-        if (fileInputRef.current) fileInputRef.current.value = '';
-        return;
-      }
+  const handleImageDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isSaving) return;
+    setIsFileDragOver(true);
+    if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
+  };
 
-      setFileError(null);
-      setFile(selectedFile);
-    }
+  const handleImageDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const next = e.relatedTarget as Node | null;
+    if (next && e.currentTarget.contains(next)) return;
+    setIsFileDragOver(false);
+  };
+
+  const handleImageDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isSaving) return;
+    setIsFileDragOver(false);
+    const dropped = e.dataTransfer?.files?.[0];
+    if (!dropped) return;
+    selectImageFile(dropped);
   };
 
   const handleSubmit = (e: FormEvent) => {
@@ -256,7 +296,15 @@ const ServiceUploadModal: React.FC<ServiceUploadModalProps> = ({ isOpen, onClose
 
             <div className="pt-2">
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('common:serviceUploadModal.labels.image')}</label>
-              <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-swiss-teal/60 border-dashed rounded-md bg-swiss-teal/5">
+              <div
+                className={`mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-md transition-colors ${
+                  isFileDragOver ? 'border-swiss-teal bg-swiss-teal/15' : 'border-swiss-teal/60 bg-swiss-teal/5'
+                } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
+                onDragEnter={handleImageDragEnter}
+                onDragOver={handleImageDragOver}
+                onDragLeave={handleImageDragLeave}
+                onDrop={handleImageDrop}
+              >
                 <div className="space-y-1 text-center">
                   <ArrowUpTrayIcon className="mx-auto h-10 w-10 text-swiss-mint" />
                   <div className="flex text-sm text-gray-600">
