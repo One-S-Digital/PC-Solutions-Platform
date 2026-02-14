@@ -267,10 +267,12 @@ export class LeadsService {
     };
 
     // Canton/Location matching - match against canton or regionsServed
-    if (lead.preferredLocation) {
+    // Treat "All" as no preferred location filter.
+    if (lead.preferredLocation && lead.preferredLocation !== 'All') {
       where.OR = [
         { canton: { equals: lead.preferredLocation, mode: 'insensitive' } },
         { regionsServed: { has: lead.preferredLocation } },
+        { regionsServed: { has: 'All' } },
         { region: { contains: lead.preferredLocation, mode: 'insensitive' } },
       ];
     }
@@ -302,10 +304,13 @@ export class LeadsService {
       let score = 0;
 
       // Canton/Location match (30 points)
-      if (lead.preferredLocation) {
-        const cantonMatch = foundation.canton?.toLowerCase() === lead.preferredLocation.toLowerCase();
+      if (lead.preferredLocation && lead.preferredLocation !== 'All') {
+        const cantonMatch =
+          foundation.canton?.toLowerCase() === lead.preferredLocation.toLowerCase();
         const regionsMatch = foundation.regionsServed?.some(
-          r => r.toLowerCase() === lead.preferredLocation!.toLowerCase()
+          r =>
+            r.toLowerCase() === lead.preferredLocation!.toLowerCase() ||
+            r.toLowerCase() === 'all'
         );
         const regionMatch = foundation.region?.toLowerCase().includes(lead.preferredLocation.toLowerCase());
         

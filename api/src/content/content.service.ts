@@ -1129,7 +1129,11 @@ export class ContentService {
     }
 
     if (region) {
-      where.region = region;
+      // When a region is selected, also include policies that apply to all regions.
+      // Treat "All" as a UI sentinel meaning "no region filter".
+      if (region !== 'All') {
+        where.region = { in: [region, 'All'] };
+      }
     }
 
     if (isCritical !== undefined) {

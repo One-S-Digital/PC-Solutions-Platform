@@ -585,6 +585,8 @@ export class CompatController {
           { region: region },
           { canton: region },
           { regionsServed: { has: region } },
+          // Organizations that explicitly serve all cantons/regions.
+          { regionsServed: { has: 'All' } },
         ];
       }
       

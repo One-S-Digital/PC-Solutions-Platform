@@ -158,7 +158,12 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
    useEffect(() => {
     if (formData.country && contentType === 'policy') {
       const validRegions = REGIONS_BY_COUNTRY[formData.country];
-      if (!validRegions.includes(formData.region || '')) {
+      const currentRegion = formData.region || '';
+      // Allow sentinel value meaning "applies to all regions/cantons".
+      if (currentRegion === 'All') {
+        return;
+      }
+      if (!validRegions.includes(currentRegion)) {
         setFormData(prev => ({ ...prev, region: validRegions[0] }));
       }
     }
@@ -634,6 +639,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
         <div>
           <label htmlFor="policyRegion" className="block text-sm font-medium text-gray-700 mb-1">{t('common:contentUploadModal.labels.regionCanton')} <span className="text-red-500 ml-0.5">*</span></label>
           <select name="region" id="policyRegion" value={formData.region} onChange={handleInputChange} required className={policySpecificInputClass}>
+            <option value="All">{t('common:filters.all', 'All')}</option>
             {(formData.country ? REGIONS_BY_COUNTRY[formData.country] : SWISS_CANTONS).map(region => <option key={region} value={region}>{region}</option>)}
           </select>
         </div>
