@@ -1074,6 +1074,31 @@ export const apiService = {
 
   mailingCancelCampaign: (apiClient: AxiosInstance, id: string) =>
     apiClient.post(`/admin/mailing/campaigns/${id}/cancel`),
+
+  // Custom Lists
+  mailingCreateCustomList: (apiClient: AxiosInstance, data: { name: string; description?: string }) =>
+    apiClient.post('/admin/mailing/custom-lists', data),
+
+  mailingListCustomLists: (apiClient: AxiosInstance, params?: { page?: number; pageSize?: number }) =>
+    apiClient.get('/admin/mailing/custom-lists', { params }),
+
+  mailingGetCustomList: (apiClient: AxiosInstance, id: string) =>
+    apiClient.get(`/admin/mailing/custom-lists/${id}`),
+
+  mailingUpdateCustomList: (apiClient: AxiosInstance, id: string, data: { name?: string; description?: string }) =>
+    apiClient.put(`/admin/mailing/custom-lists/${id}`, data),
+
+  mailingDeleteCustomList: (apiClient: AxiosInstance, id: string) =>
+    apiClient.delete(`/admin/mailing/custom-lists/${id}`),
+
+  mailingAddUsersToList: (apiClient: AxiosInstance, listId: string, userIds: string[]) =>
+    apiClient.post(`/admin/mailing/custom-lists/${listId}/members`, { userIds }),
+
+  mailingRemoveUsersFromList: (apiClient: AxiosInstance, listId: string, userIds: string[]) =>
+    apiClient.post(`/admin/mailing/custom-lists/${listId}/members/remove`, { userIds }),
+
+  mailingGetCustomListMembers: (apiClient: AxiosInstance, listId: string, params?: { page?: number; pageSize?: number }) =>
+    apiClient.get(`/admin/mailing/custom-lists/${listId}/members`, { params }),
 }
 
 // Export individual content functions for easier imports

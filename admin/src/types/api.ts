@@ -665,6 +665,26 @@ export interface MailingSendBatchResponse {
   totalEstimated: number;
 }
 
+export interface MailingCustomList {
+  id: string;
+  name: string;
+  description: string | null;
+  createdById: string;
+  createdAt: string;
+  updatedAt: string;
+  _count?: { members: number };
+}
+
+export interface MailingCustomListMember {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  isActive: boolean;
+  addedAt: string;
+}
+
 
 export interface ApiResponse<T> {
   success: boolean;

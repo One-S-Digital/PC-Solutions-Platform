@@ -210,6 +210,8 @@ const verifyCriticalTables = () => {
     // Mailing list feature
     'mailing_segments',
     'mailing_campaigns',
+    'mailing_custom_lists',
+    'mailing_custom_list_members',
   ];
   
   const sql = `
