@@ -40,6 +40,7 @@ import {
   normalizeEducationItems,
   normalizeWorkExperienceItems,
 } from '../utils/educator-profile-items';
+import { normalizeRegionsServed } from '../common/utils/regions.util';
 
 // Valid organization types for validation
 const VALID_ORGANIZATION_TYPES = Object.values(OrganizationType);
@@ -694,6 +695,9 @@ export class AdminProfilesController {
     const normalizedWebsiteUrl =
       dto.websiteUrl !== undefined ? dto.websiteUrl : dto.website !== undefined ? dto.website : undefined;
 
+    const normalizedRegionsServed =
+      dto.regionsServed !== undefined ? normalizeRegionsServed(dto.regionsServed) : undefined;
+
     await this.prisma.$transaction(async (tx) => {
       // Update contact email separately
       if (dto.contactEmail !== undefined) {
@@ -720,7 +724,7 @@ export class AdminProfilesController {
           ...(dto.region !== undefined && { region: dto.region }),
           ...(dto.canton !== undefined && { canton: dto.canton }),
           ...(dto.city !== undefined && { city: dto.city }),
-          ...(dto.regionsServed !== undefined && { regionsServed: dto.regionsServed }),
+          ...(normalizedRegionsServed !== undefined && { regionsServed: normalizedRegionsServed }),
           ...(dto.description !== undefined && { description: dto.description }),
           ...(dto.vatNumber !== undefined && { vatNumber: dto.vatNumber }),
           ...(dto.languages !== undefined && { languages: dto.languages }),

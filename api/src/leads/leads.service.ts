@@ -52,6 +52,11 @@ export class LeadsService {
     const parentEmail = createParentLeadDto.parentEmail.trim().toLowerCase();
     const parentName = createParentLeadDto.parentName.trim();
     const parentEmailHash = this.hashRecipient(parentEmail);
+    const rawPreferredLocation = createParentLeadDto.preferredLocation?.trim();
+    const preferredLocation =
+      rawPreferredLocation && rawPreferredLocation.toLowerCase() === 'all'
+        ? 'All'
+        : rawPreferredLocation;
 
     const [linkedParentUser, lead] = await this.prisma.$transaction(async (tx) => {
       const existingParentUser = await tx.user.findFirst({
@@ -73,7 +78,7 @@ export class LeadsService {
           childName: createParentLeadDto.childName.trim(),
           childAge: createParentLeadDto.childAge,
           message: createParentLeadDto.message?.trim() || undefined,
-          preferredLocation: createParentLeadDto.preferredLocation?.trim() || undefined,
+          preferredLocation: preferredLocation || undefined,
           preferredCities: this.normalizeStringArray(createParentLeadDto.preferredCities),
           preferredLanguages: this.normalizeStringArray(createParentLeadDto.preferredLanguages),
           specialRequirements: createParentLeadDto.specialRequirements?.trim() || undefined,
@@ -240,9 +245,21 @@ export class LeadsService {
   }
 
   async updateParentLead(id: string, updateParentLeadDto: UpdateParentLeadDto) {
+    const normalizedPreferredLocation =
+      updateParentLeadDto.preferredLocation !== undefined
+        ? (updateParentLeadDto.preferredLocation?.trim().toLowerCase() === 'all'
+            ? 'All'
+            : updateParentLeadDto.preferredLocation?.trim() || null)
+        : undefined;
+
     return this.prisma.parentLead.update({
       where: { id },
-      data: updateParentLeadDto,
+      data: {
+        ...updateParentLeadDto,
+        ...(normalizedPreferredLocation !== undefined && {
+          preferredLocation: normalizedPreferredLocation || undefined,
+        }),
+      },
     });
   }
 
@@ -274,6 +291,7 @@ export class LeadsService {
         // Backwards-compat: treat a sentinel stored in the single-value canton field as global coverage.
         { canton: { equals: 'All', mode: 'insensitive' } },
         { regionsServed: { has: lead.preferredLocation } },
+        // NOTE: `{ has: 'All' }` is case-sensitive. Keep writes canonical as exactly "All".
         { regionsServed: { has: 'All' } },
         { region: { contains: lead.preferredLocation, mode: 'insensitive' } },
       ];
@@ -522,6 +540,9 @@ export class LeadsService {
     });
 
     // Build the base foundation-scoping conditions
+    const foundationLocation = (foundation?.canton || foundation?.region || '').trim();
+    const hasGlobalLocation = foundationLocation.toLowerCase() === 'all';
+
     const foundationScopeConditions = [
       // Leads directly assigned to this foundation
       { foundationId: foundationId },
@@ -535,14 +556,23 @@ export class LeadsService {
       {
         status: 'NEW',
         foundationId: null,
-        ...(foundation?.region || foundation?.canton
-          ? {
-              preferredLocation: {
-                contains: foundation.canton || foundation.region || '',
-                mode: 'insensitive' as const,
-              },
-            }
-          : {}),
+        // If the foundation is global (canton/region === "All"), do NOT apply a location filter.
+        // Also include "All"/unset leads for canton-specific foundations so broad enquiries surface.
+        ...(!foundationLocation || hasGlobalLocation
+          ? {}
+          : {
+              OR: [
+                {
+                  preferredLocation: {
+                    contains: foundationLocation,
+                    mode: 'insensitive' as const,
+                  },
+                },
+                { preferredLocation: { equals: 'All', mode: 'insensitive' as const } },
+                { preferredLocation: null },
+                { preferredLocation: '' },
+              ],
+            }),
       },
     ];
 
