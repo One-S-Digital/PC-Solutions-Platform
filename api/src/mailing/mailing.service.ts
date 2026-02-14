@@ -967,11 +967,18 @@ export class MailingService {
     await this.getCustomList(listId);
     // SEC: limit batch size
     const clampedIds = userIds.slice(0, 500);
-    const result = await this.prisma.mailingCustomListMember.createMany({
-      data: clampedIds.map((userId) => ({ listId, userId })),
-      skipDuplicates: true,
-    });
-    return { added: result.count, total: clampedIds.length };
+    try {
+      const result = await this.prisma.mailingCustomListMember.createMany({
+        data: clampedIds.map((userId) => ({ listId, userId })),
+        skipDuplicates: true,
+      });
+      return { added: result.count, total: clampedIds.length };
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2003') {
+        throw new BadRequestException('One or more user IDs are invalid');
+      }
+      throw error;
+    }
   }
 
   async removeUsersFromCustomList(listId: string, userIds: string[]) {
