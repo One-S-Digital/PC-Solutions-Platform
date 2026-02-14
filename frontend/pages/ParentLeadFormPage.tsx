@@ -266,7 +266,7 @@ const ParentLeadFormPage: React.FC = () => {
             </select>
           </div>
 
-          {formData.canton && (
+          {formData.canton && formData.canton !== ALL_REGIONS_OPTION && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">{t('parentLeadForm:labels.cities')}</label>
               <p className="text-xs text-gray-500 mb-2">{t('parentLeadForm:labels.citiesHelpText')}</p>

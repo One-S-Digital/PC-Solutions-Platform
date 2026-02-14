@@ -271,6 +271,8 @@ export class LeadsService {
     if (lead.preferredLocation && lead.preferredLocation !== 'All') {
       where.OR = [
         { canton: { equals: lead.preferredLocation, mode: 'insensitive' } },
+        // Backwards-compat: treat a sentinel stored in the single-value canton field as global coverage.
+        { canton: { equals: 'All', mode: 'insensitive' } },
         { regionsServed: { has: lead.preferredLocation } },
         { regionsServed: { has: 'All' } },
         { region: { contains: lead.preferredLocation, mode: 'insensitive' } },
@@ -307,6 +309,7 @@ export class LeadsService {
       if (lead.preferredLocation && lead.preferredLocation !== 'All') {
         const cantonMatch =
           foundation.canton?.toLowerCase() === lead.preferredLocation.toLowerCase();
+        const globalCantonMatch = foundation.canton?.toLowerCase() === 'all';
         const regionsMatch = foundation.regionsServed?.some(
           r =>
             r.toLowerCase() === lead.preferredLocation!.toLowerCase() ||
@@ -314,7 +317,7 @@ export class LeadsService {
         );
         const regionMatch = foundation.region?.toLowerCase().includes(lead.preferredLocation.toLowerCase());
         
-        if (cantonMatch || regionsMatch || regionMatch) {
+        if (cantonMatch || globalCantonMatch || regionsMatch || regionMatch) {
           score += 30;
         }
       }

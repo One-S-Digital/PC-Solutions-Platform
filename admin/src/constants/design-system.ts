@@ -283,7 +283,7 @@ export const COUNTRIES_FOR_POLICIES = ['Switzerland', 'Germany', 'France', 'Ital
 export type CountryForPolicies = typeof COUNTRIES_FOR_POLICIES[number];
 
 export const REGIONS_BY_COUNTRY: Record<CountryForPolicies, readonly string[]> = {
-    'Switzerland': ["All Cantons", ...SWISS_CANTONS],
+    'Switzerland': [ALL_REGIONS_OPTION, ...SWISS_CANTONS],
     'Germany': ["All Länder", "Bavaria"], // Reduced for brevity
     'France': ["All Régions", "Île-de-France"], // Reduced for brevity
     'Italy': ["All Regioni", "Lombardy"], // Reduced for brevity

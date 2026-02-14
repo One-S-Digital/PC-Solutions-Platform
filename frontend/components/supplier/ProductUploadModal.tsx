@@ -257,7 +257,7 @@ const ProductUploadModal: React.FC<ProductUploadModalProps> = ({
               : '',
           currency: fee.currency || product.priceCurrency || 'CHF',
         })) || [],
-      supportedCantons: product.supportedCantons || [],
+      supportedCantons: normalizeMultiSelectWithAll(product.supportedCantons),
       visibilityStart: product.visibilityStart || '',
       visibilityEnd: product.visibilityEnd || '',
       volumePricing:

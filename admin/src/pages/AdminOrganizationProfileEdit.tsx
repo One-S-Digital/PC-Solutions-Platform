@@ -413,7 +413,6 @@ const AdminOrganizationProfileEdit: React.FC = () => {
                   className={STANDARD_INPUT_FIELD}
                 >
                   <option value="">{t('admin:orgProfile.selectCanton', 'Select canton')}</option>
-                  <option value={ALL_REGIONS_OPTION}>{t('common:filters.all', 'All')}</option>
                   {SWISS_CANTONS.map((canton) => (
                     <option key={canton} value={canton}>
                       {canton}
