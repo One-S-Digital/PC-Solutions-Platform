@@ -21,7 +21,8 @@ import {
   SystemUsageAnalytics,
   Partner,
   PartnerStats,
-  PartnerType
+  PartnerType,
+  ParentLead,
 } from '../types/api'
 import { AxiosInstance } from 'axios'
 import { UserRole } from '../types'
