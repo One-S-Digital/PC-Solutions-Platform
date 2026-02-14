@@ -965,23 +965,19 @@ export class MailingService {
     await this.getCustomList(listId);
     // SEC: limit batch size
     const clampedIds = userIds.slice(0, 500);
-    const results = await Promise.allSettled(
-      clampedIds.map((userId) =>
-        this.prisma.mailingCustomListMember.upsert({
-          where: { listId_userId: { listId, userId } },
-          update: {},
-          create: { listId, userId },
-        }),
-      ),
-    );
-    const added = results.filter((r) => r.status === 'fulfilled').length;
-    return { added, total: clampedIds.length };
+    const result = await this.prisma.mailingCustomListMember.createMany({
+      data: clampedIds.map((userId) => ({ listId, userId })),
+      skipDuplicates: true,
+    });
+    return { added: result.count, total: clampedIds.length };
   }
 
   async removeUsersFromCustomList(listId: string, userIds: string[]) {
     await this.getCustomList(listId);
+    // SEC: limit batch size consistent with addUsersToCustomList
+    const clampedIds = userIds.slice(0, 500);
     const deleted = await this.prisma.mailingCustomListMember.deleteMany({
-      where: { listId, userId: { in: userIds } },
+      where: { listId, userId: { in: clampedIds } },
     });
     return { removed: deleted.count };
   }

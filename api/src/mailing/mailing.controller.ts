@@ -25,6 +25,7 @@ import { PreviewRequestDto } from './dto/preview.dto';
 import { CreateSegmentDto, UpdateSegmentDto } from './dto/segment.dto';
 import { CreateCampaignDto, SendBatchDto } from './dto/campaign.dto';
 import { ExportRequestDto } from './dto/export.dto';
+import { CreateCustomListDto, UpdateCustomListDto, ManageCustomListMembersDto } from './dto/custom-list.dto';
 
 @ApiTags('admin/mailing')
 @Controller('admin/mailing')
@@ -262,7 +263,7 @@ export class MailingController {
 
   @Post('custom-lists')
   @ApiOperation({ summary: 'Create a custom mailing list' })
-  async createCustomList(@Body() body: { name: string; description?: string }, @Request() req: any) {
+  async createCustomList(@Body() body: CreateCustomListDto, @Request() req: any) {
     const adminId = this.getAdminId(req);
     return this.mailingService.createCustomList(body.name, adminId, body.description);
   }
@@ -287,7 +288,7 @@ export class MailingController {
 
   @Put('custom-lists/:id')
   @ApiOperation({ summary: 'Update a custom list' })
-  async updateCustomList(@Param('id') id: string, @Body() body: { name?: string; description?: string }) {
+  async updateCustomList(@Param('id') id: string, @Body() body: UpdateCustomListDto) {
     return this.mailingService.updateCustomList(id, body);
   }
 
@@ -300,13 +301,13 @@ export class MailingController {
 
   @Post('custom-lists/:id/members')
   @ApiOperation({ summary: 'Add users to a custom list' })
-  async addUsersToCustomList(@Param('id') id: string, @Body() body: { userIds: string[] }) {
+  async addUsersToCustomList(@Param('id') id: string, @Body() body: ManageCustomListMembersDto) {
     return this.mailingService.addUsersToCustomList(id, body.userIds);
   }
 
-  @Delete('custom-lists/:id/members')
+  @Post('custom-lists/:id/members/remove')
   @ApiOperation({ summary: 'Remove users from a custom list' })
-  async removeUsersFromCustomList(@Param('id') id: string, @Body() body: { userIds: string[] }) {
+  async removeUsersFromCustomList(@Param('id') id: string, @Body() body: ManageCustomListMembersDto) {
     return this.mailingService.removeUsersFromCustomList(id, body.userIds);
   }
 

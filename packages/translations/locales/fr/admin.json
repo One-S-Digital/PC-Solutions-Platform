@@ -2258,7 +2258,30 @@
     "actions": {
       "saveSegment": "Sauvegarder le segment",
       "export": "Exporter",
-      "sendEmail": "Envoyer un email"
+      "sendEmail": "Envoyer un email",
+      "addToList": "Ajouter à une liste"
+    },
+    "customLists": {
+      "title": "Listes personnalisées",
+      "addToList": "Ajouter à une liste",
+      "selectedCount": "{{count}} utilisateur(s) sélectionné(s)",
+      "existingLists": "Listes existantes",
+      "members": "membres",
+      "createNew": "Créer une nouvelle liste",
+      "createNewList": "Créer une nouvelle liste",
+      "namePlaceholder": "Nom de la liste",
+      "descPlaceholder": "Description (facultatif)",
+      "creating": "Création en cours...",
+      "createAndAdd": "Créer et ajouter les utilisateurs",
+      "create": "Créer la liste",
+      "created": "\"{{name}}\" créée",
+      "addedToList": "{{count}} utilisateur(s) ajouté(s) à \"{{name}}\"",
+      "createdAndAdded": "\"{{name}}\" créée avec {{count}} utilisateur(s)",
+      "createdButAddFailed": "La liste \"{{name}}\" a été créée mais l'ajout des membres a échoué. Vous pouvez les ajouter depuis l'onglet Créer.",
+      "noLists": "Aucune liste personnalisée",
+      "noListsHint": "Sélectionnez des utilisateurs dans l'onglet Créer et cliquez sur « Ajouter à une liste »",
+      "deleteConfirm": "Supprimer cette liste ?",
+      "deleted": "Liste supprimée"
     },
     "segment": {
       "saveTitle": "Sauvegarder le segment",

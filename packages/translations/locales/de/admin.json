@@ -2263,7 +2263,30 @@
     "actions": {
       "saveSegment": "Segment speichern",
       "export": "Exportieren",
-      "sendEmail": "E-Mail senden"
+      "sendEmail": "E-Mail senden",
+      "addToList": "Zur Liste hinzufügen"
+    },
+    "customLists": {
+      "title": "Benutzerdefinierte Listen",
+      "addToList": "Zur Liste hinzufügen",
+      "selectedCount": "{{count}} Benutzer ausgewählt",
+      "existingLists": "Vorhandene Listen",
+      "members": "Mitglieder",
+      "createNew": "Neue Liste erstellen",
+      "createNewList": "Neue Liste erstellen",
+      "namePlaceholder": "Listenname",
+      "descPlaceholder": "Beschreibung (optional)",
+      "creating": "Wird erstellt...",
+      "createAndAdd": "Erstellen und Benutzer hinzufügen",
+      "create": "Liste erstellen",
+      "created": "\"{{name}}\" erstellt",
+      "addedToList": "{{count}} Benutzer zu \"{{name}}\" hinzugefügt",
+      "createdAndAdded": "\"{{name}}\" erstellt mit {{count}} Benutzer(n)",
+      "createdButAddFailed": "Liste \"{{name}}\" wurde erstellt, aber das Hinzufügen der Mitglieder ist fehlgeschlagen. Sie können sie über den Tab „Liste erstellen" hinzufügen.",
+      "noLists": "Noch keine benutzerdefinierten Listen",
+      "noListsHint": "Wählen Sie Benutzer im Tab „Liste erstellen" aus und klicken Sie auf „Zur Liste hinzufügen"",
+      "deleteConfirm": "Diese Liste löschen?",
+      "deleted": "Liste gelöscht"
     },
     "segment": {
       "saveTitle": "Segment speichern",

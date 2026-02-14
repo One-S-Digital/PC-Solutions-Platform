@@ -106,10 +106,8 @@ const MailingListPage: React.FC = () => {
     setSelectedUserIds((prev) => {
       const allSelected = pageIds.every((id) => prev.has(id))
       const next = new Set(prev)
-      if (allSelected) {
-        pageIds.forEach((id) => next.delete(id))
-      } else {
-        pageIds.forEach((id) => next.add(id))
+      for (const id of pageIds) {
+        if (allSelected) { next.delete(id) } else { next.add(id) }
       }
       return next
     })

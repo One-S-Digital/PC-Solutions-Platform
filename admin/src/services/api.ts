@@ -1094,7 +1094,7 @@ export const apiService = {
     apiClient.post(`/admin/mailing/custom-lists/${listId}/members`, { userIds }),
 
   mailingRemoveUsersFromList: (apiClient: AxiosInstance, listId: string, userIds: string[]) =>
-    apiClient.delete(`/admin/mailing/custom-lists/${listId}/members`, { data: { userIds } }),
+    apiClient.post(`/admin/mailing/custom-lists/${listId}/members/remove`, { userIds }),
 
   mailingGetCustomListMembers: (apiClient: AxiosInstance, listId: string, params?: { page?: number; pageSize?: number }) =>
     apiClient.get(`/admin/mailing/custom-lists/${listId}/members`, { params }),
