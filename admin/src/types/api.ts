@@ -145,6 +145,8 @@ export interface Product {
   imageAssetId?: string;
   price?: number;
   stockStatus?: StockStatus;
+  /** When false, item is blocked/hidden from marketplace */
+  isActive?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -163,6 +165,8 @@ export interface Service {
   imageUrl?: string;
   deliveryType?: ServiceDeliveryType;
   priceInfo?: string;
+  /** When false, item is blocked/hidden from marketplace */
+  isActive?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
