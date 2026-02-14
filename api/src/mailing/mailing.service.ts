@@ -1019,7 +1019,7 @@ export class MailingService {
       total,
       page: clampedPage,
       pageSize: clampedPageSize,
-      totalPages: Math.ceil(total / pageSize),
+      totalPages: Math.ceil(total / clampedPageSize),
     };
   }
 }

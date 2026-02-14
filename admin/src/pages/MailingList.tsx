@@ -149,8 +149,8 @@ const MailingListPage: React.FC = () => {
   // Reset preview page when filters change
   useEffect(() => { setPreviewPage(1) }, [debouncedFilters])
 
-  // Clear selection when filters or page change
-  useEffect(() => { setSelectedUserIds(new Set()) }, [debouncedFilters, previewPage])
+  // Clear selection when filters change (preserve selections across pages)
+  useEffect(() => { setSelectedUserIds(new Set()) }, [debouncedFilters])
 
   // ---- Actions ----
   const handleSaveSegment = useCallback(async (name: string, description: string) => {
