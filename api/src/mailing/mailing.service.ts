@@ -925,17 +925,19 @@ export class MailingService {
   }
 
   async listCustomLists(page = 1, pageSize = 50) {
-    const skip = (page - 1) * pageSize;
+    const clampedPageSize = Math.min(Math.max(1, pageSize), MAX_PAGE_SIZE);
+    const clampedPage = Math.max(1, page);
+    const skip = (clampedPage - 1) * clampedPageSize;
     const [lists, total] = await Promise.all([
       this.prisma.mailingCustomList.findMany({
         skip,
-        take: pageSize,
+        take: clampedPageSize,
         orderBy: { updatedAt: 'desc' },
         include: { _count: { select: { members: true } } },
       }),
       this.prisma.mailingCustomList.count(),
     ]);
-    return { lists, total, page, pageSize, totalPages: Math.ceil(total / pageSize) };
+    return { lists, total, page: clampedPage, pageSize: clampedPageSize, totalPages: Math.ceil(total / clampedPageSize) };
   }
 
   async getCustomList(id: string) {
@@ -984,12 +986,14 @@ export class MailingService {
 
   async getCustomListMembers(listId: string, page = 1, pageSize = 20) {
     await this.getCustomList(listId);
-    const skip = (page - 1) * pageSize;
+    const clampedPageSize = Math.min(Math.max(1, pageSize), MAX_PAGE_SIZE);
+    const clampedPage = Math.max(1, page);
+    const skip = (clampedPage - 1) * clampedPageSize;
     const [members, total] = await Promise.all([
       this.prisma.mailingCustomListMember.findMany({
         where: { listId },
         skip,
-        take: pageSize,
+        take: clampedPageSize,
         orderBy: { addedAt: 'desc' },
         include: {
           user: {
@@ -1013,8 +1017,8 @@ export class MailingService {
         addedAt: m.addedAt.toISOString(),
       })),
       total,
-      page,
-      pageSize,
+      page: clampedPage,
+      pageSize: clampedPageSize,
       totalPages: Math.ceil(total / pageSize),
     };
   }

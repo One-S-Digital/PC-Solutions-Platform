@@ -2281,7 +2281,9 @@
       "noLists": "Aucune liste personnalisée",
       "noListsHint": "Sélectionnez des utilisateurs dans l'onglet Créer et cliquez sur « Ajouter à une liste »",
       "deleteConfirm": "Supprimer cette liste ?",
-      "deleted": "Liste supprimée"
+      "deleted": "Liste supprimée",
+      "addFailed": "Impossible d'ajouter les utilisateurs",
+      "createFailed": "Impossible de créer la liste"
     },
     "segment": {
       "saveTitle": "Sauvegarder le segment",

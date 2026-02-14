@@ -539,7 +539,7 @@ const MailingListPage: React.FC = () => {
                           <div className="text-sm font-medium text-gray-900">{list.name}</div>
                           {list.description && <div className="text-xs text-gray-500 truncate max-w-xs">{list.description}</div>}
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-600">{list._count?.members?.toLocaleString() || 0}</td>
+                        <td className="px-4 py-3 text-sm text-gray-600">{(list._count?.members ?? 0).toLocaleString()}</td>
                         <td className="px-4 py-3 text-sm text-gray-500">{new Date(list.updatedAt).toLocaleDateString()}</td>
                         <td className="px-4 py-3 text-right">
                           <button

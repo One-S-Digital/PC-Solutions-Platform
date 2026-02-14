@@ -2284,7 +2284,9 @@
       "noLists": "No custom lists yet",
       "noListsHint": "Select users in the Build tab and click \"Add to List\" to create one",
       "deleteConfirm": "Delete this list?",
-      "deleted": "List deleted"
+      "deleted": "List deleted",
+      "addFailed": "Failed to add users",
+      "createFailed": "Failed to create list"
     },
     "segment": {
       "saveTitle": "Save Segment",

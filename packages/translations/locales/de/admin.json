@@ -2282,11 +2282,13 @@
       "created": "\"{{name}}\" erstellt",
       "addedToList": "{{count}} Benutzer zu \"{{name}}\" hinzugefügt",
       "createdAndAdded": "\"{{name}}\" erstellt mit {{count}} Benutzer(n)",
-      "createdButAddFailed": "Liste \"{{name}}\" wurde erstellt, aber das Hinzufügen der Mitglieder ist fehlgeschlagen. Sie können sie über den Tab „Liste erstellen" hinzufügen.",
+      "createdButAddFailed": "Liste \"{{name}}\" wurde erstellt, aber das Hinzufügen der Mitglieder ist fehlgeschlagen. Sie können sie über den Tab 'Liste erstellen' hinzufügen.",
       "noLists": "Noch keine benutzerdefinierten Listen",
-      "noListsHint": "Wählen Sie Benutzer im Tab „Liste erstellen" aus und klicken Sie auf „Zur Liste hinzufügen"",
+      "noListsHint": "Wählen Sie Benutzer im Tab 'Liste erstellen' aus und klicken Sie auf 'Zur Liste hinzufügen'",
       "deleteConfirm": "Diese Liste löschen?",
-      "deleted": "Liste gelöscht"
+      "deleted": "Liste gelöscht",
+      "addFailed": "Benutzer konnten nicht hinzugefügt werden",
+      "createFailed": "Liste konnte nicht erstellt werden"
     },
     "segment": {
       "saveTitle": "Segment speichern",

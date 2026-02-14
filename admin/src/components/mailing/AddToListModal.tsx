@@ -59,7 +59,7 @@ const AddToListModal: React.FC<Props> = ({ isOpen, onClose, selectedUserIds, onC
       onComplete()
       onClose()
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || 'Failed to add users')
+      toast.error(err?.response?.data?.message || t('admin:mailing.customLists.addFailed', 'Failed to add users'))
     } finally {
       setLoading(false)
     }
@@ -68,7 +68,7 @@ const AddToListModal: React.FC<Props> = ({ isOpen, onClose, selectedUserIds, onC
   const handleCreateAndAdd = async () => {
     if (!newListName.trim()) return
     setLoading(true)
-    let createdList: any = null
+    let createdList: MailingCustomList | null = null
     try {
       const createRes = await apiService.mailingCreateCustomList(apiClient, {
         name: newListName.trim(),
@@ -77,12 +77,12 @@ const AddToListModal: React.FC<Props> = ({ isOpen, onClose, selectedUserIds, onC
       createdList = createRes.data
 
       // Only add members if users were selected
-      if (hasUsers) {
-        await apiService.mailingAddUsersToList(apiClient, createdList.id, selectedUserIds)
+      if (hasUsers && createdList) {
+        const addRes = await apiService.mailingAddUsersToList(apiClient, createdList.id, selectedUserIds)
         toast.success(
           t('admin:mailing.customLists.createdAndAdded', 'Created "{{name}}" and added {{count}} user(s)', {
             name: newListName.trim(),
-            count: selectedUserIds.length,
+            count: addRes.data?.added ?? selectedUserIds.length,
           }),
         )
       } else {
@@ -106,7 +106,7 @@ const AddToListModal: React.FC<Props> = ({ isOpen, onClose, selectedUserIds, onC
             { name: newListName.trim() }),
         )
       } else {
-        toast.error(err?.response?.data?.message || 'Failed to create list')
+        toast.error(err?.response?.data?.message || t('admin:mailing.customLists.createFailed', 'Failed to create list'))
       }
     } finally {
       setLoading(false)
@@ -116,7 +116,7 @@ const AddToListModal: React.FC<Props> = ({ isOpen, onClose, selectedUserIds, onC
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="add-to-list-title">
       <div
         className="bg-white rounded-xl shadow-2xl w-full max-w-md max-h-[80vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
@@ -124,7 +124,7 @@ const AddToListModal: React.FC<Props> = ({ isOpen, onClose, selectedUserIds, onC
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">
+            <h3 id="add-to-list-title" className="text-lg font-semibold text-gray-900">
               {hasUsers
                 ? t('admin:mailing.customLists.addToList', 'Add to List')
                 : t('admin:mailing.customLists.createNewList', 'Create new list')}
@@ -137,7 +137,7 @@ const AddToListModal: React.FC<Props> = ({ isOpen, onClose, selectedUserIds, onC
               </p>
             )}
           </div>
-          <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-600">
+          <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-600" aria-label={t('common:close', 'Close')}>
             <X className="w-5 h-5" />
           </button>
         </div>
