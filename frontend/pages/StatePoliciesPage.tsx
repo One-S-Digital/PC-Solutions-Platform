@@ -215,7 +215,8 @@ const StatePoliciesPage: React.FC = () => {
     fetchStatePolicies();
   }, [authenticatedRequest, i18n.language]);
 
-  const cantons = ['All', ...new Set(policyDocs.map(d => d.region).filter(Boolean) as string[])];
+  // Exclude sentinel "All" from the list; it's rendered as the dedicated first option.
+  const cantons = [...new Set(policyDocs.map(d => d.region).filter((r): r is string => Boolean(r && r !== 'All')))];
   const policyTypeOptions: Array<'All' | PolicyType> = ['All', ...POLICY_TYPES_ENUM];
   const policyCategoryOptions: Array<'All' | PolicyCategory> = ['All', ...POLICY_CATEGORIES];
 
@@ -252,7 +253,7 @@ const StatePoliciesPage: React.FC = () => {
       (isAdminOrSuperAdmin || doc.status === 'Published' || doc.status === 'Approved') && 
       (doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
        (doc.contentPreview && doc.contentPreview.toLowerCase().includes(searchTerm.toLowerCase()))) &&
-      (filterCanton === 'All' || doc.region === filterCanton) &&
+      (filterCanton === 'All' || doc.region === filterCanton || doc.region === 'All') &&
       (filterPolicyType === 'All' || doc.policyType === filterPolicyType) &&
       (filterCategory === 'All' || doc.category === filterCategory)
     );

@@ -15,7 +15,6 @@ test('parent lead form validates and submits to backend', async ({ page }) => {
   // Fill child information
   // Select first available canton option (avoid relying on specific value encoding)
   await page.selectOption('select[name="canton"]', { index: 1 });
-  await page.fill('input[name="municipality"]', 'Lausanne');
   await page.fill('input[name="childAge"]', '2');
   await page.fill('input[name="desiredStartDate"]', '2024-03-01');
 
@@ -47,6 +46,13 @@ test('parent lead form validates and submits to backend', async ({ page }) => {
   expect(seenPayload).toBeTruthy();
   expect(seenPayload.contactName).toBe('Jane Doe');
   expect(seenPayload.contactEmail).toBe('jane@example.com');
+
+  // Unauthenticated users should be prompted to create an account after submitting.
+  await expect(
+    page.getByRole('button', {
+      name: /create account to track enquiry|créer un compte pour suivre la demande|konto erstellen, um anfrage zu verfolgen/i,
+    }),
+  ).toBeVisible();
 });
 
 test('signup form validates required fields', async ({ page }) => {

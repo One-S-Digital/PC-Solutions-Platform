@@ -1,15 +1,19 @@
 import { UserRole, UserStatus, StockStatus, ServiceCategory, ServiceDeliveryType } from './';
 
-import {
-  CandidateProfile,
-  Course,
-  PolicyDocument,
-  PolicyAlert,
-  ParentLead as BaseParentLead,
-  Order as BaseOrder,
-  OrderRequest as BaseOrderRequest,
-  LineItem,
-} from '../../../types';
+// PolicyAlert type for the api service (aligned with @workspace/types definition)
+export interface PolicyAlert {
+  id: string;
+  title: string;
+  message: string;
+  alertType: string;
+  regions: string[];
+  isActive: boolean;
+  startDate?: string;
+  endDate?: string;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 // Add FrontendSettings interface
 export interface FrontendSettings {
@@ -141,6 +145,8 @@ export interface Product {
   imageAssetId?: string;
   price?: number;
   stockStatus?: StockStatus;
+  /** When false, item is blocked/hidden from marketplace */
+  isActive?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -152,13 +158,19 @@ export interface Service {
   providerName: string;
   providerLogo?: string;
   description: string;
-  category: ServiceCategory; // Legacy single category
+  /**
+   * Service category (admin historically used a UI enum; backend uses uppercase enum strings).
+   * Keep this widened so admin UIs can send/receive API-compatible values.
+   */
+  category: ServiceCategory | string;
   categories?: string[]; // New: flexible category tags
   availability: string;
   tags: string[];
   imageUrl?: string;
-  deliveryType?: ServiceDeliveryType;
+  deliveryType?: ServiceDeliveryType | string;
   priceInfo?: string;
+  /** When false, item is blocked/hidden from marketplace */
+  isActive?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -277,19 +289,93 @@ export interface FileTypeInfo {
   examples: string;
 }
 
-export interface ParentLead extends BaseParentLead {
+export interface ParentLead {
+  id: string;
+  parentName: string;
+  parentEmail: string;
+  parentPhone?: string | null;
+  parentUserId?: string | null;
+  childName: string;
+  childAge: number;
+  message?: string | null;
+  foundationId?: string | null;
+  preferredLocation?: string | null;
+  preferredCities?: string[];
+  preferredLanguages?: string[];
+  specialRequirements?: string | null;
+  source?: string | null;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
   parent?: {
+    id?: string;
     name?: string;
     email?: string;
-  };
+  } | null;
 }
 
-export interface Order extends BaseOrder {
+export interface Order {
+  id: string;
+  organizationId?: string;
+  status: string;
+  totalAmount?: number;
+  createdAt: string | Date;
+  updatedAt?: string | Date;
+  items?: LineItem[];
   foundation?: { name: string };
   foundationOrg?: { name: string };
+  supplierId?: string | null;
+  supplierName?: string | null;
 }
 
-export type OrderRequest = BaseOrderRequest;
+export interface OrderRequest {
+  id: string;
+  status: string;
+  createdAt: string | Date;
+}
+
+export interface LineItem {
+  productId?: string;
+  productName?: string;
+  quantity: number;
+  unitPrice?: number;
+  imageUrl?: string | null;
+}
+
+export interface CandidateProfile {
+  id: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  skills?: string[];
+  certifications?: string[];
+  workExperience?: string;
+  education?: string;
+  availability?: string;
+  shortBio?: string;
+}
+
+export interface Course {
+  id: string;
+  title: string;
+  description?: string;
+  status?: string;
+  createdAt?: string;
+}
+
+export interface PolicyDocument {
+  id: string;
+  title: string;
+  category?: string;
+  status?: string;
+  language?: string;
+  country?: string;
+  region?: string;
+  isCritical?: boolean;
+  updatedAt?: string;
+  fileUrl?: string;
+  tags?: string[];
+}
 
 export interface Conversation {
   id: string;
@@ -463,7 +549,149 @@ export interface LegacyUploadResult {
   mimeType: string;
 }
 
-export type { Course, PolicyDocument, PolicyAlert, FrontendSettings, LineItem };
+// FrontendSettings is already exported as an interface above
+
+// ========================
+// Mailing List Types
+// ========================
+
+export interface MailingFilters {
+  roles?: string[];
+  excludeRoles?: string[];
+  isActive?: boolean;
+  hasSubscription?: boolean;
+  subscriptionStatuses?: string[];
+  subscriptionTiers?: string[];
+  renewalDateFrom?: string;
+  renewalDateTo?: string;
+  cantons?: string[];
+  cities?: string[];
+  languages?: string[];
+  marketingOptIn?: boolean;
+  excludeUnsubscribed?: boolean;
+  createdFrom?: string;
+  createdTo?: string;
+  lastActiveFrom?: string;
+  lastActiveTo?: string;
+  search?: string;
+}
+
+export interface MailingPreviewRow {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  orgName: string | null;
+  canton: string | null;
+  isActive: boolean;
+  hasSubscription: boolean;
+  marketingOptIn: boolean;
+  mailingListOptOut: boolean;
+}
+
+export interface MailingPreviewResponse {
+  count: number;
+  rows: MailingPreviewRow[];
+  warnings: string[];
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export interface MailingSegment {
+  id: string;
+  name: string;
+  description: string | null;
+  filtersJson: MailingFilters;
+  estimatedSize: number | null;
+  lastComputedAt: string | null;
+  createdById: string;
+  createdAt: string;
+  updatedAt: string;
+  _count?: { campaigns: number };
+}
+
+export interface MailingSegmentListResponse {
+  segments: MailingSegment[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export type MailingCampaignStatus = 'DRAFT' | 'SENDING' | 'SENT' | 'FAILED' | 'CANCELLED';
+
+export interface MailingCampaignSummary {
+  id: string;
+  subject: string;
+  status: MailingCampaignStatus;
+  totalEstimated: number;
+  sentCount: number;
+  failedCount: number;
+  segmentName: string | null;
+  createdAt: string;
+  sentAt: string | null;
+  completedAt: string | null;
+}
+
+export interface MailingCampaignDetail {
+  id: string;
+  subject: string;
+  bodyHtml: string;
+  bodyText: string | null;
+  segmentId: string | null;
+  filtersJson: MailingFilters | null;
+  status: MailingCampaignStatus;
+  totalEstimated: number;
+  sentCount: number;
+  failedCount: number;
+  cursor: string | null;
+  createdById: string;
+  sentAt: string | null;
+  completedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  segment?: { name: string } | null;
+}
+
+export interface MailingCampaignListResponse {
+  campaigns: MailingCampaignSummary[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export interface MailingSendBatchResponse {
+  sentCountThisBatch: number;
+  failedCountThisBatch: number;
+  totalSentSoFar: number;
+  totalFailedSoFar: number;
+  nextCursor: string | null;
+  done: boolean;
+  totalEstimated: number;
+}
+
+export interface MailingCustomList {
+  id: string;
+  name: string;
+  description: string | null;
+  createdById: string;
+  createdAt: string;
+  updatedAt: string;
+  _count?: { members: number };
+}
+
+export interface MailingCustomListMember {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  isActive: boolean;
+  addedAt: string;
+}
 
 
 export interface ApiResponse<T> {

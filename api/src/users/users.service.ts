@@ -305,6 +305,43 @@ export class UsersService {
     }
   }
 
+  /**
+   * Systematically links orphan parent leads to a profile user by email.
+   * Safe to run repeatedly; only links leads that are not already attached.
+   */
+  private async linkParentLeadsToProfile(
+    profileUserId: string | null,
+    email: string | null | undefined,
+  ): Promise<void> {
+    if (!profileUserId || !email) {
+      return;
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail) {
+      return;
+    }
+
+    const result = await this.prisma.parentLead.updateMany({
+      where: {
+        parentUserId: null,
+        parentEmail: {
+          equals: normalizedEmail,
+          mode: 'insensitive',
+        },
+      },
+      data: {
+        parentUserId: profileUserId,
+      },
+    });
+
+    if (result.count > 0) {
+      this.logger.log(
+        `🔗 [PARENT LEAD LINK] Linked ${result.count} lead(s) to profile user ${profileUserId}`,
+      );
+    }
+  }
+
   private serializeDate(value: Date | string | null | undefined): string | null | undefined {
     if (value instanceof Date) {
       return value.toISOString();
@@ -497,6 +534,7 @@ export class UsersService {
 
   async completeProfile(clerkId: string, email: string, dto: CompleteProfileDto) {
     this.logger.log(`👤 [COMPLETE PROFILE] Completing profile for ${clerkId}`);
+    let profileUserIdToLink: string | null = null;
     
     // Check if user already exists by clerkId
     const existingUser = await this.prisma.appUser.findUnique({
@@ -532,6 +570,12 @@ export class UsersService {
         this.logger.log(`📧 [COMPLETE PROFILE] Syncing email to Clerk for ${clerkId}...`);
         await this.syncEmailToClerkWithFallback(clerkId, email);
       }
+
+      const existingProfile = await this.prisma.user.findUnique({
+        where: { clerkId },
+        select: { id: true },
+      });
+      profileUserIdToLink = existingProfile?.id || null;
     } else {
       // Check if an account with this email already exists (for a DIFFERENT clerkId)
       // This can happen when:
@@ -602,6 +646,7 @@ export class UsersService {
             isActive: true,
           },
         });
+        profileUserIdToLink = user.id;
 
         // Create organization and link user for organization-based roles
         const orgBasedRoles: UserRole[] = [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER];
@@ -643,6 +688,10 @@ export class UsersService {
           this.logger.log(`🏢 [COMPLETE PROFILE] Created organization "${organization.name}" (${orgType}) and linked to user ${user.id}`);
         }
       });
+    }
+
+    if (dto.role === UserRole.PARENT) {
+      await this.linkParentLeadsToProfile(profileUserIdToLink, email);
     }
 
     return this.findByClerkId(clerkId);
@@ -1032,6 +1081,13 @@ export class UsersService {
         // Sync email to Clerk so login email matches database email
         this.logger.log(`📧 [updateByClerkId] Email changed for user ${clerkId}, syncing to Clerk...`);
         await this.syncEmailToClerkWithFallback(clerkId, updateUserDto.email!);
+      }
+
+      if (user?.role === UserRole.PARENT) {
+        await this.linkParentLeadsToProfile(
+          user.id,
+          updateUserDto.email || user.email || appUser.email || undefined,
+        );
       }
 
         // Return full User profile

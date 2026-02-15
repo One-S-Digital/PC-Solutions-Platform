@@ -1,0 +1,32 @@
+import { IsString, IsOptional, ValidateNested, IsInt, Min, Max } from 'class-validator';
+import { Type } from 'class-transformer';
+import { MailingFiltersDto } from './mailing-filters.dto';
+
+export class CreateCampaignDto {
+  @IsString()
+  subject: string;
+
+  @IsString()
+  bodyHtml: string;
+
+  @IsOptional()
+  @IsString()
+  bodyText?: string;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => MailingFiltersDto)
+  filters?: MailingFiltersDto;
+
+  @IsOptional()
+  @IsString()
+  segmentId?: string;
+}
+
+export class SendBatchDto {
+  @IsOptional()
+  @IsInt()
+  @Min(10)
+  @Max(200)
+  batchSize?: number;
+}

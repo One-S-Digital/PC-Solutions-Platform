@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { useUser, useClerk } from '@clerk/clerk-react'
+import { useAuth, useClerk, useUser } from '@clerk/clerk-react'
 import { Menu, Bell, User } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import LanguageSwitcher from './design-system/LanguageSwitcher'
@@ -14,6 +14,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
   const { user } = useUser()
   const { signOut } = useClerk()
+  const { getToken } = useAuth()
   const { t } = useTranslation(['dashboard','common','admin'])
   const navigate = useNavigate()
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
@@ -67,8 +68,10 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
 
   useEffect(() => {
     if (typeof document === 'undefined') return
+
     const updateId = faviconUpdateIdRef.current + 1
     faviconUpdateIdRef.current = updateId
+
     const link =
       (document.querySelector("link[rel~='icon']") as HTMLLinkElement | null) ||
       (() => {
@@ -78,19 +81,25 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
         return created
       })()
 
+    // Capture the "real" favicon URL once, and keep it stable while we swap to data: URLs.
     if (link.href && !link.href.startsWith('data:')) {
       faviconBaseHrefRef.current = link.href
     }
 
     const baseHref = faviconBaseHrefRef.current || link.href
+
+    // No notifications => always restore original favicon.
     if (!notifications.total || notifications.total <= 0) {
-      if (baseHref) {
-        link.href = baseHref
-      }
+      if (baseHref) link.href = baseHref
       return
     }
 
+    // If we don't have a base icon to overlay onto, do nothing.
+    // (Avoid replacing it with a white square.)
+    if (!baseHref) return
+
     const countText = notifications.total > 9 ? '9+' : `${notifications.total}`
+
     const size = 32
     const canvas = document.createElement('canvas')
     canvas.width = size
@@ -118,44 +127,73 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
       try {
         link.href = canvas.toDataURL('image/png')
       } catch {
-        if (baseHref) link.href = baseHref
+        // If the canvas is tainted (CORS), keep the original favicon rather than replacing it.
+        link.href = baseHref
       }
     }
 
-    const drawFallback = () => {
-      if (faviconUpdateIdRef.current !== updateId) return
-      ctx.clearRect(0, 0, size, size)
-      ctx.fillStyle = '#FFFFFF'
-      ctx.fillRect(0, 0, size, size)
-      drawBadge()
-      applyCanvas()
-    }
+    const tryLoadImage = (src: string, opts?: { crossOrigin?: string }) =>
+      new Promise<HTMLImageElement | null>((resolve) => {
+        const img = new Image()
+        if (opts?.crossOrigin) img.crossOrigin = opts.crossOrigin
+        img.onload = () => resolve(img)
+        img.onerror = () => resolve(null)
+        img.src = src
+      })
 
-    if (!baseHref) {
-      drawFallback()
-      return
-    }
+    const render = async () => {
+      // 1) Prefer normal image load (works for same-origin or CORS-enabled assets).
+      let img = await tryLoadImage(baseHref, { crossOrigin: 'anonymous' })
 
-    const image = new Image()
-    image.crossOrigin = 'anonymous'
-    image.onload = () => {
+      // 2) If that fails (common when the favicon URL is accessible to the browser but not CORS-enabled),
+      // try fetching it with the admin auth token and draw from a blob URL (same-origin for canvas).
+      if (!img) {
+        try {
+          const token = await getToken()
+          if (token) {
+            const res = await fetch(baseHref, {
+              method: 'GET',
+              mode: 'cors',
+              credentials: 'include',
+              headers: { Authorization: `Bearer ${token}` },
+            })
+            if (res.ok) {
+              const blob = await res.blob()
+              const url = URL.createObjectURL(blob)
+              try {
+                img = await tryLoadImage(url)
+              } finally {
+                URL.revokeObjectURL(url)
+              }
+            }
+          }
+        } catch {
+          // ignore
+        }
+      }
+
+      // If we still can't load the base favicon, keep the original favicon.
+      if (!img) {
+        if (faviconUpdateIdRef.current !== updateId) return
+        link.href = baseHref
+        return
+      }
+
       if (faviconUpdateIdRef.current !== updateId) return
       ctx.clearRect(0, 0, size, size)
       try {
-        ctx.drawImage(image, 0, 0, size, size)
+        ctx.drawImage(img, 0, 0, size, size)
       } catch {
-        ctx.fillStyle = '#FFFFFF'
-        ctx.fillRect(0, 0, size, size)
+        // If drawing fails, keep original favicon.
+        link.href = baseHref
+        return
       }
       drawBadge()
       applyCanvas()
     }
-    image.onerror = () => {
-      if (faviconUpdateIdRef.current !== updateId) return
-      drawFallback()
-    }
-    image.src = baseHref
-  }, [notifications.total])
+
+    void render()
+  }, [notifications.total, getToken])
 
   const formatTimestamp = (value?: string) => {
     if (!value) return ''

@@ -30,6 +30,8 @@ export enum PolicyType {
   STANDARD = 'Standard',
   DIRECTIVE = 'Directive',
   LAW = 'Law',
+  COMPLIANCE_PROCEDURE = 'Compliance Procedure',
+  ADMINISTRATIVE_PROCEDURE = 'Administrative Procedure',
 }
 
 export enum FileType {

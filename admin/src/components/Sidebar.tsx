@@ -21,6 +21,7 @@ import {
   CreditCard,
   Tag,
   FileSearch,
+  Mail,
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useSettings } from '../hooks/useSettings'
@@ -48,6 +49,7 @@ const navigation = [
   { key: 'support', href: '/support', icon: LifeBuoy },
   { key: 'discountTerminations', href: '/discount-terminations', icon: Tag },
   { key: 'subscriptions', href: '/subscriptions', icon: CreditCard },
+  { key: 'mailingLists', href: '/mailing', icon: Mail },
   { key: 'policyCrawler', href: '/policy-crawler', icon: FileSearch },
   { key: 'settings', href: '/settings', icon: Settings },
 ]
@@ -67,19 +69,14 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
     support: notifications.support.count,
   }
 
-  const getAdminLogo = () => {
-    if (settings?.adminLogoAsset?.publicUrl) {
-      return settings.adminLogoAsset.publicUrl
-    }
-    return null
-  }
+  const adminLogoUrl = settings?.adminLogoAsset?.publicUrl
 
   const SidebarContent = () => (
     <div className="w-full bg-white border-r border-gray-200/80 flex flex-col shadow-sm h-full">
       <div className="h-20 flex items-center justify-center px-6 border-b border-gray-200/80">
-        {getAdminLogo() ? (
+        {adminLogoUrl ? (
           <img
-            src={getAdminLogo()}
+            src={adminLogoUrl}
             alt={t('admin:sidebar.adminLogo', 'Admin Logo')}
             className="h-[69px] w-auto"
           />
@@ -91,7 +88,9 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
       <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto">
         {/* Main Navigation */}
         {navigation.map((item) => {
-          const isActive = location.pathname === item.href
+          const isActive =
+            location.pathname === item.href ||
+            (item.href !== '/' && location.pathname.startsWith(`${item.href}/`))
           const badgeCount = navBadgeCounts[item.key] || 0
           return (
             <NavLink

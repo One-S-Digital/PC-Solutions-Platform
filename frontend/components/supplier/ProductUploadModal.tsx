@@ -10,13 +10,14 @@ import ChipInput from '../ui/ChipInput';
 import FileUploadZone from '../ui/FileUploadZone';
 import {
   STANDARD_INPUT_FIELD,
-  SWISS_CANTONS,
+  SWISS_CANTONS_WITH_ALL,
   SUGGESTED_PRODUCT_CATEGORIES,
   SUGGESTED_PRODUCT_COMPLIANCE_TAGS,
   SUGGESTED_PRODUCT_AGE_RANGES,
   SUGGESTED_PRODUCT_DELIVERY_METHODS,
 } from '../../constants';
 import { useCategories } from '../../hooks/useCategories';
+import { normalizeMultiSelectWithAll } from '../../utils/regionSelection';
 import {
   Product,
   ProductAvailabilityStatus,
@@ -256,7 +257,7 @@ const ProductUploadModal: React.FC<ProductUploadModalProps> = ({
               : '',
           currency: fee.currency || product.priceCurrency || 'CHF',
         })) || [],
-      supportedCantons: product.supportedCantons || [],
+      supportedCantons: normalizeMultiSelectWithAll(product.supportedCantons),
       visibilityStart: product.visibilityStart || '',
       visibilityEnd: product.visibilityEnd || '',
       volumePricing:
@@ -314,9 +315,14 @@ const ProductUploadModal: React.FC<ProductUploadModalProps> = ({
     field: K,
     value: ProductFormState[K],
   ) => {
+    // Support sentinel "All" for canton coverage.
+    const normalizedValue =
+      field === 'supportedCantons' && Array.isArray(value)
+        ? (normalizeMultiSelectWithAll(value as string[]) as ProductFormState[K])
+        : value;
     setFormData((prev) => ({
       ...prev,
-      [field]: value,
+      [field]: normalizedValue,
     }));
   };
 
@@ -1151,7 +1157,7 @@ const ProductUploadModal: React.FC<ProductUploadModalProps> = ({
                     {renderChipInput(
                       formData.supportedCantons,
                       'supportedCantons',
-                      SWISS_CANTONS,
+                      SWISS_CANTONS_WITH_ALL,
                       true,
                       helper('cantonsPlaceholder', 'Add all cantons you cover'),
                     )}

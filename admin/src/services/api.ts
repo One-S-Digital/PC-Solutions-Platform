@@ -21,7 +21,8 @@ import {
   SystemUsageAnalytics,
   Partner,
   PartnerStats,
-  PartnerType
+  PartnerType,
+  ParentLead,
 } from '../types/api'
 import { AxiosInstance } from 'axios'
 import { UserRole } from '../types'
@@ -1009,6 +1010,95 @@ export const apiService = {
     >('/static-translations/admin/fix-english-placeholders', {}, {
       timeout: 300000, // 5 minutes timeout for cleanup operations
     }),
+
+  // ========================
+  // Mailing List
+  // ========================
+
+  mailingPreview: (apiClient: AxiosInstance, data: {
+    filters: any;
+    page?: number;
+    pageSize?: number;
+    sort?: string;
+    sortOrder?: string;
+  }) => apiClient.post('/admin/mailing/preview', data),
+
+  mailingCreateSegment: (apiClient: AxiosInstance, data: {
+    name: string;
+    description?: string;
+    filters: any;
+  }) => apiClient.post('/admin/mailing/segments', data),
+
+  mailingListSegments: (apiClient: AxiosInstance, params?: { page?: number; pageSize?: number }) =>
+    apiClient.get('/admin/mailing/segments', { params }),
+
+  mailingGetSegment: (apiClient: AxiosInstance, id: string) =>
+    apiClient.get(`/admin/mailing/segments/${id}`),
+
+  mailingUpdateSegment: (apiClient: AxiosInstance, id: string, data: any) =>
+    apiClient.put(`/admin/mailing/segments/${id}`, data),
+
+  mailingDeleteSegment: (apiClient: AxiosInstance, id: string) =>
+    apiClient.delete(`/admin/mailing/segments/${id}`),
+
+  mailingRefreshSegment: (apiClient: AxiosInstance, id: string) =>
+    apiClient.post(`/admin/mailing/segments/${id}/refresh`),
+
+  mailingExport: (apiClient: AxiosInstance, data: {
+    filters?: any;
+    segmentId?: string;
+    format: 'csv' | 'xlsx';
+    columns: string[];
+    deduplicateByEmail?: boolean;
+  }) => apiClient.post('/admin/mailing/export', data, { responseType: 'blob' }),
+
+  mailingGetExportColumns: (apiClient: AxiosInstance) =>
+    apiClient.get('/admin/mailing/export/columns'),
+
+  mailingCreateCampaign: (apiClient: AxiosInstance, data: {
+    subject: string;
+    bodyHtml: string;
+    bodyText?: string;
+    filters?: any;
+    segmentId?: string;
+  }) => apiClient.post('/admin/mailing/campaigns', data),
+
+  mailingListCampaigns: (apiClient: AxiosInstance, params?: { page?: number; pageSize?: number }) =>
+    apiClient.get('/admin/mailing/campaigns', { params }),
+
+  mailingGetCampaign: (apiClient: AxiosInstance, id: string) =>
+    apiClient.get(`/admin/mailing/campaigns/${id}`),
+
+  mailingSendBatch: (apiClient: AxiosInstance, id: string, data?: { batchSize?: number }) =>
+    apiClient.post(`/admin/mailing/campaigns/${id}/send-batch`, data || {}),
+
+  mailingCancelCampaign: (apiClient: AxiosInstance, id: string) =>
+    apiClient.post(`/admin/mailing/campaigns/${id}/cancel`),
+
+  // Custom Lists
+  mailingCreateCustomList: (apiClient: AxiosInstance, data: { name: string; description?: string }) =>
+    apiClient.post('/admin/mailing/custom-lists', data),
+
+  mailingListCustomLists: (apiClient: AxiosInstance, params?: { page?: number; pageSize?: number }) =>
+    apiClient.get('/admin/mailing/custom-lists', { params }),
+
+  mailingGetCustomList: (apiClient: AxiosInstance, id: string) =>
+    apiClient.get(`/admin/mailing/custom-lists/${id}`),
+
+  mailingUpdateCustomList: (apiClient: AxiosInstance, id: string, data: { name?: string; description?: string }) =>
+    apiClient.put(`/admin/mailing/custom-lists/${id}`, data),
+
+  mailingDeleteCustomList: (apiClient: AxiosInstance, id: string) =>
+    apiClient.delete(`/admin/mailing/custom-lists/${id}`),
+
+  mailingAddUsersToList: (apiClient: AxiosInstance, listId: string, userIds: string[]) =>
+    apiClient.post(`/admin/mailing/custom-lists/${listId}/members`, { userIds }),
+
+  mailingRemoveUsersFromList: (apiClient: AxiosInstance, listId: string, userIds: string[]) =>
+    apiClient.post(`/admin/mailing/custom-lists/${listId}/members/remove`, { userIds }),
+
+  mailingGetCustomListMembers: (apiClient: AxiosInstance, listId: string, params?: { page?: number; pageSize?: number }) =>
+    apiClient.get(`/admin/mailing/custom-lists/${listId}/members`, { params }),
 }
 
 // Export individual content functions for easier imports

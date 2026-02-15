@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { Organization, Service, UserRole, Product, ServiceRequest, ServiceRequestStatus, OrganizationType } from '../types';
-import { STANDARD_INPUT_FIELD, ICON_INPUT_FIELD } from '../constants'; 
+import { STANDARD_INPUT_FIELD, ICON_INPUT_FIELD, ALL_REGIONS_OPTION } from '../constants'; 
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Tabs from '../components/ui/Tabs';
@@ -286,13 +286,15 @@ const MarketplacePage: React.FC = () => {
   const allRegions = useMemo(() => {
     const regions = new Set<string>();
     [...productSuppliers, ...serviceProviders].forEach(org => {
-      if (org.region) regions.add(org.region);
-      if (org.canton) regions.add(org.canton);
+      if (org.region && org.region !== ALL_REGIONS_OPTION) regions.add(org.region);
+      if (org.canton && org.canton !== ALL_REGIONS_OPTION) regions.add(org.canton);
       if (org.regionsServed) {
-        org.regionsServed.forEach(r => regions.add(r));
+        org.regionsServed.forEach(r => {
+          if (r && r !== ALL_REGIONS_OPTION) regions.add(r);
+        });
       }
     });
-    return ['All', ...Array.from(regions).sort()];
+    return [ALL_REGIONS_OPTION, ...Array.from(regions).sort()];
   }, [productSuppliers, serviceProviders]);
 
   const currentCategories = activeTabIndex === 0 ? supplierProductCategories : serviceProviderCategories;

@@ -15,7 +15,8 @@
       "viewMyEnquiries": "Meine Anfragen anzeigen",
       "submitEnquiry": "Anfrage senden",
       "addCity": "Weitere Stadt hinzufügen",
-      "removeCity": "Entfernen"
+      "removeCity": "Entfernen",
+      "createAccountToTrack": "Konto erstellen, um Anfrage zu verfolgen"
     },
     "labels": {
       "municipality": "Gemeinde",
@@ -34,7 +35,8 @@
     "messages": {
       "submitting": "Ihre Anfrage wird gesendet...",
       "success": "Ihre Anfrage wurde erfolgreich gesendet!",
-      "error": "Fehler beim Senden der Anfrage. Bitte versuchen Sie es erneut."
+      "error": "Fehler beim Senden der Anfrage. Bitte versuchen Sie es erneut.",
+      "createAccountPrompt": "Erstellen Sie ein Elternkonto, um Antworten zu verfolgen und Ihre Anfrage zu verwalten."
     },
     "subtitle": "Erzählen Sie uns von Ihren Bedürfnissen und wir helfen Ihnen, die beste Kinderbetreuungslösung zu finden",
     "title": "Finden Sie Ihre perfekte Kita"
@@ -56,7 +58,8 @@
     "submitEnquiry": "Anfrage senden",
     "backToHome": "Zurück zur Startseite",
     "addCity": "Weitere Stadt hinzufügen",
-    "removeCity": "Entfernen"
+    "removeCity": "Entfernen",
+    "createAccountToTrack": "Konto erstellen, um Anfrage zu verfolgen"
   },
   "labels": {
     "municipality": "Gemeinde",
@@ -75,7 +78,8 @@
   "messages": {
     "submitting": "Ihre Anfrage wird gesendet...",
     "success": "Ihre Anfrage wurde erfolgreich gesendet!",
-    "error": "Fehler beim Senden der Anfrage. Bitte versuchen Sie es erneut."
+    "error": "Fehler beim Senden der Anfrage. Bitte versuchen Sie es erneut.",
+    "createAccountPrompt": "Erstellen Sie ein Elternkonto, um Antworten zu verfolgen und Ihre Anfrage zu verwalten."
   },
   "subtitle": "Erzählen Sie uns von Ihren Bedürfnissen und wir helfen Ihnen, die beste Kinderbetreuungslösung zu finden",
   "title": "Finden Sie Ihre perfekte Kita"

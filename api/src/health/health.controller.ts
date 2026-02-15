@@ -1,11 +1,16 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards, Logger } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Public } from '../auth/decorators/public.decorator';
 import { PrismaService } from '../prisma/prisma.service';
+import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '@prisma/client';
 
 @ApiTags('health')
 @Controller('health')
 export class HealthController {
+  private readonly logger = new Logger(HealthController.name);
   constructor(private readonly prisma: PrismaService) {}
 
   @Get()
@@ -33,14 +38,13 @@ export class HealthController {
       // Check if users table exists
       let tablesExist = false;
       try {
-        const userCount = await this.prisma.user.count();
+        await this.prisma.user.count();
         tablesExist = true;
         
         return {
           status: 'healthy',
           database: 'connected',
           tables: 'initialized',
-          userCount,
           timestamp: new Date().toISOString(),
         };
       } catch (error) {
@@ -88,6 +92,7 @@ export class HealthController {
             timestamp: new Date().toISOString(),
           };
         }
+        throw error;
       }
       
       return {
@@ -105,8 +110,9 @@ export class HealthController {
   }
 
   @Get('snapshot')
-  @Public()
-  @ApiOperation({ summary: 'Database snapshot (sanitized)' })
+  @UseGuards(ClerkAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
+  @ApiOperation({ summary: 'Database snapshot (admin only)' })
   @ApiResponse({ status: 200, description: 'Returns counts and sample data' })
   async snapshot() {
     try {
@@ -133,13 +139,13 @@ export class HealthController {
         this.prisma.user.findMany({
           take: 5,
           orderBy: { createdAt: 'desc' },
-          select: { id: true, clerkId: true, email: true, role: true, createdAt: true },
+          select: { id: true, role: true, createdAt: true },
         }).catch(() => []),
         // @ts-ignore - model exists in schema
         this.prisma.appUser.findMany({
           take: 5,
           orderBy: { createdAt: 'desc' },
-          select: { id: true, clerkId: true, role: true, createdAt: true, email: true },
+          select: { id: true, role: true, createdAt: true },
         }).catch(() => []),
         this.prisma.frontendSettings.findFirst({
           include: {
@@ -187,18 +193,19 @@ export class HealthController {
         },
       };
     } catch (error) {
+      this.logger.error('Snapshot failed', error instanceof Error ? error.stack : String(error));
       return {
         success: false,
         message: 'Snapshot failed',
-        error: error instanceof Error ? error.message : String(error),
         timestamp: new Date().toISOString(),
       };
     }
   }
 
   @Get('users')
-  @Public()
-  @ApiOperation({ summary: 'List users (sanitized, queryable)' })
+  @UseGuards(ClerkAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
+  @ApiOperation({ summary: 'List users (admin only)' })
   @ApiResponse({ status: 200, description: 'Returns users' })
   async listUsers(
     @Query('email') email?: string,
@@ -221,8 +228,9 @@ export class HealthController {
   }
 
   @Get('app-users')
-  @Public()
-  @ApiOperation({ summary: 'List AppUsers (sanitized, queryable)' })
+  @UseGuards(ClerkAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
+  @ApiOperation({ summary: 'List AppUsers (admin only)' })
   @ApiResponse({ status: 200, description: 'Returns app users' })
   async listAppUsers(
     @Query('clerkId') clerkId?: string,

@@ -105,7 +105,7 @@ export class CompatController {
   }
 
   @Get('products')
-  @Public()
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   async getProducts(
     @Query('dateFrom') dateFrom?: string,
     @Query('limit') limit?: string,
@@ -123,14 +123,38 @@ export class CompatController {
       }
 
       const [products, total] = await Promise.all([
-        this.prisma.product.findMany({ where, orderBy: { createdAt: 'desc' }, take }),
+        this.prisma.product.findMany({
+          where,
+          orderBy: { createdAt: 'desc' },
+          take,
+          include: {
+            supplier: {
+              include: {
+                logoAsset: true,
+              },
+            },
+            imageAsset: true,
+          },
+        }),
         this.prisma.product.count({ where }),
       ]);
+
+      // Flatten owner + image fields for admin UI compatibility
+      const transformedProducts = products.map((product) => {
+        const { supplier, imageAsset, ...rest } = product as any;
+        return {
+          ...rest,
+          supplierId: rest.supplierId,
+          supplierName: supplier?.name ?? rest.supplierName ?? 'Unknown supplier',
+          supplierLogo: supplier?.logoAsset?.publicUrl ?? rest.supplierLogo ?? undefined,
+          imageUrl: imageAsset?.publicUrl ?? rest.imageUrl ?? undefined,
+        };
+      });
 
       return {
         success: true,
         message: 'OK',
-        data: products,
+        data: transformedProducts,
         total,
         timestamp: new Date().toISOString(),
       };
@@ -140,7 +164,7 @@ export class CompatController {
   }
 
   @Get('services')
-  @Public()
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   async getServices(
     @Query('dateFrom') dateFrom?: string,
     @Query('limit') limit?: string,
@@ -158,14 +182,43 @@ export class CompatController {
       }
 
       const [services, total] = await Promise.all([
-        this.prisma.service.findMany({ where, orderBy: { createdAt: 'desc' }, take }),
+        this.prisma.service.findMany({
+          where,
+          orderBy: { createdAt: 'desc' },
+          take,
+          include: {
+            provider: {
+              include: {
+                organization: {
+                  include: {
+                    logoAsset: true,
+                  },
+                },
+              },
+            },
+          },
+        }),
         this.prisma.service.count({ where }),
       ]);
+
+      // Flatten owner fields for admin UI compatibility.
+      // Note: Prisma Service.providerId is ServiceProvider.id, but admin/frontend historically
+      // treat `providerId` as Organization.id — normalize to organizationId when available.
+      const transformedServices = services.map((service) => {
+        const { provider, ...rest } = service as any;
+        const org = provider?.organization;
+        return {
+          ...rest,
+          providerId: provider?.organizationId ?? rest.providerId,
+          providerName: org?.name ?? rest.providerName ?? 'Unknown provider',
+          providerLogo: org?.logoAsset?.publicUrl ?? rest.providerLogo ?? undefined,
+        };
+      });
 
       return {
         success: true,
         message: 'OK',
-        data: services,
+        data: transformedServices,
         total,
         timestamp: new Date().toISOString(),
       };
@@ -585,6 +638,12 @@ export class CompatController {
           { region: region },
           { canton: region },
           { regionsServed: { has: region } },
+          // Backwards-compat: if some records store the sentinel in single-value fields,
+          // treat it as "serves all" too.
+          { region: 'All' },
+          { canton: 'All' },
+          // Organizations that explicitly serve all cantons/regions.
+          { regionsServed: { has: 'All' } },
         ];
       }
       
@@ -831,7 +890,6 @@ export class CompatController {
   }
 
   @Post('organizations')
-  @Public()
   async createOrganization(@Body() data: any) {
     try {
       // Map type string to OrganizationType enum
@@ -864,7 +922,6 @@ export class CompatController {
   }
 
   @Put('organizations/:id')
-  @Public()
   async updateOrganization(@Param('id') id: string, @Body() data: any) {
     try {
       const updateData: any = {};
@@ -900,7 +957,6 @@ export class CompatController {
   }
 
   @Delete('organizations/:id')
-  @Public()
   async deleteOrganization(@Param('id') id: string) {
     try {
       // First check if organization exists
@@ -932,13 +988,74 @@ export class CompatController {
   }
 
   @Get('parent-leads')
-  @Public()
-  async getParentLeads() {
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  async getParentLeads(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
     try {
-      const leads = await this.prisma.parentLead.findMany({ orderBy: { createdAt: 'desc' }, take: 50 });
-      return { success: true, message: 'OK', data: leads, timestamp: new Date().toISOString() };
+      const pageNum = Math.max(1, parseInt(page || '1', 10) || 1);
+      const limitNum = Math.min(200, Math.max(1, parseInt(limit || '200', 10) || 200));
+      const skip = (pageNum - 1) * limitNum;
+
+      const [leads, total] = await Promise.all([
+        this.prisma.parentLead.findMany({
+          orderBy: { createdAt: 'desc' },
+          take: limitNum,
+          skip,
+          include: {
+            parentUser: {
+              select: { id: true, firstName: true, lastName: true, email: true },
+            },
+          },
+        }),
+        this.prisma.parentLead.count(),
+      ]);
+
+      const formattedLeads = leads.map((lead) => ({
+        id: lead.id,
+        parentName: lead.parentName,
+        parentEmail: lead.parentEmail,
+        parentPhone: lead.parentPhone,
+        parentUserId: lead.parentUserId,
+        childName: lead.childName,
+        childAge: lead.childAge,
+        message: lead.message,
+        foundationId: lead.foundationId,
+        preferredLocation: lead.preferredLocation,
+        preferredCities: lead.preferredCities,
+        preferredLanguages: lead.preferredLanguages,
+        specialRequirements: lead.specialRequirements,
+        source: lead.source,
+        status: lead.status,
+        createdAt: lead.createdAt.toISOString(),
+        updatedAt: lead.updatedAt.toISOString(),
+        // Include linked parent user info for display in admin
+        parent: lead.parentUser
+          ? {
+              id: lead.parentUser.id,
+              name: [lead.parentUser.firstName, lead.parentUser.lastName].filter(Boolean).join(' ') || lead.parentUser.email,
+              email: lead.parentUser.email,
+            }
+          : null,
+      }));
+
+      return {
+        success: true,
+        message: 'OK',
+        data: formattedLeads,
+        total,
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          total,
+          totalPages: Math.ceil(total / limitNum),
+        },
+        timestamp: new Date().toISOString(),
+      };
     } catch (error) {
-      // If table missing, return empty silently to avoid 500 in admin
+      // Return empty to avoid 500 in admin (e.g. table missing during migration)
+      console.error('getParentLeads error:', (error as Error).message);
       return { success: true, message: 'OK', data: [], timestamp: new Date().toISOString() };
     }
   }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FormEvent } from 'react';
+import React, { useRef, useState, useEffect, FormEvent } from 'react';
 import { XMarkIcon, PaperClipIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@clerk/clerk-react';
@@ -19,7 +19,9 @@ export enum PolicyType {
   GUIDELINE = 'Guideline',
   STANDARD = 'Standard',
   DIRECTIVE = 'Directive',
-  LAW = 'Law'
+  LAW = 'Law',
+  COMPLIANCE_PROCEDURE = 'Compliance Procedure',
+  ADMINISTRATIVE_PROCEDURE = 'Administrative Procedure',
 }
 
 // Define categories
@@ -147,7 +149,9 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
   const [fileError, setFileError] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
+  const [isFileDragOver, setIsFileDragOver] = useState(false);
   const [videoSourceType, setVideoSourceType] = useState<'upload' | 'url'>('upload');
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const isOtherCategory = (value: unknown) =>
     typeof value === 'string' && value.trim().toLowerCase() === 'other';
@@ -292,6 +296,10 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
     if (formData.country && contentType === 'policy') {
       const validRegions = REGIONS_BY_COUNTRY[formData.country] ?? SWISS_CANTONS;
       const currentRegion = (formData.region ?? '') as string;
+      // Allow sentinel value meaning "applies to all regions/cantons".
+      if (currentRegion === 'All') {
+        return;
+      }
       if (!validRegions.includes(currentRegion)) {
         setFormData(prev => ({ ...prev, region: validRegions[0] as string }));
       }
@@ -323,25 +331,79 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const selectedFile = e.target.files[0];
-      const maxSizeMB = contentType === 'e-learning' ? 500 : 50;
-      if (selectedFile.size > maxSizeMB * 1024 * 1024) {
-        setFile(null);
-        setFileError(
-          t('admin:contentUpload.fileTooLarge', {
-            defaultValue: `File size exceeds ${maxSizeMB}MB limit.`,
-            max: maxSizeMB,
-          }),
-        );
-        e.target.value = '';
-        return;
-      }
-      setFileError(null);
-      setFile(selectedFile);
-      setUploadProgress(0);
+  const selectFile = (selectedFile: File, resetInput?: () => void) => {
+    const maxSizeMB = contentType === 'e-learning' ? 500 : 50;
+    const allowedExtensions = contentType === 'e-learning'
+      ? ['.pdf', '.mp4', '.docx']
+      : ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.csv', '.ods'];
+    const fileName = selectedFile.name.toLowerCase();
+    if (!allowedExtensions.some((ext) => fileName.endsWith(ext))) {
+      setFile(null);
+      setFileError(
+        t('admin:contentUpload.invalidFileType', {
+          defaultValue: `Unsupported file type. Allowed: ${allowedExtensions.join(', ')}`,
+        }),
+      );
+      resetInput?.();
+      return;
     }
+    if (selectedFile.size > maxSizeMB * 1024 * 1024) {
+      setFile(null);
+      setFileError(
+        t('admin:contentUpload.fileTooLarge', {
+          defaultValue: `File size exceeds ${maxSizeMB}MB limit.`,
+          max: maxSizeMB,
+        }),
+      );
+      resetInput?.();
+      return;
+    }
+
+    setFileError(null);
+    setFile(selectedFile);
+    setUploadProgress(0);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (!selectedFile) return;
+    selectFile(selectedFile, () => {
+      e.target.value = '';
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    });
+  };
+
+  const handleFileDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isUploading) return;
+    setIsFileDragOver(true);
+  };
+
+  const handleFileDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isUploading) return;
+    setIsFileDragOver(true);
+    if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
+  };
+
+  const handleFileDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const next = e.relatedTarget as Node | null;
+    if (next && e.currentTarget.contains(next)) return;
+    setIsFileDragOver(false);
+  };
+
+  const handleFileDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isUploading) return;
+    setIsFileDragOver(false);
+    const droppedFile = e.dataTransfer?.files?.[0];
+    if (!droppedFile) return;
+    selectFile(droppedFile);
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -791,6 +853,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
         <div>
           <label htmlFor="policyRegion" className="block text-sm font-medium text-gray-700 mb-1">{t('content.region','Region/Canton')} <span className="text-red-500 ml-0.5">*</span></label>
           <select name="region" id="policyRegion" value={formData.region || SWISS_CANTONS[0]} onChange={handleInputChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            <option value="All">{t('common:filters.all', 'All')}</option>
             {(formData.country ? (REGIONS_BY_COUNTRY[formData.country] ?? SWISS_CANTONS) : SWISS_CANTONS).map(region => <option key={region} value={region}>{region}</option>)}
           </select>
         </div>
@@ -890,7 +953,15 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
                       : t('content.uploadFile','Upload File'))}
                   {(!existingContent && (contentType === 'hr' || (contentType === 'policy' && !formData.externalLink && !formData.description))) && <span className="text-red-500 ml-0.5">*</span>}
                 </label>
-                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-blue-300 border-dashed rounded-md bg-blue-50">
+                <div
+                  className={`mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-md transition-colors ${
+                    isFileDragOver ? 'border-blue-500 bg-blue-100' : 'border-blue-300 bg-blue-50'
+                  } ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  onDragEnter={handleFileDragEnter}
+                  onDragOver={handleFileDragOver}
+                  onDragLeave={handleFileDragLeave}
+                  onDrop={handleFileDrop}
+                >
                   <div className="space-y-1 text-center">
                     <ArrowUpTrayIcon className="mx-auto h-10 w-10 text-blue-600" />
                     <div className="flex text-sm text-gray-600">
@@ -902,6 +973,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
                           type="file"
                           className="sr-only"
                           onChange={handleFileChange}
+                          ref={fileInputRef}
                           accept={contentType === 'e-learning' ? '.pdf,.mp4,.docx' : '.pdf,.doc,.docx,.xls,.xlsx,.csv,.ods'}
                         />
                       </label>

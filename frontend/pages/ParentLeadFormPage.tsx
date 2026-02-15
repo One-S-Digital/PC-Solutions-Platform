@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useAppContext } from '../contexts/AppContext';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
-import { APP_NAME, STANDARD_INPUT_FIELD, SWISS_CANTONS } from '../constants'; 
+import { APP_NAME, STANDARD_INPUT_FIELD, SWISS_CANTONS_WITH_ALL, ALL_REGIONS_OPTION } from '../constants'; 
 import { ArrowLeftIcon, SquaresPlusIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { useNavigate, Link } from 'react-router-dom'; // Import Link
 import { UserRole } from '../types'; 
@@ -34,6 +34,8 @@ const ParentLeadFormPage: React.FC = () => {
   const [cities, setCities] = useState<string[]>(['']);
   const [submitted, setSubmitted] = useState(false);
   const [unauthenticatedSuccess, setUnauthenticatedSuccess] = useState(false); // New state
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const backButtonLabel = isParentUser
     ? t('parentLeadForm:buttons.backToDashboard', 'Back to dashboard')
     : t('parentLeadForm:buttons.backToHome', 'Back to home');
@@ -71,33 +73,48 @@ const ParentLeadFormPage: React.FC = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError(null);
+
     if (!formData.canton || !formData.childAge || !formData.desiredStartDate || !formData.contactName || !formData.contactEmail) {
-        alert(t('parentLeadForm:messages.error', { defaultValue: 'Please fill in all required fields' }));
-        return;
+      alert(t('parentLeadForm:messages.error', { defaultValue: 'Please fill in all required fields' }));
+      return;
     }
+
     const wasUnauthenticated = !currentUser;
 
     // Filter out empty cities and trim whitespace
     const preferredCities = cities.filter(city => city.trim() !== '').map(city => city.trim());
 
-    submitParentLead({
-      canton: formData.canton,
-      municipality: formData.municipality,
-      preferredCities,
-      childAge: parseInt(formData.childAge, 10),
-      desiredStartDate: formData.desiredStartDate,
-      specialNeeds: formData.specialNeeds,
-      contactName: formData.contactName,
-      contactEmail: formData.contactEmail,
-      contactPhone: formData.contactPhone,
-    });
+    setIsSubmitting(true);
+    try {
+      await submitParentLead({
+        canton: formData.canton,
+        municipality: formData.municipality,
+        preferredCities,
+        childAge: parseInt(formData.childAge, 10),
+        desiredStartDate: formData.desiredStartDate,
+        specialNeeds: formData.specialNeeds,
+        contactName: formData.contactName,
+        contactEmail: formData.contactEmail,
+        contactPhone: formData.contactPhone,
+      });
 
-    if (wasUnauthenticated) {
-      setUnauthenticatedSuccess(true);
+      if (wasUnauthenticated) {
+        setUnauthenticatedSuccess(true);
+      }
+      setSubmitted(true);
+    } catch (error) {
+      console.error('Parent lead submission failed:', error);
+      setSubmitError(
+        t('parentLeadForm:messages.error', {
+          defaultValue: 'Failed to submit enquiry. Please try again.',
+        }),
+      );
+    } finally {
+      setIsSubmitting(false);
     }
-    setSubmitted(true);
   };
 
   const handleBackClick = () => {
@@ -111,6 +128,18 @@ const ParentLeadFormPage: React.FC = () => {
     } else {
       navigate('/');
     }
+  };
+
+  const handleCreateParentAccount = () => {
+    navigate('/signup', {
+      state: {
+        leadSubmission: {
+          fromLeadSubmission: true,
+          contactName: formData.contactName.trim(),
+          contactEmail: formData.contactEmail.trim(),
+        },
+      },
+    });
   };
 
   const BackButton = ({ maxWidthClass }: { maxWidthClass: string }) => (
@@ -149,7 +178,23 @@ const ParentLeadFormPage: React.FC = () => {
               <p className="text-gray-600 mb-6">
                 {t('parentLeadForm:messages.success')}
               </p>
-              <Button variant="primary" onClick={() => navigate('/login')}>{t('common:buttons.goToLogin')}</Button>
+              <p className="text-sm text-gray-500 mb-6">
+                {t(
+                  'parentLeadForm:messages.createAccountPrompt',
+                  'Create a parent account to track responses and manage your enquiry.',
+                )}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Button variant="primary" onClick={handleCreateParentAccount}>
+                  {t(
+                    'parentLeadForm:buttons.createAccountToTrack',
+                    'Create Account to Track Enquiry',
+                  )}
+                </Button>
+                <Button variant="light" onClick={() => navigate('/login')}>
+                  {t('common:buttons.goToLogin')}
+                </Button>
+              </div>
             </>
           ) : (
             <>
@@ -182,6 +227,14 @@ const ParentLeadFormPage: React.FC = () => {
         <p className="text-gray-600">{t('parentLeadForm:subtitle')}</p>
       </div>
       <Card className="w-full max-w-2xl p-8">
+        {submitError && (
+          <div
+            role="alert"
+            className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+          >
+            {submitError}
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="contactName" className="block text-sm font-medium text-gray-700 mb-1">{t('parentLeadForm:labels.fullName')}</label>
@@ -205,11 +258,15 @@ const ParentLeadFormPage: React.FC = () => {
             <label htmlFor="canton" className="block text-sm font-medium text-gray-700 mb-1">{t('parentLeadForm:labels.canton')}</label>
             <select name="canton" id="canton" value={formData.canton} onChange={handleChange} required className={STANDARD_INPUT_FIELD}>
               <option value="">{t('parentLeadForm:placeholders.canton')}</option>
-              {SWISS_CANTONS.map(c => <option key={c} value={c}>{c}</option>)}
+              {SWISS_CANTONS_WITH_ALL.map(c => (
+                <option key={c} value={c}>
+                  {c === ALL_REGIONS_OPTION ? t('common:filters.all', 'All') : c}
+                </option>
+              ))}
             </select>
           </div>
 
-          {formData.canton && (
+          {formData.canton && formData.canton !== ALL_REGIONS_OPTION && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">{t('parentLeadForm:labels.cities')}</label>
               <p className="text-xs text-gray-500 mb-2">{t('parentLeadForm:labels.citiesHelpText')}</p>
@@ -264,7 +321,11 @@ const ParentLeadFormPage: React.FC = () => {
           </div>
 
           <div className="pt-2">
-            <Button type="submit" variant="primary" size="lg" className="w-full">{t('common:buttons.submitEnquiry')}</Button>
+            <Button type="submit" variant="primary" size="lg" className="w-full" disabled={isSubmitting}>
+              {isSubmitting
+                ? t('parentLeadForm:messages.submitting', { defaultValue: 'Submitting your enquiry...' })
+                : t('common:buttons.submitEnquiry')}
+            </Button>
           </div>
         </form>
       </Card>

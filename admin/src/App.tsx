@@ -27,6 +27,11 @@ import PolicyCrawlerPage from './pages/PolicyCrawler';
 import AdminUserProfileEdit from './pages/AdminUserProfileEdit';
 import AdminOrganizationProfileEdit from './pages/AdminOrganizationProfileEdit';
 import ResetPassword from './pages/ResetPassword';
+import MailingListPage from './pages/MailingList';
+import MailingCampaignDetailPage from './pages/MailingCampaignDetail';
+import ELearningContentPage from './pages/content/ELearningContentPage';
+import HrDocumentsPage from './pages/content/HrDocumentsPage';
+import StatePoliciesPage from './pages/content/StatePoliciesPage';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -94,12 +99,20 @@ function App() {
           <Route path="candidates" element={<CandidatesPage />} />
           <Route path="parent-leads" element={<ParentLeadsPage />} />
           <Route path="orders" element={<OrdersPage />} />
-          <Route path="content" element={<ContentPage />} />
+          <Route path="content" element={<ContentPage />}>
+            <Route index element={<Navigate to="/content/e-learning" replace />} />
+            <Route path="e-learning" element={<ELearningContentPage />} />
+            <Route path="hr-documents" element={<HrDocumentsPage />} />
+            <Route path="state-policies" element={<StatePoliciesPage />} />
+          </Route>
           <Route path="messaging" element={<MessagingPage />} />
           <Route path="support" element={<SupportPage />} />
           <Route path="support/tickets/:ticketId" element={<SupportTicketPage />} />
           <Route path="discount-terminations" element={<DiscountTerminationsPage />} />
           <Route path="subscriptions" element={<SubscriptionsPage />} />
+
+          <Route path="mailing" element={<MailingListPage />} />
+          <Route path="mailing/campaigns/:id" element={<MailingCampaignDetailPage />} />
 
           {/* Policy crawler (always visible; status is indicated inside) */}
           <Route path="policy-crawler/*" element={<PolicyCrawlerPage />} />

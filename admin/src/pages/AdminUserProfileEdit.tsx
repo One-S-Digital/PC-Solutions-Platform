@@ -22,7 +22,7 @@ import Card from '../components/design-system/Card';
 import Button from '../components/design-system/Button';
 import ChipInput from '../components/design-system/ChipInput';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
-import { STANDARD_INPUT_FIELD, SWISS_CANTONS } from '../constants/design-system';
+import { ALL_REGIONS_OPTION, STANDARD_INPUT_FIELD, SWISS_CANTONS_WITH_ALL } from '../constants/design-system';
 import { UserRole } from '../types';
 
 interface UserProfile {
@@ -335,9 +335,9 @@ const AdminUserProfileEdit: React.FC = () => {
                   className={STANDARD_INPUT_FIELD}
                 >
                   <option value="">{t('admin:userProfile.selectRegion', 'Select a region')}</option>
-                  {SWISS_CANTONS.map((canton) => (
+                  {SWISS_CANTONS_WITH_ALL.map((canton) => (
                     <option key={canton} value={canton}>
-                      {canton}
+                      {canton === ALL_REGIONS_OPTION ? t('common:filters.all', 'All') : canton}
                     </option>
                   ))}
                 </select>

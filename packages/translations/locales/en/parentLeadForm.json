@@ -15,7 +15,8 @@
       "viewMyEnquiries": "View My Enquiries",
       "submitEnquiry": "Submit Enquiry",
       "addCity": "Add Another City",
-      "removeCity": "Remove"
+      "removeCity": "Remove",
+      "createAccountToTrack": "Create Account to Track Enquiry"
     },
     "labels": {
       "municipality": "Municipality",
@@ -34,7 +35,8 @@
     "messages": {
       "submitting": "Submitting your enquiry...",
       "success": "Your enquiry has been submitted successfully!",
-      "error": "Failed to submit enquiry. Please try again."
+      "error": "Failed to submit enquiry. Please try again.",
+      "createAccountPrompt": "Create a parent account to track responses and manage your enquiry."
     },
     "subtitle": "Tell us about your needs and we'll help you find the best childcare solution",
     "title": "Find your perfect crèche"
@@ -56,7 +58,8 @@
     "submitEnquiry": "Submit Enquiry",
     "backToHome": "Back To Home",
     "addCity": "Add Another City",
-    "removeCity": "Remove"
+    "removeCity": "Remove",
+    "createAccountToTrack": "Create Account to Track Enquiry"
   },
   "labels": {
     "municipality": "Municipality",
@@ -75,7 +78,8 @@
   "messages": {
     "submitting": "Submitting your enquiry...",
     "success": "Your enquiry has been submitted successfully!",
-    "error": "Failed to submit enquiry. Please try again."
+    "error": "Failed to submit enquiry. Please try again.",
+    "createAccountPrompt": "Create a parent account to track responses and manage your enquiry."
   },
   "subtitle": "Tell us about your needs and we'll help you find the best childcare solution",
   "title": "Find your perfect crèche"

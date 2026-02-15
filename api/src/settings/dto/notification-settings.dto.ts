@@ -1,4 +1,4 @@
-import { IsBoolean, IsIn, IsString } from 'class-validator';
+import { IsBoolean, IsIn, IsOptional, IsString } from 'class-validator';
 
 export class UpdateNotificationSettingsDto {
   @IsBoolean()
@@ -10,4 +10,8 @@ export class UpdateNotificationSettingsDto {
 
   @IsBoolean()
   promoRedemptionAlertsToggle: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  mailingListOptOut?: boolean;
 }

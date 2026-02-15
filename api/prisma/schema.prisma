@@ -289,10 +289,16 @@ model User {
   // Vendor client management (discount terminations)
   vendorClientMarks VendorClient[]
 
+  // Parent lead ownership (links enquiries to parent accounts)
+  parentLeads ParentLead[] @relation("UserParentLeads")
+
   // Structured educator profile items
   workExperienceItems EducatorWorkExperience[]
   educationItems      EducatorEducation[]
   certificationItems  EducatorCertification[]
+
+  // Mailing custom list memberships
+  mailingCustomListMemberships MailingCustomListMember[]
 
   @@map("users")
 }
@@ -1054,6 +1060,7 @@ model ParentLead {
   parentName   String
   parentEmail  String
   parentPhone  String?
+  parentUserId String?
   childName    String
   childAge     Int
   message      String?
@@ -1073,10 +1080,12 @@ model ParentLead {
   updatedAt DateTime @updatedAt
 
   // Relations
+  parentUser          User?                    @relation("UserParentLeads", fields: [parentUserId], references: [id], onDelete: SetNull)
   foundationResponses FoundationLeadResponse[]
 
   @@index([status])
   @@index([foundationId])
+  @@index([parentUserId])
   @@map("parent_leads")
 }
 
@@ -1762,6 +1771,9 @@ model UserNotificationPreferences {
   contentModeration Boolean @default(true)
   systemAdmin       Boolean @default(true)
   marketing         Boolean @default(true)
+
+  // Mailing list opt-out — only true when user explicitly unsubscribes
+  mailingListOptOut  Boolean @default(false) @map("mailing_list_opt_out")
 
   // Frequency settings
   frequency String @default("immediate") // immediate, daily, weekly
@@ -2521,4 +2533,101 @@ model SeedRecord {
   metadata    Json?    // Additional data about the seed run
   
   @@map("seed_records")
+}
+
+// =====================================
+// Mailing List Feature
+// =====================================
+
+enum MailingCampaignStatus {
+  DRAFT
+  SENDING
+  SENT
+  FAILED
+  CANCELLED
+}
+
+model MailingSegment {
+  id             String    @id @default(uuid())
+  name           String
+  description    String?   @db.Text
+  filtersJson    Json      @map("filters_json")
+  createdById    String    @map("created_by_id")
+  estimatedSize  Int?      @map("estimated_size")
+  lastComputedAt DateTime? @map("last_computed_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  campaigns MailingCampaign[]
+
+  @@index([createdById])
+  @@map("mailing_segments")
+}
+
+model MailingCampaign {
+  id             String                @id @default(uuid())
+  subject        String
+  bodyHtml       String                @db.Text @map("body_html")
+  bodyText       String?               @db.Text @map("body_text")
+
+  // Recipient source (one must be set)
+  segmentId      String?               @map("segment_id")
+  filtersJson    Json?                 @map("filters_json")
+
+  // Status & progress
+  status         MailingCampaignStatus @default(DRAFT)
+  totalEstimated Int                   @default(0) @map("total_estimated")
+  sentCount      Int                   @default(0) @map("sent_count")
+  failedCount    Int                   @default(0) @map("failed_count")
+  cursor         String?
+
+  // Admin tracking
+  createdById    String                @map("created_by_id")
+  sentAt         DateTime?             @map("sent_at")
+  completedAt    DateTime?             @map("completed_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  segment MailingSegment? @relation(fields: [segmentId], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([createdById])
+  @@index([segmentId])
+  @@map("mailing_campaigns")
+}
+
+// Custom mailing lists — admin-curated static lists of users
+model MailingCustomList {
+  id          String @id @default(uuid())
+  name        String
+  description String? @db.Text
+  createdById String @map("created_by_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  members MailingCustomListMember[]
+
+  @@index([createdById])
+  @@map("mailing_custom_lists")
+}
+
+model MailingCustomListMember {
+  id     String @id @default(uuid())
+  listId String @map("list_id")
+  userId String @map("user_id")
+
+  addedAt DateTime @default(now()) @map("added_at")
+
+  list MailingCustomList @relation(fields: [listId], references: [id], onDelete: Cascade)
+  user User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([listId, userId])
+  @@index([listId])
+  @@index([userId])
+  @@map("mailing_custom_list_members")
 }

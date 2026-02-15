@@ -25,7 +25,7 @@ import Card from '../components/design-system/Card';
 import Button from '../components/design-system/Button';
 import ChipInput from '../components/design-system/ChipInput';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
-import { STANDARD_INPUT_FIELD, SWISS_CANTONS, SERVICE_CATEGORIES, SERVICE_DELIVERY_TYPES } from '../constants/design-system';
+import { ALL_REGIONS_OPTION, STANDARD_INPUT_FIELD, SWISS_CANTONS_WITH_ALL, SWISS_CANTONS, SERVICE_CATEGORIES, SERVICE_DELIVERY_TYPES } from '../constants/design-system';
 
 interface OrganizationProfile {
   id: string;
@@ -159,7 +159,19 @@ const AdminOrganizationProfileEdit: React.FC = () => {
   const handleMultiSelectChange = (field: keyof OrganizationProfile, value: string) => {
     const currentValues = (formData[field] as string[]) || [];
     let newValues: string[];
-    if (currentValues.includes(value)) {
+    if (field === 'regionsServed') {
+      const hasAll = currentValues.includes(ALL_REGIONS_OPTION);
+      const isAllValue = value === ALL_REGIONS_OPTION;
+
+      if (isAllValue) {
+        newValues = hasAll ? currentValues.filter((v) => v !== ALL_REGIONS_OPTION) : [ALL_REGIONS_OPTION];
+      } else {
+        const withoutAll = currentValues.filter((v) => v !== ALL_REGIONS_OPTION);
+        newValues = withoutAll.includes(value)
+          ? withoutAll.filter((v) => v !== value)
+          : [...withoutAll, value];
+      }
+    } else if (currentValues.includes(value)) {
       newValues = currentValues.filter((v) => v !== value);
     } else {
       newValues = [...currentValues, value];
@@ -429,7 +441,7 @@ const AdminOrganizationProfileEdit: React.FC = () => {
                 {t('admin:orgProfile.regionsServedHint', 'Select all cantons where this organization operates')}
               </p>
               <div className="flex flex-wrap gap-2">
-                {SWISS_CANTONS.map((canton) => (
+                {SWISS_CANTONS_WITH_ALL.map((canton) => (
                   <button
                     key={canton}
                     type="button"
@@ -440,7 +452,7 @@ const AdminOrganizationProfileEdit: React.FC = () => {
                         : 'bg-white text-gray-700 border-gray-300 hover:border-swiss-teal'
                     }`}
                   >
-                    {canton}
+                    {canton === ALL_REGIONS_OPTION ? t('common:filters.all', 'All') : canton}
                   </button>
                 ))}
               </div>

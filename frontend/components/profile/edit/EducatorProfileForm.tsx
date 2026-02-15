@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { SettingsFormData, WorkExperienceItem, EducationItem, CertificationItem } from '../../../types';
-import { STANDARD_INPUT_FIELD, SWISS_CANTONS } from '../../../constants';
+import { STANDARD_INPUT_FIELD, SWISS_CANTONS_WITH_ALL, ALL_REGIONS_OPTION } from '../../../constants';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
 import CoverImageSection from './shared/CoverImageSection';
@@ -303,9 +303,9 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
               required
             >
               <option value="">{t('settings:educatorProfile.locationPlaceholder', 'Select a canton')}</option>
-              {SWISS_CANTONS.map((canton) => (
+              {SWISS_CANTONS_WITH_ALL.map((canton) => (
                 <option key={canton} value={canton}>
-                  {canton}
+                  {canton === ALL_REGIONS_OPTION ? t('common:filters.all', 'All') : canton}
                 </option>
               ))}
             </select>

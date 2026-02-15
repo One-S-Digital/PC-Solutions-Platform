@@ -140,6 +140,10 @@
       "oauthStep1": "Schritt 1: Anmelden",
       "oauthStep2": "Schritt 2: Daten vervollständigen"
     },
+    "leadSubmissionAccount": {
+      "title": "Verfolgen Sie Ihre Anfrage zentral",
+      "message": "Erstellen Sie jetzt Ihr Elternkonto, und Ihre kürzlich eingereichte Kinderbetreuungsanfrage wird automatisch verknüpft."
+    },
     "detailsTitle": "Geben Sie Ihre Details ein für {{role}}",
     "termsLabel": "Ich akzeptiere die Geschäftsbedingungen",
     "termsLink": "Geschäftsbedingungen",
@@ -185,6 +189,10 @@
     "wrongAccount": "Falsches Konto? Abmelden und erneut versuchen.",
     "message": "Sie sind mit Google angemeldet. Vervollständigen Sie einfach Ihre Profildetails unten, um die Einrichtung Ihres Kontos abzuschließen.",
     "title": "Fast geschafft!"
+  },
+  "leadSubmissionAccount": {
+    "title": "Verfolgen Sie Ihre Anfrage zentral",
+    "message": "Erstellen Sie jetzt Ihr Elternkonto, und Ihre kürzlich eingereichte Kinderbetreuungsanfrage wird automatisch verknüpft."
   },
   "roles": {
     "productSupplier": {

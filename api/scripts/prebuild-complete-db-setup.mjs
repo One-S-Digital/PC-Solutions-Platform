@@ -187,6 +187,7 @@ const verifyCriticalTables = () => {
   
   const criticalTables = [
     'users',
+    'parent_leads',
     // Separate contact email storage (must exist for profile settings updates)
     'user_contact_infos',
     'organizations',
@@ -206,6 +207,11 @@ const verifyCriticalTables = () => {
     'educator_work_experiences',
     'educator_educations',
     'educator_certifications',
+    // Mailing list feature
+    'mailing_segments',
+    'mailing_campaigns',
+    'mailing_custom_lists',
+    'mailing_custom_list_members',
   ];
   
   const sql = `
@@ -238,6 +244,100 @@ const verifyCriticalTables = () => {
   }
   
   success(`Critical tables verified (${count}/${criticalTables.length})`);
+};
+
+/**
+ * Verify parent lead ownership column exists and self-heal when missing.
+ * Matches migration `20260211090000_link_parent_leads_to_users`.
+ */
+const verifyParentLeadOwnershipColumn = () => {
+  log('Verifying parent lead account-link column...');
+
+  const verifySql = `
+    SELECT column_name
+    FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'parent_leads'
+      AND column_name = 'parentUserId';
+  `;
+
+  const verifyOnce = () =>
+    runPrisma(['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'], {
+      silent: true,
+      input: verifySql,
+    });
+
+  const initial = verifyOnce();
+  if (!initial.success) {
+    warn('Could not verify parentUserId column');
+    return;
+  }
+
+  if (initial.stdout && initial.stdout.includes('parentUserId')) {
+    success('Parent lead account-link column exists');
+    return;
+  }
+
+  warn('Parent lead account-link column may not exist yet');
+  log('Attempting to create it defensively (safe to re-run)...');
+
+  const ensureSql = `
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.tables
+    WHERE table_schema = 'public' AND table_name = 'parent_leads'
+  ) THEN
+    ALTER TABLE "public"."parent_leads"
+      ADD COLUMN IF NOT EXISTS "parentUserId" TEXT;
+
+    IF EXISTS (
+      SELECT 1 FROM information_schema.tables
+      WHERE table_schema = 'public' AND table_name = 'users'
+    ) THEN
+      UPDATE "public"."parent_leads" AS pl
+      SET "parentUserId" = u."id"
+      FROM "public"."users" AS u
+      WHERE pl."parentUserId" IS NULL
+        AND u."email" IS NOT NULL
+        AND LOWER(TRIM(pl."parentEmail")) = LOWER(TRIM(u."email"))
+        AND u."role" = 'PARENT';
+
+      IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint
+        WHERE conname = 'parent_leads_parentUserId_fkey'
+      ) THEN
+        ALTER TABLE "public"."parent_leads"
+          ADD CONSTRAINT "parent_leads_parentUserId_fkey"
+          FOREIGN KEY ("parentUserId") REFERENCES "public"."users"("id")
+          ON DELETE SET NULL
+          ON UPDATE CASCADE;
+      END IF;
+    END IF;
+
+    CREATE INDEX IF NOT EXISTS "parent_leads_parentUserId_idx"
+      ON "public"."parent_leads"("parentUserId");
+  END IF;
+END $$;
+`;
+
+  const ensure = runPrisma(['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'], {
+    silent: true,
+    input: ensureSql,
+  });
+
+  if (!ensure.success) {
+    warn('Could not create/ensure parentUserId column (continuing)');
+    return;
+  }
+
+  const after = verifyOnce();
+  if (after.success && after.stdout && after.stdout.includes('parentUserId')) {
+    success('Parent lead account-link column created/verified');
+  } else {
+    warn('parentUserId column still not detected after ensure step');
+    log('It should be created by migration 20260211090000_link_parent_leads_to_users');
+  }
 };
 
 /**
@@ -429,6 +529,9 @@ const main = async () => {
     
     // Step 6: Verify new availability column
     verifyEducatorAvailabilityColumn();
+
+    // Step 7: Verify parent lead ownership column
+    verifyParentLeadOwnershipColumn();
 
     
     // Print summary

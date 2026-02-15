@@ -59,6 +59,7 @@ import { RenderDebugLoggerMiddleware } from './common/middleware/render-debug-lo
 import { MaintenanceModeMiddleware } from './common/middleware/maintenance-mode.middleware';
 import { MaintenanceModule } from './maintenance/maintenance.module';
 import { CategoriesModule } from './categories/categories.module';
+import { MailingModule } from './mailing/mailing.module';
 
 import {
   AUTH_REQUESTS_LIMIT,
@@ -156,6 +157,7 @@ const bullImports = isRedisQueueEnabled
     MaintenanceModule,
     CategoriesModule,
     CrawlerModule,
+    MailingModule,
   ],
   controllers: [AppController],
   providers: [

@@ -14,6 +14,7 @@
   },
   "add": "Add",
   "addEmoji": "add Emoji",
+  "saveSuccess": "Saved successfully",
   "addPromoCodeModal": {
     "placeholder": "Placeholder"
   },
@@ -1441,6 +1442,7 @@
     "ratingText": "rating Text.",
     "ratingsReviewsTitle": "ratings Reviews Title",
     "requestServiceButton": "request Service Button",
+    "viewServiceButton": "View service",
     "requestSubmittedAlert": "request Submitted Alert",
     "reviewsPlaceholder": "Enter reviews"
   },
