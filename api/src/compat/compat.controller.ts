@@ -638,6 +638,12 @@ export class CompatController {
           { region: region },
           { canton: region },
           { regionsServed: { has: region } },
+          // Backwards-compat: if some records store the sentinel in single-value fields,
+          // treat it as "serves all" too.
+          { region: 'All' },
+          { canton: 'All' },
+          // Organizations that explicitly serve all cantons/regions.
+          { regionsServed: { has: 'All' } },
         ];
       }
       

@@ -36,6 +36,7 @@ import { UpdatePrivacySettingsDto } from './dto/privacy-settings.dto';
 import { UpdateNotificationSettingsDto } from './dto/notification-settings.dto';
 import { TranslationService } from '../translation/translation.service';
 import { FIELDS_BY_ENTITY } from '../translation/translation.config';
+import { normalizeRegionsServed } from '../common/utils/regions.util';
 
 @ApiTags('settings')
 @Controller('settings')
@@ -204,7 +205,9 @@ export class SettingsController {
         contactPerson: organization.contactPerson ?? '',
         address: organization.region ?? '',
         canton: organization.canton ?? '',
-        regionsServed: (organization as any).regionsServed ?? (organization.canton ? [organization.canton] : []),
+        regionsServed: normalizeRegionsServed(
+          (organization as any).regionsServed ?? (organization.canton ? [organization.canton] : []),
+        ),
         description: organization.description ?? '',
         vatNumber: organization.vatNumber ?? '',
         websiteUrl: (organization as any).websiteUrl ?? '',
@@ -273,7 +276,7 @@ export class SettingsController {
             region: settings.address,
             canton: settings.canton,
             city: settings.city,
-            regionsServed: settings.regionsServed ?? [],
+            regionsServed: normalizeRegionsServed(settings.regionsServed),
             description: settings.description,
             vatNumber: settings.vatNumber,
             websiteUrl: settings.websiteUrl,
@@ -295,7 +298,7 @@ export class SettingsController {
             region: settings.address,
             canton: settings.canton,
             city: settings.city,
-            regionsServed: settings.regionsServed ?? [],
+            regionsServed: normalizeRegionsServed(settings.regionsServed),
             description: settings.description,
             vatNumber: settings.vatNumber,
             websiteUrl: settings.websiteUrl,
@@ -680,7 +683,9 @@ export class SettingsController {
         contactPerson: organization.contactPerson ?? '',
         address: organization.region ?? '',
         canton: organization.canton ?? '',
-        regionsServed: (organization as any).regionsServed ?? (organization.canton ? [organization.canton] : []),
+        regionsServed: normalizeRegionsServed(
+          (organization as any).regionsServed ?? (organization.canton ? [organization.canton] : []),
+        ),
         description: organization.description ?? '',
         vatNumber: organization.vatNumber ?? '',
         websiteUrl: (organization as any).websiteUrl ?? '',
@@ -760,7 +765,7 @@ export class SettingsController {
             region: settings.address,
             canton: settings.canton,
             city: settings.city,
-            regionsServed: settings.regionsServed ?? [],
+            regionsServed: normalizeRegionsServed(settings.regionsServed),
             description: settings.description,
             vatNumber: settings.vatNumber,
             websiteUrl: settings.websiteUrl,
@@ -790,7 +795,7 @@ export class SettingsController {
             region: settings.address,
             canton: settings.canton,
             city: settings.city,
-            regionsServed: settings.regionsServed ?? [],
+            regionsServed: normalizeRegionsServed(settings.regionsServed),
             description: settings.description,
             vatNumber: settings.vatNumber,
             websiteUrl: settings.websiteUrl,
@@ -900,7 +905,9 @@ export class SettingsController {
         contactPerson: organization.contactPerson ?? '',
         address: organization.region ?? '',
         canton: organization.canton ?? '',
-        regionsServed: (organization as any).regionsServed ?? (organization.canton ? [organization.canton] : []),
+        regionsServed: normalizeRegionsServed(
+          (organization as any).regionsServed ?? (organization.canton ? [organization.canton] : []),
+        ),
         description: organization.description ?? '',
         vatNumber: organization.vatNumber ?? '',
         websiteUrl: (organization as any).websiteUrl ?? '',
@@ -958,7 +965,7 @@ export class SettingsController {
             region: settings.address,
             canton: settings.canton,
             city: settings.city,
-            regionsServed: settings.regionsServed ?? [],
+            regionsServed: normalizeRegionsServed(settings.regionsServed),
             description: settings.description,
             vatNumber: settings.vatNumber,
             websiteUrl: settings.websiteUrl,
@@ -984,7 +991,7 @@ export class SettingsController {
           region: settings.address,
           canton: settings.canton,
           city: settings.city,
-          regionsServed: settings.regionsServed ?? [],
+          regionsServed: normalizeRegionsServed(settings.regionsServed),
           description: settings.description,
           vatNumber: settings.vatNumber,
           websiteUrl: settings.websiteUrl,

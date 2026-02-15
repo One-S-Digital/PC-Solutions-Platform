@@ -1,8 +1,9 @@
 import React from 'react';
 import { SettingsFormData, SwissCanton, SupportedLanguage } from '../../../types';
-import { STANDARD_INPUT_FIELD, SWISS_CANTONS } from '../../../constants';
+import { STANDARD_INPUT_FIELD, SWISS_CANTONS_WITH_ALL, ALL_REGIONS_OPTION } from '../../../constants';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
+import { toggleMultiSelectWithAll } from '../../../utils/regionSelection';
 import CoverImageSection from './shared/CoverImageSection';
 import ContactDetailsSection from './shared/ContactDetailsSection';
 import AvatarSection from './shared/AvatarSection';
@@ -30,7 +31,9 @@ const SupplierProfileForm: React.FC<SupplierProfileFormProps> = ({ formData, onC
   const handleMultiSelectChange = (field: keyof SettingsFormData, selectedValue: string) => {
     const currentValues = (formData[field] as string[] || []) as Array<SwissCanton | SupportedLanguage | string>;
     let newValues: Array<SwissCanton | SupportedLanguage | string>;
-    if (currentValues.includes(selectedValue as any)) {
+    if (field === 'regionsServed') {
+      newValues = toggleMultiSelectWithAll(currentValues as string[], selectedValue);
+    } else if (currentValues.includes(selectedValue as any)) {
       newValues = currentValues.filter(v => v !== selectedValue);
     } else {
       newValues = [...currentValues, selectedValue as any];
@@ -162,7 +165,7 @@ const SupplierProfileForm: React.FC<SupplierProfileFormProps> = ({ formData, onC
             </label>
             <p className="text-xs text-gray-500 mb-3">{t('common:settingsCompanyProfile.cantonsHelpText', 'Select all cantons where your organization operates')}</p>
             <div className="flex flex-wrap gap-2">
-              {SWISS_CANTONS.map(canton => (
+              {SWISS_CANTONS_WITH_ALL.map(canton => (
                 <button
                   key={canton}
                   type="button"
@@ -173,7 +176,7 @@ const SupplierProfileForm: React.FC<SupplierProfileFormProps> = ({ formData, onC
                       : 'bg-white text-gray-700 border-gray-300 hover:border-swiss-teal'
                   }`}
                 >
-                  {canton}
+                  {canton === ALL_REGIONS_OPTION ? t('common:filters.all', 'All') : canton}
                 </button>
               ))}
             </div>

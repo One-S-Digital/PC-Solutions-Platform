@@ -2,7 +2,7 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { JobListing } from '../../types';
-import { STANDARD_INPUT_FIELD, ICON_INPUT_FIELD, SWISS_CANTONS } from '../../constants';
+import { STANDARD_INPUT_FIELD, ICON_INPUT_FIELD, SWISS_CANTONS_WITH_ALL, ALL_REGIONS_OPTION } from '../../constants';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { BriefcaseIcon, MapPinIcon, CalendarDaysIcon, MagnifyingGlassIcon, EyeIcon } from '@heroicons/react/24/outline';
@@ -89,7 +89,7 @@ const EducatorJobBoardPage: React.FC = () => {
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<JobListing | null>(null);
 
-  const cantons = ['All', ...SWISS_CANTONS];
+  const cantons = SWISS_CANTONS_WITH_ALL;
   const contractTypes = ['All', 'CDI', 'CDD', 'INTERNSHIP', 'PART_TIME', 'FULL_TIME'];
 
   const fetchJobs = useCallback(async () => {
@@ -195,7 +195,7 @@ const EducatorJobBoardPage: React.FC = () => {
             <select id="filterCanton" value={filterCanton} onChange={(e) => setFilterCanton(e.target.value)} className={STANDARD_INPUT_FIELD}>
               {cantons.map((c) => (
                 <option key={c} value={c}>
-                  {c === 'All' ? t('common:filters.all') : c}
+                  {c === ALL_REGIONS_OPTION ? t('common:filters.all') : c}
                 </option>
               ))}
             </select>

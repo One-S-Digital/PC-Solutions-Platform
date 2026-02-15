@@ -19,7 +19,9 @@ export enum PolicyType {
   GUIDELINE = 'Guideline',
   STANDARD = 'Standard',
   DIRECTIVE = 'Directive',
-  LAW = 'Law'
+  LAW = 'Law',
+  COMPLIANCE_PROCEDURE = 'Compliance Procedure',
+  ADMINISTRATIVE_PROCEDURE = 'Administrative Procedure',
 }
 
 // Define categories
@@ -294,6 +296,10 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
     if (formData.country && contentType === 'policy') {
       const validRegions = REGIONS_BY_COUNTRY[formData.country] ?? SWISS_CANTONS;
       const currentRegion = (formData.region ?? '') as string;
+      // Allow sentinel value meaning "applies to all regions/cantons".
+      if (currentRegion === 'All') {
+        return;
+      }
       if (!validRegions.includes(currentRegion)) {
         setFormData(prev => ({ ...prev, region: validRegions[0] as string }));
       }
@@ -847,6 +853,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
         <div>
           <label htmlFor="policyRegion" className="block text-sm font-medium text-gray-700 mb-1">{t('content.region','Region/Canton')} <span className="text-red-500 ml-0.5">*</span></label>
           <select name="region" id="policyRegion" value={formData.region || SWISS_CANTONS[0]} onChange={handleInputChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            <option value="All">{t('common:filters.all', 'All')}</option>
             {(formData.country ? (REGIONS_BY_COUNTRY[formData.country] ?? SWISS_CANTONS) : SWISS_CANTONS).map(region => <option key={region} value={region}>{region}</option>)}
           </select>
         </div>

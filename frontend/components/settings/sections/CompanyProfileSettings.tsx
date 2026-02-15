@@ -1,7 +1,7 @@
 
 import React, { useMemo, useState, useRef } from 'react';
 import { SettingsFormData, UserRole, SwissCanton, SupportedLanguage } from '../../../types';
-import { STANDARD_INPUT_FIELD, SWISS_CANTONS, SUGGESTED_SERVICE_CATEGORIES, SUGGESTED_PRODUCT_CATEGORIES, PEDAGOGY_OPTIONS } from '../../../constants';
+import { STANDARD_INPUT_FIELD, SWISS_CANTONS_WITH_ALL, ALL_REGIONS_OPTION, SUGGESTED_SERVICE_CATEGORIES, SUGGESTED_PRODUCT_CATEGORIES, PEDAGOGY_OPTIONS } from '../../../constants';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
 import ChipInput from '../../ui/ChipInput';
 import ImageCropperModal from '../../shared/ImageCropperModal';
@@ -23,6 +23,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
+import { toggleMultiSelectWithAll } from '../../../utils/regionSelection';
 
 interface CompanyProfileSettingsProps {
   settings: SettingsFormData;
@@ -85,7 +86,9 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
   const handleMultiSelectChange = (field: keyof SettingsFormData, selectedValue: string) => {
     const currentValues = (settings[field] as string[] || []) as Array<SwissCanton | SupportedLanguage | string>;
     let newValues: Array<SwissCanton | SupportedLanguage | string>;
-    if (currentValues.includes(selectedValue as any)) {
+    if (field === 'regionsServed') {
+      newValues = toggleMultiSelectWithAll(currentValues as string[], selectedValue);
+    } else if (currentValues.includes(selectedValue as any)) {
       newValues = currentValues.filter(v => v !== selectedValue);
     } else {
       newValues = [...currentValues, selectedValue as any];
@@ -503,7 +506,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
             <div className="form-input-container">
               <p className="text-xs text-gray-500 mb-2">{t('common:settingsCompanyProfile.cantonsHelpText', 'Select all cantons where your organization operates')}</p>
               <div className="flex flex-wrap gap-2">
-                {SWISS_CANTONS.map(canton => (
+                {SWISS_CANTONS_WITH_ALL.map(canton => (
                   <button
                     key={canton}
                     type="button"
@@ -514,7 +517,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
                         : 'bg-white text-gray-700 border-gray-300 hover:border-swiss-teal'
                     }`}
                   >
-                    {canton}
+                    {canton === ALL_REGIONS_OPTION ? t('common:filters.all', 'All') : canton}
                   </button>
                 ))}
               </div>

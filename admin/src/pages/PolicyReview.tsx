@@ -195,7 +195,7 @@ const PolicyReviewPanel: React.FC<{
             onChange={e => setForm({...form, policyType: e.target.value})}
             className="w-full border rounded px-3 py-2"
           >
-            {['Law', 'Regulation', 'Directive', 'Guideline', 'Standard'].map(type => (
+            {['Law', 'Regulation', 'Directive', 'Guideline', 'Standard', 'Compliance Procedure', 'Administrative Procedure'].map(type => (
               <option key={type} value={type}>{type}</option>
             ))}
           </select>
