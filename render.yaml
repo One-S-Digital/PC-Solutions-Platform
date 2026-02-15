@@ -42,9 +42,9 @@ services:
           property: connectionString
       # Required for Clerk JWT token validation (azp claim)
       - key: ADMIN_ORIGIN
-        value: https://admin.procrechesolutions.com
+        value: https://devadmin.procrechesolutions.com
       - key: APP_ORIGIN
-        value: https://app.procrechesolutions.com
+        value: https://dev.procrechesolutions.com
         # Note: Update APP_ORIGIN if your frontend uses a different domain (e.g., dash.procrechesolutions.com)
 
   # Admin Panel Service
