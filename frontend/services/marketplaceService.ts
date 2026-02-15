@@ -92,6 +92,8 @@ class MarketplaceService {
       limit: (filters.limit || 20).toString(),
       ...(filters.category && { category: filters.category }),
       ...(filters.search && { search: filters.search }),
+      // Hide blocked items by default on marketplace browsing
+      ...(filters.isActive === undefined ? { isActive: 'true' } : { isActive: String(filters.isActive) }),
       lang: currentLang,
     });
     
@@ -156,6 +158,8 @@ class MarketplaceService {
       limit: (filters.limit || 20).toString(),
       ...(filters.category && { category: filters.category }),
       ...(filters.search && { search: filters.search }),
+      // Hide blocked items by default on marketplace browsing
+      ...(filters.isActive === undefined ? { isActive: 'true' } : { isActive: String(filters.isActive) }),
       lang: currentLang,
     });
     

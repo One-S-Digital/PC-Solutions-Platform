@@ -105,7 +105,7 @@ export class CompatController {
   }
 
   @Get('products')
-  @Public()
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   async getProducts(
     @Query('dateFrom') dateFrom?: string,
     @Query('limit') limit?: string,
@@ -123,14 +123,38 @@ export class CompatController {
       }
 
       const [products, total] = await Promise.all([
-        this.prisma.product.findMany({ where, orderBy: { createdAt: 'desc' }, take }),
+        this.prisma.product.findMany({
+          where,
+          orderBy: { createdAt: 'desc' },
+          take,
+          include: {
+            supplier: {
+              include: {
+                logoAsset: true,
+              },
+            },
+            imageAsset: true,
+          },
+        }),
         this.prisma.product.count({ where }),
       ]);
+
+      // Flatten owner + image fields for admin UI compatibility
+      const transformedProducts = products.map((product) => {
+        const { supplier, imageAsset, ...rest } = product as any;
+        return {
+          ...rest,
+          supplierId: rest.supplierId,
+          supplierName: supplier?.name ?? rest.supplierName ?? 'Unknown supplier',
+          supplierLogo: supplier?.logoAsset?.publicUrl ?? rest.supplierLogo ?? undefined,
+          imageUrl: imageAsset?.publicUrl ?? rest.imageUrl ?? undefined,
+        };
+      });
 
       return {
         success: true,
         message: 'OK',
-        data: products,
+        data: transformedProducts,
         total,
         timestamp: new Date().toISOString(),
       };
@@ -140,7 +164,7 @@ export class CompatController {
   }
 
   @Get('services')
-  @Public()
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   async getServices(
     @Query('dateFrom') dateFrom?: string,
     @Query('limit') limit?: string,
@@ -158,14 +182,43 @@ export class CompatController {
       }
 
       const [services, total] = await Promise.all([
-        this.prisma.service.findMany({ where, orderBy: { createdAt: 'desc' }, take }),
+        this.prisma.service.findMany({
+          where,
+          orderBy: { createdAt: 'desc' },
+          take,
+          include: {
+            provider: {
+              include: {
+                organization: {
+                  include: {
+                    logoAsset: true,
+                  },
+                },
+              },
+            },
+          },
+        }),
         this.prisma.service.count({ where }),
       ]);
+
+      // Flatten owner fields for admin UI compatibility.
+      // Note: Prisma Service.providerId is ServiceProvider.id, but admin/frontend historically
+      // treat `providerId` as Organization.id — normalize to organizationId when available.
+      const transformedServices = services.map((service) => {
+        const { provider, ...rest } = service as any;
+        const org = provider?.organization;
+        return {
+          ...rest,
+          providerId: provider?.organizationId ?? rest.providerId,
+          providerName: org?.name ?? rest.providerName ?? 'Unknown provider',
+          providerLogo: org?.logoAsset?.publicUrl ?? rest.providerLogo ?? undefined,
+        };
+      });
 
       return {
         success: true,
         message: 'OK',
-        data: services,
+        data: transformedServices,
         total,
         timestamp: new Date().toISOString(),
       };

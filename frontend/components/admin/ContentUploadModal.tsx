@@ -1,5 +1,5 @@
 
-import React, { useMemo, useState, useEffect, FormEvent } from 'react';
+import React, { useMemo, useRef, useState, useEffect, FormEvent } from 'react';
 import { UserRole, UploadableContentType, LanguageCode, Course, HRDocument, PolicyDocument, ELearningContentType, ELEARNING_CATEGORIES, ELearningContentTypeLabels, ELEARNING_CATEGORY_LABELS, HR_CATEGORIES, HR_CATEGORY_LABELS, POLICY_CATEGORIES, POLICY_CATEGORY_LABELS, SWISS_CANTONS, PolicyType, POLICY_TYPES_ENUM } from '../../types';
 import { COUNTRIES_FOR_POLICIES, CountryForPolicies, REGIONS_BY_COUNTRY, STANDARD_INPUT_FIELD } from '../../constants'; // Import STANDARD_INPUT_FIELD
 import Button from '../ui/Button';
@@ -104,9 +104,11 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
   const [fileError, setFileError] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
+  const [isFileDragOver, setIsFileDragOver] = useState(false);
   const [videoSourceType, setVideoSourceType] = useState<'upload' | 'url'>('upload'); // For video upload vs URL
   const [customCategory, setCustomCategory] = useState('');
   const [isSavingCategory, setIsSavingCategory] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -191,24 +193,78 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
   };
 
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const selectedFile = e.target.files[0];
-      const maxSizeMB = contentType === 'e-learning' ? 500 : 50;
-      if (selectedFile.size > maxSizeMB * 1024 * 1024) {
-        setFile(null);
-        setFileError(
-          t('common:contentUploadModal.fileUpload.fileTooLarge', {
-            defaultValue: `File size exceeds ${maxSizeMB}MB limit.`,
-            max: maxSizeMB,
-          }),
-        );
-        return;
-      }
-      setFileError(null);
-      setFile(selectedFile);
-      setUploadProgress(0);
+  const selectFile = (selectedFile: File, resetInput?: () => void) => {
+    const maxSizeMB = contentType === 'e-learning' ? 500 : 50;
+    const allowedExtensions = contentType === 'e-learning'
+      ? ['.pdf', '.mp4', '.docx']
+      : ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.csv', '.ods'];
+    const fileName = selectedFile.name.toLowerCase();
+    if (!allowedExtensions.some((ext) => fileName.endsWith(ext))) {
+      setFile(null);
+      setFileError(
+        t('common:contentUploadModal.fileUpload.invalidFileType', {
+          defaultValue: `Unsupported file type. Allowed: ${allowedExtensions.join(', ')}`,
+        }),
+      );
+      resetInput?.();
+      return;
     }
+    if (selectedFile.size > maxSizeMB * 1024 * 1024) {
+      setFile(null);
+      setFileError(
+        t('common:contentUploadModal.fileUpload.fileTooLarge', {
+          defaultValue: `File size exceeds ${maxSizeMB}MB limit.`,
+          max: maxSizeMB,
+        }),
+      );
+      resetInput?.();
+      return;
+    }
+    setFileError(null);
+    setFile(selectedFile);
+    setUploadProgress(0);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (!selectedFile) return;
+    selectFile(selectedFile, () => {
+      e.target.value = '';
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    });
+  };
+
+  const handleFileDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isUploading) return;
+    setIsFileDragOver(true);
+  };
+
+  const handleFileDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isUploading) return;
+    setIsFileDragOver(true);
+    if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
+  };
+
+  const handleFileDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const next = e.relatedTarget as Node | null;
+    if (next && e.currentTarget.contains(next)) return;
+    setIsFileDragOver(false);
+  };
+
+  const handleFileDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isUploading) return;
+    setIsFileDragOver(false);
+    const droppedFile = e.dataTransfer?.files?.[0];
+    if (!droppedFile) return;
+    selectFile(droppedFile);
   };
 
   const requiresFile = useMemo(() => {
@@ -707,7 +763,15 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
                    (contentType === 'e-learning' && (formData.type === ELearningContentType.PDF || formData.type === ELearningContentType.VIDEO) ? t('common:contentUploadModal.labels.uploadFileType', { fileType: formData.type}) : t('common:contentUploadModal.labels.uploadFile'))}
                   {(!existingContent && (contentType === 'hr' || (contentType === 'policy' && !formData.externalLink && !formData.description))) && <span className="text-red-500 ml-0.5">*</span>}
                 </label>
-                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-swiss-teal/60 border-dashed rounded-md bg-swiss-teal/5">
+                <div
+                  className={`mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-md transition-colors ${
+                    isFileDragOver ? 'border-swiss-teal bg-swiss-teal/15' : 'border-swiss-teal/60 bg-swiss-teal/5'
+                  } ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  onDragEnter={handleFileDragEnter}
+                  onDragOver={handleFileDragOver}
+                  onDragLeave={handleFileDragLeave}
+                  onDrop={handleFileDrop}
+                >
                   <div className="space-y-1 text-center">
                     <ArrowUpTrayIcon className="mx-auto h-10 w-10 text-swiss-mint" />
                     <div className="flex text-sm text-gray-600">
@@ -719,6 +783,7 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
                           type="file"
                           className="sr-only"
                           onChange={handleFileChange}
+                          ref={fileInputRef}
                           accept={contentType === 'e-learning' ? '.pdf,.mp4,.docx' : '.pdf,.doc,.docx,.xls,.xlsx,.csv,.ods'}
                         />
                       </label>
