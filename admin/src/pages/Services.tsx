@@ -5,6 +5,7 @@ import { Edit, MoreVertical, Search, ShieldOff, Trash2, Wrench } from 'lucide-re
 import { useTranslation } from 'react-i18next'
 import EditServiceModal from '../components/services/EditServiceModal'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
+import TruncatedText from '../components/ui/TruncatedText'
 import { apiService, useApiClient } from '../services/api'
 import logger from '../utils/logger'
 import { Service } from '../types/api'
@@ -382,7 +383,7 @@ const Services: React.FC = () => {
                       />
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex items-center gap-3 min-w-[16rem]">
+                      <div className="flex items-start gap-3 min-w-[16rem]">
                         <div className="w-10 h-10 rounded-md bg-gray-100 overflow-hidden flex items-center justify-center">
                           {service.imageUrl ? (
                             <img src={service.imageUrl} alt={service.title} className="w-full h-full object-cover" />
@@ -391,17 +392,23 @@ const Services: React.FC = () => {
                           )}
                         </div>
                         <div className="min-w-0">
-                          <div className="text-sm font-medium text-gray-900 truncate">{service.title}</div>
+                          <div className="text-sm font-medium text-gray-900">
+                            <TruncatedText text={service.title} limit={80} moreLabel="more" />
+                          </div>
                           {service.description && (
-                            <div className="text-xs text-gray-500 truncate">{service.description}</div>
+                            <div className="text-xs text-gray-500 mt-0.5">
+                              <TruncatedText text={service.description} limit={140} moreLabel="more" />
+                            </div>
                           )}
                           {service.priceInfo && (
-                            <div className="text-xs text-gray-500 truncate">{service.priceInfo}</div>
+                            <div className="text-xs text-gray-500 mt-0.5">
+                              <TruncatedText text={service.priceInfo} limit={80} moreLabel="more" />
+                            </div>
                           )}
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700">
+                    <td className="px-4 py-3 text-sm text-gray-700 break-words [overflow-wrap:anywhere]">
                       {service.providerName || t('common:notAvailable', 'N/A')}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700">
