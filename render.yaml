@@ -40,12 +40,6 @@ services:
         fromDatabase:
           name: pc-solutions-db
           property: connectionString
-      # Required for Clerk JWT token validation (azp claim)
-      - key: ADMIN_ORIGIN
-        value: https://devadmin.procrechesolutions.com
-      - key: APP_ORIGIN
-        value: https://dev.procrechesolutions.com
-        # Note: Update APP_ORIGIN if your frontend uses a different domain (e.g., dash.procrechesolutions.com)
 
   # Admin Panel Service
   - type: web
