@@ -92,8 +92,6 @@ const ServiceProviderProfileForm: React.FC<ServiceProviderProfileFormProps> = ({
     onChange(field, newValues);
   };
 
-  const translatedLanguageOptions = SUPPORTED_LANGUAGES_OPTIONS;
-
   const logoUrl = formData.logoUrl || currentUser?.orgLogoUrl || 
     `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.companyName || 'Service Provider')}&background=2DD4BF&color=ffffff&size=128&rounded=true`;
   
@@ -239,7 +237,7 @@ const ServiceProviderProfileForm: React.FC<ServiceProviderProfileFormProps> = ({
             </label>
             <p className="text-xs text-gray-500 mb-3">{t('common:settingsCompanyProfile.languagesHelpText', 'Select all languages your organization supports')}</p>
             <div className="flex flex-wrap gap-2">
-              {translatedLanguageOptions.map(lang => (
+              {SUPPORTED_LANGUAGES_OPTIONS.map(lang => (
                 <button
                   key={lang.value}
                   type="button"

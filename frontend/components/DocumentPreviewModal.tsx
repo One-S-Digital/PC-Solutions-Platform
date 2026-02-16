@@ -13,14 +13,21 @@ function getFileExtension(type: string, url?: string, name?: string): string {
 
   // Check filename extension first
   if (name) {
-    const ext = name.split('.').pop()?.toUpperCase();
-    if (ext) return ext;
+    const parts = name.split('.');
+    if (parts.length > 1) {
+      const ext = parts.pop()?.toUpperCase();
+      if (ext && ext.length <= 5) return ext;
+    }
   }
 
   // Check URL extension
   if (url) {
-    const urlExt = url.split('.').pop()?.split('?')[0]?.toUpperCase();
-    if (urlExt && urlExt.length <= 5) return urlExt; // Valid file extension
+    const pathname = url.split('?')[0];
+    const lastSegment = pathname.split('/').pop() || '';
+    if (lastSegment.includes('.')) {
+      const urlExt = lastSegment.split('.').pop()?.toUpperCase();
+      if (urlExt && urlExt.length <= 5) return urlExt; // Valid file extension
+    }
   }
 
   // Extract from MIME type (e.g., "application/pdf" -> "PDF")
@@ -68,7 +75,8 @@ function canUseOfficeOnlineViewer(url: string): boolean {
   // It cannot access blob: URLs and it cannot send auth headers to our API proxy.
   if (!url) return false;
   if (url.startsWith('blob:')) return false;
-  if (!(url.startsWith('http://') || url.startsWith('https://'))) return false;
+  // Office Online Viewer requires a public HTTPS URL
+  if (!url.startsWith('https://')) return false;
   if (url.includes('/api/upload/download/')) return false;
   return true;
 }
@@ -395,6 +403,10 @@ const DocumentPreviewModal: React.FC<DocumentPreviewModalProps> = ({
         'QUICKTIME': 'MOV', 'X-MSVIDEO': 'AVI',
         'PDF': 'PDF', 'PNG': 'PNG', 'JPEG': 'JPG', 'JPG': 'JPG',
         'MSWORD': 'DOC', 'VND.OPENXMLFORMATS-OFFICEDOCUMENT.WORDPROCESSINGML.DOCUMENT': 'DOCX',
+        'VND.MS-EXCEL': 'XLS',
+        'VND.OPENXMLFORMATS-OFFICEDOCUMENT.SPREADSHEETML.SHEET': 'XLSX',
+        'VND.MS-POWERPOINT': 'PPT',
+        'VND.OPENXMLFORMATS-OFFICEDOCUMENT.PRESENTATIONML.PRESENTATION': 'PPTX',
       };
       normalizedFileType = mimeFormatMap[format] || format;
     }
@@ -610,61 +622,6 @@ const DocumentPreviewModal: React.FC<DocumentPreviewModalProps> = ({
       );
     }
 
-    // External Link Preview (iframe for websites)
-    if (normalizedFileType === 'LINK' || normalizedFileType === 'URL' || (previewUrl.startsWith('http') && !isVideoFile)) {
-      // Check if it's a general external link (not a video or embedded content)
-      const isEmbeddableVideo = ['youtube.com', 'youtu.be', 'vimeo.com'].some(domain => previewUrl.includes(domain));
-      const isPDF = previewUrl.toLowerCase().includes('.pdf');
-      
-      if (!isEmbeddableVideo && !isPDF) {
-        return (
-          <div className="w-full h-full flex flex-col">
-            <div className="bg-blue-50 border-b border-blue-200 p-3 flex items-center justify-between">
-              <div className="flex items-center flex-1 min-w-0">
-                <LinkIcon className="w-5 h-5 text-blue-600 mr-2 flex-shrink-0" />
-                <p className="text-sm text-blue-800 truncate">
-                  {t('preview.externalLink', 'External Link')}: {previewUrl}
-                </p>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => window.open(previewUrl, '_blank')}
-                className="ml-2 flex-shrink-0"
-              >
-                {t('preview.openInNewTab', 'Open in New Tab')}
-              </Button>
-            </div>
-            <div className="flex-1 w-full relative">
-              <iframe
-                src={previewUrl}
-                className="w-full h-full border-0"
-                title={fileName}
-                sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
-                onError={(e) => {
-                  console.error('Iframe load error:', e);
-                }}
-              />
-              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg p-4 text-center max-w-md">
-                <InformationCircleIcon className="w-8 h-8 text-blue-500 mx-auto mb-2" />
-                <p className="text-sm text-gray-700 mb-2">
-                  {t('preview.iframeNote', 'Some websites may not display in preview due to security policies.')}
-                </p>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={() => window.open(previewUrl, '_blank')}
-                >
-                  {t('preview.openInNewTab', 'Open in New Tab')}
-                </Button>
-              </div>
-            </div>
-          </div>
-        );
-      }
-    }
-
-
     // Image Preview
     if (['PNG', 'JPG', 'JPEG', 'GIF', 'WEBP', 'SVG'].includes(normalizedFileType)) {
       return (
@@ -682,7 +639,8 @@ const DocumentPreviewModal: React.FC<DocumentPreviewModalProps> = ({
     }
 
     // DOCX, XLSX, and other Office formats
-    if (['DOCX', 'DOC', 'XLSX', 'XLS', 'PPTX', 'PPT'].includes(normalizedFileType)) {
+    const officeExtensions = ['DOCX', 'DOC', 'XLSX', 'XLS', 'PPTX', 'PPT'];
+    if (officeExtensions.includes(normalizedFileType) || officeExtensions.includes(fileExtension)) {
       // Prefer Microsoft Office Online Viewer when we have a public HTTPS URL it can fetch.
       if (canUseOfficeOnlineViewer(previewUrl)) {
         const viewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(previewUrl)}`;
@@ -707,6 +665,17 @@ const DocumentPreviewModal: React.FC<DocumentPreviewModalProps> = ({
           </div>
         );
       }
+
+      // Private Office format without a client-side renderer (DOC/PPT/PPTX/XLS)
+      return (
+        <div className="w-full h-full flex flex-col items-center justify-center bg-gray-50 text-gray-600">
+          <p className="text-lg mb-4">{t('preview.noPreviewAvailable', 'Preview not available for this file type')}</p>
+          <p className="text-sm mb-6">{t('preview.downloadToView', 'Please download the file to view it')}</p>
+          <Button variant="primary" leftIcon={ArrowDownTrayIcon} onClick={handleDownload}>
+            {t('preview.downloadButton', 'Download File')}
+          </Button>
+        </div>
+      );
     }
 
     // Text files
@@ -717,6 +686,95 @@ const DocumentPreviewModal: React.FC<DocumentPreviewModalProps> = ({
           className="w-full h-full border-0 bg-white"
           title={fileName}
         />
+      );
+    }
+
+    // External Link Preview (iframe for websites) - run after specific file handlers
+    if (normalizedFileType === 'LINK' || normalizedFileType === 'URL') {
+      return (
+        <div className="w-full h-full flex flex-col">
+          <div className="bg-blue-50 border-b border-blue-200 p-3 flex items-center justify-between">
+            <div className="flex items-center flex-1 min-w-0">
+              <LinkIcon className="w-5 h-5 text-blue-600 mr-2 flex-shrink-0" />
+              <p className="text-sm text-blue-800 truncate">
+                {t('preview.externalLink', 'External Link')}: {previewUrl}
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.open(previewUrl, '_blank')}
+              className="ml-2 flex-shrink-0"
+            >
+              {t('preview.openInNewTab', 'Open in New Tab')}
+            </Button>
+          </div>
+          <div className="flex-1 w-full relative">
+            <iframe
+              src={previewUrl}
+              className="w-full h-full border-0"
+              title={fileName}
+              sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+              onError={(e) => {
+                console.error('Iframe load error:', e);
+              }}
+            />
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg p-4 text-center max-w-md">
+              <InformationCircleIcon className="w-8 h-8 text-blue-500 mx-auto mb-2" />
+              <p className="text-sm text-gray-700 mb-2">
+                {t('preview.iframeNote', 'Some websites may not display in preview due to security policies.')}
+              </p>
+              <Button variant="primary" size="sm" onClick={() => window.open(previewUrl, '_blank')}>
+                {t('preview.openInNewTab', 'Open in New Tab')}
+              </Button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    const isEmbeddableVideo = ['youtube.com', 'youtu.be', 'vimeo.com'].some(domain => previewUrl.includes(domain));
+    const isProbablyWebPage = previewUrl.startsWith('http') && !isVideoFile && !isEmbeddableVideo && !officeExtensions.includes(fileExtension);
+    if (isProbablyWebPage) {
+      return (
+        <div className="w-full h-full flex flex-col">
+          <div className="bg-blue-50 border-b border-blue-200 p-3 flex items-center justify-between">
+            <div className="flex items-center flex-1 min-w-0">
+              <LinkIcon className="w-5 h-5 text-blue-600 mr-2 flex-shrink-0" />
+              <p className="text-sm text-blue-800 truncate">
+                {t('preview.externalLink', 'External Link')}: {previewUrl}
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.open(previewUrl, '_blank')}
+              className="ml-2 flex-shrink-0"
+            >
+              {t('preview.openInNewTab', 'Open in New Tab')}
+            </Button>
+          </div>
+          <div className="flex-1 w-full relative">
+            <iframe
+              src={previewUrl}
+              className="w-full h-full border-0"
+              title={fileName}
+              sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+              onError={(e) => {
+                console.error('Iframe load error:', e);
+              }}
+            />
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg p-4 text-center max-w-md">
+              <InformationCircleIcon className="w-8 h-8 text-blue-500 mx-auto mb-2" />
+              <p className="text-sm text-gray-700 mb-2">
+                {t('preview.iframeNote', 'Some websites may not display in preview due to security policies.')}
+              </p>
+              <Button variant="primary" size="sm" onClick={() => window.open(previewUrl, '_blank')}>
+                {t('preview.openInNewTab', 'Open in New Tab')}
+              </Button>
+            </div>
+          </div>
+        </div>
       );
     }
 

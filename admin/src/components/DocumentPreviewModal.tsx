@@ -8,13 +8,20 @@ function getFileExtension(type: string, url?: string, name?: string): string {
   const normalizedType = (type || '').toUpperCase();
 
   if (name) {
-    const ext = name.split('.').pop()?.toUpperCase();
-    if (ext) return ext;
+    const parts = name.split('.');
+    if (parts.length > 1) {
+      const ext = parts.pop()?.toUpperCase();
+      if (ext && ext.length <= 5) return ext;
+    }
   }
 
   if (url) {
-    const urlExt = url.split('.').pop()?.split('?')[0]?.toUpperCase();
-    if (urlExt && urlExt.length <= 5) return urlExt;
+    const pathname = url.split('?')[0];
+    const lastSegment = pathname.split('/').pop() || '';
+    if (lastSegment.includes('.')) {
+      const urlExt = lastSegment.split('.').pop()?.toUpperCase();
+      if (urlExt && urlExt.length <= 5) return urlExt;
+    }
   }
 
   if (normalizedType.includes('/')) {
@@ -40,7 +47,8 @@ function getFileExtension(type: string, url?: string, name?: string): string {
 function canUseOfficeOnlineViewer(url: string): boolean {
   if (!url) return false;
   if (url.startsWith('blob:')) return false;
-  if (!(url.startsWith('http://') || url.startsWith('https://'))) return false;
+  // Office Online Viewer requires a public HTTPS URL
+  if (!url.startsWith('https://')) return false;
   if (url.includes('/api/upload/download/')) return false;
   return true;
 }
@@ -71,9 +79,12 @@ export default function DocumentPreviewModal({
   const blobUrlRef = useRef<string | null>(null);
   const isFetchingRef = useRef(false);
   const lastFileUrlRef = useRef<string | null>(null);
+  const loggedFileUrlRef = useRef<string | null>(null);
   
   // Fetch file with authentication and create blob URL for preview
   useEffect(() => {
+    let cancelled = false;
+
     if (!isOpen || !fileUrl) {
       // Clean up blob URL when modal closes
       if (blobUrlRef.current) {
@@ -195,6 +206,7 @@ export default function DocumentPreviewModal({
         }
 
         const blob = await response.blob();
+        if (cancelled) return;
         const blobUrl = window.URL.createObjectURL(blob);
         setPreviewBlob(blob);
         
@@ -205,16 +217,13 @@ export default function DocumentPreviewModal({
         
         blobUrlRef.current = blobUrl;
         setPreviewBlobUrl(blobUrl);
-        
-        // Small delay to ensure content is ready to render (like frontend version)
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 100);
+        setIsLoading(false);
         
         isFetchingRef.current = false;
         lastFileUrlRef.current = fileUrl; // Track that we've processed this fileUrl
       } catch (error) {
         console.error('Failed to load authenticated file:', error);
+        if (cancelled) return;
         setLoadError(true);
         setIsLoading(false);
         isFetchingRef.current = false;
@@ -225,6 +234,7 @@ export default function DocumentPreviewModal({
 
     // Cleanup on unmount
     return () => {
+      cancelled = true;
       isFetchingRef.current = false;
       if (blobUrlRef.current) {
         window.URL.revokeObjectURL(blobUrlRef.current);
@@ -266,7 +276,7 @@ export default function DocumentPreviewModal({
           setOfficeHtml(sanitized);
         } else if (ext === 'XLSX') {
           const XLSX = await import('xlsx');
-          const wb = XLSX.read(arrayBuffer, { type: 'array' });
+          const wb = XLSX.read(arrayBuffer);
           const firstSheetName = wb.SheetNames?.[0];
           const ws = firstSheetName ? wb.Sheets[firstSheetName] : undefined;
           const html = ws ? XLSX.utils.sheet_to_html(ws) : '<div>No sheets found.</div>';
@@ -295,7 +305,6 @@ export default function DocumentPreviewModal({
   if (!isOpen) return null;
 
   // Debug logging (only once per fileUrl change)
-  const loggedFileUrlRef = useRef<string | null>(null);
   if (import.meta.env.DEV && fileUrl && loggedFileUrlRef.current !== fileUrl) {
     console.log('DocumentPreviewModal:', { fileUrl, fileName, fileType });
     loggedFileUrlRef.current = fileUrl;
@@ -369,6 +378,7 @@ export default function DocumentPreviewModal({
 
   const renderPreview = () => {
     const normalizedFileType = fileType.toUpperCase();
+    const resolvedExt = getFileExtension(fileType, fileUrl, fileName);
 
     // Check if fileUrl is valid
     if (!fileUrl || fileUrl === '#') {
@@ -498,56 +508,6 @@ export default function DocumentPreviewModal({
       );
     }
 
-    // External Link Preview (iframe for websites)
-    if (normalizedFileType === 'LINK' || normalizedFileType === 'URL' || (fileUrl.startsWith('http') && !isVideoFile)) {
-      const isEmbeddableVideo = ['youtube.com', 'youtu.be', 'vimeo.com'].some(domain => fileUrl.includes(domain));
-      const isPDF = fileUrl.toLowerCase().includes('.pdf');
-      
-      if (!isEmbeddableVideo && !isPDF) {
-        return (
-          <div className="w-full h-full flex flex-col">
-            <div className="bg-blue-50 border-b border-blue-200 p-3 flex items-center justify-between">
-              <div className="flex items-center flex-1 min-w-0">
-                <LinkIcon className="w-5 h-5 text-blue-600 mr-2 flex-shrink-0" />
-                <p className="text-sm text-blue-800 truncate">
-                  External Link: {fileUrl}
-                </p>
-              </div>
-              <button
-                onClick={() => window.open(fileUrl, '_blank')}
-                className="ml-2 flex-shrink-0 px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50"
-              >
-                Open in New Tab
-              </button>
-            </div>
-            <div className="flex-1 w-full relative">
-              <iframe
-                src={fileUrl}
-                className="w-full h-full border-0"
-                title={fileName}
-                sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
-                onError={(e) => {
-                  console.error('Iframe load error:', e);
-                }}
-              />
-              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg p-4 text-center max-w-md">
-                <InformationCircleIcon className="w-8 h-8 text-blue-500 mx-auto mb-2" />
-                <p className="text-sm text-gray-700 mb-2">
-                  Some websites may not display in preview due to security policies.
-                </p>
-                <button
-                  onClick={() => window.open(fileUrl, '_blank')}
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                >
-                  Open in New Tab
-                </button>
-              </div>
-            </div>
-          </div>
-        );
-      }
-    }
-
     // PDF Preview (check both fileType and URL extension)
     const isPDFFile = normalizedFileType === 'PDF' || 
                       fileType.toLowerCase().includes('pdf') ||
@@ -619,7 +579,7 @@ export default function DocumentPreviewModal({
     }
 
     // Image Preview
-    if (['PNG', 'JPG', 'JPEG', 'GIF', 'WEBP', 'SVG'].includes(normalizedFileType)) {
+    if (['PNG', 'JPG', 'JPEG', 'GIF', 'WEBP', 'SVG'].includes(normalizedFileType) || ['PNG', 'JPG', 'JPEG', 'GIF', 'WEBP', 'SVG'].includes(resolvedExt)) {
       return (
         <div className="w-full h-full flex items-center justify-center bg-gray-50">
           <img
@@ -635,7 +595,8 @@ export default function DocumentPreviewModal({
     }
 
     // DOCX, XLSX, and other Office formats
-    if (['DOCX', 'DOC', 'XLSX', 'XLS', 'PPTX', 'PPT'].includes(normalizedFileType)) {
+    const officeExtensions = ['DOCX', 'DOC', 'XLSX', 'XLS', 'PPTX', 'PPT'];
+    if (officeExtensions.includes(resolvedExt)) {
       if (canUseOfficeOnlineViewer(previewUrl)) {
         const viewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(previewUrl)}`;
         return (
@@ -647,8 +608,7 @@ export default function DocumentPreviewModal({
         );
       }
 
-      const ext = getFileExtension(fileType, fileUrl, fileName);
-      if (['DOCX', 'XLSX'].includes(ext) && officeHtml !== null) {
+      if (['DOCX', 'XLSX'].includes(resolvedExt) && officeHtml !== null) {
         return (
           <div className="w-full h-full overflow-auto bg-white p-6">
             <div
@@ -658,16 +618,114 @@ export default function DocumentPreviewModal({
           </div>
         );
       }
+
+      // For other Office formats, we don't have a client-side renderer.
+      return (
+        <div className="w-full h-full flex flex-col items-center justify-center bg-gray-50 text-gray-600">
+          <p className="text-lg mb-4">{t('preview.noPreviewAvailable', 'Preview not available for this file type')}</p>
+          <p className="text-sm mb-6">{t('preview.downloadToView', 'Please download the file to view it')}</p>
+          <button
+            onClick={handleDownload}
+            className="px-4 py-2 bg-blue-600 text-white rounded flex items-center space-x-2 hover:bg-blue-700"
+          >
+            <ArrowDownTrayIcon className="w-4 h-4" />
+            <span>{t('common:download', 'Download')}</span>
+          </button>
+        </div>
+      );
     }
 
     // Text files
-    if (['TXT', 'MD', 'JSON', 'XML', 'CSV'].includes(normalizedFileType)) {
+    if (['TXT', 'MD', 'JSON', 'XML', 'CSV'].includes(normalizedFileType) || ['TXT', 'MD', 'JSON', 'XML', 'CSV'].includes(resolvedExt)) {
       return (
         <iframe
-          src={fileUrl}
+          src={previewUrl || fileUrl}
           className="w-full h-full border-0 bg-white"
           title={fileName}
         />
+      );
+    }
+
+    // External Link Preview (iframe for websites) - run after specific file handlers
+    if (normalizedFileType === 'LINK' || normalizedFileType === 'URL') {
+      return (
+        <div className="w-full h-full flex flex-col">
+          <div className="bg-blue-50 border-b border-blue-200 p-3 flex items-center justify-between">
+            <div className="flex items-center flex-1 min-w-0">
+              <LinkIcon className="w-5 h-5 text-blue-600 mr-2 flex-shrink-0" />
+              <p className="text-sm text-blue-800 truncate">External Link: {fileUrl}</p>
+            </div>
+            <button
+              onClick={() => window.open(fileUrl, '_blank')}
+              className="ml-2 flex-shrink-0 px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50"
+            >
+              Open in New Tab
+            </button>
+          </div>
+          <div className="flex-1 w-full relative">
+            <iframe
+              src={fileUrl}
+              className="w-full h-full border-0"
+              title={fileName}
+              sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+              onError={(e) => {
+                console.error('Iframe load error:', e);
+              }}
+            />
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg p-4 text-center max-w-md">
+              <InformationCircleIcon className="w-8 h-8 text-blue-500 mx-auto mb-2" />
+              <p className="text-sm text-gray-700 mb-2">Some websites may not display in preview due to security policies.</p>
+              <button
+                onClick={() => window.open(fileUrl, '_blank')}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                Open in New Tab
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    const isEmbeddableVideo = ['youtube.com', 'youtu.be', 'vimeo.com'].some(domain => fileUrl.includes(domain));
+    const isProbablyWebPage = fileUrl.startsWith('http') && !isVideoFile && !isEmbeddableVideo && !isPDFFile && !officeExtensions.includes(resolvedExt);
+    if (isProbablyWebPage) {
+      return (
+        <div className="w-full h-full flex flex-col">
+          <div className="bg-blue-50 border-b border-blue-200 p-3 flex items-center justify-between">
+            <div className="flex items-center flex-1 min-w-0">
+              <LinkIcon className="w-5 h-5 text-blue-600 mr-2 flex-shrink-0" />
+              <p className="text-sm text-blue-800 truncate">External Link: {fileUrl}</p>
+            </div>
+            <button
+              onClick={() => window.open(fileUrl, '_blank')}
+              className="ml-2 flex-shrink-0 px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50"
+            >
+              Open in New Tab
+            </button>
+          </div>
+          <div className="flex-1 w-full relative">
+            <iframe
+              src={fileUrl}
+              className="w-full h-full border-0"
+              title={fileName}
+              sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+              onError={(e) => {
+                console.error('Iframe load error:', e);
+              }}
+            />
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg p-4 text-center max-w-md">
+              <InformationCircleIcon className="w-8 h-8 text-blue-500 mx-auto mb-2" />
+              <p className="text-sm text-gray-700 mb-2">Some websites may not display in preview due to security policies.</p>
+              <button
+                onClick={() => window.open(fileUrl, '_blank')}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                Open in New Tab
+              </button>
+            </div>
+          </div>
+        </div>
       );
     }
 
