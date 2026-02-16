@@ -2,6 +2,48 @@ import { useState, useEffect, useRef } from 'react';
 import { XMarkIcon, ArrowDownTrayIcon, LinkIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
 import { useAuth } from '@clerk/clerk-react';
 import { useTranslation } from 'react-i18next';
+import DOMPurify from 'dompurify';
+
+function getFileExtension(type: string, url?: string, name?: string): string {
+  const normalizedType = (type || '').toUpperCase();
+
+  if (name) {
+    const ext = name.split('.').pop()?.toUpperCase();
+    if (ext) return ext;
+  }
+
+  if (url) {
+    const urlExt = url.split('.').pop()?.split('?')[0]?.toUpperCase();
+    if (urlExt && urlExt.length <= 5) return urlExt;
+  }
+
+  if (normalizedType.includes('/')) {
+    const parts = normalizedType.split('/');
+    if (parts.length === 2) {
+      const mimeType = parts[1].toUpperCase();
+      const mimeMap: Record<string, string> = {
+        PDF: 'PDF',
+        MSWORD: 'DOC',
+        'VND.OPENXMLFORMATS-OFFICEDOCUMENT.WORDPROCESSINGML.DOCUMENT': 'DOCX',
+        'VND.OPENXMLFORMATS-OFFICEDOCUMENT.SPREADSHEETML.SHEET': 'XLSX',
+        'VND.OPENXMLFORMATS-OFFICEDOCUMENT.PRESENTATIONML.PRESENTATION': 'PPTX',
+        CSV: 'CSV',
+        PLAIN: 'TXT',
+      };
+      if (mimeMap[mimeType]) return mimeMap[mimeType];
+    }
+  }
+
+  return normalizedType;
+}
+
+function canUseOfficeOnlineViewer(url: string): boolean {
+  if (!url) return false;
+  if (url.startsWith('blob:')) return false;
+  if (!(url.startsWith('http://') || url.startsWith('https://'))) return false;
+  if (url.includes('/api/upload/download/')) return false;
+  return true;
+}
 
 interface DocumentPreviewModalProps {
   isOpen: boolean;
@@ -21,8 +63,11 @@ export default function DocumentPreviewModal({
   const { getToken } = useAuth();
   const { t } = useTranslation(['common']);
   const [previewBlobUrl, setPreviewBlobUrl] = useState<string | null>(null);
+  const [previewBlob, setPreviewBlob] = useState<Blob | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [loadError, setLoadError] = useState(false);
+  const [isProcessingPreview, setIsProcessingPreview] = useState(false);
+  const [officeHtml, setOfficeHtml] = useState<string | null>(null);
   const blobUrlRef = useRef<string | null>(null);
   const isFetchingRef = useRef(false);
   const lastFileUrlRef = useRef<string | null>(null);
@@ -36,6 +81,9 @@ export default function DocumentPreviewModal({
         blobUrlRef.current = null;
         setPreviewBlobUrl(null);
       }
+      setPreviewBlob(null);
+      setOfficeHtml(null);
+      setIsProcessingPreview(false);
       lastFileUrlRef.current = null;
       return;
     }
@@ -148,6 +196,7 @@ export default function DocumentPreviewModal({
 
         const blob = await response.blob();
         const blobUrl = window.URL.createObjectURL(blob);
+        setPreviewBlob(blob);
         
         // Clean up previous blob URL
         if (blobUrlRef.current) {
@@ -183,6 +232,65 @@ export default function DocumentPreviewModal({
       }
     };
   }, [isOpen, fileUrl, getToken]); // Removed previewBlobUrl from deps to prevent re-renders
+
+  // Client-side Office preview for authenticated blobs (DOCX/XLSX)
+  useEffect(() => {
+    if (!isOpen) return;
+
+    setOfficeHtml(null);
+    setIsProcessingPreview(false);
+
+    if (!previewBlob) return;
+    if (loadError) return;
+
+    const ext = getFileExtension(fileType, fileUrl, fileName);
+    if (!['DOCX', 'XLSX'].includes(ext)) return;
+
+    // Only do client-side rendering when Office Online Viewer can't be used
+    const needsAuth = fileUrl?.startsWith('/api/upload/download/') || (fileUrl?.startsWith('http') && fileUrl?.includes('/api/upload/download/'));
+    const previewUrl = (needsAuth && previewBlobUrl) ? previewBlobUrl : (previewBlobUrl || fileUrl);
+    if (canUseOfficeOnlineViewer(previewUrl)) return;
+
+    let cancelled = false;
+
+    const run = async () => {
+      try {
+        setIsProcessingPreview(true);
+        const arrayBuffer = await previewBlob.arrayBuffer();
+
+        if (ext === 'DOCX') {
+          const mammoth = await import('mammoth/mammoth.browser');
+          const result = await mammoth.convertToHtml({ arrayBuffer });
+          const sanitized = DOMPurify.sanitize(result.value || '');
+          if (cancelled) return;
+          setOfficeHtml(sanitized);
+        } else if (ext === 'XLSX') {
+          const XLSX = await import('xlsx');
+          const wb = XLSX.read(arrayBuffer, { type: 'array' });
+          const firstSheetName = wb.SheetNames?.[0];
+          const ws = firstSheetName ? wb.Sheets[firstSheetName] : undefined;
+          const html = ws ? XLSX.utils.sheet_to_html(ws) : '<div>No sheets found.</div>';
+          const sanitized = DOMPurify.sanitize(html);
+          if (cancelled) return;
+          setOfficeHtml(sanitized);
+        }
+
+        if (cancelled) return;
+        setIsProcessingPreview(false);
+      } catch (e) {
+        console.error('Failed to render Office preview:', e);
+        if (cancelled) return;
+        setIsProcessingPreview(false);
+        setOfficeHtml(null);
+      }
+    };
+
+    run();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, previewBlob, previewBlobUrl, fileType, fileUrl, fileName, loadError]);
   
   if (!isOpen) return null;
 
@@ -281,7 +389,7 @@ export default function DocumentPreviewModal({
     const previewUrl = (needsAuth && previewBlobUrl) ? previewBlobUrl : (previewBlobUrl || fileUrl);
 
     // Show loading state if we're fetching authenticated content
-    if (isLoading && needsAuth) {
+    if ((isLoading && needsAuth) || isProcessingPreview) {
       return (
         <div className="w-full h-full flex flex-col items-center justify-center bg-gray-50">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-swiss-mint mb-4"></div>
@@ -528,14 +636,28 @@ export default function DocumentPreviewModal({
 
     // DOCX, XLSX, and other Office formats
     if (['DOCX', 'DOC', 'XLSX', 'XLS', 'PPTX', 'PPT'].includes(normalizedFileType)) {
-      const viewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fileUrl)}`;
-      return (
-        <iframe
-          src={viewerUrl}
-          className="w-full h-full border-0"
-          title={fileName}
-        />
-      );
+      if (canUseOfficeOnlineViewer(previewUrl)) {
+        const viewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(previewUrl)}`;
+        return (
+          <iframe
+            src={viewerUrl}
+            className="w-full h-full border-0"
+            title={fileName}
+          />
+        );
+      }
+
+      const ext = getFileExtension(fileType, fileUrl, fileName);
+      if (['DOCX', 'XLSX'].includes(ext) && officeHtml !== null) {
+        return (
+          <div className="w-full h-full overflow-auto bg-white p-6">
+            <div
+              className="max-w-none"
+              dangerouslySetInnerHTML={{ __html: officeHtml }}
+            />
+          </div>
+        );
+      }
     }
 
     // Text files
