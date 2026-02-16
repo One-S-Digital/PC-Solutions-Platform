@@ -542,9 +542,10 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({
   const descriptionMaxLength = 1000;
 
   const languageOptions: { value: LanguageCode; label: string }[] = [
-    { value: 'EN', label: 'EN' },
-    { value: 'FR', label: 'FR' },
-    { value: 'DE', label: 'DE' },
+    // Intentionally hardcoded labels (do not translate)
+    { value: 'EN', label: 'English' },
+    { value: 'FR', label: 'Français' },
+    { value: 'DE', label: 'Deutsch' },
   ];
 
   const renderButtonSelect = (

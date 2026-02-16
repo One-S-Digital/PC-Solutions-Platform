@@ -12,11 +12,11 @@ const LanguageSwitcher: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Use keys that will be defined in translation files
-  const languages: { code: SupportedLanguage; labelKey: string; nameKey: string; flag: React.ElementType }[] = [
-    { code: 'EN', labelKey: 'languageSwitcher.enShort', nameKey: 'languageSwitcher.enLong', flag: UKFlagIcon },
-    { code: 'FR', labelKey: 'languageSwitcher.frShort', nameKey: 'languageSwitcher.frLong', flag: FrenchFlagIcon },
-    { code: 'DE', labelKey: 'languageSwitcher.deShort', nameKey: 'languageSwitcher.deLong', flag: GermanFlagIcon },
+  // Intentionally hardcoded labels (do not translate)
+  const languages: { code: SupportedLanguage; name: string; flag: React.ElementType }[] = [
+    { code: 'EN', name: 'English', flag: UKFlagIcon },
+    { code: 'FR', name: 'Français', flag: FrenchFlagIcon },
+    { code: 'DE', name: 'Deutsch', flag: GermanFlagIcon },
   ];
 
   const currentLanguageDetails = languages.find(lang => lang.code === language) || languages[0];
@@ -38,15 +38,6 @@ const LanguageSwitcher: React.FC = () => {
     setLanguage(langCode); 
     setIsOpen(false);
   };
-  
-  const getLabel = (lang: typeof languages[0]) => {
-    // Fallback to code if key not found or t function not ready
-    return t(lang.labelKey, lang.code); 
-  };
-  
-  const getName = (lang: typeof languages[0]) => {
-    return t(lang.nameKey, lang.code);
-  }
 
   return (
     <div className="relative inline-block text-left" ref={dropdownRef}>
@@ -57,10 +48,10 @@ const LanguageSwitcher: React.FC = () => {
           onClick={() => setIsOpen(!isOpen)}
           aria-haspopup="true"
           aria-expanded={isOpen}
-          aria-label={t('languageSwitcher.selectLanguage', { currentLanguage: getName(currentLanguageDetails) })}
+          aria-label={t('languageSwitcher.selectLanguage', { currentLanguage: currentLanguageDetails.name })}
         >
           <CurrentFlagIcon className="w-5 h-auto mr-2" />
-          {getLabel(currentLanguageDetails)}
+          {currentLanguageDetails.name}
           <ChevronDownIcon className="ml-1.5 h-5 w-5 text-gray-400" />
         </button>
       </div>
@@ -86,7 +77,7 @@ const LanguageSwitcher: React.FC = () => {
                   aria-current={isCurrent ? "page" : undefined}
                 >
                   <FlagIcon className="w-5 h-auto mr-3" />
-                  {getName(lang)} ({getLabel(lang)})
+                  {lang.name}
                 </button>
               );
             })}
