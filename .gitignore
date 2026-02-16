@@ -27,6 +27,9 @@ frontend/test-results/
 out/
 dist
 
+# TypeScript incremental build info
+*.tsbuildinfo
+
 
 # Debug
 npm-debug.log*

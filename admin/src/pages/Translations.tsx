@@ -1477,7 +1477,8 @@ export default function Translations() {
                     key={lang}
                     className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    {t(`common:languageLabels.${lang}`, lang === 'en' ? 'English' : lang === 'fr' ? 'Français' : 'Deutsch')}
+                    {/* Intentionally hardcoded labels (do not translate) */}
+                    {lang === 'en' ? 'English' : lang === 'fr' ? 'Français' : 'Deutsch'}
                   </th>
                 ))}
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -1801,9 +1802,10 @@ export default function Translations() {
                   onChange={(e) => setIssuesLang(e.target.value as any)}
                   className="w-full border rounded px-3 py-2"
                 >
-                  <option value="fr">{t('common:languageLabels.fr', 'Français')}</option>
-                  <option value="de">{t('common:languageLabels.de', 'Deutsch')}</option>
-                  <option value="en">{t('common:languageLabels.en', 'English')}</option>
+                  {/* Intentionally hardcoded labels (do not translate) */}
+                  <option value="en">English</option>
+                  <option value="fr">Français</option>
+                  <option value="de">Deutsch</option>
                 </select>
               </div>
 
@@ -1938,10 +1940,12 @@ export default function Translations() {
                         {t('admin:translations.table.key', 'Key')}
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        {t('common:languageLabels.en', 'English')}
+                        {/* Intentionally hardcoded labels (do not translate) */}
+                        English
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        {t(`common:languageLabels.${issuesLang}`, issuesLang)}
+                        {/* Intentionally hardcoded labels (do not translate) */}
+                        {issuesLang === 'en' ? 'English' : issuesLang === 'fr' ? 'Français' : 'Deutsch'}
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         {t('admin:translations.issues.table.issue', 'Issue')}
