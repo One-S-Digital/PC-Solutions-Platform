@@ -35,11 +35,11 @@ export const AdminLayout: React.FC<Props> = ({ children }) => {
   }, [location.pathname])
 
   return (
-    <div className="flex min-h-dvh">
+    <div className="flex min-h-dvh overflow-x-hidden">
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-      <div className="flex-1 flex flex-col lg:pl-72">
+      <div className="min-w-0 flex-1 flex flex-col lg:pl-72">
         <Header setSidebarOpen={setSidebarOpen} />
-        <main className="flex-1 bg-page-bg p-4">{children ?? <Outlet />}</main>
+        <main className="min-w-0 flex-1 bg-page-bg p-4 overflow-x-hidden">{children ?? <Outlet />}</main>
       </div>
     </div>
   );
