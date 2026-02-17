@@ -33,12 +33,12 @@ const SettingsLayout: React.FC = () => {
       component: SystemMonitorPage,
     },
     {
-      name: t('admin:designSystem', { defaultValue: 'Design System' }),
+      name: t('admin:settings.tabs.designSystem', { defaultValue: 'Design System' }),
       key: 'designSystem',
       component: DesignSystemPage,
     },
     {
-      name: t('admin:translations', { defaultValue: 'Translations' }),
+      name: t('admin:settings.tabs.translations', { defaultValue: 'Translations' }),
       key: 'translations',
       component: TranslationsPage,
     },
@@ -80,7 +80,7 @@ function classNames(...classes: string[]) {
       <div className="bg-white rounded-card shadow-soft border border-gray-200">
         <Tab.Group selectedIndex={selectedIndex} onChange={handleTabChange}>
           <div className="border-b border-gray-200">
-            <Tab.List className="flex space-x-8 px-6 overflow-x-auto whitespace-nowrap">
+            <Tab.List className="flex flex-wrap gap-x-8 gap-y-2 px-6">
               {tabs.map((tab) => (
                 <Tab
                   key={tab.key}
