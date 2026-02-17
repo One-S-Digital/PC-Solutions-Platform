@@ -465,53 +465,55 @@ export default function EmailNotificationPage() {
               </AdminButton>
             </div>
             
-            <AdminTable>
-              <AdminTableHeader>
-                <AdminTableRow>
-                  <AdminTableHeaderCell>{t('admin:settings.emailNotifications.templates.tableHeaders.name')}</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>{t('admin:settings.emailNotifications.templates.tableHeaders.event')}</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>{t('admin:settings.emailNotifications.templates.tableHeaders.category')}</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>{t('admin:settings.emailNotifications.templates.tableHeaders.subject')}</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>{t('admin:settings.emailNotifications.templates.tableHeaders.status')}</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>{t('admin:settings.emailNotifications.templates.tableHeaders.updated')}</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>{t('admin:settings.emailNotifications.templates.tableHeaders.actions')}</AdminTableHeaderCell>
-                </AdminTableRow>
-              </AdminTableHeader>
-              <AdminTableBody>
-                {templates.map((template) => (
-                  <AdminTableRow key={template.id}>
-                    <AdminTableCell>{template.name}</AdminTableCell>
-                    <AdminTableCell>
-                      <code className="text-xs bg-gray-100 px-2 py-1 rounded">{template.event}</code>
-                    </AdminTableCell>
-                    <AdminTableCell>
-                      <AdminBadge variant={getCategoryColor(template.category)}>
-                        {template.category}
-                      </AdminBadge>
-                    </AdminTableCell>
-                    <AdminTableCell>{template.subject}</AdminTableCell>
-                    <AdminTableCell>
-                      <AdminBadge variant={template.isActive ? 'low' : 'medium'}>
-                        {template.isActive ? t('admin:settings.emailNotifications.templates.status.active') : t('admin:settings.emailNotifications.templates.status.inactive')}
-                      </AdminBadge>
-                    </AdminTableCell>
-                    <AdminTableCell>
-                      {new Date(template.updatedAt).toLocaleDateString()}
-                    </AdminTableCell>
-                    <AdminTableCell>
-                      <div className="flex gap-2">
-                        <AdminButton variant="outline" size="sm" onClick={() => openEditTemplate(template)}>
-                          {t('admin:settings.emailNotifications.templates.buttons.edit')}
-                        </AdminButton>
-                        <AdminButton variant="secondary" size="sm" onClick={() => openPreviewTemplate(template)}>
-                          {t('admin:settings.emailNotifications.templates.buttons.preview')}
-                        </AdminButton>
-                      </div>
-                    </AdminTableCell>
+            <div className="overflow-x-auto">
+              <AdminTable>
+                <AdminTableHeader>
+                  <AdminTableRow>
+                    <AdminTableHeaderCell>{t('admin:settings.emailNotifications.templates.tableHeaders.name')}</AdminTableHeaderCell>
+                    <AdminTableHeaderCell>{t('admin:settings.emailNotifications.templates.tableHeaders.event')}</AdminTableHeaderCell>
+                    <AdminTableHeaderCell>{t('admin:settings.emailNotifications.templates.tableHeaders.category')}</AdminTableHeaderCell>
+                    <AdminTableHeaderCell>{t('admin:settings.emailNotifications.templates.tableHeaders.subject')}</AdminTableHeaderCell>
+                    <AdminTableHeaderCell>{t('admin:settings.emailNotifications.templates.tableHeaders.status')}</AdminTableHeaderCell>
+                    <AdminTableHeaderCell>{t('admin:settings.emailNotifications.templates.tableHeaders.updated')}</AdminTableHeaderCell>
+                    <AdminTableHeaderCell>{t('admin:settings.emailNotifications.templates.tableHeaders.actions')}</AdminTableHeaderCell>
                   </AdminTableRow>
-                ))}
-              </AdminTableBody>
-            </AdminTable>
+                </AdminTableHeader>
+                <AdminTableBody>
+                  {templates.map((template) => (
+                    <AdminTableRow key={template.id}>
+                      <AdminTableCell>{template.name}</AdminTableCell>
+                      <AdminTableCell>
+                        <code className="text-xs bg-gray-100 px-2 py-1 rounded">{template.event}</code>
+                      </AdminTableCell>
+                      <AdminTableCell>
+                        <AdminBadge variant={getCategoryColor(template.category)}>
+                          {template.category}
+                        </AdminBadge>
+                      </AdminTableCell>
+                      <AdminTableCell>{template.subject}</AdminTableCell>
+                      <AdminTableCell>
+                        <AdminBadge variant={template.isActive ? 'low' : 'medium'}>
+                          {template.isActive ? t('admin:settings.emailNotifications.templates.status.active') : t('admin:settings.emailNotifications.templates.status.inactive')}
+                        </AdminBadge>
+                      </AdminTableCell>
+                      <AdminTableCell>
+                        {new Date(template.updatedAt).toLocaleDateString()}
+                      </AdminTableCell>
+                      <AdminTableCell>
+                        <div className="flex gap-2">
+                          <AdminButton variant="outline" size="sm" onClick={() => openEditTemplate(template)}>
+                            {t('admin:settings.emailNotifications.templates.buttons.edit')}
+                          </AdminButton>
+                          <AdminButton variant="secondary" size="sm" onClick={() => openPreviewTemplate(template)}>
+                            {t('admin:settings.emailNotifications.templates.buttons.preview')}
+                          </AdminButton>
+                        </div>
+                      </AdminTableCell>
+                    </AdminTableRow>
+                  ))}
+                </AdminTableBody>
+              </AdminTable>
+            </div>
           </AdminCard>
         )}
 
@@ -568,40 +570,42 @@ export default function EmailNotificationPage() {
               </AdminButton>
             </div>
             
-            <AdminTable>
-              <AdminTableHeader>
-                <AdminTableRow>
-                  <AdminTableHeaderCell>{t('admin:settings.emailNotifications.logs.tableHeaders.event')}</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>{t('admin:settings.emailNotifications.logs.tableHeaders.recipient')}</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>{t('admin:settings.emailNotifications.logs.tableHeaders.status')}</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>{t('admin:settings.emailNotifications.logs.tableHeaders.sentAt')}</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>{t('admin:settings.emailNotifications.logs.tableHeaders.error')}</AdminTableHeaderCell>
-                </AdminTableRow>
-              </AdminTableHeader>
-              <AdminTableBody>
-                {emailLogs.map((log) => (
-                  <AdminTableRow key={log.id}>
-                    <AdminTableCell>
-                      <code className="text-xs bg-gray-100 px-2 py-1 rounded">{log.event}</code>
-                    </AdminTableCell>
-                    <AdminTableCell>{log.recipient}</AdminTableCell>
-                    <AdminTableCell>
-                      <AdminBadge variant={getStatusColor(log.status)}>
-                        {log.status}
-                      </AdminBadge>
-                    </AdminTableCell>
-                    <AdminTableCell>
-                      {new Date(log.createdAt).toLocaleString()}
-                    </AdminTableCell>
-                    <AdminTableCell>
-                      {log.error ? (
-                        <span className="text-red-500 text-xs">{log.error}</span>
-                      ) : '-'}
-                    </AdminTableCell>
+            <div className="overflow-x-auto">
+              <AdminTable>
+                <AdminTableHeader>
+                  <AdminTableRow>
+                    <AdminTableHeaderCell>{t('admin:settings.emailNotifications.logs.tableHeaders.event')}</AdminTableHeaderCell>
+                    <AdminTableHeaderCell>{t('admin:settings.emailNotifications.logs.tableHeaders.recipient')}</AdminTableHeaderCell>
+                    <AdminTableHeaderCell>{t('admin:settings.emailNotifications.logs.tableHeaders.status')}</AdminTableHeaderCell>
+                    <AdminTableHeaderCell>{t('admin:settings.emailNotifications.logs.tableHeaders.sentAt')}</AdminTableHeaderCell>
+                    <AdminTableHeaderCell>{t('admin:settings.emailNotifications.logs.tableHeaders.error')}</AdminTableHeaderCell>
                   </AdminTableRow>
-                ))}
-              </AdminTableBody>
-            </AdminTable>
+                </AdminTableHeader>
+                <AdminTableBody>
+                  {emailLogs.map((log) => (
+                    <AdminTableRow key={log.id}>
+                      <AdminTableCell>
+                        <code className="text-xs bg-gray-100 px-2 py-1 rounded">{log.event}</code>
+                      </AdminTableCell>
+                      <AdminTableCell>{log.recipient}</AdminTableCell>
+                      <AdminTableCell>
+                        <AdminBadge variant={getStatusColor(log.status)}>
+                          {log.status}
+                        </AdminBadge>
+                      </AdminTableCell>
+                      <AdminTableCell>
+                        {new Date(log.createdAt).toLocaleString()}
+                      </AdminTableCell>
+                      <AdminTableCell>
+                        {log.error ? (
+                          <span className="text-red-500 text-xs">{log.error}</span>
+                        ) : '-'}
+                      </AdminTableCell>
+                    </AdminTableRow>
+                  ))}
+                </AdminTableBody>
+              </AdminTable>
+            </div>
           </AdminCard>
         )}
 
