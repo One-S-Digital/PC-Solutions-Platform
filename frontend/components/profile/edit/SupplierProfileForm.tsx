@@ -13,10 +13,11 @@ import {
   ShoppingCartIcon,
 } from '@heroicons/react/24/outline';
 
-const SUPPORTED_LANGUAGES_OPTIONS_BASE: { labelKey: string, value: SupportedLanguage }[] = [
-  { labelKey: 'common:languageSwitcher.en', value: 'EN'},
-  { labelKey: 'common:languageSwitcher.fr', value: 'FR'},
-  { labelKey: 'common:languageSwitcher.de', value: 'DE'},
+// Intentionally hardcoded labels (do not translate)
+const SUPPORTED_LANGUAGES_OPTIONS: { label: string; value: SupportedLanguage }[] = [
+  { label: 'English', value: 'EN' },
+  { label: 'Français', value: 'FR' },
+  { label: 'Deutsch', value: 'DE' },
 ];
 
 interface SupplierProfileFormProps {
@@ -41,7 +42,7 @@ const SupplierProfileForm: React.FC<SupplierProfileFormProps> = ({ formData, onC
     onChange(field, newValues);
   };
 
-  const translatedLanguageOptions = SUPPORTED_LANGUAGES_OPTIONS_BASE.map(opt => ({...opt, label: t(opt.labelKey)}));
+  const translatedLanguageOptions = SUPPORTED_LANGUAGES_OPTIONS;
 
   const logoUrl = formData.logoUrl || currentUser?.orgLogoUrl || 
     `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.companyName || 'Supplier')}&background=2DD4BF&color=ffffff&size=128&rounded=true`;

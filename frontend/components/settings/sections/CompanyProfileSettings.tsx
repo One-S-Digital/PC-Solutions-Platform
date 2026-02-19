@@ -31,10 +31,11 @@ interface CompanyProfileSettingsProps {
   userRole: UserRole;
 }
 
-const SUPPORTED_LANGUAGES_OPTIONS_BASE: { labelKey: string, value: SupportedLanguage }[] = [
-    { labelKey: 'common:languageSwitcher.en', value: 'EN'},
-    { labelKey: 'common:languageSwitcher.fr', value: 'FR'},
-    { labelKey: 'common:languageSwitcher.de', value: 'DE'},
+// Intentionally hardcoded labels (do not translate)
+const SUPPORTED_LANGUAGES_OPTIONS: { label: string; value: SupportedLanguage }[] = [
+  { label: 'English', value: 'EN' },
+  { label: 'Français', value: 'FR' },
+  { label: 'Deutsch', value: 'DE' },
 ];
 
 // Legacy enum options for backward compatibility
@@ -101,7 +102,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
     onChange(field, array);
   };
 
-  const translatedLanguageOptions = SUPPORTED_LANGUAGES_OPTIONS_BASE.map(opt => ({...opt, label: t(opt.labelKey)}));
+  const translatedLanguageOptions = SUPPORTED_LANGUAGES_OPTIONS;
 
   const isFoundation = userRole === UserRole.FOUNDATION;
   const isSupplier = userRole === UserRole.PRODUCT_SUPPLIER;

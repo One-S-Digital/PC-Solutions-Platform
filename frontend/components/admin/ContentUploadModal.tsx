@@ -420,9 +420,10 @@ const ContentUploadModal: React.FC<ContentUploadModalProps> = ({ isOpen, onClose
 
 
   const languageOptions: { value: LanguageCode; label: string }[] = [
-    { value: 'EN', label: t('common:languageSwitcher.enShort') },
-    { value: 'FR', label: t('common:languageSwitcher.frShort') },
-    { value: 'DE', label: t('common:languageSwitcher.deShort') },
+    // Intentionally hardcoded labels (do not translate)
+    { value: 'EN', label: 'English' },
+    { value: 'FR', label: 'Français' },
+    { value: 'DE', label: 'Deutsch' },
   ];
   
   const renderButtonSelect = (

@@ -530,58 +530,59 @@ export default function SystemConfigurationPage() {
                 {t('admin:settings.systemConfig.systemSettings.createSetting')}
               </AdminButton>
             </div>
-            
-            <AdminTable>
-              <AdminTableHeader>
-                <AdminTableRow>
-                  <AdminTableHeaderCell>{t('admin:settings.systemConfig.systemSettings.tableHeaders.key')}</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>{t('admin:settings.systemConfig.systemSettings.tableHeaders.value')}</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>{t('admin:settings.systemConfig.systemSettings.tableHeaders.category')}</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>{t('admin:settings.systemConfig.systemSettings.tableHeaders.type')}</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>{t('admin:settings.systemConfig.systemSettings.tableHeaders.actions')}</AdminTableHeaderCell>
-                </AdminTableRow>
-              </AdminTableHeader>
-              <AdminTableBody>
-                {settings.map((setting) => (
-                  <AdminTableRow key={setting.id}>
-                    <AdminTableCell>
-                      <div>
-                        <div className="font-medium text-admin-text">{setting.key}</div>
-                        <div className="text-sm text-admin-muted">{setting.description}</div>
-                      </div>
-                    </AdminTableCell>
-                    <AdminTableCell>
-                      <div className="text-sm text-admin-text">
-                        {typeof setting.value === 'string' ? setting.value : JSON.stringify(setting.value)}
-                      </div>
-                    </AdminTableCell>
-                    <AdminTableCell>
-                      <AdminBadge variant="low">{setting.category}</AdminBadge>
-                    </AdminTableCell>
-                    <AdminTableCell>
-                      <div className="flex gap-1">
-                        {setting.isEncrypted && <AdminBadge variant="high">{t('admin:settings.systemConfig.systemSettings.badges.encrypted')}</AdminBadge>}
-                        {setting.isPublic && <AdminBadge variant="medium">{t('admin:settings.systemConfig.systemSettings.badges.public')}</AdminBadge>}
-                      </div>
-                    </AdminTableCell>
-                    <AdminTableCell>
-                      <div className="flex gap-2">
-                        <AdminButton 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => handleEditSetting(setting)}
-                        >
-                          {t('admin:settings.systemConfig.systemSettings.buttons.edit')}
-                        </AdminButton>
-                        <AdminButton variant="secondary" size="sm">
-                          {t('admin:settings.systemConfig.systemSettings.buttons.view')}
-                        </AdminButton>
-                      </div>
-                    </AdminTableCell>
+            <div className="overflow-x-auto">
+              <AdminTable>
+                <AdminTableHeader>
+                  <AdminTableRow>
+                    <AdminTableHeaderCell>{t('admin:settings.systemConfig.systemSettings.tableHeaders.key')}</AdminTableHeaderCell>
+                    <AdminTableHeaderCell>{t('admin:settings.systemConfig.systemSettings.tableHeaders.value')}</AdminTableHeaderCell>
+                    <AdminTableHeaderCell>{t('admin:settings.systemConfig.systemSettings.tableHeaders.category')}</AdminTableHeaderCell>
+                    <AdminTableHeaderCell>{t('admin:settings.systemConfig.systemSettings.tableHeaders.type')}</AdminTableHeaderCell>
+                    <AdminTableHeaderCell>{t('admin:settings.systemConfig.systemSettings.tableHeaders.actions')}</AdminTableHeaderCell>
                   </AdminTableRow>
-                ))}
-              </AdminTableBody>
-            </AdminTable>
+                </AdminTableHeader>
+                <AdminTableBody>
+                  {settings.map((setting) => (
+                    <AdminTableRow key={setting.id}>
+                      <AdminTableCell>
+                        <div>
+                          <div className="font-medium text-admin-text">{setting.key}</div>
+                          <div className="text-sm text-admin-muted">{setting.description}</div>
+                        </div>
+                      </AdminTableCell>
+                      <AdminTableCell>
+                        <div className="text-sm text-admin-text">
+                          {typeof setting.value === 'string' ? setting.value : JSON.stringify(setting.value)}
+                        </div>
+                      </AdminTableCell>
+                      <AdminTableCell>
+                        <AdminBadge variant="low">{setting.category}</AdminBadge>
+                      </AdminTableCell>
+                      <AdminTableCell>
+                        <div className="flex gap-1">
+                          {setting.isEncrypted && <AdminBadge variant="high">{t('admin:settings.systemConfig.systemSettings.badges.encrypted')}</AdminBadge>}
+                          {setting.isPublic && <AdminBadge variant="medium">{t('admin:settings.systemConfig.systemSettings.badges.public')}</AdminBadge>}
+                        </div>
+                      </AdminTableCell>
+                      <AdminTableCell>
+                        <div className="flex gap-2">
+                          <AdminButton 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => handleEditSetting(setting)}
+                          >
+                            {t('admin:settings.systemConfig.systemSettings.buttons.edit')}
+                          </AdminButton>
+                          <AdminButton variant="secondary" size="sm">
+                            {t('admin:settings.systemConfig.systemSettings.buttons.view')}
+                          </AdminButton>
+                        </div>
+                      </AdminTableCell>
+                    </AdminTableRow>
+                  ))}
+                </AdminTableBody>
+              </AdminTable>
+            </div>
 
             {/* Edit Setting Modal */}
             {showEditSetting && editingSetting && (
@@ -674,54 +675,55 @@ export default function SystemConfigurationPage() {
                 {t('admin:settings.systemConfig.integrations.createIntegration')}
               </AdminButton>
             </div>
-            
-            <AdminTable>
-              <AdminTableHeader>
-                <AdminTableRow>
-                  <AdminTableHeaderCell>{t('admin:settings.systemConfig.integrations.tableHeaders.name')}</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>{t('admin:settings.systemConfig.integrations.tableHeaders.type')}</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>{t('admin:settings.systemConfig.integrations.tableHeaders.provider')}</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>{t('admin:settings.systemConfig.integrations.tableHeaders.status')}</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>{t('admin:settings.systemConfig.integrations.tableHeaders.lastSync')}</AdminTableHeaderCell>
-                  <AdminTableHeaderCell>{t('admin:settings.systemConfig.integrations.tableHeaders.actions')}</AdminTableHeaderCell>
-                </AdminTableRow>
-              </AdminTableHeader>
-              <AdminTableBody>
-                {integrations.map((integration) => (
-                  <AdminTableRow key={integration.id}>
-                    <AdminTableCell>
-                      <div className="font-medium text-admin-text">{integration.name}</div>
-                    </AdminTableCell>
-                    <AdminTableCell>
-                      <AdminBadge variant="low">{integration.type}</AdminBadge>
-                    </AdminTableCell>
-                    <AdminTableCell>
-                      <div className="text-admin-text">{integration.provider}</div>
-                    </AdminTableCell>
-                    <AdminTableCell>
-                      <AdminBadge variant={integration.isActive ? 'low' : 'medium'}>
-                        {integration.isActive ? t('admin:settings.systemConfig.integrations.status.active') : t('admin:settings.systemConfig.integrations.status.inactive')}
-                      </AdminBadge>
-                    </AdminTableCell>
-                    <AdminTableCell>
-                      <div className="text-sm text-admin-text">
-                        {integration.lastSyncAt ? new Date(integration.lastSyncAt).toLocaleString() : t('admin:settings.systemConfig.integrations.status.never')}
-                      </div>
-                    </AdminTableCell>
-                    <AdminTableCell>
-                      <div className="flex gap-2">
-                        <AdminButton variant="outline" size="sm">
-                          {t('admin:settings.systemConfig.integrations.buttons.test')}
-                        </AdminButton>
-                        <AdminButton variant="secondary" size="sm">
-                          {t('admin:settings.systemConfig.integrations.buttons.sync')}
-                        </AdminButton>
-                      </div>
-                    </AdminTableCell>
+            <div className="overflow-x-auto">
+              <AdminTable>
+                <AdminTableHeader>
+                  <AdminTableRow>
+                    <AdminTableHeaderCell>{t('admin:settings.systemConfig.integrations.tableHeaders.name')}</AdminTableHeaderCell>
+                    <AdminTableHeaderCell>{t('admin:settings.systemConfig.integrations.tableHeaders.type')}</AdminTableHeaderCell>
+                    <AdminTableHeaderCell>{t('admin:settings.systemConfig.integrations.tableHeaders.provider')}</AdminTableHeaderCell>
+                    <AdminTableHeaderCell>{t('admin:settings.systemConfig.integrations.tableHeaders.status')}</AdminTableHeaderCell>
+                    <AdminTableHeaderCell>{t('admin:settings.systemConfig.integrations.tableHeaders.lastSync')}</AdminTableHeaderCell>
+                    <AdminTableHeaderCell>{t('admin:settings.systemConfig.integrations.tableHeaders.actions')}</AdminTableHeaderCell>
                   </AdminTableRow>
-                ))}
-              </AdminTableBody>
-            </AdminTable>
+                </AdminTableHeader>
+                <AdminTableBody>
+                  {integrations.map((integration) => (
+                    <AdminTableRow key={integration.id}>
+                      <AdminTableCell>
+                        <div className="font-medium text-admin-text">{integration.name}</div>
+                      </AdminTableCell>
+                      <AdminTableCell>
+                        <AdminBadge variant="low">{integration.type}</AdminBadge>
+                      </AdminTableCell>
+                      <AdminTableCell>
+                        <div className="text-admin-text">{integration.provider}</div>
+                      </AdminTableCell>
+                      <AdminTableCell>
+                        <AdminBadge variant={integration.isActive ? 'low' : 'medium'}>
+                          {integration.isActive ? t('admin:settings.systemConfig.integrations.status.active') : t('admin:settings.systemConfig.integrations.status.inactive')}
+                        </AdminBadge>
+                      </AdminTableCell>
+                      <AdminTableCell>
+                        <div className="text-sm text-admin-text">
+                          {integration.lastSyncAt ? new Date(integration.lastSyncAt).toLocaleString() : t('admin:settings.systemConfig.integrations.status.never')}
+                        </div>
+                      </AdminTableCell>
+                      <AdminTableCell>
+                        <div className="flex gap-2">
+                          <AdminButton variant="outline" size="sm">
+                            {t('admin:settings.systemConfig.integrations.buttons.test')}
+                          </AdminButton>
+                          <AdminButton variant="secondary" size="sm">
+                            {t('admin:settings.systemConfig.integrations.buttons.sync')}
+                          </AdminButton>
+                        </div>
+                      </AdminTableCell>
+                    </AdminTableRow>
+                  ))}
+                </AdminTableBody>
+              </AdminTable>
+            </div>
           </AdminCard>
         )}
 
@@ -780,56 +782,57 @@ export default function SystemConfigurationPage() {
                   {t('admin:settings.systemConfig.maintenance.schedules.createSchedule')}
                 </AdminButton>
               </div>
-              
-              <AdminTable>
-                <AdminTableHeader>
-                  <AdminTableRow>
-                    <AdminTableHeaderCell>{t('admin:settings.systemConfig.maintenance.tableHeaders.name')}</AdminTableHeaderCell>
-                    <AdminTableHeaderCell>{t('admin:settings.systemConfig.maintenance.tableHeaders.description')}</AdminTableHeaderCell>
-                    <AdminTableHeaderCell>{t('admin:settings.systemConfig.maintenance.tableHeaders.scheduledStart')}</AdminTableHeaderCell>
-                    <AdminTableHeaderCell>{t('admin:settings.systemConfig.maintenance.tableHeaders.scheduledEnd')}</AdminTableHeaderCell>
-                    <AdminTableHeaderCell>{t('admin:settings.systemConfig.maintenance.tableHeaders.status')}</AdminTableHeaderCell>
-                    <AdminTableHeaderCell>{t('admin:settings.systemConfig.maintenance.tableHeaders.actions')}</AdminTableHeaderCell>
-                  </AdminTableRow>
-                </AdminTableHeader>
-                <AdminTableBody>
-                  {maintenanceSchedules.map((schedule) => (
-                    <AdminTableRow key={schedule.id}>
-                      <AdminTableCell>
-                        <div className="font-medium text-admin-text">{schedule.name}</div>
-                      </AdminTableCell>
-                      <AdminTableCell>
-                        <div className="text-sm text-admin-text">{schedule.description}</div>
-                      </AdminTableCell>
-                      <AdminTableCell>
-                        <div className="text-sm text-admin-text">
-                          {new Date(schedule.scheduledStart).toLocaleString()}
-                        </div>
-                      </AdminTableCell>
-                      <AdminTableCell>
-                        <div className="text-sm text-admin-text">
-                          {new Date(schedule.scheduledEnd).toLocaleString()}
-                        </div>
-                      </AdminTableCell>
-                      <AdminTableCell>
-                        <AdminBadge variant={schedule.isActive ? 'low' : 'medium'}>
-                          {schedule.isActive ? t('admin:settings.systemConfig.integrations.status.active') : t('admin:settings.systemConfig.integrations.status.inactive')}
-                        </AdminBadge>
-                      </AdminTableCell>
-                      <AdminTableCell>
-                        <div className="flex gap-2">
-                          <AdminButton variant="outline" size="sm">
-                            {t('admin:settings.systemConfig.systemSettings.buttons.edit')}
-                          </AdminButton>
-                          <AdminButton variant="secondary" size="sm">
-                            {t('admin:settings.systemConfig.systemSettings.buttons.view')}
-                          </AdminButton>
-                        </div>
-                      </AdminTableCell>
+              <div className="overflow-x-auto">
+                <AdminTable>
+                  <AdminTableHeader>
+                    <AdminTableRow>
+                      <AdminTableHeaderCell>{t('admin:settings.systemConfig.maintenance.tableHeaders.name')}</AdminTableHeaderCell>
+                      <AdminTableHeaderCell>{t('admin:settings.systemConfig.maintenance.tableHeaders.description')}</AdminTableHeaderCell>
+                      <AdminTableHeaderCell>{t('admin:settings.systemConfig.maintenance.tableHeaders.scheduledStart')}</AdminTableHeaderCell>
+                      <AdminTableHeaderCell>{t('admin:settings.systemConfig.maintenance.tableHeaders.scheduledEnd')}</AdminTableHeaderCell>
+                      <AdminTableHeaderCell>{t('admin:settings.systemConfig.maintenance.tableHeaders.status')}</AdminTableHeaderCell>
+                      <AdminTableHeaderCell>{t('admin:settings.systemConfig.maintenance.tableHeaders.actions')}</AdminTableHeaderCell>
                     </AdminTableRow>
-                  ))}
-                </AdminTableBody>
-              </AdminTable>
+                  </AdminTableHeader>
+                  <AdminTableBody>
+                    {maintenanceSchedules.map((schedule) => (
+                      <AdminTableRow key={schedule.id}>
+                        <AdminTableCell>
+                          <div className="font-medium text-admin-text">{schedule.name}</div>
+                        </AdminTableCell>
+                        <AdminTableCell>
+                          <div className="text-sm text-admin-text">{schedule.description}</div>
+                        </AdminTableCell>
+                        <AdminTableCell>
+                          <div className="text-sm text-admin-text">
+                            {new Date(schedule.scheduledStart).toLocaleString()}
+                          </div>
+                        </AdminTableCell>
+                        <AdminTableCell>
+                          <div className="text-sm text-admin-text">
+                            {new Date(schedule.scheduledEnd).toLocaleString()}
+                          </div>
+                        </AdminTableCell>
+                        <AdminTableCell>
+                          <AdminBadge variant={schedule.isActive ? 'low' : 'medium'}>
+                            {schedule.isActive ? t('admin:settings.systemConfig.integrations.status.active') : t('admin:settings.systemConfig.integrations.status.inactive')}
+                          </AdminBadge>
+                        </AdminTableCell>
+                        <AdminTableCell>
+                          <div className="flex gap-2">
+                            <AdminButton variant="outline" size="sm">
+                              {t('admin:settings.systemConfig.systemSettings.buttons.edit')}
+                            </AdminButton>
+                            <AdminButton variant="secondary" size="sm">
+                              {t('admin:settings.systemConfig.systemSettings.buttons.view')}
+                            </AdminButton>
+                          </div>
+                        </AdminTableCell>
+                      </AdminTableRow>
+                    ))}
+                  </AdminTableBody>
+                </AdminTable>
+              </div>
             </AdminCard>
           </div>
         )}

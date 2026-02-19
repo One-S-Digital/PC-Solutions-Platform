@@ -8,11 +8,11 @@ const LanguageSwitcher: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Available languages for admin
-  const languages: { code: 'EN' | 'FR' | 'DE'; labelKey: string; nameKey: string }[] = [
-    { code: 'EN', labelKey: 'languageSwitcher.enShort', nameKey: 'languageSwitcher.enLong' },
-    { code: 'FR', labelKey: 'languageSwitcher.frShort', nameKey: 'languageSwitcher.frLong' },
-    { code: 'DE', labelKey: 'languageSwitcher.deShort', nameKey: 'languageSwitcher.deLong' },
+  // Intentionally hardcoded labels (do not translate)
+  const languages: { code: 'EN' | 'FR' | 'DE'; name: string }[] = [
+    { code: 'EN', name: 'English' },
+    { code: 'FR', name: 'Français' },
+    { code: 'DE', name: 'Deutsch' },
   ];
 
   const currentCode = (i18n.language || 'en').toUpperCase().slice(0, 2) as 'EN' | 'FR' | 'DE';
@@ -38,15 +38,6 @@ const LanguageSwitcher: React.FC = () => {
     } catch {}
     setIsOpen(false);
   };
-  
-  const getLabel = (lang: typeof languages[0]) => {
-    // Fallback to code if key not found or t function not ready
-    return t(lang.labelKey, lang.code);
-  };
-  
-  const getName = (lang: typeof languages[0]) => {
-    return t(lang.nameKey, lang.code);
-  }
 
   return (
     <div className="relative inline-block text-left" ref={dropdownRef}>
@@ -57,9 +48,9 @@ const LanguageSwitcher: React.FC = () => {
           onClick={() => setIsOpen(!isOpen)}
           aria-haspopup="true"
           aria-expanded={isOpen}
-          aria-label={t('languageSwitcher.selectLanguage', { currentLanguage: getName(currentLanguageDetails) })}
+          aria-label={t('languageSwitcher.selectLanguage', { currentLanguage: currentLanguageDetails.name })}
         >
-          {getLabel(currentLanguageDetails)}
+          {currentLanguageDetails.name}
           <ChevronDownIcon className="ml-1.5 h-5 w-5 text-gray-400" />
         </button>
       </div>
@@ -83,7 +74,7 @@ const LanguageSwitcher: React.FC = () => {
                   role="menuitem"
                   aria-current={isCurrent ? "page" : undefined}
                 >
-                  {getName(lang)} ({getLabel(lang)})
+                  {lang.name}
                 </button>
               );
             })}
