@@ -50,7 +50,9 @@ BEGIN
     IF NOT EXISTS (
       SELECT 1 FROM pg_constraint
       WHERE conname = 'AppUser_email_not_empty'
-        AND conrelid = 'public.AppUser'::regclass
+        -- Use to_regclass with quoted identifier to avoid 42P01 when "AppUser" exists
+        -- as a case-sensitive table but unquoted public.AppUser would resolve to public.appuser.
+        AND conrelid = to_regclass('public."AppUser"')
     ) THEN
       ALTER TABLE "public"."AppUser"
         ADD CONSTRAINT "AppUser_email_not_empty"

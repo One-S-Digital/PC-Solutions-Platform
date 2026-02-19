@@ -13,6 +13,7 @@ import { AppModule } from './app.module';
 import { AppLoggerService } from './common/logger.service';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 import { SentryExceptionFilter } from './common/filters/sentry-exception.filter';
+import { getProductionAllowedOrigins, normalizeOrigin } from './common/cors';
 
 async function bootstrap() {
   // Trigger deployment to run database migrations
@@ -27,10 +28,7 @@ async function bootstrap() {
   expressApp.set('etag', false);
   
   // CORS configuration - MUST run before helmet
-  const prodAllowed = new Set([
-    'https://app.procrechesolutions.com',
-    'https://admin.procrechesolutions.com',
-  ]);
+  const prodAllowed = new Set(getProductionAllowedOrigins());
 
   app.enableCors({
     origin: (origin, cb) => {
@@ -41,7 +39,7 @@ async function bootstrap() {
       if (process.env.NODE_ENV !== 'production') return cb(null, true);
 
       // In production, only allow known origins
-      return cb(null, prodAllowed.has(origin));
+      return cb(null, prodAllowed.has(normalizeOrigin(origin) || origin));
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],

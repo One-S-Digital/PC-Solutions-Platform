@@ -419,6 +419,65 @@ ON "public"."users" ((("availabilitySettings"->>'employmentType')));
 
 
 /**
+ * Ensure required Postgres extensions exist for migrations.
+ *
+ * Several migrations in this repo rely on `gen_random_uuid()` which is provided by
+ * the `pgcrypto` extension. On a brand-new database this extension may not be
+ * enabled, causing migrations to fail.
+ */
+const ensurePostgresExtensions = () => {
+  log('Ensuring required Postgres extensions exist...');
+
+  // pgcrypto provides gen_random_uuid()
+  const sql = `
+    CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+  `;
+
+  const result = runPrisma(
+    ['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'],
+    {
+      silent: true,
+      input: sql,
+    }
+  );
+
+  if (!result.success) {
+    throw new Error(
+      'Failed to ensure required Postgres extensions (pgcrypto). ' +
+        'Your DB user likely lacks CREATE EXTENSION privileges. ' +
+        'Enable pgcrypto (so gen_random_uuid() exists) and re-run setup.'
+    );
+  }
+
+  success('Postgres extensions verified (pgcrypto)');
+};
+
+/**
+ * Optionally seed essential configuration data.
+ * Uses scripts/seed-once.js (idempotent by design).
+ */
+const maybeRunSeedOnce = () => {
+  if (envFlag(process.env.SKIP_SEED)) {
+    log('SKIP_SEED is set. Skipping seed-once.');
+    return;
+  }
+
+  const seedScript = path.join(__dirname, 'seed-once.js');
+  if (!fs.existsSync(seedScript)) {
+    warn('seed-once.js not found. Skipping seeding.');
+    return;
+  }
+
+  log('Running seed-once (essential configuration data)...');
+  const result = runCommand('node', [seedScript]);
+  if (!result.success) {
+    warn('seed-once failed (continuing).');
+    return;
+  }
+  success('Seed-once completed');
+};
+
+/**
  * Print database status summary
  */
 const printStatusSummary = () => {
@@ -449,6 +508,9 @@ const main = async () => {
   try {
     // Step 1: Test connection
     await testDatabaseConnection();
+
+    // Step 1.5: Ensure required extensions exist (fresh DB safe)
+    ensurePostgresExtensions();
     
     // Step 2: Generate Prisma client
     generatePrismaClient();
@@ -458,6 +520,9 @@ const main = async () => {
     
     // Step 4: Deploy migrations
     deployMigrations();
+
+    // Step 4.5: Seed essential config (optional)
+    maybeRunSeedOnce();
     
     // Step 5: Verify tables
     verifyCriticalTables();

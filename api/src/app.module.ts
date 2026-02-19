@@ -4,7 +4,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CustomThrottlerGuard } from './common/guards/custom-throttler.guard';
 import { BullModule } from '@nestjs/bull';
-import { sharedRedisOptions } from './common/redis.config';
+import { isRedisQueueEnabled, sharedRedisOptions } from './common/redis.config';
 import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -70,15 +70,21 @@ import {
   UPLOAD_TTL_SECONDS,
 } from './common/decorators/throttle.decorator';
 
+const bullImports = isRedisQueueEnabled
+  ? [
+      BullModule.forRoot({
+        redis: sharedRedisOptions,
+      }),
+    ]
+  : [];
+
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
     ScheduleModule.forRoot(),
-    BullModule.forRoot({
-      redis: sharedRedisOptions,
-    }),
+    ...bullImports,
     ThrottlerModule.forRoot([
       {
         name: 'short',
