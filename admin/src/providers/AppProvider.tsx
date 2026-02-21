@@ -1,8 +1,9 @@
 import React from 'react';
 import { ClerkProvider } from '@clerk/clerk-react';
 
-// Get the publishable key from environment variables
 const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+const clerkProxyUrl = import.meta.env.VITE_CLERK_PROXY_URL;
+const clerkDomain = import.meta.env.VITE_CLERK_DOMAIN;
 
 interface AppProviderProps {
   children: React.ReactNode;
@@ -21,17 +22,21 @@ export function AppProvider({ children }: AppProviderProps) {
     );
   }
 
+  const clerkProps: Record<string, unknown> = {
+    publishableKey: clerkPubKey,
+    signInUrl: '/login',
+    signUpUrl: '/signup',
+    afterSignOutUrl: '/login',
+    taskUrls: {
+      'choose-organization': '/dashboard',
+      'reset-password': '/login',
+    },
+  };
+  if (clerkProxyUrl) clerkProps.proxyUrl = clerkProxyUrl;
+  if (clerkDomain) clerkProps.domain = clerkDomain;
+
   return (
-    <ClerkProvider 
-      publishableKey={clerkPubKey}
-      signInUrl="/login"
-      signUpUrl="/signup"
-      afterSignOutUrl="/login"
-      taskUrls={{
-        'choose-organization': '/dashboard',
-        'reset-password': '/login',
-      }}
-    >
+    <ClerkProvider {...clerkProps as any}>
       {children}
     </ClerkProvider>
   );

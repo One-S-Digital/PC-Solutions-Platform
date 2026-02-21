@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { useSignIn, useAuth } from '@clerk/clerk-react';
+import { useSignIn, useAuth, useClerk } from '@clerk/clerk-react';
 import { useTranslation } from 'react-i18next';
 import { STANDARD_INPUT_FIELD, APP_NAME } from '../constants';
 import Card from '../components/ui/Card';
@@ -31,6 +31,7 @@ const LoginPage: React.FC = () => {
   const location = useLocation();
   const { signIn, isLoaded: isSignInLoaded, setActive } = useSignIn();
   const { isSignedIn, isLoaded: isAuthLoaded } = useAuth();
+  const clerk = useClerk();
   const { currentUser } = useAppContext();
   const { isLoading: isAuthLoading, authError, clearAuthError, logout, isSigningOut: isSigningOutGlobal } = useAuthContext();
   const { settings, loading: settingsLoading, error: settingsError } = useFrontendSettings();
@@ -126,11 +127,25 @@ const LoginPage: React.FC = () => {
       const activateSession = async (sessionId: string | null) => {
         try {
           console.log('[Login Debug] Calling setActive with sessionId:', sessionId);
+          console.log('[Login Debug] Clerk client state BEFORE setActive:', {
+            session: clerk.session?.id,
+            user: clerk.user?.id,
+            client: clerk.client?.sessions?.length,
+            publishableKey: clerk.publishableKey,
+            proxyUrl: (clerk as any).proxyUrl,
+            domain: (clerk as any).domain,
+            frontendApi: (clerk as any).frontendApi,
+          });
           await setActive({ session: sessionId });
-          console.log('[Login Debug] setActive completed. isSignedIn:', isSignedIn);
+          console.log('[Login Debug] setActive completed');
+          console.log('[Login Debug] Clerk client state AFTER setActive:', {
+            session: clerk.session?.id,
+            user: clerk.user?.id,
+            clientSessions: clerk.client?.sessions?.map(s => ({ id: s.id, status: s.status })),
+          });
+          console.log('[Login Debug] Cookies after setActive:', document.cookie);
           console.log('[Login Debug] Navigating to /dashboard...');
           navigate('/dashboard', { replace: true });
-          console.log('[Login Debug] navigate() called');
         } catch (setActiveError: any) {
           console.error('[Login Debug] setActive threw error:', setActiveError);
           setError(t('common:loginPage.sessionActivationFailed'));
@@ -189,6 +204,8 @@ const LoginPage: React.FC = () => {
             errorMessage = t('common:loginPage.invalidEmail', 'Please enter a valid email address.');
             break;
           case 'session_exists':
+            console.log('[Login Debug] Session exists error - signing out stale session before retrying');
+            try { await logout(); } catch { /* ignore sign-out errors */ }
             errorMessage = t('common:loginPage.sessionAlreadyActive');
             break;
           default:
@@ -196,6 +213,8 @@ const LoginPage: React.FC = () => {
         }
       } else if (err.message) {
         if (err.message.toLowerCase().includes('already signed in')) {
+          console.log('[Login Debug] Already signed in - signing out stale session before retrying');
+          try { await logout(); } catch { /* ignore sign-out errors */ }
           errorMessage = t('common:loginPage.sessionAlreadyActive');
           errorCode = 'session_exists';
         } else {
