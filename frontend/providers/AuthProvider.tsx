@@ -862,6 +862,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }
 
   const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+  const proxyUrl = import.meta.env.VITE_CLERK_PROXY_URL;
+  const clerkDomain = import.meta.env.VITE_CLERK_DOMAIN;
 
   if (!publishableKey) {
     throw new Error(
@@ -869,22 +871,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     );
   }
 
+  const clerkProps: Record<string, unknown> = {
+    publishableKey,
+    afterSignOutUrl: '/login',
+    taskUrls: {
+      'choose-organization': '/dashboard',
+      'reset-password': '/login',
+    },
+    appearance: {
+      elements: {
+        captcha: { display: 'none' },
+      },
+    },
+  };
+  if (proxyUrl) clerkProps.proxyUrl = proxyUrl;
+  if (clerkDomain) clerkProps.domain = clerkDomain;
+
   return (
     <ClerkProvider 
-      publishableKey={publishableKey}
-      afterSignOutUrl="/login"
-      taskUrls={{
-        'choose-organization': '/dashboard',
-        'reset-password': '/login',
-      }}
-      appearance={{
-        elements: {
-          // Disable Clerk's built-in CAPTCHA since we're using hCaptcha
-          captcha: {
-            display: 'none'
-          }
-        }
-      }}
+      {...clerkProps as any}
     >
       <AuthProviderInner>{children}</AuthProviderInner>
     </ClerkProvider>
