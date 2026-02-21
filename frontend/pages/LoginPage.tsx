@@ -115,11 +115,9 @@ const LoginPage: React.FC = () => {
       console.error('Login error:', err);
 
       let errorMessage = t('common:errors.unknown');
-      let errorCode = 'unknown';
 
       if (err.errors && err.errors.length > 0) {
         const clerkError = err.errors[0];
-        errorCode = clerkError.code;
         switch (clerkError.code) {
           case 'form_password_incorrect':
             errorMessage = t('common:loginPage.incorrectPassword', 'Incorrect password. Please try again.');
@@ -139,7 +137,6 @@ const LoginPage: React.FC = () => {
       } else if (err.message) {
         if (err.message.toLowerCase().includes('already signed in')) {
           errorMessage = t('common:loginPage.sessionAlreadyActive');
-          errorCode = 'session_exists';
         } else {
           errorMessage = err.message;
         }
