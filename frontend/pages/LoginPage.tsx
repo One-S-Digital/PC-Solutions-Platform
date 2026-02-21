@@ -109,22 +109,37 @@ const LoginPage: React.FC = () => {
 
     try {
       const result = await signIn.create({
+        strategy: 'password',
         identifier: email,
         password: password,
       });
 
-      if (result.status === 'complete') {
+      const activateSession = async (sessionId: string | null) => {
         try {
-          // Immediately activate session and navigate - no re-render in between
-          await setActive({ session: result.createdSessionId });
-          
-          // Navigate immediately - proper render gating prevents Active Session UI from showing
+          await setActive({ session: sessionId });
           navigate('/dashboard', { replace: true });
         } catch (setActiveError: any) {
           console.error('Session activation failed:', setActiveError);
           setError(t('common:loginPage.sessionActivationFailed'));
         }
+      };
+
+      if (result.status === 'complete') {
+        await activateSession(result.createdSessionId);
       } else if (result.status === 'needs_first_factor') {
+        const firstFactorResult = await signIn.attemptFirstFactor({
+          strategy: 'password',
+          password: password,
+        });
+
+        if (firstFactorResult.status === 'complete') {
+          await activateSession(firstFactorResult.createdSessionId);
+        } else if (firstFactorResult.status === 'needs_second_factor') {
+          setError(t('common:loginPage.twoFactorRequired'));
+        } else {
+          setError(t('common:loginPage.loginIncomplete'));
+        }
+      } else if (result.status === 'needs_second_factor') {
         setError(t('common:loginPage.twoFactorRequired'));
       } else {
         setError(t('common:loginPage.loginIncomplete'));

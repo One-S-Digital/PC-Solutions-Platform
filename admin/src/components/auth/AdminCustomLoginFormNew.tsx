@@ -59,22 +59,37 @@ export default function AdminCustomLoginForm() {
       }
 
       const result = await signIn.create({
+        strategy: 'password',
         identifier: formData.email,
         password: formData.password,
       });
 
-      if (result.status === 'complete') {
-        // User signed in successfully, activate session and redirect to admin dashboard
+      const activateSession = async (sessionId: string | null) => {
         try {
-          // Immediately activate session and navigate - no re-render in between
-          await setActive({ session: result.createdSessionId });
+          await setActive({ session: sessionId });
           navigate('/dashboard');
         } catch (setActiveError: any) {
           console.error('Session activation failed:', setActiveError);
           setError(t('auth:errors.sessionActivationFailed'));
         }
+      };
+
+      if (result.status === 'complete') {
+        await activateSession(result.createdSessionId);
       } else if (result.status === 'needs_first_factor') {
-        // Handle 2FA if needed
+        const firstFactorResult = await signIn.attemptFirstFactor({
+          strategy: 'password',
+          password: formData.password,
+        });
+
+        if (firstFactorResult.status === 'complete') {
+          await activateSession(firstFactorResult.createdSessionId);
+        } else if (firstFactorResult.status === 'needs_second_factor') {
+          setError(t('auth:errors.twoFactorRequired'));
+        } else {
+          setError(t('auth:errors.twoFactorRequired'));
+        }
+      } else if (result.status === 'needs_second_factor') {
         setError(t('auth:errors.twoFactorRequired'));
       }
     } catch (err: any) {
