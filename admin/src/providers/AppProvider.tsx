@@ -27,6 +27,10 @@ export function AppProvider({ children }: AppProviderProps) {
       signInUrl="/login"
       signUpUrl="/signup"
       afterSignOutUrl="/login"
+      taskUrls={{
+        'choose-organization': '/dashboard',
+        'reset-password': '/login',
+      }}
     >
       {children}
     </ClerkProvider>
