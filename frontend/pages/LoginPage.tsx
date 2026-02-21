@@ -114,6 +114,15 @@ const LoginPage: React.FC = () => {
         password: password,
       });
 
+      console.log('[Login Debug] signIn.create result:', {
+        status: result.status,
+        supportedFirstFactors: result.supportedFirstFactors,
+        supportedSecondFactors: result.supportedSecondFactors,
+        firstFactorVerification: result.firstFactorVerification,
+        createdSessionId: result.createdSessionId,
+        identifier: result.identifier,
+      });
+
       const activateSession = async (sessionId: string | null) => {
         try {
           await setActive({ session: sessionId });
@@ -127,9 +136,16 @@ const LoginPage: React.FC = () => {
       if (result.status === 'complete') {
         await activateSession(result.createdSessionId);
       } else if (result.status === 'needs_first_factor') {
+        console.log('[Login Debug] Attempting first factor with password strategy');
         const firstFactorResult = await signIn.attemptFirstFactor({
           strategy: 'password',
           password: password,
+        });
+
+        console.log('[Login Debug] attemptFirstFactor result:', {
+          status: firstFactorResult.status,
+          createdSessionId: firstFactorResult.createdSessionId,
+          supportedSecondFactors: firstFactorResult.supportedSecondFactors,
         });
 
         if (firstFactorResult.status === 'complete') {
@@ -142,10 +158,15 @@ const LoginPage: React.FC = () => {
       } else if (result.status === 'needs_second_factor') {
         setError(t('common:loginPage.twoFactorRequired'));
       } else {
+        console.warn('[Login Debug] Unexpected sign-in status:', result.status);
         setError(t('common:loginPage.loginIncomplete'));
       }
     } catch (err: any) {
-      console.error('Login error:', err);
+      console.error('[Login Debug] signIn.create threw error:', err, {
+        errors: err.errors,
+        message: err.message,
+        status: err.status,
+      });
 
       let errorMessage = t('common:errors.unknown');
       let errorCode = 'unknown';
