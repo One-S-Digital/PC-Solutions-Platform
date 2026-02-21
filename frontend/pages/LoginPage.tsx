@@ -47,18 +47,18 @@ const LoginPage: React.FC = () => {
   // If a user is already signed in, don't keep them stuck on /login.
   // This can happen after OAuth completes, or when a signed-in user refreshes /login.
   useEffect(() => {
+    console.log('[Login Debug] Redirect useEffect:', { isAuthLoaded, isSignedIn, isAuthLoading, isSigningOutGlobal, hasCurrentUser: !!currentUser });
     if (!isAuthLoaded || !isSignedIn) return;
 
-    // Avoid redirecting while the backend sync is still loading or during sign-out.
-    // Important: this must run BEFORE checking currentUser to prevent bounce-to-dashboard during sign-out.
     if (isAuthLoading || isSigningOutGlobal) return;
 
-    // If backend user exists, go to dashboard. Otherwise, route to signup to complete profile.
     if (currentUser) {
+      console.log('[Login Debug] Redirect useEffect -> /dashboard (currentUser exists)');
       navigate('/dashboard', { replace: true });
       return;
     }
 
+    console.log('[Login Debug] Redirect useEffect -> /signup (no currentUser)');
     navigate('/signup', { replace: true, state: { from: location, isPending: true } });
   }, [isAuthLoaded, isSignedIn, currentUser, isAuthLoading, isSigningOutGlobal, navigate, location]);
   
@@ -125,10 +125,14 @@ const LoginPage: React.FC = () => {
 
       const activateSession = async (sessionId: string | null) => {
         try {
+          console.log('[Login Debug] Calling setActive with sessionId:', sessionId);
           await setActive({ session: sessionId });
+          console.log('[Login Debug] setActive completed. isSignedIn:', isSignedIn);
+          console.log('[Login Debug] Navigating to /dashboard...');
           navigate('/dashboard', { replace: true });
+          console.log('[Login Debug] navigate() called');
         } catch (setActiveError: any) {
-          console.error('Session activation failed:', setActiveError);
+          console.error('[Login Debug] setActive threw error:', setActiveError);
           setError(t('common:loginPage.sessionActivationFailed'));
         }
       };
