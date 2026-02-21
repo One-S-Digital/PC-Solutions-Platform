@@ -56,10 +56,16 @@ export function AdminProtectedRoute({ children }: { children: React.ReactNode })
   // Fetch user from backend database (single source of truth)
   useEffect(() => {
     const fetchBackendUser = async () => {
-      if (!isSignedIn || !isLoaded) {
+      if (!isLoaded) {
+        return;
+      }
+
+      if (!isSignedIn) {
         setIsLoadingUser(false);
         return;
       }
+
+      setIsLoadingUser(true);
 
       try {
         const token = await getToken();
