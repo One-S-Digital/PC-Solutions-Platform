@@ -189,15 +189,17 @@ const LoginPage: React.FC = () => {
             errorMessage = t('common:loginPage.invalidEmail', 'Please enter a valid email address.');
             break;
           case 'session_exists':
-            errorMessage = t('common:loginPage.sessionAlreadyActive');
-            break;
+            console.log('[Login Debug] Session exists error - attempting to recover by navigating to dashboard');
+            navigate('/dashboard', { replace: true });
+            return;
           default:
             errorMessage = clerkError.message || t('common:errors.unknown');
         }
       } else if (err.message) {
         if (err.message.toLowerCase().includes('already signed in')) {
-          errorMessage = t('common:loginPage.sessionAlreadyActive');
-          errorCode = 'session_exists';
+          console.log('[Login Debug] Already signed in message - attempting to recover by navigating to dashboard');
+          navigate('/dashboard', { replace: true });
+          return;
         } else {
           errorMessage = err.message;
         }
