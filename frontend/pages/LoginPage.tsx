@@ -90,6 +90,7 @@ const LoginPage: React.FC = () => {
 
     try {
       const result = await signIn.create({
+        strategy: 'password',
         identifier: email,
         password: password,
       });

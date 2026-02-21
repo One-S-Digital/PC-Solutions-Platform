@@ -51,6 +51,7 @@ export default function AdminCustomLoginForm() {
       }
 
       const result = await signIn.create({
+        strategy: 'password',
         identifier: formData.email,
         password: formData.password,
       });
