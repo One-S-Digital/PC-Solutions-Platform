@@ -109,28 +109,64 @@ const LoginPage: React.FC = () => {
 
     try {
       const result = await signIn.create({
+        strategy: 'password',
         identifier: email,
         password: password,
       });
 
-      if (result.status === 'complete') {
+      console.log('[Login Debug] signIn.create result:', {
+        status: result.status,
+        supportedFirstFactors: result.supportedFirstFactors,
+        supportedSecondFactors: result.supportedSecondFactors,
+        firstFactorVerification: result.firstFactorVerification,
+        createdSessionId: result.createdSessionId,
+        identifier: result.identifier,
+      });
+
+      const activateSession = async (sessionId: string | null) => {
         try {
-          // Immediately activate session and navigate - no re-render in between
-          await setActive({ session: result.createdSessionId });
-          
-          // Navigate immediately - proper render gating prevents Active Session UI from showing
+          await setActive({ session: sessionId });
           navigate('/dashboard', { replace: true });
         } catch (setActiveError: any) {
           console.error('Session activation failed:', setActiveError);
           setError(t('common:loginPage.sessionActivationFailed'));
         }
+      };
+
+      if (result.status === 'complete') {
+        await activateSession(result.createdSessionId);
       } else if (result.status === 'needs_first_factor') {
+        console.log('[Login Debug] Attempting first factor with password strategy');
+        const firstFactorResult = await signIn.attemptFirstFactor({
+          strategy: 'password',
+          password: password,
+        });
+
+        console.log('[Login Debug] attemptFirstFactor result:', {
+          status: firstFactorResult.status,
+          createdSessionId: firstFactorResult.createdSessionId,
+          supportedSecondFactors: firstFactorResult.supportedSecondFactors,
+        });
+
+        if (firstFactorResult.status === 'complete') {
+          await activateSession(firstFactorResult.createdSessionId);
+        } else if (firstFactorResult.status === 'needs_second_factor') {
+          setError(t('common:loginPage.twoFactorRequired'));
+        } else {
+          setError(t('common:loginPage.loginIncomplete'));
+        }
+      } else if (result.status === 'needs_second_factor') {
         setError(t('common:loginPage.twoFactorRequired'));
       } else {
+        console.warn('[Login Debug] Unexpected sign-in status:', result.status);
         setError(t('common:loginPage.loginIncomplete'));
       }
     } catch (err: any) {
-      console.error('Login error:', err);
+      console.error('[Login Debug] signIn.create threw error:', err, {
+        errors: err.errors,
+        message: err.message,
+        status: err.status,
+      });
 
       let errorMessage = t('common:errors.unknown');
       let errorCode = 'unknown';
