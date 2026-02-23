@@ -25,7 +25,7 @@ export default function AdminCustomLoginForm() {
   const { t } = useTranslation(['auth', 'common']);
   const navigate = useNavigate();
   const { signIn, isLoaded, setActive } = useSignIn();
-  const { isSignedIn, isLoaded: authLoaded } = useAuth();
+  const { isSignedIn, isLoaded: authLoaded, signOut } = useAuth();
   const { user } = useUser();
   const { settings } = useSettings();
   
@@ -51,6 +51,7 @@ export default function AdminCustomLoginForm() {
       }
 
       const result = await signIn.create({
+        strategy: 'password',
         identifier: formData.email,
         password: formData.password,
       });
@@ -143,7 +144,7 @@ export default function AdminCustomLoginForm() {
   const handleSignOut = async () => {
     setIsSigningOut(true);
     try {
-      // Navigate to homepage after sign out
+      await signOut();
       navigate('/login');
     } catch (error) {
       console.error('Sign out error:', error);
