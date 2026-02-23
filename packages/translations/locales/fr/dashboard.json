@@ -237,11 +237,11 @@
       "sendMessage": "Envoyer",
       "title": "Actions rapides",
       "viewAnalytics": "Voir les analyses",
-      "viewParentLeads": "Voir les chefs de file des parents"
+      "viewParentLeads": "Voir les pistes parents"
     },
     "quickMessage": {
-      "placeholder": "Tapez un message rapide...",
-      "title": "Message rapide"
+      "placeholder": "Tapez un message rapide à l'administrateur...",
+      "title": "Message rapide à l'admin"
     },
     "quickStats": {
       "availableSpots": "Places disponibles",

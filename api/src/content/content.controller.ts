@@ -140,7 +140,7 @@ export class ContentController {
    */
 
   @Get('hr-documents')
-  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.FOUNDATION, UserRole.EDUCATOR)
   async getHrDocuments(
     @Query(new ValidationPipe({ transform: true, whitelist: true }))
     query: GetHrDocumentsQueryDto,
