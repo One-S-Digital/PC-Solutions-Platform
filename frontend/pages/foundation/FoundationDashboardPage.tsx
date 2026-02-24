@@ -133,7 +133,11 @@ const FoundationDashboardPage: React.FC = () => {
   const handleSendQuickMessage = useCallback(() => {
     if (!quickMessage.trim()) return;
     setMessageSending(true);
-    navigate('/messages', { state: { quickMessageToAdmin: quickMessage.trim() } });
+    try {
+      navigate('/messages', { state: { quickMessageToAdmin: quickMessage.trim() } });
+    } finally {
+      setMessageSending(false);
+    }
   }, [quickMessage, navigate]);
 
   // Quick actions (no change needed)
@@ -322,7 +326,7 @@ const FoundationDashboardPage: React.FC = () => {
               rows={3}
               value={quickMessage}
               onChange={(e) => setQuickMessage(e.target.value)}
-              className="w-full p-2 rounded-md text-sm text-swiss-charcoal placeholder-gray-500 border-gray-300 focus:ring-swiss-mint focus:border-swiss-mint"
+              className="w-full p-2 rounded-md text-sm bg-white text-swiss-charcoal placeholder-gray-500 border border-gray-300 focus:ring-swiss-mint focus:border-swiss-mint"
             />
             <Button
               variant="secondary"
