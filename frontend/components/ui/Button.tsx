@@ -19,7 +19,8 @@ const Button: React.FC<ButtonProps> = ({
   className = '',
   ...props
 }) => {
-  const baseStyle = "inline-flex items-center justify-center font-semibold rounded-button focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-150 ease-in-out disabled:opacity-60 disabled:cursor-not-allowed shadow-minimal hover:shadow-interactive";
+  const hasJustifyOverride = className.includes('justify-');
+  const baseStyle = `inline-flex items-center ${hasJustifyOverride ? '' : 'justify-center'} font-semibold rounded-button focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-150 ease-in-out disabled:opacity-60 disabled:cursor-not-allowed shadow-minimal hover:shadow-interactive`;
 
   const variantStyles = {
     primary: 'bg-swiss-mint text-white hover:bg-opacity-90 focus:ring-swiss-mint',

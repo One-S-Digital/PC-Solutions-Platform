@@ -241,8 +241,8 @@
       "viewParentLeads": "Eltern-Leads anzeigen"
     },
     "quickMessage": {
-      "placeholder": "Geben Sie eine schnelle Nachricht ein...",
-      "title": "Schnelle Nachricht"
+      "placeholder": "Schnelle Nachricht an Admin eingeben...",
+      "title": "Schnelle Nachricht an Admin"
     },
     "quickStats": {
       "availableSpots": "Verfügbare Plätze",

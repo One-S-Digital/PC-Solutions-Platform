@@ -63,6 +63,8 @@ const FoundationDashboardPage: React.FC = () => {
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [quickMessage, setQuickMessage] = useState('');
+  const [messageSending, setMessageSending] = useState(false);
 
   // Fetch dashboard data
   const fetchDashboardData = useCallback(async () => {
@@ -128,6 +130,16 @@ const FoundationDashboardPage: React.FC = () => {
     return date.toLocaleTimeString('de-CH', { hour: '2-digit', minute: '2-digit' });
   };
   
+  const handleSendQuickMessage = useCallback(() => {
+    if (!quickMessage.trim()) return;
+    setMessageSending(true);
+    try {
+      navigate('/messages', { state: { quickMessageToAdmin: quickMessage.trim() } });
+    } finally {
+      setMessageSending(false);
+    }
+  }, [quickMessage, navigate]);
+
   // Quick actions (no change needed)
   const quickActions = [
     { labelKey: 'foundationDashboard.quickActions.postJob', onClick: () => navigate('/recruitment'), icon: BriefcaseIcon },
@@ -301,7 +313,7 @@ const FoundationDashboardPage: React.FC = () => {
             <h2 className="text-lg font-semibold text-swiss-charcoal mb-3">{t('foundationDashboard.quickActions.title')}</h2>
             <div className="space-y-2.5">
               {quickActions.map(action => (
-                <Button key={action.labelKey} variant="light" leftIcon={action.icon} onClick={action.onClick} className="w-full !justify-start">
+                <Button key={action.labelKey} variant="light" leftIcon={action.icon} onClick={action.onClick} className="w-full justify-start text-left">
                   {t(action.labelKey)}
                 </Button>
               ))}
@@ -309,8 +321,22 @@ const FoundationDashboardPage: React.FC = () => {
           </Card>
           <Card className="p-5 bg-swiss-teal text-white">
             <h2 className="text-lg font-semibold mb-2">{t('foundationDashboard.quickMessage.title')}</h2>
-            <textarea placeholder={t('foundationDashboard.quickMessage.placeholder')} rows={3} className="w-full p-2 rounded-md text-sm text-swiss-charcoal placeholder-gray-500 border-gray-300 focus:ring-swiss-mint focus:border-swiss-mint"></textarea>
-            <Button variant="secondary" size="sm" className="w-full mt-2 !bg-white !text-swiss-teal">{t('common:buttons.sendMessage')}</Button>
+            <textarea
+              placeholder={t('foundationDashboard.quickMessage.placeholder')}
+              rows={3}
+              value={quickMessage}
+              onChange={(e) => setQuickMessage(e.target.value)}
+              className="w-full p-2 rounded-md text-sm bg-white text-swiss-charcoal placeholder-gray-500 border border-gray-300 focus:ring-swiss-mint focus:border-swiss-mint"
+            />
+            <Button
+              variant="secondary"
+              size="sm"
+              className="w-full mt-2 !bg-white !text-swiss-teal"
+              disabled={!quickMessage.trim() || messageSending}
+              onClick={handleSendQuickMessage}
+            >
+              {t('common:buttons.sendMessage')}
+            </Button>
           </Card>
         </div>
       </div>
