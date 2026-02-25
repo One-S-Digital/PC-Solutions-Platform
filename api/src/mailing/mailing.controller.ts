@@ -26,6 +26,7 @@ import { CreateSegmentDto, UpdateSegmentDto } from './dto/segment.dto';
 import { CreateCampaignDto, SendBatchDto } from './dto/campaign.dto';
 import { ExportRequestDto } from './dto/export.dto';
 import { CreateCustomListDto, UpdateCustomListDto, ManageCustomListMembersDto } from './dto/custom-list.dto';
+import { MailingFiltersDto } from './dto/mailing-filters.dto';
 
 @ApiTags('admin/mailing')
 @Controller('admin/mailing')
@@ -134,8 +135,12 @@ export class MailingController {
   ) {
     const adminId = this.getAdminId(req);
 
+    if (body.customListId && body.segmentId) {
+      throw new BadRequestException('customListId and segmentId are mutually exclusive');
+    }
+
     // Resolve filters, accounting for custom list targeting
-    let filters: any;
+    let filters: MailingFiltersDto;
     if (body.customListId) {
       const memberIds = await this.mailingService.getAllCustomListMemberIds(body.customListId);
       if (memberIds.length === 0) {
@@ -151,7 +156,7 @@ export class MailingController {
       body.columns,
       body.deduplicateByEmail ?? true,
       adminId,
-      body.segmentId,
+      body.segmentId ?? body.customListId,
     );
 
     const filename = `mailing_export_${new Date().toISOString().slice(0, 10)}`;
@@ -227,7 +232,11 @@ export class MailingController {
   async createCampaign(@Body() body: CreateCampaignDto, @Request() req: any) {
     const adminId = this.getAdminId(req);
 
-    let filters = body.filters;
+    if (body.customListId && body.segmentId) {
+      throw new BadRequestException('customListId and segmentId are mutually exclusive');
+    }
+
+    let filters: MailingFiltersDto = body.filters;
 
     // If targeting a custom list, resolve the member user IDs and inject them into filters
     if (body.customListId) {
@@ -244,7 +253,7 @@ export class MailingController {
       body.bodyText,
       adminId,
       filters,
-      body.segmentId,
+      body.customListId ? undefined : body.segmentId,
     );
   }
 

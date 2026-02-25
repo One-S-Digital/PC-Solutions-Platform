@@ -211,6 +211,7 @@ export class MailingService {
       });
       ids.push(...members.map((m) => m.userId));
       done = members.length < PAGE_SIZE;
+      if (ids.length >= MAX_EXPORT_ROWS) break;
       page++;
     }
     return ids;

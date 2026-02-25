@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { X, Users, Trash2, ChevronLeft, ChevronRight } from 'lucide-react'
 import { toast } from 'sonner'
@@ -17,6 +17,9 @@ const CustomListMembersModal: React.FC<Props> = ({ isOpen, onClose, list }) => {
   const queryClient = useQueryClient()
   const [page, setPage] = useState(1)
   const PAGE_SIZE = 20
+
+  // Reset to page 1 whenever the targeted list changes
+  useEffect(() => { setPage(1) }, [list.id])
 
   const { data, isLoading } = useQuery({
     queryKey: ['custom-list-members', list.id, page],
@@ -48,15 +51,19 @@ const CustomListMembersModal: React.FC<Props> = ({ isOpen, onClose, list }) => {
     <div
       className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
       onClick={onClose}
+      role="presentation"
     >
       <div
         className="w-full max-w-2xl bg-white rounded-lg shadow-xl max-h-[85vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="custom-list-modal-title"
       >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <h3 id="custom-list-modal-title" className="text-lg font-semibold text-gray-900 flex items-center gap-2">
               <Users className="w-5 h-5 text-blue-600" />
               {list.name}
             </h3>
@@ -65,7 +72,7 @@ const CustomListMembersModal: React.FC<Props> = ({ isOpen, onClose, list }) => {
               {list.description && ` · ${list.description}`}
             </p>
           </div>
-          <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-600">
+          <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-600" aria-label="Close">
             <X className="w-5 h-5" />
           </button>
         </div>

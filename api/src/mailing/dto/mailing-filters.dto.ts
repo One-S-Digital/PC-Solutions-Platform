@@ -1,10 +1,11 @@
-import { IsOptional, IsArray, IsBoolean, IsString, IsEnum } from 'class-validator';
+import { IsOptional, IsArray, IsBoolean, IsString, IsEnum, ArrayMaxSize } from 'class-validator';
 import { UserRole, SubscriptionStatus, SubscriptionTier } from '@prisma/client';
 
 export class MailingFiltersDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
+  @ArrayMaxSize(2000)
   userIds?: string[];
   @IsOptional()
   @IsArray()

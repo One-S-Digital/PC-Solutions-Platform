@@ -277,7 +277,8 @@ const MailingListPage: React.FC = () => {
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `${activeList.name.replace(/\s+/g, '_')}_export_${new Date().toISOString().slice(0, 10)}.${format}`
+      const sanitizedName = activeList.name.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[/\\:*?"<>|]+/g, '').replace(/\s+/g, '_').trim().slice(0, 100)
+      a.download = `${sanitizedName}_export_${new Date().toISOString().slice(0, 10)}.${format}`
       a.click()
       window.URL.revokeObjectURL(url)
       toast.success(`Exported ${activeList._count?.members || 0} members`)
@@ -288,6 +289,20 @@ const MailingListPage: React.FC = () => {
       setActionLoading(false)
     }
   }, [apiClient, activeList])
+
+  const handleDeleteCustomList = useCallback(async (listId: string) => {
+    if (!confirm(t('admin:mailing.customLists.deleteConfirm', 'Delete this list?'))) return
+    setActionLoading(true)
+    try {
+      await apiService.mailingDeleteCustomList(apiClient, listId)
+      toast.success(t('admin:mailing.customLists.deleted', 'List deleted'))
+      queryClient.invalidateQueries({ queryKey: ['mailing-custom-lists'] })
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || 'Failed to delete')
+    } finally {
+      setActionLoading(false)
+    }
+  }, [apiClient, queryClient, t])
 
   const handleRenameList = useCallback(async (listId: string, newName: string) => {
     if (!newName.trim()) return
@@ -678,16 +693,7 @@ const MailingListPage: React.FC = () => {
                             </button>
                             {/* Delete */}
                             <button
-                              onClick={async () => {
-                                if (!confirm(t('admin:mailing.customLists.deleteConfirm', 'Delete this list?'))) return
-                                try {
-                                  await apiService.mailingDeleteCustomList(apiClient, list.id)
-                                  toast.success(t('admin:mailing.customLists.deleted', 'List deleted'))
-                                  queryClient.invalidateQueries({ queryKey: ['mailing-custom-lists'] })
-                                } catch (err: any) {
-                                  toast.error(err?.response?.data?.message || 'Failed to delete')
-                                }
-                              }}
+                              onClick={() => handleDeleteCustomList(list.id)}
                               className="p-1 text-gray-400 hover:text-red-600"
                               title="Delete list"
                             >
