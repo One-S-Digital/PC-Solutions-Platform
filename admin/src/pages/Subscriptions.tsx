@@ -107,7 +107,7 @@ interface EditSubscriptionModalProps {
   subscription: Subscription | null;
   plans: SubscriptionPlan[];
   availableTiers?: SubscriptionTier[];
-  onSave: (data: { status: SubscriptionStatus; planId?: string; tier?: SubscriptionTier; durationMonths?: number; notes?: string }) => Promise<void>;
+  onSave: (data: { status: SubscriptionStatus; planId?: string; tier?: SubscriptionTier; durationMonths?: number; notes?: string; includeTrial?: boolean; trialStartDate?: string; trialEndDate?: string }) => Promise<void>;
   onDelete?: () => void;
   isLoading: boolean;
 }
@@ -129,6 +129,13 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
   const [tier, setTier] = useState<SubscriptionTier>(subscription?.tier || SubscriptionTier.BASIC);
   const [durationMonths, setDurationMonths] = useState<number>(-1); // -1 = no selection (user must choose)
   const [notes, setNotes] = useState<string>(subscription?.notes || '');
+  const [includeTrial, setIncludeTrial] = useState(false);
+  const [trialStartDate, setTrialStartDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [trialEndDate, setTrialEndDate] = useState(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 30);
+    return d.toISOString().split('T')[0];
+  });
 
   // Subscription period options (0 = monthly recurring with no fixed end, -1 = no selection)
   const subscriptionPeriodOptions = React.useMemo(() => [
@@ -210,6 +217,12 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
       setTier(SubscriptionTier.BASIC);
       setDurationMonths(-1); // No default - user must select
       setNotes('');
+      setIncludeTrial(false);
+      const todayStr = new Date().toISOString().split('T')[0];
+      setTrialStartDate(todayStr);
+      const d = new Date();
+      d.setDate(d.getDate() + 30);
+      setTrialEndDate(d.toISOString().split('T')[0]);
     }
   }, [subscription]);
 
@@ -235,6 +248,9 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
       tier: user?.role === UserRole.FOUNDATION ? tier : undefined,
       durationMonths,
       notes: notes || undefined,
+      includeTrial: !subscription && includeTrial ? true : undefined,
+      trialStartDate: !subscription && includeTrial ? trialStartDate : undefined,
+      trialEndDate: !subscription && includeTrial ? trialEndDate : undefined,
     });
   };
 
@@ -403,6 +419,76 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
                 : t('admin:subscriptions.editSubscription.subscriptionPeriodHelp', 'Select how long this subscription should be active.')}
             </p>
           </div>
+
+          {/* Trial Period (create mode only) */}
+          {!subscription && (
+            <>
+              <div className="flex items-center gap-3 p-3 border rounded-lg">
+                <input
+                  type="checkbox"
+                  id="create-include-trial"
+                  checked={includeTrial}
+                  onChange={(e) => setIncludeTrial(e.target.checked)}
+                  className="w-4 h-4 text-blue-600 rounded"
+                />
+                <label htmlFor="create-include-trial" className="text-sm font-medium text-gray-700 cursor-pointer select-none">
+                  {t('admin:subscriptions.requests.activateModal.includeTrial', 'Include Trial Period')}
+                </label>
+              </div>
+
+              {includeTrial && (
+                <div className="pl-3 border-l-2 border-blue-200 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-700">
+                      {t('admin:subscriptions.requests.activateModal.trialDates', 'Trial Dates')}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const d = new Date(trialStartDate);
+                        d.setDate(d.getDate() + 30);
+                        setTrialEndDate(d.toISOString().split('T')[0]);
+                      }}
+                      className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 font-medium"
+                    >
+                      {t('admin:subscriptions.requests.activateModal.preset30Days', '30-day trial')}
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs text-gray-600 mb-1">
+                        {t('admin:subscriptions.requests.activateModal.trialStart', 'Trial Start')}
+                      </label>
+                      <input
+                        type="date"
+                        value={trialStartDate}
+                        onChange={(e) => setTrialStartDate(e.target.value)}
+                        className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-600 mb-1">
+                        {t('admin:subscriptions.requests.activateModal.trialEnd', 'Trial End')}
+                      </label>
+                      <input
+                        type="date"
+                        value={trialEndDate}
+                        min={trialStartDate}
+                        onChange={(e) => setTrialEndDate(e.target.value)}
+                        className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    {t(
+                      'admin:subscriptions.requests.activateModal.trialHelp',
+                      'The subscription will stay in Trial status until the trial end date, then automatically become Active.',
+                    )}
+                  </p>
+                </div>
+              )}
+            </>
+          )}
 
           {/* Notes */}
           <div>
@@ -2524,7 +2610,7 @@ const Subscriptions: React.FC = () => {
       data,
     }: {
       user: User;
-      data: { status: SubscriptionStatus; planId?: string; tier?: SubscriptionTier; durationMonths?: number; notes?: string };
+      data: { status: SubscriptionStatus; planId?: string; tier?: SubscriptionTier; durationMonths?: number; notes?: string; includeTrial?: boolean; trialStartDate?: string; trialEndDate?: string };
     }) => {
       // IMPORTANT: Use profileId (User.id) for subscriptions, not id (AppUser.id)
       // The subscription table references User.id, not AppUser.id
@@ -2593,6 +2679,9 @@ const Subscriptions: React.FC = () => {
           tier: data.tier || SubscriptionTier.BASIC,
           durationMonths: duration,
           notes: data.notes,
+          includeTrial: data.includeTrial,
+          trialStartDate: data.trialStartDate,
+          trialEndDate: data.trialEndDate,
         });
         
         // For monthly recurring, ensure cancelAtPeriodEnd is false
@@ -2881,7 +2970,7 @@ const Subscriptions: React.FC = () => {
     setIsEditModalOpen(true);
   };
 
-  const handleSaveSubscription = async (data: { status: SubscriptionStatus; planId?: string; tier?: SubscriptionTier; durationMonths?: number; notes?: string }) => {
+  const handleSaveSubscription = async (data: { status: SubscriptionStatus; planId?: string; tier?: SubscriptionTier; durationMonths?: number; notes?: string; includeTrial?: boolean; trialStartDate?: string; trialEndDate?: string }) => {
     if (selectedUser) {
       // Pass the full user object so the mutation can access profileId and orgId
       await updateSubscriptionMutation.mutateAsync({ user: selectedUser, data });
