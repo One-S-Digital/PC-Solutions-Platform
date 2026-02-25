@@ -176,6 +176,8 @@ export interface CreateSubscriptionDto {
   startDate?: string;
   durationMonths?: number;
   includeTrial?: boolean;
+  trialStartDate?: string;
+  trialEndDate?: string;
   notes?: string;
 }
 

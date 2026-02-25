@@ -46,6 +46,14 @@ export class CreateSubscriptionDto {
   includeTrial?: boolean;
 
   @IsOptional()
+  @IsDateString()
+  trialStartDate?: string;
+
+  @IsOptional()
+  @IsDateString()
+  trialEndDate?: string;
+
+  @IsOptional()
   @IsString()
   notes?: string;
 }

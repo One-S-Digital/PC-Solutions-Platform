@@ -2137,6 +2137,20 @@
         "notes": "Internal Notes (optional)",
         "sendEmailNotification": "Send email notification to customer",
         "decline": "Decline Request"
+      },
+      "activateModal": {
+        "title": "Activate Subscription",
+        "startDate": "Subscription Start Date",
+        "period": "Subscription Period",
+        "includeTrial": "Include Trial Period",
+        "trialDates": "Trial Dates",
+        "trialStart": "Trial Start",
+        "trialEnd": "Trial End",
+        "preset30Days": "30-day trial",
+        "sendEmail": "Send activation email to customer",
+        "notes": "Admin Notes (optional)",
+        "submit": "Activate Subscription",
+        "trialHelp": "The subscription will stay in Trial status until the trial end date, then automatically become Active."
       }
     },
     "cancellations": {

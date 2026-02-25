@@ -1573,6 +1573,268 @@ const DeclineRequestModal: React.FC<DeclineRequestModalProps> = ({
   );
 };
 
+// Activate Subscription Request Modal Component
+interface ActivateSubscriptionRequestModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  request: {
+    id: string;
+    contactName?: string;
+    plan?: { name: string };
+  };
+  onActivate: (data: {
+    startDate?: string;
+    periodMonths?: number;
+    includeTrial?: boolean;
+    trialStartDate?: string;
+    trialEndDate?: string;
+    sendEmail?: boolean;
+    notes?: string;
+  }) => Promise<void>;
+  isLoading: boolean;
+}
+
+const ActivateSubscriptionRequestModal: React.FC<ActivateSubscriptionRequestModalProps> = ({
+  isOpen,
+  onClose,
+  request,
+  onActivate,
+  isLoading,
+}) => {
+  const { t } = useTranslation(['admin', 'common']);
+
+  const today = new Date().toISOString().split('T')[0];
+  const thirtyDaysLater = (() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 30);
+    return d.toISOString().split('T')[0];
+  })();
+
+  const [startDate, setStartDate] = React.useState(today);
+  const [periodMonths, setPeriodMonths] = React.useState<number>(-1);
+  const [includeTrial, setIncludeTrial] = React.useState(false);
+  const [trialStartDate, setTrialStartDate] = React.useState(today);
+  const [trialEndDate, setTrialEndDate] = React.useState(thirtyDaysLater);
+  const [sendEmail, setSendEmail] = React.useState(true);
+  const [notes, setNotes] = React.useState('');
+
+  // Keep trial start in sync with subscription start date
+  React.useEffect(() => {
+    setTrialStartDate(startDate);
+    const d = new Date(startDate);
+    d.setDate(d.getDate() + 30);
+    setTrialEndDate(d.toISOString().split('T')[0]);
+  }, [startDate]);
+
+  React.useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) onClose();
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  const apply30DayPreset = () => {
+    const d = new Date(trialStartDate);
+    d.setDate(d.getDate() + 30);
+    setTrialEndDate(d.toISOString().split('T')[0]);
+  };
+
+  const isSubmitDisabled = isLoading || (!includeTrial && periodMonths === -1);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await onActivate({
+      startDate: startDate || undefined,
+      periodMonths: periodMonths > 0 ? periodMonths : undefined,
+      includeTrial: includeTrial || undefined,
+      trialStartDate: includeTrial ? trialStartDate : undefined,
+      trialEndDate: includeTrial ? trialEndDate : undefined,
+      sendEmail,
+      notes: notes || undefined,
+    });
+  };
+
+  const periodOptions = [
+    { value: -1, label: t('admin:subscriptions.editSubscription.period.selectPeriod', 'Select a period...') },
+    { value: 0, label: t('admin:subscriptions.editSubscription.period.monthlyRecurring', 'Monthly Recurring') },
+    { value: 1, label: t('admin:subscriptions.editSubscription.period.oneMonth', '1 Month') },
+    { value: 3, label: t('admin:subscriptions.editSubscription.period.threeMonths', '3 Months') },
+    { value: 6, label: t('admin:subscriptions.editSubscription.period.sixMonths', '6 Months') },
+    { value: 12, label: t('admin:subscriptions.editSubscription.period.oneYear', '1 Year') },
+    { value: 24, label: t('admin:subscriptions.editSubscription.period.twoYears', '2 Years') },
+  ];
+
+  return (
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div className="bg-white rounded-lg p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-lg font-semibold">
+            {t('admin:subscriptions.requests.activateModal.title', 'Activate Subscription')}
+          </h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {request.plan?.name && (
+          <div className="mb-4 p-3 bg-blue-50 rounded-lg text-sm text-blue-800">
+            {request.plan.name}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Start Date */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t('admin:subscriptions.requests.activateModal.startDate', 'Subscription Start Date')}
+            </label>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* Period */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t('admin:subscriptions.requests.activateModal.period', 'Subscription Period')}
+            </label>
+            <select
+              value={periodMonths}
+              onChange={(e) => setPeriodMonths(Number(e.target.value))}
+              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            >
+              {periodOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Include Trial Toggle */}
+          <div className="flex items-center gap-3 p-3 border rounded-lg">
+            <input
+              type="checkbox"
+              id="include-trial"
+              checked={includeTrial}
+              onChange={(e) => setIncludeTrial(e.target.checked)}
+              className="w-4 h-4 text-blue-600 rounded"
+            />
+            <label htmlFor="include-trial" className="text-sm font-medium text-gray-700 cursor-pointer select-none">
+              {t('admin:subscriptions.requests.activateModal.includeTrial', 'Include Trial Period')}
+            </label>
+          </div>
+
+          {/* Trial Date Controls */}
+          {includeTrial && (
+            <div className="pl-3 border-l-2 border-blue-200 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-700">
+                  {t('admin:subscriptions.requests.activateModal.trialDates', 'Trial Dates')}
+                </span>
+                <button
+                  type="button"
+                  onClick={apply30DayPreset}
+                  className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 font-medium"
+                >
+                  {t('admin:subscriptions.requests.activateModal.preset30Days', '30-day trial')}
+                </button>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">
+                    {t('admin:subscriptions.requests.activateModal.trialStart', 'Trial Start')}
+                  </label>
+                  <input
+                    type="date"
+                    value={trialStartDate}
+                    onChange={(e) => setTrialStartDate(e.target.value)}
+                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">
+                    {t('admin:subscriptions.requests.activateModal.trialEnd', 'Trial End')}
+                  </label>
+                  <input
+                    type="date"
+                    value={trialEndDate}
+                    min={trialStartDate}
+                    onChange={(e) => setTrialEndDate(e.target.value)}
+                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+              <p className="text-xs text-gray-500">
+                {t(
+                  'admin:subscriptions.requests.activateModal.trialHelp',
+                  'The subscription will stay in Trial status until the trial end date, then automatically become Active.',
+                )}
+              </p>
+            </div>
+          )}
+
+          {/* Notes */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t('admin:subscriptions.requests.activateModal.notes', 'Admin Notes (optional)')}
+            </label>
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows={2}
+              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+            />
+          </div>
+
+          {/* Send Email */}
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              id="send-email"
+              checked={sendEmail}
+              onChange={(e) => setSendEmail(e.target.checked)}
+              className="w-4 h-4 text-blue-600 rounded"
+            />
+            <label htmlFor="send-email" className="text-sm text-gray-700 cursor-pointer select-none">
+              {t('admin:subscriptions.requests.activateModal.sendEmail', 'Send activation email to customer')}
+            </label>
+          </div>
+
+          <div className="flex justify-end gap-3 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 text-gray-600 hover:text-gray-900"
+            >
+              {t('common:cancel', 'Cancel')}
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitDisabled}
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+            >
+              <CheckCircle className="w-4 h-4" />
+              {isLoading
+                ? t('common:saving', 'Saving...')
+                : t('admin:subscriptions.requests.activateModal.submit', 'Activate Subscription')}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 // Subscription Settings Modal Component
 interface SubscriptionSettingsModalProps {
   isOpen: boolean;
@@ -1953,6 +2215,7 @@ const Subscriptions: React.FC = () => {
   const [cancellationStatusFilter, setCancellationStatusFilter] = useState<string>('');
   const [selectedRequest, setSelectedRequest] = useState<SubscriptionRequest | null>(null);
   const [isRequestDetailOpen, setIsRequestDetailOpen] = useState(false);
+  const [isActivateRequestModalOpen, setIsActivateRequestModalOpen] = useState(false);
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [isDeclineModalOpen, setIsDeclineModalOpen] = useState(false);
@@ -2511,7 +2774,7 @@ const Subscriptions: React.FC = () => {
       data,
     }: {
       id: string;
-      data: { startDate?: string; periodMonths?: number; includeTrial?: boolean; sendEmail?: boolean; notes?: string };
+      data: { startDate?: string; periodMonths?: number; includeTrial?: boolean; trialStartDate?: string; trialEndDate?: string; sendEmail?: boolean; notes?: string };
     }) => subscriptionService.activateSubscriptionRequest(apiClient, id, data),
     onSuccess: (res: any) => {
       queryClient.invalidateQueries({ queryKey: ['subscription-requests'] });
@@ -3710,12 +3973,7 @@ const Subscriptions: React.FC = () => {
                   selectedRequest.status === SubscriptionRequestStatus.UNDER_REVIEW ||
                   selectedRequest.status === SubscriptionRequestStatus.INVOICE_SENT) && (
                   <button
-                    onClick={() => {
-                      activateRequestMutation.mutate({
-                        id: selectedRequest.id,
-                        data: { sendEmail: true },
-                      });
-                    }}
+                    onClick={() => setIsActivateRequestModalOpen(true)}
                     disabled={activateRequestMutation.isPending}
                     className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
                   >
@@ -3781,6 +4039,23 @@ const Subscriptions: React.FC = () => {
             });
           }}
           isLoading={declineRequestMutation.isPending}
+        />
+      )}
+
+      {/* Activate Subscription Request Modal */}
+      {isActivateRequestModalOpen && selectedRequest && (
+        <ActivateSubscriptionRequestModal
+          isOpen={isActivateRequestModalOpen}
+          onClose={() => setIsActivateRequestModalOpen(false)}
+          request={selectedRequest}
+          onActivate={async (data) => {
+            await activateRequestMutation.mutateAsync({
+              id: selectedRequest.id,
+              data,
+            });
+            setIsActivateRequestModalOpen(false);
+          }}
+          isLoading={activateRequestMutation.isPending}
         />
       )}
 

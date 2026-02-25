@@ -2152,6 +2152,20 @@
         "notes": "Notes internes (optionnel)",
         "sendEmailNotification": "Envoyer une notification par email au client",
         "decline": "Refuser la demande"
+      },
+      "activateModal": {
+        "title": "Activer l'abonnement",
+        "startDate": "Date de début de l'abonnement",
+        "period": "Période d'abonnement",
+        "includeTrial": "Inclure une période d'essai",
+        "trialDates": "Dates d'essai",
+        "trialStart": "Début de l'essai",
+        "trialEnd": "Fin de l'essai",
+        "preset30Days": "Essai 30 jours",
+        "sendEmail": "Envoyer un email d'activation au client",
+        "notes": "Notes administrateur (optionnel)",
+        "submit": "Activer l'abonnement",
+        "trialHelp": "L'abonnement restera en statut Essai jusqu'à la date de fin d'essai, puis deviendra automatiquement Actif."
       }
     },
     "cancellations": {
