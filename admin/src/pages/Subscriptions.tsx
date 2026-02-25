@@ -211,6 +211,14 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
         }
       }
       setNotes(subscription.notes || '');
+      // Initialise trial state from existing subscription
+      const hasTrial = !!(subscription.trialStart || subscription.trialEnd);
+      setIncludeTrial(hasTrial);
+      const todayStr = new Date().toISOString().split('T')[0];
+      setTrialStartDate(subscription.trialStart ? subscription.trialStart.split('T')[0] : todayStr);
+      const dflt = new Date();
+      dflt.setDate(dflt.getDate() + 30);
+      setTrialEndDate(subscription.trialEnd ? subscription.trialEnd.split('T')[0] : dflt.toISOString().split('T')[0]);
     } else {
       setStatus(SubscriptionStatus.INACTIVE);
       setSelectedPlanId('');
@@ -248,9 +256,9 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
       tier: user?.role === UserRole.FOUNDATION ? tier : undefined,
       durationMonths,
       notes: notes || undefined,
-      includeTrial: !subscription && includeTrial ? true : undefined,
-      trialStartDate: !subscription && includeTrial ? trialStartDate : undefined,
-      trialEndDate: !subscription && includeTrial ? trialEndDate : undefined,
+      includeTrial: includeTrial ? true : undefined,
+      trialStartDate: includeTrial ? trialStartDate : undefined,
+      trialEndDate: includeTrial ? trialEndDate : undefined,
     });
   };
 
@@ -420,75 +428,73 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
             </p>
           </div>
 
-          {/* Trial Period (create mode only) */}
-          {!subscription && (
-            <>
-              <div className="flex items-center gap-3 p-3 border rounded-lg">
-                <input
-                  type="checkbox"
-                  id="create-include-trial"
-                  checked={includeTrial}
-                  onChange={(e) => setIncludeTrial(e.target.checked)}
-                  className="w-4 h-4 text-blue-600 rounded"
-                />
-                <label htmlFor="create-include-trial" className="text-sm font-medium text-gray-700 cursor-pointer select-none">
-                  {t('admin:subscriptions.requests.activateModal.includeTrial', 'Include Trial Period')}
-                </label>
-              </div>
+          {/* Trial Period */}
+          <>
+            <div className="flex items-center gap-3 p-3 border rounded-lg">
+              <input
+                type="checkbox"
+                id="create-include-trial"
+                checked={includeTrial}
+                onChange={(e) => setIncludeTrial(e.target.checked)}
+                className="w-4 h-4 text-blue-600 rounded"
+              />
+              <label htmlFor="create-include-trial" className="text-sm font-medium text-gray-700 cursor-pointer select-none">
+                {t('admin:subscriptions.requests.activateModal.includeTrial', 'Include Trial Period')}
+              </label>
+            </div>
 
-              {includeTrial && (
-                <div className="pl-3 border-l-2 border-blue-200 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-700">
-                      {t('admin:subscriptions.requests.activateModal.trialDates', 'Trial Dates')}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const d = new Date(trialStartDate);
-                        d.setDate(d.getDate() + 30);
-                        setTrialEndDate(d.toISOString().split('T')[0]);
-                      }}
-                      className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 font-medium"
-                    >
-                      {t('admin:subscriptions.requests.activateModal.preset30Days', '30-day trial')}
-                    </button>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs text-gray-600 mb-1">
-                        {t('admin:subscriptions.requests.activateModal.trialStart', 'Trial Start')}
-                      </label>
-                      <input
-                        type="date"
-                        value={trialStartDate}
-                        onChange={(e) => setTrialStartDate(e.target.value)}
-                        className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs text-gray-600 mb-1">
-                        {t('admin:subscriptions.requests.activateModal.trialEnd', 'Trial End')}
-                      </label>
-                      <input
-                        type="date"
-                        value={trialEndDate}
-                        min={trialStartDate}
-                        onChange={(e) => setTrialEndDate(e.target.value)}
-                        className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-                  </div>
-                  <p className="text-xs text-gray-500">
-                    {t(
-                      'admin:subscriptions.requests.activateModal.trialHelp',
-                      'The subscription will stay in Trial status until the trial end date, then automatically become Active.',
-                    )}
-                  </p>
+            {includeTrial && (
+              <div className="pl-3 border-l-2 border-blue-200 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-700">
+                    {t('admin:subscriptions.requests.activateModal.trialDates', 'Trial Dates')}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const d = new Date(trialStartDate);
+                      d.setDate(d.getDate() + 30);
+                      setTrialEndDate(d.toISOString().split('T')[0]);
+                    }}
+                    className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 font-medium"
+                  >
+                    {t('admin:subscriptions.requests.activateModal.preset30Days', '30-day trial')}
+                  </button>
                 </div>
-              )}
-            </>
-          )}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs text-gray-600 mb-1">
+                      {t('admin:subscriptions.requests.activateModal.trialStart', 'Trial Start')}
+                    </label>
+                    <input
+                      type="date"
+                      value={trialStartDate}
+                      onChange={(e) => setTrialStartDate(e.target.value)}
+                      className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-600 mb-1">
+                      {t('admin:subscriptions.requests.activateModal.trialEnd', 'Trial End')}
+                    </label>
+                    <input
+                      type="date"
+                      value={trialEndDate}
+                      min={trialStartDate}
+                      onChange={(e) => setTrialEndDate(e.target.value)}
+                      className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500">
+                  {t(
+                    'admin:subscriptions.requests.activateModal.trialHelp',
+                    'The subscription will stay in Trial status until the trial end date, then automatically become Active.',
+                  )}
+                </p>
+              </div>
+            )}
+          </>
 
           {/* Notes */}
           <div>
@@ -2639,6 +2645,8 @@ const Subscriptions: React.FC = () => {
           tier: data.tier,
           currentPeriodEnd,
           notes: data.notes,
+          trialStartDate: data.includeTrial ? data.trialStartDate : undefined,
+          trialEndDate: data.includeTrial ? data.trialEndDate : undefined,
         });
         
         // Update status and cancelAtPeriodEnd flag

@@ -187,6 +187,8 @@ export interface UpdateSubscriptionDto {
   currentPeriodEnd?: string;
   notes?: string;
   metadata?: Record<string, any>;
+  trialStartDate?: string;
+  trialEndDate?: string;
 }
 
 export interface ActivateSubscriptionDto {

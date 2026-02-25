@@ -752,6 +752,8 @@ export class SubscriptionManagementService {
       if (data.currentPeriodEnd) updateData.currentPeriodEnd = new Date(data.currentPeriodEnd);
       if (data.notes !== undefined) updateData.notes = data.notes;
       if (data.metadata) updateData.metadata = data.metadata;
+      if (data.trialStartDate) updateData.trialStart = new Date(data.trialStartDate);
+      if (data.trialEndDate) updateData.trialEnd = new Date(data.trialEndDate);
 
       const subscription = await this.prisma.subscription.update({
         where: { id },
