@@ -12,6 +12,10 @@ export class ExportRequestDto {
   @IsString()
   segmentId?: string;
 
+  @IsOptional()
+  @IsString()
+  customListId?: string;
+
   @IsString()
   @IsIn(['csv', 'xlsx'])
   format: 'csv' | 'xlsx';

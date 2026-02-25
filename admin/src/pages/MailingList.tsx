@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
-  Mail, Plus, Download, Send, Save, Trash2, RefreshCw, Users, BarChart3, List, UserPlus,
+  Mail, Plus, Download, Send, Save, Trash2, RefreshCw, Users, BarChart3, List, UserPlus, Pencil, Check, X,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
@@ -19,6 +19,7 @@ import ExportModal from '../components/mailing/ExportModal'
 import ComposeEmailModal from '../components/mailing/ComposeEmailModal'
 import SendProgressOverlay from '../components/mailing/SendProgressOverlay'
 import AddToListModal from '../components/mailing/AddToListModal'
+import CustomListMembersModal from '../components/mailing/CustomListMembersModal'
 
 type Tab = 'build' | 'segments' | 'campaigns' | 'lists'
 
@@ -75,6 +76,14 @@ const MailingListPage: React.FC = () => {
   const [sendingCampaignId, setSendingCampaignId] = useState<string | null>(null)
   const [actionLoading, setActionLoading] = useState(false)
   const [selectedUserIds, setSelectedUserIds] = useState<Set<string>>(new Set())
+
+  // Custom list action state
+  const [activeList, setActiveList] = useState<MailingCustomList | null>(null)
+  const [listMembersModalOpen, setListMembersModalOpen] = useState(false)
+  const [listComposeModalOpen, setListComposeModalOpen] = useState(false)
+  const [listExportModalOpen, setListExportModalOpen] = useState(false)
+  const [editingListId, setEditingListId] = useState<string | null>(null)
+  const [editingListName, setEditingListName] = useState('')
 
   const toggleSelectUser = useCallback((id: string) => {
     setSelectedUserIds((prev) => {
@@ -231,6 +240,66 @@ const MailingListPage: React.FC = () => {
     setFilters(segment.filtersJson)
     setActiveTab('build')
   }, [])
+
+  const handleCreateListCampaign = useCallback(async (subject: string, bodyHtml: string) => {
+    if (!activeList) return
+    setActionLoading(true)
+    try {
+      const res = await apiService.mailingCreateCampaign(apiClient, {
+        subject,
+        bodyHtml,
+        customListId: activeList.id,
+      })
+      const campaignId = res.data?.campaignId
+      toast.success('Campaign created')
+      setListComposeModalOpen(false)
+      if (campaignId) setSendingCampaignId(campaignId)
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || 'Failed to create campaign')
+    } finally {
+      setActionLoading(false)
+    }
+  }, [apiClient, activeList])
+
+  const handleExportList = useCallback(async (format: 'csv' | 'xlsx', columns: string[]) => {
+    if (!activeList) return
+    setActionLoading(true)
+    try {
+      const res = await apiService.mailingExport(apiClient, {
+        customListId: activeList.id,
+        format,
+        columns,
+        deduplicateByEmail: true,
+      })
+      const blob = new Blob([res.data], {
+        type: format === 'csv' ? 'text/csv' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      })
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${activeList.name.replace(/\s+/g, '_')}_export_${new Date().toISOString().slice(0, 10)}.${format}`
+      a.click()
+      window.URL.revokeObjectURL(url)
+      toast.success(`Exported ${activeList._count?.members || 0} members`)
+      setListExportModalOpen(false)
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || 'Export failed')
+    } finally {
+      setActionLoading(false)
+    }
+  }, [apiClient, activeList])
+
+  const handleRenameList = useCallback(async (listId: string, newName: string) => {
+    if (!newName.trim()) return
+    try {
+      await apiService.mailingUpdateCustomList(apiClient, listId, { name: newName.trim() })
+      toast.success('List renamed')
+      setEditingListId(null)
+      queryClient.invalidateQueries({ queryKey: ['mailing-custom-lists'] })
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || 'Failed to rename list')
+    }
+  }, [apiClient, queryClient])
 
   return (
     <div className="space-y-6">
@@ -536,28 +605,95 @@ const MailingListPage: React.FC = () => {
                     {customListsData.lists.map((list: MailingCustomList) => (
                       <tr key={list.id} className="hover:bg-gray-50">
                         <td className="px-4 py-3">
-                          <div className="text-sm font-medium text-gray-900">{list.name}</div>
-                          {list.description && <div className="text-xs text-gray-500 truncate max-w-xs">{list.description}</div>}
+                          {editingListId === list.id ? (
+                            <form
+                              className="flex items-center gap-2"
+                              onSubmit={(e) => { e.preventDefault(); handleRenameList(list.id, editingListName) }}
+                            >
+                              <input
+                                autoFocus
+                                value={editingListName}
+                                onChange={(e) => setEditingListName(e.target.value)}
+                                className="text-sm border border-blue-400 rounded px-2 py-0.5 focus:outline-none focus:ring-1 focus:ring-blue-500 w-48"
+                              />
+                              <button type="submit" className="p-1 text-green-600 hover:text-green-800">
+                                <Check className="w-3.5 h-3.5" />
+                              </button>
+                              <button type="button" onClick={() => setEditingListId(null)} className="p-1 text-gray-400 hover:text-gray-600">
+                                <X className="w-3.5 h-3.5" />
+                              </button>
+                            </form>
+                          ) : (
+                            <>
+                              <div className="text-sm font-medium text-gray-900">{list.name}</div>
+                              {list.description && <div className="text-xs text-gray-500 truncate max-w-xs">{list.description}</div>}
+                            </>
+                          )}
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-600">{(list._count?.members ?? 0).toLocaleString()}</td>
+                        <td className="px-4 py-3">
+                          <button
+                            onClick={() => { setActiveList(list); setListMembersModalOpen(true) }}
+                            className="text-sm text-blue-600 hover:underline"
+                            title="View members"
+                          >
+                            {(list._count?.members ?? 0).toLocaleString()} members
+                          </button>
+                        </td>
                         <td className="px-4 py-3 text-sm text-gray-500">{new Date(list.updatedAt).toLocaleDateString()}</td>
                         <td className="px-4 py-3 text-right">
-                          <button
-                            onClick={async () => {
-                              if (!confirm(t('admin:mailing.customLists.deleteConfirm', 'Delete this list?'))) return
-                              try {
-                                await apiService.mailingDeleteCustomList(apiClient, list.id)
-                                toast.success(t('admin:mailing.customLists.deleted', 'List deleted'))
-                                queryClient.invalidateQueries({ queryKey: ['mailing-custom-lists'] })
-                              } catch (err: any) {
-                                toast.error(err?.response?.data?.message || 'Failed to delete')
-                              }
-                            }}
-                            className="p-1 text-gray-400 hover:text-red-600"
-                            title="Delete"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
+                          <div className="flex items-center justify-end gap-1">
+                            {/* Send email / Create campaign */}
+                            <button
+                              onClick={() => { setActiveList(list); setListComposeModalOpen(true) }}
+                              disabled={(list._count?.members ?? 0) === 0}
+                              className="flex items-center gap-1 text-xs px-2 py-1 text-blue-600 hover:bg-blue-50 rounded disabled:opacity-40 disabled:cursor-not-allowed"
+                              title="Create mail campaign for this list"
+                            >
+                              <Send className="w-3 h-3" /> Send
+                            </button>
+                            {/* Export list */}
+                            <button
+                              onClick={() => { setActiveList(list); setListExportModalOpen(true) }}
+                              disabled={(list._count?.members ?? 0) === 0}
+                              className="flex items-center gap-1 text-xs px-2 py-1 text-gray-600 hover:bg-gray-100 rounded disabled:opacity-40 disabled:cursor-not-allowed"
+                              title="Export list members"
+                            >
+                              <Download className="w-3 h-3" /> Export
+                            </button>
+                            {/* View members */}
+                            <button
+                              onClick={() => { setActiveList(list); setListMembersModalOpen(true) }}
+                              className="flex items-center gap-1 text-xs px-2 py-1 text-gray-600 hover:bg-gray-100 rounded"
+                              title="View members"
+                            >
+                              <Users className="w-3 h-3" /> Members
+                            </button>
+                            {/* Rename */}
+                            <button
+                              onClick={() => { setEditingListId(list.id); setEditingListName(list.name) }}
+                              className="p-1 text-gray-400 hover:text-blue-600"
+                              title="Rename list"
+                            >
+                              <Pencil className="w-3.5 h-3.5" />
+                            </button>
+                            {/* Delete */}
+                            <button
+                              onClick={async () => {
+                                if (!confirm(t('admin:mailing.customLists.deleteConfirm', 'Delete this list?'))) return
+                                try {
+                                  await apiService.mailingDeleteCustomList(apiClient, list.id)
+                                  toast.success(t('admin:mailing.customLists.deleted', 'List deleted'))
+                                  queryClient.invalidateQueries({ queryKey: ['mailing-custom-lists'] })
+                                } catch (err: any) {
+                                  toast.error(err?.response?.data?.message || 'Failed to delete')
+                                }
+                              }}
+                              className="p-1 text-gray-400 hover:text-red-600"
+                              title="Delete list"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -612,6 +748,33 @@ const MailingListPage: React.FC = () => {
           }}
         />
       )}
+
+      {/* Custom list — view members */}
+      {activeList && (
+        <CustomListMembersModal
+          isOpen={listMembersModalOpen}
+          onClose={() => setListMembersModalOpen(false)}
+          list={activeList}
+        />
+      )}
+
+      {/* Custom list — compose campaign email */}
+      <ComposeEmailModal
+        isOpen={listComposeModalOpen}
+        onClose={() => setListComposeModalOpen(false)}
+        onSend={handleCreateListCampaign}
+        loading={actionLoading}
+        recipientCount={activeList?._count?.members ?? 0}
+      />
+
+      {/* Custom list — export members */}
+      <ExportModal
+        isOpen={listExportModalOpen}
+        onClose={() => setListExportModalOpen(false)}
+        onExport={handleExportList}
+        loading={actionLoading}
+        count={activeList?._count?.members ?? 0}
+      />
     </div>
   )
 }

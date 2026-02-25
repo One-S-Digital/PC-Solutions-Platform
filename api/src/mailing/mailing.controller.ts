@@ -133,7 +133,18 @@ export class MailingController {
     @Res() res: Response,
   ) {
     const adminId = this.getAdminId(req);
-    const filters = await this.mailingService.resolveFilters(body.filters, body.segmentId);
+
+    // Resolve filters, accounting for custom list targeting
+    let filters: any;
+    if (body.customListId) {
+      const memberIds = await this.mailingService.getAllCustomListMemberIds(body.customListId);
+      if (memberIds.length === 0) {
+        throw new BadRequestException('Custom list has no members');
+      }
+      filters = { ...(body.filters || {}), userIds: memberIds };
+    } else {
+      filters = await this.mailingService.resolveFilters(body.filters, body.segmentId);
+    }
 
     const result = await this.mailingService.exportRecipients(
       filters,
@@ -215,12 +226,24 @@ export class MailingController {
   @ApiOperation({ summary: 'Create a campaign' })
   async createCampaign(@Body() body: CreateCampaignDto, @Request() req: any) {
     const adminId = this.getAdminId(req);
+
+    let filters = body.filters;
+
+    // If targeting a custom list, resolve the member user IDs and inject them into filters
+    if (body.customListId) {
+      const memberIds = await this.mailingService.getAllCustomListMemberIds(body.customListId);
+      if (memberIds.length === 0) {
+        throw new BadRequestException('Custom list has no members');
+      }
+      filters = { ...filters, userIds: memberIds };
+    }
+
     return this.mailingService.createCampaign(
       body.subject,
       body.bodyHtml,
       body.bodyText,
       adminId,
-      body.filters,
+      filters,
       body.segmentId,
     );
   }

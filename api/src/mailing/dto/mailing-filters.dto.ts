@@ -4,6 +4,10 @@ import { UserRole, SubscriptionStatus, SubscriptionTier } from '@prisma/client';
 export class MailingFiltersDto {
   @IsOptional()
   @IsArray()
+  @IsString({ each: true })
+  userIds?: string[];
+  @IsOptional()
+  @IsArray()
   @IsEnum(UserRole, { each: true })
   roles?: UserRole[];
 
