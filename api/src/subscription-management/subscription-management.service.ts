@@ -752,8 +752,21 @@ export class SubscriptionManagementService {
       if (data.currentPeriodEnd) updateData.currentPeriodEnd = new Date(data.currentPeriodEnd);
       if (data.notes !== undefined) updateData.notes = data.notes;
       if (data.metadata) updateData.metadata = data.metadata;
-      if (data.trialStartDate) updateData.trialStart = new Date(data.trialStartDate);
-      if (data.trialEndDate) updateData.trialEnd = new Date(data.trialEndDate);
+      const hasTrialStartDate = Object.prototype.hasOwnProperty.call(data, 'trialStartDate');
+      const hasTrialEndDate = Object.prototype.hasOwnProperty.call(data, 'trialEndDate');
+
+      if (hasTrialStartDate) {
+        updateData.trialStart = data.trialStartDate ? new Date(data.trialStartDate) : null;
+      }
+      if (hasTrialEndDate) {
+        updateData.trialEnd = data.trialEndDate ? new Date(data.trialEndDate) : null;
+      }
+
+      const nextTrialStart = hasTrialStartDate ? updateData.trialStart : existing.trialStart;
+      const nextTrialEnd = hasTrialEndDate ? updateData.trialEnd : existing.trialEnd;
+      if (nextTrialStart && nextTrialEnd && nextTrialEnd < nextTrialStart) {
+        throw new BadRequestException('trialEndDate must be on or after trialStartDate');
+      }
 
       const subscription = await this.prisma.subscription.update({
         where: { id },
