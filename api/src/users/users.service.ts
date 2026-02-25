@@ -1743,20 +1743,32 @@ export class UsersService {
       await this.prisma.$transaction(
         async (tx) => {
         // Helper: run a deleteMany that might target a table not yet migrated.
+        // Uses a SAVEPOINT so that a P2021 (table-not-found) error can be swallowed
+        // without leaving the PostgreSQL transaction in an aborted state — which
+        // would cause every subsequent statement to fail with error 25P02.
         const safeDeleteMany = async (model: any, where: any): Promise<void> => {
+          const sp = `sp_${Math.random().toString(36).slice(2, 10)}`;
+          await tx.$executeRawUnsafe(`SAVEPOINT "${sp}"`);
           try {
             await model.deleteMany({ where });
+            await tx.$executeRawUnsafe(`RELEASE SAVEPOINT "${sp}"`);
           } catch (error: any) {
-            if (error?.code === 'P2021') return; // table does not exist
+            await tx.$executeRawUnsafe(`ROLLBACK TO SAVEPOINT "${sp}"`);
+            if (error?.code === 'P2021') return; // table does not exist, skip safely
             throw error;
           }
         };
         // Helper: run an updateMany that might target a table not yet migrated.
+        // Uses the same SAVEPOINT pattern as safeDeleteMany.
         const safeUpdateMany = async (model: any, where: any, data: any): Promise<void> => {
+          const sp = `sp_${Math.random().toString(36).slice(2, 10)}`;
+          await tx.$executeRawUnsafe(`SAVEPOINT "${sp}"`);
           try {
             await model.updateMany({ where, data });
+            await tx.$executeRawUnsafe(`RELEASE SAVEPOINT "${sp}"`);
           } catch (error: any) {
-            if (error?.code === 'P2021') return; // table does not exist
+            await tx.$executeRawUnsafe(`ROLLBACK TO SAVEPOINT "${sp}"`);
+            if (error?.code === 'P2021') return; // table does not exist, skip safely
             throw error;
           }
         };
@@ -1808,6 +1820,15 @@ export class UsersService {
           await safeDeleteMany(tx.ticketResponse, { userId: profile.id });
           await safeDeleteMany(tx.supportTicket, { OR: [{ userId: profile.id }, { assignedTo: profile.id }] });
           await safeDeleteMany(tx.userSubscription, { userId: profile.id });
+
+          // billing_transactions.subscriptionId has ON DELETE RESTRICT, so we must
+          // delete billing transactions before we can delete the subscriptions themselves.
+          const userSubIds = await tx.subscription
+            .findMany({ where: { userId: profile.id }, select: { id: true } })
+            .then((rows) => rows.map((r) => r.id));
+          if (userSubIds.length > 0) {
+            await safeDeleteMany(tx.billingTransaction, { subscriptionId: { in: userSubIds } });
+          }
           await safeDeleteMany(tx.subscription, { userId: profile.id });
 
           // E-learning
