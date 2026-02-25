@@ -426,16 +426,18 @@ export class UploadService {
     // 2. User is SUPER_ADMIN or ADMIN
     // 3. File is linked to an active public organization document
     // 4. File is linked to an active catalog (PDF/CSV)
+    // 5. File is a state policy document (accessible to all authenticated users)
     const isOwner = asset.uploadedById === appUserId;
     const isAdmin = requestingUser?.role === 'SUPER_ADMIN' || requestingUser?.role === 'ADMIN';
     const isOrganizationDocument = asset.organizationDocuments?.length > 0;
     const isCatalogAsset = catalogQueryFailed
       ? false
       : (asset.catalogPdfs?.length || 0) > 0 || (asset.catalogCsvs?.length || 0) > 0;
+    const isStatePolicyAsset = asset.category === 'STATE_POLICY';
 
-    if (!isOwner && !isAdmin && !isOrganizationDocument && !isCatalogAsset) {
+    if (!isOwner && !isAdmin && !isOrganizationDocument && !isCatalogAsset && !isStatePolicyAsset) {
       this.logger.warn(
-        `Access denied to file ${storageKey} for user ${appUserId} (owner=${isOwner}, admin=${isAdmin}, orgDoc=${isOrganizationDocument}, catalog=${isCatalogAsset})`,
+        `Access denied to file ${storageKey} for user ${appUserId} (owner=${isOwner}, admin=${isAdmin}, orgDoc=${isOrganizationDocument}, catalog=${isCatalogAsset}, statePolicy=${isStatePolicyAsset})`,
       );
       throw new ForbiddenException('Access denied to this file');
     }
