@@ -1648,7 +1648,7 @@ const ActivateSubscriptionRequestModal: React.FC<ActivateSubscriptionRequestModa
     e.preventDefault();
     await onActivate({
       startDate: startDate || undefined,
-      periodMonths: periodMonths >= 0 ? periodMonths : undefined,
+      periodMonths: periodMonths > 0 ? periodMonths : undefined,
       includeTrial: includeTrial || undefined,
       trialStartDate: includeTrial ? trialStartDate : undefined,
       trialEndDate: includeTrial ? trialEndDate : undefined,

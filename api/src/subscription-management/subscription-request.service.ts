@@ -566,6 +566,23 @@ export class SubscriptionRequestService {
           },
           performedBy,
         );
+      } else {
+        // Record who initiated the trial so audit fields are never null.
+        await this.prisma.subscription.update({
+          where: { id: subscription.id },
+          data: { activatedBy: performedBy, activatedAt: new Date() },
+        });
+        await this.prisma.subscriptionAction.create({
+          data: {
+            subscriptionId: subscription.id,
+            action: 'ACTIVATE',
+            previousStatus: 'PENDING',
+            newStatus: 'TRIAL',
+            reason: 'Trial activated from subscription request',
+            notes: data.notes,
+            performedBy,
+          },
+        });
       }
 
       // Update the request
