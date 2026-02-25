@@ -21,6 +21,10 @@ export class CreateCampaignDto {
   @IsOptional()
   @IsString()
   segmentId?: string;
+
+  @IsOptional()
+  @IsString()
+  customListId?: string;
 }
 
 export class SendBatchDto {

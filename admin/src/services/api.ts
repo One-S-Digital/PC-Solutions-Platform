@@ -1047,6 +1047,7 @@ export const apiService = {
   mailingExport: (apiClient: AxiosInstance, data: {
     filters?: any;
     segmentId?: string;
+    customListId?: string;
     format: 'csv' | 'xlsx';
     columns: string[];
     deduplicateByEmail?: boolean;
@@ -1061,6 +1062,7 @@ export const apiService = {
     bodyText?: string;
     filters?: any;
     segmentId?: string;
+    customListId?: string;
   }) => apiClient.post('/admin/mailing/campaigns', data),
 
   mailingListCampaigns: (apiClient: AxiosInstance, params?: { page?: number; pageSize?: number }) =>
