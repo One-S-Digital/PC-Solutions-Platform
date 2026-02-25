@@ -1823,11 +1823,25 @@ export class UsersService {
 
           // billing_transactions.subscriptionId has ON DELETE RESTRICT, so we must
           // delete billing transactions before we can delete the subscriptions themselves.
-          const userSubIds = await tx.subscription
-            .findMany({ where: { userId: profile.id }, select: { id: true } })
-            .then((rows) => rows.map((r) => r.id));
-          if (userSubIds.length > 0) {
-            await safeDeleteMany(tx.billingTransaction, { subscriptionId: { in: userSubIds } });
+          // The findMany is wrapped in its own SAVEPOINT so that a P2021 (table-not-found)
+          // on either subscriptions or billing_transactions in a partially-migrated
+          // environment does not abort the outer transaction (mirroring safeDeleteMany).
+          {
+            const sp = `sp_${Math.random().toString(36).slice(2, 10)}`;
+            await tx.$executeRawUnsafe(`SAVEPOINT "${sp}"`);
+            try {
+              const userSubIds = await tx.subscription
+                .findMany({ where: { userId: profile.id }, select: { id: true } })
+                .then((rows) => rows.map((r) => r.id));
+              if (userSubIds.length > 0) {
+                await safeDeleteMany(tx.billingTransaction, { subscriptionId: { in: userSubIds } });
+              }
+              await tx.$executeRawUnsafe(`RELEASE SAVEPOINT "${sp}"`);
+            } catch (error: any) {
+              await tx.$executeRawUnsafe(`ROLLBACK TO SAVEPOINT "${sp}"`);
+              if (error?.code !== 'P2021') throw error;
+              // subscriptions table absent; safeDeleteMany below will also skip gracefully
+            }
           }
           await safeDeleteMany(tx.subscription, { userId: profile.id });
 
