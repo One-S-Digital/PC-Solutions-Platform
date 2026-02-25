@@ -546,21 +546,27 @@ export class SubscriptionRequestService {
           startDate: data.startDate,
           durationMonths: data.periodMonths,
           includeTrial: data.includeTrial,
+          trialStartDate: data.trialStartDate,
+          trialEndDate: data.trialEndDate,
           notes: data.notes || `Created from subscription request ${id}`,
         },
         performedBy,
       );
 
-      // Activate the subscription
-      await this.subscriptionService.activateSubscription(
-        subscription.id,
-        {
-          startDate: data.startDate,
-          periodMonths: data.periodMonths,
-          notes: data.notes,
-        },
-        performedBy,
-      );
+      // If a trial was started, leave the subscription in TRIAL status — the scheduled
+      // cron job will transition it to ACTIVE when the trial period ends.
+      // For non-trial activations, move directly to ACTIVE now.
+      if (subscription.status !== 'TRIAL') {
+        await this.subscriptionService.activateSubscription(
+          subscription.id,
+          {
+            startDate: data.startDate,
+            periodMonths: data.periodMonths,
+            notes: data.notes,
+          },
+          performedBy,
+        );
+      }
 
       // Update the request
       const updated = await this.prisma.subscriptionRequest.update({

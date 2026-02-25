@@ -178,6 +178,14 @@ export class ActivateFromRequestDto {
   includeTrial?: boolean;
 
   @IsOptional()
+  @IsDateString()
+  trialStartDate?: string;
+
+  @IsOptional()
+  @IsDateString()
+  trialEndDate?: string;
+
+  @IsOptional()
   @IsBoolean()
   sendEmail?: boolean;
 

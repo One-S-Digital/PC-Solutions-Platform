@@ -320,6 +320,8 @@ export const subscriptionService = {
     startDate?: string;
     periodMonths?: number;
     includeTrial?: boolean;
+    trialStartDate?: string;
+    trialEndDate?: string;
     sendEmail?: boolean;
     notes?: string;
   }) =>

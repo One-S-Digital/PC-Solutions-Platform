@@ -555,11 +555,19 @@ export class SubscriptionManagementService {
       let trialEnd: Date | null = null;
       let status: SubscriptionStatus = 'PENDING';
 
-      if (data.includeTrial && plan.trialDays > 0) {
-        trialStart = startDate;
-        trialEnd = new Date(startDate);
-        trialEnd.setDate(trialEnd.getDate() + plan.trialDays);
-        status = 'TRIAL';
+      if (data.includeTrial) {
+        if (data.trialStartDate && data.trialEndDate) {
+          // Admin provided explicit trial dates
+          trialStart = new Date(data.trialStartDate);
+          trialEnd = new Date(data.trialEndDate);
+          status = 'TRIAL';
+        } else if (plan.trialDays > 0) {
+          // Fall back to plan's default trialDays
+          trialStart = startDate;
+          trialEnd = new Date(startDate);
+          trialEnd.setDate(trialEnd.getDate() + plan.trialDays);
+          status = 'TRIAL';
+        }
       }
 
       const subscription = await this.prisma.subscription.create({
