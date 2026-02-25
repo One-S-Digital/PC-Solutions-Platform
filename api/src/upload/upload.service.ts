@@ -426,14 +426,20 @@ export class UploadService {
     // 2. User is SUPER_ADMIN or ADMIN
     // 3. File is linked to an active public organization document
     // 4. File is linked to an active catalog (PDF/CSV)
-    // 5. File is a state policy document (accessible to all authenticated users)
+    // 5. File is a state policy whose accessRoles permits the requesting user's role
+    //    (empty accessRoles means all authenticated users may access it)
     const isOwner = asset.uploadedById === appUserId;
     const isAdmin = requestingUser?.role === 'SUPER_ADMIN' || requestingUser?.role === 'ADMIN';
     const isOrganizationDocument = asset.organizationDocuments?.length > 0;
     const isCatalogAsset = catalogQueryFailed
       ? false
       : (asset.catalogPdfs?.length || 0) > 0 || (asset.catalogCsvs?.length || 0) > 0;
-    const isStatePolicyAsset = asset.category === 'STATE_POLICY';
+    const isStatePolicyAsset =
+      asset.category === 'STATE_POLICY' &&
+      (
+        !asset.accessRoles?.length ||
+        (requestingUser?.role && asset.accessRoles.includes(requestingUser.role))
+      );
 
     if (!isOwner && !isAdmin && !isOrganizationDocument && !isCatalogAsset && !isStatePolicyAsset) {
       this.logger.warn(
