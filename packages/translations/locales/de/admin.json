@@ -2157,6 +2157,20 @@
         "notes": "Interne Notizen (optional)",
         "sendEmailNotification": "E-Mail-Benachrichtigung an den Kunden senden",
         "decline": "Anfrage ablehnen"
+      },
+      "activateModal": {
+        "title": "Abonnement aktivieren",
+        "startDate": "Abonnement-Startdatum",
+        "period": "Abonnementzeitraum",
+        "includeTrial": "Testzeitraum einschließen",
+        "trialDates": "Testdaten",
+        "trialStart": "Testbeginn",
+        "trialEnd": "Testende",
+        "preset30Days": "30-Tage-Test",
+        "sendEmail": "Aktivierungs-E-Mail an den Kunden senden",
+        "notes": "Admin-Notizen (optional)",
+        "submit": "Abonnement aktivieren",
+        "trialHelp": "Das Abonnement bleibt im Teststatus bis zum Enddatum des Tests und wird dann automatisch aktiv."
       }
     },
     "cancellations": {
