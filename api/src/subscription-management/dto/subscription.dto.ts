@@ -81,6 +81,14 @@ export class UpdateSubscriptionDto {
   @IsOptional()
   @IsObject()
   metadata?: Record<string, any>;
+
+  @IsOptional()
+  @IsDateString()
+  trialStartDate?: string;
+
+  @IsOptional()
+  @IsDateString()
+  trialEndDate?: string;
 }
 
 /**
