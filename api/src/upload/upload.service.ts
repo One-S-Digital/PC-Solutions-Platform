@@ -428,6 +428,8 @@ export class UploadService {
     // 4. File is linked to an active catalog (PDF/CSV)
     // 5. File is a state policy whose accessRoles permits the requesting user's role
     //    (empty accessRoles means all authenticated users may access it)
+    // 6. File is an HR document whose accessRoles permits the requesting user's role
+    //    (empty accessRoles means all authenticated users may access it)
     const isOwner = asset.uploadedById === appUserId;
     const isAdmin = requestingUser?.role === 'SUPER_ADMIN' || requestingUser?.role === 'ADMIN';
     const isOrganizationDocument = asset.organizationDocuments?.length > 0;
@@ -440,10 +442,16 @@ export class UploadService {
         !asset.accessRoles?.length ||
         (requestingUser?.role && asset.accessRoles.includes(requestingUser.role))
       );
+    const isHRDocumentAsset =
+      asset.category === 'HR_DOCUMENT' &&
+      (
+        !asset.accessRoles?.length ||
+        (requestingUser?.role && asset.accessRoles.includes(requestingUser.role))
+      );
 
-    if (!isOwner && !isAdmin && !isOrganizationDocument && !isCatalogAsset && !isStatePolicyAsset) {
+    if (!isOwner && !isAdmin && !isOrganizationDocument && !isCatalogAsset && !isStatePolicyAsset && !isHRDocumentAsset) {
       this.logger.warn(
-        `Access denied to file ${storageKey} for user ${appUserId} (owner=${isOwner}, admin=${isAdmin}, orgDoc=${isOrganizationDocument}, catalog=${isCatalogAsset}, statePolicy=${isStatePolicyAsset})`,
+        `Access denied to file ${storageKey} for user ${appUserId} (owner=${isOwner}, admin=${isAdmin}, orgDoc=${isOrganizationDocument}, catalog=${isCatalogAsset}, statePolicy=${isStatePolicyAsset}, hrDoc=${isHRDocumentAsset})`,
       );
       throw new ForbiddenException('Access denied to this file');
     }
