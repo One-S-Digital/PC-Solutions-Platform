@@ -436,18 +436,8 @@ export class UploadService {
     const isCatalogAsset = catalogQueryFailed
       ? false
       : (asset.catalogPdfs?.length || 0) > 0 || (asset.catalogCsvs?.length || 0) > 0;
-    const isStatePolicyAsset =
-      asset.category === 'STATE_POLICY' &&
-      (
-        !asset.accessRoles?.length ||
-        (requestingUser?.role && asset.accessRoles.includes(requestingUser.role))
-      );
-    const isHRDocumentAsset =
-      asset.category === 'HR_DOCUMENT' &&
-      (
-        !asset.accessRoles?.length ||
-        (requestingUser?.role && asset.accessRoles.includes(requestingUser.role))
-      );
+    const isStatePolicyAsset = this.hasCategoryAccess(asset, requestingUser, 'STATE_POLICY');
+    const isHRDocumentAsset = this.hasCategoryAccess(asset, requestingUser, 'HR_DOCUMENT');
 
     if (!isOwner && !isAdmin && !isOrganizationDocument && !isCatalogAsset && !isStatePolicyAsset && !isHRDocumentAsset) {
       this.logger.warn(
@@ -457,6 +447,23 @@ export class UploadService {
     }
 
     return asset;
+  }
+
+  /**
+   * Returns true when an asset belongs to the given category and the requesting
+   * user's role is permitted by the asset's accessRoles list.
+   * An empty accessRoles list means all authenticated users are allowed.
+   */
+  private hasCategoryAccess(
+    asset: { category: string | null; accessRoles: string[] },
+    requestingUser: { role: string } | null | undefined,
+    category: string,
+  ): boolean {
+    return (
+      asset.category === category &&
+      (!asset.accessRoles?.length ||
+        (!!requestingUser?.role && asset.accessRoles.includes(requestingUser.role)))
+    );
   }
 
   /**
