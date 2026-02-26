@@ -55,7 +55,7 @@
       "categoriesTitle": "HR-Dokument-Kategorien",
       "allItemsCount": "{{count}} Dokumente",
       "adminUploadNote": "Admin-Dashboard verwenden, um Dokumente hinzuzufügen/zu bearbeiten",
-      "title": "HR-Verfahren"
+      "title": "HR-Dokumente"
     },
     "statePoliciesPage": {
       "buttons": {
@@ -244,7 +244,7 @@
     "searchPlaceholder": "Dokumente durchsuchen...",
     "categoriesTitle": "HR-Dokumentkategorien",
     "allItemsCount": "{{count}} Dokumente",
-    "title": "HR-Verfahren"
+    "title": "HR-Dokumente"
   },
   "policyCategories": {
     "Labor&Employment": "Arbeit und Beschäftigung",
