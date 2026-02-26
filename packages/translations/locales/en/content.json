@@ -48,7 +48,7 @@
       "allItemsCount": "{{count}} documents",
       "uploadButton": "Upload Document",
       "adminUploadNote": "Use Admin Dashboard to add/edit documents",
-      "title": "HR Procedures"
+      "title": "HR Documents"
     },
     "statePoliciesPage": {
       "buttons": {
@@ -221,7 +221,7 @@
     "categoriesTitle": "HR Document Categories",
     "allItemsCount": "{{count}} documents",
     "uploadButton": "Upload Document",
-    "title": "HR Procedures"
+    "title": "HR Documents"
   },
   "policyCategories": {
     "Labor&Employment": "Labor& Employment",

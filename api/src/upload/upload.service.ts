@@ -428,27 +428,42 @@ export class UploadService {
     // 4. File is linked to an active catalog (PDF/CSV)
     // 5. File is a state policy whose accessRoles permits the requesting user's role
     //    (empty accessRoles means all authenticated users may access it)
+    // 6. File is an HR document whose accessRoles permits the requesting user's role
+    //    (empty accessRoles means all authenticated users may access it)
     const isOwner = asset.uploadedById === appUserId;
     const isAdmin = requestingUser?.role === 'SUPER_ADMIN' || requestingUser?.role === 'ADMIN';
     const isOrganizationDocument = asset.organizationDocuments?.length > 0;
     const isCatalogAsset = catalogQueryFailed
       ? false
       : (asset.catalogPdfs?.length || 0) > 0 || (asset.catalogCsvs?.length || 0) > 0;
-    const isStatePolicyAsset =
-      asset.category === 'STATE_POLICY' &&
-      (
-        !asset.accessRoles?.length ||
-        (requestingUser?.role && asset.accessRoles.includes(requestingUser.role))
-      );
+    const isStatePolicyAsset = this.hasCategoryAccess(asset, requestingUser, 'STATE_POLICY');
+    const isHRDocumentAsset = this.hasCategoryAccess(asset, requestingUser, 'HR_DOCUMENT');
 
-    if (!isOwner && !isAdmin && !isOrganizationDocument && !isCatalogAsset && !isStatePolicyAsset) {
+    if (!isOwner && !isAdmin && !isOrganizationDocument && !isCatalogAsset && !isStatePolicyAsset && !isHRDocumentAsset) {
       this.logger.warn(
-        `Access denied to file ${storageKey} for user ${appUserId} (owner=${isOwner}, admin=${isAdmin}, orgDoc=${isOrganizationDocument}, catalog=${isCatalogAsset}, statePolicy=${isStatePolicyAsset})`,
+        `Access denied to file ${storageKey} for user ${appUserId} (owner=${isOwner}, admin=${isAdmin}, orgDoc=${isOrganizationDocument}, catalog=${isCatalogAsset}, statePolicy=${isStatePolicyAsset}, hrDoc=${isHRDocumentAsset})`,
       );
       throw new ForbiddenException('Access denied to this file');
     }
 
     return asset;
+  }
+
+  /**
+   * Returns true when an asset belongs to the given category and the requesting
+   * user's role is permitted by the asset's accessRoles list.
+   * An empty accessRoles list means all authenticated users are allowed.
+   */
+  private hasCategoryAccess(
+    asset: { category: string | null; accessRoles: string[] },
+    requestingUser: { role: string } | null | undefined,
+    category: string,
+  ): boolean {
+    return (
+      asset.category === category &&
+      (!asset.accessRoles?.length ||
+        (!!requestingUser?.role && asset.accessRoles.includes(requestingUser.role)))
+    );
   }
 
   /**

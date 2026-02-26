@@ -705,7 +705,7 @@
     "noDocumentsInCategory": "No documents in this category",
     "noDocumentsMatchSearch": "No documents match your search",
     "searchPlaceholder": "Search documents...",
-    "title": "HR Procedures",
+    "title": "HR Documents",
     "uploadButton": "Upload Document"
   },
   "inquiryDetailModal": {
@@ -1320,7 +1320,7 @@
     "fileGallery": "File Gallery",
     "foundations": "Foundations",
     "homeFindCreche": "Home / Find Crèche",
-    "hrProcedures": "HR Procedures",
+    "hrProcedures": "HR Documents",
     "jobBoard": "Job Board",
     "jobListings": "Job Listings",
     "manageSubscriptionDesc": "Manage your subscription and billing",

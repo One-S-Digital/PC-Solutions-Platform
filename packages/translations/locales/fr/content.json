@@ -55,7 +55,7 @@
       "categoriesTitle": "Catégories de documents RH",
       "allItemsCount": "{{count}} documents",
       "adminUploadNote": "Utiliser le tableau de bord d'administration pour ajouter/modifier les documents",
-      "title": "Procédures RH"
+      "title": "Documents RH"
     },
     "statePoliciesPage": {
       "buttons": {
@@ -245,7 +245,7 @@
     "searchPlaceholder": "Recherche de documents...",
     "categoriesTitle": "Catégories de documents RH",
     "allItemsCount": "{{count}} documents",
-    "title": "Procédures RH"
+    "title": "Documents RH"
   },
   "policyCategories": {
     "Labor&Employment": "Travail et emploi",
