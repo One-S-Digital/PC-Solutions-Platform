@@ -2165,7 +2165,7 @@
         "sendEmail": "Envoyer un email d'activation au client",
         "notes": "Notes administrateur (optionnel)",
         "submit": "Activer l'abonnement",
-        "trialHelp": "L'abonnement restera en statut Essai jusqu'à la date de fin d'essai, puis deviendra automatiquement Actif."
+        "trialHelp": "Lorsque l'essai se termine, l'abonnement devient Inactif. L'administrateur doit ensuite l'activer pour accorder un accès complet à l'utilisateur."
       }
     },
     "cancellations": {

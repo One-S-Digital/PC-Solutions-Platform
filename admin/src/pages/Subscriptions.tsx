@@ -2303,6 +2303,7 @@ type ViewMode = 'subscriptions' | 'requests' | 'cancellations' | 'settings';
 const Subscriptions: React.FC = () => {
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [statsStatusFilter, setStatsStatusFilter] = useState<'ACTIVE' | 'TRIAL' | 'EXPIRING_SOON' | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [selectedUserSubscription, setSelectedUserSubscription] = useState<Subscription | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -2564,6 +2565,20 @@ const Subscriptions: React.FC = () => {
     }
     return map;
   }, [userStats]);
+
+  // Subscriptions filtered by the stat card the admin clicked
+  const statsFilteredSubscriptions = React.useMemo(() => {
+    if (!statsStatusFilter) return [];
+    const now = new Date();
+    const in30Days = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+    return subscriptions.filter((sub) => {
+      if (statsStatusFilter === 'ACTIVE') return sub.status === 'ACTIVE';
+      if (statsStatusFilter === 'TRIAL') return sub.status === 'TRIAL';
+      if (statsStatusFilter === 'EXPIRING_SOON')
+        return sub.status === 'ACTIVE' && !!sub.currentPeriodEnd && new Date(sub.currentPeriodEnd) <= in30Days;
+      return false;
+    });
+  }, [subscriptions, statsStatusFilter]);
 
   // Subscription counts by role (derived from subscription plan allowedRoles)
   const subscriptionCountsByRole = React.useMemo(() => {
@@ -3066,18 +3081,24 @@ const Subscriptions: React.FC = () => {
       value: analytics?.activeSubscriptions || 0,
       icon: <CreditCard className="w-6 h-6 text-green-600" />,
       color: 'bg-green-50 border-green-200',
+      selectedColor: 'bg-green-100 border-green-500 ring-2 ring-green-400',
+      filterKey: 'ACTIVE' as const,
     },
     {
       title: t('admin:subscriptions.stats.trialSubscriptions'),
       value: analytics?.trialSubscriptions || 0,
       icon: <Clock className="w-6 h-6 text-blue-600" />,
       color: 'bg-blue-50 border-blue-200',
+      selectedColor: 'bg-blue-100 border-blue-500 ring-2 ring-blue-400',
+      filterKey: 'TRIAL' as const,
     },
     {
       title: t('admin:subscriptions.stats.expiringSoon'),
       value: analytics?.expiringWithin30Days || 0,
       icon: <AlertTriangle className="w-6 h-6 text-yellow-600" />,
       color: 'bg-yellow-50 border-yellow-200',
+      selectedColor: 'bg-yellow-100 border-yellow-500 ring-2 ring-yellow-400',
+      filterKey: 'EXPIRING_SOON' as const,
     },
     {
       title: t('admin:subscriptions.stats.monthlyRevenue'),
@@ -3085,6 +3106,7 @@ const Subscriptions: React.FC = () => {
       icon: <DollarSign className="w-6 h-6 text-purple-600" />,
       color: 'bg-purple-50 border-purple-200',
       isText: true,
+      filterKey: null,
     },
   ];
 
@@ -3176,20 +3198,38 @@ const Subscriptions: React.FC = () => {
         <>
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {statsCards.map((stat, index) => (
-              <div
-                key={index}
-                className={`${stat.color} border rounded-lg p-4 flex items-center justify-between`}
-              >
-                <div>
-                  <p className="text-sm text-gray-600">{stat.title}</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {stat.isText ? stat.value : (stat.value as number).toLocaleString()}
-                  </p>
+            {statsCards.map((stat, index) => {
+              const isSelected = stat.filterKey !== null && statsStatusFilter === stat.filterKey;
+              const isClickable = stat.filterKey !== null;
+              return (
+                <div
+                  key={index}
+                  onClick={() => {
+                    if (!isClickable) return;
+                    setStatsStatusFilter(isSelected ? null : stat.filterKey);
+                  }}
+                  className={`border rounded-lg p-4 flex items-center justify-between transition-all
+                    ${isSelected ? stat.selectedColor : stat.color}
+                    ${isClickable ? 'cursor-pointer hover:shadow-md' : ''}
+                  `}
+                >
+                  <div>
+                    <p className="text-sm text-gray-600">{stat.title}</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {stat.isText ? stat.value : (stat.value as number).toLocaleString()}
+                    </p>
+                    {isClickable && (
+                      <p className="text-xs mt-1 text-gray-400">
+                        {isSelected
+                          ? t('admin:subscriptions.stats.clickToClear', 'Click to clear filter')
+                          : t('admin:subscriptions.stats.clickToFilter', 'Click to filter')}
+                      </p>
+                    )}
+                  </div>
+                  {stat.icon}
                 </div>
-                {stat.icon}
-              </div>
-            ))}
+              );
+            })}
           </div>
         </>
       )}
@@ -3699,13 +3739,34 @@ const Subscriptions: React.FC = () => {
             </div>
           </div>
 
+          {/* Active filter banner */}
+          {statsStatusFilter && (
+            <div className="flex items-center justify-between px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
+              <span>
+                {statsStatusFilter === 'ACTIVE' && t('admin:subscriptions.stats.filterActive', 'Showing: Active Subscriptions')}
+                {statsStatusFilter === 'TRIAL' && t('admin:subscriptions.stats.filterTrial', 'Showing: Trial Subscriptions')}
+                {statsStatusFilter === 'EXPIRING_SOON' && t('admin:subscriptions.stats.filterExpiring', 'Showing: Expiring Within 30 Days')}
+                {' '}
+                <span className="font-semibold">({statsFilteredSubscriptions.length})</span>
+              </span>
+              <button
+                type="button"
+                onClick={() => setStatsStatusFilter(null)}
+                className="flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium"
+              >
+                <X className="w-4 h-4" />
+                {t('admin:subscriptions.stats.viewAll', 'View All')}
+              </button>
+            </div>
+          )}
+
           {/* User List */}
           <div className="bg-white rounded-lg border overflow-hidden">
-            {roleUsersLoading ? (
+            {!statsStatusFilter && roleUsersLoading ? (
               <div className="flex justify-center py-12">
                 <LoadingSpinner />
               </div>
-            ) : roleUsersResult.users.length === 0 ? (
+            ) : (statsStatusFilter ? statsFilteredSubscriptions.length === 0 : roleUsersResult.users.length === 0) ? (
               <div className="text-center py-12 text-gray-500">
                 <Users className="w-12 h-12 mx-auto mb-3 text-gray-300" />
                 <p>{t('admin:subscriptions.noUsersFound', 'No users found')}</p>
@@ -3730,84 +3791,167 @@ const Subscriptions: React.FC = () => {
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                         {t('admin:subscriptions.userTable.plan', 'Plan')}
                       </th>
+                      {statsStatusFilter === 'EXPIRING_SOON' && (
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                          {t('admin:subscriptions.userTable.expiresOn', 'Expires On')}
+                        </th>
+                      )}
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                         {t('admin:subscriptions.userTable.actions', 'Actions')}
                       </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y">
-                    {roleUsersResult.users.map((user) => {
-                      const subscription = getSubscriptionForUser(user);
-                      return (
-                        <tr
-                          key={user.id}
-                          className="hover:bg-gray-50 cursor-pointer"
-                          onClick={() => handleEditUser(user)}
-                        >
-                          <td className="px-4 py-4">
-                            <div className="flex items-center gap-3">
-                              <div className="h-10 w-10 rounded-full bg-swiss-teal flex items-center justify-center flex-shrink-0">
-                                <span className="text-white font-medium">
-                                  {(user.firstName || user.email || '?').charAt(0).toUpperCase()}
-                                </span>
-                              </div>
-                              <div>
-                                <p className="font-medium text-gray-900">
-                                  {user.firstName && user.lastName
-                                    ? `${user.firstName} ${user.lastName}`
-                                    : user.name || t('common:unknown', 'Unknown')}
-                                </p>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-4 py-4 text-sm text-gray-600">
-                            {user.email || t('common:notAvailable', 'N/A')}
-                          </td>
-                          <td className="px-4 py-4 text-sm text-gray-600">
-                            {user.orgName || '-'}
-                          </td>
-                          <td className="px-4 py-4">
-                            {getSubscriptionStatusBadge(user)}
-                          </td>
-                          <td className="px-4 py-4 text-sm text-gray-600">
-                            {subscription?.plan?.name || '-'}
-                          </td>
-                          <td className="px-4 py-4">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleEditUser(user);
-                              }}
-                              className={`flex items-center gap-1 px-3 py-1.5 text-sm rounded-lg transition-colors ${
-                                subscription
-                                  ? 'bg-blue-50 text-blue-600 hover:bg-blue-100'
-                                  : 'bg-green-50 text-green-600 hover:bg-green-100'
-                              }`}
+                    {statsStatusFilter
+                      ? statsFilteredSubscriptions.map((sub) => {
+                          const subUser: User = {
+                            id: sub.user?.id || sub.userId || '',
+                            profileId: sub.user?.id || sub.userId || '',
+                            email: sub.user?.email || '',
+                            name: sub.user?.firstName
+                              ? `${sub.user.firstName} ${sub.user.lastName || ''}`.trim()
+                              : sub.user?.email || '',
+                            firstName: sub.user?.firstName,
+                            lastName: sub.user?.lastName,
+                            role: (sub.user?.role as any) || 'USER',
+                            orgId: sub.organizationId,
+                            orgName: sub.organization?.name,
+                            status: 'ACTIVE',
+                            createdAt: new Date(),
+                            updatedAt: new Date(),
+                          };
+                          const openModal = () => {
+                            setSelectedUser(subUser);
+                            setSelectedUserSubscription(sub);
+                            setIsEditModalOpen(true);
+                          };
+                          return (
+                            <tr
+                              key={sub.id}
+                              className="hover:bg-gray-50 cursor-pointer"
+                              onClick={openModal}
                             >
-                              {subscription ? (
-                                <>
+                              <td className="px-4 py-4">
+                                <div className="flex items-center gap-3">
+                                  <div className="h-10 w-10 rounded-full bg-swiss-teal flex items-center justify-center flex-shrink-0">
+                                    <span className="text-white font-medium">
+                                      {(sub.user?.firstName || sub.user?.email || '?').charAt(0).toUpperCase()}
+                                    </span>
+                                  </div>
+                                  <div>
+                                    <p className="font-medium text-gray-900">
+                                      {sub.user?.firstName && sub.user?.lastName
+                                        ? `${sub.user.firstName} ${sub.user.lastName}`
+                                        : sub.user?.email || t('common:unknown', 'Unknown')}
+                                    </p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-4 py-4 text-sm text-gray-600">
+                                {sub.user?.email || t('common:notAvailable', 'N/A')}
+                              </td>
+                              <td className="px-4 py-4 text-sm text-gray-600">
+                                {sub.organization?.name || '-'}
+                              </td>
+                              <td className="px-4 py-4">
+                                <span className={`px-2 py-1 text-xs font-medium rounded-full ${SubscriptionStatusColors[sub.status]}`}>
+                                  {t(`admin:subscriptions.status.${sub.status.toLowerCase()}`)}
+                                </span>
+                              </td>
+                              <td className="px-4 py-4 text-sm text-gray-600">
+                                {sub.plan?.name || '-'}
+                              </td>
+                              {statsStatusFilter === 'EXPIRING_SOON' && (
+                                <td className="px-4 py-4 text-sm text-gray-600">
+                                  {sub.currentPeriodEnd
+                                    ? new Date(sub.currentPeriodEnd).toLocaleDateString()
+                                    : '-'}
+                                </td>
+                              )}
+                              <td className="px-4 py-4">
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); openModal(); }}
+                                  className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
+                                >
                                   <Edit className="w-4 h-4" />
                                   {t('admin:subscriptions.manageSubscription', 'Manage')}
-                                </>
-                              ) : (
-                                <>
-                                  <Plus className="w-4 h-4" />
-                                  {t('admin:subscriptions.addSubscription', 'Add')}
-                                </>
-                              )}
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })
+                      : roleUsersResult.users.map((user) => {
+                          const subscription = getSubscriptionForUser(user);
+                          return (
+                            <tr
+                              key={user.id}
+                              className="hover:bg-gray-50 cursor-pointer"
+                              onClick={() => handleEditUser(user)}
+                            >
+                              <td className="px-4 py-4">
+                                <div className="flex items-center gap-3">
+                                  <div className="h-10 w-10 rounded-full bg-swiss-teal flex items-center justify-center flex-shrink-0">
+                                    <span className="text-white font-medium">
+                                      {(user.firstName || user.email || '?').charAt(0).toUpperCase()}
+                                    </span>
+                                  </div>
+                                  <div>
+                                    <p className="font-medium text-gray-900">
+                                      {user.firstName && user.lastName
+                                        ? `${user.firstName} ${user.lastName}`
+                                        : user.name || t('common:unknown', 'Unknown')}
+                                    </p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-4 py-4 text-sm text-gray-600">
+                                {user.email || t('common:notAvailable', 'N/A')}
+                              </td>
+                              <td className="px-4 py-4 text-sm text-gray-600">
+                                {user.orgName || '-'}
+                              </td>
+                              <td className="px-4 py-4">
+                                {getSubscriptionStatusBadge(user)}
+                              </td>
+                              <td className="px-4 py-4 text-sm text-gray-600">
+                                {subscription?.plan?.name || '-'}
+                              </td>
+                              <td className="px-4 py-4">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleEditUser(user);
+                                  }}
+                                  className={`flex items-center gap-1 px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                                    subscription
+                                      ? 'bg-blue-50 text-blue-600 hover:bg-blue-100'
+                                      : 'bg-green-50 text-green-600 hover:bg-green-100'
+                                  }`}
+                                >
+                                  {subscription ? (
+                                    <>
+                                      <Edit className="w-4 h-4" />
+                                      {t('admin:subscriptions.manageSubscription', 'Manage')}
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Plus className="w-4 h-4" />
+                                      {t('admin:subscriptions.addSubscription', 'Add')}
+                                    </>
+                                  )}
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
                   </tbody>
                 </table>
               </div>
             )}
           </div>
 
-          {/* Pagination */}
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:items-center">
+          {/* Pagination — hidden when a stat-card filter is active (filtered view shows all matches) */}
+          <div className={`grid grid-cols-1 gap-3 sm:grid-cols-3 sm:items-center${statsStatusFilter ? ' hidden' : ''}`}>
             <div className="text-sm text-gray-600 text-center sm:text-left">
               {t(
                 'admin:users.pagination.showing',
