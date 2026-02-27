@@ -409,6 +409,11 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               {t('admin:subscriptions.editSubscription.subscriptionPeriod', 'Subscription Period')}
+              {includeTrial && (
+                <span className="ml-2 text-xs font-normal text-gray-400">
+                  {t('admin:subscriptions.editSubscription.periodOptional', '(optional when trial is set)')}
+                </span>
+              )}
             </label>
             <select
               value={durationMonths}
@@ -422,9 +427,11 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
               ))}
             </select>
             <p className="text-xs text-gray-500 mt-1">
-              {durationMonths === 0 
+              {durationMonths === 0
                 ? t('admin:subscriptions.editSubscription.monthlyRecurringHelp', 'Auto-renews every month until cancelled, paused, or changed by an admin.')
-                : t('admin:subscriptions.editSubscription.subscriptionPeriodHelp', 'Select how long this subscription should be active.')}
+                : includeTrial && durationMonths === -1
+                  ? t('admin:subscriptions.editSubscription.periodFromPlanHelp', 'No period selected — the plan\'s default billing period will be used after the trial ends.')
+                  : t('admin:subscriptions.editSubscription.subscriptionPeriodHelp', 'Select how long this subscription should be active.')}
             </p>
           </div>
 
@@ -435,7 +442,15 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
                 type="checkbox"
                 id="create-include-trial"
                 checked={includeTrial}
-                onChange={(e) => setIncludeTrial(e.target.checked)}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  setIncludeTrial(checked);
+                  if (checked) {
+                    setStatus(SubscriptionStatus.TRIAL);
+                  } else if (!subscription) {
+                    setStatus(SubscriptionStatus.INACTIVE);
+                  }
+                }}
                 className="w-4 h-4 text-blue-600 rounded"
               />
               <label htmlFor="create-include-trial" className="text-sm font-medium text-gray-700 cursor-pointer select-none">
@@ -2678,8 +2693,11 @@ const Subscriptions: React.FC = () => {
           console.warn(`[Subscription] Warning: User ${user.id} has no profileId. Using id as fallback.`);
         }
         
-        // For monthly recurring (0), set durationMonths to 1
-        const duration = isMonthlyRecurring ? 1 : data.durationMonths;
+        // For monthly recurring (0), set durationMonths to 1.
+        // When a trial is active and no explicit period was chosen (-1), pass undefined
+        // so the backend falls back to the plan's billing period instead of calculating
+        // an end date from a negative month offset.
+        const duration = isMonthlyRecurring ? 1 : (data.durationMonths === -1 ? undefined : data.durationMonths);
         const subscription = await subscriptionService.createSubscription(apiClient, {
           userId: subscriptionUserId,
           organizationId: organizationId || undefined,
