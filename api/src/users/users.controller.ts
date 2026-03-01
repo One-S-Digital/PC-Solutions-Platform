@@ -21,6 +21,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { CompleteProfileDto } from './dto/complete-profile.dto';
 import { InviteUserDto } from './dto/invite-user.dto';
 import { BulkInviteDto } from './dto/bulk-invite.dto';
+import { AdminCreateUserDto } from './dto/admin-create-user.dto';
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '@prisma/client';
@@ -280,6 +281,18 @@ export class UsersController {
       message: `${successCount} invitation(s) sent${failCount > 0 ? `, ${failCount} failed` : ''}`,
       data: results,
     };
+  }
+
+  /**
+   * Directly create a user account in Clerk and the database.
+   * The email is pre-verified; the account is usable immediately without the user
+   * clicking a confirmation link. Restricted to SUPER_ADMIN only.
+   */
+  @Post('admin-create')
+  @Roles(UserRole.SUPER_ADMIN)
+  async adminCreateUser(@Body() dto: AdminCreateUserDto) {
+    const result = await this.usersService.adminCreateUser(dto);
+    return { success: true, data: result };
   }
 
   @Get()

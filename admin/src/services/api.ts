@@ -335,6 +335,10 @@ export const apiService = {
     apiClient.get<ApiResponse<{ id: string; emailAddress: string; role: string | null; status: string; createdAt: string }[]>>('/users/invitations'),
   resendInvitation: (apiClient: AxiosInstance, invitationId: string) =>
     apiClient.post<ApiResponse<any>>(`/users/invitations/${invitationId}/resend`),
+  adminCreateUser: (
+    apiClient: AxiosInstance,
+    payload: { email: string; role: UserRole; firstName?: string; lastName?: string; temporaryPassword?: string },
+  ) => apiClient.post<ApiResponse<{ clerkId: string; dbUserId: string; email: string; role: string; temporaryPassword?: string }>>('/users/admin-create', payload),
   updateUser: (apiClient: AxiosInstance, id: string, userData: Partial<User>) => {
     // Exclude id from the body - it's already in the URL and not allowed in UpdateUserDto
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

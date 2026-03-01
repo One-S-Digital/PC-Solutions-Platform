@@ -309,14 +309,16 @@ const ElevateToAdminModal: React.FC<ElevateToAdminModalProps> = ({ isOpen, onClo
   )
 }
 
-// Add User Modal Component (invites user via Clerk) — supports single and bulk invite
+// Add User Modal Component (invites user via Clerk) — supports single, bulk invite, and direct account creation
 interface AddUserModalProps {
   isOpen: boolean
   onClose: () => void
   onInvite: (payload: { email: string; role: UserRole }) => Promise<void>
   onBulkInvite: (invitations: { email: string; role: UserRole }[]) => Promise<{ data: { email: string; success: boolean; error?: string }[] }>
+  onAdminCreate: (payload: { email: string; role: UserRole; firstName?: string; lastName?: string; temporaryPassword?: string }) => Promise<{ temporaryPassword?: string }>
   isLoading: boolean
   isBulkLoading: boolean
+  isCreateLoading: boolean
   canInviteSuperAdmin: boolean
 }
 
@@ -342,12 +344,14 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
   onClose,
   onInvite,
   onBulkInvite,
+  onAdminCreate,
   isLoading,
   isBulkLoading,
+  isCreateLoading,
   canInviteSuperAdmin,
 }) => {
   const { t } = useTranslation(['common', 'admin'])
-  const [activeTab, setActiveTab] = useState<'single' | 'bulk'>('single')
+  const [activeTab, setActiveTab] = useState<'single' | 'bulk' | 'create'>('single')
 
   // Single invite state
   const [email, setEmail] = useState('')
@@ -359,6 +363,16 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
   const [bulkRole, setBulkRole] = useState<UserRole>(UserRole.PARENT)
   const [bulkResults, setBulkResults] = useState<{ email: string; success: boolean; error?: string }[] | null>(null)
 
+  // Create account state
+  const [createEmail, setCreateEmail] = useState('')
+  const [createFirstName, setCreateFirstName] = useState('')
+  const [createLastName, setCreateLastName] = useState('')
+  const [createRole, setCreateRole] = useState<UserRole>(UserRole.PARENT)
+  const [useCustomPassword, setUseCustomPassword] = useState(false)
+  const [customPassword, setCustomPassword] = useState('')
+  const [createError, setCreateError] = useState<string | null>(null)
+  const [createdPassword, setCreatedPassword] = useState<string | null>(null)
+
   useEffect(() => {
     if (isOpen) {
       setEmail('')
@@ -368,6 +382,14 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
       setBulkText('')
       setBulkRole(UserRole.PARENT)
       setBulkResults(null)
+      setCreateEmail('')
+      setCreateFirstName('')
+      setCreateLastName('')
+      setCreateRole(UserRole.PARENT)
+      setUseCustomPassword(false)
+      setCustomPassword('')
+      setCreateError(null)
+      setCreatedPassword(null)
     }
   }, [isOpen])
 
@@ -403,6 +425,34 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
     const invitations = parsedEmails.map((em) => ({ email: em, role: bulkRole }))
     const response = await onBulkInvite(invitations)
     setBulkResults(response.data)
+  }
+
+  const handleCreateSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setCreateError(null)
+    setCreatedPassword(null)
+    if (!createEmail.trim()) {
+      setCreateError(t('admin:users.addUser.emailRequired', 'Email is required'))
+      return
+    }
+    if (useCustomPassword && customPassword.length < 12) {
+      setCreateError(t('admin:users.addUser.passwordTooShort', 'Password must be at least 12 characters'))
+      return
+    }
+    try {
+      const result = await onAdminCreate({
+        email: createEmail.trim(),
+        role: createRole,
+        firstName: createFirstName.trim() || undefined,
+        lastName: createLastName.trim() || undefined,
+        temporaryPassword: useCustomPassword ? customPassword : undefined,
+      })
+      if (result.temporaryPassword) {
+        setCreatedPassword(result.temporaryPassword)
+      }
+    } catch (err) {
+      setCreateError(err instanceof Error ? err.message : t('admin:users.addUser.createFailed', 'Failed to create user'))
+    }
   }
 
   if (!isOpen) return null
@@ -448,6 +498,20 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
             <Upload className="w-4 h-4" />
             {t('admin:users.addUser.bulkInvite', 'Bulk Invite')}
           </button>
+          {canInviteSuperAdmin && (
+            <button
+              type="button"
+              className={`flex-1 px-4 py-3 text-sm font-medium flex items-center justify-center gap-2 transition-colors ${
+                activeTab === 'create'
+                  ? 'border-b-2 border-swiss-coral text-swiss-coral'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+              onClick={() => setActiveTab('create')}
+            >
+              <UserCog className="w-4 h-4" />
+              {t('admin:users.addUser.createAccount', 'Create Account')}
+            </button>
+          )}
         </div>
 
         {/* Single invite tab */}
@@ -572,6 +636,141 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
                   className="px-4 py-2 text-sm font-medium text-white bg-swiss-teal border border-transparent rounded-md shadow-sm hover:bg-swiss-teal/90"
                 >
                   {t('common:done', 'Done')}
+                </button>
+              )}
+            </div>
+          </form>
+        )}
+
+        {/* Create Account tab — SUPER_ADMIN only */}
+        {activeTab === 'create' && (
+          <form onSubmit={handleCreateSubmit}>
+            <div className="p-6 space-y-4">
+              {createError && (
+                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">{createError}</div>
+              )}
+
+              {/* Success: show generated password once */}
+              {createdPassword && (
+                <div className="bg-green-50 border border-green-200 rounded-md p-4 space-y-2">
+                  <p className="text-sm font-medium text-green-800">
+                    {t('admin:users.addUser.createSuccess', 'Account created successfully!')}
+                  </p>
+                  <p className="text-xs text-green-700">
+                    {t('admin:users.addUser.tempPasswordLabel', 'Temporary password (share securely — shown once):')}
+                  </p>
+                  <code className="block bg-white border border-green-200 rounded px-3 py-2 text-sm font-mono text-gray-900 select-all">
+                    {createdPassword}
+                  </code>
+                  <p className="text-xs text-green-600">
+                    {t('admin:users.addUser.tempPasswordHint', 'The user should change this on first login.')}
+                  </p>
+                </div>
+              )}
+
+              {!createdPassword && (
+                <>
+                  <div className="bg-amber-50 border border-amber-200 rounded-md px-4 py-3 text-xs text-amber-700">
+                    {t('admin:users.addUser.createAccountNote', 'The account will be created immediately with a pre-verified email. No invitation email is sent.')}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {t('admin:users.addUser.firstName', 'First name')}
+                      </label>
+                      <input
+                        type="text"
+                        className={STANDARD_INPUT_FIELD}
+                        value={createFirstName}
+                        onChange={(e) => setCreateFirstName(e.target.value)}
+                        placeholder={t('common:placeholders.firstname', 'First name')}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {t('admin:users.addUser.lastName', 'Last name')}
+                      </label>
+                      <input
+                        type="text"
+                        className={STANDARD_INPUT_FIELD}
+                        value={createLastName}
+                        onChange={(e) => setCreateLastName(e.target.value)}
+                        placeholder={t('common:placeholders.lastname', 'Last name')}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      {t('admin:users.addUser.email', 'Email')} <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      className={STANDARD_INPUT_FIELD}
+                      value={createEmail}
+                      onChange={(e) => setCreateEmail(e.target.value)}
+                      placeholder={t('common:placeholders.emailaddress')}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      {t('admin:users.addUser.role', 'Role')}
+                    </label>
+                    <RoleSelect value={createRole} onChange={setCreateRole} canInviteSuperAdmin={canInviteSuperAdmin} t={t} />
+                  </div>
+
+                  <div>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="rounded border-gray-300 text-swiss-teal focus:ring-swiss-teal"
+                        checked={useCustomPassword}
+                        onChange={(e) => { setUseCustomPassword(e.target.checked); setCustomPassword('') }}
+                      />
+                      <span className="text-sm font-medium text-gray-700">
+                        {t('admin:users.addUser.setCustomPassword', 'Set custom temporary password')}
+                      </span>
+                    </label>
+                    {!useCustomPassword && (
+                      <p className="mt-1 text-xs text-gray-500">
+                        {t('admin:users.addUser.autoPasswordHint', 'A secure password will be auto-generated and shown after creation.')}
+                      </p>
+                    )}
+                    {useCustomPassword && (
+                      <input
+                        type="password"
+                        className={`mt-2 ${STANDARD_INPUT_FIELD}`}
+                        value={customPassword}
+                        onChange={(e) => setCustomPassword(e.target.value)}
+                        placeholder={t('admin:users.addUser.passwordPlaceholder', 'Min. 12 characters')}
+                        minLength={12}
+                      />
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
+              <button
+                type="button"
+                onClick={onClose}
+                disabled={isCreateLoading}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 disabled:opacity-50"
+              >
+                {createdPassword ? t('common:done', 'Done') : t('common:cancel', 'Cancel')}
+              </button>
+              {!createdPassword && (
+                <button
+                  type="submit"
+                  disabled={isCreateLoading}
+                  className="px-4 py-2 text-sm font-medium text-white bg-swiss-coral border border-transparent rounded-md shadow-sm hover:bg-swiss-coral/90 disabled:opacity-50"
+                >
+                  {isCreateLoading
+                    ? t('admin:users.addUser.creating', 'Creating...')
+                    : t('admin:users.addUser.createAccountBtn', 'Create Account')}
                 </button>
               )}
             </div>
@@ -1009,6 +1208,24 @@ const Users: React.FC = () => {
   const handleBulkInvite = async (invitations: { email: string; role: UserRole }[]) => {
     const response = await bulkInviteMutation.mutateAsync(invitations)
     return (response as any)?.data ?? { data: [] }
+  }
+
+  // Admin direct user creation mutation (SUPER_ADMIN only)
+  const adminCreateUserMutation = useMutation({
+    mutationFn: (payload: { email: string; role: UserRole; firstName?: string; lastName?: string; temporaryPassword?: string }) =>
+      apiService.adminCreateUser(apiClient, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] })
+      toast.success(t('admin:users.addUser.createSuccess', 'User account created and ready to use'))
+    },
+    onError: (error: any) => {
+      logger.error('Failed to create user:', error)
+    },
+  })
+
+  const handleAdminCreateUser = async (payload: { email: string; role: UserRole; firstName?: string; lastName?: string; temporaryPassword?: string }) => {
+    const response = await adminCreateUserMutation.mutateAsync(payload)
+    return (response as any)?.data?.data ?? {}
   }
 
   const { users, meta } = React.useMemo(() => {
@@ -1647,8 +1864,10 @@ const Users: React.FC = () => {
         onClose={handleCloseAddUserModal}
         onInvite={handleInviteUser}
         onBulkInvite={handleBulkInvite}
+        onAdminCreate={handleAdminCreateUser}
         isLoading={inviteUserMutation.isPending}
         isBulkLoading={bulkInviteMutation.isPending}
+        isCreateLoading={adminCreateUserMutation.isPending}
         canInviteSuperAdmin={canInviteSuperAdmin}
       />
 
