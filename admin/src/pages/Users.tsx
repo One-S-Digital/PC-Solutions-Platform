@@ -835,7 +835,7 @@ interface PendingInvitationsSectionProps {
   isLoading: boolean
   isError?: boolean
   onResend: (id: string) => void
-  resendingId: string | null
+  resendingId: Set<string>
   roleColors: Record<string, string>
   t: (key: string, defaultValue?: string) => string
 }
@@ -903,12 +903,12 @@ const PendingInvitationsSection: React.FC<PendingInvitationsSectionProps> = ({
                     )}
                     <button
                       type="button"
-                      disabled={resendingId === inv.id}
+                      disabled={resendingId.has(inv.id)}
                       onClick={() => onResend(inv.id)}
                       title={t('admin:users.pendingInvitations.resend', 'Resend invitation')}
                       className="p-1 rounded text-gray-400 hover:text-swiss-teal hover:bg-swiss-teal/10 transition-colors disabled:opacity-50"
                     >
-                      <RefreshCw className={`h-4 w-4 ${resendingId === inv.id ? 'animate-spin' : ''}`} />
+                      <RefreshCw className={`h-4 w-4 ${resendingId.has(inv.id) ? 'animate-spin' : ''}`} />
                     </button>
                   </div>
                 </div>
@@ -1210,9 +1210,22 @@ const Users: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['pending-invitations'] })
       const results = (response as any)?.data?.data ?? []
       const successCount = results.filter((r: any) => r.success).length
-      toast.success(t('admin:users.addUser.bulkDone', `${successCount} invitation(s) sent`))
       const failureCount = results.length - successCount
       logger.log('Bulk invite completed', { total: results.length, successCount, failureCount })
+      if (successCount === 0) {
+        toast.error(
+          t('admin:users.addUser.bulkAllFailed', `All ${failureCount} invitation(s) failed to send`, { failureCount }),
+        )
+      } else if (failureCount > 0) {
+        toast.warn(
+          t('admin:users.addUser.bulkPartialSuccess', `${successCount} sent, ${failureCount} failed`, {
+            successCount,
+            failureCount,
+          }),
+        )
+      } else {
+        toast.success(t('admin:users.addUser.bulkDone', `${successCount} invitation(s) sent`, { count: successCount }))
+      }
     },
     onError: (error: any) => {
       logger.error('Failed to bulk invite:', error)
@@ -1235,16 +1248,16 @@ const Users: React.FC = () => {
   const pendingInvitations: PendingInvitation[] = (pendingInvitationsResponse as any)?.data?.data ?? []
 
   // Resend invitation mutation
-  const [resendingId, setResendingId] = useState<string | null>(null)
+  const [pendingResendIds, setPendingResendIds] = useState<Set<string>>(new Set())
   const resendInvitationMutation = useMutation({
     mutationFn: (invitationId: string) => apiService.resendInvitation(apiClient, invitationId),
-    onSuccess: () => {
+    onSuccess: (_data, invitationId) => {
       queryClient.invalidateQueries({ queryKey: ['pending-invitations'] })
-      setResendingId(null)
+      setPendingResendIds((prev) => { const next = new Set(prev); next.delete(invitationId); return next })
       toast.success(t('admin:users.pendingInvitations.resendSuccess', 'Invitation resent'))
     },
-    onError: (error: any) => {
-      setResendingId(null)
+    onError: (error: any, invitationId) => {
+      setPendingResendIds((prev) => { const next = new Set(prev); next.delete(invitationId); return next })
       const message =
         error?.response?.data?.message || t('admin:users.pendingInvitations.resendFailed', 'Failed to resend invitation')
       toast.error(message)
@@ -1252,7 +1265,8 @@ const Users: React.FC = () => {
   })
 
   const handleResendInvitation = (invitationId: string) => {
-    setResendingId(invitationId)
+    if (pendingResendIds.has(invitationId)) return
+    setPendingResendIds((prev) => new Set(prev).add(invitationId))
     resendInvitationMutation.mutate(invitationId)
   }
 
@@ -1612,7 +1626,7 @@ const Users: React.FC = () => {
         isLoading={isPendingInvitationsLoading}
         isError={isPendingInvitationsError}
         onResend={handleResendInvitation}
-        resendingId={resendingId}
+        resendingId={pendingResendIds}
         roleColors={roleColors}
         t={t}
       />

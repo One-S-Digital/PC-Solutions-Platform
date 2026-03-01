@@ -260,32 +260,38 @@ export class UsersController {
 
     const callerRole = (request.context?.role || request.user?.role) as UserRole | undefined;
 
-    const settled = await Promise.allSettled(
-      dto.invitations.map(async (inv) => {
-        if (callerRole === UserRole.ADMIN && inv.role === UserRole.SUPER_ADMIN) {
-          return { email: inv.email, success: false, error: 'Only SUPER_ADMIN can create SUPER_ADMIN users' };
-        }
-        try {
-          const invitation = await (this.clerk as any).invitations.createInvitation({
-            emailAddress: inv.email,
-            redirectUrl: inv.redirectUrl,
-            publicMetadata: { role: inv.role },
-          });
-          return { email: inv.email, success: true, invitationId: invitation.id };
-        } catch (error: any) {
-          const code = error?.errors?.[0]?.code ?? error?.code;
-          const message =
-            code === 'duplicate_record' || code === 'form_identifier_exists'
-              ? 'Invitation already sent to this email'
-              : (error?.message ?? 'Failed to send invitation');
-          return { email: inv.email, success: false, error: message };
-        }
-      }),
-    );
+    const sendOne = async (inv: (typeof dto.invitations)[number]) => {
+      if (callerRole === UserRole.ADMIN && inv.role === UserRole.SUPER_ADMIN) {
+        return { email: inv.email, success: false, error: 'Only SUPER_ADMIN can create SUPER_ADMIN users' };
+      }
+      try {
+        const invitation = await (this.clerk as any).invitations.createInvitation({
+          emailAddress: inv.email,
+          redirectUrl: inv.redirectUrl,
+          publicMetadata: { role: inv.role },
+        });
+        return { email: inv.email, success: true, invitationId: invitation.id };
+      } catch (error: any) {
+        const code = error?.errors?.[0]?.code ?? error?.code;
+        const message =
+          code === 'duplicate_record' || code === 'form_identifier_exists'
+            ? 'Invitation already sent to this email'
+            : (error?.message ?? 'Failed to send invitation');
+        return { email: inv.email, success: false, error: message };
+      }
+    };
 
-    const results = settled.map((r) =>
-      r.status === 'fulfilled' ? r.value : { success: false, error: r.reason?.message ?? 'Unexpected error' },
-    );
+    const CONCURRENCY = 5;
+    const results: Awaited<ReturnType<typeof sendOne>>[] = [];
+    for (let i = 0; i < dto.invitations.length; i += CONCURRENCY) {
+      const batch = dto.invitations.slice(i, i + CONCURRENCY);
+      const settled = await Promise.allSettled(batch.map(sendOne));
+      results.push(
+        ...settled.map((r) =>
+          r.status === 'fulfilled' ? r.value : { success: false, error: r.reason?.message ?? 'Unexpected error' },
+        ),
+      );
+    }
     const successCount = results.filter((r: any) => r.success).length;
     const failCount = results.length - successCount;
 
