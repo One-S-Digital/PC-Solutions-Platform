@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
-import { 
-  Users as UsersIcon, 
-  Plus, 
-  Search, 
+import {
+  Users as UsersIcon,
+  Plus,
+  Search,
   Edit,
   Trash2,
   MoreVertical,
@@ -18,7 +18,12 @@ import {
   Ban,
   CheckCircle,
   UserX,
-  UserCheck as UserCheckIcon
+  UserCheck as UserCheckIcon,
+  RefreshCw,
+  ChevronDown,
+  ChevronUp,
+  Mail,
+  Upload,
 } from 'lucide-react'
 import { useApiClient, apiService } from '../services/api'
 import { useTranslation } from 'react-i18next';
@@ -304,49 +309,79 @@ const ElevateToAdminModal: React.FC<ElevateToAdminModalProps> = ({ isOpen, onClo
   )
 }
 
-// Add User Modal Component (invites user via Clerk)
+// Add User Modal Component (invites user via Clerk) — supports single and bulk invite
 interface AddUserModalProps {
   isOpen: boolean
   onClose: () => void
   onInvite: (payload: { email: string; role: UserRole }) => Promise<void>
+  onBulkInvite: (invitations: { email: string; role: UserRole }[]) => Promise<{ data: { email: string; success: boolean; error?: string }[] }>
   isLoading: boolean
+  isBulkLoading: boolean
   canInviteSuperAdmin: boolean
 }
+
+const RoleSelect: React.FC<{ value: UserRole; onChange: (r: UserRole) => void; canInviteSuperAdmin: boolean; t: (k: string, d?: string) => string }> = ({
+  value,
+  onChange,
+  canInviteSuperAdmin,
+  t,
+}) => (
+  <select className={STANDARD_INPUT_FIELD} value={value} onChange={(e) => onChange(e.target.value as UserRole)}>
+    {canInviteSuperAdmin && <option value={UserRole.SUPER_ADMIN}>{t('common:superadmin')}</option>}
+    <option value={UserRole.ADMIN}>{t('common:admin')}</option>
+    <option value={UserRole.FOUNDATION}>{t('common:foundation')}</option>
+    <option value={UserRole.PRODUCT_SUPPLIER}>{t('common:productsupplier')}</option>
+    <option value={UserRole.SERVICE_PROVIDER}>{t('common:serviceprovider')}</option>
+    <option value={UserRole.EDUCATOR}>{t('common:educator')}</option>
+    <option value={UserRole.PARENT}>{t('common:parent')}</option>
+  </select>
+)
 
 const AddUserModal: React.FC<AddUserModalProps> = ({
   isOpen,
   onClose,
   onInvite,
+  onBulkInvite,
   isLoading,
+  isBulkLoading,
   canInviteSuperAdmin,
 }) => {
   const { t } = useTranslation(['common', 'admin'])
+  const [activeTab, setActiveTab] = useState<'single' | 'bulk'>('single')
+
+  // Single invite state
   const [email, setEmail] = useState('')
   const [role, setRole] = useState<UserRole>(UserRole.PARENT)
   const [error, setError] = useState<string | null>(null)
+
+  // Bulk invite state
+  const [bulkText, setBulkText] = useState('')
+  const [bulkRole, setBulkRole] = useState<UserRole>(UserRole.PARENT)
+  const [bulkResults, setBulkResults] = useState<{ email: string; success: boolean; error?: string }[] | null>(null)
 
   useEffect(() => {
     if (isOpen) {
       setEmail('')
       setRole(UserRole.PARENT)
       setError(null)
+      setActiveTab('single')
+      setBulkText('')
+      setBulkRole(UserRole.PARENT)
+      setBulkResults(null)
     }
   }, [isOpen])
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSingleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
-
     if (!email.trim()) {
       setError(t('admin:users.addUser.emailRequired', 'Email is required'))
       return
     }
-
     if (!canInviteSuperAdmin && role === UserRole.SUPER_ADMIN) {
       setError(t('admin:users.addUser.superAdminNotAllowed', 'Only Super Admin can add a Super Admin'))
       return
     }
-
     try {
       await onInvite({ email: email.trim(), role })
     } catch (err) {
@@ -354,89 +389,289 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
     }
   }
 
+  const parsedEmails = useMemo(() => {
+    return bulkText
+      .split(/[\n,;]+/)
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0)
+  }, [bulkText])
+
+  const handleBulkSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (parsedEmails.length === 0) return
+    setBulkResults(null)
+    const invitations = parsedEmails.map((em) => ({ email: em, role: bulkRole }))
+    const response = await onBulkInvite(invitations)
+    setBulkResults(response.data)
+  }
+
   if (!isOpen) return null
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
       <div className="w-full max-w-lg bg-white shadow-xl rounded-lg overflow-hidden">
+        {/* Header */}
         <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900">{t('admin:users.addUser', 'Add User')}</h2>
           <button
             onClick={onClose}
             className="p-1 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
-            disabled={isLoading}
+            disabled={isLoading || isBulkLoading}
           >
             <X className="w-6 h-6" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <div className="p-6 space-y-4">
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
-                {error}
+        {/* Tabs */}
+        <div className="flex border-b border-gray-200">
+          <button
+            type="button"
+            className={`flex-1 px-4 py-3 text-sm font-medium flex items-center justify-center gap-2 transition-colors ${
+              activeTab === 'single'
+                ? 'border-b-2 border-swiss-teal text-swiss-teal'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+            onClick={() => setActiveTab('single')}
+          >
+            <Mail className="w-4 h-4" />
+            {t('admin:users.addUser.singleInvite', 'Single Invite')}
+          </button>
+          <button
+            type="button"
+            className={`flex-1 px-4 py-3 text-sm font-medium flex items-center justify-center gap-2 transition-colors ${
+              activeTab === 'bulk'
+                ? 'border-b-2 border-swiss-teal text-swiss-teal'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+            onClick={() => setActiveTab('bulk')}
+          >
+            <Upload className="w-4 h-4" />
+            {t('admin:users.addUser.bulkInvite', 'Bulk Invite')}
+          </button>
+        </div>
+
+        {/* Single invite tab */}
+        {activeTab === 'single' && (
+          <form onSubmit={handleSingleSubmit}>
+            <div className="p-6 space-y-4">
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">{error}</div>
+              )}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('admin:users.addUser.email', 'Email')} <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="email"
+                  className={STANDARD_INPUT_FIELD}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={t('common:placeholders.emailaddress')}
+                  required
+                />
+                <p className="mt-1 text-xs text-gray-500">
+                  {t(
+                    'admin:users.addUser.emailHint',
+                    'We will send an invitation email. The user will appear in the list after they sign up.',
+                  )}
+                </p>
               </div>
-            )}
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t('admin:users.addUser.email', 'Email')} <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="email"
-                className={STANDARD_INPUT_FIELD}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t('common:placeholders.emailaddress')}
-                required
-              />
-              <p className="mt-1 text-xs text-gray-500">
-                {t(
-                  'admin:users.addUser.emailHint',
-                  'We will send an invitation email. The user will appear in the list after they sign up.',
-                )}
-              </p>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('admin:users.addUser.role', 'Role')}
+                </label>
+                <RoleSelect value={role} onChange={setRole} canInviteSuperAdmin={canInviteSuperAdmin} t={t} />
+              </div>
             </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t('admin:users.addUser.role', 'Role')}
-              </label>
-              <select
-                className={STANDARD_INPUT_FIELD}
-                value={role}
-                onChange={(e) => setRole(e.target.value as UserRole)}
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
+              <button
+                type="button"
+                onClick={onClose}
+                disabled={isLoading}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 disabled:opacity-50"
               >
-                {canInviteSuperAdmin && <option value={UserRole.SUPER_ADMIN}>{t('common:superadmin')}</option>}
-                <option value={UserRole.ADMIN}>{t('common:admin')}</option>
-                <option value={UserRole.FOUNDATION}>{t('common:foundation')}</option>
-                <option value={UserRole.PRODUCT_SUPPLIER}>{t('common:productsupplier')}</option>
-                <option value={UserRole.SERVICE_PROVIDER}>{t('common:serviceprovider')}</option>
-                <option value={UserRole.EDUCATOR}>{t('common:educator')}</option>
-                <option value={UserRole.PARENT}>{t('common:parent')}</option>
-              </select>
+                {t('common:cancel', 'Cancel')}
+              </button>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="px-4 py-2 text-sm font-medium text-white bg-swiss-teal border border-transparent rounded-md shadow-sm hover:bg-swiss-teal/90 disabled:opacity-50"
+              >
+                {isLoading ? t('admin:users.addUser.sending', 'Sending...') : t('admin:users.addUser.sendInvite', 'Send Invite')}
+              </button>
             </div>
-          </div>
+          </form>
+        )}
 
-          <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
-            <button
-              type="button"
-              onClick={onClose}
-              disabled={isLoading}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 disabled:opacity-50"
-            >
-              {t('common:cancel', 'Cancel')}
-            </button>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="px-4 py-2 text-sm font-medium text-white bg-swiss-teal border border-transparent rounded-md shadow-sm hover:bg-swiss-teal/90 disabled:opacity-50"
-            >
-              {isLoading ? t('admin:users.addUser.sending', 'Sending...') : t('admin:users.addUser.sendInvite', 'Send Invite')}
-            </button>
-          </div>
-        </form>
+        {/* Bulk invite tab */}
+        {activeTab === 'bulk' && (
+          <form onSubmit={handleBulkSubmit}>
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('admin:users.addUser.bulkEmails', 'Email addresses')} <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  className={`${STANDARD_INPUT_FIELD} h-32 resize-none`}
+                  value={bulkText}
+                  onChange={(e) => { setBulkText(e.target.value); setBulkResults(null) }}
+                  placeholder={t('admin:users.addUser.bulkEmailsPlaceholder', 'One email per line, or comma/semicolon separated')}
+                />
+                {parsedEmails.length > 0 && (
+                  <p className="mt-1 text-xs text-gray-500">
+                    {parsedEmails.length} {t('admin:users.addUser.emailsDetected', 'email(s) detected')}
+                    {parsedEmails.length > 50 && (
+                      <span className="text-red-500 ml-1">— {t('admin:users.addUser.maxBulk', 'max 50 per batch')}</span>
+                    )}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('admin:users.addUser.role', 'Role')} ({t('admin:users.addUser.appliesAll', 'applies to all')})
+                </label>
+                <RoleSelect value={bulkRole} onChange={setBulkRole} canInviteSuperAdmin={canInviteSuperAdmin} t={t} />
+              </div>
+
+              {/* Bulk results */}
+              {bulkResults && (
+                <div className="space-y-1 max-h-40 overflow-y-auto border border-gray-200 rounded-md p-3">
+                  {bulkResults.map((r, i) => (
+                    <div key={i} className={`flex items-center justify-between text-xs ${r.success ? 'text-green-700' : 'text-red-600'}`}>
+                      <span className="truncate max-w-xs">{r.email}</span>
+                      <span className="ml-2 shrink-0">{r.success ? '✓ Sent' : `✗ ${r.error}`}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
+              <button
+                type="button"
+                onClick={onClose}
+                disabled={isBulkLoading}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 disabled:opacity-50"
+              >
+                {t('common:cancel', 'Cancel')}
+              </button>
+              {!bulkResults && (
+                <button
+                  type="submit"
+                  disabled={isBulkLoading || parsedEmails.length === 0 || parsedEmails.length > 50}
+                  className="px-4 py-2 text-sm font-medium text-white bg-swiss-teal border border-transparent rounded-md shadow-sm hover:bg-swiss-teal/90 disabled:opacity-50"
+                >
+                  {isBulkLoading
+                    ? t('admin:users.addUser.sending', 'Sending...')
+                    : `${t('admin:users.addUser.sendInvites', 'Send Invites')} (${parsedEmails.length})`}
+                </button>
+              )}
+              {bulkResults && (
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-4 py-2 text-sm font-medium text-white bg-swiss-teal border border-transparent rounded-md shadow-sm hover:bg-swiss-teal/90"
+                >
+                  {t('common:done', 'Done')}
+                </button>
+              )}
+            </div>
+          </form>
+        )}
       </div>
+    </div>
+  )
+}
+
+// Pending Invitations Section
+interface PendingInvitation {
+  id: string
+  emailAddress: string
+  role: string | null
+  status: string
+  createdAt: string
+}
+
+interface PendingInvitationsSectionProps {
+  invitations: PendingInvitation[]
+  isLoading: boolean
+  onResend: (id: string) => void
+  resendingId: string | null
+  roleColors: Record<string, string>
+  t: (key: string, defaultValue?: string) => string
+}
+
+const PendingInvitationsSection: React.FC<PendingInvitationsSectionProps> = ({
+  invitations,
+  isLoading,
+  onResend,
+  resendingId,
+  roleColors,
+  t,
+}) => {
+  const [isOpen, setIsOpen] = useState(false)
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+      <button
+        type="button"
+        className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50 transition-colors"
+        onClick={() => setIsOpen((v) => !v)}
+      >
+        <div className="flex items-center gap-2">
+          <Mail className="h-5 w-5 text-gray-400" />
+          <span className="text-sm font-medium text-gray-700">
+            {t('admin:users.pendingInvitations.title', 'Pending Invitations')}
+            {!isLoading && (
+              <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                {invitations.length}
+              </span>
+            )}
+          </span>
+        </div>
+        {isOpen ? <ChevronUp className="h-4 w-4 text-gray-400" /> : <ChevronDown className="h-4 w-4 text-gray-400" />}
+      </button>
+
+      {isOpen && (
+        <div className="border-t border-gray-200">
+          {isLoading ? (
+            <div className="px-6 py-4 text-sm text-gray-500">{t('common:loading', 'Loading...')}</div>
+          ) : invitations.length === 0 ? (
+            <div className="px-6 py-4 text-sm text-gray-500">
+              {t('admin:users.pendingInvitations.empty', 'No pending invitations.')}
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-100">
+              {invitations.map((inv) => (
+                <div key={inv.id} className="flex items-center justify-between px-6 py-3 hover:bg-gray-50">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-gray-900 truncate">{inv.emailAddress}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      {t('admin:users.pendingInvitations.sent', 'Sent')}{' '}
+                      {new Date(inv.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3 ml-4 shrink-0">
+                    {inv.role && (
+                      <span className={`inline-flex px-2 py-0.5 text-xs font-semibold rounded-full ${roleColors[inv.role] ?? 'bg-gray-100 text-gray-800'}`}>
+                        {inv.role}
+                      </span>
+                    )}
+                    <button
+                      type="button"
+                      disabled={resendingId === inv.id}
+                      onClick={() => onResend(inv.id)}
+                      title={t('admin:users.pendingInvitations.resend', 'Resend invitation')}
+                      className="p-1 rounded text-gray-400 hover:text-swiss-teal hover:bg-swiss-teal/10 transition-colors disabled:opacity-50"
+                    >
+                      <RefreshCw className={`h-4 w-4 ${resendingId === inv.id ? 'animate-spin' : ''}`} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
@@ -709,6 +944,7 @@ const Users: React.FC = () => {
     onSuccess: () => {
       setIsAddUserModalOpen(false)
       toast.success(t('admin:users.addUser.inviteSent', 'Invitation sent'))
+      queryClient.invalidateQueries({ queryKey: ['pending-invitations'] })
       logger.log('User invitation created successfully')
     },
     onError: (error: any) => {
@@ -720,6 +956,60 @@ const Users: React.FC = () => {
       toast.error(message)
     },
   })
+
+  // Bulk invite mutation
+  const bulkInviteMutation = useMutation({
+    mutationFn: (invitations: { email: string; role: UserRole }[]) =>
+      apiService.bulkInviteUsers(apiClient, invitations),
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({ queryKey: ['pending-invitations'] })
+      const results = (response as any)?.data?.data ?? []
+      const successCount = results.filter((r: any) => r.success).length
+      toast.success(t('admin:users.addUser.bulkDone', `${successCount} invitation(s) sent`))
+      logger.log('Bulk invite completed', results)
+    },
+    onError: (error: any) => {
+      logger.error('Failed to bulk invite:', error)
+      toast.error(t('admin:users.addUser.bulkFailed', 'Failed to send invitations'))
+    },
+  })
+
+  // Pending invitations query
+  const { data: pendingInvitationsResponse, isLoading: isPendingInvitationsLoading } = useQuery({
+    queryKey: ['pending-invitations'],
+    queryFn: () => apiService.listInvitations(apiClient),
+    enabled: !!apiClient,
+    staleTime: 60 * 1000,
+    refetchOnWindowFocus: false,
+  })
+  const pendingInvitations: PendingInvitation[] = (pendingInvitationsResponse as any)?.data?.data ?? []
+
+  // Resend invitation mutation
+  const [resendingId, setResendingId] = useState<string | null>(null)
+  const resendInvitationMutation = useMutation({
+    mutationFn: (invitationId: string) => apiService.resendInvitation(apiClient, invitationId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pending-invitations'] })
+      setResendingId(null)
+      toast.success(t('admin:users.pendingInvitations.resendSuccess', 'Invitation resent'))
+    },
+    onError: (error: any) => {
+      setResendingId(null)
+      const message =
+        error?.response?.data?.message || t('admin:users.pendingInvitations.resendFailed', 'Failed to resend invitation')
+      toast.error(message)
+    },
+  })
+
+  const handleResendInvitation = (invitationId: string) => {
+    setResendingId(invitationId)
+    resendInvitationMutation.mutate(invitationId)
+  }
+
+  const handleBulkInvite = async (invitations: { email: string; role: UserRole }[]) => {
+    const response = await bulkInviteMutation.mutateAsync(invitations)
+    return (response as any)?.data ?? { data: [] }
+  }
 
   const { users, meta } = React.useMemo(() => {
     // /admin/users returns DB users directly (not wrapped like many other endpoints).
@@ -991,6 +1281,16 @@ const Users: React.FC = () => {
           {t('admin:users.addUser', 'Add User')}
         </Button>
       </div>
+
+      {/* Pending Invitations */}
+      <PendingInvitationsSection
+        invitations={pendingInvitations}
+        isLoading={isPendingInvitationsLoading}
+        onResend={handleResendInvitation}
+        resendingId={resendingId}
+        roleColors={roleColors}
+        t={t}
+      />
 
       {/* Filters */}
       <Card className="p-6">
@@ -1346,7 +1646,9 @@ const Users: React.FC = () => {
         isOpen={isAddUserModalOpen}
         onClose={handleCloseAddUserModal}
         onInvite={handleInviteUser}
+        onBulkInvite={handleBulkInvite}
         isLoading={inviteUserMutation.isPending}
+        isBulkLoading={bulkInviteMutation.isPending}
         canInviteSuperAdmin={canInviteSuperAdmin}
       />
 

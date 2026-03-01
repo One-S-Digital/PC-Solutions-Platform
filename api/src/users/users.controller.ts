@@ -20,6 +20,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CompleteProfileDto } from './dto/complete-profile.dto';
 import { InviteUserDto } from './dto/invite-user.dto';
+import { BulkInviteDto } from './dto/bulk-invite.dto';
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '@prisma/client';
@@ -141,6 +142,143 @@ export class UsersController {
       message: 'Invitation created successfully',
       data: invitation,
       timestamp: new Date().toISOString(),
+    };
+  }
+
+  /**
+   * List pending Clerk invitations.
+   * Returns up to 100 invitations with email, role, and sent date.
+   */
+  @Get('invitations')
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
+  async listInvitations(@Query('status') status = 'pending') {
+    if (!this.clerk) {
+      throw new BadRequestException('Clerk is not configured on the API');
+    }
+    try {
+      const result = await (this.clerk as any).invitations.getInvitationList({
+        status,
+        limit: 100,
+      });
+      const items: any[] = result?.data ?? result ?? [];
+      return {
+        success: true,
+        data: items.map((inv: any) => ({
+          id: inv.id,
+          emailAddress: inv.emailAddress,
+          role: inv.publicMetadata?.role ?? null,
+          status: inv.status,
+          createdAt: inv.createdAt,
+        })),
+      };
+    } catch (error: any) {
+      this.logger.error('Failed to list Clerk invitations', error?.message);
+      throw new InternalServerErrorException('Failed to list invitations');
+    }
+  }
+
+  /**
+   * Resend a pending invitation by revoking the old one and creating a new one.
+   * Preserves the original email and role from the existing invitation.
+   */
+  @Post('invitations/:id/resend')
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
+  async resendInvitation(@Param('id') invitationId: string, @Request() request) {
+    if (!this.clerk) {
+      throw new BadRequestException('Clerk is not configured on the API');
+    }
+
+    // Fetch invitation list to get full details
+    let existing: any;
+    try {
+      const result = await (this.clerk as any).invitations.getInvitationList({
+        status: 'pending',
+        limit: 500,
+      });
+      const items: any[] = result?.data ?? result ?? [];
+      existing = items.find((inv: any) => inv.id === invitationId);
+    } catch (err: any) {
+      this.logger.error('Failed to fetch invitation for resend', err?.message);
+      throw new InternalServerErrorException('Failed to fetch invitation details');
+    }
+
+    if (!existing) {
+      throw new BadRequestException('Invitation not found or already accepted/revoked');
+    }
+
+    const callerRole = (request.context?.role || request.user?.role) as UserRole | undefined;
+    const invitedRole = existing.publicMetadata?.role as UserRole | undefined;
+    if (callerRole === UserRole.ADMIN && invitedRole === UserRole.SUPER_ADMIN) {
+      throw new ForbiddenException('Only SUPER_ADMIN can resend SUPER_ADMIN invitations');
+    }
+
+    // Revoke the old invitation
+    try {
+      await (this.clerk as any).invitations.revokeInvitation(invitationId);
+    } catch (err: any) {
+      this.logger.warn('Failed to revoke old invitation before resend', err?.message);
+    }
+
+    // Create new invitation with same details
+    const newInvitation = await (this.clerk as any).invitations.createInvitation({
+      emailAddress: existing.emailAddress,
+      publicMetadata: existing.publicMetadata ?? {},
+    });
+
+    return {
+      success: true,
+      message: 'Invitation resent successfully',
+      data: newInvitation,
+    };
+  }
+
+  /**
+   * Bulk invite users by email and pre-assign roles.
+   * Accepts up to 50 invitations per request. Each entry is processed independently;
+   * partial failures are returned in the response rather than aborting the batch.
+   */
+  @Post('invite/bulk')
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
+  async bulkInviteUsers(@Body() dto: BulkInviteDto, @Request() request) {
+    if (!this.clerk) {
+      throw new BadRequestException('Clerk is not configured on the API');
+    }
+
+    const callerRole = (request.context?.role || request.user?.role) as UserRole | undefined;
+
+    const settled = await Promise.allSettled(
+      dto.invitations.map(async (inv) => {
+        if (callerRole === UserRole.ADMIN && inv.role === UserRole.SUPER_ADMIN) {
+          return { email: inv.email, success: false, error: 'Only SUPER_ADMIN can create SUPER_ADMIN users' };
+        }
+        try {
+          const invitation = await (this.clerk as any).invitations.createInvitation({
+            emailAddress: inv.email,
+            redirectUrl: inv.redirectUrl,
+            publicMetadata: { role: inv.role },
+          });
+          return { email: inv.email, success: true, invitationId: invitation.id };
+        } catch (error: any) {
+          const code = error?.errors?.[0]?.code ?? error?.code;
+          const message =
+            code === 'duplicate_record' || code === 'form_identifier_exists'
+              ? 'Invitation already sent to this email'
+              : (error?.message ?? 'Failed to send invitation');
+          return { email: inv.email, success: false, error: message };
+        }
+      }),
+    );
+
+    const results = settled.map((r) =>
+      r.status === 'fulfilled' ? r.value : { success: false, error: 'Unexpected error' },
+    );
+    const successCount = results.filter((r: any) => r.success).length;
+    const failCount = results.length - successCount;
+
+    return {
+      success: true,
+      message: `${successCount} invitation(s) sent${failCount > 0 ? `, ${failCount} failed` : ''}`,
+      data: results,
     };
   }
 

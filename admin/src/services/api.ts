@@ -327,6 +327,14 @@ export const apiService = {
     apiClient: AxiosInstance,
     payload: { email: string; role: UserRole; redirectUrl?: string; reason?: string },
   ) => apiClient.post<ApiResponse<InviteUserResponse>>('/users/invite', payload),
+  bulkInviteUsers: (
+    apiClient: AxiosInstance,
+    invitations: { email: string; role: UserRole }[],
+  ) => apiClient.post<ApiResponse<{ message: string; data: { email: string; success: boolean; error?: string; invitationId?: string }[] }>>('/users/invite/bulk', { invitations }),
+  listInvitations: (apiClient: AxiosInstance) =>
+    apiClient.get<ApiResponse<{ id: string; emailAddress: string; role: string | null; status: string; createdAt: string }[]>>('/users/invitations'),
+  resendInvitation: (apiClient: AxiosInstance, invitationId: string) =>
+    apiClient.post<ApiResponse<any>>(`/users/invitations/${invitationId}/resend`),
   updateUser: (apiClient: AxiosInstance, id: string, userData: Partial<User>) => {
     // Exclude id from the body - it's already in the URL and not allowed in UpdateUserDto
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
