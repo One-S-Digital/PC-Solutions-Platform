@@ -1512,7 +1512,10 @@
     "select": "select",
     "typeorselect": "typeorselect",
     "url": "https://example.com",
-    "vatNumber": "vat Number"
+    "vatNumber": "vat Number",
+    "emailaddress": "E-Mail-Adresse",
+    "firstname": "Vorname",
+    "lastname": "Nachname"
   },
   "chipInput": {
     "pressEnterHint": "Tippen und zum Hinzufügen Enter drücken."
@@ -2097,7 +2100,7 @@
     }
   },
   "showPassword": "Passwort anzeigen",
-  "saving": "Speichern...",
+  "saving": "Wird gespeichert...",
   "sidebar": {
     "ordersAppointments": "orders Appointments"
   },
@@ -2385,6 +2388,7 @@
   "viewAll": "Anzeigen Alle",
   "welcome": "Willkommen",
   "welcomeBack": "Willkommen Zurück!",
-  "saving": "Wird gespeichert...",
-  "description": "Beschreibung"
+  "description": "Beschreibung",
+  "cancel": "Abbrechen",
+  "done": "Fertig"
 }

@@ -462,7 +462,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
       <div className="w-full max-w-lg bg-white shadow-xl rounded-lg overflow-hidden">
         {/* Header */}
         <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">{t('admin:users.addUser', 'Add User')}</h2>
+          <h2 className="text-xl font-semibold text-gray-900">{t('admin:users.addUser.title', 'Add User')}</h2>
           <button
             onClick={onClose}
             className="p-1 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
@@ -1495,7 +1495,7 @@ const Users: React.FC = () => {
           </p>
         </div>
         <Button variant="primary" leftIcon={Plus} onClick={() => setIsAddUserModalOpen(true)}>
-          {t('admin:users.addUser', 'Add User')}
+          {t('admin:users.addUser.title', 'Add User')}
         </Button>
       </div>
 

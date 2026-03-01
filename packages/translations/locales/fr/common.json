@@ -1495,7 +1495,10 @@
     "select": "select",
     "typeorselect": "typeorselect",
     "url": "https://example.com",
-    "vatNumber": "vat Number"
+    "vatNumber": "vat Number",
+    "emailaddress": "Adresse e-mail",
+    "firstname": "Prénom",
+    "lastname": "Nom de famille"
   },
   "chipInput": {
     "pressEnterHint": "Tapez puis appuyez sur Entrée pour ajouter."
@@ -2383,6 +2386,7 @@
   "viewAll": "Voir Tous",
   "welcome": "Bienvener",
   "welcomeBack": "Bon retour !",
-  "saving": "Enregistrement...",
-  "description": "Description"
+  "description": "Description",
+  "cancel": "Annuler",
+  "done": "Terminé"
 }
