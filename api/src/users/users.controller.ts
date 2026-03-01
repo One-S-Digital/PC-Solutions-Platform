@@ -282,7 +282,7 @@ export class UsersController {
     };
 
     const CONCURRENCY = 5;
-    const results: Awaited<ReturnType<typeof sendOne>>[] = [];
+    const results = [] as { email?: string; success: boolean; error?: string; invitationId?: string }[];
     for (let i = 0; i < dto.invitations.length; i += CONCURRENCY) {
       const batch = dto.invitations.slice(i, i + CONCURRENCY);
       const settled = await Promise.allSettled(batch.map(sendOne));

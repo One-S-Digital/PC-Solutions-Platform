@@ -1217,7 +1217,7 @@ const Users: React.FC = () => {
           t('admin:users.addUser.bulkAllFailed', `All ${failureCount} invitation(s) failed to send`, { failureCount }),
         )
       } else if (failureCount > 0) {
-        toast.warn(
+        toast.warning(
           t('admin:users.addUser.bulkPartialSuccess', `${successCount} sent, ${failureCount} failed`, {
             successCount,
             failureCount,
