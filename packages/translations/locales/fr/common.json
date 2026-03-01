@@ -1495,7 +1495,7 @@
     "select": "select",
     "typeorselect": "typeorselect",
     "url": "https://example.com",
-    "vatNumber": "vat Number",
+    "vatNumber": "Numéro de TVA",
     "emailaddress": "Adresse e-mail",
     "firstname": "Prénom",
     "lastname": "Nom de famille"

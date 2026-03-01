@@ -60,7 +60,7 @@ export class AdminCreateUserDto {
 
 Sequence:
 
-```
+```text
 1. clerk.users.createUser({
      emailAddress: [dto.email],
      emailAddressVerified: true,        // pre-verified — no email check needed
@@ -172,7 +172,7 @@ const adminCreateUserMutation = useMutation({
 
 ## Key Files to Change
 
-```
+```text
 api/src/users/
   dto/admin-create-user.dto.ts          ← NEW
   users.service.ts                      ← add adminCreateUser()

@@ -1512,7 +1512,7 @@
     "select": "select",
     "typeorselect": "typeorselect",
     "url": "https://example.com",
-    "vatNumber": "vat Number",
+    "vatNumber": "Umsatzsteuer-ID",
     "emailaddress": "E-Mail-Adresse",
     "firstname": "Vorname",
     "lastname": "Nachname"

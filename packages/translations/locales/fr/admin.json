@@ -1214,7 +1214,7 @@
       "createAccount": "Créer un compte",
       "email": "E-mail",
       "emailRequired": "L'e-mail est requis",
-      "emailHint": "Nous enverrons un e-mail d'invitation. L'utilisateur apparaître dans la liste après son inscription.",
+      "emailHint": "Nous enverrons un e-mail d'invitation. L'utilisateur apparaîtra dans la liste après son inscription.",
       "role": "Rôle",
       "sending": "Envoi...",
       "sendInvite": "Envoyer l'invitation",

@@ -1424,7 +1424,7 @@
     "table": {
       "namespace": "Namensraum",
       "key": "Schlüssel",
-      "actions": "Actions",
+      "actions": "Aktionen",
       "noTranslationsFound": "Keine Übersetzungen gefunden"
     },
     "missing": "Fehlend",

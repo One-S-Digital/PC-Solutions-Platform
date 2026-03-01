@@ -221,9 +221,10 @@ export class UsersController {
       this.logger.warn('Failed to revoke old invitation before resend', err?.message);
     }
 
-    // Create new invitation with same details
+    // Create new invitation with same details (preserve original redirect URL if present)
     const newInvitation = await (this.clerk as any).invitations.createInvitation({
       emailAddress: existing.emailAddress,
+      ...(existing.redirectUrl ? { redirectUrl: existing.redirectUrl } : {}),
       publicMetadata: existing.publicMetadata ?? {},
     });
 
@@ -291,8 +292,8 @@ export class UsersController {
    */
   @Post('admin-create')
   @Roles(UserRole.SUPER_ADMIN)
-  async adminCreateUser(@Body() dto: AdminCreateUserDto) {
-    const result = await this.usersService.adminCreateUser(dto);
+  async adminCreateUser(@Body() dto: AdminCreateUserDto, @Request() request) {
+    const result = await this.usersService.adminCreateUser(dto, this.getChangedBy(request));
     return { success: true, data: result };
   }
 

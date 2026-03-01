@@ -747,7 +747,7 @@ export class UsersService {
    * The email is pre-verified, so the account is usable immediately.
    * If the DB insert fails after Clerk creation, the Clerk user is rolled back.
    */
-  async adminCreateUser(dto: AdminCreateUserDto): Promise<{
+  async adminCreateUser(dto: AdminCreateUserDto, changedBy = 'admin'): Promise<{
     clerkId: string;
     dbUserId: string;
     email: string;
@@ -805,7 +805,7 @@ export class UsersService {
             userId: appUser.id,
             previousRole: null as any,
             newRole: dto.role,
-            changedBy: 'admin',
+            changedBy,
             reason: 'Admin direct user creation',
           },
         });
@@ -831,12 +831,20 @@ export class UsersService {
     } catch (error: any) {
       // Rollback: delete the Clerk user to avoid orphaned accounts
       this.logger.error(`DB insert failed after Clerk user created (${clerkId}). Rolling back Clerk user.`, error?.message);
+      let rollbackSucceeded = false;
       try {
         await (this.clerk as any).users.deleteUser(clerkId);
+        rollbackSucceeded = true;
       } catch (rollbackErr: any) {
-        this.logger.error(`Failed to roll back Clerk user ${clerkId}`, rollbackErr?.message);
+        this.logger.error(
+          `Failed to roll back Clerk user ${clerkId} — the Clerk account may still exist. DB error: ${error?.message}. Rollback error: ${rollbackErr?.message}`,
+        );
       }
-      throw new InternalServerErrorException('Failed to save user to database. The Clerk account has been removed.');
+      throw new InternalServerErrorException(
+        rollbackSucceeded
+          ? 'Failed to save user to database. The Clerk account has been removed.'
+          : `Failed to save user to database. The Clerk account (${clerkId}) may still exist and require manual removal.`,
+      );
     }
 
     this.logger.log(`✅ [ADMIN CREATE USER] Created user ${maskedEmail} with role ${dto.role}, clerkId=${clerkId}`);
@@ -1156,10 +1164,12 @@ export class UsersService {
     const org = await this.prisma.organization.findUnique({ where: { id: dto.organizationId }, select: { id: true } });
     if (!org) throw new NotFoundException('Organization not found');
     const profile = await this.prisma.user.findUnique({ where: { id: profileUserId }, select: { role: true } });
+    if (!profile) throw new NotFoundException('User profile not found');
+    const orgRole = dto.role ?? profile.role;
     await this.prisma.userOrganization.upsert({
       where: { userId_organizationId: { userId: profileUserId, organizationId: dto.organizationId } },
-      create: { userId: profileUserId, organizationId: dto.organizationId, role: dto.role ?? profile!.role },
-      update: { role: dto.role ?? profile!.role },
+      create: { userId: profileUserId, organizationId: dto.organizationId, role: orgRole },
+      update: { role: orgRole },
     });
     return { success: true };
   }

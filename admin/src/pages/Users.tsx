@@ -428,9 +428,13 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
     e.preventDefault()
     if (parsedEmails.length === 0) return
     setBulkResults(null)
-    const invitations = parsedEmails.map((em) => ({ email: em, role: bulkRole }))
-    const response = await onBulkInvite(invitations)
-    setBulkResults(response.data)
+    try {
+      const invitations = parsedEmails.map((em) => ({ email: em, role: bulkRole }))
+      const response = await onBulkInvite(invitations)
+      setBulkResults(response.data)
+    } catch {
+      // toast is already handled by the parent mutation's onError handler
+    }
   }
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
@@ -479,7 +483,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
           <button
             onClick={onClose}
             className="p-1 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
-            disabled={isLoading || isBulkLoading}
+            disabled={isLoading || isBulkLoading || isCreateLoading}
           >
             <X className="w-6 h-6" />
           </button>
