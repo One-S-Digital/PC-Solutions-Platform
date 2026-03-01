@@ -1353,7 +1353,7 @@
     "pendingInvitations": {
       "title": "Invitations en attente",
       "empty": "Aucune invitation en attente.",
-      "sent": "Envoyé",
+      "sent": "Envoyée",
       "resend": "Renvoyer l'invitation",
       "resendSuccess": "Invitation renvoyée",
       "resendFailed": "Échec du renvoi de l'invitation"

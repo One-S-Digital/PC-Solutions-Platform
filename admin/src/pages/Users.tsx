@@ -497,8 +497,9 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
               activeTab === 'single'
                 ? 'border-b-2 border-swiss-teal text-swiss-teal'
                 : 'text-gray-500 hover:text-gray-700'
-            }`}
+            } disabled:opacity-40 disabled:cursor-not-allowed`}
             onClick={() => setActiveTab('single')}
+            disabled={isLoading || isBulkLoading || isCreateLoading}
           >
             <Mail className="w-4 h-4" />
             {t('admin:users.addUser.singleInvite', 'Single Invite')}
@@ -509,8 +510,9 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
               activeTab === 'bulk'
                 ? 'border-b-2 border-swiss-teal text-swiss-teal'
                 : 'text-gray-500 hover:text-gray-700'
-            }`}
+            } disabled:opacity-40 disabled:cursor-not-allowed`}
             onClick={() => setActiveTab('bulk')}
+            disabled={isLoading || isBulkLoading || isCreateLoading}
           >
             <Upload className="w-4 h-4" />
             {t('admin:users.addUser.bulkInvite', 'Bulk Invite')}
@@ -522,8 +524,9 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
                 activeTab === 'create'
                   ? 'border-b-2 border-swiss-coral text-swiss-coral'
                   : 'text-gray-500 hover:text-gray-700'
-              }`}
+              } disabled:opacity-40 disabled:cursor-not-allowed`}
               onClick={() => setActiveTab('create')}
+              disabled={isLoading || isBulkLoading || isCreateLoading}
             >
               <UserCog className="w-4 h-4" />
               {t('admin:users.addUser.createAccount', 'Create Account')}
@@ -568,7 +571,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                disabled={isLoading}
+                disabled={isLoading || isCreateLoading}
                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 disabled:opacity-50"
               >
                 {t('common:cancel', 'Cancel')}
@@ -630,7 +633,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                disabled={isBulkLoading}
+                disabled={isBulkLoading || isCreateLoading}
                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 disabled:opacity-50"
               >
                 {t('common:cancel', 'Cancel')}

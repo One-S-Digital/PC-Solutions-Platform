@@ -222,11 +222,22 @@ export class UsersController {
     }
 
     // Create new invitation with same details (preserve original redirect URL if present)
-    const newInvitation = await (this.clerk as any).invitations.createInvitation({
-      emailAddress: existing.emailAddress,
-      ...(existing.redirectUrl ? { redirectUrl: existing.redirectUrl } : {}),
-      publicMetadata: existing.publicMetadata ?? {},
-    });
+    let newInvitation: any;
+    try {
+      newInvitation = await (this.clerk as any).invitations.createInvitation({
+        emailAddress: existing.emailAddress,
+        ...(existing.redirectUrl ? { redirectUrl: existing.redirectUrl } : {}),
+        publicMetadata: existing.publicMetadata ?? {},
+      });
+    } catch (err: any) {
+      this.logger.error('Failed to recreate invitation during resend', {
+        invitationId,
+        status: err?.status ?? err?.response?.status,
+        code: err?.errors?.[0]?.code ?? err?.code,
+        message: err?.message ?? err?.errors?.[0]?.message,
+      });
+      throw new InternalServerErrorException('Failed to resend invitation. Please try again.');
+    }
 
     return {
       success: true,
@@ -578,7 +589,7 @@ export class UsersController {
     @Param('id', ParseUUIDPipe) id: string,
     @Param('orgId', ParseUUIDPipe) orgId: string,
   ) {
-    await this.usersService.removeUserFromOrganization(id, orgId);
-    return { success: true };
+    const result = await this.usersService.removeUserFromOrganization(id, orgId);
+    return { success: true, removed: result.removed };
   }
 }
