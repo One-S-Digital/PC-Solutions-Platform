@@ -22,6 +22,7 @@ import { CompleteProfileDto } from './dto/complete-profile.dto';
 import { InviteUserDto } from './dto/invite-user.dto';
 import { BulkInviteDto } from './dto/bulk-invite.dto';
 import { AdminCreateUserDto } from './dto/admin-create-user.dto';
+import { AssignUserOrganizationDto } from './dto/assign-user-organization.dto';
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '@prisma/client';
@@ -551,5 +552,32 @@ export class UsersController {
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
   findByOrganization(@Param('orgId', ParseUUIDPipe) orgId: string) {
     return this.usersService.findByOrganization(orgId);
+  }
+
+  @Get(':id/organizations')
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
+  async getUserOrganizations(@Param('id', ParseUUIDPipe) id: string) {
+    const data = await this.usersService.getUserOrganizations(id);
+    return { success: true, data };
+  }
+
+  @Post(':id/organizations')
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
+  async assignUserToOrganization(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: AssignUserOrganizationDto,
+  ) {
+    await this.usersService.assignUserToOrganization(id, dto);
+    return { success: true };
+  }
+
+  @Delete(':id/organizations/:orgId')
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
+  async removeUserFromOrganization(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('orgId', ParseUUIDPipe) orgId: string,
+  ) {
+    await this.usersService.removeUserFromOrganization(id, orgId);
+    return { success: true };
   }
 }

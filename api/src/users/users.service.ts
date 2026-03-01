@@ -5,6 +5,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CompleteProfileDto } from './dto/complete-profile.dto';
 import { AdminCreateUserDto } from './dto/admin-create-user.dto';
+import { AssignUserOrganizationDto } from './dto/assign-user-organization.dto';
 import * as crypto from 'crypto';
 import { PrincipalService } from '../principal/principal.service';
 import { RoleSyncService } from '../sync/role-sync.service';
@@ -1115,6 +1116,60 @@ export class UsersService {
     // Note: AppUser doesn't have organization relations yet
     // This method returns empty array until organization migration is complete
     return [];
+  }
+
+  /**
+   * Resolve the User (profile) id from either an AppUser.id or User.id.
+   * Most controller actions receive AppUser.id, but the UserOrganization
+   * junction table references User.id.
+   */
+  private async resolveProfileUserId(id: string): Promise<string> {
+    const appUser = await this.prisma.appUser.findUnique({ where: { id }, select: { clerkId: true } });
+    if (appUser) {
+      const profile = await this.prisma.user.findUnique({ where: { clerkId: appUser.clerkId }, select: { id: true } });
+      if (!profile) throw new NotFoundException('User profile not found');
+      return profile.id;
+    }
+    const profile = await this.prisma.user.findUnique({ where: { id }, select: { id: true } });
+    if (!profile) throw new NotFoundException('User not found');
+    return profile.id;
+  }
+
+  async getUserOrganizations(id: string) {
+    const profileUserId = await this.resolveProfileUserId(id);
+    const records = await this.prisma.userOrganization.findMany({
+      where: { userId: profileUserId },
+      include: { organization: { select: { id: true, name: true, type: true } } },
+      orderBy: { createdAt: 'asc' },
+    });
+    return records.map((uo) => ({
+      organizationId: uo.organizationId,
+      name: uo.organization.name,
+      type: uo.organization.type,
+      role: uo.role,
+      assignedAt: uo.createdAt,
+    }));
+  }
+
+  async assignUserToOrganization(id: string, dto: AssignUserOrganizationDto) {
+    const profileUserId = await this.resolveProfileUserId(id);
+    const org = await this.prisma.organization.findUnique({ where: { id: dto.organizationId }, select: { id: true } });
+    if (!org) throw new NotFoundException('Organization not found');
+    const profile = await this.prisma.user.findUnique({ where: { id: profileUserId }, select: { role: true } });
+    await this.prisma.userOrganization.upsert({
+      where: { userId_organizationId: { userId: profileUserId, organizationId: dto.organizationId } },
+      create: { userId: profileUserId, organizationId: dto.organizationId, role: dto.role ?? profile!.role },
+      update: { role: dto.role ?? profile!.role },
+    });
+    return { success: true };
+  }
+
+  async removeUserFromOrganization(id: string, organizationId: string) {
+    const profileUserId = await this.resolveProfileUserId(id);
+    await this.prisma.userOrganization.deleteMany({
+      where: { userId: profileUserId, organizationId },
+    });
+    return { success: true };
   }
 
   async updateByClerkId(clerkId: string, updateUserDto: UpdateUserDto) {

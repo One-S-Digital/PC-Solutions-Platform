@@ -359,6 +359,14 @@ export const apiService = {
     reason?: string
   ) => apiClient.post<ApiResponse<User>>(`/users/${userId}/elevate-to-admin`, { targetRole, reason }),
 
+  // User–Organization assignment
+  getUserOrganizations: (apiClient: AxiosInstance, userId: string) =>
+    apiClient.get<ApiResponse<{ organizationId: string; name: string; type: string; role: string; assignedAt: string }[]>>(`/users/${userId}/organizations`),
+  assignUserToOrganization: (apiClient: AxiosInstance, userId: string, organizationId: string, role?: string) =>
+    apiClient.post<ApiResponse<{ success: boolean }>>(`/users/${userId}/organizations`, { organizationId, role }),
+  removeUserFromOrganization: (apiClient: AxiosInstance, userId: string, organizationId: string) =>
+    apiClient.delete<ApiResponse<{ success: boolean }>>(`/users/${userId}/organizations/${organizationId}`),
+
   // Organizations
   getOrganizations: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Organization[]>>('/compat/organizations', { params: { limit: 10000 } }),
   getOrganizationById: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<Organization>>(`/compat/organizations/${id}`),

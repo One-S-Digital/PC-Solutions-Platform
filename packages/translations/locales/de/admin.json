@@ -1336,6 +1336,18 @@
       "resend": "Einladung erneut senden",
       "resendSuccess": "Einladung erneut gesendet",
       "resendFailed": "Einladung konnte nicht erneut gesendet werden"
+    },
+    "orgAssignment": {
+      "title": "Organisationen",
+      "selectOrg": "Organisation auswählen...",
+      "noneAssigned": "Keine Organisationen zugewiesen",
+      "removeOrg": "Aus Organisation entfernen",
+      "addOrgBtn": "Hinzufügen",
+      "addSuccess": "Organisation zugewiesen",
+      "addFailed": "Organisation konnte nicht zugewiesen werden",
+      "removeSuccess": "Organisation entfernt",
+      "removeFailed": "Organisation konnte nicht entfernt werden",
+      "optional": "Organisation zuweisen (optional)"
     }
   },
   "translations": {

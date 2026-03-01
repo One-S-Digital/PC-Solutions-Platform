@@ -1310,6 +1310,18 @@
       "resend": "Resend invitation",
       "resendSuccess": "Invitation resent",
       "resendFailed": "Failed to resend invitation"
+    },
+    "orgAssignment": {
+      "title": "Organizations",
+      "selectOrg": "Select organization...",
+      "noneAssigned": "No organizations assigned",
+      "removeOrg": "Remove from organization",
+      "addOrgBtn": "Add",
+      "addSuccess": "Organization assigned",
+      "addFailed": "Failed to assign organization",
+      "removeSuccess": "Organization removed",
+      "removeFailed": "Failed to remove organization",
+      "optional": "Assign to organization (optional)"
     }
   },
   "translations": {

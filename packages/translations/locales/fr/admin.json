@@ -1356,6 +1356,18 @@
       "resend": "Renvoyer l'invitation",
       "resendSuccess": "Invitation renvoyée",
       "resendFailed": "Échec du renvoi de l'invitation"
+    },
+    "orgAssignment": {
+      "title": "Organisations",
+      "selectOrg": "Sélectionner une organisation...",
+      "noneAssigned": "Aucune organisation assignée",
+      "removeOrg": "Retirer de l'organisation",
+      "addOrgBtn": "Ajouter",
+      "addSuccess": "Organisation assignée",
+      "addFailed": "Impossible d'assigner l'organisation",
+      "removeSuccess": "Organisation retirée",
+      "removeFailed": "Impossible de retirer l'organisation",
+      "optional": "Assigner à une organisation (optionnel)"
     }
   },
   "jobListings": {

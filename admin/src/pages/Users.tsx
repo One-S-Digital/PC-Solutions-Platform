@@ -315,7 +315,9 @@ interface AddUserModalProps {
   onClose: () => void
   onInvite: (payload: { email: string; role: UserRole }) => Promise<void>
   onBulkInvite: (invitations: { email: string; role: UserRole }[]) => Promise<{ data: { email: string; success: boolean; error?: string }[] }>
-  onAdminCreate: (payload: { email: string; role: UserRole; firstName?: string; lastName?: string; temporaryPassword?: string }) => Promise<{ temporaryPassword?: string }>
+  onAdminCreate: (payload: { email: string; role: UserRole; firstName?: string; lastName?: string; temporaryPassword?: string }) => Promise<{ temporaryPassword?: string; dbUserId?: string }>
+  onAssignOrg?: (userId: string, organizationId: string) => Promise<void>
+  allOrganizations?: import('../types/api').Organization[]
   isLoading: boolean
   isBulkLoading: boolean
   isCreateLoading: boolean
@@ -345,6 +347,8 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
   onInvite,
   onBulkInvite,
   onAdminCreate,
+  onAssignOrg,
+  allOrganizations,
   isLoading,
   isBulkLoading,
   isCreateLoading,
@@ -370,6 +374,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
   const [createRole, setCreateRole] = useState<UserRole>(UserRole.PARENT)
   const [useCustomPassword, setUseCustomPassword] = useState(false)
   const [customPassword, setCustomPassword] = useState('')
+  const [createOrgId, setCreateOrgId] = useState('')
   const [createError, setCreateError] = useState<string | null>(null)
   const [createdPassword, setCreatedPassword] = useState<string | null>(null)
 
@@ -388,6 +393,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
       setCreateRole(UserRole.PARENT)
       setUseCustomPassword(false)
       setCustomPassword('')
+      setCreateOrgId('')
       setCreateError(null)
       setCreatedPassword(null)
     }
@@ -447,6 +453,13 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
         lastName: createLastName.trim() || undefined,
         temporaryPassword: useCustomPassword ? customPassword : undefined,
       })
+      if (createOrgId && result.dbUserId && onAssignOrg) {
+        try {
+          await onAssignOrg(result.dbUserId, createOrgId)
+        } catch {
+          // Org assignment failure is non-fatal — account was already created
+        }
+      }
       if (result.temporaryPassword) {
         setCreatedPassword(result.temporaryPassword)
       }
@@ -750,6 +763,26 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
                       />
                     )}
                   </div>
+
+                  {allOrganizations && allOrganizations.length > 0 && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {t('admin:users.orgAssignment.optional', 'Assign to organization (optional)')}
+                      </label>
+                      <select
+                        className={STANDARD_INPUT_FIELD}
+                        value={createOrgId}
+                        onChange={(e) => setCreateOrgId(e.target.value)}
+                      >
+                        <option value="">{t('admin:users.orgAssignment.selectOrg', 'Select organization...')}</option>
+                        {[...allOrganizations]
+                          .sort((a, b) => a.name.localeCompare(b.name))
+                          .map((o) => (
+                            <option key={o.id} value={o.id}>{o.name}</option>
+                          ))}
+                      </select>
+                    </div>
+                  )}
                 </>
               )}
             </div>
@@ -1226,6 +1259,62 @@ const Users: React.FC = () => {
   const handleAdminCreateUser = async (payload: { email: string; role: UserRole; firstName?: string; lastName?: string; temporaryPassword?: string }) => {
     const response = await adminCreateUserMutation.mutateAsync(payload)
     return (response as any)?.data?.data ?? {}
+  }
+
+  // Organizations list (for assignment dropdowns)
+  const { data: orgsResponse } = useQuery({
+    queryKey: ['organizations'],
+    queryFn: () => apiService.getOrganizations(apiClient),
+    enabled: !!apiClient,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  })
+  const allOrganizations = (orgsResponse as any)?.data?.data ?? []
+
+  // User organizations query — fetched when edit modal opens
+  const { data: userOrgsResponse } = useQuery({
+    queryKey: ['user-organizations', selectedUser?.id],
+    queryFn: () => apiService.getUserOrganizations(apiClient, selectedUser!.id),
+    enabled: !!apiClient && !!selectedUser && isEditModalOpen,
+    staleTime: 0,
+  })
+  const userOrganizations = (userOrgsResponse as any)?.data?.data ?? []
+
+  // Assign / remove user from org mutations
+  const assignOrgMutation = useMutation({
+    mutationFn: ({ userId, organizationId }: { userId: string; organizationId: string }) =>
+      apiService.assignUserToOrganization(apiClient, userId, organizationId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-organizations', selectedUser?.id] })
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] })
+      toast.success(t('admin:users.orgAssignment.addSuccess', 'Organization assigned'))
+    },
+    onError: () => {
+      toast.error(t('admin:users.orgAssignment.addFailed', 'Failed to assign organization'))
+    },
+  })
+
+  const removeOrgMutation = useMutation({
+    mutationFn: ({ userId, organizationId }: { userId: string; organizationId: string }) =>
+      apiService.removeUserFromOrganization(apiClient, userId, organizationId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-organizations', selectedUser?.id] })
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] })
+      toast.success(t('admin:users.orgAssignment.removeSuccess', 'Organization removed'))
+    },
+    onError: () => {
+      toast.error(t('admin:users.orgAssignment.removeFailed', 'Failed to remove organization'))
+    },
+  })
+
+  const handleAddOrg = async (organizationId: string) => {
+    if (!selectedUser) return
+    await assignOrgMutation.mutateAsync({ userId: selectedUser.id, organizationId })
+  }
+
+  const handleRemoveOrg = async (organizationId: string) => {
+    if (!selectedUser) return
+    await removeOrgMutation.mutateAsync({ userId: selectedUser.id, organizationId })
   }
 
   const { users, meta } = React.useMemo(() => {
@@ -1836,6 +1925,11 @@ const Users: React.FC = () => {
         isLoading={updateUserMutation.isPending}
         isFetchingUser={false}
         currentUserRole={currentUser?.role}
+        userOrganizations={userOrganizations}
+        allOrganizations={allOrganizations}
+        onAddOrg={handleAddOrg}
+        onRemoveOrg={handleRemoveOrg}
+        isOrgLoading={assignOrgMutation.isPending || removeOrgMutation.isPending}
       />
 
       {/* Delete Confirmation Modal */}
@@ -1865,6 +1959,8 @@ const Users: React.FC = () => {
         onInvite={handleInviteUser}
         onBulkInvite={handleBulkInvite}
         onAdminCreate={handleAdminCreateUser}
+        onAssignOrg={async (userId, orgId) => { await assignOrgMutation.mutateAsync({ userId, organizationId: orgId }) }}
+        allOrganizations={allOrganizations}
         isLoading={inviteUserMutation.isPending}
         isBulkLoading={bulkInviteMutation.isPending}
         isCreateLoading={adminCreateUserMutation.isPending}
