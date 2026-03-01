@@ -165,25 +165,24 @@ export class ScheduledActionsService implements OnModuleInit {
 
       for (const subscription of expiredTrials) {
         try {
-          // Trial ended — move to INACTIVE so the admin must explicitly activate
-          await this.prisma.subscription.update({
-            where: { id: subscription.id },
-            data: {
-              status: 'INACTIVE',
-            },
-          });
-
-          // Log the action
-          await this.prisma.subscriptionAction.create({
-            data: {
-              subscriptionId: subscription.id,
-              action: 'TRIAL_END',
-              previousStatus: 'TRIAL',
-              newStatus: 'INACTIVE',
-              performedBy: 'system',
-              reason: 'Trial period ended — awaiting admin activation',
-            },
-          });
+          // Trial ended — move to INACTIVE so the admin must explicitly activate.
+          // Both writes are atomic: if the audit log insert fails the status stays TRIAL.
+          await this.prisma.$transaction([
+            this.prisma.subscription.update({
+              where: { id: subscription.id },
+              data: { status: 'INACTIVE' },
+            }),
+            this.prisma.subscriptionAction.create({
+              data: {
+                subscriptionId: subscription.id,
+                action: 'TRIAL_END',
+                previousStatus: 'TRIAL',
+                newStatus: 'INACTIVE',
+                performedBy: 'system',
+                reason: 'Trial period ended — awaiting admin activation',
+              },
+            }),
+          ]);
 
           this.logger.log(`Trial ended for subscription ${subscription.id}, moved to INACTIVE`);
         } catch (error) {

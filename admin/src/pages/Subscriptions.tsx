@@ -447,8 +447,9 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
                   setIncludeTrial(checked);
                   if (checked) {
                     setStatus(SubscriptionStatus.TRIAL);
-                  } else if (!subscription) {
-                    setStatus(SubscriptionStatus.INACTIVE);
+                  } else {
+                    // Revert to the subscription's pre-trial status (or INACTIVE for new subscriptions)
+                    setStatus(subscription ? subscription.status : SubscriptionStatus.INACTIVE);
                   }
                 }}
                 className="w-4 h-4 text-blue-600 rounded"
@@ -2566,19 +2567,24 @@ const Subscriptions: React.FC = () => {
     return map;
   }, [userStats]);
 
-  // Subscriptions filtered by the stat card the admin clicked
+  // Subscriptions filtered by the stat card the admin clicked.
+  // Respects the currently selected role tab and excludes already-expired records from EXPIRING_SOON.
   const statsFilteredSubscriptions = React.useMemo(() => {
     if (!statsStatusFilter) return [];
     const now = new Date();
     const in30Days = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
     return subscriptions.filter((sub) => {
+      // Honour the role tab so the filtered view matches the admin's current context
+      if (selectedRole && !sub.plan?.allowedRoles?.includes(selectedRole as any)) return false;
       if (statsStatusFilter === 'ACTIVE') return sub.status === 'ACTIVE';
       if (statsStatusFilter === 'TRIAL') return sub.status === 'TRIAL';
-      if (statsStatusFilter === 'EXPIRING_SOON')
-        return sub.status === 'ACTIVE' && !!sub.currentPeriodEnd && new Date(sub.currentPeriodEnd) <= in30Days;
+      if (statsStatusFilter === 'EXPIRING_SOON') {
+        const periodEnd = sub.currentPeriodEnd ? new Date(sub.currentPeriodEnd) : null;
+        return sub.status === 'ACTIVE' && !!periodEnd && periodEnd >= now && periodEnd <= in30Days;
+      }
       return false;
     });
-  }, [subscriptions, statsStatusFilter]);
+  }, [subscriptions, statsStatusFilter, selectedRole]);
 
   // Subscription counts by role (derived from subscription plan allowedRoles)
   const subscriptionCountsByRole = React.useMemo(() => {
@@ -2652,19 +2658,21 @@ const Subscriptions: React.FC = () => {
       // The subscription table references User.id, not AppUser.id
       // Use the helper function that checks profileId, organizationId, and id
       const existingSubscription = getSubscriptionForUser(user);
-      const isMonthlyRecurring = data.durationMonths === 0;
-      
+      // Normalise -1 ("Select a period…") to undefined so it never produces a negative month offset
+      const normalizedDurationMonths = data.durationMonths === -1 ? undefined : data.durationMonths;
+      const isMonthlyRecurring = normalizedDurationMonths === 0;
+
       if (existingSubscription) {
         // Calculate new currentPeriodEnd based on durationMonths
         // 0 = monthly recurring (set to 1 month period that will auto-renew indefinitely)
         let currentPeriodEnd: string | undefined;
-        if (data.durationMonths !== undefined) {
-          const startDate = existingSubscription.currentPeriodStart 
+        if (normalizedDurationMonths !== undefined) {
+          const startDate = existingSubscription.currentPeriodStart
             ? new Date(existingSubscription.currentPeriodStart)
             : new Date();
           const endDate = new Date(startDate);
           // For monthly recurring (0), set period to 1 month
-          const months = isMonthlyRecurring ? 1 : data.durationMonths;
+          const months = isMonthlyRecurring ? 1 : normalizedDurationMonths;
           endDate.setMonth(endDate.getMonth() + months);
           currentPeriodEnd = endDate.toISOString();
         }
@@ -2708,11 +2716,9 @@ const Subscriptions: React.FC = () => {
           console.warn(`[Subscription] Warning: User ${user.id} has no profileId. Using id as fallback.`);
         }
         
-        // For monthly recurring (0), set durationMonths to 1.
-        // When a trial is active and no explicit period was chosen (-1), pass undefined
-        // so the backend falls back to the plan's billing period instead of calculating
-        // an end date from a negative month offset.
-        const duration = isMonthlyRecurring ? 1 : (data.durationMonths === -1 ? undefined : data.durationMonths);
+        // For monthly recurring (0), pass 1 so the backend sets a 1-month period.
+        // normalizedDurationMonths already coerces -1 → undefined (plan billing period used).
+        const duration = isMonthlyRecurring ? 1 : normalizedDurationMonths;
         const subscription = await subscriptionService.createSubscription(apiClient, {
           userId: subscriptionUserId,
           organizationId: organizationId || undefined,
@@ -3202,15 +3208,18 @@ const Subscriptions: React.FC = () => {
               const isSelected = stat.filterKey !== null && statsStatusFilter === stat.filterKey;
               const isClickable = stat.filterKey !== null;
               return (
-                <div
+                <button
+                  type="button"
                   key={index}
                   onClick={() => {
                     if (!isClickable) return;
                     setStatsStatusFilter(isSelected ? null : stat.filterKey);
                   }}
-                  className={`border rounded-lg p-4 flex items-center justify-between transition-all
+                  disabled={!isClickable}
+                  aria-pressed={isClickable ? isSelected : undefined}
+                  className={`w-full text-left border rounded-lg p-4 flex items-center justify-between transition-all
                     ${isSelected ? stat.selectedColor : stat.color}
-                    ${isClickable ? 'cursor-pointer hover:shadow-md' : ''}
+                    ${isClickable ? 'cursor-pointer hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-400' : 'cursor-default'}
                   `}
                 >
                   <div>
@@ -3227,7 +3236,7 @@ const Subscriptions: React.FC = () => {
                     )}
                   </div>
                   {stat.icon}
-                </div>
+                </button>
               );
             })}
           </div>
