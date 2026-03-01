@@ -2150,7 +2150,7 @@
         "sendEmail": "Send activation email to customer",
         "notes": "Admin Notes (optional)",
         "submit": "Activate Subscription",
-        "trialHelp": "The subscription will stay in Trial status until the trial end date, then automatically become Active."
+        "trialHelp": "When the trial ends the subscription becomes Inactive. The admin must then activate it to grant the user full access."
       }
     },
     "cancellations": {

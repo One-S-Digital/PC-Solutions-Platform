@@ -2170,7 +2170,7 @@
         "sendEmail": "Aktivierungs-E-Mail an den Kunden senden",
         "notes": "Admin-Notizen (optional)",
         "submit": "Abonnement aktivieren",
-        "trialHelp": "Das Abonnement bleibt im Teststatus bis zum Enddatum des Tests und wird dann automatisch aktiv."
+        "trialHelp": "Wenn der Test endet, wird das Abonnement inaktiv. Der Administrator muss es dann aktivieren, um dem Benutzer vollen Zugang zu gewähren."
       }
     },
     "cancellations": {
