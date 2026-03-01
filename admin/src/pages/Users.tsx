@@ -830,6 +830,7 @@ interface PendingInvitation {
 interface PendingInvitationsSectionProps {
   invitations: PendingInvitation[]
   isLoading: boolean
+  isError?: boolean
   onResend: (id: string) => void
   resendingId: string | null
   roleColors: Record<string, string>
@@ -839,6 +840,7 @@ interface PendingInvitationsSectionProps {
 const PendingInvitationsSection: React.FC<PendingInvitationsSectionProps> = ({
   invitations,
   isLoading,
+  isError,
   onResend,
   resendingId,
   roleColors,
@@ -871,6 +873,10 @@ const PendingInvitationsSection: React.FC<PendingInvitationsSectionProps> = ({
         <div className="border-t border-gray-200">
           {isLoading ? (
             <div className="px-6 py-4 text-sm text-gray-500">{t('common:loading', 'Loading...')}</div>
+          ) : isError ? (
+            <div className="px-6 py-4 text-sm text-red-600">
+              {t('admin:users.pendingInvitations.loadFailed', 'Failed to load pending invitations.')}
+            </div>
           ) : invitations.length === 0 ? (
             <div className="px-6 py-4 text-sm text-gray-500">
               {t('admin:users.pendingInvitations.empty', 'No pending invitations.')}
@@ -1202,7 +1208,8 @@ const Users: React.FC = () => {
       const results = (response as any)?.data?.data ?? []
       const successCount = results.filter((r: any) => r.success).length
       toast.success(t('admin:users.addUser.bulkDone', `${successCount} invitation(s) sent`))
-      logger.log('Bulk invite completed', results)
+      const failureCount = results.length - successCount
+      logger.log('Bulk invite completed', { total: results.length, successCount, failureCount })
     },
     onError: (error: any) => {
       logger.error('Failed to bulk invite:', error)
@@ -1211,7 +1218,11 @@ const Users: React.FC = () => {
   })
 
   // Pending invitations query
-  const { data: pendingInvitationsResponse, isLoading: isPendingInvitationsLoading } = useQuery({
+  const {
+    data: pendingInvitationsResponse,
+    isLoading: isPendingInvitationsLoading,
+    isError: isPendingInvitationsError,
+  } = useQuery({
     queryKey: ['pending-invitations'],
     queryFn: () => apiService.listInvitations(apiClient),
     enabled: !!apiClient,
@@ -1596,6 +1607,7 @@ const Users: React.FC = () => {
       <PendingInvitationsSection
         invitations={pendingInvitations}
         isLoading={isPendingInvitationsLoading}
+        isError={isPendingInvitationsError}
         onResend={handleResendInvitation}
         resendingId={resendingId}
         roleColors={roleColors}

@@ -273,7 +273,7 @@ export class UsersController {
     );
 
     const results = settled.map((r) =>
-      r.status === 'fulfilled' ? r.value : { success: false, error: 'Unexpected error' },
+      r.status === 'fulfilled' ? r.value : { success: false, error: r.reason?.message ?? 'Unexpected error' },
     );
     const successCount = results.filter((r: any) => r.success).length;
     const failCount = results.length - successCount;
