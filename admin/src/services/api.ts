@@ -327,6 +327,18 @@ export const apiService = {
     apiClient: AxiosInstance,
     payload: { email: string; role: UserRole; redirectUrl?: string; reason?: string },
   ) => apiClient.post<ApiResponse<InviteUserResponse>>('/users/invite', payload),
+  bulkInviteUsers: (
+    apiClient: AxiosInstance,
+    invitations: { email: string; role: UserRole }[],
+  ) => apiClient.post<ApiResponse<{ message: string; data: { email: string; success: boolean; error?: string; invitationId?: string }[] }>>('/users/invite/bulk', { invitations }),
+  listInvitations: (apiClient: AxiosInstance) =>
+    apiClient.get<ApiResponse<{ id: string; emailAddress: string; role: string | null; status: string; createdAt: string }[]>>('/users/invitations'),
+  resendInvitation: (apiClient: AxiosInstance, invitationId: string) =>
+    apiClient.post<ApiResponse<any>>(`/users/invitations/${invitationId}/resend`),
+  adminCreateUser: (
+    apiClient: AxiosInstance,
+    payload: { email: string; role: UserRole; firstName?: string; lastName?: string; temporaryPassword?: string },
+  ) => apiClient.post<ApiResponse<{ clerkId: string; dbUserId: string; email: string; role: string; temporaryPassword?: string }>>('/users/admin-create', payload),
   updateUser: (apiClient: AxiosInstance, id: string, userData: Partial<User>) => {
     // Exclude id from the body - it's already in the URL and not allowed in UpdateUserDto
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -346,6 +358,14 @@ export const apiService = {
     targetRole: 'ADMIN' | 'SUPER_ADMIN',
     reason?: string
   ) => apiClient.post<ApiResponse<User>>(`/users/${userId}/elevate-to-admin`, { targetRole, reason }),
+
+  // User–Organization assignment
+  getUserOrganizations: (apiClient: AxiosInstance, userId: string) =>
+    apiClient.get<ApiResponse<{ organizationId: string; name: string; type: string; role: string; assignedAt: string }[]>>(`/users/${userId}/organizations`),
+  assignUserToOrganization: (apiClient: AxiosInstance, userId: string, organizationId: string, role?: string) =>
+    apiClient.post<ApiResponse<{ success: boolean }>>(`/users/${userId}/organizations`, { organizationId, role }),
+  removeUserFromOrganization: (apiClient: AxiosInstance, userId: string, organizationId: string) =>
+    apiClient.delete<ApiResponse<{ success: boolean }>>(`/users/${userId}/organizations/${organizationId}`),
 
   // Organizations
   getOrganizations: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Organization[]>>('/compat/organizations', { params: { limit: 10000 } }),
