@@ -14,6 +14,7 @@ import {
   BadRequestException,
   ForbiddenException,
   InternalServerErrorException,
+  ConflictException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -128,7 +129,13 @@ export class UsersController {
         throw new BadRequestException('Invitation rate limit exceeded. Please try again later.');
       }
 
-      if (status === 422 || code === 'duplicate_record' || code === 'form_identifier_exists') {
+      // A user account already exists with this email — 409 so the UI can give a specific message
+      if (code === 'form_identifier_exists') {
+        throw new ConflictException('A user with this email already exists');
+      }
+
+      // A pending invitation already exists for this email
+      if (status === 422 || code === 'duplicate_record') {
         throw new BadRequestException('An invitation has already been sent to this email');
       }
 

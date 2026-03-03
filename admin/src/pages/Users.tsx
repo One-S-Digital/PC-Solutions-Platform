@@ -467,8 +467,15 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
       if (result.temporaryPassword) {
         setCreatedPassword(result.temporaryPassword)
       }
-    } catch (err) {
-      setCreateError(err instanceof Error ? err.message : t('admin:users.addUser.createFailed', 'Failed to create user'))
+    } catch (err: any) {
+      const apiMessage = err?.response?.data?.message
+      setCreateError(
+        typeof apiMessage === 'string'
+          ? apiMessage
+          : err instanceof Error
+            ? err.message
+            : t('admin:users.addUser.createFailed', 'Failed to create user'),
+      )
     }
   }
 
