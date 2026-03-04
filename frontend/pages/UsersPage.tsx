@@ -10,6 +10,9 @@ import { useAppContext } from '../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
 import { useAuthenticatedApi } from '../hooks/useAuthenticatedApi';
 
+// Maximum users fetched per request. Referenced in the truncation warning message.
+const PAGE_LIMIT = 100;
+
 // Map backend status strings (uppercase or isActive boolean) to the legacy frontend title-case values.
 const toFrontendStatus = (status: string | undefined, isActive: boolean): 'Active' | 'Pending' | 'Inactive' => {
   if (status === 'ACTIVE') return 'Active';
@@ -81,7 +84,7 @@ const UserRow: React.FC<UserRowProps> = ({ user, onUserSelect, onDeleteUser, isS
   };
 
   const displayName = user.name || user.email || 'Unknown';
-  const encodedName = encodeURIComponent(displayName.replace(/ /g, '+'));
+  const fallbackAvatarUrl = `https://ui-avatars.com/api/?${new URLSearchParams({ name: displayName, background: '48CFAE', color: 'fff' }).toString()}`;
 
   return (
     <tr className="hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => onUserSelect(user)}>
@@ -89,7 +92,7 @@ const UserRow: React.FC<UserRowProps> = ({ user, onUserSelect, onDeleteUser, isS
         <div className="flex items-center">
           <img
             className="h-10 w-10 rounded-full"
-            src={user.avatarUrl || `https://ui-avatars.com/api/?name=${encodedName}&background=48CFAE&color=fff`}
+            src={user.avatarUrl || fallbackAvatarUrl}
             alt={displayName}
           />
           <div className="ml-4">
@@ -162,7 +165,7 @@ const UserDetailDrawer: React.FC<UserDetailDrawerProps> = ({ user, onClose, onUp
   };
 
   const displayName = user.name || user.email || 'Unknown';
-  const encodedName = encodeURIComponent(displayName.replace(/ /g, '+'));
+  const fallbackAvatarUrl = `https://ui-avatars.com/api/?${new URLSearchParams({ name: displayName, background: '48CFAE', color: 'fff' }).toString()}`;
 
   return (
     <div
@@ -176,7 +179,7 @@ const UserDetailDrawer: React.FC<UserDetailDrawerProps> = ({ user, onClose, onUp
         </div>
         <div className="flex-grow overflow-y-auto">
           <img
-            src={user.avatarUrl || `https://ui-avatars.com/api/?name=${encodedName}&background=48CFAE&color=fff`}
+            src={user.avatarUrl || fallbackAvatarUrl}
             alt={displayName}
             className="w-24 h-24 rounded-full mx-auto mb-4"
           />
@@ -259,8 +262,7 @@ const UserListPage: React.FC<{ roleFilter?: UserRole }> = ({ roleFilter }) => {
     setError(null);
     setTruncatedTotal(null);
     try {
-      const limit = 100;
-      const params = new URLSearchParams({ page: '1', limit: String(limit) });
+      const params = new URLSearchParams({ page: '1', limit: String(PAGE_LIMIT) });
       if (roleFilter) params.set('role', roleFilter);
 
       const response = await authenticatedRequest<{ users: RawApiUser[]; total: number }>(`/admin/users?${params.toString()}`);
@@ -336,8 +338,15 @@ const UserListPage: React.FC<{ roleFilter?: UserRole }> = ({ roleFilter }) => {
         body: JSON.stringify(patchBody),
       });
 
-      setUsersData(prev => prev.map(u => u.id === updatedUser.id ? updatedUser : u));
-      setSelectedUser(updatedUser);
+      setUsersData(prev => {
+        const next = prev.map(u => (u.id === updatedUser.id ? updatedUser : u));
+        return roleFilter ? next.filter(u => u.role === roleFilter) : next;
+      });
+      if (roleFilter && updatedUser.role !== roleFilter) {
+        setSelectedUser(null);
+      } else {
+        setSelectedUser(updatedUser);
+      }
     } catch (err) {
       alert(err instanceof Error ? err.message : t('roleManagement.updateError', 'Failed to update user'));
     } finally {
@@ -370,7 +379,7 @@ const UserListPage: React.FC<{ roleFilter?: UserRole }> = ({ roleFilter }) => {
 
       {truncatedTotal !== null && (
         <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-md text-sm">
-          {t('roleManagement.truncatedWarning', `Showing 100 of ${truncatedTotal} users. Refine your search to find specific users.`, { total: truncatedTotal })}
+          {t('roleManagement.truncatedWarning', `Showing ${PAGE_LIMIT} of ${truncatedTotal} users. Refine your search to find specific users.`, { limit: PAGE_LIMIT, total: truncatedTotal })}
         </div>
       )}
 
