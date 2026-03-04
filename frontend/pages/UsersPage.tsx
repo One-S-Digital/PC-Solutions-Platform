@@ -19,8 +19,11 @@ const toFrontendStatus = (status: string | undefined, isActive: boolean): 'Activ
 };
 
 // Shape returned by the /admin/users endpoint before transformation.
+// appUserId is the AppUser.id injected by user-management.service.ts; this is the
+// identifier expected by /users/:id mutation endpoints (PATCH, DELETE).
 interface RawApiUser {
   id: string;
+  appUserId?: string | null;
   clerkId: string;
   email: string;
   firstName?: string;
@@ -39,6 +42,8 @@ interface RawApiUser {
 
 const transformApiUser = (u: RawApiUser): User => ({
   ...(u as unknown as User),
+  // Prefer appUserId so that PATCH/DELETE calls reach the correct /users/:id endpoint.
+  id: u.appUserId || u.id,
   name: [u.firstName, u.lastName].filter(Boolean).join(' ').trim() || u.email || 'Unknown User',
   status: toFrontendStatus(u.status, u.isActive),
   lastLogin: u.lastActiveAt,
@@ -241,6 +246,7 @@ const UserListPage: React.FC<{ roleFilter?: UserRole }> = ({ roleFilter }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [truncatedTotal, setTruncatedTotal] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
@@ -251,8 +257,10 @@ const UserListPage: React.FC<{ roleFilter?: UserRole }> = ({ roleFilter }) => {
   const fetchUsers = useCallback(async () => {
     setIsLoading(true);
     setError(null);
+    setTruncatedTotal(null);
     try {
-      const params = new URLSearchParams({ page: '1', limit: '100' });
+      const limit = 100;
+      const params = new URLSearchParams({ page: '1', limit: String(limit) });
       if (roleFilter) params.set('role', roleFilter);
 
       const response = await authenticatedRequest<{ users: RawApiUser[]; total: number }>(`/admin/users?${params.toString()}`);
@@ -266,6 +274,12 @@ const UserListPage: React.FC<{ roleFilter?: UserRole }> = ({ roleFilter }) => {
         : [];
 
       setUsersData(rawUsers.map(transformApiUser));
+
+      // Surface a notice when the backend has more records than the page returned.
+      const total: number = typeof payload?.total === 'number' ? payload.total : rawUsers.length;
+      if (total > rawUsers.length) {
+        setTruncatedTotal(total);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : t('roleManagement.fetchError', 'Failed to load users'));
     } finally {
@@ -291,9 +305,17 @@ const UserListPage: React.FC<{ roleFilter?: UserRole }> = ({ roleFilter }) => {
   const handleCloseDrawer = () => setSelectedUser(null);
 
   const handleDeleteUser = async (userId: string) => {
-    if (!window.confirm(t('roleManagement.confirmDeleteUser'))) return;
+    const userName = usersData.find(u => u.id === userId)?.name || 'this user';
+    const confirmMessage = t(
+      'roleManagement.confirmDeleteUser',
+      `Are you sure you want to delete ${userName}? This action cannot be undone.`,
+      { userName },
+    );
+    if (!window.confirm(confirmMessage)) return;
     try {
-      await authenticatedRequest(`/users/${userId}?hard=true&force=true`, { method: 'DELETE' });
+      // Use the standard (soft) delete path. Hard-delete flags are omitted
+      // to preserve referential integrity and allow potential recovery.
+      await authenticatedRequest(`/users/${userId}`, { method: 'DELETE' });
       setUsersData(prev => prev.filter(u => u.id !== userId));
       if (selectedUser?.id === userId) setSelectedUser(null);
     } catch (err) {
@@ -346,6 +368,12 @@ const UserListPage: React.FC<{ roleFilter?: UserRole }> = ({ roleFilter }) => {
         </div>
       </Card>
 
+      {truncatedTotal !== null && (
+        <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-md text-sm">
+          {t('roleManagement.truncatedWarning', `Showing 100 of ${truncatedTotal} users. Refine your search to find specific users.`, { total: truncatedTotal })}
+        </div>
+      )}
+
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
           {error}
@@ -387,7 +415,11 @@ const UserListPage: React.FC<{ roleFilter?: UserRole }> = ({ roleFilter }) => {
         </table>
       </div>
       {!isLoading && filteredUsers.length === 0 && !error && (
-        <p className="text-center text-gray-500 py-8">{t('roleManagement.emptyState')}</p>
+        <p className="text-center text-gray-500 py-8">
+          {searchTerm.trim()
+            ? t('roleManagement.noSearchResults', 'No users match your search')
+            : t('roleManagement.emptyState')}
+        </p>
       )}
       <UserDetailDrawer
         user={selectedUser}
