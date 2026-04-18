@@ -31,8 +31,7 @@
     "i18n:full-check": "npm run extract:i18n-keys && npm run check:i18n-keys && npm run generate:i18n-types",
     "i18n:pipeline": "node scripts/i18n-pipeline.mjs",
     "i18n:pipeline:ci": "node scripts/i18n-pipeline.mjs --ci",
-    "prepare": "node scripts/run-husky.js",
-    "graphify": "node scripts/graphify.mjs"
+    "prepare": "node scripts/run-husky.js"
   },
   "devDependencies": {
     "@types/node": "^22.10.5",
