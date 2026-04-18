@@ -11,8 +11,8 @@
 
 ### Auth / 401
 - Clerk JWT expired or not forwarded — check `Authorization` header
-- User not synced to DB — check `api/src/modules/auth/` webhook handler
-- Missing CASL ability — check `auth/ability.factory.ts`
+- User not synced to DB — check `api/src/auth/` webhook handler
+- Missing CASL ability — check `api/src/auth/ability/ability.factory.ts`
 
 ### Role-based UI not showing
 - Route guard in `App.tsx` not matching the role enum value
@@ -20,8 +20,8 @@
 - Clerk user metadata missing `role` field
 
 ### i18n key missing / untranslated
-- Run `pnpm i18n:extract` then `pnpm i18n:check`
-- Check `frontend/src/i18n/locales/` for the key
+- Run `pnpm extract:i18n-keys` then `pnpm check:i18n-keys`
+- Check `frontend/i18n/locales/` for the key
 - Pre-commit hook will catch hardcoded strings
 
 ### API 500
@@ -30,18 +30,18 @@
 - Redis connection issues — check Bull queue setup
 
 ### WebSocket / messaging not connecting
-- Check `MessagingContext` — Socket.io client config
-- Check `api/src/modules/messaging/` for CORS & auth middleware
+- Check `frontend/contexts/MessagingContext.tsx` — Socket.io client config
+- Check `api/src/messaging/` for CORS & auth middleware
 
 ### Stripe webhook not processing
-- Check `api/src/modules/billing/` webhook controller
+- Check `api/src/billing/` webhook controller
 - Verify `STRIPE_WEBHOOK_SECRET` env var is set
 
 ## Debug Commands
 
 ```bash
 pnpm db:status          # Check migration state
-pnpm i18n:check         # Validate translation coverage
+pnpm check:i18n-keys    # Validate translation coverage
 pnpm type-check         # Catch TS errors across all packages
 pnpm lint               # ESLint across monorepo
 ```

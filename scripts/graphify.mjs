@@ -9,7 +9,7 @@
  * Run:  node scripts/graphify.mjs
  */
 
-import { existsSync, readdirSync, statSync, writeFileSync, mkdirSync } from 'fs';
+import { existsSync, readdirSync, statSync, writeFileSync, mkdirSync, readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -22,7 +22,7 @@ const API_INFRA_DIRS = new Set(['common', 'compat', 'prisma', 'types', 'utils', 
 
 // Known module descriptions — add new entries as modules evolve
 const MODULE_DESCRIPTIONS = {
-  auth:                   ['JWT validation, Clerk sync, CASL RBAC', 'Clerk, Passport, CASL'],
+  auth:                   ['Clerk auth, CASL RBAC, guard definitions', 'Clerk, Passport, CASL'],
   admin:                  ['Back-office ops, role management', 'auth'],
   marketplace:            ['Product catalog, ordering, search', 'billing, categories'],
   billing:                ['Stripe subscriptions + payments', 'Stripe SDK'],
@@ -72,9 +72,9 @@ function subdirs(dir) {
   return readdirSync(dir).filter((n) => statSync(join(dir, n)).isDirectory());
 }
 
-function files(dir, ext) {
+function tsxFiles(dir) {
   if (!existsSync(dir)) return [];
-  return readdirSync(dir).filter((n) => n.endsWith(ext));
+  return readdirSync(dir).filter((n) => n.endsWith('.tsx') || n.endsWith('.ts'));
 }
 
 function hasFile(dir, ext) {
@@ -97,29 +97,55 @@ function scanApiModules() {
 // ─── Scan frontend ───────────────────────────────────────────────────────────
 
 function scanFrontendComponents() {
-  const dir = join(ROOT, 'frontend', 'src', 'components');
-  return subdirs(dir).map((name) => ({ name, path: `frontend/src/components/${name}/` }));
+  // Components live at frontend/components/ (not under src/)
+  const dir = join(ROOT, 'frontend', 'components');
+  return subdirs(dir).map((name) => ({ name, path: `frontend/components/${name}/` }));
 }
 
 function scanFrontendPages() {
-  const dir = join(ROOT, 'frontend', 'src', 'pages');
-  return subdirs(dir).map((name) => ({ name, path: `frontend/src/pages/${name}/` }));
+  // Pages live at frontend/pages/ as .tsx files (not under src/)
+  const dir = join(ROOT, 'frontend', 'pages');
+  const pageFiles = tsxFiles(dir).map((f) => ({
+    name: f.replace(/\.(tsx?)$/, ''),
+    path: `frontend/pages/${f}`,
+    type: 'file',
+  }));
+  const pageDirs = subdirs(dir).map((name) => ({
+    name,
+    path: `frontend/pages/${name}/`,
+    type: 'dir',
+  }));
+  return [...pageDirs, ...pageFiles];
 }
 
 function scanFrontendContexts() {
-  const dir = join(ROOT, 'frontend', 'src', 'contexts');
-  return files(dir, '.tsx')
-    .concat(files(dir, '.ts'))
-    .map((f) => ({ name: f.replace(/\.(tsx?|jsx?)$/, ''), path: `frontend/src/contexts/${f}` }));
+  // Contexts live at frontend/contexts/ (not under src/)
+  const dir = join(ROOT, 'frontend', 'contexts');
+  return tsxFiles(dir).map((f) => ({
+    name: f.replace(/\.(tsx?)$/, ''),
+    path: `frontend/contexts/${f}`,
+  }));
 }
 
 // ─── Scan admin ──────────────────────────────────────────────────────────────
 
+function collectTsxRecursive(dir, base) {
+  if (!existsSync(dir)) return [];
+  const results = [];
+  for (const entry of readdirSync(dir)) {
+    const full = join(dir, entry);
+    const rel = base ? `${base}/${entry}` : entry;
+    if (statSync(full).isDirectory()) {
+      results.push(...collectTsxRecursive(full, rel));
+    } else if (entry.endsWith('.tsx') || entry.endsWith('.ts')) {
+      results.push(rel.replace(/\.(tsx?)$/, ''));
+    }
+  }
+  return results;
+}
+
 function scanAdminPages() {
-  const dir = join(ROOT, 'admin', 'src', 'pages');
-  return readdirSync(dir)
-    .filter((n) => n.endsWith('.tsx') || n.endsWith('.ts'))
-    .map((n) => n.replace(/\.(tsx?)$/, ''));
+  return collectTsxRecursive(join(ROOT, 'admin', 'src', 'pages'), '');
 }
 
 function scanAdminComponentDirs() {
@@ -127,7 +153,7 @@ function scanAdminComponentDirs() {
   return subdirs(dir);
 }
 
-import { readFileSync } from 'fs';
+// ─── Scan packages ───────────────────────────────────────────────────────────
 
 function scanPackagesSync() {
   const dir = join(ROOT, 'packages');
@@ -147,14 +173,16 @@ function buildGraph(apiModules, packages, frontendComponents, frontendPages, fro
   const now = new Date().toISOString().slice(0, 10);
 
   const nodes = [
-    { id: 'frontend', type: 'app', path: 'frontend/', tech: 'React 19 + Vite + Tailwind', entry: 'frontend/src/main.tsx' },
+    { id: 'frontend', type: 'app', path: 'frontend/', tech: 'React 19 + Vite + Tailwind', entry: 'frontend/index.tsx' },
     { id: 'admin', type: 'app', path: 'admin/', tech: 'React 19 + Vite', entry: 'admin/src/main.tsx' },
     { id: 'api', type: 'app', path: 'api/', tech: 'NestJS', entry: 'api/src/main.ts' },
     ...packages.map((p) => ({ id: `pkg-${p.name}`, type: 'package', path: p.path, name: p.pkgName })),
-    ...apiModules.map((m) => ({ id: m.id, type: 'api-module', path: m.path })),
+    ...apiModules.map((m) => ({ id: m.id, type: 'api-module', path: m.path, desc: m.desc })),
     ...frontendComponents.map((c) => ({ id: `fc-${c.name}`, type: 'frontend-component-dir', path: c.path })),
-    ...frontendPages.map((pg) => ({ id: `fp-${pg.name}`, type: 'frontend-page-dir', path: pg.path })),
+    ...frontendPages.map((pg) => ({ id: `fp-${pg.name}`, type: 'frontend-page', path: pg.path })),
     ...frontendContexts.map((ctx) => ({ id: `ctx-${ctx.name}`, type: 'context', path: ctx.path })),
+    ...adminPages.map((p) => ({ id: `ap-${p.replace(/\//g, '-')}`, type: 'admin-page', path: `admin/src/pages/${p}.tsx` })),
+    ...adminComponentDirs.map((d) => ({ id: `acd-${d}`, type: 'admin-component-dir', path: `admin/src/components/${d}/` })),
   ];
 
   const edges = [
@@ -186,6 +214,8 @@ function buildGraph(apiModules, packages, frontendComponents, frontendPages, fro
       packageCount: packages.length,
       adminPageCount: adminPages.length,
       frontendComponentDirCount: frontendComponents.length,
+      frontendPageCount: frontendPages.length,
+      frontendContextCount: frontendContexts.length,
     },
   };
 }
@@ -199,24 +229,28 @@ function buildReport(graph, apiModules, packages, frontendComponents, frontendPa
     .map((m) => `| \`${m.name}\` | ${m.desc} | ${m.deps} |`)
     .join('\n');
 
-  const componentsTable = frontendComponents
-    .map((c) => `| \`${c.name}/\` | — |`)
-    .join('\n');
+  const componentsTable = frontendComponents.length
+    ? frontendComponents.map((c) => `| \`${c.name}/\` | — |`).join('\n')
+    : '| *(none found)* | — |';
 
   const contextsTable = frontendContexts.length
     ? frontendContexts.map((c) => `| \`${c.name}\` | — |`).join('\n')
     : '| *(none found)* | — |';
 
   const pagesSection = frontendPages.length
-    ? frontendPages.map((p) => `├── ${p.name}/`).join('\n')
+    ? frontendPages.map((p) => `├── ${p.type === 'dir' ? p.name + '/' : p.name + '.tsx'}`).join('\n')
     : '*(none found)*';
 
   const packagesTable = packages
     .map((p) => `| \`${p.pkgName}\` | \`${p.pkgName}\` | — |`)
     .join('\n');
 
-  const adminPagesList = adminPages.map((p) => `- \`${p}\``).join('\n');
-  const adminComponentList = adminComponentDirs.map((d) => `- \`${d}/\``).join('\n');
+  const adminPagesList = adminPages.length
+    ? adminPages.map((p) => `- \`${p}\``).join('\n')
+    : '*(none found)*';
+  const adminComponentList = adminComponentDirs.length
+    ? adminComponentDirs.map((d) => `- \`${d}/\``).join('\n')
+    : '*(none found)*';
 
   return `# PC-Solutions-Platform — Graph Report
 
@@ -245,20 +279,20 @@ ${modulesTable}
 
 ---
 
-## Frontend Pages (\`frontend/src/pages/\`)
+## Frontend Pages (\`frontend/pages/\`)
 
 \`\`\`
 pages/
 ${pagesSection}
 \`\`\`
 
-**Main router**: \`frontend/src/App.tsx\` — contains all role-based route guards.
+**Main router**: \`frontend/App.tsx\` — contains all role-based route guards.
 
 ---
 
 ## Admin App (\`admin/src/\`)
 
-### Pages
+### Pages (${adminPages.length} total)
 ${adminPagesList}
 
 ### Component Directories
@@ -266,7 +300,7 @@ ${adminComponentList}
 
 ---
 
-## Frontend Component Domains (\`frontend/src/components/\`)
+## Frontend Component Domains (\`frontend/components/\`)
 
 | Directory | Contains |
 |---|---|
@@ -274,7 +308,7 @@ ${componentsTable}
 
 ---
 
-## Context Providers (\`frontend/src/contexts/\`)
+## Context Providers (\`frontend/contexts/\`)
 
 | Context | Purpose |
 |---|---|
@@ -296,7 +330,7 @@ ${packagesTable}
 Browser
   └── Clerk JWT (Authorization header)
         └── NestJS API Gateway
-              ├── JwtAuthGuard (validates Clerk token)
+              ├── ClerkAuthGuard (validates Clerk token)
               ├── RolesGuard (CASL ability check)
               └── Module Controller
                     ├── Service (business logic)
@@ -311,7 +345,8 @@ Browser
 
 - **Provider**: Clerk (hosted auth UI + JWT)
 - **Sync**: Clerk webhooks → \`api/src/auth/\` → Prisma User record
-- **RBAC**: CASL \`ability\` definitions scoped per role
+- **RBAC**: CASL \`ability\` definitions in \`api/src/auth/ability/\`
+- **Guards**: \`ClerkAuthGuard\` + \`RolesGuard\` (from \`api/src/auth/guards/\`)
 - **Roles** (enum in \`@workspace/types\`):
   - \`SUPER_ADMIN\` — full platform access
   - \`ADMIN\` — managed admin access (uses \`/admin\` app)
@@ -327,8 +362,8 @@ Browser
 
 | File | Role |
 |---|---|
-| \`frontend/src/main.tsx\` | Frontend SPA entry |
-| \`frontend/src/App.tsx\` | All frontend routes + role guards |
+| \`frontend/index.tsx\` | Frontend SPA entry |
+| \`frontend/App.tsx\` | All frontend routes + role guards |
 | \`admin/src/main.tsx\` | Admin SPA entry |
 | \`api/src/main.ts\` | NestJS bootstrap |
 | \`api/src/app.module.ts\` | Root NestJS module (imports all modules) |
@@ -370,7 +405,7 @@ api/messaging ◀── socket ── frontend
 ## Maintenance Notes
 
 - Regenerate this report after major structural changes: \`pnpm graphify\`
-- Update \`graph.json\` is regenerated automatically by the same command
+- \`graph.json\` is regenerated automatically by the same command
 - Report path: \`graphify-out/GRAPH_REPORT.md\`
 `;
 }
@@ -391,12 +426,12 @@ function main() {
   try { adminPages = scanAdminPages(); } catch { /* admin may not exist */ }
   try { adminComponentDirs = scanAdminComponentDirs(); } catch { /* admin may not exist */ }
 
-  console.log(`  API modules:       ${apiModules.length}`);
-  console.log(`  Packages:          ${packages.length}`);
-  console.log(`  Admin pages:       ${adminPages.length}`);
-  console.log(`  Frontend comp dirs:${frontendComponents.length}`);
-  console.log(`  Frontend page dirs:${frontendPages.length}`);
-  console.log(`  Frontend contexts: ${frontendContexts.length}`);
+  console.log(`  API modules:        ${apiModules.length}`);
+  console.log(`  Packages:           ${packages.length}`);
+  console.log(`  Admin pages:        ${adminPages.length}`);
+  console.log(`  Frontend comp dirs: ${frontendComponents.length}`);
+  console.log(`  Frontend pages:     ${frontendPages.length}`);
+  console.log(`  Frontend contexts:  ${frontendContexts.length}`);
   console.log('');
 
   const graph = buildGraph(apiModules, packages, frontendComponents, frontendPages, frontendContexts, adminPages, adminComponentDirs);

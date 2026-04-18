@@ -27,7 +27,7 @@ pc-solutions-platform/
 |---|---|---|
 | `admin` | Back-office ops, role management | auth |
 | `analytics` | User behaviour tracking | — |
-| `auth` | JWT validation, Clerk sync, CASL RBAC | Clerk, Passport, CASL |
+| `auth` | Clerk auth, CASL RBAC, guard definitions | Clerk, Passport, CASL |
 | `billing` | Stripe subscriptions + payments | Stripe SDK |
 | `categories` | Product/service taxonomy | — |
 | `content` | CMS-style content management | — |
@@ -71,20 +71,55 @@ pc-solutions-platform/
 
 ---
 
-## Frontend Pages (`frontend/src/pages/`)
+## Frontend Pages (`frontend/pages/`)
 
 ```
 pages/
-*(none found)*
+├── admin/
+├── candidate/
+├── educator/
+├── foundation/
+├── parent/
+├── partner/
+├── profile/
+├── service-provider/
+├── supplier/
+├── DashboardDetailPage.tsx
+├── DashboardPage.tsx
+├── DesignSystemPage.tsx
+├── ELearningPage.tsx
+├── FileGalleryPage.tsx
+├── FoundationLeadsPage.tsx
+├── HRProceduresPage.tsx
+├── LoginPage.tsx
+├── LoginPageE2E.tsx
+├── MarketplacePage.tsx
+├── MessagesPage.tsx
+├── NotificationsPage.tsx
+├── ParentEnquiriesPage.tsx
+├── ParentLeadFormPage.tsx
+├── PartnersPage.tsx
+├── PricingPage.tsx
+├── ProfileEditPage.tsx
+├── ProfilePage.tsx
+├── PublicPartnersPage.tsx
+├── RecruitmentPage.tsx
+├── ResetPasswordPage.tsx
+├── ServiceProviderSettingsPage.tsx
+├── SettingsPage.tsx
+├── SignupPage.tsx
+├── SignupPageE2E.tsx
+├── StatePoliciesPage.tsx
+├── UsersPage.tsx
 ```
 
-**Main router**: `frontend/src/App.tsx` — contains all role-based route guards.
+**Main router**: `frontend/App.tsx` — contains all role-based route guards.
 
 ---
 
 ## Admin App (`admin/src/`)
 
-### Pages
+### Pages (36 total)
 - `AccessDenied`
 - `AdminOrganizationProfileEdit`
 - `AdminUserProfileEdit`
@@ -117,6 +152,10 @@ pages/
 - `SystemMonitor`
 - `Translations`
 - `Users`
+- `content/ContentShared`
+- `content/ELearningContentPage`
+- `content/HrDocumentsPage`
+- `content/StatePoliciesPage`
 
 ### Component Directories
 - `auth/`
@@ -132,19 +171,39 @@ pages/
 
 ---
 
-## Frontend Component Domains (`frontend/src/components/`)
+## Frontend Component Domains (`frontend/components/`)
 
 | Directory | Contains |
 |---|---|
-| `verification/` | — |
+| `admin/` | — |
+| `availability/` | — |
+| `cart/` | — |
+| `foundation/` | — |
+| `help/` | — |
+| `icons/` | — |
+| `layout/` | — |
+| `marketplace/` | — |
+| `messaging/` | — |
+| `profile/` | — |
+| `recruitment/` | — |
+| `service-provider/` | — |
+| `settings/` | — |
+| `shared/` | — |
+| `supplier/` | — |
+| `support/` | — |
+| `ui/` | — |
 
 ---
 
-## Context Providers (`frontend/src/contexts/`)
+## Context Providers (`frontend/contexts/`)
 
 | Context | Purpose |
 |---|---|
-| *(none found)* | — |
+| `AppContext` | — |
+| `CartContext` | — |
+| `MessagingContext` | — |
+| `NotificationContext` | — |
+| `SubscriptionContext` | — |
 
 ---
 
@@ -166,7 +225,7 @@ pages/
 Browser
   └── Clerk JWT (Authorization header)
         └── NestJS API Gateway
-              ├── JwtAuthGuard (validates Clerk token)
+              ├── ClerkAuthGuard (validates Clerk token)
               ├── RolesGuard (CASL ability check)
               └── Module Controller
                     ├── Service (business logic)
@@ -181,7 +240,8 @@ Browser
 
 - **Provider**: Clerk (hosted auth UI + JWT)
 - **Sync**: Clerk webhooks → `api/src/auth/` → Prisma User record
-- **RBAC**: CASL `ability` definitions scoped per role
+- **RBAC**: CASL `ability` definitions in `api/src/auth/ability/`
+- **Guards**: `ClerkAuthGuard` + `RolesGuard` (from `api/src/auth/guards/`)
 - **Roles** (enum in `@workspace/types`):
   - `SUPER_ADMIN` — full platform access
   - `ADMIN` — managed admin access (uses `/admin` app)
@@ -197,8 +257,8 @@ Browser
 
 | File | Role |
 |---|---|
-| `frontend/src/main.tsx` | Frontend SPA entry |
-| `frontend/src/App.tsx` | All frontend routes + role guards |
+| `frontend/index.tsx` | Frontend SPA entry |
+| `frontend/App.tsx` | All frontend routes + role guards |
 | `admin/src/main.tsx` | Admin SPA entry |
 | `api/src/main.ts` | NestJS bootstrap |
 | `api/src/app.module.ts` | Root NestJS module (imports all modules) |
@@ -240,5 +300,5 @@ api/messaging ◀── socket ── frontend
 ## Maintenance Notes
 
 - Regenerate this report after major structural changes: `pnpm graphify`
-- Update `graph.json` is regenerated automatically by the same command
+- `graph.json` is regenerated automatically by the same command
 - Report path: `graphify-out/GRAPH_REPORT.md`

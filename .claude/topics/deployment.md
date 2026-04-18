@@ -47,24 +47,29 @@ typescript-config → eslint-config → types → translations → ui
                                               frontend / admin / api
 ```
 
+## Render Build Commands (from render.yaml)
+
+```
+frontend:  pnpm run prebuild:render && cd frontend && pnpm install && pnpm run build:render
+api:       pnpm run prebuild:render && cd api && pnpm install && pnpm run build:render
+admin:     pnpm run prebuild:render && cd admin && pnpm install && pnpm run build
+```
+
+`pnpm run prebuild:render` runs `scripts/prebuild-lock-check.mjs` — a lock file
+validation only. The full API setup (DB migrations, seeds) happens inside `build:render`.
+
 ## Deploy Steps (manual)
 
 1. Push to `main` — Render auto-deploys on merge
-2. Run migrations: `pnpm db:migrate` (in API build command)
-3. Check `pnpm db:status` if migration is stuck
-
-## Render Build Commands
-
-- **API**: `pnpm install && pnpm build && pnpm db:migrate`
-- **Frontend**: `pnpm install && pnpm build`
-- **Admin**: `pnpm install && pnpm build`
+2. Migrations run automatically as part of `build:render` in the API service
+3. Check `pnpm db:status` if migration state is unclear
 
 ## Common Deploy Failures
 
 | Symptom | Check |
 |---|---|
-| API won't start | `DATABASE_URL` / `REDIS_URL` missing |
+| API won't start | `DATABASE_URL` / `REDIS_URL` missing or wrong |
 | Clerk 401 | `CLERK_SECRET_KEY` wrong or expired |
 | Stripe webhook 400 | `STRIPE_WEBHOOK_SECRET` mismatch |
-| Build fails | Run `pnpm prebuild:render` locally first |
+| Build fails at lock check | Run `pnpm install` locally to regenerate `pnpm-lock.yaml` |
 | Migration stuck | Check `api/prisma/migrations/` for conflicts |

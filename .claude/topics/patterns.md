@@ -14,9 +14,12 @@
 
 ### Guards order
 Always apply in this order on controllers:
-1. `@UseGuards(JwtAuthGuard)` — validates Clerk JWT
-2. `@UseGuards(RolesGuard)` — CASL role check
-3. `@Roles(Role.ADMIN, ...)` — specify allowed roles
+1. `@UseGuards(ClerkAuthGuard, RolesGuard)` — auth then RBAC
+2. `@Roles(UserRole.ADMIN, ...)` — specify allowed roles
+
+Where `ClerkAuthGuard` is from `../auth/guards/clerk-auth.guard` and
+`RolesGuard` is from `../auth/guards/roles.guard`. The `UserRole` enum
+comes from Prisma's generated client (not `@workspace/types`).
 
 ### DTOs
 - Use `class-validator` decorators (`@IsString()`, `@IsOptional()`, etc.)
@@ -30,13 +33,16 @@ Always apply in this order on controllers:
 
 ## React Conventions
 
-### File structure (`frontend/src/` and `admin/src/`)
+### File structure
+
 ```
-components/<domain>/
-  <ComponentName>.tsx       — component file
-  <ComponentName>.test.tsx  — co-located tests (Vitest)
-hooks/
-  use<HookName>.ts          — custom hooks
+frontend/
+├── pages/        Page-level components (route targets)
+├── components/   Feature-domain component directories
+├── contexts/     React context providers (AppContext, etc.)
+├── hooks/        Custom hooks
+├── services/     API fetchers
+└── App.tsx       All routes + role guards
 ```
 
 ### Data fetching
@@ -58,7 +64,6 @@ hooks/
 ### @workspace/types
 - All cross-app interfaces live here
 - Import with `import type { ... } from '@workspace/types'`
-- Enum: `Role` — use everywhere, never re-define locally
 
 ### @repo/ui
 - Shared primitive components (Button, Input, Card, etc.)
