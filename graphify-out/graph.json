@@ -1,0 +1,903 @@
+{
+  "version": "1.0",
+  "generated": "2026-04-18",
+  "repo": "pc-solutions-platform",
+  "type": "monorepo",
+  "nodes": [
+    {
+      "id": "frontend",
+      "type": "app",
+      "path": "frontend/",
+      "tech": "React 19 + Vite + Tailwind",
+      "entry": "frontend/index.tsx"
+    },
+    {
+      "id": "admin",
+      "type": "app",
+      "path": "admin/",
+      "tech": "React 19 + Vite",
+      "entry": "admin/src/main.tsx"
+    },
+    {
+      "id": "api",
+      "type": "app",
+      "path": "api/",
+      "tech": "NestJS",
+      "entry": "api/src/main.ts"
+    },
+    {
+      "id": "pkg-eslint-config",
+      "type": "package",
+      "path": "packages/eslint-config/",
+      "name": "@repo/eslint-config"
+    },
+    {
+      "id": "pkg-translations",
+      "type": "package",
+      "path": "packages/translations/",
+      "name": "@workspace/translations"
+    },
+    {
+      "id": "pkg-types",
+      "type": "package",
+      "path": "packages/types/",
+      "name": "@workspace/types"
+    },
+    {
+      "id": "pkg-typescript-config",
+      "type": "package",
+      "path": "packages/typescript-config/",
+      "name": "@repo/typescript-config"
+    },
+    {
+      "id": "pkg-ui",
+      "type": "package",
+      "path": "packages/ui/",
+      "name": "@repo/ui"
+    },
+    {
+      "id": "mod-admin",
+      "type": "api-module",
+      "path": "api/src/admin/",
+      "desc": "Back-office ops, role management"
+    },
+    {
+      "id": "mod-analytics",
+      "type": "api-module",
+      "path": "api/src/analytics/",
+      "desc": "User behaviour tracking"
+    },
+    {
+      "id": "mod-auth",
+      "type": "api-module",
+      "path": "api/src/auth/",
+      "desc": "Clerk auth, CASL RBAC, guard definitions"
+    },
+    {
+      "id": "mod-billing",
+      "type": "api-module",
+      "path": "api/src/billing/",
+      "desc": "Stripe subscriptions + payments"
+    },
+    {
+      "id": "mod-categories",
+      "type": "api-module",
+      "path": "api/src/categories/",
+      "desc": "Product/service taxonomy"
+    },
+    {
+      "id": "mod-content",
+      "type": "api-module",
+      "path": "api/src/content/",
+      "desc": "CMS-style content management"
+    },
+    {
+      "id": "mod-content-management",
+      "type": "api-module",
+      "path": "api/src/content-management/",
+      "desc": "CMS content CRUD"
+    },
+    {
+      "id": "mod-content-moderation",
+      "type": "api-module",
+      "path": "api/src/content-moderation/",
+      "desc": "Content review & moderation"
+    },
+    {
+      "id": "mod-crawler",
+      "type": "api-module",
+      "path": "api/src/crawler/",
+      "desc": "Web content crawling & classification"
+    },
+    {
+      "id": "mod-dashboard",
+      "type": "api-module",
+      "path": "api/src/dashboard/",
+      "desc": "Aggregated stats per role"
+    },
+    {
+      "id": "mod-elearning",
+      "type": "api-module",
+      "path": "api/src/elearning/",
+      "desc": "Learning content, courses"
+    },
+    {
+      "id": "mod-email-notification",
+      "type": "api-module",
+      "path": "api/src/email-notification/",
+      "desc": "Transactional notifications"
+    },
+    {
+      "id": "mod-frontend-settings",
+      "type": "api-module",
+      "path": "api/src/frontend-settings/",
+      "desc": "Feature flags, per-role config"
+    },
+    {
+      "id": "mod-health",
+      "type": "api-module",
+      "path": "api/src/health/",
+      "desc": "Health check endpoint"
+    },
+    {
+      "id": "mod-leads",
+      "type": "api-module",
+      "path": "api/src/leads/",
+      "desc": "Lead capture & CRM pipeline"
+    },
+    {
+      "id": "mod-mailing",
+      "type": "api-module",
+      "path": "api/src/mailing/",
+      "desc": "Email campaigns"
+    },
+    {
+      "id": "mod-maintenance",
+      "type": "api-module",
+      "path": "api/src/maintenance/",
+      "desc": "Maintenance mode controls"
+    },
+    {
+      "id": "mod-marketplace",
+      "type": "api-module",
+      "path": "api/src/marketplace/",
+      "desc": "Product catalog, ordering, search"
+    },
+    {
+      "id": "mod-messaging",
+      "type": "api-module",
+      "path": "api/src/messaging/",
+      "desc": "Real-time chat (Socket.io)"
+    },
+    {
+      "id": "mod-metrics",
+      "type": "api-module",
+      "path": "api/src/metrics/",
+      "desc": "Platform metrics & health"
+    },
+    {
+      "id": "mod-organization-documents",
+      "type": "api-module",
+      "path": "api/src/organization-documents/",
+      "desc": "Org document storage"
+    },
+    {
+      "id": "mod-partners",
+      "type": "api-module",
+      "path": "api/src/partners/",
+      "desc": "Partner integrations"
+    },
+    {
+      "id": "mod-platform-settings",
+      "type": "api-module",
+      "path": "api/src/platform-settings/",
+      "desc": "Global platform configuration"
+    },
+    {
+      "id": "mod-policy-alerts",
+      "type": "api-module",
+      "path": "api/src/policy-alerts/",
+      "desc": "Policy change alerts"
+    },
+    {
+      "id": "mod-principal",
+      "type": "api-module",
+      "path": "api/src/principal/",
+      "desc": "Principal/org entity management"
+    },
+    {
+      "id": "mod-profiles",
+      "type": "api-module",
+      "path": "api/src/profiles/",
+      "desc": "User profile data"
+    },
+    {
+      "id": "mod-promo-codes",
+      "type": "api-module",
+      "path": "api/src/promo-codes/",
+      "desc": "Promotional code management"
+    },
+    {
+      "id": "mod-recruitment",
+      "type": "api-module",
+      "path": "api/src/recruitment/",
+      "desc": "Job/candidate matching"
+    },
+    {
+      "id": "mod-security",
+      "type": "api-module",
+      "path": "api/src/security/",
+      "desc": "Security audit logging"
+    },
+    {
+      "id": "mod-settings",
+      "type": "api-module",
+      "path": "api/src/settings/",
+      "desc": "Per-user settings"
+    },
+    {
+      "id": "mod-static-translation",
+      "type": "api-module",
+      "path": "api/src/static-translation/",
+      "desc": "Static i18n string delivery"
+    },
+    {
+      "id": "mod-subscription-management",
+      "type": "api-module",
+      "path": "api/src/subscription-management/",
+      "desc": "Subscription lifecycle ops"
+    },
+    {
+      "id": "mod-support",
+      "type": "api-module",
+      "path": "api/src/support/",
+      "desc": "Support tickets"
+    },
+    {
+      "id": "mod-sync",
+      "type": "api-module",
+      "path": "api/src/sync/",
+      "desc": "Data sync jobs"
+    },
+    {
+      "id": "mod-system-configuration",
+      "type": "api-module",
+      "path": "api/src/system-configuration/",
+      "desc": "System-level config"
+    },
+    {
+      "id": "mod-system-monitoring",
+      "type": "api-module",
+      "path": "api/src/system-monitoring/",
+      "desc": "System health monitoring"
+    },
+    {
+      "id": "mod-translation",
+      "type": "api-module",
+      "path": "api/src/translation/",
+      "desc": "Dynamic translation management"
+    },
+    {
+      "id": "mod-translation-errors",
+      "type": "api-module",
+      "path": "api/src/translation-errors/",
+      "desc": "Translation error tracking"
+    },
+    {
+      "id": "mod-upload",
+      "type": "api-module",
+      "path": "api/src/upload/",
+      "desc": "File upload & S3 storage"
+    },
+    {
+      "id": "mod-user-management",
+      "type": "api-module",
+      "path": "api/src/user-management/",
+      "desc": "Admin user management ops"
+    },
+    {
+      "id": "mod-users",
+      "type": "api-module",
+      "path": "api/src/users/",
+      "desc": "User account management"
+    },
+    {
+      "id": "mod-vendor-clients",
+      "type": "api-module",
+      "path": "api/src/vendor-clients/",
+      "desc": "Third-party vendor client wrappers"
+    },
+    {
+      "id": "mod-webhooks",
+      "type": "api-module",
+      "path": "api/src/webhooks/",
+      "desc": "Incoming webhook handlers (Clerk, Stripe)"
+    },
+    {
+      "id": "fc-admin",
+      "type": "frontend-component-dir",
+      "path": "frontend/components/admin/"
+    },
+    {
+      "id": "fc-availability",
+      "type": "frontend-component-dir",
+      "path": "frontend/components/availability/"
+    },
+    {
+      "id": "fc-cart",
+      "type": "frontend-component-dir",
+      "path": "frontend/components/cart/"
+    },
+    {
+      "id": "fc-foundation",
+      "type": "frontend-component-dir",
+      "path": "frontend/components/foundation/"
+    },
+    {
+      "id": "fc-help",
+      "type": "frontend-component-dir",
+      "path": "frontend/components/help/"
+    },
+    {
+      "id": "fc-icons",
+      "type": "frontend-component-dir",
+      "path": "frontend/components/icons/"
+    },
+    {
+      "id": "fc-layout",
+      "type": "frontend-component-dir",
+      "path": "frontend/components/layout/"
+    },
+    {
+      "id": "fc-marketplace",
+      "type": "frontend-component-dir",
+      "path": "frontend/components/marketplace/"
+    },
+    {
+      "id": "fc-messaging",
+      "type": "frontend-component-dir",
+      "path": "frontend/components/messaging/"
+    },
+    {
+      "id": "fc-profile",
+      "type": "frontend-component-dir",
+      "path": "frontend/components/profile/"
+    },
+    {
+      "id": "fc-recruitment",
+      "type": "frontend-component-dir",
+      "path": "frontend/components/recruitment/"
+    },
+    {
+      "id": "fc-service-provider",
+      "type": "frontend-component-dir",
+      "path": "frontend/components/service-provider/"
+    },
+    {
+      "id": "fc-settings",
+      "type": "frontend-component-dir",
+      "path": "frontend/components/settings/"
+    },
+    {
+      "id": "fc-shared",
+      "type": "frontend-component-dir",
+      "path": "frontend/components/shared/"
+    },
+    {
+      "id": "fc-supplier",
+      "type": "frontend-component-dir",
+      "path": "frontend/components/supplier/"
+    },
+    {
+      "id": "fc-support",
+      "type": "frontend-component-dir",
+      "path": "frontend/components/support/"
+    },
+    {
+      "id": "fc-ui",
+      "type": "frontend-component-dir",
+      "path": "frontend/components/ui/"
+    },
+    {
+      "id": "fp-admin",
+      "type": "frontend-page",
+      "path": "frontend/pages/admin/"
+    },
+    {
+      "id": "fp-candidate",
+      "type": "frontend-page",
+      "path": "frontend/pages/candidate/"
+    },
+    {
+      "id": "fp-educator",
+      "type": "frontend-page",
+      "path": "frontend/pages/educator/"
+    },
+    {
+      "id": "fp-foundation",
+      "type": "frontend-page",
+      "path": "frontend/pages/foundation/"
+    },
+    {
+      "id": "fp-parent",
+      "type": "frontend-page",
+      "path": "frontend/pages/parent/"
+    },
+    {
+      "id": "fp-partner",
+      "type": "frontend-page",
+      "path": "frontend/pages/partner/"
+    },
+    {
+      "id": "fp-profile",
+      "type": "frontend-page",
+      "path": "frontend/pages/profile/"
+    },
+    {
+      "id": "fp-service-provider",
+      "type": "frontend-page",
+      "path": "frontend/pages/service-provider/"
+    },
+    {
+      "id": "fp-supplier",
+      "type": "frontend-page",
+      "path": "frontend/pages/supplier/"
+    },
+    {
+      "id": "fp-DashboardDetailPage",
+      "type": "frontend-page",
+      "path": "frontend/pages/DashboardDetailPage.tsx"
+    },
+    {
+      "id": "fp-DashboardPage",
+      "type": "frontend-page",
+      "path": "frontend/pages/DashboardPage.tsx"
+    },
+    {
+      "id": "fp-DesignSystemPage",
+      "type": "frontend-page",
+      "path": "frontend/pages/DesignSystemPage.tsx"
+    },
+    {
+      "id": "fp-ELearningPage",
+      "type": "frontend-page",
+      "path": "frontend/pages/ELearningPage.tsx"
+    },
+    {
+      "id": "fp-FileGalleryPage",
+      "type": "frontend-page",
+      "path": "frontend/pages/FileGalleryPage.tsx"
+    },
+    {
+      "id": "fp-FoundationLeadsPage",
+      "type": "frontend-page",
+      "path": "frontend/pages/FoundationLeadsPage.tsx"
+    },
+    {
+      "id": "fp-HRProceduresPage",
+      "type": "frontend-page",
+      "path": "frontend/pages/HRProceduresPage.tsx"
+    },
+    {
+      "id": "fp-LoginPage",
+      "type": "frontend-page",
+      "path": "frontend/pages/LoginPage.tsx"
+    },
+    {
+      "id": "fp-LoginPageE2E",
+      "type": "frontend-page",
+      "path": "frontend/pages/LoginPageE2E.tsx"
+    },
+    {
+      "id": "fp-MarketplacePage",
+      "type": "frontend-page",
+      "path": "frontend/pages/MarketplacePage.tsx"
+    },
+    {
+      "id": "fp-MessagesPage",
+      "type": "frontend-page",
+      "path": "frontend/pages/MessagesPage.tsx"
+    },
+    {
+      "id": "fp-NotificationsPage",
+      "type": "frontend-page",
+      "path": "frontend/pages/NotificationsPage.tsx"
+    },
+    {
+      "id": "fp-ParentEnquiriesPage",
+      "type": "frontend-page",
+      "path": "frontend/pages/ParentEnquiriesPage.tsx"
+    },
+    {
+      "id": "fp-ParentLeadFormPage",
+      "type": "frontend-page",
+      "path": "frontend/pages/ParentLeadFormPage.tsx"
+    },
+    {
+      "id": "fp-PartnersPage",
+      "type": "frontend-page",
+      "path": "frontend/pages/PartnersPage.tsx"
+    },
+    {
+      "id": "fp-PricingPage",
+      "type": "frontend-page",
+      "path": "frontend/pages/PricingPage.tsx"
+    },
+    {
+      "id": "fp-ProfileEditPage",
+      "type": "frontend-page",
+      "path": "frontend/pages/ProfileEditPage.tsx"
+    },
+    {
+      "id": "fp-ProfilePage",
+      "type": "frontend-page",
+      "path": "frontend/pages/ProfilePage.tsx"
+    },
+    {
+      "id": "fp-PublicPartnersPage",
+      "type": "frontend-page",
+      "path": "frontend/pages/PublicPartnersPage.tsx"
+    },
+    {
+      "id": "fp-RecruitmentPage",
+      "type": "frontend-page",
+      "path": "frontend/pages/RecruitmentPage.tsx"
+    },
+    {
+      "id": "fp-ResetPasswordPage",
+      "type": "frontend-page",
+      "path": "frontend/pages/ResetPasswordPage.tsx"
+    },
+    {
+      "id": "fp-ServiceProviderSettingsPage",
+      "type": "frontend-page",
+      "path": "frontend/pages/ServiceProviderSettingsPage.tsx"
+    },
+    {
+      "id": "fp-SettingsPage",
+      "type": "frontend-page",
+      "path": "frontend/pages/SettingsPage.tsx"
+    },
+    {
+      "id": "fp-SignupPage",
+      "type": "frontend-page",
+      "path": "frontend/pages/SignupPage.tsx"
+    },
+    {
+      "id": "fp-SignupPageE2E",
+      "type": "frontend-page",
+      "path": "frontend/pages/SignupPageE2E.tsx"
+    },
+    {
+      "id": "fp-StatePoliciesPage",
+      "type": "frontend-page",
+      "path": "frontend/pages/StatePoliciesPage.tsx"
+    },
+    {
+      "id": "fp-UsersPage",
+      "type": "frontend-page",
+      "path": "frontend/pages/UsersPage.tsx"
+    },
+    {
+      "id": "ctx-AppContext",
+      "type": "context",
+      "path": "frontend/contexts/AppContext.tsx"
+    },
+    {
+      "id": "ctx-CartContext",
+      "type": "context",
+      "path": "frontend/contexts/CartContext.tsx"
+    },
+    {
+      "id": "ctx-MessagingContext",
+      "type": "context",
+      "path": "frontend/contexts/MessagingContext.tsx"
+    },
+    {
+      "id": "ctx-NotificationContext",
+      "type": "context",
+      "path": "frontend/contexts/NotificationContext.tsx"
+    },
+    {
+      "id": "ctx-SubscriptionContext",
+      "type": "context",
+      "path": "frontend/contexts/SubscriptionContext.tsx"
+    },
+    {
+      "id": "ap-AccessDenied",
+      "type": "admin-page",
+      "path": "admin/src/pages/AccessDenied.tsx"
+    },
+    {
+      "id": "ap-AdminOrganizationProfileEdit",
+      "type": "admin-page",
+      "path": "admin/src/pages/AdminOrganizationProfileEdit.tsx"
+    },
+    {
+      "id": "ap-AdminUserProfileEdit",
+      "type": "admin-page",
+      "path": "admin/src/pages/AdminUserProfileEdit.tsx"
+    },
+    {
+      "id": "ap-Candidates",
+      "type": "admin-page",
+      "path": "admin/src/pages/Candidates.tsx"
+    },
+    {
+      "id": "ap-CantonDetail",
+      "type": "admin-page",
+      "path": "admin/src/pages/CantonDetail.tsx"
+    },
+    {
+      "id": "ap-Cantons",
+      "type": "admin-page",
+      "path": "admin/src/pages/Cantons.tsx"
+    },
+    {
+      "id": "ap-Content",
+      "type": "admin-page",
+      "path": "admin/src/pages/Content.tsx"
+    },
+    {
+      "id": "ap-Dashboard",
+      "type": "admin-page",
+      "path": "admin/src/pages/Dashboard.tsx"
+    },
+    {
+      "id": "ap-DesignSystem",
+      "type": "admin-page",
+      "path": "admin/src/pages/DesignSystem.tsx"
+    },
+    {
+      "id": "ap-DiscountTerminations",
+      "type": "admin-page",
+      "path": "admin/src/pages/DiscountTerminations.tsx"
+    },
+    {
+      "id": "ap-EmailNotificationPage",
+      "type": "admin-page",
+      "path": "admin/src/pages/EmailNotificationPage.tsx"
+    },
+    {
+      "id": "ap-JobListings",
+      "type": "admin-page",
+      "path": "admin/src/pages/JobListings.tsx"
+    },
+    {
+      "id": "ap-MailingCampaignDetail",
+      "type": "admin-page",
+      "path": "admin/src/pages/MailingCampaignDetail.tsx"
+    },
+    {
+      "id": "ap-MailingList",
+      "type": "admin-page",
+      "path": "admin/src/pages/MailingList.tsx"
+    },
+    {
+      "id": "ap-Messaging",
+      "type": "admin-page",
+      "path": "admin/src/pages/Messaging.tsx"
+    },
+    {
+      "id": "ap-Orders",
+      "type": "admin-page",
+      "path": "admin/src/pages/Orders.tsx"
+    },
+    {
+      "id": "ap-Organizations",
+      "type": "admin-page",
+      "path": "admin/src/pages/Organizations.tsx"
+    },
+    {
+      "id": "ap-ParentLeads",
+      "type": "admin-page",
+      "path": "admin/src/pages/ParentLeads.tsx"
+    },
+    {
+      "id": "ap-Partners",
+      "type": "admin-page",
+      "path": "admin/src/pages/Partners.tsx"
+    },
+    {
+      "id": "ap-PolicyCrawler",
+      "type": "admin-page",
+      "path": "admin/src/pages/PolicyCrawler.tsx"
+    },
+    {
+      "id": "ap-PolicyReview",
+      "type": "admin-page",
+      "path": "admin/src/pages/PolicyReview.tsx"
+    },
+    {
+      "id": "ap-Products",
+      "type": "admin-page",
+      "path": "admin/src/pages/Products.tsx"
+    },
+    {
+      "id": "ap-ResetPassword",
+      "type": "admin-page",
+      "path": "admin/src/pages/ResetPassword.tsx"
+    },
+    {
+      "id": "ap-Services",
+      "type": "admin-page",
+      "path": "admin/src/pages/Services.tsx"
+    },
+    {
+      "id": "ap-Settings",
+      "type": "admin-page",
+      "path": "admin/src/pages/Settings.tsx"
+    },
+    {
+      "id": "ap-Subscriptions",
+      "type": "admin-page",
+      "path": "admin/src/pages/Subscriptions.tsx"
+    },
+    {
+      "id": "ap-Support",
+      "type": "admin-page",
+      "path": "admin/src/pages/Support.tsx"
+    },
+    {
+      "id": "ap-SupportTicket",
+      "type": "admin-page",
+      "path": "admin/src/pages/SupportTicket.tsx"
+    },
+    {
+      "id": "ap-SystemConfigurationPage",
+      "type": "admin-page",
+      "path": "admin/src/pages/SystemConfigurationPage.tsx"
+    },
+    {
+      "id": "ap-SystemMonitor",
+      "type": "admin-page",
+      "path": "admin/src/pages/SystemMonitor.tsx"
+    },
+    {
+      "id": "ap-Translations",
+      "type": "admin-page",
+      "path": "admin/src/pages/Translations.tsx"
+    },
+    {
+      "id": "ap-Users",
+      "type": "admin-page",
+      "path": "admin/src/pages/Users.tsx"
+    },
+    {
+      "id": "ap-content-ContentShared",
+      "type": "admin-page",
+      "path": "admin/src/pages/content/ContentShared.tsx"
+    },
+    {
+      "id": "ap-content-ELearningContentPage",
+      "type": "admin-page",
+      "path": "admin/src/pages/content/ELearningContentPage.tsx"
+    },
+    {
+      "id": "ap-content-HrDocumentsPage",
+      "type": "admin-page",
+      "path": "admin/src/pages/content/HrDocumentsPage.tsx"
+    },
+    {
+      "id": "ap-content-StatePoliciesPage",
+      "type": "admin-page",
+      "path": "admin/src/pages/content/StatePoliciesPage.tsx"
+    },
+    {
+      "id": "acd-auth",
+      "type": "admin-component-dir",
+      "path": "admin/src/components/auth/"
+    },
+    {
+      "id": "acd-design-system",
+      "type": "admin-component-dir",
+      "path": "admin/src/components/design-system/"
+    },
+    {
+      "id": "acd-forms",
+      "type": "admin-component-dir",
+      "path": "admin/src/components/forms/"
+    },
+    {
+      "id": "acd-mailing",
+      "type": "admin-component-dir",
+      "path": "admin/src/components/mailing/"
+    },
+    {
+      "id": "acd-messaging",
+      "type": "admin-component-dir",
+      "path": "admin/src/components/messaging/"
+    },
+    {
+      "id": "acd-products",
+      "type": "admin-component-dir",
+      "path": "admin/src/components/products/"
+    },
+    {
+      "id": "acd-services",
+      "type": "admin-component-dir",
+      "path": "admin/src/components/services/"
+    },
+    {
+      "id": "acd-settings",
+      "type": "admin-component-dir",
+      "path": "admin/src/components/settings/"
+    },
+    {
+      "id": "acd-support",
+      "type": "admin-component-dir",
+      "path": "admin/src/components/support/"
+    },
+    {
+      "id": "acd-ui",
+      "type": "admin-component-dir",
+      "path": "admin/src/components/ui/"
+    }
+  ],
+  "edges": [
+    {
+      "from": "frontend",
+      "to": "pkg-ui"
+    },
+    {
+      "from": "frontend",
+      "to": "pkg-types"
+    },
+    {
+      "from": "frontend",
+      "to": "pkg-translations"
+    },
+    {
+      "from": "admin",
+      "to": "pkg-ui"
+    },
+    {
+      "from": "admin",
+      "to": "pkg-types"
+    },
+    {
+      "from": "admin",
+      "to": "pkg-translations"
+    },
+    {
+      "from": "api",
+      "to": "pkg-types"
+    },
+    {
+      "from": "api",
+      "to": "pkg-translations"
+    },
+    {
+      "from": "mod-marketplace",
+      "to": "mod-billing"
+    },
+    {
+      "from": "mod-marketplace",
+      "to": "mod-categories"
+    },
+    {
+      "from": "mod-leads",
+      "to": "mod-mailing"
+    },
+    {
+      "from": "mod-email-notification",
+      "to": "mod-mailing"
+    },
+    {
+      "from": "mod-dashboard",
+      "to": "mod-analytics"
+    },
+    {
+      "from": "mod-elearning",
+      "to": "mod-content"
+    }
+  ],
+  "meta": {
+    "apiModuleCount": 43,
+    "packageCount": 5,
+    "adminPageCount": 36,
+    "frontendComponentDirCount": 17,
+    "frontendPageCount": 36,
+    "frontendContextCount": 5
+  }
+}
