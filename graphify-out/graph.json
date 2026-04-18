@@ -1,0 +1,343 @@
+{
+  "version": "1.0",
+  "generated": "2026-04-18",
+  "repo": "pc-solutions-platform",
+  "type": "monorepo",
+  "nodes": [
+    {
+      "id": "frontend",
+      "type": "app",
+      "path": "frontend/",
+      "tech": "React 19 + Vite + Tailwind",
+      "entry": "frontend/src/main.tsx"
+    },
+    {
+      "id": "admin",
+      "type": "app",
+      "path": "admin/",
+      "tech": "React 19 + Vite",
+      "entry": "admin/src/main.tsx"
+    },
+    {
+      "id": "api",
+      "type": "app",
+      "path": "api/",
+      "tech": "NestJS",
+      "entry": "api/src/main.ts"
+    },
+    {
+      "id": "pkg-eslint-config",
+      "type": "package",
+      "path": "packages/eslint-config/",
+      "name": "@repo/eslint-config"
+    },
+    {
+      "id": "pkg-translations",
+      "type": "package",
+      "path": "packages/translations/",
+      "name": "@workspace/translations"
+    },
+    {
+      "id": "pkg-types",
+      "type": "package",
+      "path": "packages/types/",
+      "name": "@workspace/types"
+    },
+    {
+      "id": "pkg-typescript-config",
+      "type": "package",
+      "path": "packages/typescript-config/",
+      "name": "@repo/typescript-config"
+    },
+    {
+      "id": "pkg-ui",
+      "type": "package",
+      "path": "packages/ui/",
+      "name": "@repo/ui"
+    },
+    {
+      "id": "mod-admin",
+      "type": "api-module",
+      "path": "api/src/admin/"
+    },
+    {
+      "id": "mod-analytics",
+      "type": "api-module",
+      "path": "api/src/analytics/"
+    },
+    {
+      "id": "mod-auth",
+      "type": "api-module",
+      "path": "api/src/auth/"
+    },
+    {
+      "id": "mod-billing",
+      "type": "api-module",
+      "path": "api/src/billing/"
+    },
+    {
+      "id": "mod-categories",
+      "type": "api-module",
+      "path": "api/src/categories/"
+    },
+    {
+      "id": "mod-content",
+      "type": "api-module",
+      "path": "api/src/content/"
+    },
+    {
+      "id": "mod-content-management",
+      "type": "api-module",
+      "path": "api/src/content-management/"
+    },
+    {
+      "id": "mod-content-moderation",
+      "type": "api-module",
+      "path": "api/src/content-moderation/"
+    },
+    {
+      "id": "mod-crawler",
+      "type": "api-module",
+      "path": "api/src/crawler/"
+    },
+    {
+      "id": "mod-dashboard",
+      "type": "api-module",
+      "path": "api/src/dashboard/"
+    },
+    {
+      "id": "mod-elearning",
+      "type": "api-module",
+      "path": "api/src/elearning/"
+    },
+    {
+      "id": "mod-email-notification",
+      "type": "api-module",
+      "path": "api/src/email-notification/"
+    },
+    {
+      "id": "mod-frontend-settings",
+      "type": "api-module",
+      "path": "api/src/frontend-settings/"
+    },
+    {
+      "id": "mod-health",
+      "type": "api-module",
+      "path": "api/src/health/"
+    },
+    {
+      "id": "mod-leads",
+      "type": "api-module",
+      "path": "api/src/leads/"
+    },
+    {
+      "id": "mod-mailing",
+      "type": "api-module",
+      "path": "api/src/mailing/"
+    },
+    {
+      "id": "mod-maintenance",
+      "type": "api-module",
+      "path": "api/src/maintenance/"
+    },
+    {
+      "id": "mod-marketplace",
+      "type": "api-module",
+      "path": "api/src/marketplace/"
+    },
+    {
+      "id": "mod-messaging",
+      "type": "api-module",
+      "path": "api/src/messaging/"
+    },
+    {
+      "id": "mod-metrics",
+      "type": "api-module",
+      "path": "api/src/metrics/"
+    },
+    {
+      "id": "mod-organization-documents",
+      "type": "api-module",
+      "path": "api/src/organization-documents/"
+    },
+    {
+      "id": "mod-partners",
+      "type": "api-module",
+      "path": "api/src/partners/"
+    },
+    {
+      "id": "mod-platform-settings",
+      "type": "api-module",
+      "path": "api/src/platform-settings/"
+    },
+    {
+      "id": "mod-policy-alerts",
+      "type": "api-module",
+      "path": "api/src/policy-alerts/"
+    },
+    {
+      "id": "mod-principal",
+      "type": "api-module",
+      "path": "api/src/principal/"
+    },
+    {
+      "id": "mod-profiles",
+      "type": "api-module",
+      "path": "api/src/profiles/"
+    },
+    {
+      "id": "mod-promo-codes",
+      "type": "api-module",
+      "path": "api/src/promo-codes/"
+    },
+    {
+      "id": "mod-recruitment",
+      "type": "api-module",
+      "path": "api/src/recruitment/"
+    },
+    {
+      "id": "mod-security",
+      "type": "api-module",
+      "path": "api/src/security/"
+    },
+    {
+      "id": "mod-settings",
+      "type": "api-module",
+      "path": "api/src/settings/"
+    },
+    {
+      "id": "mod-static-translation",
+      "type": "api-module",
+      "path": "api/src/static-translation/"
+    },
+    {
+      "id": "mod-subscription-management",
+      "type": "api-module",
+      "path": "api/src/subscription-management/"
+    },
+    {
+      "id": "mod-support",
+      "type": "api-module",
+      "path": "api/src/support/"
+    },
+    {
+      "id": "mod-sync",
+      "type": "api-module",
+      "path": "api/src/sync/"
+    },
+    {
+      "id": "mod-system-configuration",
+      "type": "api-module",
+      "path": "api/src/system-configuration/"
+    },
+    {
+      "id": "mod-system-monitoring",
+      "type": "api-module",
+      "path": "api/src/system-monitoring/"
+    },
+    {
+      "id": "mod-translation",
+      "type": "api-module",
+      "path": "api/src/translation/"
+    },
+    {
+      "id": "mod-translation-errors",
+      "type": "api-module",
+      "path": "api/src/translation-errors/"
+    },
+    {
+      "id": "mod-upload",
+      "type": "api-module",
+      "path": "api/src/upload/"
+    },
+    {
+      "id": "mod-user-management",
+      "type": "api-module",
+      "path": "api/src/user-management/"
+    },
+    {
+      "id": "mod-users",
+      "type": "api-module",
+      "path": "api/src/users/"
+    },
+    {
+      "id": "mod-vendor-clients",
+      "type": "api-module",
+      "path": "api/src/vendor-clients/"
+    },
+    {
+      "id": "mod-webhooks",
+      "type": "api-module",
+      "path": "api/src/webhooks/"
+    },
+    {
+      "id": "fc-verification",
+      "type": "frontend-component-dir",
+      "path": "frontend/src/components/verification/"
+    }
+  ],
+  "edges": [
+    {
+      "from": "frontend",
+      "to": "pkg-ui"
+    },
+    {
+      "from": "frontend",
+      "to": "pkg-types"
+    },
+    {
+      "from": "frontend",
+      "to": "pkg-translations"
+    },
+    {
+      "from": "admin",
+      "to": "pkg-ui"
+    },
+    {
+      "from": "admin",
+      "to": "pkg-types"
+    },
+    {
+      "from": "admin",
+      "to": "pkg-translations"
+    },
+    {
+      "from": "api",
+      "to": "pkg-types"
+    },
+    {
+      "from": "api",
+      "to": "pkg-translations"
+    },
+    {
+      "from": "mod-marketplace",
+      "to": "mod-billing"
+    },
+    {
+      "from": "mod-marketplace",
+      "to": "mod-categories"
+    },
+    {
+      "from": "mod-leads",
+      "to": "mod-mailing"
+    },
+    {
+      "from": "mod-email-notification",
+      "to": "mod-mailing"
+    },
+    {
+      "from": "mod-dashboard",
+      "to": "mod-analytics"
+    },
+    {
+      "from": "mod-elearning",
+      "to": "mod-content"
+    }
+  ],
+  "meta": {
+    "apiModuleCount": 43,
+    "packageCount": 5,
+    "adminPageCount": 32,
+    "frontendComponentDirCount": 1
+  }
+}
