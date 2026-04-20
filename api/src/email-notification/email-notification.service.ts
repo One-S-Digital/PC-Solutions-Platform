@@ -1,7 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailTemplateService } from './email-template.service';
-import * as sgMail from '@sendgrid/mail';
+import { MailingTransportService } from '../mailing/mailing-transport.service';
 import { createHash } from 'crypto';
 
 export interface EmailNotification {
@@ -65,12 +66,8 @@ export class EmailNotificationService {
   constructor(
     private prisma: PrismaService,
     private emailTemplateService: EmailTemplateService,
-  ) {
-    // Initialize SendGrid
-    if (process.env.SENDGRID_API_KEY) {
-      sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-    }
-  }
+    private mailingTransport: MailingTransportService,
+  ) {}
 
   async sendNotification(notification: EmailNotification): Promise<boolean> {
     let user: any = null;
@@ -105,33 +102,33 @@ export class EmailNotificationService {
         return false;
       }
 
-      // Prepare email data
-      const emailData = {
+      // Send via the unified mailing transport (SMTP → Mailgun → SendGrid, first configured wins)
+      const result = await this.mailingTransport.sendEmail({
         to: notification.recipient,
         from: {
-          email: process.env.FROM_EMAIL || 'noreply@procreche.ch',
-          name: process.env.FROM_NAME || 'Pro Crèche Solutions',
+          email: process.env.FROM_EMAIL || process.env.MAILING_FROM_EMAIL || 'noreply@procreche.ch',
+          name: process.env.FROM_NAME || process.env.MAILING_FROM_NAME || 'Pro Crèche Solutions',
         },
         subject: this.processTemplate(template.subject, notification.payload),
         html: this.processTemplate(template.htmlContent, notification.payload, { escapeHtml: true }),
         text: this.processTemplate(template.textContent, notification.payload),
-        categories: [notification.event],
-        customArgs: {
+        metadata: {
           event: notification.event,
           ...(user?.id ? { userId: user.id } : {}),
         },
-      };
+      });
 
-      // Send email via SendGrid
-      const response = await sgMail.send(emailData);
-      
+      if (!result.success) {
+        throw new Error(result.error || `${result.provider} transport failed`);
+      }
+
       // Log the email
       await this.logEmail({
         userId: user?.id,
         event: notification.event,
         recipient: notification.recipient,
         templateId: template.id,
-        messageId: response[0].headers['x-message-id'] as string,
+        messageId: result.messageId || null,
         status: 'sent',
         payload: notification.payload,
       });
@@ -205,6 +202,7 @@ export class EmailNotificationService {
     });
   }
 
+  @Cron('0 * * * * *') // every minute
   async processScheduledEmails(): Promise<void> {
     const now = new Date();
     const scheduledEmails = await this.prisma.scheduledEmail.findMany({
@@ -215,7 +213,7 @@ export class EmailNotificationService {
     });
 
     for (const email of scheduledEmails) {
-      await this.sendNotification({
+      const sent = await this.sendNotification({
         event: email.event,
         recipient: email.recipient,
         payload: email.payload,
@@ -223,7 +221,7 @@ export class EmailNotificationService {
 
       await this.prisma.scheduledEmail.update({
         where: { id: email.id },
-        data: { status: 'sent' },
+        data: { status: sent ? 'sent' : 'failed' },
       });
     }
   }
