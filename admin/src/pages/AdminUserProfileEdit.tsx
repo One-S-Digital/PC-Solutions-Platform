@@ -22,7 +22,7 @@ import Card from '../components/design-system/Card';
 import Button from '../components/design-system/Button';
 import ChipInput from '../components/design-system/ChipInput';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
-import { ALL_REGIONS_OPTION, STANDARD_INPUT_FIELD, SWISS_CANTONS_WITH_ALL } from '../constants/design-system';
+import { ALL_REGIONS_OPTION, STANDARD_INPUT_FIELD, SWISS_CANTONS_WITH_ALL, EDUCATOR_JOB_ROLES } from '../constants/design-system';
 import { UserRole } from '../types';
 
 interface UserProfile {
@@ -347,9 +347,10 @@ const AdminUserProfileEdit: React.FC = () => {
                   {t('admin:userProfile.cities', 'Cities')}
                 </label>
                 <ChipInput
-                  value={formData.cities || []}
+                  selectedChips={formData.cities || []}
                   onChange={(chips) => handleChange('cities', chips)}
                   placeholder={t('admin:userProfile.citiesPlaceholder', 'Add cities...')}
+                  allowCustomValues={true}
                 />
               </div>
             </div>
@@ -369,9 +370,10 @@ const AdminUserProfileEdit: React.FC = () => {
                   {t('admin:userProfile.jobRoles', 'Job Roles')}
                 </label>
                 <ChipInput
-                  value={formData.jobRoles || []}
+                  selectedChips={formData.jobRoles || []}
+                  availableOptions={[...EDUCATOR_JOB_ROLES]}
                   onChange={(chips) => handleChange('jobRoles', chips)}
-                  placeholder={t('admin:userProfile.jobRolesPlaceholder', 'e.g., Educator, Assistant')}
+                  placeholder={t('admin:userProfile.jobRolesPlaceholder', 'Select a role')}
                 />
               </div>
               <div>
@@ -426,9 +428,10 @@ const AdminUserProfileEdit: React.FC = () => {
                 {t('admin:userProfile.skills', 'Skills')}
               </h3>
               <ChipInput
-                value={formData.skills || []}
+                selectedChips={formData.skills || []}
                 onChange={(chips) => handleChange('skills', chips)}
                 placeholder={t('admin:userProfile.skillsPlaceholder', 'e.g., Montessori, Bilingual')}
+                allowCustomValues={true}
               />
             </Card>
 
@@ -438,9 +441,10 @@ const AdminUserProfileEdit: React.FC = () => {
                 {t('admin:userProfile.certifications', 'Certifications')}
               </h3>
               <ChipInput
-                value={formData.certifications || []}
+                selectedChips={formData.certifications || []}
                 onChange={(chips) => handleChange('certifications', chips)}
                 placeholder={t('admin:userProfile.certificationsPlaceholder', 'e.g., CPR Certified')}
+                allowCustomValues={true}
               />
             </Card>
 

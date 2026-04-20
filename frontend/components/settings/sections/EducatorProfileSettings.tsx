@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { SettingsFormData, UserRole, WorkExperienceItem, EducationItem, CertificationItem } from '../../../types';
-import { STANDARD_INPUT_FIELD, SWISS_CANTONS_WITH_ALL, ALL_REGIONS_OPTION } from '../../../constants';
+import { STANDARD_INPUT_FIELD, SWISS_CANTONS_WITH_ALL, ALL_REGIONS_OPTION, EDUCATOR_JOB_ROLES } from '../../../constants';
 import SettingsSectionWrapper from '../SettingsSectionWrapper';
 import ImageCropperModal from '../../shared/ImageCropperModal';
 import FileUploadZone from '../../ui/FileUploadZone';
@@ -494,15 +494,18 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
               {t('settings:educatorProfile.role', 'Role')} <span className="text-swiss-coral">*</span>
             </label>
             <div className="form-input-container">
-              <input
-                type="text"
+              <select
                 id="jobRole"
                 value={(profileData as any).jobRole}
                 onChange={(e) => handleFieldChange('jobRole', e.target.value)}
                 className={STANDARD_INPUT_FIELD}
-                placeholder={t('settings:educatorProfile.rolePlaceholder', 'e.g., Educator, Assistant')}
                 required
-              />
+              >
+                <option value="">{t('settings:educatorProfile.rolePlaceholder', 'Select a role')}</option>
+                {EDUCATOR_JOB_ROLES.map((role) => (
+                  <option key={role} value={role}>{role}</option>
+                ))}
+              </select>
             </div>
 
             <label htmlFor="region" className="form-label md:pt-2">

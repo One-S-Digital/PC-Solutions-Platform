@@ -19,6 +19,10 @@ export const ALL_REGIONS_OPTION = 'All' as const;
 // Convenience list for selects where users can choose to cover all cantons.
 export const SWISS_CANTONS_WITH_ALL = [ALL_REGIONS_OPTION, ...SWISS_CANTONS] as const;
 
+// Restricted list of valid educator job roles.
+export const EDUCATOR_JOB_ROLES = ['Direction', 'EDE', 'ASE', 'Auxiliaire', 'Cleaning'] as const;
+export type EducatorJobRole = typeof EDUCATOR_JOB_ROLES[number];
+
 export const SERVICE_CATEGORIES = [
   'Legal', 'Catering', 'Cleaning', 'Workshops', 'IT_Support', 'Consulting', 
   'Maintenance', 'Photography', 'Staff_Training', 'Landscaping', 'Other'
