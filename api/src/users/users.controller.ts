@@ -102,11 +102,19 @@ export class UsersController {
     // Clerk SDK (v5) invitation API.
     // We keep types loose here to avoid coupling to SDK internals.
     const maskedEmail = dto.email ? `${dto.email.substring(0, 3)}***@${dto.email.split('@')[1] || '***'}` : '***';
+
+    // Default to the platform login page so invited users land on the app after accepting.
+    const appUrl =
+      this.configService.get<string>('APP_URL') ||
+      this.configService.get<string>('FRONTEND_URL') ||
+      'https://app.procreche.ch';
+    const inviteRedirectUrl = dto.redirectUrl || `${appUrl}/login`;
+
     let invitation: any;
     try {
       invitation = await (this.clerk as any).invitations.createInvitation({
         emailAddress: dto.email,
-        redirectUrl: dto.redirectUrl,
+        redirectUrl: inviteRedirectUrl,
         publicMetadata: { role: dto.role },
       });
     } catch (error: any) {

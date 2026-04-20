@@ -4,9 +4,10 @@ import { EmailNotificationService } from './email-notification.service';
 import { EmailTemplateService } from './email-template.service';
 import { PrismaModule } from '../prisma/prisma.module';
 import { AuthModule } from '../auth/auth.module';
+import { MailingModule } from '../mailing/mailing.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule],
+  imports: [PrismaModule, AuthModule, MailingModule],
   controllers: [EmailNotificationController],
   providers: [EmailNotificationService, EmailTemplateService],
   exports: [EmailNotificationService, EmailTemplateService],
