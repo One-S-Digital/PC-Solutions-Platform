@@ -243,8 +243,10 @@ const LoginPage: React.FC = () => {
       // `redirectUrl` must point to a page rendering <AuthenticateWithRedirectCallback />
       // so Clerk can exchange the OAuth code for a session. After that, Clerk sends
       // the user to `redirectUrlComplete` where the app router handles post-login navigation.
-      const ssoCallbackUrl = new URL('/sso-callback', window.location.origin).toString();
-      const postLoginUrl = new URL(import.meta.env.BASE_URL || '/', window.location.origin).toString();
+      // Both URLs are built from the same BASE_URL prefix so non-root deployments work correctly.
+      const base = import.meta.env.BASE_URL || '/';
+      const postLoginUrl = new URL(base, window.location.origin).toString();
+      const ssoCallbackUrl = new URL(`${base.replace(/\/$/, '')}/sso-callback`, window.location.origin).toString();
 
       await signIn.authenticateWithRedirect({
         strategy: provider,
