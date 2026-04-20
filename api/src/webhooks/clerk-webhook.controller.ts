@@ -15,6 +15,7 @@ import { createClerkClient } from '@clerk/clerk-sdk-node';
 import { ConfigService } from '@nestjs/config';
 import { UserRole } from '@prisma/client';
 import { EmailNotificationService } from '../email-notification/email-notification.service';
+import { MailingTransportService } from '../mailing/mailing-transport.service';
 
 // Simple in-memory set for idempotency (replace with Redis in production)
 const processedEvents = new Set<string>();
@@ -34,6 +35,7 @@ export class ClerkWebhookController {
     private prisma: PrismaService,
     private configService: ConfigService,
     private emailNotificationService: EmailNotificationService,
+    private mailingTransport: MailingTransportService,
   ) {
     const clerkSecretKey = this.configService.get<string>('CLERK_SECRET_KEY');
     const webhookSecret = this.configService.get<string>('CLERK_WEBHOOK_SECRET');
@@ -449,9 +451,11 @@ ${'='.repeat(100)}`);
         console.log(`🗑️ [E2E DEBUG] ROUTING TO handleUserDeleted()`);
         await this.handleUserDeleted(data);
         break;
-      // Clerk fires email.created whenever it dispatches any email (invites, magic links, etc.).
-      // No action needed — it is purely informational.
+      // Clerk fires email.created when Custom Email Delivery is enabled in the Clerk dashboard.
+      // delivered_by_clerk: false means Clerk is handing off delivery to us — we must send it.
+      // delivered_by_clerk: true means Clerk already delivered it — no action needed.
       case 'email.created':
+        await this.handleEmailCreated(data);
         break;
       default:
         console.warn(`⚠️ [E2E DEBUG] UNHANDLED EVENT TYPE: ${type}`);
@@ -498,6 +502,40 @@ ${'='.repeat(100)}`);
 
   private resolveLastActiveAt(data: any): Date | undefined {
     return this.parseClerkTimestamp(data?.last_active_at ?? data?.last_sign_in_at);
+  }
+
+  private async handleEmailCreated(data: any) {
+    // When Custom Email Delivery is on, Clerk hands the email to us for dispatch.
+    // If Clerk already delivered it (delivered_by_clerk: true), do nothing.
+    if (data.delivered_by_clerk) {
+      this.logger.log(`[email.created] delivered_by_clerk=true — no action needed`);
+      return;
+    }
+
+    const to: string = data.to_email_address;
+    const subject: string = data.subject;
+    const html: string = data.body;
+    const text: string = data.body_plain || '';
+
+    if (!to || !subject || !html) {
+      this.logger.warn(`[email.created] Missing required fields — to:${to} subject:${subject} body:${!!html}`);
+      return;
+    }
+
+    this.logger.log(`[email.created] Dispatching via transport → ${to} | ${subject}`);
+
+    const result = await this.mailingTransport.sendEmail({
+      to,
+      subject,
+      html,
+      text,
+    });
+
+    if (result.success) {
+      this.logger.log(`[email.created] Sent via ${result.provider} → ${to}`);
+    } else {
+      this.logger.error(`[email.created] Send failed via ${result.provider}: ${result.error}`);
+    }
   }
 
   private async handleUserCreated(data: any) {
