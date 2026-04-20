@@ -76,7 +76,10 @@ const runPrisma = (args, { silent = false, input } = {}) => {
     throw new Error(`${cmd} ${cmdArgs.join(' ')} failed: ${stderr || stdout}`.trim());
   }
 
-  return typeof result.stdout === 'string' ? result.stdout.trim() : '';
+  // Prisma v6 db execute writes SELECT results to stderr; return both streams concatenated.
+  const stdout = typeof result.stdout === 'string' ? result.stdout.trim() : '';
+  const stderr = typeof result.stderr === 'string' ? result.stderr.trim() : '';
+  return stdout + (stderr ? '\n' + stderr : '');
 };
 
 const runSql = (sql) =>
@@ -85,6 +88,28 @@ const runSql = (sql) =>
     input: sql,
   });
 
+/**
+ * Check whether a migration is currently in a failed state in the tracking table.
+ * Returns true only when the migration row has started_at set but finished_at is NULL
+ * (the signature of a partial/failed apply).
+ */
+const isMigrationFailed = (migrationName) => {
+  const sql = `
+SELECT migration_name
+FROM "_prisma_migrations"
+WHERE migration_name = '${migrationName}'
+  AND started_at IS NOT NULL
+  AND finished_at IS NULL
+  AND rolled_back_at IS NULL;
+`;
+  try {
+    const out = runSql(sql);
+    return typeof out === 'string' && out.includes(migrationName);
+  } catch (_e) {
+    return false;
+  }
+};
+
 const resolveMigration = async (status, migrationName) => {
   const flag = status === 'applied' ? '--applied' : '--rolled-back';
   try {
@@ -92,10 +117,9 @@ const resolveMigration = async (status, migrationName) => {
     log(`✅ Marked migration ${migrationName} as ${status}.`);
     return true;
   } catch (e) {
-    // Check if it's already in the desired state (P3008 for applied, P3012 for rolled-back not needed)
     const alreadyInState = e.message.includes('P3008') || e.message.includes('already recorded as applied');
     const cannotRollback = e.message.includes('P3012') || e.message.includes('cannot be rolled back');
-    
+
     if (alreadyInState && status === 'applied') {
       log(`ℹ️  Migration ${migrationName} already marked as ${status}.`);
       return true;
@@ -1122,64 +1146,56 @@ const main = async () => {
   }
 
   // Subscription management system (enhanced subscription features)
-  // Strategy: 
-  // 1. Clear failed state (mark as rolled-back)
-  // 2. Ensure schema exists (so migration won't fail when Prisma runs it)
-  // 3. Let `prisma migrate deploy` run the migration normally and mark it applied
+  // Strategy:
+  // 1. Only clear failed state when the migration is actually stuck/failed
+  // 2. Ensure schema exists (idempotent safety net)
+  // 3. Let `prisma migrate deploy` run/mark the migration normally
   try {
     log('🔧 Preparing for subscription management system migration...');
-    
-    // Step 1: Clear failed state - try standard command first
-    let cleared = await resolveMigration('rolled-back', '20251218000000_subscription_management_system');
-    
-    // If standard command doesn't work, force-update the tracking table
-    if (!cleared) {
-      log('⚠️  Standard resolve failed, force-marking as rolled-back...');
-      cleared = forceMarkMigrationRolledBack('20251218000000_subscription_management_system');
+    const migName = '20251218000000_subscription_management_system';
+
+    if (isMigrationFailed(migName)) {
+      let cleared = await resolveMigration('rolled-back', migName);
+      if (!cleared) {
+        cleared = forceMarkMigrationRolledBack(migName);
+      }
+      if (cleared) {
+        log('✅ Migration cleared from failed state. Prisma will re-run it.');
+      }
+    } else {
+      log(`ℹ️  Migration ${migName} is not in a failed state — skipping rollback.`);
     }
-    
-    if (cleared) {
-      log('✅ Migration cleared from failed state. Prisma will re-run it.');
-    }
-    
-    // Step 2: Ensure schema exists so migration will succeed when Prisma runs it
+
     ensureSubscriptionManagementSystem();
     log('✅ Database schema prepared for migration.');
     log('📋 Prisma migrate deploy will now run this migration and mark it complete.');
-    
+
   } catch (e) {
     warn(`⚠️  Subscription management system preparation failed: ${e.message}`);
-    // Try force rollback anyway
-    try {
-      forceMarkMigrationRolledBack('20251218000000_subscription_management_system');
-      ensureSubscriptionManagementSystem();
-    } catch (e2) {
-      error(`❌ Could not prepare for migration: ${e2.message}`);
-    }
   }
 
   // Foundation subscription tiers (PricingTier scoping + seed)
   try {
     log('🔧 Preparing for foundation subscription tiers migration...');
-    let cleared = await resolveMigration('rolled-back', '20251221000002_foundation_subscription_tiers');
-    if (!cleared) {
-      log('⚠️  Standard resolve failed, force-marking as rolled-back...');
-      cleared = forceMarkMigrationRolledBack('20251221000002_foundation_subscription_tiers');
+    const migName = '20251221000002_foundation_subscription_tiers';
+
+    if (isMigrationFailed(migName)) {
+      let cleared = await resolveMigration('rolled-back', migName);
+      if (!cleared) {
+        cleared = forceMarkMigrationRolledBack(migName);
+      }
+      if (cleared) {
+        log('✅ Migration cleared from failed state. Prisma will re-run it.');
+      }
+    } else {
+      log(`ℹ️  Migration ${migName} is not in a failed state — skipping rollback.`);
     }
-    if (cleared) {
-      log('✅ Migration cleared from failed state. Prisma will re-run it.');
-    }
+
     ensureFoundationSubscriptionTiers();
     log('✅ Database schema prepared for migration.');
     log('📋 Prisma migrate deploy will now run this migration and mark it complete.');
   } catch (e) {
     warn(`⚠️  Foundation subscription tiers preparation failed: ${e.message}`);
-    try {
-      forceMarkMigrationRolledBack('20251221000002_foundation_subscription_tiers');
-      ensureFoundationSubscriptionTiers();
-    } catch (e2) {
-      error(`❌ Could not prepare for migration: ${e2.message}`);
-    }
   }
 
   // Job contract types (adds REPLACEMENT, TEMPORARY, FREELANCE enum values)
@@ -1197,14 +1213,18 @@ const main = async () => {
   // 2. Ensure the table + setting exist so the migration will not fail
   try {
     log('🔧 Preparing for email grace period setting migration...');
+    const migName = '20251221000002_add_email_grace_period_setting';
 
-    let cleared = await resolveMigration('rolled-back', '20251221000002_add_email_grace_period_setting');
-    if (!cleared) {
-      log('⚠️  Standard resolve failed, force-marking as rolled-back...');
-      cleared = forceMarkMigrationRolledBack('20251221000002_add_email_grace_period_setting');
-    }
-    if (cleared) {
-      log('✅ Migration cleared from failed state. Prisma will re-run it.');
+    if (isMigrationFailed(migName)) {
+      let cleared = await resolveMigration('rolled-back', migName);
+      if (!cleared) {
+        cleared = forceMarkMigrationRolledBack(migName);
+      }
+      if (cleared) {
+        log('✅ Migration cleared from failed state. Prisma will re-run it.');
+      }
+    } else {
+      log(`ℹ️  Migration ${migName} is not in a failed state — skipping rollback.`);
     }
 
     ensureEmailGracePeriodSetting();
@@ -1212,12 +1232,6 @@ const main = async () => {
     log('📋 Prisma migrate deploy will now run this migration and mark it complete.');
   } catch (e) {
     warn(`⚠️  Email grace period setting preparation failed: ${e.message}`);
-    try {
-      forceMarkMigrationRolledBack('20251221000002_add_email_grace_period_setting');
-      ensureEmailGracePeriodSetting();
-    } catch (e2) {
-      error(`❌ Could not prepare for migration: ${e2.message}`);
-    }
   }
 
   // Parent lead account linking (lead ownership to parent profile)
@@ -1226,14 +1240,18 @@ const main = async () => {
   // 2. Ensure schema exists so migration apply remains resilient
   try {
     log('🔧 Preparing for parent lead account-link migration...');
+    const migName = '20260211090000_link_parent_leads_to_users';
 
-    let cleared = await resolveMigration('rolled-back', '20260211090000_link_parent_leads_to_users');
-    if (!cleared) {
-      log('⚠️  Standard resolve failed, force-marking as rolled-back...');
-      cleared = forceMarkMigrationRolledBack('20260211090000_link_parent_leads_to_users');
-    }
-    if (cleared) {
-      log('✅ Migration cleared from failed state. Prisma will re-run it.');
+    if (isMigrationFailed(migName)) {
+      let cleared = await resolveMigration('rolled-back', migName);
+      if (!cleared) {
+        cleared = forceMarkMigrationRolledBack(migName);
+      }
+      if (cleared) {
+        log('✅ Migration cleared from failed state. Prisma will re-run it.');
+      }
+    } else {
+      log(`ℹ️  Migration ${migName} is not in a failed state — skipping rollback.`);
     }
 
     ensureParentLeadAccountLink();
@@ -1241,12 +1259,6 @@ const main = async () => {
     log('📋 Prisma migrate deploy will now run this migration and mark it complete.');
   } catch (e) {
     warn(`⚠️  Parent lead account-link preparation failed: ${e.message}`);
-    try {
-      forceMarkMigrationRolledBack('20260211090000_link_parent_leads_to_users');
-      ensureParentLeadAccountLink();
-    } catch (e2) {
-      error(`❌ Could not prepare for migration: ${e2.message}`);
-    }
   }
 
   log('Done.');

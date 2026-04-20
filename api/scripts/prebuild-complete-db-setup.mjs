@@ -233,8 +233,9 @@ const verifyCriticalTables = () => {
     throw new Error('Failed to verify critical tables');
   }
   
-  // Parse the count from the result to verify all tables exist
-  const countMatch = result.stdout?.match(/\b(\d+)\b/);
+  // Prisma v6 db execute writes tabular SELECT results to stderr; check both streams.
+  const output = (result.stdout || '') + (result.stderr || '');
+  const countMatch = output.match(/\b(\d+)\b/);
   const count = countMatch ? Number(countMatch[1]) : NaN;
   
   if (!Number.isInteger(count) || count !== criticalTables.length) {
@@ -273,7 +274,8 @@ const verifyParentLeadOwnershipColumn = () => {
     return;
   }
 
-  if (initial.stdout && initial.stdout.includes('parentUserId')) {
+  const initialOut = (initial.stdout || '') + (initial.stderr || '');
+  if (initialOut.includes('parentUserId')) {
     success('Parent lead account-link column exists');
     return;
   }
@@ -332,7 +334,8 @@ END $$;
   }
 
   const after = verifyOnce();
-  if (after.success && after.stdout && after.stdout.includes('parentUserId')) {
+  const afterOut = (after.stdout || '') + (after.stderr || '');
+  if (after.success && afterOut.includes('parentUserId')) {
     success('Parent lead account-link column created/verified');
   } else {
     warn('parentUserId column still not detected after ensure step');
@@ -367,7 +370,8 @@ const verifyEducatorAvailabilityColumn = () => {
   }
 
   // Prisma prints tabular output; the column name appears in stdout when present.
-  if (initial.stdout && initial.stdout.includes('availabilitySettings')) {
+  const initialOut = (initial.stdout || '') + (initial.stderr || '');
+  if (initialOut.includes('availabilitySettings')) {
     success('Educator availability settings column exists');
     return;
   }
@@ -409,7 +413,8 @@ ON "public"."users" ((("availabilitySettings"->>'employmentType')));
   }
 
   const after = verifyOnce();
-  if (after.success && after.stdout && after.stdout.includes('availabilitySettings')) {
+  const afterOut = (after.stdout || '') + (after.stderr || '');
+  if (after.success && afterOut.includes('availabilitySettings')) {
     success('Educator availability settings column created/verified');
   } else {
     warn('availabilitySettings column still not detected after ensure step');

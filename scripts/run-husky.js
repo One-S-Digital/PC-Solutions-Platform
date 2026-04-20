@@ -7,8 +7,12 @@ const { spawnSync } = require('child_process');
 const repoRoot = path.resolve(__dirname, '..');
 const gitDirectory = path.join(repoRoot, '.git');
 
-if (process.env.HUSKY === '0' || process.env.HUSKY_SKIP_INSTALL === '1' || process.env.CI === 'true') {
-  console.log('Husky install disabled by environment.');
+if (
+  process.env.HUSKY === '0' ||
+  process.env.HUSKY_SKIP_INSTALL === '1' ||
+  process.env.CI === 'true' ||
+  process.env.RENDER === 'true'
+) {
   process.exit(0);
 }
 
