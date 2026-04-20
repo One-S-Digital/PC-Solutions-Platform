@@ -107,7 +107,7 @@ export class UsersController {
     const appUrl =
       this.configService.get<string>('APP_URL') ||
       this.configService.get<string>('FRONTEND_URL') ||
-      'https://app.procreche.ch';
+      '';
     const inviteRedirectUrl = dto.redirectUrl || `${appUrl}/login`;
 
     let invitation: any;
