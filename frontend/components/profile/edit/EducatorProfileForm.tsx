@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { SettingsFormData, WorkExperienceItem, EducationItem, CertificationItem } from '../../../types';
-import { STANDARD_INPUT_FIELD, SWISS_CANTONS_WITH_ALL, ALL_REGIONS_OPTION } from '../../../constants';
+import { STANDARD_INPUT_FIELD, SWISS_CANTONS_WITH_ALL, ALL_REGIONS_OPTION, EDUCATOR_JOB_ROLES } from '../../../constants';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
 import CoverImageSection from './shared/CoverImageSection';
@@ -269,12 +269,12 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
             </label>
             <ChipInput
               selectedChips={jobRoles}
+              availableOptions={[...EDUCATOR_JOB_ROLES]}
               onChange={(roles) => {
                 onChange('jobRoles', roles);
                 onChange('jobRole', roles[0] || '');
               }}
-              placeholder={t('settings:educatorProfile.rolePlaceholder', 'e.g., Educator, Assistant')}
-              allowCustomValues={true}
+              placeholder={t('settings:educatorProfile.rolePlaceholder', 'Select a role')}
               onInputValueChange={setJobRoleDraft}
             />
             <p className="mt-1 text-xs text-gray-500">

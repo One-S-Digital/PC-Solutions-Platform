@@ -2,6 +2,7 @@ import {
   IsArray,
   IsBoolean,
   IsEmail,
+  IsIn,
   IsObject,
   IsOptional,
   IsString,
@@ -10,6 +11,8 @@ import {
   ValidateIf,
   ValidateNested,
 } from 'class-validator';
+
+export const ALLOWED_JOB_ROLES = ['Direction', 'EDE', 'ASE', 'Auxiliaire', 'Cleaning'] as const;
 import { Type } from 'class-transformer';
 import { EducatorAvailabilitySettingsDto } from './educator-availability.dto';
 
@@ -185,6 +188,7 @@ export class UpdateEducatorSettingsDto {
    */
   @IsOptional()
   @IsString()
+  @IsIn(ALLOWED_JOB_ROLES)
   jobRole?: string;
 
   /**
@@ -192,7 +196,7 @@ export class UpdateEducatorSettingsDto {
    */
   @IsOptional()
   @IsArray()
-  @IsString({ each: true })
+  @IsIn(ALLOWED_JOB_ROLES, { each: true })
   jobRoles?: string[];
 
   /**

@@ -497,7 +497,11 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
               <select
                 id="jobRole"
                 value={(profileData as any).jobRole}
-                onChange={(e) => handleFieldChange('jobRole', e.target.value)}
+                onChange={(e) => {
+                  const role = e.target.value;
+                  handleFieldChange('jobRole', role);
+                  handleFieldChange('jobRoles', role ? [role] : []);
+                }}
                 className={STANDARD_INPUT_FIELD}
                 required
               >
