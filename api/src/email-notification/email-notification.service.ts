@@ -213,7 +213,7 @@ export class EmailNotificationService {
     });
 
     for (const email of scheduledEmails) {
-      await this.sendNotification({
+      const sent = await this.sendNotification({
         event: email.event,
         recipient: email.recipient,
         payload: email.payload,
@@ -221,7 +221,7 @@ export class EmailNotificationService {
 
       await this.prisma.scheduledEmail.update({
         where: { id: email.id },
-        data: { status: 'sent' },
+        data: { status: sent ? 'sent' : 'failed' },
       });
     }
   }
