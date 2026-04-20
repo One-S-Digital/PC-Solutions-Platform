@@ -3,10 +3,10 @@ import { ClerkWebhookController } from './clerk-webhook.controller';
 import { WebhookDiagnosticsController } from './diagnostics.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
+import { EmailNotificationModule } from '../email-notification/email-notification.module';
 
 @Module({
-  imports: [PrismaModule, ConfigModule],
+  imports: [PrismaModule, ConfigModule, EmailNotificationModule],
   controllers: [ClerkWebhookController, WebhookDiagnosticsController],
-  // Removed WebhooksController to avoid route conflicts
 })
 export class WebhooksModule {}

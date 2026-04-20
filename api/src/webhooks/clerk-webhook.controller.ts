@@ -14,6 +14,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { createClerkClient } from '@clerk/clerk-sdk-node';
 import { ConfigService } from '@nestjs/config';
 import { UserRole } from '@prisma/client';
+import { EmailNotificationService } from '../email-notification/email-notification.service';
 
 // Simple in-memory set for idempotency (replace with Redis in production)
 const processedEvents = new Set<string>();
@@ -32,6 +33,7 @@ export class ClerkWebhookController {
   constructor(
     private prisma: PrismaService,
     private configService: ConfigService,
+    private emailNotificationService: EmailNotificationService,
   ) {
     const clerkSecretKey = this.configService.get<string>('CLERK_SECRET_KEY');
     const webhookSecret = this.configService.get<string>('CLERK_WEBHOOK_SECRET');
@@ -753,6 +755,24 @@ ${'='.repeat(100)}`);
         error?.stack,
       );
       // Do not throw; user creation should remain successful.
+    }
+
+    // Send welcome email — fire-and-forget, never block user creation.
+    if (primaryEmail && !primaryEmail.endsWith('@missing-email.local') && !primaryEmail.endsWith('@clerk-test-webhook.local')) {
+      this.emailNotificationService.sendNotification({
+        event: 'welcome_email',
+        recipient: primaryEmail,
+        recipientName: firstName,
+        payload: {
+          firstName,
+          role: validRole,
+          dashboardUrl: `${this.configService.get<string>('APP_URL') || this.configService.get<string>('FRONTEND_URL') || ''}/login`,
+        },
+        bypassPreferences: true,
+        allowUnknownRecipient: false,
+      }).catch((err: any) => {
+        this.logger.warn(`Welcome email failed for ${primaryEmail}: ${err?.message || err}`);
+      });
     }
     
     // E2E DEBUG: Clerk API sync with comprehensive logging

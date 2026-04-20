@@ -160,14 +160,18 @@ const LoginPage: React.FC = () => {
     }
 
     try {
-      // OAuth will redirect to dashboard after completion
-      // Use full URL for redirects (Clerk v5 requirement)
-      const redirectUrl = `${window.location.origin}/dashboard`;
-      
+      // `redirectUrl` must point to a page rendering <AuthenticateWithRedirectCallback />
+      // so Clerk can exchange the OAuth code for a session. After that, Clerk sends
+      // the user to `redirectUrlComplete` where the app router handles post-login navigation.
+      // Both URLs are built from the same BASE_URL prefix so non-root deployments work correctly.
+      const base = import.meta.env.BASE_URL || '/';
+      const postLoginUrl = new URL(base, window.location.origin).toString();
+      const ssoCallbackUrl = new URL(`${base.replace(/\/$/, '')}/sso-callback`, window.location.origin).toString();
+
       await signIn.authenticateWithRedirect({
         strategy: provider,
-        redirectUrl: redirectUrl,
-        redirectUrlComplete: redirectUrl,
+        redirectUrl: ssoCallbackUrl,
+        redirectUrlComplete: postLoginUrl,
       });
     } catch (error: any) {
       console.error('Social login error:', error);
