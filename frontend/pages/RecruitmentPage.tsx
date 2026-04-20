@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { JobListing, CandidateProfile, UserRole, JobStatus, JobContractType, JobContractTypeValue, Application } from '../types';
-import { STANDARD_INPUT_FIELD, ICON_INPUT_FIELD } from '../constants';
+import { STANDARD_INPUT_FIELD, ICON_INPUT_FIELD, EDUCATOR_JOB_ROLES } from '../constants';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Tabs from '../components/ui/Tabs';
@@ -434,18 +434,7 @@ const RecruitmentPage: React.FC = () => {
     ],
   );
 
-  const candidateRoleOptions = useMemo(() => {
-    const roles = new Set<string>();
-    candidateProfiles.forEach((c) => {
-      const roleEntries = c.jobRoles && c.jobRoles.length > 0
-        ? c.jobRoles
-        : [c.currentRoleOrTitle ?? c.jobRole ?? ''].map(r => r.trim()).filter(Boolean);
-      roleEntries.forEach((role) => {
-        if (role) roles.add(role);
-      });
-    });
-    return Array.from(roles).sort((a, b) => a.localeCompare(b));
-  }, [candidateProfiles]);
+  const candidateRoleOptions = [...EDUCATOR_JOB_ROLES];
 
   const jobsTotalPages = useMemo(
     () => Math.max(1, Math.ceil(filteredJobs.length / Math.max(1, jobsPerPage))),

@@ -17,11 +17,13 @@ import {
   IsEmail,
   IsBoolean,
   IsArray,
+  IsIn,
   IsNumber,
   IsUrl,
   IsUUID,
   ValidateNested,
 } from 'class-validator';
+import { ALLOWED_JOB_ROLES } from '../settings/dto/educator-settings.dto';
 import { Type } from 'class-transformer';
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -73,11 +75,12 @@ class AdminUpdateUserProfileDto {
 
   @IsOptional()
   @IsString()
+  @IsIn(ALLOWED_JOB_ROLES)
   jobRole?: string;
 
   @IsOptional()
   @IsArray()
-  @IsString({ each: true })
+  @IsIn(ALLOWED_JOB_ROLES, { each: true })
   jobRoles?: string[];
 
   @IsOptional()
