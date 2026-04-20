@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Routes, Route, Navigate, useLocation, useNavigate, Link } from 'react-router-dom';
-import { useAuth, useUser, useClerk } from '@clerk/clerk-react';
+import { useAuth, useUser, useClerk, AuthenticateWithRedirectCallback } from '@clerk/clerk-react';
 import MainLayout from './components/layout/MainLayout';
 import DashboardPage from './pages/DashboardPage'; // This will be the Foundation default dashboard
 import MarketplacePage from './pages/MarketplacePage';
@@ -624,6 +624,8 @@ const App: React.FC = () => {
                 <Route path="/partners" element={<PublicPartnersPage />} />
                 <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
                 <Route path="/reset-password" element={<ResetPasswordPage />} />
+                {/* Handles the OAuth callback from Clerk after Google SSO */}
+                <Route path="/sso-callback" element={<AuthenticateWithRedirectCallback />} />
                 <Route path="/*" element={<ProtectedLayout />} />
               </Routes>
             </SubscriptionProvider>

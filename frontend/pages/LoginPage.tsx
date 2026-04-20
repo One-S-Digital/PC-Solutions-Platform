@@ -240,16 +240,16 @@ const LoginPage: React.FC = () => {
     }
 
     try {
-      // OAuth completes via a full page load (server request). Redirecting to a deep SPA
-      // route like `/dashboard` can 404 in environments without an index.html rewrite.
-      // Redirect to the app base URL and let the client router handle post-login navigation.
-      // Use full URL for redirects (Clerk v5 requirement).
-      const redirectUrl = new URL(import.meta.env.BASE_URL || '/', window.location.origin).toString();
-      
+      // `redirectUrl` must point to a page rendering <AuthenticateWithRedirectCallback />
+      // so Clerk can exchange the OAuth code for a session. After that, Clerk sends
+      // the user to `redirectUrlComplete` where the app router handles post-login navigation.
+      const ssoCallbackUrl = new URL('/sso-callback', window.location.origin).toString();
+      const postLoginUrl = new URL(import.meta.env.BASE_URL || '/', window.location.origin).toString();
+
       await signIn.authenticateWithRedirect({
         strategy: provider,
-        redirectUrl: redirectUrl,
-        redirectUrlComplete: redirectUrl,
+        redirectUrl: ssoCallbackUrl,
+        redirectUrlComplete: postLoginUrl,
       });
     } catch (error: any) {
       console.error('Social login error:', error);
