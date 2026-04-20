@@ -449,6 +449,10 @@ ${'='.repeat(100)}`);
         console.log(`🗑️ [E2E DEBUG] ROUTING TO handleUserDeleted()`);
         await this.handleUserDeleted(data);
         break;
+      // Clerk fires email.created whenever it dispatches any email (invites, magic links, etc.).
+      // No action needed — it is purely informational.
+      case 'email.created':
+        break;
       default:
         console.warn(`⚠️ [E2E DEBUG] UNHANDLED EVENT TYPE: ${type}`);
         console.warn(`⚠️ [E2E DEBUG] If this event type should be handled, add a case for it`);
