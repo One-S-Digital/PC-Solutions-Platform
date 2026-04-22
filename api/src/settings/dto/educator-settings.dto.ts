@@ -2,6 +2,7 @@ import {
   IsArray,
   IsBoolean,
   IsEmail,
+  IsIn,
   IsObject,
   IsOptional,
   IsString,
@@ -188,7 +189,8 @@ export class UpdateEducatorSettingsDto {
    * Candidate role/title (e.g., "Educator", "Assistant"). Used for candidate pool filtering.
    */
   @IsOptional()
-  @IsString()
+  @ValidateIf((o) => !!o.jobRole)
+  @IsIn(ALLOWED_JOB_ROLES)
   jobRole?: string;
 
   /**

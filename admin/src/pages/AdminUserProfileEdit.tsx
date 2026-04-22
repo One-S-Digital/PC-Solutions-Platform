@@ -87,7 +87,10 @@ const AdminUserProfileEdit: React.FC = () => {
         contactEmail: profile.contactEmail || '',
         phoneNumber: profile.phoneNumber || '',
         region: profile.region || '',
-        jobRole: profile.jobRole || '',
+        jobRole: (() => {
+          const raw = profile.jobRole || '';
+          return (EDUCATOR_JOB_ROLES as readonly string[]).includes(raw) ? raw : '';
+        })(),
         cities: profile.cities || [],
         workExperience: profile.workExperience || '',
         education: profile.education || '',
