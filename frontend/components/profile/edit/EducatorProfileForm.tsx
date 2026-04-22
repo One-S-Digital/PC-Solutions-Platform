@@ -33,7 +33,15 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
   // Normalize legacy multi-role data to a single role on mount so the submit
   // payload always matches what the select displays, even if untouched.
   useEffect(() => {
-    if (Array.isArray(formData.jobRoles) && formData.jobRoles.length > 1) {
+    const allowed = EDUCATOR_JOB_ROLES as readonly string[];
+    const current =
+      (Array.isArray(formData.jobRoles) && formData.jobRoles[0]) ||
+      formData.jobRole ||
+      '';
+    if (current && !allowed.includes(current)) {
+      onChange('jobRole', '');
+      onChange('jobRoles', []);
+    } else if (Array.isArray(formData.jobRoles) && formData.jobRoles.length > 1) {
       onChange('jobRoles', [formData.jobRoles[0]]);
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps

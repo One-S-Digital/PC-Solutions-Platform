@@ -90,7 +90,11 @@ const buildProfileData = (settings: SettingsFormData, currentUser: any) => {
     lastName: settings.lastName || currentUser?.lastName || '',
     email: settings.email || currentUser?.email || '',
     phoneNumber: settings.phoneNumber || '',
-    jobRole: (settings as any).jobRole || '',
+    jobRole: (() => {
+      const raw = (settings as any).jobRole || (Array.isArray((settings as any).jobRoles) ? (settings as any).jobRoles[0] : '') || '';
+      return (EDUCATOR_JOB_ROLES as readonly string[]).includes(raw) ? raw : '';
+    })(),
+    jobRoles: Array.isArray((settings as any).jobRoles) ? (settings as any).jobRoles : [],
     region: (settings as any).region || '',
     shortBio: settings.shortBio || '',
     workExperience: settings.workExperience || '',
