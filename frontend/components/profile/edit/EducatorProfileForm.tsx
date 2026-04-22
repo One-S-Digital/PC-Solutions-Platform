@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SettingsFormData, WorkExperienceItem, EducationItem, CertificationItem } from '../../../types';
 import { STANDARD_INPUT_FIELD, SWISS_CANTONS_WITH_ALL, ALL_REGIONS_OPTION, EDUCATOR_JOB_ROLES } from '../../../constants';
 import { useTranslation } from 'react-i18next';
@@ -29,6 +29,14 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
   const { t } = useTranslation(['common', 'settings']);
   const { currentUser } = useAppContext();
   const [citiesDraft, setCitiesDraft] = useState('');
+
+  // Normalize legacy multi-role data to a single role on mount so the submit
+  // payload always matches what the select displays, even if untouched.
+  useEffect(() => {
+    if (Array.isArray(formData.jobRoles) && formData.jobRoles.length > 1) {
+      onChange('jobRoles', [formData.jobRoles[0]]);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSkillsChange = (newSkills: string[]) => {
     onChange('skills', newSkills);
