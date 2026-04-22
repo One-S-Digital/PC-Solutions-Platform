@@ -21,6 +21,7 @@ import {
   IsNumber,
   IsUrl,
   IsUUID,
+  ValidateIf,
   ValidateNested,
 } from 'class-validator';
 import { ALLOWED_JOB_ROLES } from '../settings/dto/educator-settings.dto';
@@ -74,12 +75,13 @@ class AdminUpdateUserProfileDto {
   region?: string;
 
   @IsOptional()
-  @IsString()
+  @ValidateIf((o) => !!o.jobRole)
   @IsIn(ALLOWED_JOB_ROLES)
   jobRole?: string;
 
   @IsOptional()
   @IsArray()
+  @ValidateIf((o) => Array.isArray(o.jobRoles) && o.jobRoles.length > 0)
   @IsIn(ALLOWED_JOB_ROLES, { each: true })
   jobRoles?: string[];
 
