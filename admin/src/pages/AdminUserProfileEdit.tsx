@@ -37,7 +37,6 @@ interface UserProfile {
   phoneNumber: string;
   region: string;
   jobRole: string;
-  jobRoles: string[];
   cities: string[];
   workExperience: string;
   education: string;
@@ -89,7 +88,6 @@ const AdminUserProfileEdit: React.FC = () => {
         phoneNumber: profile.phoneNumber || '',
         region: profile.region || '',
         jobRole: profile.jobRole || '',
-        jobRoles: profile.jobRoles || [],
         cities: profile.cities || [],
         workExperience: profile.workExperience || '',
         education: profile.education || '',
@@ -370,11 +368,10 @@ const AdminUserProfileEdit: React.FC = () => {
                   {t('admin:userProfile.jobRoles', 'Job Role')}
                 </label>
                 <select
-                  value={formData.jobRole || formData.jobRoles?.[0] || ''}
+                  value={formData.jobRole || ''}
                   onChange={(e) => {
                     const role = e.target.value;
                     handleChange('jobRole', role);
-                    handleChange('jobRoles', role ? [role] : []);
                   }}
                   className={STANDARD_INPUT_FIELD}
                 >
