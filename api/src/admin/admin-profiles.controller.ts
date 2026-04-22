@@ -81,11 +81,6 @@ class AdminUpdateUserProfileDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  jobRoles?: string[];
-
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
   cities?: string[];
 
   @IsOptional()
@@ -298,7 +293,6 @@ export class AdminProfilesController {
         phoneNumber: user.phoneNumber ?? '',
         region: user.region ?? '',
         jobRole: user.jobRole ?? '',
-        jobRoles: Array.isArray(user.jobRoles) ? user.jobRoles : [],
         cities: Array.isArray(user.cities) ? user.cities : [],
         workExperience: user.workExperience ?? '',
         education: user.education ?? '',
@@ -501,11 +495,7 @@ export class AdminProfilesController {
           shortBio: dto.shortBio,
           ...(dto.region !== undefined && { region: dto.region }),
           ...(dto.cities !== undefined && { cities: dto.cities }),
-          ...(dto.jobRoles !== undefined && { jobRoles: dto.jobRoles }),
           ...(dto.jobRole !== undefined && { jobRole: dto.jobRole }),
-          ...(dto.jobRoles?.length && dto.jobRole === undefined
-            ? { jobRole: dto.jobRoles[0] }
-            : {}),
           ...(dto.candidatePoolVisible !== undefined && { candidatePoolVisible: dto.candidatePoolVisible }),
           ...(dto.avatarAssetId !== undefined && { avatarAssetId: dto.avatarAssetId || null }),
           ...(dto.coverAssetId !== undefined && { coverAssetId: dto.coverAssetId || null }),

@@ -192,14 +192,6 @@ export class UpdateEducatorSettingsDto {
   jobRole?: string;
 
   /**
-   * Candidate roles/titles for multi-role matching.
-   */
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  jobRoles?: string[];
-
-  /**
    * Candidate cities for multi-city matching.
    */
   @IsOptional()

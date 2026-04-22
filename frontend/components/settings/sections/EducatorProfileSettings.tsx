@@ -91,10 +91,9 @@ const buildProfileData = (settings: SettingsFormData, currentUser: any) => {
     email: settings.email || currentUser?.email || '',
     phoneNumber: settings.phoneNumber || '',
     jobRole: (() => {
-      const raw = (settings as any).jobRole || (Array.isArray((settings as any).jobRoles) ? (settings as any).jobRoles[0] : '') || '';
+      const raw = (settings as any).jobRole || '';
       return (EDUCATOR_JOB_ROLES as readonly string[]).includes(raw) ? raw : '';
     })(),
-    jobRoles: Array.isArray((settings as any).jobRoles) ? (settings as any).jobRoles : [],
     region: (settings as any).region || '',
     shortBio: settings.shortBio || '',
     workExperience: settings.workExperience || '',
@@ -504,7 +503,6 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
                 onChange={(e) => {
                   const role = e.target.value;
                   handleFieldChange('jobRole', role);
-                  handleFieldChange('jobRoles', role ? [role] : []);
                 }}
                 className={STANDARD_INPUT_FIELD}
                 required

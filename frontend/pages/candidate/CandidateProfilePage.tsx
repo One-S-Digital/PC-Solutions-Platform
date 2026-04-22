@@ -114,7 +114,6 @@ const CandidateProfilePage: React.FC = () => {
     avatarUrl,
     currentRoleOrTitle,
     jobRole,
-    jobRoles,
     location,
     availabilityStatus,
     shortBio,
@@ -132,9 +131,9 @@ const CandidateProfilePage: React.FC = () => {
   } = candidate;
 
   const isFavorite = isCandidateFavorite(candidate.id);
-  const roleDisplay = jobRoles && jobRoles.length > 0
-    ? jobRoles.join(', ')
-    : (currentRoleOrTitle ?? jobRole ?? t('candidateProfile.roleNotSpecified'));
+  const roleDisplay = jobRole
+    ? jobRole
+    : (currentRoleOrTitle ?? t('candidateProfile.roleNotSpecified'));
   const locationDisplay = location ?? (cities && cities.length > 0 ? cities.join(', ') : t('candidateProfile.locationNotProvided'));
 
   const handleSendMessage = async () => {
