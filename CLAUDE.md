@@ -2,6 +2,11 @@
 
 This file is maintained by Claude Code sessions to avoid re-investigating the same areas of the codebase. Update it as new findings are made.
 
+> **v2 staffing-first remodel:** there is a dedicated plan folder at `docs/v2-staffing-remodel/`.
+> Start any remodel-related task by reading `docs/v2-staffing-remodel/00-README.md` and
+> `docs/v2-staffing-remodel/01-current-state-inventory.md` **before** re-analysing the codebase.
+> The current-state inventory there is the canonical pre-remodel snapshot.
+
 ---
 
 ## Architecture Overview
