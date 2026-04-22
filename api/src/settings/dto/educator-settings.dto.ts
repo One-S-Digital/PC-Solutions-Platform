@@ -99,11 +99,13 @@ export class UpdateEducatorSettingsDto {
   lastName?: string;
 
   @IsOptional()
+  @ValidateIf((o) => !!o.email)
   @IsEmail()
   email?: string;
 
   // Separate from authentication email: used for "contact info" on the profile.
   @IsOptional()
+  @ValidateIf((o) => !!o.contactEmail)
   @IsEmail()
   contactEmail?: string;
 
