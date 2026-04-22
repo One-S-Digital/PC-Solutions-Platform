@@ -170,9 +170,9 @@ interface CandidateCardProps {
 
 const CandidateCard: React.FC<CandidateCardProps> = ({ candidate, onViewProfile, onToggleFavorite, isFavorite }) => {
   const { t } = useTranslation(['recruitment', 'common']);
-  const roleDisplay = candidate.jobRoles && candidate.jobRoles.length > 0
-    ? candidate.jobRoles.join(', ')
-    : (candidate.currentRoleOrTitle ?? candidate.jobRole ?? candidate.role ?? t('recruitment:candidateCard.roleUnknown', 'Role not specified'));
+  const roleDisplay = candidate.jobRole
+    ? candidate.jobRole
+    : (candidate.currentRoleOrTitle ?? candidate.role ?? t('recruitment:candidateCard.roleUnknown', 'Role not specified'));
   const locationDisplay = candidate.location
     ?? (candidate.cities && candidate.cities.length > 0 ? candidate.cities.join(', ') : undefined)
     ?? candidate.preferredRegion
@@ -373,7 +373,6 @@ const RecruitmentPage: React.FC = () => {
           const roleText = [
             candidate.currentRoleOrTitle,
             candidate.jobRole,
-            ...(candidate.jobRoles ?? []),
             candidate.role,
           ].filter(Boolean).join(' ').toLowerCase();
           const locationText = [
@@ -387,9 +386,9 @@ const RecruitmentPage: React.FC = () => {
             roleText.includes(searchTermCandidates.toLowerCase());
 
           const matchesRole = candidateRoleFilter
-            ? (candidate.jobRoles && candidate.jobRoles.length > 0
-                ? candidate.jobRoles
-                : [candidate.currentRoleOrTitle ?? candidate.jobRole ?? ''])
+            ? (candidate.jobRole
+                ? [candidate.jobRole]
+                : [candidate.currentRoleOrTitle ?? ''])
                 .filter(Boolean)
                 .some(role => role.toLowerCase() === candidateRoleFilter.toLowerCase())
             : true;

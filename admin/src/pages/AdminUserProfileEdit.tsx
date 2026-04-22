@@ -37,7 +37,6 @@ interface UserProfile {
   phoneNumber: string;
   region: string;
   jobRole: string;
-  jobRoles: string[];
   cities: string[];
   workExperience: string;
   education: string;
@@ -88,8 +87,10 @@ const AdminUserProfileEdit: React.FC = () => {
         contactEmail: profile.contactEmail || '',
         phoneNumber: profile.phoneNumber || '',
         region: profile.region || '',
-        jobRole: profile.jobRole || '',
-        jobRoles: profile.jobRoles || [],
+        jobRole: (() => {
+          const raw = profile.jobRole || '';
+          return (EDUCATOR_JOB_ROLES as readonly string[]).includes(raw) ? raw : '';
+        })(),
         cities: profile.cities || [],
         workExperience: profile.workExperience || '',
         education: profile.education || '',
@@ -367,14 +368,21 @@ const AdminUserProfileEdit: React.FC = () => {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('admin:userProfile.jobRoles', 'Job Roles')}
+                  {t('admin:userProfile.jobRoles', 'Job Role')}
                 </label>
-                <ChipInput
-                  selectedChips={formData.jobRoles || []}
-                  availableOptions={[...EDUCATOR_JOB_ROLES]}
-                  onChange={(chips) => handleChange('jobRoles', chips)}
-                  placeholder={t('admin:userProfile.jobRolesPlaceholder', 'Select a role')}
-                />
+                <select
+                  value={formData.jobRole || ''}
+                  onChange={(e) => {
+                    const role = e.target.value;
+                    handleChange('jobRole', role);
+                  }}
+                  className={STANDARD_INPUT_FIELD}
+                >
+                  <option value="">{t('admin:userProfile.jobRolesPlaceholder', 'Select a role')}</option>
+                  {EDUCATOR_JOB_ROLES.map((role) => (
+                    <option key={role} value={role}>{role}</option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">

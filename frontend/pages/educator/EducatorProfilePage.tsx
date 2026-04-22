@@ -37,7 +37,6 @@ interface EducatorProfileData {
   candidatePoolVisible: boolean;
   region: string;
   jobRole: string;
-  jobRoles: string[];
   cities: string[];
 }
 
@@ -124,7 +123,6 @@ const EducatorProfilePage: React.FC = () => {
           phoneNumber: data.phoneNumber || '',
           region: data.region || '',
           jobRole: data.jobRole || '',
-          jobRoles: Array.isArray(data.jobRoles) ? data.jobRoles : (data.jobRole ? [data.jobRole] : []),
           cities: Array.isArray(data.cities) ? data.cities : [],
           workExperience: data.workExperience || '',
           education: data.education || '',
@@ -149,7 +147,6 @@ const EducatorProfilePage: React.FC = () => {
           phoneNumber: '',
           region: '',
           jobRole: '',
-          jobRoles: [],
           cities: [],
           workExperience: '',
           education: '',
@@ -384,9 +381,9 @@ const EducatorProfilePage: React.FC = () => {
 
   const fullName = `${profile.firstName} ${profile.lastName}`.trim() || t('educatorProfilePage.unnamed', 'Unnamed Educator');
   const avatarUrl = profile.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=48CFAE&color=fff&size=128`;
-  const roleDisplay = profile.jobRoles.length > 0
-    ? profile.jobRoles.join(', ')
-    : profile.jobRole || t('educatorProfilePage.roleNotProvided', 'Role not provided');
+  const roleDisplay = profile.jobRole
+    ? profile.jobRole
+    : t('educatorProfilePage.roleNotProvided', 'Role not provided');
   const locationDisplay = [
     ...(profile.cities.length > 0 ? [profile.cities.join(', ')] : []),
     ...(profile.region ? [profile.region] : []),

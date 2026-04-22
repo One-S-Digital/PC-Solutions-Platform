@@ -30,11 +30,13 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
   const { currentUser } = useAppContext();
   const [citiesDraft, setCitiesDraft] = useState('');
 
-  // Normalize legacy multi-role data to a single role on mount so the submit
-  // payload always matches what the select displays, even if untouched.
+  // Normalize role data on mount so the submit payload always matches what
+  // the select displays, even if untouched.
   useEffect(() => {
-    if (Array.isArray(formData.jobRoles) && formData.jobRoles.length > 1) {
-      onChange('jobRoles', [formData.jobRoles[0]]);
+    const allowed = EDUCATOR_JOB_ROLES as readonly string[];
+    const current = formData.jobRole || '';
+    if (current && !allowed.includes(current)) {
+      onChange('jobRole', '');
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -185,12 +187,6 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
     'https://images.unsplash.com/photo-1503676260728-4c8c0c7832a6?auto=format&fit=crop&w=1600&q=80';
 
   const fullName = `${formData.firstName || ''} ${formData.lastName || ''}`.trim() || t('settings:educatorProfile.educator', 'Educator');
-  const jobRoles =
-    Array.isArray(formData.jobRoles) && formData.jobRoles.length > 0
-      ? formData.jobRoles
-      : formData.jobRole
-        ? [formData.jobRole]
-        : [];
   const cities = Array.isArray(formData.cities) ? formData.cities : [];
   const hasUnconfirmedCity = citiesDraft.trim().length > 0;
 
@@ -275,11 +271,10 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
             </label>
             <select
               id="jobRole"
-              value={jobRoles[0] || ''}
+              value={formData.jobRole || ''}
               onChange={(e) => {
                 const role = e.target.value;
                 onChange('jobRole', role);
-                onChange('jobRoles', role ? [role] : []);
               }}
               className={STANDARD_INPUT_FIELD}
               required

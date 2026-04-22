@@ -99,11 +99,13 @@ export class UpdateEducatorSettingsDto {
   lastName?: string;
 
   @IsOptional()
+  @ValidateIf((o) => !!o.email)
   @IsEmail()
   email?: string;
 
   // Separate from authentication email: used for "contact info" on the profile.
   @IsOptional()
+  @ValidateIf((o) => !!o.contactEmail)
   @IsEmail()
   contactEmail?: string;
 
@@ -187,17 +189,9 @@ export class UpdateEducatorSettingsDto {
    * Candidate role/title (e.g., "Educator", "Assistant"). Used for candidate pool filtering.
    */
   @IsOptional()
-  @IsString()
+  @ValidateIf((o) => !!o.jobRole)
   @IsIn(ALLOWED_JOB_ROLES)
   jobRole?: string;
-
-  /**
-   * Candidate roles/titles for multi-role matching.
-   */
-  @IsOptional()
-  @IsArray()
-  @IsIn(ALLOWED_JOB_ROLES, { each: true })
-  jobRoles?: string[];
 
   /**
    * Candidate cities for multi-city matching.

@@ -21,6 +21,7 @@ import {
   IsNumber,
   IsUrl,
   IsUUID,
+  ValidateIf,
   ValidateNested,
 } from 'class-validator';
 import { ALLOWED_JOB_ROLES } from '../settings/dto/educator-settings.dto';
@@ -58,10 +59,12 @@ class AdminUpdateUserProfileDto {
   lastName?: string;
 
   @IsOptional()
+  @ValidateIf((o) => !!o.email)
   @IsEmail()
   email?: string;
 
   @IsOptional()
+  @ValidateIf((o) => !!o.contactEmail)
   @IsEmail()
   contactEmail?: string;
 
@@ -74,14 +77,9 @@ class AdminUpdateUserProfileDto {
   region?: string;
 
   @IsOptional()
-  @IsString()
+  @ValidateIf((o) => !!o.jobRole)
   @IsIn(ALLOWED_JOB_ROLES)
   jobRole?: string;
-
-  @IsOptional()
-  @IsArray()
-  @IsIn(ALLOWED_JOB_ROLES, { each: true })
-  jobRoles?: string[];
 
   @IsOptional()
   @IsArray()
@@ -298,7 +296,6 @@ export class AdminProfilesController {
         phoneNumber: user.phoneNumber ?? '',
         region: user.region ?? '',
         jobRole: user.jobRole ?? '',
-        jobRoles: Array.isArray(user.jobRoles) ? user.jobRoles : [],
         cities: Array.isArray(user.cities) ? user.cities : [],
         workExperience: user.workExperience ?? '',
         education: user.education ?? '',
@@ -501,11 +498,7 @@ export class AdminProfilesController {
           shortBio: dto.shortBio,
           ...(dto.region !== undefined && { region: dto.region }),
           ...(dto.cities !== undefined && { cities: dto.cities }),
-          ...(dto.jobRoles !== undefined && { jobRoles: dto.jobRoles }),
           ...(dto.jobRole !== undefined && { jobRole: dto.jobRole }),
-          ...(dto.jobRoles?.length && dto.jobRole === undefined
-            ? { jobRole: dto.jobRoles[0] }
-            : {}),
           ...(dto.candidatePoolVisible !== undefined && { candidatePoolVisible: dto.candidatePoolVisible }),
           ...(dto.avatarAssetId !== undefined && { avatarAssetId: dto.avatarAssetId || null }),
           ...(dto.coverAssetId !== undefined && { coverAssetId: dto.coverAssetId || null }),

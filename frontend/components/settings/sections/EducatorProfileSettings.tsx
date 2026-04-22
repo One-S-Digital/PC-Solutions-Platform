@@ -90,7 +90,10 @@ const buildProfileData = (settings: SettingsFormData, currentUser: any) => {
     lastName: settings.lastName || currentUser?.lastName || '',
     email: settings.email || currentUser?.email || '',
     phoneNumber: settings.phoneNumber || '',
-    jobRole: (settings as any).jobRole || '',
+    jobRole: (() => {
+      const raw = (settings as any).jobRole || '';
+      return (EDUCATOR_JOB_ROLES as readonly string[]).includes(raw) ? raw : '';
+    })(),
     region: (settings as any).region || '',
     shortBio: settings.shortBio || '',
     workExperience: settings.workExperience || '',
@@ -500,7 +503,6 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
                 onChange={(e) => {
                   const role = e.target.value;
                   handleFieldChange('jobRole', role);
-                  handleFieldChange('jobRoles', role ? [role] : []);
                 }}
                 className={STANDARD_INPUT_FIELD}
                 required
