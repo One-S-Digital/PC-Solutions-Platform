@@ -367,14 +367,22 @@ const AdminUserProfileEdit: React.FC = () => {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('admin:userProfile.jobRoles', 'Job Roles')}
+                  {t('admin:userProfile.jobRoles', 'Job Role')}
                 </label>
-                <ChipInput
-                  selectedChips={formData.jobRoles || []}
-                  availableOptions={[...EDUCATOR_JOB_ROLES]}
-                  onChange={(chips) => handleChange('jobRoles', chips)}
-                  placeholder={t('admin:userProfile.jobRolesPlaceholder', 'Select a role')}
-                />
+                <select
+                  value={formData.jobRole || formData.jobRoles?.[0] || ''}
+                  onChange={(e) => {
+                    const role = e.target.value;
+                    handleChange('jobRole', role);
+                    handleChange('jobRoles', role ? [role] : []);
+                  }}
+                  className={STANDARD_INPUT_FIELD}
+                >
+                  <option value="">{t('admin:userProfile.jobRolesPlaceholder', 'Select a role')}</option>
+                  {EDUCATOR_JOB_ROLES.map((role) => (
+                    <option key={role} value={role}>{role}</option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">

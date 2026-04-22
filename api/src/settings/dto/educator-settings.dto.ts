@@ -2,7 +2,6 @@ import {
   IsArray,
   IsBoolean,
   IsEmail,
-  IsIn,
   IsObject,
   IsOptional,
   IsString,
@@ -99,11 +98,13 @@ export class UpdateEducatorSettingsDto {
   lastName?: string;
 
   @IsOptional()
+  @ValidateIf((o) => !!o.email)
   @IsEmail()
   email?: string;
 
   // Separate from authentication email: used for "contact info" on the profile.
   @IsOptional()
+  @ValidateIf((o) => !!o.contactEmail)
   @IsEmail()
   contactEmail?: string;
 
@@ -188,7 +189,6 @@ export class UpdateEducatorSettingsDto {
    */
   @IsOptional()
   @IsString()
-  @IsIn(ALLOWED_JOB_ROLES)
   jobRole?: string;
 
   /**
@@ -196,7 +196,7 @@ export class UpdateEducatorSettingsDto {
    */
   @IsOptional()
   @IsArray()
-  @IsIn(ALLOWED_JOB_ROLES, { each: true })
+  @IsString({ each: true })
   jobRoles?: string[];
 
   /**
