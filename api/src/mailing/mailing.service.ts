@@ -186,7 +186,35 @@ export class MailingService {
       });
     }
 
+    // H) Direct user ID restriction (e.g. from a custom list) -----
+    if (filters.userIds?.length) {
+      andConditions.push({ id: { in: filters.userIds } });
+    }
+
     return { AND: andConditions };
+  }
+
+  /** Fetch all member user IDs from a custom list (handles pagination). */
+  async getAllCustomListMemberIds(listId: string): Promise<string[]> {
+    const PAGE_SIZE = 500;
+    const ids: string[] = [];
+    let page = 1;
+    let done = false;
+    while (!done) {
+      const skip = (page - 1) * PAGE_SIZE;
+      const members = await this.prisma.mailingCustomListMember.findMany({
+        where: { listId },
+        skip,
+        take: PAGE_SIZE,
+        select: { userId: true },
+        orderBy: { userId: 'asc' },
+      });
+      ids.push(...members.map((m) => m.userId));
+      done = members.length < PAGE_SIZE;
+      if (ids.length >= MAX_EXPORT_ROWS) break;
+      page++;
+    }
+    return ids;
   }
 
   /* ================================================================ */

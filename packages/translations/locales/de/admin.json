@@ -589,26 +589,12 @@
     }
   },
   "dashboard": {
-    "quickActions": {
-      "title": "Schnellaktionen",
-      "manageUsers": {
-        "title": "Benutzer verwalten",
-        "description": "Benutzer hinzufügen, bearbeiten oder entfernen"
-      },
-      "organizations": {
-        "title": "Organisationen",
-        "description": "Kindertagesstätten verwalten"
-      },
-      "orders": {
-        "title": "Bestellungen",
-        "description": "Aktuelle Bestellungen anzeigen"
-      },
-      "analytics": {
-        "title": "Analytik",
-        "description": "Plattformmetriken anzeigen"
-      }
-    },
-    "contentUploadSuccess": "Inhalt erfolgreich hochgeladen!"
+    "policyCrawler": {
+      "label": "Richtlinien-Crawler",
+      "enabled": "Aktiv",
+      "disabled": "Deaktiviert",
+      "manage": "Verwalten"
+    }
   },
   "contentUpload": {
     "fileTooLarge": "Dateigröße überschreitet das Limit von {{max}} MB."
@@ -649,14 +635,6 @@
     "status": {
       "enabled": "Aktiv",
       "disabled": "Deaktiviert"
-    }
-  },
-  "dashboard": {
-    "policyCrawler": {
-      "label": "Richtlinien-Crawler",
-      "enabled": "Aktiv",
-      "disabled": "Deaktiviert",
-      "manage": "Verwalten"
     }
   },
   "cantons": {
@@ -1209,7 +1187,41 @@
   "users": {
     "title": "Benutzerverwaltung",
     "subtitle": "Alle Benutzer auf der Plattform verwalten",
-    "addUser": "Benutzer hinzufügen",
+    "addUser": {
+      "title": "Benutzer hinzufügen",
+      "singleInvite": "Einzeleinladung",
+      "bulkInvite": "Masseneinladung",
+      "createAccount": "Konto erstellen",
+      "email": "E-Mail",
+      "emailRequired": "E-Mail ist erforderlich",
+      "emailHint": "Wir senden eine Einladungs-E-Mail. Der Benutzer erscheint in der Liste nach der Anmeldung.",
+      "role": "Rolle",
+      "sending": "Senden...",
+      "sendInvite": "Einladung senden",
+      "bulkEmails": "E-Mail-Adressen",
+      "bulkEmailsPlaceholder": "Eine E-Mail pro Zeile oder durch Komma/Semikolon getrennt",
+      "emailsDetected": "E-Mail(s) erkannt",
+      "maxBulk": "max. 50 pro Batch",
+      "appliesAll": "gilt für alle",
+      "sendInvites": "Einladungen senden",
+      "bulkDone": "Einladung(en) gesendet",
+      "bulkFailed": "Einladungen konnten nicht gesendet werden",
+      "superAdminNotAllowed": "Nur Super-Admin kann einen Super-Admin hinzufügen",
+      "failed": "Benutzer konnte nicht eingeladen werden",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "createAccountNote": "Das Konto wird sofort mit einer vorverifizierten E-Mail erstellt. Es wird keine Einladungs-E-Mail gesendet.",
+      "createSuccess": "Konto erfolgreich erstellt!",
+      "createFailed": "Benutzer konnte nicht erstellt werden",
+      "setCustomPassword": "Benutzerdefiniertes temporäres Passwort festlegen",
+      "autoPasswordHint": "Ein sicheres Passwort wird automatisch generiert und nach der Erstellung angezeigt.",
+      "passwordPlaceholder": "Min. 12 Zeichen",
+      "passwordTooShort": "Das Passwort muss mindestens 12 Zeichen lang sein",
+      "creating": "Erstellen...",
+      "createAccountBtn": "Konto erstellen",
+      "tempPasswordLabel": "Temporäres Passwort (sicher weitergeben — wird nur einmal angezeigt):",
+      "tempPasswordHint": "Der Benutzer sollte dieses Passwort beim ersten Login ändern."
+    },
     "actions": {
       "suspend": "Sperren",
       "reactivate": "Reaktivieren",
@@ -1316,12 +1328,132 @@
       "noEmail": "Keine E-Mail",
       "noOrganization": "Keine Organisation",
       "never": "Nie"
+    },
+    "pendingInvitations": {
+      "title": "Ausstehende Einladungen",
+      "empty": "Keine ausstehenden Einladungen.",
+      "sent": "Gesendet",
+      "resend": "Einladung erneut senden",
+      "resendSuccess": "Einladung erneut gesendet",
+      "resendFailed": "Einladung konnte nicht erneut gesendet werden"
+    },
+    "orgAssignment": {
+      "title": "Organisationen",
+      "selectOrg": "Organisation auswählen...",
+      "noneAssigned": "Keine Organisationen zugewiesen",
+      "removeOrg": "Aus Organisation entfernen",
+      "addOrgBtn": "Hinzufügen",
+      "addSuccess": "Organisation zugewiesen",
+      "addFailed": "Organisation konnte nicht zugewiesen werden",
+      "removeSuccess": "Organisation entfernt",
+      "removeFailed": "Organisation konnte nicht entfernt werden",
+      "optional": "Organisation zuweisen (optional)"
     }
   },
   "translations": {
-    "descriptionPlaceholder": "Beschreibung (fakultativ)",
-    "versionPlaceholder": "Version (z.B. v1.2.3)",
-    "searchPlaceholder": "Schlüssel oder Werte suchen..."
+    "title": "Übersetzungsverwaltung",
+    "subtitle": "Statische UI-Übersetzungen verwalten",
+    "errors": {
+      "fileTooLarge": "Dateigröße überschreitet das Limit von {{max}} MB."
+    },
+    "tabs": {
+      "translations": "Übersetzungen",
+      "auditLogs": "Auditprotokolle",
+      "releases": "Versionen"
+    },
+    "releases": {
+      "title": "Übersetzungsversionen",
+      "versionPlaceholder": "Version (z.B. v1.2.3)",
+      "descriptionPlaceholder": "Beschreibung (optional)",
+      "createRelease": "Version erstellen",
+      "creating": "Erstellen...",
+      "description": "Das Erstellen einer Version invalidiert alle Caches und zwingt Clients, frische Übersetzungen abzurufen."
+    },
+    "filters": {
+      "namespace": "Namensraum",
+      "search": "Suchen"
+    },
+    "searchPlaceholder": "Nach Schlüsseln oder Werten suchen...",
+    "pagination": {
+      "showingResults": "Zeige {{start}} bis {{end}} von {{total}} Ergebnissen",
+      "pageOfTotal": "Seite {{page}} von {{totalPages}}"
+    },
+    "oneClickSync": {
+      "title": "Ein-Klick-Synchronisation",
+      "description": "Englische Schlüssel importieren → In Französisch und Deutsch übersetzen → In Dateien exportieren.",
+      "subDescription": "Das macht alles in einem Schritt! Dauert 5-10 Minuten.",
+      "button": "🔄 Vollständige Synchronisation aller Sprachen",
+      "syncing": "Synchronisierung... (dauert einige Minuten)"
+    },
+    "advanced": {
+      "title": "⚙️ Erweiterte Optionen (Einzelschritte)",
+      "expand": "Zum Erweitern klicken",
+      "importFromFiles": "Aus JSON-Dateien importieren",
+      "importFromFilesDesc": "EN/FR/DE aus packages/translations/locales in die Datenbank laden",
+      "import": "Importieren",
+      "importing": "Importieren...",
+      "scanFix": "Hartcodierte Zeichenfolgen scannen und reparieren",
+      "scanFixDesc": "Hartcodierte Zeichenfolgen im Code finden und Übersetzungsschlüssel erstellen",
+      "scan": "Scannen",
+      "scanning": "Scannen...",
+      "translateMissing": "Fehlende übersetzen (FR/DE)",
+      "translateMissingDesc": "Fehlende Schlüssel ins Französische und Deutsche übersetzen",
+      "translate": "Übersetzen",
+      "translating": "Übersetzen...",
+      "cleanPrefixes": "Präfixe bereinigen",
+      "cleanPrefixesDesc": "Präfixe [FR]/[DE]/[EN] aus Übersetzungen entfernen",
+      "clean": "Bereinigen",
+      "cleaning": "Bereinigen...",
+      "exportToFiles": "In JSON-Dateien exportieren",
+      "exportToFilesDesc": "Datenbankübersetzungen zurück in JSON-Dateien synchronisieren (erforderlich für Frontend)",
+      "export": "Exportieren"
+    },
+    "moreOptions": {
+      "title": "Weitere Optionen",
+      "show": "Anzeigen",
+      "hide": "Ausblenden",
+      "refresh": "Aktualisieren",
+      "fixEnLabels": "EN-Schlüsselbeschriftungen reparieren",
+      "fixingEnLabels": "EN-Beschriftungen reparieren...",
+      "approveSelected": "{{count}} Ausgewählte genehmigen",
+      "approving": "Genehmigen...",
+      "exportJson": "JSON exportieren",
+      "exportCsv": "CSV exportieren",
+      "import": "Importieren"
+    },
+    "table": {
+      "namespace": "Namensraum",
+      "key": "Schlüssel",
+      "actions": "Aktionen",
+      "noTranslationsFound": "Keine Übersetzungen gefunden"
+    },
+    "missing": "Fehlend",
+    "stats": {
+      "totalKeys": "Schlüssel insgesamt",
+      "needsReview": "Benötigt Überprüfung",
+      "namespaces": "Namensräume"
+    },
+    "audit": {
+      "title": "Auditprotokolle",
+      "date": "Datum",
+      "action": "Aktion",
+      "namespace": "Namensraum",
+      "key": "Schlüssel",
+      "language": "Sprache",
+      "user": "Benutzer",
+      "noLogsFound": "Keine Auditprotokolle gefunden"
+    },
+    "releasesList": {
+      "title": "Übersetzungsversionen",
+      "active": "Aktiv",
+      "created": "Erstellt:",
+      "by": "von",
+      "noReleasesFound": "Keine Versionen gefunden"
+    },
+    "error": {
+      "loadFailed": "Fehler beim Laden der Übersetzungen",
+      "description": "Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut."
+    }
   },
   "jobListings": {
     "emptyState": {
@@ -1691,111 +1823,6 @@
       "sessionTimeoutDesc": "Automatische Abmeldung nach 30 Minuten Inaktivität"
     }
   },
-  "translations": {
-    "title": "Übersetzungsverwaltung",
-    "subtitle": "Statische UI-Übersetzungen verwalten",
-    "errors": {
-      "fileTooLarge": "Dateigröße überschreitet das Limit von {{max}} MB."
-    },
-    "tabs": {
-      "translations": "Übersetzungen",
-      "auditLogs": "Auditprotokolle",
-      "releases": "Versionen"
-    },
-    "releases": {
-      "title": "Übersetzungsversionen",
-      "versionPlaceholder": "Version (z.B. v1.2.3)",
-      "descriptionPlaceholder": "Beschreibung (optional)",
-      "createRelease": "Version erstellen",
-      "creating": "Erstellen...",
-      "description": "Das Erstellen einer Version invalidiert alle Caches und zwingt Clients, frische Übersetzungen abzurufen."
-    },
-    "filters": {
-      "namespace": "Namensraum",
-      "search": "Suchen"
-    },
-    "searchPlaceholder": "Nach Schlüsseln oder Werten suchen...",
-    "pagination": {
-      "showingResults": "Zeige {{start}} bis {{end}} von {{total}} Ergebnissen",
-      "pageOfTotal": "Seite {{page}} von {{totalPages}}"
-    },
-    "oneClickSync": {
-      "title": "Ein-Klick-Synchronisation",
-      "description": "Englische Schlüssel importieren → In Französisch und Deutsch übersetzen → In Dateien exportieren.",
-      "subDescription": "Das macht alles in einem Schritt! Dauert 5-10 Minuten.",
-      "button": "🔄 Vollständige Synchronisation aller Sprachen",
-      "syncing": "Synchronisierung... (dauert einige Minuten)"
-    },
-    "advanced": {
-      "title": "⚙️ Erweiterte Optionen (Einzelschritte)",
-      "expand": "Zum Erweitern klicken",
-      "importFromFiles": "Aus JSON-Dateien importieren",
-      "importFromFilesDesc": "EN/FR/DE aus packages/translations/locales in die Datenbank laden",
-      "import": "Importieren",
-      "importing": "Importieren...",
-      "scanFix": "Hartcodierte Zeichenfolgen scannen und reparieren",
-      "scanFixDesc": "Hartcodierte Zeichenfolgen im Code finden und Übersetzungsschlüssel erstellen",
-      "scan": "Scannen",
-      "scanning": "Scannen...",
-      "translateMissing": "Fehlende übersetzen (FR/DE)",
-      "translateMissingDesc": "Fehlende Schlüssel ins Französische und Deutsche übersetzen",
-      "translate": "Übersetzen",
-      "translating": "Übersetzen...",
-      "cleanPrefixes": "Präfixe bereinigen",
-      "cleanPrefixesDesc": "Präfixe [FR]/[DE]/[EN] aus Übersetzungen entfernen",
-      "clean": "Bereinigen",
-      "cleaning": "Bereinigen...",
-      "exportToFiles": "In JSON-Dateien exportieren",
-      "exportToFilesDesc": "Datenbankübersetzungen zurück in JSON-Dateien synchronisieren (erforderlich für Frontend)",
-      "export": "Exportieren"
-    },
-    "moreOptions": {
-      "title": "Weitere Optionen",
-      "show": "Anzeigen",
-      "hide": "Ausblenden",
-      "refresh": "Aktualisieren",
-      "fixEnLabels": "EN-Schlüsselbeschriftungen reparieren",
-      "fixingEnLabels": "EN-Beschriftungen reparieren...",
-      "approveSelected": "{{count}} Ausgewählte genehmigen",
-      "approving": "Genehmigen...",
-      "exportJson": "JSON exportieren",
-      "exportCsv": "CSV exportieren",
-      "import": "Importieren"
-    },
-    "table": {
-      "namespace": "Namensraum",
-      "key": "Schlüssel",
-      "actions": "Actions",
-      "noTranslationsFound": "Keine Übersetzungen gefunden"
-    },
-    "missing": "Fehlend",
-    "stats": {
-      "totalKeys": "Schlüssel insgesamt",
-      "needsReview": "Benötigt Überprüfung",
-      "namespaces": "Namensräume"
-    },
-    "audit": {
-      "title": "Auditprotokolle",
-      "date": "Datum",
-      "action": "Aktion",
-      "namespace": "Namensraum",
-      "key": "Schlüssel",
-      "language": "Sprache",
-      "user": "Benutzer",
-      "noLogsFound": "Keine Auditprotokolle gefunden"
-    },
-    "releasesList": {
-      "title": "Übersetzungsversionen",
-      "active": "Aktiv",
-      "created": "Erstellt:",
-      "by": "von",
-      "noReleasesFound": "Keine Versionen gefunden"
-    },
-    "error": {
-      "loadFailed": "Fehler beim Laden der Übersetzungen",
-      "description": "Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut."
-    }
-  },
   "subscriptions": {
     "title": "Abonnementverwaltung",
     "subtitle": "Abonnements, Pläne und Abrechnung verwalten",
@@ -2157,6 +2184,20 @@
         "notes": "Interne Notizen (optional)",
         "sendEmailNotification": "E-Mail-Benachrichtigung an den Kunden senden",
         "decline": "Anfrage ablehnen"
+      },
+      "activateModal": {
+        "title": "Abonnement aktivieren",
+        "startDate": "Abonnement-Startdatum",
+        "period": "Abonnementzeitraum",
+        "includeTrial": "Testzeitraum einschließen",
+        "trialDates": "Testdaten",
+        "trialStart": "Testbeginn",
+        "trialEnd": "Testende",
+        "preset30Days": "30-Tage-Test",
+        "sendEmail": "Aktivierungs-E-Mail an den Kunden senden",
+        "notes": "Admin-Notizen (optional)",
+        "submit": "Abonnement aktivieren",
+        "trialHelp": "Wenn der Test endet, wird das Abonnement inaktiv. Der Administrator muss es dann aktivieren, um dem Benutzer vollen Zugang zu gewähren."
       }
     },
     "cancellations": {

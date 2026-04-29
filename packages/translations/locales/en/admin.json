@@ -576,26 +576,12 @@
     }
   },
   "dashboard": {
-    "quickActions": {
-      "title": "Quick Actions",
-      "manageUsers": {
-        "title": "Manage Users",
-        "description": "Add, edit, or remove users"
-      },
-      "organizations": {
-        "title": "Organizations",
-        "description": "Manage daycare centers"
-      },
-      "orders": {
-        "title": "Orders",
-        "description": "View recent orders"
-      },
-      "analytics": {
-        "title": "Analytics",
-        "description": "View platform metrics"
-      }
-    },
-    "contentUploadSuccess": "Content uploaded successfully!"
+    "policyCrawler": {
+      "label": "Policy Crawler",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "manage": "Manage"
+    }
   },
   "contentUpload": {
     "fileTooLarge": "File size exceeds {{max}}MB limit."
@@ -636,14 +622,6 @@
     "status": {
       "enabled": "Enabled",
       "disabled": "Disabled"
-    }
-  },
-  "dashboard": {
-    "policyCrawler": {
-      "label": "Policy Crawler",
-      "enabled": "Enabled",
-      "disabled": "Disabled",
-      "manage": "Manage"
     }
   },
   "cantons": {
@@ -1183,7 +1161,43 @@
   "users": {
     "title": "Users Management",
     "subtitle": "Manage all users across the platform",
-    "addUser": "Add User",
+    "addUser": {
+      "title": "Add User",
+      "singleInvite": "Single Invite",
+      "bulkInvite": "Bulk Invite",
+      "createAccount": "Create Account",
+      "email": "Email",
+      "emailRequired": "Email is required",
+      "emailHint": "We will send an invitation email. The user will appear in the list after they sign up.",
+      "role": "Role",
+      "sending": "Sending...",
+      "sendInvite": "Send Invite",
+      "bulkEmails": "Email addresses",
+      "bulkEmailsPlaceholder": "One email per line, or comma/semicolon separated",
+      "emailsDetected": "email(s) detected",
+      "maxBulk": "max 50 per batch",
+      "appliesAll": "applies to all",
+      "sendInvites": "Send Invites",
+      "bulkDone": "{{count}} invitation(s) sent",
+      "bulkPartialSuccess": "{{successCount}} sent, {{failureCount}} failed",
+      "bulkAllFailed": "All {{failureCount}} invitation(s) failed to send",
+      "bulkFailed": "Failed to send invitations",
+      "superAdminNotAllowed": "Only Super Admin can add a Super Admin",
+      "failed": "Failed to invite user",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "createAccountNote": "The account will be created immediately with a pre-verified email. No invitation email is sent.",
+      "createSuccess": "Account created successfully!",
+      "createFailed": "Failed to create user",
+      "setCustomPassword": "Set custom temporary password",
+      "autoPasswordHint": "A secure password will be auto-generated and shown after creation.",
+      "passwordPlaceholder": "Min. 12 characters",
+      "passwordTooShort": "Password must be at least 12 characters",
+      "creating": "Creating...",
+      "createAccountBtn": "Create Account",
+      "tempPasswordLabel": "Temporary password (share securely — shown once):",
+      "tempPasswordHint": "The user should change this on first login."
+    },
     "actions": {
       "suspend": "Suspend",
       "reactivate": "Reactivate",
@@ -1290,12 +1304,132 @@
       "noEmail": "No email",
       "noOrganization": "No organization",
       "never": "Never"
+    },
+    "pendingInvitations": {
+      "title": "Pending Invitations",
+      "empty": "No pending invitations.",
+      "sent": "Sent",
+      "resend": "Resend invitation",
+      "resendSuccess": "Invitation resent",
+      "resendFailed": "Failed to resend invitation"
+    },
+    "orgAssignment": {
+      "title": "Organizations",
+      "selectOrg": "Select organization...",
+      "noneAssigned": "No organizations assigned",
+      "removeOrg": "Remove from organization",
+      "addOrgBtn": "Add",
+      "addSuccess": "Organization assigned",
+      "addFailed": "Failed to assign organization",
+      "removeSuccess": "Organization removed",
+      "removeFailed": "Failed to remove organization",
+      "optional": "Assign to organization (optional)"
     }
   },
   "translations": {
-    "descriptionPlaceholder": "Description (optional)",
-    "versionPlaceholder": "Version (e.g., v1.2.3)",
-    "searchPlaceholder": "Search keys or values..."
+    "title": "Translation Management",
+    "subtitle": "Manage static UI translations",
+    "errors": {
+      "fileTooLarge": "File size exceeds {{max}}MB limit."
+    },
+    "tabs": {
+      "translations": "Translations",
+      "auditLogs": "Audit Logs",
+      "releases": "Releases"
+    },
+    "releases": {
+      "title": "Translation Releases",
+      "versionPlaceholder": "Version (e.g., v1.2.3)",
+      "descriptionPlaceholder": "Description (optional)",
+      "createRelease": "Create Release",
+      "creating": "Creating...",
+      "description": "Creating a release will invalidate all caches and force clients to fetch fresh translations."
+    },
+    "filters": {
+      "namespace": "Namespace",
+      "search": "Search"
+    },
+    "searchPlaceholder": "Search for keys or values...",
+    "pagination": {
+      "showingResults": "Showing {{start}} to {{end}} of {{total}} results",
+      "pageOfTotal": "Page {{page}} of {{totalPages}}"
+    },
+    "oneClickSync": {
+      "title": "One-Click Sync",
+      "description": "Import English keys → Translate to French & German → Export to files.",
+      "subDescription": "This does everything in one step! Takes 5-10 minutes.",
+      "button": "🔄 Full Sync All Languages",
+      "syncing": "Syncing... (this takes a few minutes)"
+    },
+    "advanced": {
+      "title": "⚙️ Advanced Options (Individual Steps)",
+      "expand": "Click to expand",
+      "importFromFiles": "Import from JSON Files",
+      "importFromFilesDesc": "Load EN/FR/DE from packages/translations/locales into database",
+      "import": "Import",
+      "importing": "Importing...",
+      "scanFix": "Scan & Fix Hardcoded Strings",
+      "scanFixDesc": "Find hardcoded strings in code and create translation keys",
+      "scan": "Scan",
+      "scanning": "Scanning...",
+      "translateMissing": "Translate Missing (FR/DE)",
+      "translateMissingDesc": "Translate missing keys to French and German",
+      "translate": "Translate",
+      "translating": "Translating...",
+      "cleanPrefixes": "Clean Prefixes",
+      "cleanPrefixesDesc": "Remove [FR]/[DE]/[EN] prefixes from translations",
+      "clean": "Clean",
+      "cleaning": "Cleaning...",
+      "exportToFiles": "Export to JSON Files",
+      "exportToFilesDesc": "Sync database translations back to JSON files (required for frontend)",
+      "export": "Export"
+    },
+    "moreOptions": {
+      "title": "More Options",
+      "show": "Show",
+      "hide": "Hide",
+      "refresh": "Refresh",
+      "fixEnLabels": "Fix EN Key Labels",
+      "fixingEnLabels": "Fixing EN Labels...",
+      "approveSelected": "Approve {{count}} Selected",
+      "approving": "Approving...",
+      "exportJson": "Export JSON",
+      "exportCsv": "Export CSV",
+      "import": "Import"
+    },
+    "table": {
+      "namespace": "Namespace",
+      "key": "Key",
+      "actions": "Actions",
+      "noTranslationsFound": "No translations found"
+    },
+    "missing": "Missing",
+    "stats": {
+      "totalKeys": "Total Keys",
+      "needsReview": "Needs Review",
+      "namespaces": "Namespaces"
+    },
+    "audit": {
+      "title": "Audit Logs",
+      "date": "Date",
+      "action": "Action",
+      "namespace": "Namespace",
+      "key": "Key",
+      "language": "Language",
+      "user": "User",
+      "noLogsFound": "No audit logs found"
+    },
+    "releasesList": {
+      "title": "Translation Releases",
+      "active": "Active",
+      "created": "Created:",
+      "by": "by",
+      "noReleasesFound": "No releases found"
+    },
+    "error": {
+      "loadFailed": "Failed to load translations",
+      "description": "Please check your connection and try again."
+    }
   },
   "jobListings": {
     "emptyState": {
@@ -1665,111 +1799,6 @@
       "sessionTimeoutDesc": "Auto-logout after 30 minutes of inactivity"
     }
   },
-  "translations": {
-    "title": "Translation Management",
-    "subtitle": "Manage static UI translations",
-    "errors": {
-      "fileTooLarge": "File size exceeds {{max}}MB limit."
-    },
-    "tabs": {
-      "translations": "Translations",
-      "auditLogs": "Audit Logs",
-      "releases": "Releases"
-    },
-    "releases": {
-      "title": "Translation Releases",
-      "versionPlaceholder": "Version (e.g., v1.2.3)",
-      "descriptionPlaceholder": "Description (optional)",
-      "createRelease": "Create Release",
-      "creating": "Creating...",
-      "description": "Creating a release will invalidate all caches and force clients to fetch fresh translations."
-    },
-    "filters": {
-      "namespace": "Namespace",
-      "search": "Search"
-    },
-    "searchPlaceholder": "Search for keys or values...",
-    "pagination": {
-      "showingResults": "Showing {{start}} to {{end}} of {{total}} results",
-      "pageOfTotal": "Page {{page}} of {{totalPages}}"
-    },
-    "oneClickSync": {
-      "title": "One-Click Sync",
-      "description": "Import English keys → Translate to French & German → Export to files.",
-      "subDescription": "This does everything in one step! Takes 5-10 minutes.",
-      "button": "🔄 Full Sync All Languages",
-      "syncing": "Syncing... (this takes a few minutes)"
-    },
-    "advanced": {
-      "title": "⚙️ Advanced Options (Individual Steps)",
-      "expand": "Click to expand",
-      "importFromFiles": "Import from JSON Files",
-      "importFromFilesDesc": "Load EN/FR/DE from packages/translations/locales into database",
-      "import": "Import",
-      "importing": "Importing...",
-      "scanFix": "Scan & Fix Hardcoded Strings",
-      "scanFixDesc": "Find hardcoded strings in code and create translation keys",
-      "scan": "Scan",
-      "scanning": "Scanning...",
-      "translateMissing": "Translate Missing (FR/DE)",
-      "translateMissingDesc": "Translate missing keys to French and German",
-      "translate": "Translate",
-      "translating": "Translating...",
-      "cleanPrefixes": "Clean Prefixes",
-      "cleanPrefixesDesc": "Remove [FR]/[DE]/[EN] prefixes from translations",
-      "clean": "Clean",
-      "cleaning": "Cleaning...",
-      "exportToFiles": "Export to JSON Files",
-      "exportToFilesDesc": "Sync database translations back to JSON files (required for frontend)",
-      "export": "Export"
-    },
-    "moreOptions": {
-      "title": "More Options",
-      "show": "Show",
-      "hide": "Hide",
-      "refresh": "Refresh",
-      "fixEnLabels": "Fix EN Key Labels",
-      "fixingEnLabels": "Fixing EN Labels...",
-      "approveSelected": "Approve {{count}} Selected",
-      "approving": "Approving...",
-      "exportJson": "Export JSON",
-      "exportCsv": "Export CSV",
-      "import": "Import"
-    },
-    "table": {
-      "namespace": "Namespace",
-      "key": "Key",
-      "actions": "Actions",
-      "noTranslationsFound": "No translations found"
-    },
-    "missing": "Missing",
-    "stats": {
-      "totalKeys": "Total Keys",
-      "needsReview": "Needs Review",
-      "namespaces": "Namespaces"
-    },
-    "audit": {
-      "title": "Audit Logs",
-      "date": "Date",
-      "action": "Action",
-      "namespace": "Namespace",
-      "key": "Key",
-      "language": "Language",
-      "user": "User",
-      "noLogsFound": "No audit logs found"
-    },
-    "releasesList": {
-      "title": "Translation Releases",
-      "active": "Active",
-      "created": "Created:",
-      "by": "by",
-      "noReleasesFound": "No releases found"
-    },
-    "error": {
-      "loadFailed": "Failed to load translations",
-      "description": "Please check your connection and try again."
-    }
-  },
   "subscriptions": {
     "title": "Subscription Management",
     "subtitle": "Manage subscriptions, plans, and billing",
@@ -2137,6 +2166,20 @@
         "notes": "Internal Notes (optional)",
         "sendEmailNotification": "Send email notification to customer",
         "decline": "Decline Request"
+      },
+      "activateModal": {
+        "title": "Activate Subscription",
+        "startDate": "Subscription Start Date",
+        "period": "Subscription Period",
+        "includeTrial": "Include Trial Period",
+        "trialDates": "Trial Dates",
+        "trialStart": "Trial Start",
+        "trialEnd": "Trial End",
+        "preset30Days": "30-day trial",
+        "sendEmail": "Send activation email to customer",
+        "notes": "Admin Notes (optional)",
+        "submit": "Activate Subscription",
+        "trialHelp": "When the trial ends the subscription becomes Inactive. The admin must then activate it to grant the user full access."
       }
     },
     "cancellations": {

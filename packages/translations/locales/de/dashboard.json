@@ -241,8 +241,8 @@
       "viewParentLeads": "Eltern-Leads anzeigen"
     },
     "quickMessage": {
-      "placeholder": "Geben Sie eine schnelle Nachricht ein...",
-      "title": "Schnelle Nachricht"
+      "placeholder": "Schnelle Nachricht an Admin eingeben...",
+      "title": "Schnelle Nachricht an Admin"
     },
     "quickStats": {
       "availableSpots": "Verfügbare Plätze",
@@ -528,7 +528,7 @@
     "fileGallery": "Dateigalerie",
     "foundations": "Stiftungen",
     "homeFindCreche": "Startseite / Krippe finden",
-    "hrProcedures": "HR-Verfahren",
+    "hrProcedures": "HR-Dokumente",
     "jobBoard": "Stellenbörse",
     "jobListings": "Stellenanzeigen",
     "manageSubscriptionDesc": "Verwalten Sie Ihr Abonnement und Ihre Abrechnung",

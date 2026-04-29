@@ -46,6 +46,14 @@ export class CreateSubscriptionDto {
   includeTrial?: boolean;
 
   @IsOptional()
+  @IsDateString()
+  trialStartDate?: string;
+
+  @IsOptional()
+  @IsDateString()
+  trialEndDate?: string;
+
+  @IsOptional()
   @IsString()
   notes?: string;
 }
@@ -73,6 +81,14 @@ export class UpdateSubscriptionDto {
   @IsOptional()
   @IsObject()
   metadata?: Record<string, any>;
+
+  @IsOptional()
+  @IsDateString()
+  trialStartDate?: string;
+
+  @IsOptional()
+  @IsDateString()
+  trialEndDate?: string;
 }
 
 /**

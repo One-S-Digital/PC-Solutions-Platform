@@ -26,6 +26,7 @@ import { CreateSegmentDto, UpdateSegmentDto } from './dto/segment.dto';
 import { CreateCampaignDto, SendBatchDto } from './dto/campaign.dto';
 import { ExportRequestDto } from './dto/export.dto';
 import { CreateCustomListDto, UpdateCustomListDto, ManageCustomListMembersDto } from './dto/custom-list.dto';
+import { MailingFiltersDto } from './dto/mailing-filters.dto';
 
 @ApiTags('admin/mailing')
 @Controller('admin/mailing')
@@ -133,14 +134,29 @@ export class MailingController {
     @Res() res: Response,
   ) {
     const adminId = this.getAdminId(req);
-    const filters = await this.mailingService.resolveFilters(body.filters, body.segmentId);
+
+    if (body.customListId && body.segmentId) {
+      throw new BadRequestException('customListId and segmentId are mutually exclusive');
+    }
+
+    // Resolve filters, accounting for custom list targeting
+    let filters: MailingFiltersDto;
+    if (body.customListId) {
+      const memberIds = await this.mailingService.getAllCustomListMemberIds(body.customListId);
+      if (memberIds.length === 0) {
+        throw new BadRequestException('Custom list has no members');
+      }
+      filters = { ...(body.filters || {}), userIds: memberIds };
+    } else {
+      filters = await this.mailingService.resolveFilters(body.filters, body.segmentId);
+    }
 
     const result = await this.mailingService.exportRecipients(
       filters,
       body.columns,
       body.deduplicateByEmail ?? true,
       adminId,
-      body.segmentId,
+      body.segmentId ?? body.customListId,
     );
 
     const filename = `mailing_export_${new Date().toISOString().slice(0, 10)}`;
@@ -215,13 +231,29 @@ export class MailingController {
   @ApiOperation({ summary: 'Create a campaign' })
   async createCampaign(@Body() body: CreateCampaignDto, @Request() req: any) {
     const adminId = this.getAdminId(req);
+
+    if (body.customListId && body.segmentId) {
+      throw new BadRequestException('customListId and segmentId are mutually exclusive');
+    }
+
+    let filters: MailingFiltersDto = body.filters;
+
+    // If targeting a custom list, resolve the member user IDs and inject them into filters
+    if (body.customListId) {
+      const memberIds = await this.mailingService.getAllCustomListMemberIds(body.customListId);
+      if (memberIds.length === 0) {
+        throw new BadRequestException('Custom list has no members');
+      }
+      filters = { ...filters, userIds: memberIds };
+    }
+
     return this.mailingService.createCampaign(
       body.subject,
       body.bodyHtml,
       body.bodyText,
       adminId,
-      body.filters,
-      body.segmentId,
+      filters,
+      body.customListId ? undefined : body.segmentId,
     );
   }
 

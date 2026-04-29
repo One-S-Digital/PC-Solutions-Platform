@@ -51,7 +51,7 @@ const AccessDeniedPage: React.FC = () => {
 
             <div className="mt-6 text-center">
               <p className="text-xs text-gray-500">
-                Need help? Contact support at admin@procreche.com
+                Need help? Contact support at admin@procrechesolutions.com
               </p>
             </div>
           </div>

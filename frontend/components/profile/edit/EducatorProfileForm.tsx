@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SettingsFormData, WorkExperienceItem, EducationItem, CertificationItem } from '../../../types';
-import { STANDARD_INPUT_FIELD, SWISS_CANTONS_WITH_ALL, ALL_REGIONS_OPTION } from '../../../constants';
+import { STANDARD_INPUT_FIELD, SWISS_CANTONS_WITH_ALL, ALL_REGIONS_OPTION, EDUCATOR_JOB_ROLES } from '../../../constants';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
 import CoverImageSection from './shared/CoverImageSection';
@@ -28,8 +28,17 @@ interface EducatorProfileFormProps {
 const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onChange }) => {
   const { t } = useTranslation(['common', 'settings']);
   const { currentUser } = useAppContext();
-  const [jobRoleDraft, setJobRoleDraft] = useState('');
   const [citiesDraft, setCitiesDraft] = useState('');
+
+  // Normalize role data on mount so the submit payload always matches what
+  // the select displays, even if untouched.
+  useEffect(() => {
+    const allowed = EDUCATOR_JOB_ROLES as readonly string[];
+    const current = formData.jobRole || '';
+    if (current && !allowed.includes(current)) {
+      onChange('jobRole', '');
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSkillsChange = (newSkills: string[]) => {
     onChange('skills', newSkills);
@@ -178,14 +187,7 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
     'https://images.unsplash.com/photo-1503676260728-4c8c0c7832a6?auto=format&fit=crop&w=1600&q=80';
 
   const fullName = `${formData.firstName || ''} ${formData.lastName || ''}`.trim() || t('settings:educatorProfile.educator', 'Educator');
-  const jobRoles =
-    Array.isArray(formData.jobRoles) && formData.jobRoles.length > 0
-      ? formData.jobRoles
-      : formData.jobRole
-        ? [formData.jobRole]
-        : [];
   const cities = Array.isArray(formData.cities) ? formData.cities : [];
-  const hasUnconfirmedJobRole = jobRoleDraft.trim().length > 0;
   const hasUnconfirmedCity = citiesDraft.trim().length > 0;
 
   return (
@@ -267,28 +269,21 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
             <label htmlFor="jobRole" className="block text-sm font-medium text-gray-700 mb-1">
               {t('settings:educatorProfile.role', 'Role')} <span className="text-swiss-coral">*</span>
             </label>
-            <ChipInput
-              selectedChips={jobRoles}
-              onChange={(roles) => {
-                onChange('jobRoles', roles);
-                onChange('jobRole', roles[0] || '');
+            <select
+              id="jobRole"
+              value={formData.jobRole || ''}
+              onChange={(e) => {
+                const role = e.target.value;
+                onChange('jobRole', role);
               }}
-              placeholder={t('settings:educatorProfile.rolePlaceholder', 'e.g., Educator, Assistant')}
-              allowCustomValues={true}
-              onInputValueChange={setJobRoleDraft}
-            />
-            <p className="mt-1 text-xs text-gray-500">
-              {t('settings:educatorProfile.roleHint', 'Add one or more roles to improve matching.')}
-            </p>
-            <p
-              className={`mt-1 text-xs ${hasUnconfirmedJobRole ? 'text-swiss-coral' : 'text-gray-500'}`}
+              className={STANDARD_INPUT_FIELD}
+              required
             >
-              {hasUnconfirmedJobRole && <span className="text-swiss-coral">*</span>}{' '}
-              {t(
-                'settings:educatorProfile.rolePressEnterHint',
-                'Type a role and press Enter to add it.',
-              )}
-            </p>
+              <option value="">{t('settings:educatorProfile.rolePlaceholder', 'Select a role')}</option>
+              {EDUCATOR_JOB_ROLES.map((role) => (
+                <option key={role} value={role}>{role}</option>
+              ))}
+            </select>
           </div>
 
           <div>

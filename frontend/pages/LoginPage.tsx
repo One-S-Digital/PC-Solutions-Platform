@@ -188,11 +188,9 @@ const LoginPage: React.FC = () => {
       });
 
       let errorMessage = t('common:errors.unknown');
-      let errorCode = 'unknown';
 
       if (err.errors && err.errors.length > 0) {
         const clerkError = err.errors[0];
-        errorCode = clerkError.code;
         switch (clerkError.code) {
           case 'form_password_incorrect':
             errorMessage = t('common:loginPage.incorrectPassword', 'Incorrect password. Please try again.');
@@ -216,7 +214,6 @@ const LoginPage: React.FC = () => {
           console.log('[Login Debug] Already signed in - signing out stale session before retrying');
           try { await logout(); } catch { /* ignore sign-out errors */ }
           errorMessage = t('common:loginPage.sessionAlreadyActive');
-          errorCode = 'session_exists';
         } else {
           errorMessage = err.message;
         }

@@ -176,6 +176,8 @@ export interface CreateSubscriptionDto {
   startDate?: string;
   durationMonths?: number;
   includeTrial?: boolean;
+  trialStartDate?: string;
+  trialEndDate?: string;
   notes?: string;
 }
 
@@ -185,6 +187,8 @@ export interface UpdateSubscriptionDto {
   currentPeriodEnd?: string;
   notes?: string;
   metadata?: Record<string, any>;
+  trialStartDate?: string;
+  trialEndDate?: string;
 }
 
 export interface ActivateSubscriptionDto {

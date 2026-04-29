@@ -766,9 +766,10 @@ ${'='.repeat(100)}`);
         payload: {
           firstName,
           role: validRole,
-          loginUrl: `${this.configService.get<string>('APP_URL') || 'https://app.procreche.ch'}/login`,
+          dashboardUrl: `${this.configService.get<string>('APP_URL') || this.configService.get<string>('FRONTEND_URL') || ''}/login`,
         },
         bypassPreferences: true,
+        allowUnknownRecipient: false,
       }).catch((err: any) => {
         this.logger.warn(`Welcome email failed for ${primaryEmail}: ${err?.message || err}`);
       });

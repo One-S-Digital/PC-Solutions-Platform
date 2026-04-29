@@ -237,11 +237,11 @@
       "sendMessage": "Envoyer",
       "title": "Actions rapides",
       "viewAnalytics": "Voir les analyses",
-      "viewParentLeads": "Voir les chefs de file des parents"
+      "viewParentLeads": "Voir les pistes parents"
     },
     "quickMessage": {
-      "placeholder": "Tapez un message rapide...",
-      "title": "Message rapide"
+      "placeholder": "Tapez un message rapide à l'administrateur...",
+      "title": "Message rapide à l'admin"
     },
     "quickStats": {
       "availableSpots": "Places disponibles",
@@ -527,7 +527,7 @@
     "fileGallery": "Galerie de fichiers",
     "foundations": "Fondations",
     "homeFindCreche": "Accueil / Trouver une crèche",
-    "hrProcedures": "Procédures RH",
+    "hrProcedures": "Documents RH",
     "jobBoard": "Tableau d'emploi",
     "jobListings": "Offres d'emploi",
     "manageSubscriptionDesc": "Gérez votre abonnement et votre facturation",

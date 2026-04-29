@@ -165,29 +165,26 @@ export class ScheduledActionsService implements OnModuleInit {
 
       for (const subscription of expiredTrials) {
         try {
-          // Activate the subscription (move from trial to active)
-          await this.prisma.subscription.update({
-            where: { id: subscription.id },
-            data: {
-              status: 'ACTIVE',
-              currentPeriodStart: now,
-              currentPeriodEnd: resolveBillingPeriod(subscription.plan.billingPeriod).addPeriod(now),
-            },
-          });
+          // Trial ended — move to INACTIVE so the admin must explicitly activate.
+          // Both writes are atomic: if the audit log insert fails the status stays TRIAL.
+          await this.prisma.$transaction([
+            this.prisma.subscription.update({
+              where: { id: subscription.id },
+              data: { status: 'INACTIVE' },
+            }),
+            this.prisma.subscriptionAction.create({
+              data: {
+                subscriptionId: subscription.id,
+                action: 'TRIAL_END',
+                previousStatus: 'TRIAL',
+                newStatus: 'INACTIVE',
+                performedBy: 'system',
+                reason: 'Trial period ended — awaiting admin activation',
+              },
+            }),
+          ]);
 
-          // Log the action
-          await this.prisma.subscriptionAction.create({
-            data: {
-              subscriptionId: subscription.id,
-              action: 'TRIAL_END',
-              previousStatus: 'TRIAL',
-              newStatus: 'ACTIVE',
-              performedBy: 'system',
-              reason: 'Trial period ended',
-            },
-          });
-
-          this.logger.log(`Trial ended for subscription ${subscription.id}, moved to ACTIVE`);
+          this.logger.log(`Trial ended for subscription ${subscription.id}, moved to INACTIVE`);
         } catch (error) {
           this.logger.error(
             `Failed to process trial expiration for ${subscription.id}: ${(error as Error).message}`,

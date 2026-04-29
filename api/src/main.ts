@@ -15,6 +15,25 @@ import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 import { SentryExceptionFilter } from './common/filters/sentry-exception.filter';
 import { getProductionAllowedOrigins, normalizeOrigin } from './common/cors';
 
+const isRedisConnectionRefused = (reason: any): boolean => {
+  if (!reason) return false;
+  if (reason?.code === 'ECONNREFUSED') return true;
+  if (Array.isArray(reason?.errors)) {
+    return reason.errors.some((err: any) => err?.code === 'ECONNREFUSED');
+  }
+  return false;
+};
+
+process.on('unhandledRejection', (reason) => {
+  if (isRedisConnectionRefused(reason)) {
+    // Redis is optional in some deploy environments; keep API alive.
+    console.warn('[bootstrap] Ignoring Redis connection refusal in unhandledRejection:', reason);
+    return;
+  }
+  // Keep API process alive; log all other unhandled rejections for diagnosis.
+  console.error('[bootstrap] Unhandled promise rejection:', reason);
+});
+
 async function bootstrap() {
   // Trigger deployment to run database migrations
   const app = await NestFactory.create(AppModule, {

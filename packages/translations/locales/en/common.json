@@ -1522,7 +1522,10 @@
     "select": "select",
     "typeorselect": "typeorselect",
     "url": "https://example.com",
-    "vatNumber": "vat Number"
+    "vatNumber": "vat Number",
+    "emailaddress": "Email address",
+    "firstname": "First name",
+    "lastname": "Last name"
   },
   "chipInput": {
     "pressEnterHint": "Type and press Enter to add."
@@ -2383,6 +2386,7 @@
   "viewAll": "view All",
   "welcome": "Welcome",
   "welcomeBack": "Welcome back!",
-  "saving": "Saving...",
-  "description": "Description"
+  "description": "Description",
+  "cancel": "Cancel",
+  "done": "Done"
 }

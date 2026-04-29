@@ -55,17 +55,27 @@ export function AdminProtectedRoute({ children }: { children: React.ReactNode })
 
   // Fetch user from backend database (single source of truth)
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchBackendUser = async () => {
-      if (!isSignedIn || !isLoaded) {
+      if (!isLoaded) {
+        return;
+      }
+
+      if (!isSignedIn) {
         setIsLoadingUser(false);
         return;
       }
 
+      setIsLoadingUser(true);
+
       try {
         const token = await getToken();
         if (!token) {
-          setError('Failed to get authentication token');
-          setIsLoadingUser(false);
+          if (!controller.signal.aborted) {
+            setError('Failed to get authentication token');
+            setIsLoadingUser(false);
+          }
           return;
         }
 
@@ -75,6 +85,7 @@ export function AdminProtectedRoute({ children }: { children: React.ReactNode })
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
           },
+          signal: controller.signal,
         });
 
         if (!response.ok) {
@@ -89,14 +100,17 @@ export function AdminProtectedRoute({ children }: { children: React.ReactNode })
           setError('Invalid response from server');
         }
       } catch (err) {
+        if (controller.signal.aborted) return;
         console.error('Failed to fetch backend user:', err);
         setError(err instanceof Error ? err.message : 'Failed to fetch user');
       } finally {
-        setIsLoadingUser(false);
+        if (!controller.signal.aborted) setIsLoadingUser(false);
       }
     };
 
     fetchBackendUser();
+
+    return () => controller.abort();
   }, [isSignedIn, isLoaded, getToken]);
 
   // Show loading while Clerk or backend user is loading
