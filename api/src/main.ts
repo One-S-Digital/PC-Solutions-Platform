@@ -29,7 +29,8 @@ process.on('unhandledRejection', (reason) => {
     console.warn('[bootstrap] Ignoring Redis connection refusal in unhandledRejection:', reason);
     return;
   }
-  throw reason;
+  // Keep API process alive; log all other unhandled rejections for diagnosis.
+  console.error('[bootstrap] Unhandled promise rejection:', reason);
 });
 
 async function bootstrap() {
