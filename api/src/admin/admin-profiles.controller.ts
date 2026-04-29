@@ -31,7 +31,7 @@ import { Type } from 'class-transformer';
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { UserRole, OrganizationType, AssetKind } from '@prisma/client';
+import { UserRole, OrganizationType, AssetKind, ServiceCategory } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   EducatorWorkExperienceItemDto,
@@ -278,7 +278,7 @@ class AdminUpsertServiceDto {
   @IsString()
   title!: string;
   @IsOptional() @IsString() description?: string;
-  @IsOptional() @IsString() category?: string;
+  @IsOptional() @IsIn(Object.values(ServiceCategory)) category?: ServiceCategory;
   @IsOptional() @IsNumber() price?: number;
   @IsOptional() @IsString() priceInfo?: string;
   @IsOptional() @IsBoolean() isActive?: boolean;
@@ -780,6 +780,8 @@ export class AdminProfilesController {
 
   @Post('organizations/:id/products')
   async createOrganizationProduct(@Param('id', ParseUUIDPipe) id: string, @Body() dto: AdminUpsertProductDto) {
+    const org = await this.prisma.organization.findUnique({ where: { id } });
+    if (!org) throw new NotFoundException('Organization not found');
     const item = await this.prisma.product.create({
       data: { supplierId: id, title: dto.title, description: dto.description, category: dto.category, price: dto.price, isActive: dto.isActive ?? true },
     });
@@ -817,13 +819,15 @@ export class AdminProfilesController {
 
   @Post('organizations/:id/services')
   async createOrganizationService(@Param('id', ParseUUIDPipe) id: string, @Body() dto: AdminUpsertServiceDto) {
+    const org = await this.prisma.organization.findUnique({ where: { id } });
+    if (!org) throw new NotFoundException('Organization not found');
     const provider = await this.prisma.serviceProvider.upsert({
       where: { organizationId: id },
       create: { organizationId: id },
       update: {},
     });
     const item = await this.prisma.service.create({
-      data: { providerId: provider.id, title: dto.title, description: dto.description, category: (dto.category as any) || 'CONSULTING', price: dto.price, priceInfo: dto.priceInfo, isActive: dto.isActive ?? true },
+      data: { providerId: provider.id, title: dto.title, description: dto.description, category: dto.category || ServiceCategory.CONSULTING, price: dto.price, priceInfo: dto.priceInfo, isActive: dto.isActive ?? true },
     });
     return { success: true, data: item };
   }

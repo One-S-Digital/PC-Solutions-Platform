@@ -465,6 +465,7 @@ const SuperAdminUserFullEditPage: React.FC = () => {
   const [services, setServices] = useState<any[]>([]);
   const [documents, setDocuments] = useState<any[]>([]);
   const [auditEvents, setAuditEvents] = useState<any[]>([]);
+  const [jsonDrafts, setJsonDrafts] = useState<Record<string, string>>({});
 
   const isSuperAdmin = currentUser?.role === UserRole.SUPER_ADMIN;
 
@@ -474,8 +475,18 @@ const SuperAdminUserFullEditPage: React.FC = () => {
       setIsLoading(true);
       setError(null);
       try {
+        setOrganization(null);
+        setProducts([]);
+        setServices([]);
+        setDocuments([]);
+        setAuditEvents([]);
         const profileRes = await authenticatedRequest<{ data: any }>(`/admin/users/${id}/profile`);
         setProfile(profileRes.data);
+        const [userAudit] = await Promise.all([
+          authenticatedRequest<{ data?: any[]; logs?: any[] }>(`/admin/audit-logs?entityId=${id}&limit=25`),
+        ]);
+        const userLogs = (userAudit as any)?.data?.logs ?? (userAudit as any)?.logs ?? [];
+        setAuditEvents(userLogs);
         if (profileRes.data?.organization?.id) {
           const orgId = profileRes.data.organization.id;
           const orgRes = await authenticatedRequest<{ data: any }>(`/admin/organizations/${orgId}/profile`);
@@ -488,13 +499,11 @@ const SuperAdminUserFullEditPage: React.FC = () => {
           setProducts(productsRes.data ?? []);
           setServices(servicesRes.data ?? []);
           setDocuments(documentsRes.data ?? []);
-          const [userAudit, orgAudit] = await Promise.all([
-            authenticatedRequest<{ data?: any[]; logs?: any[] }>(`/admin/audit-logs?entityId=${id}&limit=25`),
+          const [orgAudit] = await Promise.all([
             authenticatedRequest<{ data?: any[]; logs?: any[] }>(`/admin/audit-logs?entityId=${orgId}&limit=25`),
           ]);
-          const userLogs = (userAudit as any)?.data?.logs ?? (userAudit as any)?.logs ?? [];
           const organizationLogs = (orgAudit as any)?.data?.logs ?? (orgAudit as any)?.logs ?? [];
-          setAuditEvents([...userLogs, ...organizationLogs].sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()));
+          setAuditEvents((prev) => [...prev, ...organizationLogs].sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()));
         }
       } catch (e) {
         setError(e instanceof Error ? e.message : 'Failed to load editable profile');
@@ -515,9 +524,26 @@ const SuperAdminUserFullEditPage: React.FC = () => {
     setError(null);
     setSuccess(null);
     try {
-      await authenticatedRequest(`/admin/users/${id}/profile`, { method: 'PATCH', body: JSON.stringify(profile) });
+      const userPayload = {
+        firstName: profile.firstName, lastName: profile.lastName, email: profile.email, contactEmail: profile.contactEmail,
+        phoneNumber: profile.phoneNumber, region: profile.region, jobRole: profile.jobRole, cities: profile.cities,
+        workExperience: profile.workExperience, education: profile.education, certifications: profile.certifications,
+        workExperienceItems: profile.workExperienceItems, educationItems: profile.educationItems, certificationItems: profile.certificationItems,
+        skills: profile.skills, availability: profile.availability, cvUrl: profile.cvUrl, shortBio: profile.shortBio,
+        candidatePoolVisible: profile.candidatePoolVisible, avatarAssetId: profile.avatarAssetId, coverAssetId: profile.coverAssetId,
+      };
+      await authenticatedRequest(`/admin/users/${id}/profile`, { method: 'PATCH', body: JSON.stringify(userPayload) });
       if (organization?.id) {
-        await authenticatedRequest(`/admin/organizations/${organization.id}/profile`, { method: 'PATCH', body: JSON.stringify(organization) });
+        const orgPayload = {
+          name: organization.name, type: organization.type, contactEmail: organization.contactEmail, phoneNumber: organization.phoneNumber,
+          contactPerson: organization.contactPerson, region: organization.region, canton: organization.canton, city: organization.city,
+          regionsServed: organization.regionsServed, description: organization.description, vatNumber: organization.vatNumber, languages: organization.languages,
+          capacity: organization.capacity, pedagogy: organization.pedagogy, productCategory: organization.productCategory,
+          minimumOrderQuantity: organization.minimumOrderQuantity, directOrderLink: organization.directOrderLink, catalogUrl: organization.catalogUrl,
+          websiteUrl: organization.websiteUrl, serviceType: organization.serviceType, serviceCategories: organization.serviceCategories,
+          deliveryType: organization.deliveryType, bookingLink: organization.bookingLink, logoAssetId: organization.logoAssetId, coverAssetId: organization.coverAssetId,
+        };
+        await authenticatedRequest(`/admin/organizations/${organization.id}/profile`, { method: 'PATCH', body: JSON.stringify(orgPayload) });
       }
       setSuccess('Profile changes saved permanently.');
     } catch (e) {
@@ -565,49 +591,55 @@ const SuperAdminUserFullEditPage: React.FC = () => {
             <input className={STANDARD_INPUT_FIELD} value={profile?.cvUrl ?? ''} onChange={(e) => setProfile({ ...profile, cvUrl: e.target.value })} placeholder="CV URL" />
             <textarea
               className={STANDARD_INPUT_FIELD}
-              value={JSON.stringify(profile?.cities ?? [])}
+              value={jsonDrafts.cities ?? JSON.stringify(profile?.cities ?? [])}
               onChange={(e) => {
-                try { setProfile({ ...profile, cities: JSON.parse(e.target.value || '[]') }); } catch {}
+                const v = e.target.value; setJsonDrafts((d) => ({ ...d, cities: v }));
+                try { setProfile({ ...profile, cities: JSON.parse(v || '[]') }); } catch {}
               }}
               placeholder='Cities JSON (e.g. ["Zurich","Bern"])'
             />
             <textarea
               className={STANDARD_INPUT_FIELD}
-              value={JSON.stringify(profile?.skills ?? [])}
+              value={jsonDrafts.skills ?? JSON.stringify(profile?.skills ?? [])}
               onChange={(e) => {
-                try { setProfile({ ...profile, skills: JSON.parse(e.target.value || '[]') }); } catch {}
+                const v = e.target.value; setJsonDrafts((d) => ({ ...d, skills: v }));
+                try { setProfile({ ...profile, skills: JSON.parse(v || '[]') }); } catch {}
               }}
               placeholder='Skills JSON (e.g. ["Childcare","First Aid"])'
             />
             <textarea
               className={STANDARD_INPUT_FIELD}
-              value={JSON.stringify(profile?.certifications ?? [])}
+              value={jsonDrafts.certifications ?? JSON.stringify(profile?.certifications ?? [])}
               onChange={(e) => {
-                try { setProfile({ ...profile, certifications: JSON.parse(e.target.value || '[]') }); } catch {}
+                const v = e.target.value; setJsonDrafts((d) => ({ ...d, certifications: v }));
+                try { setProfile({ ...profile, certifications: JSON.parse(v || '[]') }); } catch {}
               }}
               placeholder='Certifications JSON (e.g. ["CPR","Montessori"])'
             />
             <textarea
               className={STANDARD_INPUT_FIELD}
-              value={JSON.stringify(profile?.workExperienceItems ?? [])}
+              value={jsonDrafts.workExperienceItems ?? JSON.stringify(profile?.workExperienceItems ?? [])}
               onChange={(e) => {
-                try { setProfile({ ...profile, workExperienceItems: JSON.parse(e.target.value || '[]') }); } catch {}
+                const v = e.target.value; setJsonDrafts((d) => ({ ...d, workExperienceItems: v }));
+                try { setProfile({ ...profile, workExperienceItems: JSON.parse(v || '[]') }); } catch {}
               }}
               placeholder="Educator Work Experience Items JSON"
             />
             <textarea
               className={STANDARD_INPUT_FIELD}
-              value={JSON.stringify(profile?.educationItems ?? [])}
+              value={jsonDrafts.educationItems ?? JSON.stringify(profile?.educationItems ?? [])}
               onChange={(e) => {
-                try { setProfile({ ...profile, educationItems: JSON.parse(e.target.value || '[]') }); } catch {}
+                const v = e.target.value; setJsonDrafts((d) => ({ ...d, educationItems: v }));
+                try { setProfile({ ...profile, educationItems: JSON.parse(v || '[]') }); } catch {}
               }}
               placeholder="Educator Education Items JSON"
             />
             <textarea
               className={STANDARD_INPUT_FIELD}
-              value={JSON.stringify(profile?.certificationItems ?? [])}
+              value={jsonDrafts.certificationItems ?? JSON.stringify(profile?.certificationItems ?? [])}
               onChange={(e) => {
-                try { setProfile({ ...profile, certificationItems: JSON.parse(e.target.value || '[]') }); } catch {}
+                const v = e.target.value; setJsonDrafts((d) => ({ ...d, certificationItems: v }));
+                try { setProfile({ ...profile, certificationItems: JSON.parse(v || '[]') }); } catch {}
               }}
               placeholder="Educator Certification Items JSON"
             />
@@ -625,34 +657,38 @@ const SuperAdminUserFullEditPage: React.FC = () => {
             <input className={STANDARD_INPUT_FIELD} value={organization?.capacity ?? ''} onChange={(e) => setOrganization({ ...organization, capacity: Number(e.target.value || 0) })} placeholder="Daycare Capacity" />
             <textarea
               className={STANDARD_INPUT_FIELD}
-              value={JSON.stringify(organization?.pedagogy ?? [])}
+              value={jsonDrafts.pedagogy ?? JSON.stringify(organization?.pedagogy ?? [])}
               onChange={(e) => {
-                try { setOrganization({ ...organization, pedagogy: JSON.parse(e.target.value || '[]') }); } catch {}
+                const v = e.target.value; setJsonDrafts((d) => ({ ...d, pedagogy: v }));
+                try { setOrganization({ ...organization, pedagogy: JSON.parse(v || '[]') }); } catch {}
               }}
               placeholder='Daycare Pedagogy JSON (e.g. ["Montessori","Play-based"])'
             />
             <textarea
               className={STANDARD_INPUT_FIELD}
-              value={JSON.stringify(organization?.languages ?? [])}
+              value={jsonDrafts.languages ?? JSON.stringify(organization?.languages ?? [])}
               onChange={(e) => {
-                try { setOrganization({ ...organization, languages: JSON.parse(e.target.value || '[]') }); } catch {}
+                const v = e.target.value; setJsonDrafts((d) => ({ ...d, languages: v }));
+                try { setOrganization({ ...organization, languages: JSON.parse(v || '[]') }); } catch {}
               }}
               placeholder='Languages JSON (e.g. ["EN","FR","DE"])'
             />
             <textarea
               className={STANDARD_INPUT_FIELD}
-              value={JSON.stringify(organization?.regionsServed ?? [])}
+              value={jsonDrafts.regionsServed ?? JSON.stringify(organization?.regionsServed ?? [])}
               onChange={(e) => {
-                try { setOrganization({ ...organization, regionsServed: JSON.parse(e.target.value || '[]') }); } catch {}
+                const v = e.target.value; setJsonDrafts((d) => ({ ...d, regionsServed: v }));
+                try { setOrganization({ ...organization, regionsServed: JSON.parse(v || '[]') }); } catch {}
               }}
               placeholder='Regions Served JSON (e.g. ["Zurich","Vaud"])'
             />
             <input className={STANDARD_INPUT_FIELD} value={organization?.serviceType ?? ''} onChange={(e) => setOrganization({ ...organization, serviceType: e.target.value })} placeholder="Service Provider Type" />
             <textarea
               className={STANDARD_INPUT_FIELD}
-              value={JSON.stringify(organization?.serviceCategories ?? [])}
+              value={jsonDrafts.serviceCategories ?? JSON.stringify(organization?.serviceCategories ?? [])}
               onChange={(e) => {
-                try { setOrganization({ ...organization, serviceCategories: JSON.parse(e.target.value || '[]') }); } catch {}
+                const v = e.target.value; setJsonDrafts((d) => ({ ...d, serviceCategories: v }));
+                try { setOrganization({ ...organization, serviceCategories: JSON.parse(v || '[]') }); } catch {}
               }}
               placeholder='Service Categories JSON (e.g. ["Cleaning","Training"])'
             />
@@ -667,8 +703,11 @@ const SuperAdminUserFullEditPage: React.FC = () => {
                   <div>{p.title}</div>
                   <Button variant="danger" size="xs" onClick={async () => {
                     if (!organization?.id) return;
-                    await authenticatedRequest(`/admin/organizations/${organization.id}/products/${p.id}`, { method: 'DELETE' });
-                    setProducts((prev) => prev.filter((x) => x.id !== p.id));
+                    if (!window.confirm(`Permanently delete product "${p.title}"?`)) return;
+                    try {
+                      await authenticatedRequest(`/admin/organizations/${organization.id}/products/${p.id}`, { method: 'DELETE' });
+                      setProducts((prev) => prev.filter((x) => x.id !== p.id));
+                    } catch (e) { setError(e instanceof Error ? e.message : 'Failed to delete product'); }
                   }}>Hard Delete</Button>
                 </div>
               ))}
@@ -682,8 +721,11 @@ const SuperAdminUserFullEditPage: React.FC = () => {
                   <div>{s.title}</div>
                   <Button variant="danger" size="xs" onClick={async () => {
                     if (!organization?.id) return;
-                    await authenticatedRequest(`/admin/organizations/${organization.id}/services/${s.id}`, { method: 'DELETE' });
-                    setServices((prev) => prev.filter((x) => x.id !== s.id));
+                    if (!window.confirm(`Permanently delete service "${s.title}"?`)) return;
+                    try {
+                      await authenticatedRequest(`/admin/organizations/${organization.id}/services/${s.id}`, { method: 'DELETE' });
+                      setServices((prev) => prev.filter((x) => x.id !== s.id));
+                    } catch (e) { setError(e instanceof Error ? e.message : 'Failed to delete service'); }
                   }}>Hard Delete</Button>
                 </div>
               ))}
@@ -697,8 +739,11 @@ const SuperAdminUserFullEditPage: React.FC = () => {
                   <div>{d.title || d.documentType}</div>
                   <Button variant="danger" size="xs" onClick={async () => {
                     if (!organization?.id) return;
-                    await authenticatedRequest(`/admin/organizations/${organization.id}/documents/${d.id}`, { method: 'DELETE' });
-                    setDocuments((prev) => prev.filter((x) => x.id !== d.id));
+                    if (!window.confirm(`Permanently delete document "${d.title || d.documentType}"?`)) return;
+                    try {
+                      await authenticatedRequest(`/admin/organizations/${organization.id}/documents/${d.id}`, { method: 'DELETE' });
+                      setDocuments((prev) => prev.filter((x) => x.id !== d.id));
+                    } catch (e) { setError(e instanceof Error ? e.message : 'Failed to delete document'); }
                   }}>Hard Delete</Button>
                 </div>
               ))}
