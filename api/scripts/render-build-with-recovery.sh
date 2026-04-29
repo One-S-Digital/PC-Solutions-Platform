@@ -16,6 +16,14 @@ else
   PRISMA_CMD="npx prisma"
 fi
 
+# Ensure required Postgres extensions exist (pgcrypto provides gen_random_uuid)
+echo "🧩 Ensuring required Postgres extensions exist (pgcrypto)..."
+if ! $PRISMA_CMD db execute --schema prisma/schema.prisma --stdin <<< 'CREATE EXTENSION IF NOT EXISTS "pgcrypto";' >/dev/null 2>&1; then
+  echo "❌ Failed to enable pgcrypto extension (required for migrations)."
+  echo "Your DB user likely lacks CREATE EXTENSION privileges."
+  exit 1
+fi
+
 # Ensure Prisma client exists
 if [ ! -d "../node_modules/@prisma/client" ]; then
   echo "⚠️  Prisma client not found, generating..."

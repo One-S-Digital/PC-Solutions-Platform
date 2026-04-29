@@ -27,13 +27,15 @@ export class TranslationService {
   constructor(
     private prisma: PrismaService,
     private configService: ConfigService,
-    @InjectQueue('translation') private translationQueue?: Queue,
+    @Optional() @InjectQueue('translation') private translationQueue?: Queue,
     @Optional() private deepLService?: DeepLService,
   ) {
     if (this.translationQueue) {
       this.logger.log('Translation queue injected successfully');
     } else {
-      this.logger.error('Translation queue NOT injected - translations will NOT be processed! Check Redis connection and queue module setup.');
+      this.logger.warn(
+        'Translation queue not injected. Redis-backed workers are disabled; inline fallback will be used when possible.',
+      );
     }
     
     if (this.deepLService) {

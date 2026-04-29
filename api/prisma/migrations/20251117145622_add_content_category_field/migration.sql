@@ -1,6 +1,5 @@
 -- AlterTable
-ALTER TABLE "assets" ADD COLUMN "contentCategory" TEXT;
+ALTER TABLE "assets" ADD COLUMN IF NOT EXISTS "contentCategory" TEXT;
 
 -- CreateIndex
-CREATE INDEX "assets_contentCategory_idx" ON "assets"("contentCategory");
-
+CREATE INDEX IF NOT EXISTS "assets_contentCategory_idx" ON "assets"("contentCategory");
