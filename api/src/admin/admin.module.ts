@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
 import { AdminController } from './admin.controller';
 import { AdminProfilesController } from './admin-profiles.controller';
+import { AdminSubresourcesController } from './admin-subresources.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { AuthModule } from '../auth/auth.module';
 import { RoleManagementModule } from './role-management/role-management.module';
+import { MarketplaceModule } from '../marketplace/marketplace.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, RoleManagementModule],
-  controllers: [AdminController, AdminProfilesController],
+  imports: [PrismaModule, AuthModule, RoleManagementModule, MarketplaceModule],
+  controllers: [AdminController, AdminProfilesController, AdminSubresourcesController],
 })
 export class AdminModule {}
