@@ -25,6 +25,7 @@ const userProfileInclude = {
         include: {
           logoAsset: true,
           coverAsset: true,
+          contactInfo: true,
           products: {
             include: {
               imageAsset: true,
@@ -464,6 +465,7 @@ export class UsersService {
         description: org.description,
         vatNumber: org.vatNumber,
         contactPerson: org.contactPerson,
+        contactEmail: (org as any).contactInfo?.contactEmail ?? null,
         phoneNumber: org.phoneNumber,
         canton: org.canton,
         regionsServed: org.regionsServed ?? (org.canton ? [org.canton] : []),

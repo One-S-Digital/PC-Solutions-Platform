@@ -651,6 +651,7 @@ export class ProfileController {
         },
         logoAsset: true,
         coverAsset: true,
+        contactInfo: true,
         members: {
           include: {
             user: {
@@ -667,9 +668,13 @@ export class ProfileController {
       throw new NotFoundException('Organization not found');
     }
 
+    const { contactInfo, ...orgRest } = organization as any;
     return {
       success: true,
-      data: organization,
+      data: {
+        ...orgRest,
+        contactEmail: contactInfo?.contactEmail ?? null,
+      },
     };
   }
 
