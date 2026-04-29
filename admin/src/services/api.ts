@@ -976,6 +976,9 @@ export const apiService = {
   adminRemoveOrgMember: (apiClient: AxiosInstance, orgId: string, userId: string) =>
     apiClient.delete<ApiResponse<any>>(`/admin/organizations/${orgId}/members/${userId}`),
 
+  adminImpersonateUser: (apiClient: AxiosInstance, userId: string) =>
+    apiClient.post<ApiResponse<{ id: string; firstName: string; lastName: string; email: string; role: string; displayName: string }>>(`/admin/users/${userId}/impersonate`),
+
   // Support Tickets
   getSupportTickets: (apiClient: AxiosInstance, filters?: {
     status?: string;

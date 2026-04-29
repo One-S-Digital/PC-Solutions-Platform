@@ -12,6 +12,7 @@ import {
   NotFoundException,
   BadRequestException,
   ConflictException,
+  Request,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import {
@@ -801,5 +802,62 @@ export class AdminSubresourcesController {
 
     this.logger.log(`[ADMIN] Removed user ${profileId} from org ${orgId}`);
     return { success: true, message: 'Member removed from organization' };
+  }
+
+  // ─── Impersonation ───────────────────────────────────────────────────────────
+
+  @Post('users/:userId/impersonate')
+  @ApiOperation({ summary: 'Log impersonation start for a user (audit trail)' })
+  async impersonateUser(
+    @Param('userId', ParseUUIDPipe) userId: string,
+    @Request() req: any,
+  ) {
+    const targetProfileId = await this.resolveProfileId(userId);
+
+    const target = await this.prisma.user.findFirst({
+      where: {
+        OR: [
+          { id: targetProfileId },
+          { appUsers: { some: { id: targetProfileId } } },
+        ],
+      },
+      select: { id: true, firstName: true, lastName: true, email: true, role: true },
+    });
+    if (!target) throw new NotFoundException('Target user not found');
+
+    const adminAppUserId: string | undefined = req.context?.appUserId;
+    const adminUser = adminAppUserId
+      ? await this.prisma.user.findFirst({
+          where: { appUsers: { some: { id: adminAppUserId } } },
+          select: { id: true, email: true },
+        })
+      : null;
+
+    await this.prisma.auditLog.create({
+      data: {
+        entity: 'User',
+        entityId: target.id,
+        action: 'impersonate',
+        actorId: adminUser?.id ?? adminAppUserId ?? 'unknown',
+        metadata: {
+          targetUserId: target.id,
+          targetEmail: target.email,
+          adminEmail: adminUser?.email,
+        },
+      },
+    });
+
+    this.logger.log(`[ADMIN] Impersonation started: admin=${adminUser?.email} → user=${target.email}`);
+    return {
+      success: true,
+      data: {
+        id: target.id,
+        firstName: target.firstName,
+        lastName: target.lastName,
+        email: target.email,
+        role: target.role,
+        displayName: `${target.firstName ?? ''} ${target.lastName ?? ''}`.trim() || target.email,
+      },
+    };
   }
 }

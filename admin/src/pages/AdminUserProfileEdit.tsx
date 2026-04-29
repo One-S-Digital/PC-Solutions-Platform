@@ -18,15 +18,28 @@ import {
   Star,
   Building2,
   Lock,
+  UserCheck,
+  Image as ImageIcon,
 } from 'lucide-react';
 import Card from '../components/design-system/Card';
 import Button from '../components/design-system/Button';
 import ChipInput from '../components/design-system/ChipInput';
+import Tabs from '../components/design-system/Tabs';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
-import { ALL_REGIONS_OPTION, STANDARD_INPUT_FIELD, SWISS_CANTONS_WITH_ALL, EDUCATOR_JOB_ROLES } from '../constants/design-system';
+import { ImpersonationBanner } from '../components/ImpersonationBanner';
+import { ItemListEditor, ItemFormModal } from '../components/ItemListEditor';
+import { ImageUploadField } from '../components/ImageUploadField';
+import { PermissionGate } from '../components/PermissionGate';
+import {
+  ALL_REGIONS_OPTION,
+  STANDARD_INPUT_FIELD,
+  SWISS_CANTONS_WITH_ALL,
+  EDUCATOR_JOB_ROLES,
+} from '../constants/design-system';
 import { UserRole } from '../types';
 import { useAdminRole } from '../hooks/useAdminRole';
-import { PermissionGate } from '../components/PermissionGate';
+
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 interface UserProfile {
   id: string;
@@ -61,6 +74,311 @@ interface UserProfile {
   } | null;
 }
 
+interface WorkExpItem {
+  id: string;
+  jobTitle: string;
+  institutionName: string;
+  startDate?: string;
+  endDate?: string;
+  descriptionPoints?: string[];
+}
+
+interface EducationItem {
+  id: string;
+  degree: string;
+  institutionName: string;
+  graduationYear?: string;
+  description?: string;
+}
+
+interface CertificationItem {
+  id: string;
+  name: string;
+  issuingOrganization?: string;
+  issueDate?: string;
+  expiryDate?: string;
+  credentialUrl?: string;
+}
+
+// ─── Small helpers ────────────────────────────────────────────────────────────
+
+function FormField({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <label className="mb-1 block text-sm font-medium text-gray-700">{label}</label>
+      {children}
+    </div>
+  );
+}
+
+// ─── Educator sub-sections ────────────────────────────────────────────────────
+
+function WorkExperienceSection({ userId }: { userId: string }) {
+  const apiClient = useApiClient();
+  const queryClient = useQueryClient();
+  const [formOpen, setFormOpen] = useState(false);
+  const [editItem, setEditItem] = useState<WorkExpItem | null>(null);
+  const [form, setForm] = useState({ jobTitle: '', institutionName: '', startDate: '', endDate: '' });
+
+  const { data } = useQuery({
+    queryKey: ['admin-work-experience', userId],
+    queryFn: () => apiService.adminListWorkExperience(apiClient, userId),
+    enabled: !!userId,
+  });
+  const items: WorkExpItem[] = data?.data?.data ?? [];
+
+  const createMutation = useMutation({
+    mutationFn: (d: typeof form) => apiService.adminCreateWorkExperience(apiClient, userId, d),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-work-experience', userId] });
+      toast.success('Work experience added');
+      closeForm();
+    },
+    onError: () => toast.error('Failed to save work experience'),
+  });
+  const updateMutation = useMutation({
+    mutationFn: (d: typeof form) => apiService.adminUpdateWorkExperience(apiClient, userId, editItem!.id, d),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-work-experience', userId] });
+      toast.success('Work experience updated');
+      closeForm();
+    },
+    onError: () => toast.error('Failed to update work experience'),
+  });
+  const deleteMutation = useMutation({
+    mutationFn: (itemId: string) => apiService.adminDeleteWorkExperience(apiClient, userId, itemId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-work-experience', userId] });
+      toast.success('Work experience removed');
+    },
+    onError: () => toast.error('Failed to remove work experience'),
+  });
+
+  const openAdd = () => { setEditItem(null); setForm({ jobTitle: '', institutionName: '', startDate: '', endDate: '' }); setFormOpen(true); };
+  const openEdit = (item: WorkExpItem) => { setEditItem(item); setForm({ jobTitle: item.jobTitle, institutionName: item.institutionName, startDate: item.startDate ?? '', endDate: item.endDate ?? '' }); setFormOpen(true); };
+  const closeForm = () => { setFormOpen(false); setEditItem(null); };
+  const handleSubmit = () => { editItem ? updateMutation.mutate(form) : createMutation.mutate(form); };
+
+  return (
+    <>
+      <ItemListEditor
+        title="Work Experience"
+        items={items}
+        columns={[
+          { label: 'Job Title', render: (i) => i.jobTitle },
+          { label: 'Institution', render: (i) => i.institutionName },
+          { label: 'Period', render: (i) => [i.startDate, i.endDate].filter(Boolean).join(' – ') || '—' },
+        ]}
+        emptyMessage="No work experience entries yet."
+        onAdd={openAdd}
+        onEdit={openEdit}
+        onDelete={(i) => deleteMutation.mutate(i.id)}
+      />
+      <ItemFormModal
+        title={editItem ? 'Edit Work Experience' : 'Add Work Experience'}
+        isOpen={formOpen}
+        onClose={closeForm}
+        onSubmit={handleSubmit}
+        isLoading={createMutation.isPending || updateMutation.isPending}
+      >
+        <FormField label="Job Title *">
+          <input className={STANDARD_INPUT_FIELD} value={form.jobTitle} onChange={(e) => setForm((p) => ({ ...p, jobTitle: e.target.value }))} />
+        </FormField>
+        <FormField label="Institution *">
+          <input className={STANDARD_INPUT_FIELD} value={form.institutionName} onChange={(e) => setForm((p) => ({ ...p, institutionName: e.target.value }))} />
+        </FormField>
+        <div className="grid grid-cols-2 gap-3">
+          <FormField label="Start Date">
+            <input className={STANDARD_INPUT_FIELD} placeholder="e.g. 2020-01" value={form.startDate} onChange={(e) => setForm((p) => ({ ...p, startDate: e.target.value }))} />
+          </FormField>
+          <FormField label="End Date">
+            <input className={STANDARD_INPUT_FIELD} placeholder="e.g. 2023-06 or Present" value={form.endDate} onChange={(e) => setForm((p) => ({ ...p, endDate: e.target.value }))} />
+          </FormField>
+        </div>
+      </ItemFormModal>
+    </>
+  );
+}
+
+function EducationSection({ userId }: { userId: string }) {
+  const apiClient = useApiClient();
+  const queryClient = useQueryClient();
+  const [formOpen, setFormOpen] = useState(false);
+  const [editItem, setEditItem] = useState<EducationItem | null>(null);
+  const [form, setForm] = useState({ degree: '', institutionName: '', graduationYear: '', description: '' });
+
+  const { data } = useQuery({
+    queryKey: ['admin-education', userId],
+    queryFn: () => apiService.adminListEducation(apiClient, userId),
+    enabled: !!userId,
+  });
+  const items: EducationItem[] = data?.data?.data ?? [];
+
+  const createMutation = useMutation({
+    mutationFn: (d: typeof form) => apiService.adminCreateEducation(apiClient, userId, d),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-education', userId] });
+      toast.success('Education added');
+      closeForm();
+    },
+    onError: () => toast.error('Failed to save education'),
+  });
+  const updateMutation = useMutation({
+    mutationFn: (d: typeof form) => apiService.adminUpdateEducation(apiClient, userId, editItem!.id, d),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-education', userId] });
+      toast.success('Education updated');
+      closeForm();
+    },
+    onError: () => toast.error('Failed to update education'),
+  });
+  const deleteMutation = useMutation({
+    mutationFn: (itemId: string) => apiService.adminDeleteEducation(apiClient, userId, itemId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-education', userId] });
+      toast.success('Education entry removed');
+    },
+    onError: () => toast.error('Failed to remove education entry'),
+  });
+
+  const openAdd = () => { setEditItem(null); setForm({ degree: '', institutionName: '', graduationYear: '', description: '' }); setFormOpen(true); };
+  const openEdit = (item: EducationItem) => { setEditItem(item); setForm({ degree: item.degree, institutionName: item.institutionName, graduationYear: item.graduationYear ?? '', description: item.description ?? '' }); setFormOpen(true); };
+  const closeForm = () => { setFormOpen(false); setEditItem(null); };
+  const handleSubmit = () => { editItem ? updateMutation.mutate(form) : createMutation.mutate(form); };
+
+  return (
+    <>
+      <ItemListEditor
+        title="Education"
+        items={items}
+        columns={[
+          { label: 'Degree', render: (i) => i.degree },
+          { label: 'Institution', render: (i) => i.institutionName },
+          { label: 'Year', render: (i) => i.graduationYear ?? '—' },
+        ]}
+        emptyMessage="No education entries yet."
+        onAdd={openAdd}
+        onEdit={openEdit}
+        onDelete={(i) => deleteMutation.mutate(i.id)}
+      />
+      <ItemFormModal
+        title={editItem ? 'Edit Education' : 'Add Education'}
+        isOpen={formOpen}
+        onClose={closeForm}
+        onSubmit={handleSubmit}
+        isLoading={createMutation.isPending || updateMutation.isPending}
+      >
+        <FormField label="Degree / Qualification *">
+          <input className={STANDARD_INPUT_FIELD} value={form.degree} onChange={(e) => setForm((p) => ({ ...p, degree: e.target.value }))} />
+        </FormField>
+        <FormField label="Institution *">
+          <input className={STANDARD_INPUT_FIELD} value={form.institutionName} onChange={(e) => setForm((p) => ({ ...p, institutionName: e.target.value }))} />
+        </FormField>
+        <div className="grid grid-cols-2 gap-3">
+          <FormField label="Graduation Year">
+            <input className={STANDARD_INPUT_FIELD} placeholder="e.g. 2019" value={form.graduationYear} onChange={(e) => setForm((p) => ({ ...p, graduationYear: e.target.value }))} />
+          </FormField>
+          <FormField label="Description">
+            <input className={STANDARD_INPUT_FIELD} value={form.description} onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))} />
+          </FormField>
+        </div>
+      </ItemFormModal>
+    </>
+  );
+}
+
+function CertificationsSection({ userId }: { userId: string }) {
+  const apiClient = useApiClient();
+  const queryClient = useQueryClient();
+  const [formOpen, setFormOpen] = useState(false);
+  const [editItem, setEditItem] = useState<CertificationItem | null>(null);
+  const [form, setForm] = useState({ name: '', issuingOrganization: '', issueDate: '', expiryDate: '', credentialUrl: '' });
+
+  const { data } = useQuery({
+    queryKey: ['admin-certifications', userId],
+    queryFn: () => apiService.adminListCertifications(apiClient, userId),
+    enabled: !!userId,
+  });
+  const items: CertificationItem[] = data?.data?.data ?? [];
+
+  const createMutation = useMutation({
+    mutationFn: (d: typeof form) => apiService.adminCreateCertification(apiClient, userId, d),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-certifications', userId] });
+      toast.success('Certification added');
+      closeForm();
+    },
+    onError: () => toast.error('Failed to save certification'),
+  });
+  const updateMutation = useMutation({
+    mutationFn: (d: typeof form) => apiService.adminUpdateCertification(apiClient, userId, editItem!.id, d),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-certifications', userId] });
+      toast.success('Certification updated');
+      closeForm();
+    },
+    onError: () => toast.error('Failed to update certification'),
+  });
+  const deleteMutation = useMutation({
+    mutationFn: (itemId: string) => apiService.adminDeleteCertification(apiClient, userId, itemId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-certifications', userId] });
+      toast.success('Certification removed');
+    },
+    onError: () => toast.error('Failed to remove certification'),
+  });
+
+  const openAdd = () => { setEditItem(null); setForm({ name: '', issuingOrganization: '', issueDate: '', expiryDate: '', credentialUrl: '' }); setFormOpen(true); };
+  const openEdit = (item: CertificationItem) => { setEditItem(item); setForm({ name: item.name, issuingOrganization: item.issuingOrganization ?? '', issueDate: item.issueDate ?? '', expiryDate: item.expiryDate ?? '', credentialUrl: item.credentialUrl ?? '' }); setFormOpen(true); };
+  const closeForm = () => { setFormOpen(false); setEditItem(null); };
+  const handleSubmit = () => { editItem ? updateMutation.mutate(form) : createMutation.mutate(form); };
+
+  return (
+    <>
+      <ItemListEditor
+        title="Certifications"
+        items={items}
+        columns={[
+          { label: 'Name', render: (i) => i.name },
+          { label: 'Issuer', render: (i) => i.issuingOrganization ?? '—' },
+          { label: 'Expiry', render: (i) => i.expiryDate ?? '—' },
+        ]}
+        emptyMessage="No certifications yet."
+        onAdd={openAdd}
+        onEdit={openEdit}
+        onDelete={(i) => deleteMutation.mutate(i.id)}
+      />
+      <ItemFormModal
+        title={editItem ? 'Edit Certification' : 'Add Certification'}
+        isOpen={formOpen}
+        onClose={closeForm}
+        onSubmit={handleSubmit}
+        isLoading={createMutation.isPending || updateMutation.isPending}
+      >
+        <FormField label="Certification Name *">
+          <input className={STANDARD_INPUT_FIELD} value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} />
+        </FormField>
+        <FormField label="Issuing Organization">
+          <input className={STANDARD_INPUT_FIELD} value={form.issuingOrganization} onChange={(e) => setForm((p) => ({ ...p, issuingOrganization: e.target.value }))} />
+        </FormField>
+        <div className="grid grid-cols-2 gap-3">
+          <FormField label="Issue Date">
+            <input className={STANDARD_INPUT_FIELD} placeholder="e.g. 2022-03" value={form.issueDate} onChange={(e) => setForm((p) => ({ ...p, issueDate: e.target.value }))} />
+          </FormField>
+          <FormField label="Expiry Date">
+            <input className={STANDARD_INPUT_FIELD} placeholder="e.g. 2025-03" value={form.expiryDate} onChange={(e) => setForm((p) => ({ ...p, expiryDate: e.target.value }))} />
+          </FormField>
+        </div>
+        <FormField label="Credential URL">
+          <input type="url" className={STANDARD_INPUT_FIELD} placeholder="https://..." value={form.credentialUrl} onChange={(e) => setForm((p) => ({ ...p, credentialUrl: e.target.value }))} />
+        </FormField>
+      </ItemFormModal>
+    </>
+  );
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
+
 const AdminUserProfileEdit: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -71,8 +389,12 @@ const AdminUserProfileEdit: React.FC = () => {
 
   const [formData, setFormData] = useState<Partial<UserProfile>>({});
   const [isDirty, setIsDirty] = useState(false);
+  const [activeTab, setActiveTab] = useState(0);
 
-  // Fetch user profile
+  // Impersonation state
+  const [impersonating, setImpersonating] = useState(false);
+  const [impersonationTarget, setImpersonationTarget] = useState<{ displayName: string; email: string } | null>(null);
+
   const { data: profileResponse, isLoading, error } = useQuery({
     queryKey: ['admin-user-profile', id],
     queryFn: () => apiService.getAdminUserProfile(apiClient, id!),
@@ -81,7 +403,6 @@ const AdminUserProfileEdit: React.FC = () => {
 
   const profile = profileResponse?.data?.data;
 
-  // Initialize form data when profile loads
   useEffect(() => {
     if (profile) {
       setFormData({
@@ -96,19 +417,17 @@ const AdminUserProfileEdit: React.FC = () => {
           return (EDUCATOR_JOB_ROLES as readonly string[]).includes(raw) ? raw : '';
         })(),
         cities: profile.cities || [],
-        workExperience: profile.workExperience || '',
-        education: profile.education || '',
-        certifications: profile.certifications || [],
         skills: profile.skills || [],
         availability: profile.availability || '',
         cvUrl: profile.cvUrl || '',
         shortBio: profile.shortBio || '',
         candidatePoolVisible: profile.candidatePoolVisible || false,
+        avatarAssetId: profile.avatarAssetId || undefined,
+        coverAssetId: profile.coverAssetId || undefined,
       });
     }
   }, [profile]);
 
-  // Update mutation
   const updateMutation = useMutation({
     mutationFn: (data: Partial<UserProfile>) =>
       apiService.updateAdminUserProfile(apiClient, id!, data),
@@ -116,12 +435,22 @@ const AdminUserProfileEdit: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['admin-user-profile', id] });
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
       setIsDirty(false);
-      toast.success(t('admin:userProfile.updateSuccess', 'Profile updated successfully'));
+      toast.success('Profile updated successfully');
     },
-    onError: (error: any) => {
-      const message = error?.response?.data?.message || t('admin:userProfile.updateError', 'Failed to update profile');
-      toast.error(message);
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message || 'Failed to update profile');
     },
+  });
+
+  const impersonateMutation = useMutation({
+    mutationFn: () => apiService.adminImpersonateUser(apiClient, id!),
+    onSuccess: (res) => {
+      const data = res.data?.data;
+      setImpersonationTarget({ displayName: data.displayName, email: data.email });
+      setImpersonating(true);
+      toast.success(`Now editing as ${data.displayName}`);
+    },
+    onError: () => toast.error('Failed to start impersonation'),
   });
 
   const handleChange = (field: keyof UserProfile, value: any) => {
@@ -129,38 +458,22 @@ const AdminUserProfileEdit: React.FC = () => {
     setIsDirty(true);
   };
 
-  // Core submit logic - separated for reuse by both form submit and button click
   const submitForm = async () => {
     try {
       await updateMutation.mutateAsync(formData);
     } catch {
-      // Error already handled by onError callback
+      // handled by onError
     }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await submitForm();
-  };
-
-  // Handler for Save button click (avoids MouseEvent/FormEvent type mismatch)
-  const handleSaveClick = () => {
-    submitForm();
   };
 
   const handleBack = () => {
-    if (isDirty) {
-      if (window.confirm(t('common:unsavedChangesPrompt', 'You have unsaved changes. Are you sure you want to leave?'))) {
-        navigate('/users');
-      }
-    } else {
-      navigate('/users');
-    }
+    if (isDirty && !window.confirm('You have unsaved changes. Leave anyway?')) return;
+    navigate('/users');
   };
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="flex h-64 items-center justify-center">
         <LoadingSpinner size="large" />
       </div>
     );
@@ -168,11 +481,9 @@ const AdminUserProfileEdit: React.FC = () => {
 
   if (error || !profile) {
     return (
-      <div className="text-center py-12">
-        <div className="text-red-500 mb-4">{t('admin:userProfile.loadError', 'Failed to load user profile')}</div>
-        <Button variant="secondary" onClick={() => navigate('/users')}>
-          {t('common:back', 'Back')}
-        </Button>
+      <div className="py-12 text-center">
+        <div className="mb-4 text-red-500">Failed to load user profile</div>
+        <Button variant="secondary" onClick={() => navigate('/users')}>Back</Button>
       </div>
     );
   }
@@ -180,62 +491,323 @@ const AdminUserProfileEdit: React.FC = () => {
   const isEducator = profile.role === UserRole.EDUCATOR;
   const fullName = `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || profile.email;
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Button variant="secondary" leftIcon={ArrowLeft} onClick={handleBack}>
-            {t('common:back', 'Back')}
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold text-swiss-charcoal flex items-center">
-              <User className="h-6 w-6 mr-2 text-swiss-teal" />
-              {t('admin:userProfile.editTitle', 'Edit User Profile')}
-            </h1>
-            <p className="text-gray-600 mt-1">
-              {fullName} • <span className="text-swiss-teal">{profile.role}</span>
-            </p>
-          </div>
-        </div>
-        <Button
-          variant="primary"
-          leftIcon={Save}
-          onClick={handleSaveClick}
-          disabled={!isDirty || updateMutation.isPending}
-        >
-          {updateMutation.isPending ? t('common:saving', 'Saving...') : t('common:saveChanges', 'Save Changes')}
-        </Button>
-      </div>
+  // ── Tab content builders ────────────────────────────────────────────────────
 
-      {/* ADMIN limited-access notice */}
+  const identityTab = (
+    <div className="space-y-6">
+      {/* Avatar / Cover */}
+      {isSuperAdmin && (
+        <Card className="p-6">
+          <h3 className="mb-4 flex items-center text-base font-semibold text-gray-900">
+            <ImageIcon className="mr-2 h-5 w-5 text-swiss-teal" />
+            Profile Images
+          </h3>
+          <div className="space-y-5">
+            <ImageUploadField
+              label="Avatar"
+              currentUrl={profile.avatarUrl}
+              assetKind="AVATAR"
+              onUploaded={(assetId) => handleChange('avatarAssetId', assetId)}
+              onRemove={() => handleChange('avatarAssetId', '')}
+            />
+            <ImageUploadField
+              label="Cover Image"
+              currentUrl={profile.coverImageUrl}
+              assetKind="COVER_IMAGE"
+              aspectRatio="banner"
+              onUploaded={(assetId) => handleChange('coverAssetId', assetId)}
+              onRemove={() => handleChange('coverAssetId', '')}
+            />
+          </div>
+        </Card>
+      )}
+
+      {/* Name */}
+      <Card className="p-6">
+        <h3 className="mb-4 flex items-center text-base font-semibold text-gray-900">
+          <User className="mr-2 h-5 w-5 text-swiss-teal" />
+          Basic Information
+        </h3>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <FormField label="First Name">
+            <input type="text" value={formData.firstName || ''} onChange={(e) => handleChange('firstName', e.target.value)} className={STANDARD_INPUT_FIELD} />
+          </FormField>
+          <FormField label="Last Name">
+            <input type="text" value={formData.lastName || ''} onChange={(e) => handleChange('lastName', e.target.value)} className={STANDARD_INPUT_FIELD} />
+          </FormField>
+        </div>
+      </Card>
+
+      {/* Contact */}
+      <Card className="p-6">
+        <h3 className="mb-4 flex items-center text-base font-semibold text-gray-900">
+          <Mail className="mr-2 h-5 w-5 text-swiss-teal" />
+          Contact Information
+        </h3>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <FormField label="Login Email">
+            <input type="email" value={formData.email || ''} onChange={(e) => handleChange('email', e.target.value)} className={STANDARD_INPUT_FIELD} />
+          </FormField>
+          <FormField label="Contact Email">
+            <input type="email" value={formData.contactEmail || ''} onChange={(e) => handleChange('contactEmail', e.target.value)} className={STANDARD_INPUT_FIELD} />
+            <p className="mt-1 text-xs text-gray-500">Public contact email shown to other users</p>
+          </FormField>
+          <FormField label="Phone Number">
+            <input type="tel" value={formData.phoneNumber || ''} onChange={(e) => handleChange('phoneNumber', e.target.value)} className={STANDARD_INPUT_FIELD} placeholder="+41 XX XXX XX XX" />
+          </FormField>
+        </div>
+      </Card>
+
+      {/* Bio */}
+      <Card className="p-6">
+        <h3 className="mb-4 flex items-center text-base font-semibold text-gray-900">
+          <FileText className="mr-2 h-5 w-5 text-swiss-teal" />
+          Bio / About
+        </h3>
+        <textarea
+          value={formData.shortBio || ''}
+          onChange={(e) => handleChange('shortBio', e.target.value)}
+          rows={4}
+          className={STANDARD_INPUT_FIELD}
+          placeholder="Tell us about this user..."
+        />
+      </Card>
+    </div>
+  );
+
+  const professionalTab = (
+    <PermissionGate
+      role={UserRole.SUPER_ADMIN}
+      fallback={
+        <Card className="p-6 opacity-60">
+          <div className="flex items-center gap-2">
+            <Lock className="h-4 w-4 text-amber-400" />
+            <span className="text-sm text-gray-500">Super Admin required to edit professional details.</span>
+          </div>
+        </Card>
+      }
+    >
+      <div className="space-y-6">
+        <Card className="p-6">
+          <h3 className="mb-4 flex items-center text-base font-semibold text-gray-900">
+            <Briefcase className="mr-2 h-5 w-5 text-swiss-teal" />
+            Professional Details
+          </h3>
+          <div className="space-y-4">
+            <FormField label="Job Role">
+              <select value={formData.jobRole || ''} onChange={(e) => handleChange('jobRole', e.target.value)} className={STANDARD_INPUT_FIELD}>
+                <option value="">Select a role</option>
+                {EDUCATOR_JOB_ROLES.map((role) => (
+                  <option key={role} value={role}>{role}</option>
+                ))}
+              </select>
+            </FormField>
+            <FormField label="Availability">
+              <input type="text" value={formData.availability || ''} onChange={(e) => handleChange('availability', e.target.value)} className={STANDARD_INPUT_FIELD} placeholder="e.g., Full-time, Available immediately" />
+            </FormField>
+            <div className="flex items-center gap-3">
+              <input
+                type="checkbox"
+                id="candidatePoolVisible"
+                checked={formData.candidatePoolVisible || false}
+                onChange={(e) => handleChange('candidatePoolVisible', e.target.checked)}
+                className="h-4 w-4 rounded border-gray-300 text-swiss-teal focus:ring-swiss-teal"
+              />
+              <label htmlFor="candidatePoolVisible" className="text-sm text-gray-700">
+                Visible in candidate pool
+              </label>
+            </div>
+          </div>
+        </Card>
+
+        <Card className="p-6">
+          <h3 className="mb-4 flex items-center text-base font-semibold text-gray-900">
+            <MapPin className="mr-2 h-5 w-5 text-swiss-teal" />
+            Location
+          </h3>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <FormField label="Region / Canton">
+              <select value={formData.region || ''} onChange={(e) => handleChange('region', e.target.value)} className={STANDARD_INPUT_FIELD}>
+                <option value="">Select a region</option>
+                {SWISS_CANTONS_WITH_ALL.map((canton) => (
+                  <option key={canton} value={canton}>
+                    {canton === ALL_REGIONS_OPTION ? 'All' : canton}
+                  </option>
+                ))}
+              </select>
+            </FormField>
+            <FormField label="Cities">
+              <ChipInput
+                selectedChips={formData.cities || []}
+                onChange={(chips) => handleChange('cities', chips)}
+                placeholder="Add cities..."
+                allowCustomValues={true}
+              />
+            </FormField>
+          </div>
+        </Card>
+      </div>
+    </PermissionGate>
+  );
+
+  const experienceTab = (
+    <PermissionGate
+      role={UserRole.SUPER_ADMIN}
+      fallback={
+        <Card className="p-6 opacity-60">
+          <div className="flex items-center gap-2">
+            <Lock className="h-4 w-4 text-amber-400" />
+            <span className="text-sm text-gray-500">Super Admin required to edit experience and education.</span>
+          </div>
+        </Card>
+      }
+    >
+      <div className="space-y-8">
+        <Card className="p-6">
+          <WorkExperienceSection userId={id!} />
+        </Card>
+        <Card className="p-6">
+          <EducationSection userId={id!} />
+        </Card>
+        <Card className="p-6">
+          <CertificationsSection userId={id!} />
+        </Card>
+      </div>
+    </PermissionGate>
+  );
+
+  const skillsTab = (
+    <PermissionGate
+      role={UserRole.SUPER_ADMIN}
+      fallback={
+        <Card className="p-6 opacity-60">
+          <div className="flex items-center gap-2">
+            <Lock className="h-4 w-4 text-amber-400" />
+            <span className="text-sm text-gray-500">Super Admin required to edit skills.</span>
+          </div>
+        </Card>
+      }
+    >
+      <div className="space-y-6">
+        <Card className="p-6">
+          <h3 className="mb-4 flex items-center text-base font-semibold text-gray-900">
+            <Star className="mr-2 h-5 w-5 text-swiss-teal" />
+            Skills
+          </h3>
+          <ChipInput
+            selectedChips={formData.skills || []}
+            onChange={(chips) => handleChange('skills', chips)}
+            placeholder="e.g., Montessori, Bilingual..."
+            allowCustomValues={true}
+          />
+        </Card>
+
+        <Card className="p-6">
+          <h3 className="mb-4 flex items-center text-base font-semibold text-gray-900">
+            <FileText className="mr-2 h-5 w-5 text-swiss-teal" />
+            CV / Resume URL
+          </h3>
+          <input
+            type="url"
+            value={formData.cvUrl || ''}
+            onChange={(e) => handleChange('cvUrl', e.target.value)}
+            className={STANDARD_INPUT_FIELD}
+            placeholder="https://..."
+          />
+        </Card>
+      </div>
+    </PermissionGate>
+  );
+
+  // ── Non-educator / ADMIN simple layout ──────────────────────────────────────
+
+  const simpleLayout = (
+    <div className="space-y-6">
       {!isSuperAdmin && (
         <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
           <Lock className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
-          <span>
-            {t(
-              'admin:userProfile.adminLimitedAccess',
-              'You have read-only access to advanced sections. Basic profile fields (name, email, phone, bio) can be saved. Full editing requires Super Admin.',
-            )}
-          </span>
+          <span>You have limited access. Only basic profile fields can be saved. Full editing requires Super Admin.</span>
         </div>
       )}
+      {identityTab}
+    </div>
+  );
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Organization Info (if applicable) */}
+  // ── Educator tab layout (SUPER_ADMIN gets all 4 tabs) ───────────────────────
+
+  const educatorTabLayout = (
+    <Tabs
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tabs={[
+        { label: 'Identity', icon: User, content: identityTab },
+        { label: 'Professional', icon: Briefcase, content: professionalTab },
+        { label: 'Experience & Education', icon: GraduationCap, content: experienceTab },
+        { label: 'Skills', icon: Award, content: skillsTab },
+      ]}
+    />
+  );
+
+  return (
+    <div>
+      {/* Impersonation banner */}
+      {impersonating && impersonationTarget && (
+        <ImpersonationBanner
+          targetName={impersonationTarget.displayName}
+          targetEmail={impersonationTarget.email}
+          onExit={() => { setImpersonating(false); setImpersonationTarget(null); }}
+        />
+      )}
+
+      <div className="space-y-6 p-1">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button variant="secondary" leftIcon={ArrowLeft} onClick={handleBack}>
+              Back
+            </Button>
+            <div>
+              <h1 className="flex items-center text-2xl font-bold text-swiss-charcoal">
+                <User className="mr-2 h-6 w-6 text-swiss-teal" />
+                Edit User Profile
+              </h1>
+              <p className="mt-1 text-gray-600">
+                {fullName} • <span className="text-swiss-teal">{profile.role}</span>
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            {isSuperAdmin && !impersonating && (
+              <Button
+                variant="secondary"
+                leftIcon={UserCheck}
+                onClick={() => impersonateMutation.mutate()}
+                disabled={impersonateMutation.isPending}
+              >
+                {impersonateMutation.isPending ? 'Starting…' : 'Edit as User'}
+              </Button>
+            )}
+            <Button
+              variant="primary"
+              leftIcon={Save}
+              onClick={submitForm}
+              disabled={!isDirty || updateMutation.isPending}
+            >
+              {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
+            </Button>
+          </div>
+        </div>
+
+        {/* Organization info */}
         {profile.organization && (
           <Card className="p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-              <Building2 className="w-5 h-5 mr-2 text-swiss-teal" />
-              {t('admin:userProfile.organization', 'Organization')}
+            <h3 className="mb-4 flex items-center text-base font-semibold text-gray-900">
+              <Building2 className="mr-2 h-5 w-5 text-swiss-teal" />
+              Organization
             </h3>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-4">
               {profile.organization.logoUrl && (
-                <img
-                  src={profile.organization.logoUrl}
-                  alt={profile.organization.name}
-                  className="w-12 h-12 rounded-lg object-cover"
-                />
+                <img src={profile.organization.logoUrl} alt={profile.organization.name} className="h-12 w-12 rounded-lg object-cover" />
               )}
               <div>
                 <p className="font-medium text-gray-900">{profile.organization.name}</p>
@@ -246,334 +818,28 @@ const AdminUserProfileEdit: React.FC = () => {
                 size="sm"
                 onClick={() => navigate(`/organizations/${profile.organization!.id}/profile`)}
               >
-                {t('admin:userProfile.editOrgProfile', 'Edit Organization Profile')}
+                Edit Organization Profile
               </Button>
             </div>
           </Card>
         )}
 
-        {/* Basic Information */}
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-            <User className="w-5 h-5 mr-2 text-swiss-teal" />
-            {t('admin:userProfile.basicInfo', 'Basic Information')}
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t('admin:userProfile.firstName', 'First Name')}
-              </label>
-              <input
-                type="text"
-                value={formData.firstName || ''}
-                onChange={(e) => handleChange('firstName', e.target.value)}
-                className={STANDARD_INPUT_FIELD}
-                placeholder={t('admin:userProfile.firstNamePlaceholder', 'Enter first name')}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t('admin:userProfile.lastName', 'Last Name')}
-              </label>
-              <input
-                type="text"
-                value={formData.lastName || ''}
-                onChange={(e) => handleChange('lastName', e.target.value)}
-                className={STANDARD_INPUT_FIELD}
-                placeholder={t('admin:userProfile.lastNamePlaceholder', 'Enter last name')}
-              />
-            </div>
-          </div>
-        </Card>
+        {/* Main content */}
+        {isEducator ? educatorTabLayout : simpleLayout}
 
-        {/* Contact Information */}
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-            <Mail className="w-5 h-5 mr-2 text-swiss-teal" />
-            {t('admin:userProfile.contactInfo', 'Contact Information')}
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t('admin:userProfile.email', 'Email')}
-              </label>
-              <input
-                type="email"
-                value={formData.email || ''}
-                onChange={(e) => handleChange('email', e.target.value)}
-                className={STANDARD_INPUT_FIELD}
-                placeholder={t('admin:userProfile.emailPlaceholder', 'user@example.com')}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t('admin:userProfile.contactEmail', 'Contact Email')}
-              </label>
-              <input
-                type="email"
-                value={formData.contactEmail || ''}
-                onChange={(e) => handleChange('contactEmail', e.target.value)}
-                className={STANDARD_INPUT_FIELD}
-                placeholder={t('admin:userProfile.contactEmailPlaceholder', 'contact@example.com')}
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                {t('admin:userProfile.contactEmailHint', 'Public contact email (different from login email)')}
-              </p>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t('admin:userProfile.phone', 'Phone Number')}
-              </label>
-              <input
-                type="tel"
-                value={formData.phoneNumber || ''}
-                onChange={(e) => handleChange('phoneNumber', e.target.value)}
-                className={STANDARD_INPUT_FIELD}
-                placeholder="+41 XX XXX XX XX"
-              />
-            </div>
-          </div>
-        </Card>
-
-        {/* Location (for Educators) — SUPER_ADMIN only */}
-        {isEducator && (
-          <PermissionGate
-            role={UserRole.SUPER_ADMIN}
-            fallback={
-              <Card className="p-6 opacity-60">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                  <MapPin className="w-5 h-5 text-swiss-teal" />
-                  {t('admin:userProfile.location', 'Location')}
-                  <Lock className="w-4 h-4 text-amber-400" />
-                </h3>
-                <p className="text-sm text-gray-500">{t('admin:userProfile.superAdminOnly', 'Super Admin required to edit this section.')}</p>
-              </Card>
-            }
-          >
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <MapPin className="w-5 h-5 mr-2 text-swiss-teal" />
-                {t('admin:userProfile.location', 'Location')}
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t('admin:userProfile.region', 'Region / Canton')}
-                  </label>
-                  <select
-                    value={formData.region || ''}
-                    onChange={(e) => handleChange('region', e.target.value)}
-                    className={STANDARD_INPUT_FIELD}
-                  >
-                    <option value="">{t('admin:userProfile.selectRegion', 'Select a region')}</option>
-                    {SWISS_CANTONS_WITH_ALL.map((canton) => (
-                      <option key={canton} value={canton}>
-                        {canton === ALL_REGIONS_OPTION ? t('common:filters.all', 'All') : canton}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t('admin:userProfile.cities', 'Cities')}
-                  </label>
-                  <ChipInput
-                    selectedChips={formData.cities || []}
-                    onChange={(chips) => handleChange('cities', chips)}
-                    placeholder={t('admin:userProfile.citiesPlaceholder', 'Add cities...')}
-                    allowCustomValues={true}
-                  />
-                </div>
-              </div>
-            </Card>
-          </PermissionGate>
-        )}
-
-        {/* Professional Details (for Educators) — SUPER_ADMIN only */}
-        {isEducator && (
-          <PermissionGate
-            role={UserRole.SUPER_ADMIN}
-            fallback={
-              <Card className="p-6 opacity-60">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                  <Briefcase className="w-5 h-5 text-swiss-teal" />
-                  {t('admin:userProfile.professionalDetails', 'Professional Details')}
-                  <Lock className="w-4 h-4 text-amber-400" />
-                </h3>
-                <p className="text-sm text-gray-500">{t('admin:userProfile.superAdminOnly', 'Super Admin required to edit this section.')}</p>
-              </Card>
-            }
-          >
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <Briefcase className="w-5 h-5 mr-2 text-swiss-teal" />
-                {t('admin:userProfile.professionalDetails', 'Professional Details')}
-              </h3>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t('admin:userProfile.jobRoles', 'Job Role')}
-                  </label>
-                  <select
-                    value={formData.jobRole || ''}
-                    onChange={(e) => {
-                      const role = e.target.value;
-                      handleChange('jobRole', role);
-                    }}
-                    className={STANDARD_INPUT_FIELD}
-                  >
-                    <option value="">{t('admin:userProfile.jobRolesPlaceholder', 'Select a role')}</option>
-                    {EDUCATOR_JOB_ROLES.map((role) => (
-                      <option key={role} value={role}>{role}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t('admin:userProfile.availability', 'Availability')}
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.availability || ''}
-                    onChange={(e) => handleChange('availability', e.target.value)}
-                    className={STANDARD_INPUT_FIELD}
-                    placeholder={t('admin:userProfile.availabilityPlaceholder', 'e.g., Full-time, Available immediately')}
-                  />
-                </div>
-                <div className="flex items-center space-x-3">
-                  <input
-                    type="checkbox"
-                    id="candidatePoolVisible"
-                    checked={formData.candidatePoolVisible || false}
-                    onChange={(e) => handleChange('candidatePoolVisible', e.target.checked)}
-                    className="h-4 w-4 text-swiss-teal focus:ring-swiss-teal border-gray-300 rounded"
-                  />
-                  <label htmlFor="candidatePoolVisible" className="text-sm text-gray-700">
-                    {t('admin:userProfile.candidatePoolVisible', 'Visible in candidate pool')}
-                  </label>
-                </div>
-              </div>
-            </Card>
-          </PermissionGate>
-        )}
-
-        {/* Bio Section */}
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-            <FileText className="w-5 h-5 mr-2 text-swiss-teal" />
-            {t('admin:userProfile.bio', 'Bio / About')}
-          </h3>
-          <textarea
-            value={formData.shortBio || ''}
-            onChange={(e) => handleChange('shortBio', e.target.value)}
-            rows={4}
-            className={STANDARD_INPUT_FIELD}
-            placeholder={t('admin:userProfile.bioPlaceholder', 'Tell us about this user...')}
-          />
-        </Card>
-
-        {/* Skills, Certifications, Education, Work Experience, CV — SUPER_ADMIN only */}
-        {isEducator && (
-          <PermissionGate
-            role={UserRole.SUPER_ADMIN}
-            fallback={
-              <Card className="p-6 opacity-60">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                  <Star className="w-5 h-5 text-swiss-teal" />
-                  {t('admin:userProfile.skillsAndExperience', 'Skills, Certifications & Experience')}
-                  <Lock className="w-4 h-4 text-amber-400" />
-                </h3>
-                <p className="text-sm text-gray-500">{t('admin:userProfile.superAdminOnly', 'Super Admin required to edit this section.')}</p>
-              </Card>
-            }
-          >
-            <>
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                  <Star className="w-5 h-5 mr-2 text-swiss-teal" />
-                  {t('admin:userProfile.skills', 'Skills')}
-                </h3>
-                <ChipInput
-                  selectedChips={formData.skills || []}
-                  onChange={(chips) => handleChange('skills', chips)}
-                  placeholder={t('admin:userProfile.skillsPlaceholder', 'e.g., Montessori, Bilingual')}
-                  allowCustomValues={true}
-                />
-              </Card>
-
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                  <Award className="w-5 h-5 mr-2 text-swiss-teal" />
-                  {t('admin:userProfile.certifications', 'Certifications')}
-                </h3>
-                <ChipInput
-                  selectedChips={formData.certifications || []}
-                  onChange={(chips) => handleChange('certifications', chips)}
-                  placeholder={t('admin:userProfile.certificationsPlaceholder', 'e.g., CPR Certified')}
-                  allowCustomValues={true}
-                />
-              </Card>
-
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                  <GraduationCap className="w-5 h-5 mr-2 text-swiss-teal" />
-                  {t('admin:userProfile.education', 'Education')}
-                </h3>
-                <textarea
-                  value={formData.education || ''}
-                  onChange={(e) => handleChange('education', e.target.value)}
-                  rows={4}
-                  className={STANDARD_INPUT_FIELD}
-                  placeholder={t('admin:userProfile.educationPlaceholder', 'List educational background...')}
-                />
-              </Card>
-
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                  <Briefcase className="w-5 h-5 mr-2 text-swiss-teal" />
-                  {t('admin:userProfile.workExperience', 'Work Experience')}
-                </h3>
-                <textarea
-                  value={formData.workExperience || ''}
-                  onChange={(e) => handleChange('workExperience', e.target.value)}
-                  rows={6}
-                  className={STANDARD_INPUT_FIELD}
-                  placeholder={t('admin:userProfile.workExperiencePlaceholder', 'Describe work experience...')}
-                />
-              </Card>
-
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                  <FileText className="w-5 h-5 mr-2 text-swiss-teal" />
-                  {t('admin:userProfile.cvUrl', 'CV / Resume URL')}
-                </h3>
-                <input
-                  type="url"
-                  value={formData.cvUrl || ''}
-                  onChange={(e) => handleChange('cvUrl', e.target.value)}
-                  className={STANDARD_INPUT_FIELD}
-                  placeholder="https://..."
-                />
-              </Card>
-            </>
-          </PermissionGate>
-        )}
-
-        {/* Save Button */}
-        <div className="flex justify-end space-x-4">
-          <Button variant="secondary" onClick={handleBack}>
-            {t('common:cancel', 'Cancel')}
-          </Button>
+        {/* Footer save row */}
+        <div className="flex justify-end gap-3 border-t border-gray-100 pt-4">
+          <Button variant="secondary" onClick={handleBack}>Cancel</Button>
           <Button
             variant="primary"
             leftIcon={Save}
-            type="submit"
+            onClick={submitForm}
             disabled={!isDirty || updateMutation.isPending}
           >
-            {updateMutation.isPending ? t('common:saving', 'Saving...') : t('common:saveChanges', 'Save Changes')}
+            {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
           </Button>
         </div>
-      </form>
+      </div>
     </div>
   );
 };
