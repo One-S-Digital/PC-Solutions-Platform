@@ -55,6 +55,7 @@ const OrganizationProfileViewPage: React.FC = () => {
             description: orgData.description,
             vatNumber: orgData.vatNumber,
             contactPerson: orgData.contactPerson,
+            contactEmail: orgData.contactEmail ?? null,
             phoneNumber: orgData.phoneNumber,
             canton: orgData.canton,
             regionsServed: Array.isArray(orgData.regionsServed) ? orgData.regionsServed : (orgData.canton ? [orgData.canton] : []),

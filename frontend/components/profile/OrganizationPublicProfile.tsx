@@ -212,6 +212,23 @@ const OrganizationPublicProfile: React.FC<OrganizationPublicProfileProps> = ({
 
               <div>
                 <p className="text-xs text-gray-500 mb-1 font-medium">
+                  {t('profile:organization.contactEmail', { defaultValue: 'Contact Email' })}
+                </p>
+                {organization.contactEmail ? (
+                  <a
+                    href={`mailto:${organization.contactEmail}`}
+                    className="text-swiss-mint hover:text-swiss-teal flex items-center gap-2"
+                  >
+                    <EnvelopeIcon className="w-4 h-4" />
+                    {organization.contactEmail}
+                  </a>
+                ) : (
+                  <p className="text-gray-400 italic text-xs">{t('profile:organization.notProvided', { defaultValue: 'Not provided' })}</p>
+                )}
+              </div>
+
+              <div>
+                <p className="text-xs text-gray-500 mb-1 font-medium">
                   {t('profile:organization.phone', { defaultValue: 'Phone' })}
                 </p>
                 {organization.phoneNumber ? (

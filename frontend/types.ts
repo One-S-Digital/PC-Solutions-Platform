@@ -88,6 +88,7 @@ export interface Organization {
   
   // Additional organization fields
   contactPerson?: string;
+  contactEmail?: string;
   phoneNumber?: string;
   canton?: string; // Legacy single canton field
   city?: string; // City where the organization is located
