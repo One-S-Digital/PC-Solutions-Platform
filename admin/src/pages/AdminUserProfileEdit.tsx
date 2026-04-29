@@ -17,6 +17,7 @@ import {
   Award,
   Star,
   Building2,
+  Lock,
 } from 'lucide-react';
 import Card from '../components/design-system/Card';
 import Button from '../components/design-system/Button';
@@ -24,6 +25,8 @@ import ChipInput from '../components/design-system/ChipInput';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { ALL_REGIONS_OPTION, STANDARD_INPUT_FIELD, SWISS_CANTONS_WITH_ALL, EDUCATOR_JOB_ROLES } from '../constants/design-system';
 import { UserRole } from '../types';
+import { useAdminRole } from '../hooks/useAdminRole';
+import { PermissionGate } from '../components/PermissionGate';
 
 interface UserProfile {
   id: string;
@@ -64,6 +67,7 @@ const AdminUserProfileEdit: React.FC = () => {
   const { t } = useTranslation(['admin', 'common']);
   const apiClient = useApiClient();
   const queryClient = useQueryClient();
+  const { isSuperAdmin } = useAdminRole();
 
   const [formData, setFormData] = useState<Partial<UserProfile>>({});
   const [isDirty, setIsDirty] = useState(false);
@@ -204,6 +208,19 @@ const AdminUserProfileEdit: React.FC = () => {
         </Button>
       </div>
 
+      {/* ADMIN limited-access notice */}
+      {!isSuperAdmin && (
+        <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          <Lock className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
+          <span>
+            {t(
+              'admin:userProfile.adminLimitedAccess',
+              'You have read-only access to advanced sections. Basic profile fields (name, email, phone, bio) can be saved. Full editing requires Super Admin.',
+            )}
+          </span>
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Organization Info (if applicable) */}
         {profile.organization && (
@@ -318,98 +335,126 @@ const AdminUserProfileEdit: React.FC = () => {
           </div>
         </Card>
 
-        {/* Location (for Educators) */}
+        {/* Location (for Educators) — SUPER_ADMIN only */}
         {isEducator && (
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-              <MapPin className="w-5 h-5 mr-2 text-swiss-teal" />
-              {t('admin:userProfile.location', 'Location')}
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('admin:userProfile.region', 'Region / Canton')}
-                </label>
-                <select
-                  value={formData.region || ''}
-                  onChange={(e) => handleChange('region', e.target.value)}
-                  className={STANDARD_INPUT_FIELD}
-                >
-                  <option value="">{t('admin:userProfile.selectRegion', 'Select a region')}</option>
-                  {SWISS_CANTONS_WITH_ALL.map((canton) => (
-                    <option key={canton} value={canton}>
-                      {canton === ALL_REGIONS_OPTION ? t('common:filters.all', 'All') : canton}
-                    </option>
-                  ))}
-                </select>
+          <PermissionGate
+            role={UserRole.SUPER_ADMIN}
+            fallback={
+              <Card className="p-6 opacity-60">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-swiss-teal" />
+                  {t('admin:userProfile.location', 'Location')}
+                  <Lock className="w-4 h-4 text-amber-400" />
+                </h3>
+                <p className="text-sm text-gray-500">{t('admin:userProfile.superAdminOnly', 'Super Admin required to edit this section.')}</p>
+              </Card>
+            }
+          >
+            <Card className="p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <MapPin className="w-5 h-5 mr-2 text-swiss-teal" />
+                {t('admin:userProfile.location', 'Location')}
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('admin:userProfile.region', 'Region / Canton')}
+                  </label>
+                  <select
+                    value={formData.region || ''}
+                    onChange={(e) => handleChange('region', e.target.value)}
+                    className={STANDARD_INPUT_FIELD}
+                  >
+                    <option value="">{t('admin:userProfile.selectRegion', 'Select a region')}</option>
+                    {SWISS_CANTONS_WITH_ALL.map((canton) => (
+                      <option key={canton} value={canton}>
+                        {canton === ALL_REGIONS_OPTION ? t('common:filters.all', 'All') : canton}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('admin:userProfile.cities', 'Cities')}
+                  </label>
+                  <ChipInput
+                    selectedChips={formData.cities || []}
+                    onChange={(chips) => handleChange('cities', chips)}
+                    placeholder={t('admin:userProfile.citiesPlaceholder', 'Add cities...')}
+                    allowCustomValues={true}
+                  />
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('admin:userProfile.cities', 'Cities')}
-                </label>
-                <ChipInput
-                  selectedChips={formData.cities || []}
-                  onChange={(chips) => handleChange('cities', chips)}
-                  placeholder={t('admin:userProfile.citiesPlaceholder', 'Add cities...')}
-                  allowCustomValues={true}
-                />
-              </div>
-            </div>
-          </Card>
+            </Card>
+          </PermissionGate>
         )}
 
-        {/* Professional Details (for Educators) */}
+        {/* Professional Details (for Educators) — SUPER_ADMIN only */}
         {isEducator && (
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-              <Briefcase className="w-5 h-5 mr-2 text-swiss-teal" />
-              {t('admin:userProfile.professionalDetails', 'Professional Details')}
-            </h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('admin:userProfile.jobRoles', 'Job Role')}
-                </label>
-                <select
-                  value={formData.jobRole || ''}
-                  onChange={(e) => {
-                    const role = e.target.value;
-                    handleChange('jobRole', role);
-                  }}
-                  className={STANDARD_INPUT_FIELD}
-                >
-                  <option value="">{t('admin:userProfile.jobRolesPlaceholder', 'Select a role')}</option>
-                  {EDUCATOR_JOB_ROLES.map((role) => (
-                    <option key={role} value={role}>{role}</option>
-                  ))}
-                </select>
+          <PermissionGate
+            role={UserRole.SUPER_ADMIN}
+            fallback={
+              <Card className="p-6 opacity-60">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                  <Briefcase className="w-5 h-5 text-swiss-teal" />
+                  {t('admin:userProfile.professionalDetails', 'Professional Details')}
+                  <Lock className="w-4 h-4 text-amber-400" />
+                </h3>
+                <p className="text-sm text-gray-500">{t('admin:userProfile.superAdminOnly', 'Super Admin required to edit this section.')}</p>
+              </Card>
+            }
+          >
+            <Card className="p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <Briefcase className="w-5 h-5 mr-2 text-swiss-teal" />
+                {t('admin:userProfile.professionalDetails', 'Professional Details')}
+              </h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('admin:userProfile.jobRoles', 'Job Role')}
+                  </label>
+                  <select
+                    value={formData.jobRole || ''}
+                    onChange={(e) => {
+                      const role = e.target.value;
+                      handleChange('jobRole', role);
+                    }}
+                    className={STANDARD_INPUT_FIELD}
+                  >
+                    <option value="">{t('admin:userProfile.jobRolesPlaceholder', 'Select a role')}</option>
+                    {EDUCATOR_JOB_ROLES.map((role) => (
+                      <option key={role} value={role}>{role}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('admin:userProfile.availability', 'Availability')}
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.availability || ''}
+                    onChange={(e) => handleChange('availability', e.target.value)}
+                    className={STANDARD_INPUT_FIELD}
+                    placeholder={t('admin:userProfile.availabilityPlaceholder', 'e.g., Full-time, Available immediately')}
+                  />
+                </div>
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="candidatePoolVisible"
+                    checked={formData.candidatePoolVisible || false}
+                    onChange={(e) => handleChange('candidatePoolVisible', e.target.checked)}
+                    className="h-4 w-4 text-swiss-teal focus:ring-swiss-teal border-gray-300 rounded"
+                  />
+                  <label htmlFor="candidatePoolVisible" className="text-sm text-gray-700">
+                    {t('admin:userProfile.candidatePoolVisible', 'Visible in candidate pool')}
+                  </label>
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('admin:userProfile.availability', 'Availability')}
-                </label>
-                <input
-                  type="text"
-                  value={formData.availability || ''}
-                  onChange={(e) => handleChange('availability', e.target.value)}
-                  className={STANDARD_INPUT_FIELD}
-                  placeholder={t('admin:userProfile.availabilityPlaceholder', 'e.g., Full-time, Available immediately')}
-                />
-              </div>
-              <div className="flex items-center space-x-3">
-                <input
-                  type="checkbox"
-                  id="candidatePoolVisible"
-                  checked={formData.candidatePoolVisible || false}
-                  onChange={(e) => handleChange('candidatePoolVisible', e.target.checked)}
-                  className="h-4 w-4 text-swiss-teal focus:ring-swiss-teal border-gray-300 rounded"
-                />
-                <label htmlFor="candidatePoolVisible" className="text-sm text-gray-700">
-                  {t('admin:userProfile.candidatePoolVisible', 'Visible in candidate pool')}
-                </label>
-              </div>
-            </div>
-          </Card>
+            </Card>
+          </PermissionGate>
         )}
 
         {/* Bio Section */}
@@ -427,77 +472,91 @@ const AdminUserProfileEdit: React.FC = () => {
           />
         </Card>
 
-        {/* Skills & Certifications (for Educators) */}
+        {/* Skills, Certifications, Education, Work Experience, CV — SUPER_ADMIN only */}
         {isEducator && (
-          <>
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <Star className="w-5 h-5 mr-2 text-swiss-teal" />
-                {t('admin:userProfile.skills', 'Skills')}
-              </h3>
-              <ChipInput
-                selectedChips={formData.skills || []}
-                onChange={(chips) => handleChange('skills', chips)}
-                placeholder={t('admin:userProfile.skillsPlaceholder', 'e.g., Montessori, Bilingual')}
-                allowCustomValues={true}
-              />
-            </Card>
+          <PermissionGate
+            role={UserRole.SUPER_ADMIN}
+            fallback={
+              <Card className="p-6 opacity-60">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                  <Star className="w-5 h-5 text-swiss-teal" />
+                  {t('admin:userProfile.skillsAndExperience', 'Skills, Certifications & Experience')}
+                  <Lock className="w-4 h-4 text-amber-400" />
+                </h3>
+                <p className="text-sm text-gray-500">{t('admin:userProfile.superAdminOnly', 'Super Admin required to edit this section.')}</p>
+              </Card>
+            }
+          >
+            <>
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                  <Star className="w-5 h-5 mr-2 text-swiss-teal" />
+                  {t('admin:userProfile.skills', 'Skills')}
+                </h3>
+                <ChipInput
+                  selectedChips={formData.skills || []}
+                  onChange={(chips) => handleChange('skills', chips)}
+                  placeholder={t('admin:userProfile.skillsPlaceholder', 'e.g., Montessori, Bilingual')}
+                  allowCustomValues={true}
+                />
+              </Card>
 
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <Award className="w-5 h-5 mr-2 text-swiss-teal" />
-                {t('admin:userProfile.certifications', 'Certifications')}
-              </h3>
-              <ChipInput
-                selectedChips={formData.certifications || []}
-                onChange={(chips) => handleChange('certifications', chips)}
-                placeholder={t('admin:userProfile.certificationsPlaceholder', 'e.g., CPR Certified')}
-                allowCustomValues={true}
-              />
-            </Card>
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                  <Award className="w-5 h-5 mr-2 text-swiss-teal" />
+                  {t('admin:userProfile.certifications', 'Certifications')}
+                </h3>
+                <ChipInput
+                  selectedChips={formData.certifications || []}
+                  onChange={(chips) => handleChange('certifications', chips)}
+                  placeholder={t('admin:userProfile.certificationsPlaceholder', 'e.g., CPR Certified')}
+                  allowCustomValues={true}
+                />
+              </Card>
 
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <GraduationCap className="w-5 h-5 mr-2 text-swiss-teal" />
-                {t('admin:userProfile.education', 'Education')}
-              </h3>
-              <textarea
-                value={formData.education || ''}
-                onChange={(e) => handleChange('education', e.target.value)}
-                rows={4}
-                className={STANDARD_INPUT_FIELD}
-                placeholder={t('admin:userProfile.educationPlaceholder', 'List educational background...')}
-              />
-            </Card>
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                  <GraduationCap className="w-5 h-5 mr-2 text-swiss-teal" />
+                  {t('admin:userProfile.education', 'Education')}
+                </h3>
+                <textarea
+                  value={formData.education || ''}
+                  onChange={(e) => handleChange('education', e.target.value)}
+                  rows={4}
+                  className={STANDARD_INPUT_FIELD}
+                  placeholder={t('admin:userProfile.educationPlaceholder', 'List educational background...')}
+                />
+              </Card>
 
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <Briefcase className="w-5 h-5 mr-2 text-swiss-teal" />
-                {t('admin:userProfile.workExperience', 'Work Experience')}
-              </h3>
-              <textarea
-                value={formData.workExperience || ''}
-                onChange={(e) => handleChange('workExperience', e.target.value)}
-                rows={6}
-                className={STANDARD_INPUT_FIELD}
-                placeholder={t('admin:userProfile.workExperiencePlaceholder', 'Describe work experience...')}
-              />
-            </Card>
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                  <Briefcase className="w-5 h-5 mr-2 text-swiss-teal" />
+                  {t('admin:userProfile.workExperience', 'Work Experience')}
+                </h3>
+                <textarea
+                  value={formData.workExperience || ''}
+                  onChange={(e) => handleChange('workExperience', e.target.value)}
+                  rows={6}
+                  className={STANDARD_INPUT_FIELD}
+                  placeholder={t('admin:userProfile.workExperiencePlaceholder', 'Describe work experience...')}
+                />
+              </Card>
 
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <FileText className="w-5 h-5 mr-2 text-swiss-teal" />
-                {t('admin:userProfile.cvUrl', 'CV / Resume URL')}
-              </h3>
-              <input
-                type="url"
-                value={formData.cvUrl || ''}
-                onChange={(e) => handleChange('cvUrl', e.target.value)}
-                className={STANDARD_INPUT_FIELD}
-                placeholder="https://..."
-              />
-            </Card>
-          </>
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                  <FileText className="w-5 h-5 mr-2 text-swiss-teal" />
+                  {t('admin:userProfile.cvUrl', 'CV / Resume URL')}
+                </h3>
+                <input
+                  type="url"
+                  value={formData.cvUrl || ''}
+                  onChange={(e) => handleChange('cvUrl', e.target.value)}
+                  className={STANDARD_INPUT_FIELD}
+                  placeholder="https://..."
+                />
+              </Card>
+            </>
+          </PermissionGate>
         )}
 
         {/* Save Button */}

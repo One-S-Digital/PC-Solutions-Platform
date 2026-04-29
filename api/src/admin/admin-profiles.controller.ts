@@ -4,11 +4,13 @@ import {
   Patch,
   Param,
   Body,
+  Request,
   UseGuards,
   ParseUUIDPipe,
   Logger,
   NotFoundException,
   BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import {
@@ -414,13 +416,38 @@ export class AdminProfilesController {
     );
   }
 
+  // Fields that ADMIN (non-super) is allowed to edit on a user profile.
+  private static readonly ADMIN_ALLOWED_FIELDS: (keyof AdminUpdateUserProfileDto)[] = [
+    'firstName',
+    'lastName',
+    'email',
+    'contactEmail',
+    'phoneNumber',
+    'shortBio',
+  ];
+
   @Patch('users/:id/profile')
   @ApiOperation({ summary: 'Update full user profile (admin)' })
   @ApiResponse({ status: 200, description: 'User profile updated successfully' })
   async updateUserProfile(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: AdminUpdateUserProfileDto,
+    @Request() req: any,
   ) {
+    const callerRole: UserRole = req.context?.role ?? req.user?.role;
+
+    if (callerRole === UserRole.ADMIN) {
+      // Strip any fields beyond the ADMIN whitelist and throw if the caller
+      // tried to touch restricted fields (so they know why the change didn't apply).
+      const restrictedFields = (Object.keys(dto) as (keyof AdminUpdateUserProfileDto)[]).filter(
+        (k) => !AdminProfilesController.ADMIN_ALLOWED_FIELDS.includes(k),
+      );
+      if (restrictedFields.length > 0) {
+        throw new ForbiddenException(
+          `ADMIN role cannot edit: ${restrictedFields.join(', ')}. Use SUPER_ADMIN for full profile access.`,
+        );
+      }
+    }
     this.logger.log(`[ADMIN] Updating profile for user: ${id}`);
 
     // Find the user - first try AppUser.id, then User.id

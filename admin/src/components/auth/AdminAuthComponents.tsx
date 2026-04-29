@@ -1,15 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useAuth, useUser } from '@clerk/clerk-react';
 import { Navigate } from 'react-router-dom';
-
-enum UserRole {
-  SUPER_ADMIN = 'SUPER_ADMIN',
-  ADMIN = 'ADMIN',
-  FOUNDATION = 'FOUNDATION',
-}
+import { UserRole } from '../../types';
 
 import AdminCustomLoginForm from './AdminCustomLoginFormNew';
 import AdminCustomSignupForm from './AdminCustomSignupFormNew';
+
+// ─── Admin Role Context ───────────────────────────────────────────────────────
+// Populated by AdminProtectedRoute once the backend user is verified.
+// Avoids redundant /users/me fetches in every page that needs the caller's role.
+
+interface AdminRoleContextValue {
+  adminRole: UserRole | null;
+  isSuperAdmin: boolean;
+}
+
+export const AdminRoleContext = createContext<AdminRoleContextValue>({
+  adminRole: null,
+  isSuperAdmin: false,
+});
 
 // Get API base URL from environment
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -162,10 +171,24 @@ export function AdminProtectedRoute({ children }: { children: React.ReactNode })
   }
 
   // Check if user has admin role from database (single source of truth)
-  const userRole = backendUser?.role;
+  const userRole = backendUser?.role as UserRole | undefined;
   if (userRole !== UserRole.SUPER_ADMIN && userRole !== UserRole.ADMIN) {
     return <Navigate to="/access-denied" />;
   }
 
-  return <>{children}</>;
+  return (
+    <AdminRoleContext.Provider
+      value={{
+        adminRole: userRole,
+        isSuperAdmin: userRole === UserRole.SUPER_ADMIN,
+      }}
+    >
+      {children}
+    </AdminRoleContext.Provider>
+  );
+}
+
+// Convenience hook — always use this instead of reading the context directly.
+export function useAdminRoleContext(): AdminRoleContextValue {
+  return useContext(AdminRoleContext);
 }
