@@ -26,6 +26,9 @@ import Button from '../components/design-system/Button';
 import ChipInput from '../components/design-system/ChipInput';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { ALL_REGIONS_OPTION, STANDARD_INPUT_FIELD, SWISS_CANTONS_WITH_ALL, SWISS_CANTONS, SERVICE_CATEGORIES, SERVICE_DELIVERY_TYPES } from '../constants/design-system';
+import OrgProductsPanel from '../components/org/OrgProductsPanel';
+import OrgServicesPanel from '../components/org/OrgServicesPanel';
+import OrgMembersPanel from '../components/org/OrgMembersPanel';
 
 interface OrganizationProfile {
   id: string;
@@ -667,41 +670,6 @@ const AdminOrganizationProfileEdit: React.FC = () => {
           </Card>
         )}
 
-        {/* Members */}
-        {profile.members && profile.members.length > 0 && (
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-              <Users className="w-5 h-5 mr-2 text-swiss-teal" />
-              {t('admin:orgProfile.members', 'Organization Members')}
-            </h3>
-            <div className="space-y-3">
-              {profile.members.map((member: any) => (
-                <div
-                  key={member.userId}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                >
-                  <div>
-                    <p className="font-medium text-gray-900">{member.name || 'Unknown'}</p>
-                    <p className="text-sm text-gray-500">{member.email}</p>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <span className="px-2 py-1 text-xs font-medium bg-swiss-teal/10 text-swiss-teal rounded-full">
-                      {member.role}
-                    </span>
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => navigate(`/users/${member.userId}/profile`)}
-                    >
-                      {t('admin:orgProfile.editMember', 'Edit')}
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Card>
-        )}
-
         {/* Save Button */}
         <div className="flex justify-end space-x-4">
           <Button variant="secondary" onClick={handleBack}>
@@ -717,6 +685,22 @@ const AdminOrganizationProfileEdit: React.FC = () => {
           </Button>
         </div>
       </form>
+
+      {/* Phase 5: Supplier products panel */}
+      {isSupplier && <OrgProductsPanel orgId={id!} />}
+
+      {/* Phase 6: Service provider services panel */}
+      {isServiceProvider && <OrgServicesPanel orgId={id!} />}
+
+      {/* Phase 7: Members management (replaces read-only member list) */}
+      <OrgMembersPanel
+        orgId={id!}
+        orgType={profile.type}
+        members={profile.members || []}
+        onMembersChanged={() =>
+          queryClient.invalidateQueries({ queryKey: ['admin-organization-profile', id] })
+        }
+      />
     </div>
   );
 };

@@ -907,6 +907,30 @@ export const apiService = {
   updateAdminOrganizationProfile: (apiClient: AxiosInstance, orgId: string, data: any) =>
     apiClient.patch<ApiResponse<any>>(`/admin/organizations/${orgId}/profile`, data),
 
+  // Admin org-scoped product endpoints (Phase 5)
+  getAdminOrgProducts: (apiClient: AxiosInstance, orgId: string) =>
+    apiClient.get<ApiResponse<any[]>>(`/admin/organizations/${orgId}/products`),
+  createAdminOrgProduct: (apiClient: AxiosInstance, orgId: string, data: any) =>
+    apiClient.post<ApiResponse<any>>(`/admin/organizations/${orgId}/products`, data),
+  updateAdminOrgProduct: (apiClient: AxiosInstance, orgId: string, productId: string, data: any) =>
+    apiClient.patch<ApiResponse<any>>(`/admin/organizations/${orgId}/products/${productId}`, data),
+  deleteAdminOrgProduct: (apiClient: AxiosInstance, orgId: string, productId: string) =>
+    apiClient.delete<ApiResponse<any>>(`/admin/organizations/${orgId}/products/${productId}`),
+
+  // Admin org-scoped service endpoints (Phase 6)
+  getAdminOrgServices: (apiClient: AxiosInstance, orgId: string) =>
+    apiClient.get<ApiResponse<any[]>>(`/admin/organizations/${orgId}/services`),
+  createAdminOrgService: (apiClient: AxiosInstance, orgId: string, data: any) =>
+    apiClient.post<ApiResponse<any>>(`/admin/organizations/${orgId}/services`, data),
+  deleteAdminOrgService: (apiClient: AxiosInstance, orgId: string, serviceId: string) =>
+    apiClient.delete<ApiResponse<any>>(`/admin/organizations/${orgId}/services/${serviceId}`),
+
+  // Admin org member management (Phase 7)
+  addAdminOrgMember: (apiClient: AxiosInstance, orgId: string, userId: string, role: string) =>
+    apiClient.post<ApiResponse<any>>(`/admin/organizations/${orgId}/members`, { userId, role }),
+  removeAdminOrgMember: (apiClient: AxiosInstance, orgId: string, userId: string) =>
+    apiClient.delete<ApiResponse<any>>(`/admin/organizations/${orgId}/members/${userId}`),
+
   // Support Tickets
   getSupportTickets: (apiClient: AxiosInstance, filters?: {
     status?: string;

@@ -853,4 +853,47 @@ export class AdminProfilesController {
     if (!deleted.count) throw new NotFoundException('Document not found');
     return { success: true, message: 'Document hard deleted' };
   }
+
+  // ── Member management ──────────────────────────────────────────────────────
+
+  @Post('organizations/:orgId/members')
+  async addOrganizationMember(
+    @Param('orgId', ParseUUIDPipe) orgId: string,
+    @Body() dto: { userId: string; role: string },
+  ) {
+    if (!dto.userId) throw new BadRequestException('userId is required');
+    const org = await this.prisma.organization.findUnique({ where: { id: orgId } });
+    if (!org) throw new NotFoundException('Organization not found');
+
+    const user = await this.prisma.user.findUnique({ where: { id: dto.userId } });
+    if (!user) throw new NotFoundException('User not found');
+
+    const role = (Object.values(UserRole) as string[]).includes(dto.role)
+      ? (dto.role as UserRole)
+      : org.type === OrganizationType.FOUNDATION
+        ? UserRole.EDUCATOR
+        : org.type === OrganizationType.PRODUCT_SUPPLIER
+          ? UserRole.PRODUCT_SUPPLIER
+          : UserRole.SERVICE_PROVIDER;
+
+    await this.prisma.userOrganization.upsert({
+      where: { userId_organizationId: { userId: dto.userId, organizationId: orgId } },
+      create: { userId: dto.userId, organizationId: orgId, role },
+      update: { role },
+    });
+
+    return { success: true, message: 'Member added to organization' };
+  }
+
+  @Delete('organizations/:orgId/members/:userId')
+  async removeOrganizationMember(
+    @Param('orgId', ParseUUIDPipe) orgId: string,
+    @Param('userId') userId: string,
+  ) {
+    const deleted = await this.prisma.userOrganization.deleteMany({
+      where: { userId, organizationId: orgId },
+    });
+    if (!deleted.count) throw new NotFoundException('Member not found in this organization');
+    return { success: true, message: 'Member removed from organization' };
+  }
 }
