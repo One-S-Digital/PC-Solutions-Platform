@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useSignIn, useAuth } from '@clerk/clerk-react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useSignIn, useAuth, useClerk } from '@clerk/clerk-react';
 import { useTranslation } from 'react-i18next';
 import { STANDARD_INPUT_FIELD, APP_NAME } from '../constants';
 import Card from '../components/ui/Card';
@@ -28,8 +28,10 @@ const GoogleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 const LoginPage: React.FC = () => {
   const { t } = useTranslation(['auth', 'common']);
   const navigate = useNavigate();
+  const location = useLocation();
   const { signIn, isLoaded: isSignInLoaded, setActive } = useSignIn();
   const { isSignedIn, isLoaded: isAuthLoaded } = useAuth();
+  const clerk = useClerk();
   const { currentUser } = useAppContext();
   const { isLoading: isAuthLoading, authError, clearAuthError, logout, isSigningOut: isSigningOutGlobal } = useAuthContext();
   const { settings, loading: settingsLoading, error: settingsError } = useFrontendSettings();
@@ -42,6 +44,24 @@ const LoginPage: React.FC = () => {
       console.warn('Failed to load frontend settings:', settingsError);
     }
   }, [settingsError]);
+
+  // If a user is already signed in, don't keep them stuck on /login.
+  // This can happen after OAuth completes, or when a signed-in user refreshes /login.
+  useEffect(() => {
+    console.log('[Login Debug] Redirect useEffect:', { isAuthLoaded, isSignedIn, isAuthLoading, isSigningOutGlobal, hasCurrentUser: !!currentUser });
+    if (!isAuthLoaded || !isSignedIn) return;
+
+    if (isAuthLoading || isSigningOutGlobal) return;
+
+    if (currentUser) {
+      console.log('[Login Debug] Redirect useEffect -> /dashboard (currentUser exists)');
+      navigate('/dashboard', { replace: true });
+      return;
+    }
+
+    console.log('[Login Debug] Redirect useEffect -> /signup (no currentUser)');
+    navigate('/signup', { replace: true, state: { from: location, isPending: true } });
+  }, [isAuthLoaded, isSignedIn, currentUser, isAuthLoading, isSigningOutGlobal, navigate, location]);
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -95,24 +115,77 @@ const LoginPage: React.FC = () => {
         password: password,
       });
 
-      if (result.status === 'complete') {
+      console.log('[Login Debug] signIn.create result:', {
+        status: result.status,
+        supportedFirstFactors: result.supportedFirstFactors,
+        supportedSecondFactors: result.supportedSecondFactors,
+        firstFactorVerification: result.firstFactorVerification,
+        createdSessionId: result.createdSessionId,
+        identifier: result.identifier,
+      });
+
+      const activateSession = async (sessionId: string | null) => {
         try {
-          // Immediately activate session and navigate - no re-render in between
-          await setActive({ session: result.createdSessionId });
-          
-          // Navigate immediately - proper render gating prevents Active Session UI from showing
+          console.log('[Login Debug] Calling setActive with sessionId:', sessionId);
+          console.log('[Login Debug] Clerk client state BEFORE setActive:', {
+            session: clerk.session?.id,
+            user: clerk.user?.id,
+            client: clerk.client?.sessions?.length,
+            publishableKey: clerk.publishableKey,
+            proxyUrl: (clerk as any).proxyUrl,
+            domain: (clerk as any).domain,
+            frontendApi: (clerk as any).frontendApi,
+          });
+          await setActive({ session: sessionId });
+          console.log('[Login Debug] setActive completed');
+          console.log('[Login Debug] Clerk client state AFTER setActive:', {
+            session: clerk.session?.id,
+            user: clerk.user?.id,
+            clientSessions: clerk.client?.sessions?.map(s => ({ id: s.id, status: s.status })),
+          });
+          console.log('[Login Debug] Cookies after setActive:', document.cookie);
+          console.log('[Login Debug] Navigating to /dashboard...');
           navigate('/dashboard', { replace: true });
         } catch (setActiveError: any) {
-          console.error('Session activation failed:', setActiveError);
+          console.error('[Login Debug] setActive threw error:', setActiveError);
           setError(t('common:loginPage.sessionActivationFailed'));
         }
+      };
+
+      if (result.status === 'complete') {
+        await activateSession(result.createdSessionId);
       } else if (result.status === 'needs_first_factor') {
+        console.log('[Login Debug] Attempting first factor with password strategy');
+        const firstFactorResult = await signIn.attemptFirstFactor({
+          strategy: 'password',
+          password: password,
+        });
+
+        console.log('[Login Debug] attemptFirstFactor result:', {
+          status: firstFactorResult.status,
+          createdSessionId: firstFactorResult.createdSessionId,
+          supportedSecondFactors: firstFactorResult.supportedSecondFactors,
+        });
+
+        if (firstFactorResult.status === 'complete') {
+          await activateSession(firstFactorResult.createdSessionId);
+        } else if (firstFactorResult.status === 'needs_second_factor') {
+          setError(t('common:loginPage.twoFactorRequired'));
+        } else {
+          setError(t('common:loginPage.loginIncomplete'));
+        }
+      } else if (result.status === 'needs_second_factor') {
         setError(t('common:loginPage.twoFactorRequired'));
       } else {
+        console.warn('[Login Debug] Unexpected sign-in status:', result.status);
         setError(t('common:loginPage.loginIncomplete'));
       }
     } catch (err: any) {
-      console.error('Login error:', err);
+      console.error('[Login Debug] signIn.create threw error:', err, {
+        errors: err.errors,
+        message: err.message,
+        status: err.status,
+      });
 
       let errorMessage = t('common:errors.unknown');
 
@@ -129,6 +202,8 @@ const LoginPage: React.FC = () => {
             errorMessage = t('common:loginPage.invalidEmail', 'Please enter a valid email address.');
             break;
           case 'session_exists':
+            console.log('[Login Debug] Session exists error - signing out stale session before retrying');
+            try { await logout(); } catch { /* ignore sign-out errors */ }
             errorMessage = t('common:loginPage.sessionAlreadyActive');
             break;
           default:
@@ -136,6 +211,8 @@ const LoginPage: React.FC = () => {
         }
       } else if (err.message) {
         if (err.message.toLowerCase().includes('already signed in')) {
+          console.log('[Login Debug] Already signed in - signing out stale session before retrying');
+          try { await logout(); } catch { /* ignore sign-out errors */ }
           errorMessage = t('common:loginPage.sessionAlreadyActive');
         } else {
           errorMessage = err.message;
@@ -208,85 +285,8 @@ const LoginPage: React.FC = () => {
   // Show "Active Session" UI - let user choose to go to dashboard or sign out
   if (isSignedIn && currentUser) {
     return (
-      <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-2 sm:p-3 md:p-4 lg:p-6">
-        <Card className="w-full max-w-md p-3 sm:p-4 md:p-6 shadow-xl">
-          <div className="text-center mb-3 sm:mb-4 md:mb-5">
-            <LogoLink
-              to={homePath}
-              ariaLabel={t('common:buttons.goHome', 'Go to home')}
-              logoUrl={logoUrl}
-              altText={settings?.siteName || APP_NAME}
-              showFallback={showLogoFallback}
-              imageClassName="h-12 sm:h-14 md:h-[72px] w-auto mx-auto mb-1.5 sm:mb-2"
-              iconClassName="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-swiss-mint mx-auto mb-1.5 sm:mb-2"
-              fallbackIcon={SquaresPlusIcon}
-            />
-            <h1 className="text-base sm:text-lg md:text-xl font-bold text-swiss-charcoal">
-              {t('common:loginPage.title', { appName: settings?.siteName || APP_NAME })}
-            </h1>
-          </div>
-
-          <div className="space-y-3 sm:space-y-4">
-            <div className="flex justify-center mb-2 sm:mb-3">
-              <CheckCircleIcon className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 text-swiss-mint" />
-            </div>
-            <h2 className="text-base sm:text-lg md:text-xl font-bold text-swiss-charcoal text-center">
-              {t('common:loginPage.alreadySignedInTitle', 'Active Session Detected')}
-            </h2>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-              <p className="text-sm text-blue-800 text-center">
-                <strong>Welcome back, {currentUser.firstName || 'User'}!</strong>
-              </p>
-              <p className="text-xs text-blue-700 text-center mt-1.5">
-                {t('common:loginPage.alreadySignedInDescription', 'You are already logged in. Choose an option below to continue.')}
-              </p>
-            </div>
-            <div className="flex flex-col space-y-2">
-              <Button
-                type="button"
-                variant="primary"
-                size="lg"
-                className="w-full"
-                onClick={() => navigate('/dashboard', { replace: true })}
-              >
-                {t('common:loginPage.goToDashboard', 'Go to Dashboard')}
-              </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                className="w-full"
-                onClick={handleLogout}
-                disabled={isSigningOut}
-              >
-                {isSigningOut
-                  ? t('common:loginPage.signingOut', 'Signing Out...')
-                  : t('common:loginPage.signOutButton', 'Sign Out')}
-              </Button>
-            </div>
-          </div>
-
-          <div className="mt-3 sm:mt-4 md:mt-5 text-center text-xs text-gray-600 space-y-1.5">
-            <p>
-              {t('common:loginPage.noAccount')}{' '}
-              <Link to="/signup" className="font-medium text-swiss-mint hover:underline">
-                {t('common:buttons.signup')}
-              </Link>
-            </p>
-          </div>
-
-          <div className="mt-3 sm:mt-4 flex justify-center items-center gap-3">
-            <LanguageSwitcher />
-            <button
-              onClick={() => setIsHelpModalOpen(true)}
-              className="p-2 rounded-full text-gray-500 hover:text-swiss-teal hover:bg-gray-100 transition-colors"
-              aria-label={t('common:navbar.help')}
-              title={t('common:navbar.help')}
-            >
-              <QuestionMarkCircleIcon className="h-5 w-5" />
-            </button>
-          </div>
-        </Card>
-        <HelpModal isOpen={isHelpModalOpen} onClose={() => setIsHelpModalOpen(false)} />
+      <div className="min-h-screen bg-page-bg flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-swiss-mint"></div>
       </div>
     );
   }

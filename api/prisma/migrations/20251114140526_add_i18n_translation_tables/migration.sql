@@ -65,7 +65,7 @@ END
 $$;
 
 -- CreateTable
-CREATE TABLE "static_translations" (
+CREATE TABLE IF NOT EXISTS "static_translations" (
     "namespace" TEXT NOT NULL,
     "key" TEXT NOT NULL,
     "lang" TEXT NOT NULL,
@@ -81,7 +81,7 @@ CREATE TABLE "static_translations" (
 );
 
 -- CreateTable
-CREATE TABLE "translation_memory" (
+CREATE TABLE IF NOT EXISTS "translation_memory" (
     "id" TEXT NOT NULL,
     "sourceTextHash" TEXT NOT NULL,
     "sourceLang" TEXT NOT NULL,
@@ -96,7 +96,7 @@ CREATE TABLE "translation_memory" (
 );
 
 -- CreateTable
-CREATE TABLE "translation_releases" (
+CREATE TABLE IF NOT EXISTS "translation_releases" (
     "id" TEXT NOT NULL,
     "version" TEXT NOT NULL,
     "description" TEXT,
@@ -108,7 +108,7 @@ CREATE TABLE "translation_releases" (
 );
 
 -- CreateTable
-CREATE TABLE "translation_audit_logs" (
+CREATE TABLE IF NOT EXISTS "translation_audit_logs" (
     "id" TEXT NOT NULL,
     "type" TEXT NOT NULL,
     "namespace" TEXT,
@@ -127,7 +127,7 @@ CREATE TABLE "translation_audit_logs" (
 );
 
 -- CreateTable
-CREATE TABLE "mt_cost_tracking" (
+CREATE TABLE IF NOT EXISTS "mt_cost_tracking" (
     "id" TEXT NOT NULL,
     "date" DATE NOT NULL,
     "provider" TEXT NOT NULL,

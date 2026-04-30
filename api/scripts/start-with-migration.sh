@@ -37,6 +37,13 @@ if [ $attempt -gt $max_attempts ]; then
     exit 1
 fi
 
+# Ensure required Postgres extensions exist (pgcrypto provides gen_random_uuid)
+echo "🧩 Ensuring required Postgres extensions exist (pgcrypto)..."
+if ! npx prisma db execute --schema "$PRISMA_SCHEMA_PATH" --stdin <<< 'CREATE EXTENSION IF NOT EXISTS "pgcrypto";' > /dev/null 2>&1; then
+    echo "❌ Failed to enable pgcrypto extension (required for migrations)."
+    exit 1
+fi
+
 # Run database migrations
 echo "🔄 Running database migrations..."
 if npx prisma migrate deploy --schema "$PRISMA_SCHEMA_PATH"; then

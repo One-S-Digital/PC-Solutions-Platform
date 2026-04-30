@@ -13,6 +13,14 @@ if [ ! -d "../node_modules/@prisma/client" ]; then
     npx prisma generate
 fi
 
+echo "🧩 Ensuring required Postgres extensions exist (pgcrypto)..."
+# Required for migrations using gen_random_uuid()
+if ! npx prisma db execute --schema prisma/schema.prisma --stdin <<< 'CREATE EXTENSION IF NOT EXISTS "pgcrypto";' >/dev/null 2>&1; then
+    echo "❌ Failed to enable pgcrypto extension (required for migrations)."
+    echo "Your DB user likely lacks CREATE EXTENSION privileges."
+    exit 1
+fi
+
 echo "🧹 Resolving failed migrations (pre-build script)..."
 node ./scripts/prebuild-db-setup.mjs || {
     echo "❌ Pre-build database cleanup failed"

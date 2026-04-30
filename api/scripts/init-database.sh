@@ -11,6 +11,14 @@ fi
 echo "📦 Generating Prisma client..."
 npx prisma generate
 
+echo "🧩 Ensuring required Postgres extensions exist (pgcrypto)..."
+# Required for migrations using gen_random_uuid()
+if ! npx prisma db execute --schema ./prisma/schema.prisma --stdin <<< 'CREATE EXTENSION IF NOT EXISTS "pgcrypto";' >/dev/null 2>&1; then
+    echo "❌ Failed to enable pgcrypto extension."
+    echo "Your DB user likely lacks CREATE EXTENSION privileges."
+    exit 1
+fi
+
 echo "🔄 Running database migrations..."
 npx prisma migrate deploy
 
