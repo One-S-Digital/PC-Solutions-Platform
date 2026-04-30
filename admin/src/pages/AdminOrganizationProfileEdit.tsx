@@ -20,11 +20,16 @@ import {
   ShoppingCart,
   Briefcase,
   Link,
+  Lock,
 } from 'lucide-react';
 import Card from '../components/design-system/Card';
 import Button from '../components/design-system/Button';
 import ChipInput from '../components/design-system/ChipInput';
+import Tabs from '../components/design-system/Tabs';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
+import { ItemListEditor, ItemFormModal } from '../components/ItemListEditor';
+import { PermissionGate } from '../components/PermissionGate';
+import { UserRole } from '../types';
 import { ALL_REGIONS_OPTION, STANDARD_INPUT_FIELD, SWISS_CANTONS_WITH_ALL, SWISS_CANTONS, SERVICE_CATEGORIES, SERVICE_DELIVERY_TYPES } from '../constants/design-system';
 
 interface OrganizationProfile {
@@ -84,6 +89,359 @@ const PEDAGOGY_OPTIONS = [
 
 const LANGUAGE_OPTIONS = ['EN', 'FR', 'DE', 'IT'];
 
+const PRODUCT_CATEGORIES = [
+  'Educational Toys', 'Furniture', 'Books', 'Safety Equipment',
+  'Food & Nutrition', 'Clothing', 'Arts & Crafts', 'Outdoor Equipment',
+  'Technology', 'Other',
+] as const;
+
+const API_SERVICE_CATEGORIES = ['CLEANING', 'IT_SUPPORT', 'MAINTENANCE', 'CONSULTING', 'TRAINING', 'OTHER'] as const;
+const API_DELIVERY_TYPES = ['On-site', 'Remote', 'Hybrid'] as const;
+const SERVICE_CATEGORY_LABELS: Record<string, string> = {
+  CLEANING: 'Cleaning', IT_SUPPORT: 'IT Support', MAINTENANCE: 'Maintenance',
+  CONSULTING: 'Consulting', TRAINING: 'Training', OTHER: 'Other',
+};
+
+// ─── Products sub-resource section ────────────────────────────────────────────
+
+function ProductsSection({ orgId }: { orgId: string }) {
+  const apiClient = useApiClient();
+  const queryClient = useQueryClient();
+  const [formOpen, setFormOpen] = useState(false);
+  const [editItem, setEditItem] = useState<any | null>(null);
+  const [form, setForm] = useState({
+    title: '', description: '', category: '', price: '', tagsText: '', isActive: true,
+  });
+
+  const { data } = useQuery({
+    queryKey: ['admin-org-products', orgId],
+    queryFn: () => apiService.adminListOrgProducts(apiClient, orgId),
+    enabled: !!orgId,
+  });
+  const items: any[] = data?.data?.data ?? [];
+
+  const createMutation = useMutation({
+    mutationFn: (d: typeof form) =>
+      apiService.adminCreateOrgProduct(apiClient, orgId, {
+        title: d.title,
+        description: d.description || undefined,
+        category: d.category || undefined,
+        price: d.price ? parseFloat(d.price) : undefined,
+        tags: d.tagsText ? d.tagsText.split(',').map((t) => t.trim()).filter(Boolean) : [],
+        isActive: d.isActive,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-org-products', orgId] });
+      toast.success('Product created');
+      closeForm();
+    },
+    onError: () => toast.error('Failed to create product'),
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: (d: typeof form) =>
+      apiService.adminUpdateOrgProduct(apiClient, orgId, editItem!.id, {
+        title: d.title,
+        description: d.description || undefined,
+        category: d.category || undefined,
+        price: d.price ? parseFloat(d.price) : undefined,
+        tags: d.tagsText ? d.tagsText.split(',').map((t) => t.trim()).filter(Boolean) : [],
+        isActive: d.isActive,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-org-products', orgId] });
+      toast.success('Product updated');
+      closeForm();
+    },
+    onError: () => toast.error('Failed to update product'),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (itemId: string) => apiService.adminDeleteOrgProduct(apiClient, orgId, itemId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-org-products', orgId] });
+      toast.success('Product deleted');
+    },
+    onError: () => toast.error('Failed to delete product'),
+  });
+
+  const openAdd = () => {
+    setEditItem(null);
+    setForm({ title: '', description: '', category: '', price: '', tagsText: '', isActive: true });
+    setFormOpen(true);
+  };
+
+  const openEdit = (item: any) => {
+    setEditItem(item);
+    setForm({
+      title: item.title || '',
+      description: item.description || '',
+      category: item.category || '',
+      price: item.price !== null && item.price !== undefined ? String(item.price) : '',
+      tagsText: Array.isArray(item.tags) ? item.tags.join(', ') : '',
+      isActive: item.isActive !== false,
+    });
+    setFormOpen(true);
+  };
+
+  const closeForm = () => { setFormOpen(false); setEditItem(null); };
+  const handleSubmit = () => { editItem ? updateMutation.mutate(form) : createMutation.mutate(form); };
+
+  return (
+    <>
+      <PermissionGate
+        role={UserRole.SUPER_ADMIN}
+        fallback={
+          <Card className="p-6 opacity-60">
+            <div className="flex items-center gap-2">
+              <Lock className="h-4 w-4 text-amber-400" />
+              <span className="text-sm text-gray-500">Super Admin required to manage products.</span>
+            </div>
+          </Card>
+        }
+      >
+        <Card className="p-6">
+          <ItemListEditor
+            title="Products"
+            items={items}
+            columns={[
+              { label: 'Title', render: (i) => i.title },
+              { label: 'Category', render: (i) => i.category || '—' },
+              { label: 'Price', render: (i) => i.price !== undefined && i.price !== null ? `CHF ${i.price}` : '—' },
+              { label: 'Status', render: (i) => i.isActive !== false ? 'Active' : 'Hidden' },
+            ]}
+            emptyMessage="No products yet. Add the first product."
+            onAdd={openAdd}
+            onEdit={openEdit}
+            onDelete={(i) => deleteMutation.mutate(i.id)}
+          />
+        </Card>
+      </PermissionGate>
+      <ItemFormModal
+        title={editItem ? 'Edit Product' : 'Add Product'}
+        isOpen={formOpen}
+        onClose={closeForm}
+        onSubmit={handleSubmit}
+        isLoading={createMutation.isPending || updateMutation.isPending}
+      >
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Title *</label>
+          <input className={STANDARD_INPUT_FIELD} value={form.title} onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))} />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+          <textarea className={STANDARD_INPUT_FIELD} rows={3} value={form.description} onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))} />
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+            <select className={STANDARD_INPUT_FIELD} value={form.category} onChange={(e) => setForm((p) => ({ ...p, category: e.target.value }))}>
+              <option value="">Select category</option>
+              {PRODUCT_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Price (CHF)</label>
+            <input type="number" min="0" step="0.01" className={STANDARD_INPUT_FIELD} value={form.price} onChange={(e) => setForm((p) => ({ ...p, price: e.target.value }))} />
+          </div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Tags (comma-separated)</label>
+          <input className={STANDARD_INPUT_FIELD} placeholder="e.g. toys, educational, wooden" value={form.tagsText} onChange={(e) => setForm((p) => ({ ...p, tagsText: e.target.value }))} />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+          <select className={STANDARD_INPUT_FIELD} value={form.isActive ? 'active' : 'hidden'} onChange={(e) => setForm((p) => ({ ...p, isActive: e.target.value === 'active' }))}>
+            <option value="active">Active (visible)</option>
+            <option value="hidden">Hidden</option>
+          </select>
+        </div>
+      </ItemFormModal>
+    </>
+  );
+}
+
+// ─── Services sub-resource section ────────────────────────────────────────────
+
+function ServicesSection({ orgId }: { orgId: string }) {
+  const apiClient = useApiClient();
+  const queryClient = useQueryClient();
+  const [formOpen, setFormOpen] = useState(false);
+  const [editItem, setEditItem] = useState<any | null>(null);
+  const [form, setForm] = useState({
+    title: '', description: '', category: 'OTHER', deliveryType: 'On-site',
+    priceInfo: '', availability: '', tagsText: '', isActive: true,
+  });
+
+  const { data } = useQuery({
+    queryKey: ['admin-org-services', orgId],
+    queryFn: () => apiService.adminListOrgServices(apiClient, orgId),
+    enabled: !!orgId,
+  });
+  const items: any[] = data?.data?.data ?? [];
+
+  const createMutation = useMutation({
+    mutationFn: (d: typeof form) =>
+      apiService.adminCreateOrgService(apiClient, orgId, {
+        title: d.title,
+        description: d.description || undefined,
+        category: d.category,
+        deliveryType: d.deliveryType,
+        priceInfo: d.priceInfo || undefined,
+        availability: d.availability || undefined,
+        tags: d.tagsText ? d.tagsText.split(',').map((t) => t.trim()).filter(Boolean) : [],
+        isActive: d.isActive,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-org-services', orgId] });
+      toast.success('Service created');
+      closeForm();
+    },
+    onError: () => toast.error('Failed to create service'),
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: (d: typeof form) =>
+      apiService.adminUpdateOrgService(apiClient, orgId, editItem!.id, {
+        title: d.title,
+        description: d.description || undefined,
+        category: d.category,
+        deliveryType: d.deliveryType,
+        priceInfo: d.priceInfo || undefined,
+        availability: d.availability || undefined,
+        tags: d.tagsText ? d.tagsText.split(',').map((t) => t.trim()).filter(Boolean) : [],
+        isActive: d.isActive,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-org-services', orgId] });
+      toast.success('Service updated');
+      closeForm();
+    },
+    onError: () => toast.error('Failed to update service'),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (itemId: string) => apiService.adminDeleteOrgService(apiClient, orgId, itemId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-org-services', orgId] });
+      toast.success('Service deleted');
+    },
+    onError: () => toast.error('Failed to delete service'),
+  });
+
+  const openAdd = () => {
+    setEditItem(null);
+    setForm({ title: '', description: '', category: 'OTHER', deliveryType: 'On-site', priceInfo: '', availability: '', tagsText: '', isActive: true });
+    setFormOpen(true);
+  };
+
+  const openEdit = (item: any) => {
+    setEditItem(item);
+    setForm({
+      title: item.title || '',
+      description: item.description || '',
+      category: API_SERVICE_CATEGORIES.includes(item.category) ? item.category : 'OTHER',
+      deliveryType: API_DELIVERY_TYPES.includes(item.deliveryType) ? item.deliveryType : 'On-site',
+      priceInfo: item.priceInfo || '',
+      availability: item.availability || '',
+      tagsText: Array.isArray(item.tags) ? item.tags.join(', ') : '',
+      isActive: item.isActive !== false,
+    });
+    setFormOpen(true);
+  };
+
+  const closeForm = () => { setFormOpen(false); setEditItem(null); };
+  const handleSubmit = () => { editItem ? updateMutation.mutate(form) : createMutation.mutate(form); };
+
+  return (
+    <>
+      <PermissionGate
+        role={UserRole.SUPER_ADMIN}
+        fallback={
+          <Card className="p-6 opacity-60">
+            <div className="flex items-center gap-2">
+              <Lock className="h-4 w-4 text-amber-400" />
+              <span className="text-sm text-gray-500">Super Admin required to manage services.</span>
+            </div>
+          </Card>
+        }
+      >
+        <Card className="p-6">
+          <ItemListEditor
+            title="Services"
+            items={items}
+            columns={[
+              { label: 'Title', render: (i) => i.title },
+              { label: 'Category', render: (i) => SERVICE_CATEGORY_LABELS[i.category] ?? i.category ?? '—' },
+              { label: 'Delivery', render: (i) => i.deliveryType || '—' },
+              { label: 'Status', render: (i) => i.isActive !== false ? 'Active' : 'Hidden' },
+            ]}
+            emptyMessage="No services yet. Add the first service."
+            onAdd={openAdd}
+            onEdit={openEdit}
+            onDelete={(i) => deleteMutation.mutate(i.id)}
+          />
+        </Card>
+      </PermissionGate>
+      <ItemFormModal
+        title={editItem ? 'Edit Service' : 'Add Service'}
+        isOpen={formOpen}
+        onClose={closeForm}
+        onSubmit={handleSubmit}
+        isLoading={createMutation.isPending || updateMutation.isPending}
+      >
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Title *</label>
+          <input className={STANDARD_INPUT_FIELD} value={form.title} onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))} />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+          <textarea className={STANDARD_INPUT_FIELD} rows={3} value={form.description} onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))} />
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+            <select className={STANDARD_INPUT_FIELD} value={form.category} onChange={(e) => setForm((p) => ({ ...p, category: e.target.value }))}>
+              {API_SERVICE_CATEGORIES.map((c) => (
+                <option key={c} value={c}>{SERVICE_CATEGORY_LABELS[c] ?? c}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Type</label>
+            <select className={STANDARD_INPUT_FIELD} value={form.deliveryType} onChange={(e) => setForm((p) => ({ ...p, deliveryType: e.target.value }))}>
+              {API_DELIVERY_TYPES.map((d) => <option key={d} value={d}>{d}</option>)}
+            </select>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Price Info</label>
+            <input className={STANDARD_INPUT_FIELD} placeholder="e.g. From CHF 150/h" value={form.priceInfo} onChange={(e) => setForm((p) => ({ ...p, priceInfo: e.target.value }))} />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Availability</label>
+            <input className={STANDARD_INPUT_FIELD} placeholder="e.g. Mon–Fri, on demand" value={form.availability} onChange={(e) => setForm((p) => ({ ...p, availability: e.target.value }))} />
+          </div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Tags (comma-separated)</label>
+          <input className={STANDARD_INPUT_FIELD} placeholder="e.g. consulting, hr, legal" value={form.tagsText} onChange={(e) => setForm((p) => ({ ...p, tagsText: e.target.value }))} />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+          <select className={STANDARD_INPUT_FIELD} value={form.isActive ? 'active' : 'hidden'} onChange={(e) => setForm((p) => ({ ...p, isActive: e.target.value === 'active' }))}>
+            <option value="active">Active (visible)</option>
+            <option value="hidden">Hidden</option>
+          </select>
+        </div>
+      </ItemFormModal>
+    </>
+  );
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
+
 const AdminOrganizationProfileEdit: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -93,6 +451,7 @@ const AdminOrganizationProfileEdit: React.FC = () => {
 
   const [formData, setFormData] = useState<Partial<OrganizationProfile>>({});
   const [isDirty, setIsDirty] = useState(false);
+  const [activeTab, setActiveTab] = useState(0);
 
   // Fetch organization profile
   const { data: profileResponse, isLoading, error } = useQuery({
@@ -257,35 +616,8 @@ const AdminOrganizationProfileEdit: React.FC = () => {
     }
   };
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Button variant="secondary" leftIcon={ArrowLeft} onClick={handleBack}>
-            {t('common:back', 'Back')}
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold text-swiss-charcoal flex items-center">
-              {getTypeIcon()}
-              <span className="ml-2">{t('admin:orgProfile.editTitle', 'Edit Organization Profile')}</span>
-            </h1>
-            <p className="text-gray-600 mt-1">
-              {profile.name} • <span className="text-swiss-teal">{getTypeLabel()}</span>
-            </p>
-          </div>
-        </div>
-        <Button
-          variant="primary"
-          leftIcon={Save}
-          onClick={handleSaveClick}
-          disabled={!isDirty || updateMutation.isPending}
-        >
-          {updateMutation.isPending ? t('common:saving', 'Saving...') : t('common:saveChanges', 'Save Changes')}
-        </Button>
-      </div>
-
-      <form onSubmit={handleSubmit} className="space-y-6">
+  const orgDetailsForm = (
+    <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Information */}
         <Card className="p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
@@ -717,6 +1049,59 @@ const AdminOrganizationProfileEdit: React.FC = () => {
           </Button>
         </div>
       </form>
+  );
+
+  const mainContent = isSupplier ? (
+    <Tabs
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tabs={[
+        { label: 'Organization', icon: Building2, content: orgDetailsForm },
+        { label: 'Products', icon: ShoppingCart, content: <ProductsSection orgId={id!} /> },
+      ]}
+    />
+  ) : isServiceProvider ? (
+    <Tabs
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tabs={[
+        { label: 'Organization', icon: Building2, content: orgDetailsForm },
+        { label: 'Services', icon: Wrench, content: <ServicesSection orgId={id!} /> },
+      ]}
+    />
+  ) : (
+    orgDetailsForm
+  );
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <Button variant="secondary" leftIcon={ArrowLeft} onClick={handleBack}>
+            {t('common:back', 'Back')}
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold text-swiss-charcoal flex items-center">
+              {getTypeIcon()}
+              <span className="ml-2">{t('admin:orgProfile.editTitle', 'Edit Organization Profile')}</span>
+            </h1>
+            <p className="text-gray-600 mt-1">
+              {profile.name} • <span className="text-swiss-teal">{getTypeLabel()}</span>
+            </p>
+          </div>
+        </div>
+        <Button
+          variant="primary"
+          leftIcon={Save}
+          onClick={handleSaveClick}
+          disabled={!isDirty || updateMutation.isPending}
+        >
+          {updateMutation.isPending ? t('common:saving', 'Saving...') : t('common:saveChanges', 'Save Changes')}
+        </Button>
+      </div>
+
+      {mainContent}
     </div>
   );
 };
