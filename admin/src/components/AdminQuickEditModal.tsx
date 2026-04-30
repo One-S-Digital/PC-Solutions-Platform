@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { X, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { X, User, ExternalLink } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useApiClient, apiService } from '../services/api';
@@ -33,6 +34,7 @@ const AdminQuickEditModal: React.FC<AdminQuickEditModalProps> = ({ isOpen, onClo
   const { t } = useTranslation(['admin', 'common']);
   const apiClient = useApiClient();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -200,24 +202,34 @@ const AdminQuickEditModal: React.FC<AdminQuickEditModalProps> = ({ isOpen, onClo
             </p>
           </div>
 
-          <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end gap-3">
+          <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-between gap-3">
             <button
               type="button"
-              onClick={onClose}
-              disabled={updateMutation.isPending}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 disabled:opacity-50"
+              onClick={() => { onClose(); navigate(`/users/${user!.id}/profile`); }}
+              className="flex items-center gap-1.5 text-sm font-medium text-swiss-teal hover:text-swiss-teal/80"
             >
-              {t('common:cancel', 'Cancel')}
+              <ExternalLink className="w-4 h-4" />
+              {t('admin:users.quickEdit.fullProfile', 'Full Profile')}
             </button>
-            <button
-              type="submit"
-              disabled={updateMutation.isPending}
-              className="px-4 py-2 text-sm font-medium text-white bg-swiss-teal border border-transparent rounded-md shadow-sm hover:bg-swiss-teal/90 disabled:opacity-50"
-            >
-              {updateMutation.isPending
-                ? t('common:saving', 'Saving...')
-                : t('common:saveChanges', 'Save Changes')}
-            </button>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={onClose}
+                disabled={updateMutation.isPending}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 disabled:opacity-50"
+              >
+                {t('common:cancel', 'Cancel')}
+              </button>
+              <button
+                type="submit"
+                disabled={updateMutation.isPending}
+                className="px-4 py-2 text-sm font-medium text-white bg-swiss-teal border border-transparent rounded-md shadow-sm hover:bg-swiss-teal/90 disabled:opacity-50"
+              >
+                {updateMutation.isPending
+                  ? t('common:saving', 'Saving...')
+                  : t('common:saveChanges', 'Save Changes')}
+              </button>
+            </div>
           </div>
         </form>
       </div>

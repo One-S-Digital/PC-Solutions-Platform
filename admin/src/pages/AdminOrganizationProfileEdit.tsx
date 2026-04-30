@@ -440,6 +440,219 @@ function ServicesSection({ orgId }: { orgId: string }) {
   );
 }
 
+// ─── Staff sub-resource section (Foundation orgs) ────────────────────────────
+
+const STAFF_ROLE_OPTIONS = ['EDUCATOR', 'FOUNDATION', 'ADMIN', 'PARENT'] as const;
+
+function StaffSection({ orgId }: { orgId: string }) {
+  const apiClient = useApiClient();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const [addOpen, setAddOpen] = useState(false);
+  const [roleModalUserId, setRoleModalUserId] = useState<string | null>(null);
+  const [newUserId, setNewUserId] = useState('');
+  const [newRole, setNewRole] = useState<string>('EDUCATOR');
+  const [selectedRole, setSelectedRole] = useState<string>('EDUCATOR');
+
+  const { data } = useQuery({
+    queryKey: ['admin-org-members', orgId],
+    queryFn: () => apiService.adminListOrgMembers(apiClient, orgId),
+    enabled: !!orgId,
+  });
+  const members: any[] = data?.data?.data ?? [];
+
+  const addMutation = useMutation({
+    mutationFn: () => apiService.adminAddOrgMember(apiClient, orgId, { userId: newUserId.trim(), role: newRole }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-org-members', orgId] });
+      toast.success('Staff member added');
+      setAddOpen(false);
+      setNewUserId('');
+      setNewRole('EDUCATOR');
+    },
+    onError: (err: any) => toast.error(err?.response?.data?.message || 'Failed to add staff member'),
+  });
+
+  const updateRoleMutation = useMutation({
+    mutationFn: ({ userId, role }: { userId: string; role: string }) =>
+      apiService.adminUpdateOrgMemberRole(apiClient, orgId, userId, role),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-org-members', orgId] });
+      toast.success('Role updated');
+      setRoleModalUserId(null);
+    },
+    onError: () => toast.error('Failed to update role'),
+  });
+
+  const removeMutation = useMutation({
+    mutationFn: (userId: string) => apiService.adminRemoveOrgMember(apiClient, orgId, userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-org-members', orgId] });
+      toast.success('Staff member removed');
+    },
+    onError: () => toast.error('Failed to remove staff member'),
+  });
+
+  const roleTarget = members.find((m) => m.userId === roleModalUserId);
+
+  return (
+    <>
+      <PermissionGate
+        role={UserRole.SUPER_ADMIN}
+        fallback={
+          <Card className="p-6 opacity-60">
+            <div className="flex items-center gap-2">
+              <Lock className="h-4 w-4 text-amber-400" />
+              <span className="text-sm text-gray-500">Super Admin required to manage staff.</span>
+            </div>
+          </Card>
+        }
+      >
+        <Card className="p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h4 className="text-sm font-semibold text-gray-700">Staff Members</h4>
+            <button
+              type="button"
+              onClick={() => setAddOpen(true)}
+              className="flex items-center gap-1 rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700"
+            >
+              + Add Staff
+            </button>
+          </div>
+          {members.length === 0 ? (
+            <p className="rounded-md border border-dashed border-gray-200 py-4 text-center text-sm text-gray-400">
+              No staff members yet.
+            </p>
+          ) : (
+            <div className="divide-y divide-gray-100 rounded-md border border-gray-200">
+              {members.map((m) => (
+                <div key={m.userId} className="flex items-center justify-between gap-3 px-4 py-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium text-gray-800">
+                      {m.user ? `${m.user.firstName ?? ''} ${m.user.lastName ?? ''}`.trim() || m.user.email : m.userId}
+                    </p>
+                    {m.user?.email && <p className="truncate text-xs text-gray-400">{m.user.email}</p>}
+                  </div>
+                  <span className="shrink-0 rounded-full bg-swiss-teal/10 px-2 py-0.5 text-xs font-medium text-swiss-teal">
+                    {m.role}
+                  </span>
+                  <div className="flex shrink-0 items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => { setRoleModalUserId(m.userId); setSelectedRole(m.role); }}
+                      className="rounded px-2 py-1 text-xs text-gray-500 hover:bg-gray-100"
+                    >
+                      Role
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => navigate(`/users/${m.userId}/profile`)}
+                      className="rounded px-2 py-1 text-xs text-gray-500 hover:bg-gray-100"
+                    >
+                      Profile
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { if (window.confirm('Remove this staff member?')) removeMutation.mutate(m.userId); }}
+                      className="rounded px-2 py-1 text-xs text-red-400 hover:bg-red-50"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
+      </PermissionGate>
+
+      {/* Add staff modal */}
+      {addOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-sm rounded-lg bg-white shadow-xl">
+            <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
+              <h3 className="text-base font-semibold text-gray-900">Add Staff Member</h3>
+              <button onClick={() => setAddOpen(false)} className="text-gray-400 hover:text-gray-600">✕</button>
+            </div>
+            <div className="space-y-4 px-6 py-5">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">User ID *</label>
+                <input
+                  className={STANDARD_INPUT_FIELD}
+                  placeholder="Paste user ID from the Users page"
+                  value={newUserId}
+                  onChange={(e) => setNewUserId(e.target.value)}
+                />
+                <p className="mt-1 text-xs text-gray-400">Find user IDs on the Users page.</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                <select className={STANDARD_INPUT_FIELD} value={newRole} onChange={(e) => setNewRole(e.target.value)}>
+                  {STAFF_ROLE_OPTIONS.map((r) => <option key={r} value={r}>{r}</option>)}
+                </select>
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 border-t border-gray-200 px-6 py-4">
+              <button
+                type="button"
+                onClick={() => setAddOpen(false)}
+                className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => addMutation.mutate()}
+                disabled={!newUserId.trim() || addMutation.isPending}
+                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              >
+                {addMutation.isPending ? 'Adding...' : 'Add'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Change role modal */}
+      {roleModalUserId && roleTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-xs rounded-lg bg-white shadow-xl">
+            <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
+              <h3 className="text-base font-semibold text-gray-900">Change Role</h3>
+              <button onClick={() => setRoleModalUserId(null)} className="text-gray-400 hover:text-gray-600">✕</button>
+            </div>
+            <div className="px-6 py-5">
+              <p className="mb-3 text-sm text-gray-600">
+                {roleTarget.user ? `${roleTarget.user.firstName ?? ''} ${roleTarget.user.lastName ?? ''}`.trim() || roleTarget.user.email : roleTarget.userId}
+              </p>
+              <select className={STANDARD_INPUT_FIELD} value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)}>
+                {STAFF_ROLE_OPTIONS.map((r) => <option key={r} value={r}>{r}</option>)}
+              </select>
+            </div>
+            <div className="flex justify-end gap-3 border-t border-gray-200 px-6 py-4">
+              <button
+                type="button"
+                onClick={() => setRoleModalUserId(null)}
+                className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => updateRoleMutation.mutate({ userId: roleModalUserId, role: selectedRole })}
+                disabled={updateRoleMutation.isPending}
+                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              >
+                {updateRoleMutation.isPending ? 'Saving...' : 'Save'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 
 const AdminOrganizationProfileEdit: React.FC = () => {
@@ -1067,6 +1280,15 @@ const AdminOrganizationProfileEdit: React.FC = () => {
       tabs={[
         { label: 'Organization', icon: Building2, content: orgDetailsForm },
         { label: 'Services', icon: Wrench, content: <ServicesSection orgId={id!} /> },
+      ]}
+    />
+  ) : isFoundation ? (
+    <Tabs
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tabs={[
+        { label: 'Organization', icon: Home, content: orgDetailsForm },
+        { label: 'Staff', icon: Users, content: <StaffSection orgId={id!} /> },
       ]}
     />
   ) : (
