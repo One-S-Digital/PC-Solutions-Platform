@@ -814,24 +814,23 @@ export class AdminSubresourcesController {
   ) {
     const targetProfileId = await this.resolveProfileId(userId);
 
-    const target = await this.prisma.user.findFirst({
-      where: {
-        OR: [
-          { id: targetProfileId },
-          { appUsers: { some: { id: targetProfileId } } },
-        ],
-      },
+    const target = await this.prisma.user.findUnique({
+      where: { id: targetProfileId },
       select: { id: true, firstName: true, lastName: true, email: true, role: true },
     });
     if (!target) throw new NotFoundException('Target user not found');
 
     const adminAppUserId: string | undefined = req.context?.appUserId;
-    const adminUser = adminAppUserId
-      ? await this.prisma.user.findFirst({
-          where: { appUsers: { some: { id: adminAppUserId } } },
+    let adminUser: { id: string; email: string } | null = null;
+    if (adminAppUserId) {
+      const appUser = await this.prisma.appUser.findUnique({ where: { id: adminAppUserId } });
+      if (appUser) {
+        adminUser = await this.prisma.user.findUnique({
+          where: { clerkId: appUser.clerkId },
           select: { id: true, email: true },
-        })
-      : null;
+        });
+      }
+    }
 
     await this.prisma.auditLog.create({
       data: {
