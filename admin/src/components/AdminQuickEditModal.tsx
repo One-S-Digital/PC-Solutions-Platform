@@ -64,8 +64,10 @@ const AdminQuickEditModal: React.FC<AdminQuickEditModalProps> = ({ isOpen, onClo
       onClose();
     },
     onError: (err: any) => {
-      const message =
-        err?.response?.data?.message ?? t('admin:userProfile.updateError', 'Failed to update profile');
+      const raw = err?.response?.data?.message;
+      const message = Array.isArray(raw)
+        ? raw.join('; ')
+        : (raw ?? t('admin:userProfile.updateError', 'Failed to update profile'));
       setFormError(message);
     },
   });
@@ -80,11 +82,11 @@ const AdminQuickEditModal: React.FC<AdminQuickEditModalProps> = ({ isOpen, onClo
     }
 
     updateMutation.mutate({
-      firstName: firstName.trim() || undefined,
-      lastName: lastName.trim() || undefined,
+      firstName: firstName.trim() || null,
+      lastName: lastName.trim() || null,
       email: email.trim(),
-      phoneNumber: phoneNumber.trim() || undefined,
-      shortBio: shortBio.trim() || undefined,
+      phoneNumber: phoneNumber.trim() || null,
+      shortBio: shortBio.trim() || null,
     });
   };
 
