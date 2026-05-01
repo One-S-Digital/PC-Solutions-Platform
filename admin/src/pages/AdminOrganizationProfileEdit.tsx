@@ -157,7 +157,7 @@ function ProductsSection({ orgId, apiClient }: { orgId: string; apiClient: any }
   const [editItem, setEditItem] = useState<ProductItem | null>(null);
   const [form, setForm] = useState({ title: '', description: '', price: '', category: '', isActive: true });
 
-  const { data } = useQuery({
+  const { data, isLoading: loadingItems, isError: errorItems } = useQuery({
     queryKey: ['admin-org-products', orgId],
     queryFn: () => apiService.adminListOrgProducts(apiClient, orgId),
     enabled: !!orgId && !!apiClient,
@@ -195,8 +195,11 @@ function ProductsSection({ orgId, apiClient }: { orgId: string; apiClient: any }
   });
 
   const openAdd = () => { setEditItem(null); setForm({ title: '', description: '', price: '', category: '', isActive: true }); setFormOpen(true); };
-  const openEdit = (p: ProductItem) => { setEditItem(p); setForm({ title: p.title, description: '', price: p.price?.toString() ?? '', category: p.category ?? '', isActive: p.isActive ?? true }); setFormOpen(true); };
+  const openEdit = (p: ProductItem) => { setEditItem(p); setForm({ title: p.title, description: (p as any).description ?? '', price: p.price?.toString() ?? '', category: p.category ?? '', isActive: p.isActive ?? true }); setFormOpen(true); };
   const closeForm = () => { setFormOpen(false); setEditItem(null); };
+
+  if (loadingItems) return <SectionSpinner />;
+  if (errorItems) return <SectionError message="Failed to load products." />;
 
   return (
     <>
@@ -258,7 +261,7 @@ function ServicesSection({ orgId, apiClient }: { orgId: string; apiClient: any }
   const [editItem, setEditItem] = useState<ServiceItem | null>(null);
   const [form, setForm] = useState({ title: '', description: '', category: '', price: '', priceInfo: '', deliveryType: '', isActive: true });
 
-  const { data } = useQuery({
+  const { data, isLoading: loadingItems, isError: errorItems } = useQuery({
     queryKey: ['admin-org-services', orgId],
     queryFn: () => apiService.adminListOrgServices(apiClient, orgId),
     enabled: !!orgId && !!apiClient,
@@ -300,8 +303,11 @@ function ServicesSection({ orgId, apiClient }: { orgId: string; apiClient: any }
   });
 
   const openAdd = () => { setEditItem(null); setForm({ title: '', description: '', category: '', price: '', priceInfo: '', deliveryType: '', isActive: true }); setFormOpen(true); };
-  const openEdit = (s: ServiceItem) => { setEditItem(s); setForm({ title: s.title, description: '', category: s.category ?? '', price: s.price?.toString() ?? '', priceInfo: '', deliveryType: s.deliveryType ?? '', isActive: s.isActive ?? true }); setFormOpen(true); };
+  const openEdit = (s: ServiceItem) => { setEditItem(s); setForm({ title: s.title, description: (s as any).description ?? '', category: s.category ?? '', price: s.price?.toString() ?? '', priceInfo: (s as any).priceInfo ?? '', deliveryType: s.deliveryType ?? '', isActive: s.isActive ?? true }); setFormOpen(true); };
   const closeForm = () => { setFormOpen(false); setEditItem(null); };
+
+  if (loadingItems) return <SectionSpinner />;
+  if (errorItems) return <SectionError message="Failed to load services." />;
 
   return (
     <>
@@ -381,7 +387,7 @@ function DocumentsSection({ orgId, apiClient }: { orgId: string; apiClient: any 
   const [uploadOpen, setUploadOpen] = useState(false);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
 
-  const { data } = useQuery({
+  const { data, isLoading: loadingDocs, isError: errorDocs } = useQuery({
     queryKey: ['admin-org-documents', orgId],
     queryFn: () => apiService.adminListOrgDocuments(apiClient, orgId),
     enabled: !!orgId && !!apiClient,
@@ -430,6 +436,9 @@ function DocumentsSection({ orgId, apiClient }: { orgId: string; apiClient: any 
       setUploading(false);
     }
   };
+
+  if (loadingDocs) return <SectionSpinner />;
+  if (errorDocs) return <SectionError message="Failed to load documents." />;
 
   return (
     <div className="space-y-4">
@@ -514,7 +523,7 @@ function StaffSection({ orgId, orgProfileId, apiClient, safeNavigate }: StaffSec
   const [roleModalUserId, setRoleModalUserId] = useState<string | null>(null);
   const [selectedRole, setSelectedRole] = useState<string>(UserRole.EDUCATOR);
 
-  const { data } = useQuery({
+  const { data, isLoading: loadingMembers, isError: errorMembers } = useQuery({
     queryKey: ['admin-org-members', orgId],
     queryFn: () => apiService.adminListOrgMembers(apiClient, orgId),
     enabled: !!orgId && !!apiClient,
@@ -542,6 +551,9 @@ function StaffSection({ orgId, orgProfileId, apiClient, safeNavigate }: StaffSec
     onSuccess: () => { invalidateBoth(); toast.success('Staff member removed'); },
     onError: (e: any) => toast.error(normMsg(e, 'Failed to remove staff member')),
   });
+
+  if (loadingMembers) return <SectionSpinner />;
+  if (errorMembers) return <SectionError message="Failed to load staff members." />;
 
   return (
     <div className="space-y-4">
@@ -634,7 +646,19 @@ function normMsg(err: any, fallback: string): string {
   return Array.isArray(raw) ? raw.join('; ') : (raw ?? fallback);
 }
 
+function SectionSpinner() {
+  return <div className="flex items-center justify-center py-8 text-sm text-gray-400">Loading…</div>;
+}
+
+function SectionError({ message }: { message: string }) {
+  return (
+    <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{message}</div>
+  );
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
+
+const PROFILE_FORM_ID = 'org-profile-form';
 
 const AdminOrganizationProfileEdit: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -769,7 +793,7 @@ const AdminOrganizationProfileEdit: React.FC = () => {
   // ── Tab: Profile ────────────────────────────────────────────────────────────
 
   const profileTab = (
-    <form onSubmit={(e) => { e.preventDefault(); submitForm(); }} className="space-y-6">
+    <form id={PROFILE_FORM_ID} onSubmit={(e) => { e.preventDefault(); submitForm(); }} className="space-y-6">
       {/* Logo / Cover */}
       {isSuperAdmin && (
         <Card className="p-6">
@@ -783,7 +807,7 @@ const AdminOrganizationProfileEdit: React.FC = () => {
               currentUrl={profile.logoUrl}
               assetKind="AVATAR"
               onUploaded={(assetId) => handleChange('logoAssetId', assetId)}
-              onRemove={() => handleChange('logoAssetId', '')}
+              onRemove={() => handleChange('logoAssetId', null)}
             />
             <ImageUploadField
               label="Cover Image"
@@ -791,7 +815,7 @@ const AdminOrganizationProfileEdit: React.FC = () => {
               assetKind="COVER_IMAGE"
               aspectRatio="banner"
               onUploaded={(assetId) => handleChange('coverAssetId', assetId)}
-              onRemove={() => handleChange('coverAssetId', '')}
+              onRemove={() => handleChange('coverAssetId', null)}
             />
           </div>
         </Card>
@@ -1085,7 +1109,7 @@ const AdminOrganizationProfileEdit: React.FC = () => {
             </p>
           </div>
         </div>
-        <Button variant="primary" leftIcon={Save} onClick={submitForm} disabled={!isDirty || updateMutation.isPending}>
+        <Button variant="primary" leftIcon={Save} type="submit" form={PROFILE_FORM_ID} disabled={!isDirty || updateMutation.isPending}>
           {updateMutation.isPending ? t('common:saving', 'Saving...') : t('common:saveChanges', 'Save Changes')}
         </Button>
       </div>
