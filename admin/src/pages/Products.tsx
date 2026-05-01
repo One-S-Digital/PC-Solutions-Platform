@@ -1,7 +1,8 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 import { Menu, Transition } from '@headlessui/react'
-import { Edit, MoreVertical, Package, Search, ShieldOff, Trash2 } from 'lucide-react'
+import { Building2, Edit, MoreVertical, Package, Search, ShieldOff, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import EditProductModal from '../components/products/EditProductModal'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
@@ -13,6 +14,7 @@ const Products: React.FC = () => {
   const { t } = useTranslation(['admin', 'common'])
   const apiClient = useApiClient()
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
 
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
@@ -437,6 +439,20 @@ const Products: React.FC = () => {
                                   </button>
                                 )}
                               </Menu.Item>
+                              {product.supplierId && (
+                                <Menu.Item>
+                                  {({ active: isActiveItem }) => (
+                                    <button
+                                      type="button"
+                                      onClick={() => navigate(`/organizations/${product.supplierId}/profile`)}
+                                      className={`${isActiveItem ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
+                                    >
+                                      <Building2 className="h-4 w-4 mr-2" />
+                                      {t('admin:products.actions.editSupplierProfile', 'Supplier Profile')}
+                                    </button>
+                                  )}
+                                </Menu.Item>
+                              )}
                               <Menu.Item>
                                 {({ active: isActiveItem }) => (
                                   <button
