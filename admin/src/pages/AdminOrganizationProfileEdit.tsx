@@ -29,6 +29,7 @@ import Tabs from '../components/design-system/Tabs';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { ItemListEditor, ItemFormModal } from '../components/ItemListEditor';
 import { PermissionGate } from '../components/PermissionGate';
+import { useAdminRole } from '../hooks/useAdminRole';
 import { UserRole } from '../types';
 import { ALL_REGIONS_OPTION, STANDARD_INPUT_FIELD, SWISS_CANTONS_WITH_ALL, SWISS_CANTONS, SERVICE_CATEGORIES, SERVICE_DELIVERY_TYPES } from '../constants/design-system';
 
@@ -107,6 +108,7 @@ const SERVICE_CATEGORY_LABELS: Record<string, string> = {
 function ProductsSection({ orgId }: { orgId: string }) {
   const apiClient = useApiClient();
   const queryClient = useQueryClient();
+  const { isSuperAdmin } = useAdminRole();
   const [formOpen, setFormOpen] = useState(false);
   const [editItem, setEditItem] = useState<any | null>(null);
   const [form, setForm] = useState({
@@ -116,7 +118,7 @@ function ProductsSection({ orgId }: { orgId: string }) {
   const { data } = useQuery({
     queryKey: ['admin-org-products', orgId],
     queryFn: () => apiService.adminListOrgProducts(apiClient, orgId),
-    enabled: !!orgId,
+    enabled: !!orgId && isSuperAdmin,
   });
   const items: any[] = data?.data?.data ?? [];
 
@@ -266,6 +268,7 @@ function ProductsSection({ orgId }: { orgId: string }) {
 function ServicesSection({ orgId }: { orgId: string }) {
   const apiClient = useApiClient();
   const queryClient = useQueryClient();
+  const { isSuperAdmin } = useAdminRole();
   const [formOpen, setFormOpen] = useState(false);
   const [editItem, setEditItem] = useState<any | null>(null);
   const [form, setForm] = useState({
@@ -276,7 +279,7 @@ function ServicesSection({ orgId }: { orgId: string }) {
   const { data } = useQuery({
     queryKey: ['admin-org-services', orgId],
     queryFn: () => apiService.adminListOrgServices(apiClient, orgId),
-    enabled: !!orgId,
+    enabled: !!orgId && isSuperAdmin,
   });
   const items: any[] = data?.data?.data ?? [];
 
@@ -340,8 +343,9 @@ function ServicesSection({ orgId }: { orgId: string }) {
     setForm({
       title: item.title || '',
       description: item.description || '',
-      category: API_SERVICE_CATEGORIES.includes(item.category) ? item.category : 'OTHER',
-      deliveryType: API_DELIVERY_TYPES.includes(item.deliveryType) ? item.deliveryType : 'On-site',
+      // Preserve stored value as-is; legacy/unknown values are shown as a labelled option in the select
+      category: item.category || 'OTHER',
+      deliveryType: item.deliveryType || 'On-site',
       priceInfo: item.priceInfo || '',
       availability: item.availability || '',
       tagsText: Array.isArray(item.tags) ? item.tags.join(', ') : '',
@@ -405,12 +409,18 @@ function ServicesSection({ orgId }: { orgId: string }) {
               {API_SERVICE_CATEGORIES.map((c) => (
                 <option key={c} value={c}>{SERVICE_CATEGORY_LABELS[c] ?? c}</option>
               ))}
+              {form.category && !(API_SERVICE_CATEGORIES as readonly string[]).includes(form.category) && (
+                <option value={form.category}>{form.category} (legacy)</option>
+              )}
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Type</label>
             <select className={STANDARD_INPUT_FIELD} value={form.deliveryType} onChange={(e) => setForm((p) => ({ ...p, deliveryType: e.target.value }))}>
               {API_DELIVERY_TYPES.map((d) => <option key={d} value={d}>{d}</option>)}
+              {form.deliveryType && !(API_DELIVERY_TYPES as readonly string[]).includes(form.deliveryType) && (
+                <option value={form.deliveryType}>{form.deliveryType} (legacy)</option>
+              )}
             </select>
           </div>
         </div>
@@ -447,6 +457,7 @@ const STAFF_ROLE_OPTIONS = ['EDUCATOR', 'FOUNDATION', 'ADMIN', 'PARENT'] as cons
 function StaffSection({ orgId }: { orgId: string }) {
   const apiClient = useApiClient();
   const queryClient = useQueryClient();
+  const { isSuperAdmin } = useAdminRole();
   const navigate = useNavigate();
   const [addOpen, setAddOpen] = useState(false);
   const [roleModalUserId, setRoleModalUserId] = useState<string | null>(null);
@@ -457,7 +468,7 @@ function StaffSection({ orgId }: { orgId: string }) {
   const { data } = useQuery({
     queryKey: ['admin-org-members', orgId],
     queryFn: () => apiService.adminListOrgMembers(apiClient, orgId),
-    enabled: !!orgId,
+    enabled: !!orgId && isSuperAdmin,
   });
   const members: any[] = data?.data?.data ?? [];
 
