@@ -27,7 +27,7 @@ export class TranslationService {
   constructor(
     private prisma: PrismaService,
     private configService: ConfigService,
-    @InjectQueue('translation') private translationQueue?: Queue,
+    @Optional() @InjectQueue('translation') private translationQueue?: Queue,
     @Optional() private deepLService?: DeepLService,
   ) {
     if (this.translationQueue) {
