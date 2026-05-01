@@ -1,4 +1,11 @@
 /**
+ * True only when a Redis host or URL is explicitly configured.
+ * BullModule registration is skipped entirely when false so the app
+ * boots without Redis (queue workers are simply unavailable).
+ */
+export const REDIS_ENABLED = !!(process.env.REDIS_HOST || process.env.REDIS_URL);
+
+/**
  * Shared Redis connection options for Bull queues.
  *
  * Centralised here so that BullModule.forRoot() (app.module)
