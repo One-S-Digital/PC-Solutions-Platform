@@ -27,9 +27,13 @@ async function bootstrap() {
   expressApp.set('etag', false);
   
   // CORS configuration - MUST run before helmet
+  // CORS_ORIGINS env var accepts a comma-separated list of extra allowed origins,
+  // enabling Render preview URLs and other deployment targets without code changes.
+  const envOrigins = (process.env.CORS_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
   const prodAllowed = new Set([
     'https://app.procrechesolutions.com',
     'https://admin.procrechesolutions.com',
+    ...envOrigins,
   ]);
 
   app.enableCors({
@@ -58,6 +62,16 @@ async function bootstrap() {
     exposedHeaders: ['Content-Type', 'Authorization', 'x-build-commit', 'X-Trace-Id'],
     maxAge: 86400,
     optionsSuccessStatus: 204,
+  });
+
+  // When the cors middleware denies an origin it calls next() rather than ending the
+  // response, so OPTIONS preflights from blocked origins fall through to NestJS routing
+  // and get a 404 NotFoundException instead of a proper CORS rejection. Catch them here.
+  app.use((req: any, res: any, next: any) => {
+    if (req.method === 'OPTIONS') {
+      return res.status(403).end();
+    }
+    next();
   });
   
   // Raw body for webhook route
