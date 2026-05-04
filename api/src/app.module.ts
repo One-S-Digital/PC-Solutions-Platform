@@ -4,7 +4,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CustomThrottlerGuard } from './common/guards/custom-throttler.guard';
 import { BullModule } from '@nestjs/bull';
-import { sharedRedisOptions } from './common/redis.config';
+import { sharedRedisOptions, REDIS_ENABLED } from './common/redis.config';
 import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -76,9 +76,7 @@ import {
       isGlobal: true,
     }),
     ScheduleModule.forRoot(),
-    BullModule.forRoot({
-      redis: sharedRedisOptions,
-    }),
+    ...(REDIS_ENABLED ? [BullModule.forRoot({ redis: sharedRedisOptions })] : []),
     ThrottlerModule.forRoot([
       {
         name: 'short',

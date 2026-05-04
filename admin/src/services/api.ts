@@ -907,6 +907,78 @@ export const apiService = {
   updateAdminOrganizationProfile: (apiClient: AxiosInstance, orgId: string, data: any) =>
     apiClient.patch<ApiResponse<any>>(`/admin/organizations/${orgId}/profile`, data),
 
+  // ── Educator sub-resources (SUPER_ADMIN) ──────────────────────────────────
+  // Work Experience
+  adminListWorkExperience: (apiClient: AxiosInstance, userId: string) =>
+    apiClient.get<ApiResponse<any[]>>(`/admin/users/${userId}/work-experience`),
+  adminCreateWorkExperience: (apiClient: AxiosInstance, userId: string, data: any) =>
+    apiClient.post<ApiResponse<any>>(`/admin/users/${userId}/work-experience`, data),
+  adminUpdateWorkExperience: (apiClient: AxiosInstance, userId: string, itemId: string, data: any) =>
+    apiClient.patch<ApiResponse<any>>(`/admin/users/${userId}/work-experience/${itemId}`, data),
+  adminDeleteWorkExperience: (apiClient: AxiosInstance, userId: string, itemId: string) =>
+    apiClient.delete<ApiResponse<any>>(`/admin/users/${userId}/work-experience/${itemId}`),
+
+  // Education
+  adminListEducation: (apiClient: AxiosInstance, userId: string) =>
+    apiClient.get<ApiResponse<any[]>>(`/admin/users/${userId}/education`),
+  adminCreateEducation: (apiClient: AxiosInstance, userId: string, data: any) =>
+    apiClient.post<ApiResponse<any>>(`/admin/users/${userId}/education`, data),
+  adminUpdateEducation: (apiClient: AxiosInstance, userId: string, itemId: string, data: any) =>
+    apiClient.patch<ApiResponse<any>>(`/admin/users/${userId}/education/${itemId}`, data),
+  adminDeleteEducation: (apiClient: AxiosInstance, userId: string, itemId: string) =>
+    apiClient.delete<ApiResponse<any>>(`/admin/users/${userId}/education/${itemId}`),
+
+  // Certifications
+  adminListCertifications: (apiClient: AxiosInstance, userId: string) =>
+    apiClient.get<ApiResponse<any[]>>(`/admin/users/${userId}/certifications`),
+  adminCreateCertification: (apiClient: AxiosInstance, userId: string, data: any) =>
+    apiClient.post<ApiResponse<any>>(`/admin/users/${userId}/certifications`, data),
+  adminUpdateCertification: (apiClient: AxiosInstance, userId: string, itemId: string, data: any) =>
+    apiClient.patch<ApiResponse<any>>(`/admin/users/${userId}/certifications/${itemId}`, data),
+  adminDeleteCertification: (apiClient: AxiosInstance, userId: string, itemId: string) =>
+    apiClient.delete<ApiResponse<any>>(`/admin/users/${userId}/certifications/${itemId}`),
+
+  // ── Organization: Products (SUPER_ADMIN) ──────────────────────────────────
+  adminListOrgProducts: (apiClient: AxiosInstance, orgId: string) =>
+    apiClient.get<ApiResponse<any[]>>(`/admin/organizations/${orgId}/products`),
+  adminCreateOrgProduct: (apiClient: AxiosInstance, orgId: string, data: any) =>
+    apiClient.post<ApiResponse<any>>(`/admin/organizations/${orgId}/products`, data),
+  adminUpdateOrgProduct: (apiClient: AxiosInstance, orgId: string, productId: string, data: any) =>
+    apiClient.patch<ApiResponse<any>>(`/admin/organizations/${orgId}/products/${productId}`, data),
+  adminDeleteOrgProduct: (apiClient: AxiosInstance, orgId: string, productId: string) =>
+    apiClient.delete<ApiResponse<any>>(`/admin/organizations/${orgId}/products/${productId}`),
+
+  // ── Organization: Services (SUPER_ADMIN) ──────────────────────────────────
+  adminListOrgServices: (apiClient: AxiosInstance, orgId: string) =>
+    apiClient.get<ApiResponse<any[]>>(`/admin/organizations/${orgId}/services`),
+  adminCreateOrgService: (apiClient: AxiosInstance, orgId: string, data: any) =>
+    apiClient.post<ApiResponse<any>>(`/admin/organizations/${orgId}/services`, data),
+  adminUpdateOrgService: (apiClient: AxiosInstance, orgId: string, serviceId: string, data: any) =>
+    apiClient.patch<ApiResponse<any>>(`/admin/organizations/${orgId}/services/${serviceId}`, data),
+  adminDeleteOrgService: (apiClient: AxiosInstance, orgId: string, serviceId: string) =>
+    apiClient.delete<ApiResponse<any>>(`/admin/organizations/${orgId}/services/${serviceId}`),
+
+  // ── Organization: Documents (SUPER_ADMIN) ─────────────────────────────────
+  adminListOrgDocuments: (apiClient: AxiosInstance, orgId: string) =>
+    apiClient.get<ApiResponse<any[]>>(`/admin/organizations/${orgId}/documents`),
+  adminCreateOrgDocument: (apiClient: AxiosInstance, orgId: string, data: { assetId: string; documentType?: string; title?: string; description?: string; displayOrder?: number }) =>
+    apiClient.post<ApiResponse<any>>(`/admin/organizations/${orgId}/documents`, data),
+  adminDeleteOrgDocument: (apiClient: AxiosInstance, orgId: string, docId: string) =>
+    apiClient.delete<ApiResponse<any>>(`/admin/organizations/${orgId}/documents/${docId}`),
+
+  // ── Organization: Members (SUPER_ADMIN) ───────────────────────────────────
+  adminListOrgMembers: (apiClient: AxiosInstance, orgId: string) =>
+    apiClient.get<ApiResponse<any[]>>(`/admin/organizations/${orgId}/members`),
+  adminAddOrgMember: (apiClient: AxiosInstance, orgId: string, data: { userId: string; role: string }) =>
+    apiClient.post<ApiResponse<any>>(`/admin/organizations/${orgId}/members`, data),
+  adminUpdateOrgMemberRole: (apiClient: AxiosInstance, orgId: string, userId: string, role: string) =>
+    apiClient.patch<ApiResponse<any>>(`/admin/organizations/${orgId}/members/${userId}`, { role }),
+  adminRemoveOrgMember: (apiClient: AxiosInstance, orgId: string, userId: string) =>
+    apiClient.delete<ApiResponse<any>>(`/admin/organizations/${orgId}/members/${userId}`),
+
+  adminImpersonateUser: (apiClient: AxiosInstance, userId: string) =>
+    apiClient.post<ApiResponse<{ id: string; firstName: string; lastName: string; email: string; role: string; displayName: string }>>(`/admin/users/${userId}/impersonate`),
+
   // Support Tickets
   getSupportTickets: (apiClient: AxiosInstance, filters?: {
     status?: string;

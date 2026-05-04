@@ -1,3 +1,7 @@
+// Load .env before any module is imported so redis.config.ts and other
+// module-level env reads see the populated process.env.
+import 'dotenv/config';
+
 // Initialize Sentry as early as possible, before other imports
 import { initSentry } from './sentry.instrument';
 
@@ -13,6 +17,7 @@ import { AppModule } from './app.module';
 import { AppLoggerService } from './common/logger.service';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 import { SentryExceptionFilter } from './common/filters/sentry-exception.filter';
+import { isOriginAllowed } from './common/cors.config';
 
 async function bootstrap() {
   // Trigger deployment to run database migrations
@@ -26,23 +31,11 @@ async function bootstrap() {
   const expressApp = app.getHttpAdapter().getInstance();
   expressApp.set('etag', false);
   
-  // CORS configuration - MUST run before helmet
-  const prodAllowed = new Set([
-    'https://app.procrechesolutions.com',
-    'https://admin.procrechesolutions.com',
-  ]);
-
+  // CORS configuration - MUST run before helmet.
+  // Origin logic is shared with AllExceptionsFilter via cors.config.ts so that
+  // error responses from dynamically-allowed origins also carry CORS headers.
   app.enableCors({
-    origin: (origin, cb) => {
-      // Allow non-browser clients (curl/postman) with no Origin header
-      if (!origin) return cb(null, true);
-
-      // In non-production, allow all origins for easier testing
-      if (process.env.NODE_ENV !== 'production') return cb(null, true);
-
-      // In production, only allow known origins
-      return cb(null, prodAllowed.has(origin));
-    },
+    origin: (origin, cb) => cb(null, isOriginAllowed(origin)),
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: [
@@ -58,6 +51,16 @@ async function bootstrap() {
     exposedHeaders: ['Content-Type', 'Authorization', 'x-build-commit', 'X-Trace-Id'],
     maxAge: 86400,
     optionsSuccessStatus: 204,
+  });
+
+  // When the cors middleware denies an origin it calls next() rather than ending the
+  // response, so OPTIONS preflights from blocked origins fall through to NestJS routing
+  // and get a 404 NotFoundException instead of a proper CORS rejection. Catch them here.
+  app.use((req: any, res: any, next: any) => {
+    if (req.method === 'OPTIONS') {
+      return res.status(403).end();
+    }
+    next();
   });
   
   // Raw body for webhook route

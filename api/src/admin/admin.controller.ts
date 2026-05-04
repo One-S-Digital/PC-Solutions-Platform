@@ -1,10 +1,13 @@
-import { Controller, Get, Put, Post, Body, UseGuards, Request, Logger } from '@nestjs/common';
+import { Controller, Get, Put, Post, Body, UseGuards, Request, Logger, UseInterceptors, UploadedFile, BadRequestException, Req } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { PrismaService } from '../prisma/prisma.service';
-
+import { UploadService } from '../upload/upload.service';
+import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole, OrganizationType } from '@prisma/client';
+import { AssetKind } from '@workspace/types';
 
 export class SystemSettingsDto {
   maintenanceMode: boolean;
@@ -46,8 +49,45 @@ export class SubscriptionTierDto {
 @ApiBearerAuth()
 export class AdminController {
   private readonly logger = new Logger(AdminController.name);
-  
-  constructor(private readonly prisma: PrismaService) {}
+
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly uploadService: UploadService,
+  ) {}
+
+  /**
+   * POST /admin/uploads
+   * Admin-privileged file upload; attributed to the calling admin user.
+   */
+  @Post('uploads')
+  @UseGuards(ClerkAuthGuard, RolesGuard)
+  @UseInterceptors(FileInterceptor('file', { limits: { fileSize: 20 * 1024 * 1024 } }))
+  async adminUploadAsset(
+    @UploadedFile() file: Express.Multer.File,
+    @Body('kind') kind: string,
+    @Req() req: any,
+  ) {
+    if (!file) throw new BadRequestException('No file provided');
+    const validKind = kind as AssetKind;
+    if (!Object.values(AssetKind).includes(validKind)) {
+      throw new BadRequestException(`Invalid kind. Must be one of: ${Object.values(AssetKind).join(', ')}`);
+    }
+    const appUserId = req.context?.appUserId;
+    if (!appUserId) throw new BadRequestException('User not authenticated');
+
+    const result = await this.uploadService.uploadFile(file, appUserId, validKind);
+    return {
+      success: true,
+      data: {
+        id: result.asset.id,
+        publicUrl: result.asset.publicUrl,
+        filename: result.asset.filename,
+        originalName: result.asset.filename,
+        size: result.asset.size,
+        mimeType: result.asset.mimeType,
+      },
+    };
+  }
 
   @Get('settings')
   @ApiOperation({ summary: 'Get system settings' })

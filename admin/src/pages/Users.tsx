@@ -40,7 +40,9 @@ import { STANDARD_INPUT_FIELD } from '../constants/design-system'
 import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 import EditUserModal from '../components/EditUserModal'
+import AdminQuickEditModal, { QuickEditUserData } from '../components/AdminQuickEditModal'
 import { useDebouncedValue } from '../hooks/useDebouncedValue'
+import { useAdminRole } from '../hooks/useAdminRole'
 
 // Delete Confirmation Modal Component
 interface DeleteConfirmModalProps {
@@ -1097,21 +1099,15 @@ const Users: React.FC = () => {
   const [isElevateModalOpen, setIsElevateModalOpen] = useState(false)
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false)
   const [isSuspendModalOpen, setIsSuspendModalOpen] = useState(false)
+  const [isQuickEditModalOpen, setIsQuickEditModalOpen] = useState(false)
+  const [quickEditUser, setQuickEditUser] = useState<QuickEditUserData | null>(null)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
 
   const apiClient = useApiClient()
   const queryClient = useQueryClient()
 
-  // Fetch current user to check if they are super admin
-  const { data: currentUserResponse } = useQuery({
-    queryKey: ['current-user'],
-    queryFn: () => apiService.getCurrentUser(apiClient),
-    enabled: !!apiClient,
-    staleTime: 5 * 60 * 1000,
-  })
-
-  const currentUser = currentUserResponse?.data?.data
-  const isSuperAdmin = currentUser?.role === UserRole.SUPER_ADMIN
+  // Role comes from AdminRoleContext — no extra API call needed.
+  const { isSuperAdmin, adminRole } = useAdminRole()
   const canInviteSuperAdmin = isSuperAdmin
 
   // Reset to first page when filters/page-size change
@@ -1433,10 +1429,23 @@ const Users: React.FC = () => {
   const canGoPrev = page > 1
   const canGoNext = page < totalPages
 
-  // Handle opening edit modal
+  // Handle opening edit modal (role/status/org management — available to both roles)
   const handleEditUser = (user: User) => {
     setSelectedUser(user)
     setIsEditModalOpen(true)
+  }
+
+  // Handle opening quick-edit modal (basic profile fields — ADMIN role only)
+  const handleQuickEditUser = (user: User) => {
+    setQuickEditUser({
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      phoneNumber: (user as any).phoneNumber ?? null,
+      shortBio: (user as any).shortBio ?? null,
+    })
+    setIsQuickEditModalOpen(true)
   }
 
   const handleSuspendClick = (user: User) => {
@@ -1568,6 +1577,11 @@ const Users: React.FC = () => {
   const handleCloseEditModal = () => {
     setIsEditModalOpen(false)
     setSelectedUser(null)
+  }
+
+  const handleCloseQuickEditModal = () => {
+    setIsQuickEditModalOpen(false)
+    setQuickEditUser(null)
   }
 
   const handleCloseDeleteModal = () => {
@@ -1832,18 +1846,36 @@ const Users: React.FC = () => {
                               </Menu.Item>
                             )}
 
-                            {/* Edit Full Profile - Navigate to full profile edit page */}
-                            <Menu.Item>
-                              {({ active }) => (
-                                <button
-                                  onClick={() => navigate(`/users/${user.id}/profile`)}
-                                  className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-swiss-teal font-medium`}
-                                >
-                                  <Edit className="h-4 w-4 mr-2" />
-                                  {t('admin:users.editFullProfile', 'Edit Full Profile')}
-                                </button>
-                              )}
-                            </Menu.Item>
+                            {/* Edit Full Profile — SUPER_ADMIN only */}
+                            {isSuperAdmin && (
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <button
+                                    onClick={() => navigate(`/users/${user.id}/profile`)}
+                                    className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-swiss-teal font-medium`}
+                                  >
+                                    <Edit className="h-4 w-4 mr-2" />
+                                    {t('admin:users.editFullProfile', 'Edit Full Profile')}
+                                  </button>
+                                )}
+                              </Menu.Item>
+                            )}
+
+                            {/* Quick Edit Profile — ADMIN role only (limited fields) */}
+                            {!isSuperAdmin && (
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <button
+                                    onClick={() => handleQuickEditUser(user)}
+                                    className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-swiss-teal font-medium`}
+                                  >
+                                    <Edit className="h-4 w-4 mr-2" />
+                                    {t('admin:users.quickEditProfile', 'Quick Edit Profile')}
+                                  </button>
+                                )}
+                              </Menu.Item>
+                            )}
+
                             {/* View Profile - Only for users with organizations (suppliers/service providers) */}
                             {user.orgId && (user.role === UserRole.PRODUCT_SUPPLIER || user.role === UserRole.SERVICE_PROVIDER) && (
                               <Menu.Item>
@@ -1858,6 +1890,8 @@ const Users: React.FC = () => {
                                 )}
                               </Menu.Item>
                             )}
+
+                            {/* Edit User Account (role / status / org assignment) — both roles */}
                             <Menu.Item>
                               {({ active }) => (
                                 <button
@@ -1949,7 +1983,7 @@ const Users: React.FC = () => {
         <div className="hidden sm:block" />
       </div>
 
-      {/* Edit User Modal */}
+      {/* Edit User Modal — role/status/org management, available to both ADMIN and SUPER_ADMIN */}
       <EditUserModal
         isOpen={isEditModalOpen}
         onClose={handleCloseEditModal}
@@ -1957,12 +1991,19 @@ const Users: React.FC = () => {
         onSave={handleUpdateUser}
         isLoading={updateUserMutation.isPending}
         isFetchingUser={false}
-        currentUserRole={currentUser?.role}
+        currentUserRole={adminRole ?? undefined}
         userOrganizations={userOrganizations}
         allOrganizations={allOrganizations}
         onAddOrg={handleAddOrg}
         onRemoveOrg={handleRemoveOrg}
         isOrgLoading={assignOrgMutation.isPending || removeOrgMutation.isPending}
+      />
+
+      {/* Quick Edit Profile Modal — basic profile fields, ADMIN role only */}
+      <AdminQuickEditModal
+        isOpen={isQuickEditModalOpen}
+        onClose={handleCloseQuickEditModal}
+        user={quickEditUser}
       />
 
       {/* Delete Confirmation Modal */}
