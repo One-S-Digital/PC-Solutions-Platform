@@ -17,6 +17,7 @@ import { AppModule } from './app.module';
 import { AppLoggerService } from './common/logger.service';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 import { SentryExceptionFilter } from './common/filters/sentry-exception.filter';
+import { isOriginAllowed } from './common/cors.config';
 
 async function bootstrap() {
   // Trigger deployment to run database migrations
@@ -30,27 +31,11 @@ async function bootstrap() {
   const expressApp = app.getHttpAdapter().getInstance();
   expressApp.set('etag', false);
   
-  // CORS configuration - MUST run before helmet
-  // CORS_ORIGINS env var accepts a comma-separated list of extra allowed origins,
-  // enabling Render preview URLs and other deployment targets without code changes.
-  const envOrigins = (process.env.CORS_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
-  const prodAllowed = new Set([
-    'https://app.procrechesolutions.com',
-    'https://admin.procrechesolutions.com',
-    ...envOrigins,
-  ]);
-
+  // CORS configuration - MUST run before helmet.
+  // Origin logic is shared with AllExceptionsFilter via cors.config.ts so that
+  // error responses from dynamically-allowed origins also carry CORS headers.
   app.enableCors({
-    origin: (origin, cb) => {
-      // Allow non-browser clients (curl/postman) with no Origin header
-      if (!origin) return cb(null, true);
-
-      // In non-production, allow all origins for easier testing
-      if (process.env.NODE_ENV !== 'production') return cb(null, true);
-
-      // In production, only allow known origins
-      return cb(null, prodAllowed.has(origin));
-    },
+    origin: (origin, cb) => cb(null, isOriginAllowed(origin)),
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: [
