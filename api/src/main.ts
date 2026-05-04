@@ -1,3 +1,7 @@
+// Load .env before any module is imported so redis.config.ts and other
+// module-level env reads see the populated process.env.
+import 'dotenv/config';
+
 // Initialize Sentry as early as possible, before other imports
 import { initSentry } from './sentry.instrument';
 

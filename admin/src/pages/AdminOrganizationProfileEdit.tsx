@@ -1109,7 +1109,14 @@ const AdminOrganizationProfileEdit: React.FC = () => {
             </p>
           </div>
         </div>
-        <Button variant="primary" leftIcon={Save} type="submit" form={PROFILE_FORM_ID} disabled={!isDirty || updateMutation.isPending}>
+        <Button
+          variant="primary"
+          leftIcon={Save}
+          type="submit"
+          form={PROFILE_FORM_ID}
+          disabled={activeTab !== 0 || !isDirty || updateMutation.isPending}
+          title={activeTab !== 0 ? t('admin:orgProfile.saveOnProfileTab', 'Switch to the Profile tab to save changes') : undefined}
+        >
           {updateMutation.isPending ? t('common:saving', 'Saving...') : t('common:saveChanges', 'Save Changes')}
         </Button>
       </div>

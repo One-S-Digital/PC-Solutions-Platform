@@ -285,7 +285,8 @@ export class AdminSubresourcesController {
     @Body() dto: AdminCreateWorkExperienceDto,
   ) {
     const profileId = await this.resolveProfileId(userId);
-    const count = await this.prisma.educatorWorkExperience.count({ where: { userId: profileId } });
+    const agg = await this.prisma.educatorWorkExperience.aggregate({ where: { userId: profileId }, _max: { sortOrder: true } });
+    const nextOrder = (agg._max.sortOrder ?? -1) + 1;
     const item = await this.prisma.educatorWorkExperience.create({
       data: {
         userId: profileId,
@@ -294,7 +295,7 @@ export class AdminSubresourcesController {
         startDate: dto.startDate,
         endDate: dto.endDate,
         descriptionPoints: dto.descriptionPoints ?? [],
-        sortOrder: count,
+        sortOrder: nextOrder,
       },
     });
     this.logger.log(`[ADMIN] Created work experience ${item.id} for user ${userId}`);
@@ -364,7 +365,8 @@ export class AdminSubresourcesController {
     @Body() dto: AdminCreateEducationDto,
   ) {
     const profileId = await this.resolveProfileId(userId);
-    const count = await this.prisma.educatorEducation.count({ where: { userId: profileId } });
+    const agg = await this.prisma.educatorEducation.aggregate({ where: { userId: profileId }, _max: { sortOrder: true } });
+    const nextOrder = (agg._max.sortOrder ?? -1) + 1;
     const item = await this.prisma.educatorEducation.create({
       data: {
         userId: profileId,
@@ -372,7 +374,7 @@ export class AdminSubresourcesController {
         institutionName: dto.institutionName,
         graduationYear: dto.graduationYear,
         description: dto.description,
-        sortOrder: count,
+        sortOrder: nextOrder,
       },
     });
     this.logger.log(`[ADMIN] Created education ${item.id} for user ${userId}`);
@@ -440,7 +442,8 @@ export class AdminSubresourcesController {
     @Body() dto: AdminCreateCertificationDto,
   ) {
     const profileId = await this.resolveProfileId(userId);
-    const count = await this.prisma.educatorCertification.count({ where: { userId: profileId } });
+    const agg = await this.prisma.educatorCertification.aggregate({ where: { userId: profileId }, _max: { sortOrder: true } });
+    const nextOrder = (agg._max.sortOrder ?? -1) + 1;
     const item = await this.prisma.educatorCertification.create({
       data: {
         userId: profileId,
@@ -449,7 +452,7 @@ export class AdminSubresourcesController {
         issueDate: dto.issueDate,
         expiryDate: dto.expiryDate,
         credentialUrl: dto.credentialUrl,
-        sortOrder: count,
+        sortOrder: nextOrder,
       },
     });
     this.logger.log(`[ADMIN] Created certification ${item.id} for user ${userId}`);
@@ -657,7 +660,8 @@ export class AdminSubresourcesController {
     const asset = await this.prisma.asset.findUnique({ where: { id: dto.assetId } });
     if (!asset) throw new BadRequestException('Asset not found. Upload the file first.');
 
-    const count = await this.prisma.organizationDocument.count({ where: { organizationId: orgId } });
+    const agg = await this.prisma.organizationDocument.aggregate({ where: { organizationId: orgId }, _max: { displayOrder: true } });
+    const nextOrder = (agg._max.displayOrder ?? -1) + 1;
     const doc = await this.prisma.organizationDocument.create({
       data: {
         organizationId: orgId,
@@ -665,7 +669,7 @@ export class AdminSubresourcesController {
         documentType: dto.documentType ?? 'CATALOG',
         title: dto.title,
         description: dto.description,
-        displayOrder: dto.displayOrder ?? count,
+        displayOrder: dto.displayOrder ?? nextOrder,
         isActive: true,
       },
       include: { asset: true },
@@ -683,11 +687,23 @@ export class AdminSubresourcesController {
   ) {
     const doc = await this.prisma.organizationDocument.findFirst({
       where: { id: docId, organizationId: orgId },
+      select: { id: true, assetId: true },
     });
     if (!doc) throw new NotFoundException('Document not found for this organization');
 
-    // Hard delete — cascade defined in schema (onDelete: Cascade on asset relation)
     await this.prisma.organizationDocument.delete({ where: { id: docId } });
+
+    // Best-effort asset cleanup: remove the Asset record when no other document references it.
+    // Admin bypasses the ownership check; the storage file is cleaned up via best-effort.
+    const remainingRefs = await this.prisma.organizationDocument.count({ where: { assetId: doc.assetId } });
+    if (remainingRefs === 0) {
+      try {
+        await this.prisma.asset.delete({ where: { id: doc.assetId } });
+      } catch (e: any) {
+        this.logger.error(`[ADMIN] Document ${docId} deleted, but asset ${doc.assetId} cleanup failed: ${e?.message || e}`);
+      }
+    }
+
     this.logger.log(`[ADMIN] Hard-deleted document ${docId} from org ${orgId}`);
     return { success: true, message: 'Document deleted' };
   }
@@ -837,7 +853,7 @@ export class AdminSubresourcesController {
         entity: 'User',
         entityId: target.id,
         action: 'impersonate',
-        actorId: adminUser?.id ?? adminAppUserId ?? 'unknown',
+        actorId: adminUser?.id ?? undefined,
         metadata: {
           targetUserId: target.id,
           targetEmail: target.email,

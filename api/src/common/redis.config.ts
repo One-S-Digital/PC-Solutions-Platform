@@ -1,9 +1,18 @@
 /**
+ * Parse REDIS_URL when REDIS_HOST is not explicitly set.
+ * Bull v4 passes options directly to ioredis, which has no `url` property,
+ * so we decompose the URL into host/port/password manually.
+ */
+const _redisUrl = (!process.env.REDIS_HOST && process.env.REDIS_URL)
+  ? (() => { try { return new URL(process.env.REDIS_URL!); } catch { return null; } })()
+  : null;
+
+/**
  * True only when a Redis host or URL is explicitly configured.
  * BullModule registration is skipped entirely when false so the app
  * boots without Redis (queue workers are simply unavailable).
  */
-export const REDIS_ENABLED = !!(process.env.REDIS_HOST || process.env.REDIS_URL);
+export const REDIS_ENABLED = !!(process.env.REDIS_HOST || _redisUrl);
 
 /**
  * Shared Redis connection options for Bull queues.
@@ -14,9 +23,9 @@ export const REDIS_ENABLED = !!(process.env.REDIS_HOST || process.env.REDIS_URL)
  * only has to be made in one place.
  */
 export const sharedRedisOptions = {
-  host: process.env.REDIS_HOST || 'localhost',
-  port: parseInt(process.env.REDIS_PORT || '6379'),
-  password: process.env.REDIS_PASSWORD,
+  host: process.env.REDIS_HOST || _redisUrl?.hostname || 'localhost',
+  port: parseInt(process.env.REDIS_PORT || _redisUrl?.port || '6379'),
+  password: process.env.REDIS_PASSWORD || _redisUrl?.password || undefined,
   /** Fail fast instead of blocking the request thread for minutes. */
   maxRetriesPerRequest: 3,
   connectTimeout: 5000,
