@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useApiClient, apiService } from '../services/api';
@@ -20,7 +20,11 @@ import {
   Lock,
   UserCheck,
   Image as ImageIcon,
+  Upload,
+  X,
+  ExternalLink,
 } from 'lucide-react';
+import { useAssetUpload } from '../hooks/useAssetUpload';
 import Card from '../components/design-system/Card';
 import Button from '../components/design-system/Button';
 import ChipInput from '../components/design-system/ChipInput';
@@ -390,6 +394,8 @@ const AdminUserProfileEdit: React.FC = () => {
   const [formData, setFormData] = useState<Partial<UserProfile>>({});
   const [isDirty, setIsDirty] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
+  const cvInputRef = useRef<HTMLInputElement>(null);
+  const { uploadAsset, uploading: cvUploading } = useAssetUpload();
 
   // Impersonation state
   const [impersonating, setImpersonating] = useState(false);
@@ -705,14 +711,84 @@ const AdminUserProfileEdit: React.FC = () => {
         <Card className="p-6">
           <h3 className="mb-4 flex items-center text-base font-semibold text-gray-900">
             <FileText className="mr-2 h-5 w-5 text-swiss-teal" />
-            CV / Resume URL
+            CV / Resume
           </h3>
+          {formData.cvUrl ? (
+            <div className="flex items-center justify-between rounded-lg border border-green-200 bg-green-50 px-4 py-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <FileText className="h-5 w-5 shrink-0 text-green-600" />
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-gray-900">
+                    {formData.cvUrl.split('/').pop() || 'CV document'}
+                  </p>
+                  <a
+                    href={formData.cvUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-xs text-green-700 hover:underline"
+                  >
+                    <ExternalLink className="h-3 w-3" />
+                    View document
+                  </a>
+                </div>
+              </div>
+              <div className="ml-3 flex shrink-0 gap-2">
+                <button
+                  type="button"
+                  onClick={() => cvInputRef.current?.click()}
+                  disabled={cvUploading}
+                  className="flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                >
+                  <Upload className="h-3.5 w-3.5" />
+                  {cvUploading ? 'Uploading…' : 'Replace'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleChange('cvUrl', '')}
+                  disabled={cvUploading}
+                  className="flex items-center gap-1.5 rounded-md border border-red-200 bg-white px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+                >
+                  <X className="h-3.5 w-3.5" />
+                  Remove
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div
+              onClick={() => !cvUploading && cvInputRef.current?.click()}
+              className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-8 transition-colors hover:border-swiss-teal hover:bg-swiss-teal/5 ${cvUploading ? 'pointer-events-none opacity-50' : ''}`}
+            >
+              {cvUploading ? (
+                <>
+                  <div className="h-8 w-8 animate-spin rounded-full border-2 border-swiss-teal border-t-transparent" />
+                  <p className="mt-2 text-sm text-gray-500">Uploading…</p>
+                </>
+              ) : (
+                <>
+                  <Upload className="h-8 w-8 text-gray-400" />
+                  <p className="mt-2 text-sm font-medium text-swiss-teal">Upload CV / Resume</p>
+                  <p className="mt-1 text-xs text-gray-400">PDF, DOC, DOCX — max 5 MB</p>
+                </>
+              )}
+            </div>
+          )}
           <input
-            type="url"
-            value={formData.cvUrl || ''}
-            onChange={(e) => handleChange('cvUrl', e.target.value)}
-            className={STANDARD_INPUT_FIELD}
-            placeholder="https://..."
+            ref={cvInputRef}
+            type="file"
+            accept=".pdf,.doc,.docx"
+            className="hidden"
+            onChange={async (e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+              try {
+                const asset = await uploadAsset(file, 'CV');
+                handleChange('cvUrl', asset.publicUrl);
+              } catch {
+                toast.error('CV upload failed. Please try again.');
+              } finally {
+                if (cvInputRef.current) cvInputRef.current.value = '';
+              }
+            }}
           />
         </Card>
       </div>
