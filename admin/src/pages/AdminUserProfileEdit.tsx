@@ -711,7 +711,7 @@ const AdminUserProfileEdit: React.FC = () => {
         <Card className="p-6">
           <h3 className="mb-4 flex items-center text-base font-semibold text-gray-900">
             <FileText className="mr-2 h-5 w-5 text-swiss-teal" />
-            CV / Resume
+            {t('admin:userProfileEdit.cv.title')}
           </h3>
           {formData.cvUrl ? (
             <div className="flex items-center justify-between rounded-lg border border-green-200 bg-green-50 px-4 py-3">
@@ -719,7 +719,7 @@ const AdminUserProfileEdit: React.FC = () => {
                 <FileText className="h-5 w-5 shrink-0 text-green-600" />
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium text-gray-900">
-                    {formData.cvUrl.split('/').pop() || 'CV document'}
+                    {formData.cvUrl.split('/').pop() || t('admin:userProfileEdit.cv.document')}
                   </p>
                   <a
                     href={formData.cvUrl}
@@ -728,7 +728,7 @@ const AdminUserProfileEdit: React.FC = () => {
                     className="flex items-center gap-1 text-xs text-green-700 hover:underline"
                   >
                     <ExternalLink className="h-3 w-3" />
-                    View document
+                    {t('admin:userProfileEdit.cv.viewDocument')}
                   </a>
                 </div>
               </div>
@@ -740,7 +740,7 @@ const AdminUserProfileEdit: React.FC = () => {
                   className="flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
                 >
                   <Upload className="h-3.5 w-3.5" />
-                  {cvUploading ? 'Uploading…' : 'Replace'}
+                  {cvUploading ? t('admin:userProfileEdit.cv.uploading') : t('admin:userProfileEdit.cv.replace')}
                 </button>
                 <button
                   type="button"
@@ -749,7 +749,7 @@ const AdminUserProfileEdit: React.FC = () => {
                   className="flex items-center gap-1.5 rounded-md border border-red-200 bg-white px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
                 >
                   <X className="h-3.5 w-3.5" />
-                  Remove
+                  {t('admin:userProfileEdit.cv.remove')}
                 </button>
               </div>
             </div>
@@ -761,13 +761,13 @@ const AdminUserProfileEdit: React.FC = () => {
               {cvUploading ? (
                 <>
                   <div className="h-8 w-8 animate-spin rounded-full border-2 border-swiss-teal border-t-transparent" />
-                  <p className="mt-2 text-sm text-gray-500">Uploading…</p>
+                  <p className="mt-2 text-sm text-gray-500">{t('admin:userProfileEdit.cv.uploading')}</p>
                 </>
               ) : (
                 <>
                   <Upload className="h-8 w-8 text-gray-400" />
-                  <p className="mt-2 text-sm font-medium text-swiss-teal">Upload CV / Resume</p>
-                  <p className="mt-1 text-xs text-gray-400">PDF, DOC, DOCX — max 5 MB</p>
+                  <p className="mt-2 text-sm font-medium text-swiss-teal">{t('admin:userProfileEdit.cv.upload')}</p>
+                  <p className="mt-1 text-xs text-gray-400">{t('admin:userProfileEdit.cv.hint')}</p>
                 </>
               )}
             </div>
@@ -784,7 +784,7 @@ const AdminUserProfileEdit: React.FC = () => {
                 const asset = await uploadAsset(file, 'CV');
                 handleChange('cvUrl', asset.publicUrl);
               } catch {
-                toast.error('CV upload failed. Please try again.');
+                toast.error(t('admin:userProfileEdit.cv.uploadFailed'));
               } finally {
                 if (cvInputRef.current) cvInputRef.current.value = '';
               }

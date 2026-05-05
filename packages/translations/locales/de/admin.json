@@ -2438,5 +2438,18 @@
       "cancelSending": "Versand abbrechen",
       "close": "Schliessen"
     }
+  },
+  "userProfileEdit": {
+    "cv": {
+      "title": "CV / Lebenslauf",
+      "document": "CV-Dokument",
+      "viewDocument": "Dokument anzeigen",
+      "upload": "CV hochladen",
+      "uploading": "Wird hochgeladen…",
+      "replace": "Ersetzen",
+      "remove": "Entfernen",
+      "hint": "PDF, DOC, DOCX — max. 5 MB",
+      "uploadFailed": "CV-Upload fehlgeschlagen. Bitte erneut versuchen."
+    }
   }
 }
