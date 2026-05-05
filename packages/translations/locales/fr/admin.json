@@ -2464,6 +2464,18 @@
       "close": "Fermer"
     }
   },
+  "userProfileEdit": {
+    "cv": {
+      "title": "CV / Curriculum vitae",
+      "document": "Document CV",
+      "viewDocument": "Voir le document",
+      "upload": "Télécharger un CV",
+      "uploading": "Téléchargement…",
+      "replace": "Remplacer",
+      "remove": "Supprimer",
+      "hint": "PDF, DOC, DOCX — 5 Mo max",
+      "uploadFailed": "Échec du téléchargement du CV. Veuillez réessayer."
+    }
   "orgProfile": {
     "editTitle": "Modifier le profil de l'organisation",
     "basicInfo": "Informations générales",

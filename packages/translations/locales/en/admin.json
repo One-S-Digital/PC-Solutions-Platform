@@ -2439,6 +2439,18 @@
       "close": "Close"
     }
   },
+  "userProfileEdit": {
+    "cv": {
+      "title": "CV / Resume",
+      "document": "CV document",
+      "viewDocument": "View document",
+      "upload": "Upload CV / Resume",
+      "uploading": "Uploading…",
+      "replace": "Replace",
+      "remove": "Remove",
+      "hint": "PDF, DOC, DOCX — max 5 MB",
+      "uploadFailed": "CV upload failed. Please try again."
+    }
   "orgProfile": {
     "editTitle": "Edit Organization Profile",
     "basicInfo": "Basic Information",

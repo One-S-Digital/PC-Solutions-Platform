@@ -80,7 +80,7 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
       { replace: false },
     );
   };
-  
+
   const [documents, setDocuments] = useState<ProfileDocument[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
@@ -90,7 +90,9 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
   const [docDescription, setDocDescription] = useState('');
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkDeleting, setBulkDeleting] = useState(false);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Determine if user is allowed to use this component
@@ -98,7 +100,7 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
 
   const fetchDocuments = useCallback(async () => {
     if (!isAllowed) return;
-    
+
     try {
       setIsLoading(true);
       const response = await request<ProfileDocument[]>('/organization-documents');
@@ -116,6 +118,23 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
   useEffect(() => {
     fetchDocuments();
   }, [fetchDocuments]);
+
+  const toggleSelected = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (documents.every((d) => selectedIds.has(d.id))) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(documents.map((d) => d.id)));
+    }
+  };
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -186,7 +205,7 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
           message: t('settings:profileDocuments.uploadSuccessMessage', 'Your document has been uploaded successfully.'),
           type: 'success',
         });
-        
+
         // Reset form
         setDocTitle('');
         setDocDescription('');
@@ -224,6 +243,7 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
 
       if (response.success) {
         setDocuments(prev => prev.filter(doc => doc.id !== documentId));
+        setSelectedIds((prev) => { const next = new Set(prev); next.delete(documentId); return next; });
         addNotification({
           title: t('settings:profileDocuments.deleteSuccess', 'Document deleted'),
           message: t('settings:profileDocuments.deleteSuccessMessage', 'The document has been deleted successfully.'),
@@ -242,6 +262,31 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
     } finally {
       setDeletingId(null);
     }
+  };
+
+  const handleBulkDelete = async () => {
+    const count = selectedIds.size;
+    if (count === 0) return;
+    if (!confirm(
+      t('common:bulkActions.confirmBulkDelete', 'Permanently delete {{count}} item(s)? This cannot be undone.', { count }),
+    )) return;
+
+    setBulkDeleting(true);
+    const ids = Array.from(selectedIds);
+    const results = await Promise.allSettled(
+      ids.map((id) => request<{ success: boolean }>(`/organization-documents/${id}`, { method: 'DELETE' })),
+    );
+    const deletedIds = new Set(
+      ids.filter((_, i) => results[i].status === 'fulfilled' && (results[i] as PromiseFulfilledResult<any>).value.success !== false),
+    );
+    setDocuments((prev) => prev.filter((doc) => !deletedIds.has(doc.id)));
+    setSelectedIds((prev) => new Set([...prev].filter((id) => !deletedIds.has(id))));
+    setBulkDeleting(false);
+    addNotification({
+      title: t('settings:profileDocuments.deleteSuccess', 'Document deleted'),
+      message: t('settings:profileDocuments.deleteSuccessMessage', 'The document has been deleted successfully.'),
+      type: 'success',
+    });
   };
 
   const handleDownload = async (doc: ProfileDocument) => {
@@ -276,9 +321,11 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
     return null;
   }
 
+  const allSelected = documents.length > 0 && documents.every((d) => selectedIds.has(d.id));
+
   return (
-    <SettingsSectionWrapper 
-      title={t('settings:profileDocuments.title')} 
+    <SettingsSectionWrapper
+      title={t('settings:profileDocuments.title')}
       icon={DocumentIcon}
     >
       <div className="space-y-6">
@@ -295,7 +342,7 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
           <h4 className="text-sm font-medium text-gray-900">
             {t('settings:profileDocuments.uploadNew')}
           </h4>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -314,7 +361,7 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
                 ))}
               </select>
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 {t('settings:profileDocuments.documentTitle')}
@@ -329,7 +376,7 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
               />
             </div>
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               {t('settings:profileDocuments.description')}
@@ -354,7 +401,7 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
               className="hidden"
               disabled={isUploading}
             />
-            
+
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
@@ -373,7 +420,7 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
                 </>
               )}
             </button>
-            
+
             <p className="mt-2 text-xs text-gray-500">
               {t('settings:profileDocuments.allowedFormats')}
             </p>
@@ -394,7 +441,40 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
               {t('settings:profileDocuments.deleteHelpCta', 'How do I delete files?')}
             </button>
           </div>
-          
+
+          {/* Bulk action bar */}
+          {documents.length > 0 && (
+            <div className="flex items-center gap-3 mb-3">
+              <label className="flex items-center gap-2 cursor-pointer select-none text-sm text-gray-600">
+                <input
+                  type="checkbox"
+                  checked={allSelected}
+                  onChange={toggleSelectAll}
+                  className="h-4 w-4 rounded border-gray-300 text-swiss-mint focus:ring-swiss-mint"
+                />
+                {allSelected
+                  ? t('common:bulkActions.deselectAll', 'Deselect all')
+                  : t('common:bulkActions.selectAll', 'Select all')}
+              </label>
+              {selectedIds.size > 0 && (
+                <>
+                  <span className="text-sm text-gray-500">
+                    {t('common:bulkActions.selected', '{{count}} selected', { count: selectedIds.size })}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleBulkDelete}
+                    disabled={bulkDeleting}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium text-white bg-red-600 hover:bg-red-700 disabled:opacity-50"
+                  >
+                    <TrashIcon className="h-4 w-4" />
+                    {t('common:bulkActions.deleteSelected', 'Delete selected')}
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+
           {isLoading ? (
             <div className="text-center py-8">
               <ArrowPathIcon className="animate-spin h-8 w-8 mx-auto text-gray-400" />
@@ -417,15 +497,22 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
               {documents.map((doc) => {
                 const IconComponent = getDocumentIcon(doc.asset?.mimeType);
                 const docTypeKey = `settings:profileDocuments.types.${doc.documentType.toLowerCase()}`;
-                
+
                 return (
-                  <li key={doc.id} className="p-4 hover:bg-gray-50">
+                  <li key={doc.id} className={`p-4 hover:bg-gray-50 ${selectedIds.has(doc.id) ? 'bg-swiss-mint/5' : ''}`}>
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center min-w-0 flex-1">
+                      <div className="flex items-center min-w-0 flex-1 gap-3">
+                        {/* Checkbox */}
+                        <input
+                          type="checkbox"
+                          checked={selectedIds.has(doc.id)}
+                          onChange={() => toggleSelected(doc.id)}
+                          className="h-4 w-4 rounded border-gray-300 text-swiss-mint focus:ring-swiss-mint flex-shrink-0"
+                        />
                         <div className="flex-shrink-0">
                           <IconComponent className="h-8 w-8 text-swiss-mint" />
                         </div>
-                        <div className="ml-3 min-w-0 flex-1">
+                        <div className="min-w-0 flex-1">
                           <p className="text-sm font-medium text-gray-900 truncate">
                             {doc.title || doc.asset?.filename || t('settings:profileDocuments.untitledDocument')}
                           </p>
@@ -443,7 +530,7 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
                           )}
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center space-x-2 ml-4">
                         {doc.asset?.mimeType?.includes('pdf') && (
                           <button

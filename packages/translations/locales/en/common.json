@@ -2388,5 +2388,12 @@
   "welcomeBack": "Welcome back!",
   "description": "Description",
   "cancel": "Cancel",
-  "done": "Done"
+  "done": "Done",
+  "bulkActions": {
+    "selected": "{{count}} selected",
+    "deleteSelected": "Delete selected",
+    "selectAll": "Select all",
+    "deselectAll": "Deselect all",
+    "confirmBulkDelete": "Permanently delete {{count}} item(s)? This cannot be undone."
+  }
 }
