@@ -174,6 +174,12 @@ Enforced in educator-settings.dto, admin-profiles.controller, settings.controlle
 `jobRecruitment` → `['job_application_received', 'application_status_update', 'job_match']`.
 Preference check (`shouldSendNotification`) is wired. But **no seed templates for these events and no call sites in recruitment.service.ts** — so no email currently fires on jobs/applications.
 
+### Billing-critical templates NOT seeded (silent failure today)
+- `payment_reminder` and `subscription_payment_failed` — referenced by billing flow, never inserted into `EmailTemplate`. Seed alongside the staffing remodel.
+
+### Engine bugs caught during audit
+- `email-notification.service.ts#sendBulkNotification` ignores `scheduledAt` — should delegate to `scheduleNotification` when a future date is given.
+
 ### Cron
 `@Cron('0 * * * * *')` in EmailNotificationService dispatches due `ScheduledEmail` rows every minute.
 
@@ -183,14 +189,35 @@ Preference check (`shouldSendNotification`) is wired. But **no seed templates fo
 
 | Area | Gap | Remodel action |
 |---|---|---|
-| Admin overview | No staffing-first signals/alerts | Replace 10 count cards with staffing-led overview + activity feed |
-| Admin nav order | Role-agnostic alphabet-ish order | Reorder by strategic priority (staffing on top, non-core roles below) |
-| Foundation overview | Heavy mock data, not action-led | Replace with "Post a job / Find candidates / Find replacement / Urgent needs" action dashboard |
-| Replacement staffing | No model, no UI | Add `ReplacementRequest` model, urgency flag, dedicated UI on foundation side + matching endpoint |
-| Educator availability | Stored but not used | Add "Available for replacement" toggle + date windows; use in matching |
-| Candidate matching | Returns everyone | Add scoring (role, cities, availability overlap, skills) |
-| Emails | Templates for recruitment events not seeded; no call sites | Seed 5 templates + wire into recruitment.service |
-| Foundation pages mock data | Already documented in FOUNDATION_PAGES_REBUILD_PLAN.md | Fold the same backlog into Phase 3 of this remodel |
+| Admin overview | No staffing-first signals/alerts | Replace 10 count cards with staffing-led overview; existing cards preserved below the fold |
+| Admin nav order | Role-agnostic flat sidebar (no sub-items pattern) | Reorder + add collapsible parent groups (new pattern for admin sidebar) |
+| Foundation overview | Heavy mock data, not action-led | Replace with action-first dashboard (Post a job / Find candidates / Find replacement / Review applications) |
+| Replacement staffing | No model, no UI | Add `ReplacementRequest` + `ReplacementMatch` tables (separate state machine: SUGGESTED → OFFERED → ACCEPTED). Endpoints inside existing `recruitment.controller` — no new module. |
+| Educator availability | Stored but not used | Add `isOpenToReplacement` + date window as JSON keys inside existing `availabilitySettings` (no new User columns). Use in matching. |
+| Candidate matching | Returns everyone (stub) | Add weighted scoring (role 40 / city 25 / skills 15 / availability 15 / recency 5) |
+| Application pipeline | Only 4 statuses, no real hiring stages | Extend `ApplicationStatus` enum: + SHORTLISTED, INTERVIEW, OFFER, HIRED |
+| Foundation shortlists | localStorage only | Persist as `Organization.savedCandidateIds` JSON (no new SavedCandidate table) |
+| In-app notifications | Purely transient (`NotificationContext` in-memory) | New `Notification` Prisma table; reuse `messaging.gateway` for socket push |
+| Emails | Templates for recruitment events not seeded; no call sites | Seed 7 templates + wire into recruitment.service. Plus seed 2 missing billing templates while there. |
+| Feature flags | None planned for rollout | 4 flags: `v2_staffing_ia`, `v2_replacement_module`, `v2_staffing_emails`, `v2_in_app_notifications` |
+| Foundation pages mock data | Already documented in FOUNDATION_PAGES_REBUILD_PLAN.md | Fold same backlog into Phase 5 of this remodel |
+
+## 6b. Bugs caught during audit (fix in Phase 1–2)
+
+| # | File | Issue |
+|---|---|---|
+| 1 | `frontend/App.tsx:168` | Admin default redirect lands on `/admin/content-dashboard` (content-centric) — should land on staffing |
+| 2 | `frontend/components/layout/MainLayout.tsx` | `useTranslation` called inside a callback — lift to component body |
+| 3 | `admin/src/pages/Candidates.tsx` | Delete menu item has no `onClick` handler |
+| 4 | `admin/src/components/AddJobListingModal.tsx` | Missing `employmentType`, `workSchedule`, `startDate`, `salaryRange` vs. foundation modal |
+| 5 | `admin/src/pages/JobListings.tsx` | Status filter missing `FILLED` |
+| 6 | `frontend/pages/educator/EducatorJobBoardPage.tsx` | Contract-type filter omits REPLACEMENT, TEMPORARY, FREELANCE |
+| 7 | `frontend/pages/educator/EducatorApplicationsPage.tsx` | "View details" is an `alert()` stub |
+| 8 | `api/src/recruitment/recruitment.controller.ts` | Missing `@Roles` on 2 endpoints (`GET applications`, `GET candidates/:id`) |
+| 9 | DTOs | Duplicate `UpdateJobApplicationDto` (in both `create-job-application.dto.ts` and `update-job-application.dto.ts`) |
+| 10 | `admin/src/pages/Messaging.tsx` | `unreadCount` hard-coded to `0` |
+| 11 | `recruitment.service.ts#findMatchingCandidates` | Stub — replaced by §5.5 scoring in plan |
+| 12 | Various | `picsum.photos` placeholder avatars throughout; replace with initials-avatar |
 
 ---
 
