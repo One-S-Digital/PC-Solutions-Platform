@@ -707,7 +707,23 @@ const AdminUserProfileEdit: React.FC = () => {
             allowCustomValues={true}
           />
         </Card>
+      </div>
+    </PermissionGate>
+  );
 
+  const documentsTab = (
+    <PermissionGate
+      role={UserRole.SUPER_ADMIN}
+      fallback={
+        <Card className="p-6 opacity-60">
+          <div className="flex items-center gap-2">
+            <Lock className="h-4 w-4 text-amber-400" />
+            <span className="text-sm text-gray-500">Super Admin required to manage documents.</span>
+          </div>
+        </Card>
+      }
+    >
+      <div className="space-y-6">
         <Card className="p-6">
           <h3 className="mb-4 flex items-center text-base font-semibold text-gray-900">
             <FileText className="mr-2 h-5 w-5 text-swiss-teal" />
@@ -820,6 +836,7 @@ const AdminUserProfileEdit: React.FC = () => {
         { label: 'Professional', icon: Briefcase, content: professionalTab },
         { label: 'Experience & Education', icon: GraduationCap, content: experienceTab },
         { label: 'Skills', icon: Award, content: skillsTab },
+        { label: 'CV & Documents', icon: FileText, content: documentsTab },
       ]}
     />
   );
