@@ -2451,6 +2451,7 @@
       "hint": "PDF, DOC, DOCX — max. 5 MB",
       "uploadFailed": "CV-Upload fehlgeschlagen. Bitte erneut versuchen."
     }
+  },
   "orgProfile": {
     "editTitle": "Organisationsprofil bearbeiten",
     "basicInfo": "Allgemeine Informationen",
