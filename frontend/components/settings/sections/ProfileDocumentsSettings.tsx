@@ -129,7 +129,7 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
   };
 
   const toggleSelectAll = () => {
-    if (selectedIds.size === documents.length) {
+    if (documents.every((d) => selectedIds.has(d.id))) {
       setSelectedIds(new Set());
     } else {
       setSelectedIds(new Set(documents.map((d) => d.id)));
@@ -273,11 +273,14 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
 
     setBulkDeleting(true);
     const ids = Array.from(selectedIds);
-    await Promise.allSettled(
+    const results = await Promise.allSettled(
       ids.map((id) => request<{ success: boolean }>(`/organization-documents/${id}`, { method: 'DELETE' })),
     );
-    setDocuments((prev) => prev.filter((doc) => !ids.includes(doc.id)));
-    setSelectedIds(new Set());
+    const deletedIds = new Set(
+      ids.filter((_, i) => results[i].status === 'fulfilled' && (results[i] as PromiseFulfilledResult<any>).value.success !== false),
+    );
+    setDocuments((prev) => prev.filter((doc) => !deletedIds.has(doc.id)));
+    setSelectedIds((prev) => new Set([...prev].filter((id) => !deletedIds.has(id))));
     setBulkDeleting(false);
     addNotification({
       title: t('settings:profileDocuments.deleteSuccess', 'Document deleted'),
@@ -318,7 +321,7 @@ const ProfileDocumentsSettings: React.FC<ProfileDocumentsSettingsProps> = ({ use
     return null;
   }
 
-  const allSelected = documents.length > 0 && selectedIds.size === documents.length;
+  const allSelected = documents.length > 0 && documents.every((d) => selectedIds.has(d.id));
 
   return (
     <SettingsSectionWrapper

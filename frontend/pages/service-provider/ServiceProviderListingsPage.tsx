@@ -308,11 +308,14 @@ const ServiceProviderListingsPage: React.FC = () => {
 
     setBulkDeleting(true);
     const ids = Array.from(selectedIds);
-    await Promise.allSettled(
+    const results = await Promise.allSettled(
       ids.map((id) => authenticatedRequest<void>(`/marketplace/services/${id}`, { method: 'DELETE' })),
     );
-    setServiceListings((prev) => prev.filter((s) => !ids.includes(s.id)));
-    setSelectedIds(new Set());
+    const deletedIds = new Set(
+      ids.filter((_, i) => results[i].status === 'fulfilled' && (results[i] as PromiseFulfilledResult<any>).value.success !== false),
+    );
+    setServiceListings((prev) => prev.filter((s) => !deletedIds.has(s.id)));
+    setSelectedIds((prev) => new Set([...prev].filter((id) => !deletedIds.has(id))));
     setBulkDeleting(false);
   };
 
@@ -340,7 +343,7 @@ const ServiceProviderListingsPage: React.FC = () => {
     );
   }
 
-  const allSelected = filteredServiceListings.length > 0 && selectedIds.size === filteredServiceListings.length;
+  const allSelected = filteredServiceListings.length > 0 && filteredServiceListings.every((s) => selectedIds.has(s.id));
 
   return (
     <div className="space-y-6">

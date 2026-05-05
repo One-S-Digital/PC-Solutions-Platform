@@ -204,7 +204,7 @@ const FileGalleryPage: React.FC = () => {
   };
 
   const toggleSelectAll = () => {
-    if (selectedIds.size === files.length) {
+    if (files.every((f) => selectedIds.has(f.id))) {
       setSelectedIds(new Set());
     } else {
       setSelectedIds(new Set(files.map((f) => f.id)));
@@ -253,8 +253,11 @@ const FileGalleryPage: React.FC = () => {
 
     setBulkDeleting(true);
     const ids = Array.from(selectedIds);
-    await Promise.allSettled(ids.map((id) => request(`/upload/files/${id}`, { method: 'DELETE' })));
-    setSelectedIds(new Set());
+    const results = await Promise.allSettled(ids.map((id) => request(`/upload/files/${id}`, { method: 'DELETE' })));
+    const deletedIds = new Set(
+      ids.filter((_, i) => results[i].status === 'fulfilled'),
+    );
+    setSelectedIds((prev) => new Set([...prev].filter((id) => !deletedIds.has(id))));
     setBulkDeleting(false);
     await refetch();
   };
@@ -265,7 +268,7 @@ const FileGalleryPage: React.FC = () => {
     return parts.length > 1 ? parts[parts.length - 1].toUpperCase() : 'FILE';
   };
 
-  const allSelected = files.length > 0 && selectedIds.size === files.length;
+  const allSelected = files.length > 0 && files.every((f) => selectedIds.has(f.id));
 
   return (
     <div className="space-y-6">

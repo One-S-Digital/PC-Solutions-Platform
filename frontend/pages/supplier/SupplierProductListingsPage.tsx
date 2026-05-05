@@ -440,11 +440,14 @@ const SupplierProductListingsPage: React.FC = () => {
 
     setBulkDeleting(true);
     const ids = Array.from(selectedIds);
-    await Promise.allSettled(
+    const results = await Promise.allSettled(
       ids.map((id) => request(`/marketplace/products/${id}`, { method: 'DELETE' })),
     );
-    setProducts((prev) => prev.filter((p) => !ids.includes(p.id)));
-    setSelectedIds(new Set());
+    const deletedIds = new Set(
+      ids.filter((_, i) => results[i].status === 'fulfilled' && (results[i] as PromiseFulfilledResult<any>).value.success !== false),
+    );
+    setProducts((prev) => prev.filter((p) => !deletedIds.has(p.id)));
+    setSelectedIds((prev) => new Set([...prev].filter((id) => !deletedIds.has(id))));
     setBulkDeleting(false);
   };
 
@@ -479,7 +482,7 @@ const SupplierProductListingsPage: React.FC = () => {
     );
   }
 
-  const allSelected = filteredProducts.length > 0 && selectedIds.size === filteredProducts.length;
+  const allSelected = filteredProducts.length > 0 && filteredProducts.every((p) => selectedIds.has(p.id));
 
   return (
     <div className="space-y-6">
