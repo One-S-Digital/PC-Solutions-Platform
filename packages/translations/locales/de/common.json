@@ -2390,5 +2390,12 @@
   "welcomeBack": "Willkommen Zurück!",
   "description": "Beschreibung",
   "cancel": "Abbrechen",
-  "done": "Fertig"
+  "done": "Fertig",
+  "bulkActions": {
+    "selected": "{{count}} ausgewählt",
+    "deleteSelected": "Auswahl löschen",
+    "selectAll": "Alle auswählen",
+    "deselectAll": "Auswahl aufheben",
+    "confirmBulkDelete": "{{count}} Element(e) dauerhaft löschen? Dies kann nicht rückgängig gemacht werden."
+  }
 }

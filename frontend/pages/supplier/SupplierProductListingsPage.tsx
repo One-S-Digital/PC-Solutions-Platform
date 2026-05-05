@@ -34,6 +34,8 @@ const SupplierProductListingsPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkDeleting, setBulkDeleting] = useState(false);
 
   const loadProducts = useCallback(async () => {
     if (!currentUser?.orgId) {
@@ -101,6 +103,23 @@ const SupplierProductListingsPage: React.FC = () => {
         return haystack.includes(lowerSearch);
       });
   }, [products, currentUser?.orgId, searchTerm]);
+
+  const toggleSelected = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filteredProducts.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filteredProducts.map((p) => p.id)));
+    }
+  };
 
   const getStockStatusColor = (status: StockStatus) => {
     switch (status) {
@@ -379,6 +398,7 @@ const SupplierProductListingsPage: React.FC = () => {
       }
 
       setProducts((prev) => prev.filter((product) => product.id !== productId));
+      setSelectedIds((prev) => { const next = new Set(prev); next.delete(productId); return next; });
       addNotification({
         type: 'success',
         title: t(
@@ -407,6 +427,25 @@ const SupplierProductListingsPage: React.FC = () => {
               ),
       });
     }
+  };
+
+  const handleBulkDelete = async () => {
+    const count = selectedIds.size;
+    if (count === 0) return;
+    if (
+      !window.confirm(
+        t('common:bulkActions.confirmBulkDelete', 'Permanently delete {{count}} item(s)? This cannot be undone.', { count }),
+      )
+    ) return;
+
+    setBulkDeleting(true);
+    const ids = Array.from(selectedIds);
+    await Promise.allSettled(
+      ids.map((id) => request(`/marketplace/products/${id}`, { method: 'DELETE' })),
+    );
+    setProducts((prev) => prev.filter((p) => !ids.includes(p.id)));
+    setSelectedIds(new Set());
+    setBulkDeleting(false);
   };
 
   const formatPrice = (product: Product) => {
@@ -439,6 +478,8 @@ const SupplierProductListingsPage: React.FC = () => {
       </Card>
     );
   }
+
+  const allSelected = filteredProducts.length > 0 && selectedIds.size === filteredProducts.length;
 
   return (
     <div className="space-y-6">
@@ -484,6 +525,41 @@ const SupplierProductListingsPage: React.FC = () => {
             />
           </div>
         </Card>
+
+        {/* Bulk action bar */}
+        {filteredProducts.length > 0 && (
+          <div className="flex items-center gap-3">
+            <label className="flex items-center gap-2 cursor-pointer select-none text-sm text-gray-600">
+              <input
+                type="checkbox"
+                checked={allSelected}
+                onChange={toggleSelectAll}
+                className="h-4 w-4 rounded border-gray-300 text-swiss-mint focus:ring-swiss-mint"
+              />
+              {allSelected
+                ? t('common:bulkActions.deselectAll', 'Deselect all')
+                : t('common:bulkActions.selectAll', 'Select all')}
+            </label>
+            {selectedIds.size > 0 && (
+              <>
+                <span className="text-sm text-gray-500">
+                  {t('common:bulkActions.selected', '{{count}} selected', { count: selectedIds.size })}
+                </span>
+                <Button
+                  variant="danger"
+                  size="sm"
+                  onClick={handleBulkDelete}
+                  disabled={bulkDeleting}
+                  className="flex items-center gap-1.5"
+                >
+                  <TrashIcon className="w-4 h-4" />
+                  {t('common:bulkActions.deleteSelected', 'Delete selected')}
+                </Button>
+              </>
+            )}
+          </div>
+        )}
+
         <Card className="p-0 overflow-hidden">
           {isLoading ? (
             <div className="p-10 text-center text-gray-500">
@@ -494,6 +570,15 @@ const SupplierProductListingsPage: React.FC = () => {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
+                    <th className="px-4 py-3 w-10">
+                      <input
+                        type="checkbox"
+                        checked={allSelected}
+                        onChange={toggleSelectAll}
+                        className="h-4 w-4 rounded border-gray-300 text-swiss-mint focus:ring-swiss-mint"
+                        aria-label={t('common:bulkActions.selectAll')}
+                      />
+                    </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       {t('dashboard:supplierProductListingsPage.table.product')}
                     </th>
@@ -513,7 +598,15 @@ const SupplierProductListingsPage: React.FC = () => {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {filteredProducts.map((product) => (
-                    <tr key={product.id} className="hover:bg-gray-50">
+                    <tr key={product.id} className={`hover:bg-gray-50 ${selectedIds.has(product.id) ? 'bg-swiss-mint/5' : ''}`}>
+                      <td className="px-4 py-4 w-10">
+                        <input
+                          type="checkbox"
+                          checked={selectedIds.has(product.id)}
+                          onChange={() => toggleSelected(product.id)}
+                          className="h-4 w-4 rounded border-gray-300 text-swiss-mint focus:ring-swiss-mint"
+                        />
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <img

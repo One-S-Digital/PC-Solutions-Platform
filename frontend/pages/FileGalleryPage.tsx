@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { 
-  PaperClipIcon, 
-  DocumentIcon, 
-  EyeIcon, 
-  ArrowDownTrayIcon, 
+import {
+  PaperClipIcon,
+  DocumentIcon,
+  EyeIcon,
+  ArrowDownTrayIcon,
   TrashIcon,
   InboxIcon,
   ExclamationCircleIcon,
@@ -35,7 +35,7 @@ const getFileIcon = (mimeType?: string, fileName?: string): string => {
     if (mimeType.startsWith('video/')) return '🎬';
     if (mimeType.startsWith('audio/')) return '🎵';
   }
-  
+
   // Fallback to file extension
   if (fileName) {
     const ext = fileName.split('.').pop()?.toLowerCase();
@@ -58,23 +58,39 @@ const getFileIcon = (mimeType?: string, fileName?: string): string => {
       default: return '📎';
     }
   }
-  
+
   return '📎';
 };
 
 interface FileCardProps {
   file: UserFile;
+  isSelected: boolean;
+  onToggleSelect: (id: string) => void;
   onPreview: (file: UserFile) => void;
   onDownload: (file: UserFile) => void;
   onDelete: (file: UserFile) => void;
 }
 
-const FileCard: React.FC<FileCardProps> = ({ file, onPreview, onDownload, onDelete }) => {
+const FileCard: React.FC<FileCardProps> = ({ file, isSelected, onToggleSelect, onPreview, onDownload, onDelete }) => {
   const { t, i18n } = useTranslation(['dashboard', 'common']);
   const fileIcon = getFileIcon(file.mimeType, file.name);
 
   return (
-    <Card className="p-4 flex flex-col group transition-all duration-200" hoverEffect>
+    <Card
+      className={`p-4 flex flex-col group transition-all duration-200 relative ${isSelected ? 'ring-2 ring-swiss-mint' : ''}`}
+      hoverEffect
+    >
+      {/* Checkbox overlay */}
+      <div className="absolute top-2 left-2 z-10">
+        <input
+          type="checkbox"
+          checked={isSelected}
+          onChange={() => onToggleSelect(file.id)}
+          onClick={(e) => e.stopPropagation()}
+          className="h-4 w-4 rounded border-gray-300 text-swiss-mint focus:ring-swiss-mint cursor-pointer"
+          aria-label={t('common:bulkActions.selectAll')}
+        />
+      </div>
       <div className="flex-grow">
         <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center bg-swiss-mint/10 rounded-xl">
           {fileIcon === '📎' ? (
@@ -83,8 +99,8 @@ const FileCard: React.FC<FileCardProps> = ({ file, onPreview, onDownload, onDele
             <span className="text-4xl">{fileIcon}</span>
           )}
         </div>
-        <p 
-          className="text-sm font-semibold text-swiss-charcoal text-center truncate" 
+        <p
+          className="text-sm font-semibold text-swiss-charcoal text-center truncate"
           title={file.name}
         >
           {file.name}
@@ -110,20 +126,20 @@ const FileCard: React.FC<FileCardProps> = ({ file, onPreview, onDownload, onDele
         )}
       </div>
       <div className="mt-4 pt-3 border-t border-gray-200 flex justify-center space-x-2">
-        <Button 
-          variant="ghost" 
-          size="xs" 
-          title={t('common:fileGallery.actions.preview')} 
-          className="!p-2 hover:bg-swiss-mint/10" 
+        <Button
+          variant="ghost"
+          size="xs"
+          title={t('common:fileGallery.actions.preview')}
+          className="!p-2 hover:bg-swiss-mint/10"
           onClick={() => onPreview(file)}
         >
           <EyeIcon className="w-4 h-4" />
         </Button>
-        <Button 
-          variant="ghost" 
-          size="xs" 
-          title={t('common:fileGallery.actions.download')} 
-          className="!p-2 hover:bg-swiss-mint/10" 
+        <Button
+          variant="ghost"
+          size="xs"
+          title={t('common:fileGallery.actions.download')}
+          className="!p-2 hover:bg-swiss-mint/10"
           onClick={() => onDownload(file)}
         >
           <ArrowDownTrayIcon className="w-4 h-4" />
@@ -163,6 +179,8 @@ const FileGalleryPage: React.FC = () => {
   const { files, loading, error, refetch } = useUserFiles();
   const { authenticatedDownload, request } = useAuthenticatedApi();
   const [previewFile, setPreviewFile] = useState<UserFile | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkDeleting, setBulkDeleting] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -174,6 +192,23 @@ const FileGalleryPage: React.FC = () => {
       { pathname: location.pathname, search: nextSearch ? `?${nextSearch}` : '' },
       { replace: false },
     );
+  };
+
+  const toggleSelected = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === files.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(files.map((f) => f.id)));
+    }
   };
 
   const handlePreview = (file: UserFile) => {
@@ -200,6 +235,7 @@ const FileGalleryPage: React.FC = () => {
 
     try {
       await request(`/upload/files/${file.id}`, { method: 'DELETE' });
+      setSelectedIds((prev) => { const next = new Set(prev); next.delete(file.id); return next; });
       await refetch();
     } catch (err) {
       console.error('Delete failed:', err);
@@ -207,11 +243,29 @@ const FileGalleryPage: React.FC = () => {
     }
   };
 
+  const handleBulkDelete = async () => {
+    const count = selectedIds.size;
+    if (count === 0) return;
+    const confirmed = window.confirm(
+      t('common:bulkActions.confirmBulkDelete', 'Permanently delete {{count}} item(s)? This cannot be undone.', { count }),
+    );
+    if (!confirmed) return;
+
+    setBulkDeleting(true);
+    const ids = Array.from(selectedIds);
+    await Promise.allSettled(ids.map((id) => request(`/upload/files/${id}`, { method: 'DELETE' })));
+    setSelectedIds(new Set());
+    setBulkDeleting(false);
+    await refetch();
+  };
+
   // Get file extension from file name
   const getFileExtension = (fileName: string): string => {
     const parts = fileName.split('.');
     return parts.length > 1 ? parts[parts.length - 1].toUpperCase() : 'FILE';
   };
+
+  const allSelected = files.length > 0 && selectedIds.size === files.length;
 
   return (
     <div className="space-y-6">
@@ -234,8 +288,8 @@ const FileGalleryPage: React.FC = () => {
           </button>
         </div>
         <div className="flex items-center gap-3">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             size="sm"
             onClick={() => refetch()}
             disabled={loading}
@@ -262,10 +316,10 @@ const FileGalleryPage: React.FC = () => {
                 {t('common:errors.loadingFiles', 'Error loading files')}
               </h3>
               <p className="text-sm text-red-600 mt-1">{error}</p>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => refetch()} 
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => refetch()}
                 className="mt-3"
               >
                 {t('common:tryAgain', 'Try Again')}
@@ -293,17 +347,53 @@ const FileGalleryPage: React.FC = () => {
 
       {/* Files Grid */}
       {!loading && files.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-          {files.map(file => (
-            <FileCard 
-              key={file.id} 
-              file={file} 
-              onPreview={handlePreview}
-              onDownload={handleDownload}
-              onDelete={handleDelete}
-            />
-          ))}
-        </div>
+        <>
+          {/* Bulk action bar */}
+          <div className="flex items-center gap-3">
+            <label className="flex items-center gap-2 cursor-pointer select-none text-sm text-gray-600">
+              <input
+                type="checkbox"
+                checked={allSelected}
+                onChange={toggleSelectAll}
+                className="h-4 w-4 rounded border-gray-300 text-swiss-mint focus:ring-swiss-mint"
+              />
+              {allSelected
+                ? t('common:bulkActions.deselectAll', 'Deselect all')
+                : t('common:bulkActions.selectAll', 'Select all')}
+            </label>
+            {selectedIds.size > 0 && (
+              <>
+                <span className="text-sm text-gray-500">
+                  {t('common:bulkActions.selected', '{{count}} selected', { count: selectedIds.size })}
+                </span>
+                <Button
+                  variant="danger"
+                  size="sm"
+                  onClick={handleBulkDelete}
+                  disabled={bulkDeleting}
+                  className="flex items-center gap-1.5"
+                >
+                  <TrashIcon className="w-4 h-4" />
+                  {t('common:bulkActions.deleteSelected', 'Delete selected')}
+                </Button>
+              </>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            {files.map(file => (
+              <FileCard
+                key={file.id}
+                file={file}
+                isSelected={selectedIds.has(file.id)}
+                onToggleSelect={toggleSelected}
+                onPreview={handlePreview}
+                onDownload={handleDownload}
+                onDelete={handleDelete}
+              />
+            ))}
+          </div>
+        </>
       )}
 
       {/* Preview Modal */}

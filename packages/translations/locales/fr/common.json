@@ -2388,5 +2388,12 @@
   "welcomeBack": "Bon retour !",
   "description": "Description",
   "cancel": "Annuler",
-  "done": "Terminé"
+  "done": "Terminé",
+  "bulkActions": {
+    "selected": "{{count}} sélectionné(s)",
+    "deleteSelected": "Supprimer la sélection",
+    "selectAll": "Tout sélectionner",
+    "deselectAll": "Tout désélectionner",
+    "confirmBulkDelete": "Supprimer définitivement {{count}} élément(s) ? Cette action est irréversible."
+  }
 }

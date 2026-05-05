@@ -15,16 +15,28 @@ import { useNotifications } from '../../contexts/NotificationContext';
 
 interface ServiceCardProps {
   service: Service;
+  isSelected: boolean;
+  onToggleSelect: (id: string) => void;
   onEdit: (service: Service) => void;
   onDelete: (serviceId: string) => void;
 }
 
-const ProviderServiceCard: React.FC<ServiceCardProps> = ({ service, onEdit, onDelete }) => {
+const ProviderServiceCard: React.FC<ServiceCardProps> = ({ service, isSelected, onToggleSelect, onEdit, onDelete }) => {
     const { t } = useTranslation(['dashboard', 'common']);
     const categoryLabel = formatServiceCategoryForService(t, service);
     const deliveryLabel = formatServiceDeliveryType(t, service.deliveryType);
     return (
-        <Card className="flex flex-col group" hoverEffect>
+        <Card className={`flex flex-col group relative ${isSelected ? 'ring-2 ring-swiss-mint' : ''}`} hoverEffect>
+            {/* Checkbox */}
+            <div className="absolute top-2 left-2 z-10">
+              <input
+                type="checkbox"
+                checked={isSelected}
+                onChange={() => onToggleSelect(service.id)}
+                onClick={(e) => e.stopPropagation()}
+                className="h-4 w-4 rounded border-gray-300 text-swiss-mint focus:ring-swiss-mint cursor-pointer"
+              />
+            </div>
             <div className="relative overflow-hidden aspect-[16/10]">
             <img src={service.imageUrl || `https://picsum.photos/seed/${service.id}/400/250`} alt={service.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
             </div>
@@ -50,7 +62,7 @@ const ServiceProviderListingsPage: React.FC = () => {
   const { currentUser } = useAppContext();
   const { authenticatedRequest } = useAuthenticatedApi();
   const { showToast } = useNotifications();
-  
+
   const [serviceListings, setServiceListings] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -59,6 +71,8 @@ const ServiceProviderListingsPage: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState<ServiceCategory | 'All'>('All');
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkDeleting, setBulkDeleting] = useState(false);
 
   const normalizeServiceFromApi = useCallback((service: any): Service => {
     const providerOrgId = service?.provider?.organizationId;
@@ -117,6 +131,23 @@ const ServiceProviderListingsPage: React.FC = () => {
     setIsModalOpen(false);
   };
 
+  const toggleSelected = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filteredServiceListings.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filteredServiceListings.map((s) => s.id)));
+    }
+  };
+
   const handleServiceSubmit = async (data: Partial<Omit<Service, 'id' | 'providerId' | 'providerName' | 'providerLogo'>>, file?: File) => {
     if (!currentUser || !currentUser.orgId || !currentUser.orgName) {
       alert(t('dashboard:serviceProviderListingsPage.missingOrgDetails', 'User organization details are missing.'));
@@ -132,13 +163,13 @@ const ServiceProviderListingsPage: React.FC = () => {
         formData.append('file', file);
         // Store as an image asset (not a generic document)
         formData.append('assetKind', 'PRODUCT_IMAGE');
-        
+
         const uploadResponse = await authenticatedRequest<any>('/upload/file', {
           method: 'POST',
           body: formData,
           headers: {}, // Let browser set Content-Type for FormData
         });
-        
+
         const uploadedAsset: UploadedAsset | undefined =
           (uploadResponse as any)?.asset ?? (uploadResponse as any)?.data?.asset;
 
@@ -258,15 +289,35 @@ const ServiceProviderListingsPage: React.FC = () => {
 
       if (response.success) {
         setServiceListings(prev => prev.filter(s => s.id !== serviceId));
+        setSelectedIds((prev) => { const next = new Set(prev); next.delete(serviceId); return next; });
       }
     } catch (err) {
       console.error('Failed to delete service:', err);
       alert(t('serviceProviderListingsPage.deleteError', 'Failed to delete service'));
     }
   };
-  
+
+  const handleBulkDelete = async () => {
+    const count = selectedIds.size;
+    if (count === 0) return;
+    if (
+      !window.confirm(
+        t('common:bulkActions.confirmBulkDelete', 'Permanently delete {{count}} item(s)? This cannot be undone.', { count }),
+      )
+    ) return;
+
+    setBulkDeleting(true);
+    const ids = Array.from(selectedIds);
+    await Promise.allSettled(
+      ids.map((id) => authenticatedRequest<void>(`/marketplace/services/${id}`, { method: 'DELETE' })),
+    );
+    setServiceListings((prev) => prev.filter((s) => !ids.includes(s.id)));
+    setSelectedIds(new Set());
+    setBulkDeleting(false);
+  };
+
   const filteredServiceListings = useMemo(() => {
-    return serviceListings.filter(service => 
+    return serviceListings.filter(service =>
         (service.title.toLowerCase().includes(searchTerm.toLowerCase()) || service.description.toLowerCase().includes(searchTerm.toLowerCase())) &&
         (filterCategory === 'All' || service.category === filterCategory)
     );
@@ -288,6 +339,8 @@ const ServiceProviderListingsPage: React.FC = () => {
       </div>
     );
   }
+
+  const allSelected = filteredServiceListings.length > 0 && selectedIds.size === filteredServiceListings.length;
 
   return (
     <div className="space-y-6">
@@ -320,7 +373,41 @@ const ServiceProviderListingsPage: React.FC = () => {
           </select>
         </div>
       </Card>
-      
+
+      {/* Bulk action bar */}
+      {filteredServiceListings.length > 0 && (
+        <div className="flex items-center gap-3">
+          <label className="flex items-center gap-2 cursor-pointer select-none text-sm text-gray-600">
+            <input
+              type="checkbox"
+              checked={allSelected}
+              onChange={toggleSelectAll}
+              className="h-4 w-4 rounded border-gray-300 text-swiss-mint focus:ring-swiss-mint"
+            />
+            {allSelected
+              ? t('common:bulkActions.deselectAll', 'Deselect all')
+              : t('common:bulkActions.selectAll', 'Select all')}
+          </label>
+          {selectedIds.size > 0 && (
+            <>
+              <span className="text-sm text-gray-500">
+                {t('common:bulkActions.selected', '{{count}} selected', { count: selectedIds.size })}
+              </span>
+              <Button
+                variant="danger"
+                size="sm"
+                onClick={handleBulkDelete}
+                disabled={bulkDeleting}
+                className="flex items-center gap-1.5"
+              >
+                <TrashIcon className="w-4 h-4" />
+                {t('common:bulkActions.deleteSelected', 'Delete selected')}
+              </Button>
+            </>
+          )}
+        </div>
+      )}
+
       {filteredServiceListings.length === 0 ? (
         <Card className="p-10 text-center">
           <WrenchScrewdriverIcon className="w-16 h-16 mx-auto text-gray-300 mb-4" />
@@ -332,11 +419,13 @@ const ServiceProviderListingsPage: React.FC = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredServiceListings.map(service => (
-            <ProviderServiceCard 
-              key={service.id} 
-              service={service} 
-              onEdit={handleOpenModal} 
-              onDelete={handleDeleteService} 
+            <ProviderServiceCard
+              key={service.id}
+              service={service}
+              isSelected={selectedIds.has(service.id)}
+              onToggleSelect={toggleSelected}
+              onEdit={handleOpenModal}
+              onDelete={handleDeleteService}
             />
           ))}
         </div>
