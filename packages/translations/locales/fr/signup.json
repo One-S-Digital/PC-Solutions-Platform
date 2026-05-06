@@ -182,7 +182,11 @@
     "captchaError": "Erreur Captcha",
     "captchaRefreshHint": "Essayez d’actualiser la page ou d’utiliser un autre navigateur.",
     "emailInvalid": "E-mail invalide",
-    "passwordWeak": "Le mot de passe n'est pas assez fort"
+    "passwordWeak": "Le mot de passe n'est pas assez fort",
+    "cityRequired": "La ville est obligatoire",
+    "shortBioRequired": "La courte biographie est obligatoire",
+    "professionalExperienceRequired": "L'expérience professionnelle est obligatoire",
+    "jobRoleRequired": "Veuillez sélectionner votre type de profil"
   },
   "oauthCompletion": {
     "emailFromProvider": "Courriel fourni par Google",
@@ -319,8 +323,35 @@
   "progress": {
     "step1": "Étape 1 de 2",
     "step2": "Étape 2 de 2",
+    "step3Educator": "Étape 3 : Configurez votre profil d'éducateur",
     "oauthStep1": "Étape 1 : Connexion",
     "oauthStep2": "Étape 2 : Complétez vos informations"
+  },
+  "educatorProfile": {
+    "setupTitle": "Configurer votre profil d'éducateur",
+    "basicInfo": "Informations de base",
+    "firstName": "Prénom",
+    "firstNamePlaceholder": "Entrez votre prénom",
+    "lastName": "Nom de famille",
+    "lastNamePlaceholder": "Entrez votre nom de famille",
+    "phone": "Numéro de téléphone",
+    "emailFromAccount": "Email de votre compte",
+    "location": "Localisation",
+    "city": "Ville",
+    "cityPlaceholder": "ex. Zurich",
+    "profileType": "Votre type de profil",
+    "profileTypeHint": "Sélectionnez la qualification qui décrit le mieux votre rôle",
+    "biography": "Courte biographie",
+    "shortBioPlaceholder": "Parlez-nous de vous, de vos valeurs et de ce qui vous motive dans la petite enfance...",
+    "professionalExperience": "Expérience professionnelle",
+    "professionalExperiencePlaceholder": "Décrivez votre parcours professionnel, les institutions où vous avez travaillé, vos années d'expérience et vos responsabilités clés...",
+    "professionalExperienceHint": "Vous pourrez ajouter des expériences professionnelles structurées plus tard depuis vos paramètres de profil.",
+    "cvUpload": "Téléchargez votre CV",
+    "cvDocument": "Document CV",
+    "cvDragDrop": "Glissez-déposez votre CV ici, ou cliquez pour parcourir",
+    "cvHint": "PDF, DOC ou DOCX — max 5 Mo. Optionnel mais fortement recommandé.",
+    "savingProfile": "Enregistrement du profil...",
+    "completeSetup": "Terminer la configuration"
   },
   "detailsTitle": "Entrez vos détails pour {{role}}",
   "termsLabel": "J'accepte les termes et conditions",

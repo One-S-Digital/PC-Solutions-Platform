@@ -182,7 +182,11 @@
     "captchaError": "CAPTCHA-Verifizierung fehlgeschlagen. Bitte versuchen Sie es erneut",
     "captchaRefreshHint": "Versuchen Sie, die Seite zu aktualisieren oder einen anderen Browser zu verwenden.",
     "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
-    "passwordWeak": "Das Passwort ist nicht stark genug"
+    "passwordWeak": "Das Passwort ist nicht stark genug",
+    "cityRequired": "Stadt ist erforderlich",
+    "shortBioRequired": "Kurzbiografie ist erforderlich",
+    "professionalExperienceRequired": "Berufserfahrung ist erforderlich",
+    "jobRoleRequired": "Bitte wählen Sie Ihren Profiltyp"
   },
   "oauthCompletion": {
     "emailFromProvider": "E-Mail von Google bereitgestellt",
@@ -319,8 +323,35 @@
   "progress": {
     "step1": "Schritt 1 von 2",
     "step2": "Schritt 2 von 2",
+    "step3Educator": "Schritt 3: Erzieherprofil einrichten",
     "oauthStep1": "Schritt 1: Anmelden",
     "oauthStep2": "Schritt 2: Daten vervollständigen"
+  },
+  "educatorProfile": {
+    "setupTitle": "Ihr Erzieherprofil einrichten",
+    "basicInfo": "Grundlegende Informationen",
+    "firstName": "Vorname",
+    "firstNamePlaceholder": "Geben Sie Ihren Vornamen ein",
+    "lastName": "Nachname",
+    "lastNamePlaceholder": "Geben Sie Ihren Nachnamen ein",
+    "phone": "Telefonnummer",
+    "emailFromAccount": "E-Mail aus Ihrem Konto",
+    "location": "Standort",
+    "city": "Stadt",
+    "cityPlaceholder": "z.B. Zürich",
+    "profileType": "Ihr Profiltyp",
+    "profileTypeHint": "Wählen Sie die Qualifikation, die Ihre Rolle am besten beschreibt",
+    "biography": "Kurzbiografie",
+    "shortBioPlaceholder": "Erzählen Sie uns von sich, Ihren Werten und was Sie in der Frühkindlichen Bildung motiviert...",
+    "professionalExperience": "Berufserfahrung",
+    "professionalExperiencePlaceholder": "Beschreiben Sie Ihren beruflichen Werdegang, Einrichtungen, in denen Sie gearbeitet haben, Ihre Erfahrungsjahre und wichtige Aufgaben...",
+    "professionalExperienceHint": "Sie können strukturierte Berufserfahrungen später in Ihren Profileinstellungen hinzufügen.",
+    "cvUpload": "Lebenslauf hochladen",
+    "cvDocument": "Lebenslauf-Dokument",
+    "cvDragDrop": "Ziehen Sie Ihren Lebenslauf hierher oder klicken Sie zum Durchsuchen",
+    "cvHint": "PDF, DOC oder DOCX — max 5 MB. Optional, aber sehr empfohlen.",
+    "savingProfile": "Profil wird gespeichert...",
+    "completeSetup": "Einrichtung abschließen"
   },
   "detailsTitle": "Geben Sie Ihre Details ein für {{role}}",
   "termsLabel": "Ich akzeptiere die Geschäftsbedingungen",
