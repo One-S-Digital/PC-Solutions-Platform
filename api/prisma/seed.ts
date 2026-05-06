@@ -186,6 +186,74 @@ async function seedEmailTemplates() {
         The Pro Crèche Solutions Team
       `,
     },
+    // Billing templates — referenced by billing flow but were never seeded (silent failure)
+    {
+      name: 'Payment reminder',
+      event: 'payment_reminder',
+      subject: 'Payment Reminder - Pro Crèche Solutions',
+      category: 'subscription',
+      variables: ['firstName', 'amount', 'dueDate', 'invoiceUrl'],
+      htmlContent: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2>Payment Reminder</h2>
+          <p>Hello {{firstName}},</p>
+          <p>This is a friendly reminder that a payment of <strong>{{amount}}</strong> is due on <strong>{{dueDate}}</strong>.</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="{{invoiceUrl}}" style="background-color: #3B82F6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">View Invoice</a>
+          </div>
+          <p>If you have already made this payment, please disregard this message.</p>
+          <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+        </div>
+      `,
+      textContent: `
+        Payment Reminder
+
+        Hello {{firstName}},
+
+        This is a friendly reminder that a payment of {{amount}} is due on {{dueDate}}.
+
+        View your invoice: {{invoiceUrl}}
+
+        If you have already made this payment, please disregard this message.
+
+        Best regards,
+        The Pro Crèche Solutions Team
+      `,
+    },
+    {
+      name: 'Subscription payment failed',
+      event: 'subscription_payment_failed',
+      subject: 'Action Required: Payment Failed - Pro Crèche Solutions',
+      category: 'subscription',
+      variables: ['firstName', 'amount', 'retryDate', 'updatePaymentUrl'],
+      htmlContent: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2>Payment Failed</h2>
+          <p>Hello {{firstName}},</p>
+          <p>We were unable to process your payment of <strong>{{amount}}</strong>. We will retry on <strong>{{retryDate}}</strong>.</p>
+          <p>To avoid any interruption to your service, please update your payment details:</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="{{updatePaymentUrl}}" style="background-color: #EF4444; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Update Payment Method</a>
+          </div>
+          <p>If you need assistance, please contact our support team.</p>
+          <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+        </div>
+      `,
+      textContent: `
+        Payment Failed
+
+        Hello {{firstName}},
+
+        We were unable to process your payment of {{amount}}. We will retry on {{retryDate}}.
+
+        Please update your payment details: {{updatePaymentUrl}}
+
+        If you need assistance, please contact our support team.
+
+        Best regards,
+        The Pro Crèche Solutions Team
+      `,
+    },
   ];
 
   for (const template of templates) {
@@ -785,6 +853,11 @@ async function seedFeatureFlags() {
     { key: 'FEATURE_I18N_ENABLED', value: 'true', description: 'Enable internationalization' },
     { key: 'FEATURE_CLAMAV_ENABLED', value: 'true', description: 'Enable ClamAV virus scanning' },
     { key: 'FEATURE_GATED_CONTENT_ENABLED', value: 'true', description: 'Enable gated content features' },
+    // v2 staffing remodel rollout flags — default off until each phase is validated
+    { key: 'v2_staffing_ia', value: 'false', description: 'v2 remodel: new staffing-centric nav order on admin + foundation sidebars' },
+    { key: 'v2_replacement_module', value: 'false', description: 'v2 remodel: replacement staffing module (Phase 3)' },
+    { key: 'v2_staffing_emails', value: 'false', description: 'v2 remodel: new staffing email templates (Phase 4)' },
+    { key: 'v2_in_app_notifications', value: 'false', description: 'v2 remodel: in-app notification feed (Phase 4)' },
   ];
 
   for (const flag of featureFlags) {

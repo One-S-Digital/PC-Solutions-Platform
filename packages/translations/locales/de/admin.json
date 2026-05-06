@@ -622,7 +622,13 @@
     "systemMonitoring": "Systemüberwachung",
     "translations": "Übersetzungen",
     "designSystem": "Design-System",
-    "settings": "Einstellungen"
+    "settings": "Einstellungen",
+    "staffing": "Personalbesetzung",
+    "hrCompliance": "HR & Compliance",
+    "suppliersServices": "Lieferanten & Dienste",
+    "platformOps": "Plattformbetrieb",
+    "replacements": "Ersatz",
+    "applications": "Bewerbungen"
   },
   "policyCrawler": {
     "title": "Richtlinien-Crawler",
@@ -1465,6 +1471,7 @@
       "published": "Veröffentlicht",
       "draft": "Entwurf",
       "closed": "Geschlossen",
+      "filled": "Besetzt",
       "paused": "Pausiert",
       "all": "Alle Status"
     },
