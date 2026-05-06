@@ -1246,7 +1246,7 @@ const SignupPage: React.FC = () => {
                   canton: formData.canton || '',
                 }}
                 onSubmit={handleEducatorProfileSubmit}
-                onBack={() => setCurrentStep(2)}
+                onBack={() => { setCurrentStep(2); setShowVerificationStep(false); }}
                 isLoading={isEducatorProfileLoading}
               />
             )}
