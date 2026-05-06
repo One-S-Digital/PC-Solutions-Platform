@@ -4,6 +4,23 @@ This file is maintained by Claude Code sessions to avoid re-investigating the sa
 
 ---
 
+## Staffing-Centric Remodel (v2) — Active
+
+**Status:** Preparation complete. Implementation starts with Phase 1.
+**Docs:** `STAFFING_REMODEL_PLAN.md` (strategy) · `REMODEL_NOTES.md` (audit findings) · `IMPLEMENTATION_PHASES.md` (task tracker with file locations)
+**Working branch:** `claude/prepare-dashboard-remodel-7OHe5`
+
+**Summary of what changes:**
+- Admin and Foundation dashboards remodeled around staffing/recruitment action verbs.
+- Three new Prisma tables: `ReplacementRequest`, `ReplacementMatch`, `Notification`.
+- Four new `ApplicationStatus` enum values: `SHORTLISTED`, `INTERVIEW`, `OFFER`, `HIRED`.
+- Seven new email templates seeded; two missing billing templates fixed.
+- New admin sidebar pattern: collapsible groups (currently flat).
+- Feature flags control rollout: `v2_staffing_ia`, `v2_replacement_module`, `v2_staffing_emails`, `v2_in_app_notifications`.
+- **Parent / Supplier / Service Provider dashboards: do not touch.**
+
+---
+
 ## Architecture Overview
 
 | Layer | Stack |
