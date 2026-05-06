@@ -4,7 +4,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateJobListingDto } from './dto/create-job-listing.dto';
 import { UpdateJobListingDto } from './dto/update-job-listing.dto';
 import { CreateJobApplicationDto } from './dto/create-job-application.dto';
-import { UpdateJobApplicationDto } from './dto/update-job-application.dto';
+import { UpdateJobApplicationDto } from './dto/create-job-application.dto';
 import { JobContractType, JobStatus } from '@workspace/types';
 import { JobEmploymentType, Prisma } from '@prisma/client';
 import { TranslationService } from '../translation/translation.service';

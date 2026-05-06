@@ -164,9 +164,10 @@ const JobListings: React.FC = () => {
               onChange={(e) => setSelectedStatus(e.target.value)}
             >
               <option value="">{t('admin:jobListings.statusFilter.all')}</option>
-                <option value="PUBLISHED">{t('admin:jobListings.statusFilter.published', 'Published')}</option>
-                <option value="DRAFT">{t('admin:jobListings.statusFilter.draft', 'Draft')}</option>
+              <option value="PUBLISHED">{t('admin:jobListings.statusFilter.published', 'Published')}</option>
+              <option value="DRAFT">{t('admin:jobListings.statusFilter.draft', 'Draft')}</option>
               <option value="CLOSED">{t('admin:jobListings.statusFilter.closed')}</option>
+              <option value="FILLED">{t('admin:jobListings.statusFilter.filled', 'Filled')}</option>
             </select>
           </div>
           <div className="sm:w-48">

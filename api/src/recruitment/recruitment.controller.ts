@@ -119,6 +119,7 @@ export class RecruitmentController {
   }
 
   @Get('applications')
+  @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   findAllJobApplications(
     @Query('candidateId') candidateId?: string,
     @Query('jobListingId') jobListingId?: string,
@@ -159,6 +160,7 @@ export class RecruitmentController {
   }
 
   @Get('applications/:id')
+  @Roles(UserRole.FOUNDATION, UserRole.EDUCATOR, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   findJobApplicationById(@Param('id') id: string) {
     return this.recruitmentService.findJobApplicationById(id);
   }
