@@ -84,9 +84,11 @@ export class InternPoolController {
   proposeToIntern(
     @Param('id') requestId: string,
     @Body('applicantId') applicantId: string,
-    @Body('note') note?: string,
+    @Body('note') note: string | undefined,
+    @Request() req,
   ) {
-    return this.internPoolService.proposeToIntern(requestId, applicantId, note);
+    const isAdmin = req.user.role === UserRole.ADMIN || req.user.role === UserRole.SUPER_ADMIN;
+    return this.internPoolService.proposeToIntern(requestId, applicantId, req.user.organizationId, isAdmin, note);
   }
 
   // ── 8. Educator: my applications ─────────────────────────────────────────

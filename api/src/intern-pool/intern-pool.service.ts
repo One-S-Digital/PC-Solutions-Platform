@@ -214,9 +214,12 @@ export class InternPoolService {
 
   // ── Foundation proposes directly to a specific intern ────────────────────
 
-  async proposeToIntern(requestId: string, applicantId: string, note?: string) {
+  async proposeToIntern(requestId: string, applicantId: string, foundationId: string, isAdmin: boolean, note?: string) {
     const request = await this.prisma.internPoolRequest.findUnique({ where: { id: requestId } });
     if (!request) throw new NotFoundException('Intern pool request not found');
+    if (!isAdmin && request.foundationId !== foundationId) {
+      throw new ForbiddenException('You can only propose interns for your own placement requests');
+    }
 
     const existing = await this.prisma.internPoolApplication.findUnique({
       where: { requestId_applicantId: { requestId, applicantId } },

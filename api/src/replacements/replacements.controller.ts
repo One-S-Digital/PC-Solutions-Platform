@@ -81,8 +81,9 @@ export class ReplacementsController {
   // ── 6. Propose a match (admin or system) ─────────────────────────────────
   @Post('requests/:id/matches')
   @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
-  proposeMatch(@Param('id') requestId: string, @Body('educatorId') educatorId: string) {
-    return this.replacementsService.proposeMatch(requestId, educatorId);
+  proposeMatch(@Param('id') requestId: string, @Body('educatorId') educatorId: string, @Request() req) {
+    const isAdmin = req.user.role === UserRole.ADMIN || req.user.role === UserRole.SUPER_ADMIN;
+    return this.replacementsService.proposeMatch(requestId, educatorId, req.user.organizationId, isAdmin);
   }
 
   // ── 7. Educator responds to a proposed match ──────────────────────────────
