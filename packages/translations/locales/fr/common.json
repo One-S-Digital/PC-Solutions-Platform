@@ -2395,5 +2395,15 @@
     "selectAll": "Tout sélectionner",
     "deselectAll": "Tout désélectionner",
     "confirmBulkDelete": "Supprimer définitivement {{count}} élément(s) ? Cette action est irréversible."
+  },
+  "educatorJobRoles": {
+    "Direction": "Direction",
+    "EDE": "EDE",
+    "ASE": "ASE",
+    "Auxiliaire": "Auxiliaire",
+    "Cleaning": "Nettoyage",
+    "Director": "Directeur/Directrice",
+    "CleaningStaff": "Personnel de nettoyage",
+    "Intern": "Stagiaire"
   }
 }
