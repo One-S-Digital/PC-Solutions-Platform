@@ -125,9 +125,12 @@ export class ReplacementsService {
 
   // ── Matches ───────────────────────────────────────────────────────────────
 
-  async proposeMatch(requestId: string, educatorId: string) {
+  async proposeMatch(requestId: string, educatorId: string, foundationId: string, isAdmin: boolean) {
     const request = await this.prisma.replacementRequest.findUnique({ where: { id: requestId } });
     if (!request) throw new NotFoundException('Replacement request not found');
+    if (!isAdmin && request.foundationId !== foundationId) {
+      throw new ForbiddenException('You can only propose matches for your own replacement requests');
+    }
     if (request.status !== ReplacementRequestStatus.OPEN) {
       throw new BadRequestException('Can only propose matches for OPEN requests');
     }
