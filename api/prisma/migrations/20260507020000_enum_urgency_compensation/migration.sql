@@ -17,6 +17,7 @@ DO $$ BEGIN
 END $$;
 
 -- 3. Convert replacement_requests.urgency TEXT → UrgencyLevel (only if still TEXT)
+--    Must drop default first; Postgres cannot auto-cast a TEXT default to an enum.
 DO $$ BEGIN
   IF EXISTS (
     SELECT 1 FROM information_schema.columns
@@ -29,6 +30,8 @@ DO $$ BEGIN
       SET "urgency" = 'NORMAL'
       WHERE "urgency" NOT IN ('NORMAL', 'URGENT');
 
+    ALTER TABLE "replacement_requests" ALTER COLUMN "urgency" DROP DEFAULT;
+
     ALTER TABLE "replacement_requests"
       ALTER COLUMN "urgency" TYPE "UrgencyLevel"
       USING "urgency"::"UrgencyLevel";
@@ -39,6 +42,7 @@ DO $$ BEGIN
 END $$;
 
 -- 4. Convert intern_pool_requests.compensationType TEXT → CompensationType (only if still TEXT)
+--    Must drop default first for the same reason.
 DO $$ BEGIN
   IF EXISTS (
     SELECT 1 FROM information_schema.columns
@@ -50,6 +54,8 @@ DO $$ BEGIN
     UPDATE "intern_pool_requests"
       SET "compensationType" = 'UNPAID'
       WHERE "compensationType" NOT IN ('PAID', 'UNPAID', 'STIPEND');
+
+    ALTER TABLE "intern_pool_requests" ALTER COLUMN "compensationType" DROP DEFAULT;
 
     ALTER TABLE "intern_pool_requests"
       ALTER COLUMN "compensationType" TYPE "CompensationType"
