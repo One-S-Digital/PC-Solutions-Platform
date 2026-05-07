@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { InternPoolService } from './intern-pool.service';
 import { CreateInternPoolRequestDto } from './dto/create-intern-pool-request.dto';
-import { ApplyInternPoolDto, RespondInternApplicationDto } from './dto/apply-intern-pool.dto';
+import { ApplyInternPoolDto, ProposeInternDto, RespondInternApplicationDto } from './dto/apply-intern-pool.dto';
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -83,12 +83,11 @@ export class InternPoolController {
   @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   proposeToIntern(
     @Param('id') requestId: string,
-    @Body('applicantId') applicantId: string,
-    @Body('note') note: string | undefined,
+    @Body() dto: ProposeInternDto,
     @Request() req,
   ) {
     const isAdmin = req.user.role === UserRole.ADMIN || req.user.role === UserRole.SUPER_ADMIN;
-    return this.internPoolService.proposeToIntern(requestId, applicantId, req.user.organizationId, isAdmin, note);
+    return this.internPoolService.proposeToIntern(requestId, dto.applicantId, req.user.organizationId, isAdmin, dto.note);
   }
 
   // ── 8. Educator: my applications ─────────────────────────────────────────

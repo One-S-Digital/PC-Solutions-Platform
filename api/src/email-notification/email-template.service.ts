@@ -280,6 +280,96 @@ export class EmailTemplateService {
         `.trim(),
         isActive: true,
       },
+      // ── Replacement Staffing ───────────────────────────────────────────────
+      {
+        name: 'Replacement request posted',
+        event: 'replacement_request_posted',
+        subject: 'New replacement shift available',
+        category: 'jobRecruitment',
+        variables: ['firstName', 'role', 'startDate', 'endDate', 'location', 'urgency', 'requestUrl'],
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>A replacement shift is available</h2>
+            <p>Hello {{firstName}},</p>
+            <p>A new replacement request matching your profile has been posted:</p>
+            <ul>
+              <li><strong>Role:</strong> {{role}}</li>
+              <li><strong>Dates:</strong> {{startDate}} – {{endDate}}</li>
+              <li><strong>Location:</strong> {{location}}</li>
+              <li><strong>Urgency:</strong> {{urgency}}</li>
+            </ul>
+            <div style="text-align: center; margin: 24px 0;">
+              <a href="{{requestUrl}}" style="background-color: #14B8A6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">View Request</a>
+            </div>
+            <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+          </div>
+        `.trim(),
+        textContent: `A replacement shift is available\n\nHello {{firstName}},\n\nRole: {{role}} | Dates: {{startDate}} – {{endDate}} | Location: {{location}} | Urgency: {{urgency}}\n\nView: {{requestUrl}}\n\nBest regards,\nThe Pro Crèche Solutions Team`.trim(),
+        isActive: true,
+      },
+      {
+        name: 'Replacement match accepted',
+        event: 'replacement_match_accepted',
+        subject: 'Replacement match accepted — {{role}}',
+        category: 'jobRecruitment',
+        variables: ['firstName', 'role', 'startDate', 'endDate', 'requestUrl'],
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>An educator accepted your replacement request</h2>
+            <p>Hello {{firstName}},</p>
+            <p>An educator has accepted your replacement request for <strong>{{role}}</strong> ({{startDate}} – {{endDate}}).</p>
+            <p>Please confirm the match in your dashboard.</p>
+            <div style="text-align: center; margin: 24px 0;">
+              <a href="{{requestUrl}}" style="background-color: #14B8A6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Confirm Match</a>
+            </div>
+            <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+          </div>
+        `.trim(),
+        textContent: `Hello {{firstName}},\n\nAn educator accepted your replacement request for {{role}} ({{startDate}} – {{endDate}}).\nConfirm at: {{requestUrl}}\n\nBest regards,\nThe Pro Crèche Solutions Team`.trim(),
+        isActive: true,
+      },
+      {
+        name: 'Replacement match declined',
+        event: 'replacement_match_declined',
+        subject: 'Replacement match declined — {{role}}',
+        category: 'jobRecruitment',
+        variables: ['firstName', 'role', 'startDate', 'endDate', 'requestUrl'],
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Replacement match declined</h2>
+            <p>Hello {{firstName}},</p>
+            <p>An educator has declined your replacement request for <strong>{{role}}</strong> ({{startDate}} – {{endDate}}).</p>
+            <p>You can find another match or re-open the request from your dashboard.</p>
+            <div style="text-align: center; margin: 24px 0;">
+              <a href="{{requestUrl}}" style="background-color: #14B8A6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Manage Request</a>
+            </div>
+            <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+          </div>
+        `.trim(),
+        textContent: `Hello {{firstName}},\n\nAn educator declined your replacement request for {{role}} ({{startDate}} – {{endDate}}).\nManage at: {{requestUrl}}\n\nBest regards,\nThe Pro Crèche Solutions Team`.trim(),
+        isActive: true,
+      },
+      {
+        name: 'Replacement pool low',
+        event: 'replacement_pool_low',
+        subject: 'Low replacement pool alert for your region',
+        category: 'systemAdmin',
+        variables: ['firstName', 'poolSize', 'adminUrl'],
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Replacement Pool Alert</h2>
+            <p>Hello {{firstName}},</p>
+            <p>The number of educators available for replacement shifts in your region has dropped below the recommended level (<strong>{{poolSize}}</strong> available).</p>
+            <p>Consider encouraging educators to enable their availability for replacement shifts.</p>
+            <div style="text-align: center; margin: 24px 0;">
+              <a href="{{adminUrl}}" style="background-color: #F59E0B; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">View Replacement Pool</a>
+            </div>
+            <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+          </div>
+        `.trim(),
+        textContent: `Hello {{firstName}},\n\nReplacement pool in your region is low ({{poolSize}} available).\nView at: {{adminUrl}}\n\nBest regards,\nThe Pro Crèche Solutions Team`.trim(),
+        isActive: true,
+      },
     ];
   }
 

@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import {
+  CompensationType,
   InternPoolApplicationStatus,
   InternPoolRequestStatus,
   NotificationType,
@@ -44,7 +45,7 @@ export class InternPoolService {
         description: dto.description,
         location: dto.location,
         supervisorName: dto.supervisorName,
-        compensationType: dto.compensationType ?? 'UNPAID',
+        compensationType: dto.compensationType ?? CompensationType.UNPAID,
         weeklyHours: dto.weeklyHours,
       },
       include: { applications: { include: { applicant: { select: { id: true, firstName: true, lastName: true, email: true } } } } },
@@ -181,6 +182,14 @@ export class InternPoolService {
       throw new ForbiddenException('You can only respond to applications for your own requests');
     }
 
+    const terminal: InternPoolApplicationStatus[] = [
+      InternPoolApplicationStatus.CONFIRMED,
+      InternPoolApplicationStatus.DECLINED,
+    ];
+    if (terminal.includes(application.status)) {
+      throw new BadRequestException(`Application is already ${application.status.toLowerCase()} and cannot be changed`);
+    }
+
     const updated = await this.prisma.internPoolApplication.update({
       where: { id: applicationId },
       data: { status: dto.status, note: dto.note, respondedAt: new Date() },
@@ -220,6 +229,9 @@ export class InternPoolService {
     if (!isAdmin && request.foundationId !== foundationId) {
       throw new ForbiddenException('You can only propose interns for your own placement requests');
     }
+    if (request.status !== InternPoolRequestStatus.OPEN && request.status !== InternPoolRequestStatus.REVIEWING) {
+      throw new BadRequestException('Cannot propose to a placement that is no longer accepting applications');
+    }
 
     const existing = await this.prisma.internPoolApplication.findUnique({
       where: { requestId_applicantId: { requestId, applicantId } },
@@ -250,12 +262,22 @@ export class InternPoolService {
   // ── Available interns pool ────────────────────────────────────────────────
 
   async findAvailableInterns(filters?: { role?: string; region?: string }) {
+    const roleFilter = filters?.role
+      ? {
+          OR: [
+            { jobRole: { contains: filters.role, mode: 'insensitive' as const } },
+            { jobRoles: { has: filters.role } },
+          ],
+        }
+      : {};
+
     return this.prisma.user.findMany({
       where: {
         availableForInternship: true,
+        candidatePoolVisible: true,
         isActive: true,
         ...(filters?.region ? { region: filters.region } : {}),
-        ...(filters?.role ? { jobRole: { contains: filters.role, mode: 'insensitive' } } : {}),
+        ...roleFilter,
       },
       select: {
         id: true,

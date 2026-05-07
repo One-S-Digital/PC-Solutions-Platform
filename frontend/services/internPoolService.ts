@@ -132,7 +132,7 @@ class InternPoolService {
   async getSignals(foundationId?: string): Promise<InternPoolSignals> {
     const params = foundationId ? `?foundationId=${foundationId}` : '';
     const res = await apiService.get<InternPoolSignals>(`/intern-pool/signals${params}`);
-    if (!res.success || !res.data) return { openRequests: 0, reviewingRequests: 0, filledRequests: 0, internPoolSize: 0 };
+    if (!res.success || !res.data) throw new Error(res.message || 'Failed to load intern pool signals');
     return res.data;
   }
 
