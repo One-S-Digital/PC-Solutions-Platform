@@ -2399,11 +2399,9 @@
     "confirmBulkDelete": "{{count}} Element(e) dauerhaft löschen? Dies kann nicht rückgängig gemacht werden."
   },
   "educatorJobRoles": {
-    "Direction": "Direktion",
     "EDE": "EDE",
     "ASE": "ASE",
     "Auxiliaire": "Hilfskraft",
-    "Cleaning": "Reinigung",
     "Director": "Direktor/in",
     "CleaningStaff": "Reinigungspersonal",
     "Intern": "Praktikant/in"
