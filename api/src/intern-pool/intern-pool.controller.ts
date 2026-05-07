@@ -46,7 +46,7 @@ export class InternPoolController {
 
   // ── 3. Get single request ─────────────────────────────────────────────────
   @Get('requests/:id')
-  @Roles(UserRole.FOUNDATION, UserRole.EDUCATOR, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   findRequestById(@Param('id') id: string) {
     return this.internPoolService.findRequestById(id);
   }
