@@ -11,7 +11,7 @@ export const ALL_REGIONS_OPTION = 'All' as const;
 export const SWISS_CANTONS_WITH_ALL = [ALL_REGIONS_OPTION, ...SWISS_CANTONS] as const;
 
 // Restricted list of valid educator job roles. No free-text input is allowed; users must pick from this list.
-export const EDUCATOR_JOB_ROLES = ['Direction', 'EDE', 'ASE', 'Auxiliaire', 'Cleaning'] as const;
+export const EDUCATOR_JOB_ROLES = ['Direction', 'EDE', 'ASE', 'Auxiliaire', 'Cleaning', 'Director', 'Cleaning Staff', 'Intern'] as const;
 export type EducatorJobRole = typeof EDUCATOR_JOB_ROLES[number];
 
 export const APP_NAME = "Pro Crèche Solutions";
