@@ -238,7 +238,7 @@ export default function EducatorInternPoolPage() {
     setIsLoading(true);
     try {
       const [requests, mine] = await Promise.all([
-        internPoolService.getRequests({ status: 'OPEN' }),
+        internPoolService.getRequests({ status: 'OPEN,REVIEWING' }),
         internPoolService.getMyApplications(),
       ]);
       setOpenRequests(requests);

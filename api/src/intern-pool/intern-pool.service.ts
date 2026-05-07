@@ -55,7 +55,10 @@ export class InternPoolService {
   async findAllRequests(filters: { foundationId?: string; status?: string; isAdmin?: boolean }) {
     const where: Record<string, unknown> = {};
     if (filters.foundationId) where.foundationId = filters.foundationId;
-    if (filters.status) where.status = filters.status;
+    if (filters.status) {
+      const statuses = filters.status.split(',').map((s) => s.trim()).filter(Boolean);
+      where.status = statuses.length === 1 ? statuses[0] : { in: statuses };
+    }
 
     return this.prisma.internPoolRequest.findMany({
       where,
@@ -180,6 +183,15 @@ export class InternPoolService {
     if (!application) throw new NotFoundException('Application not found');
     if (!isAdmin && application.request.foundationId !== foundationId) {
       throw new ForbiddenException('You can only respond to applications for your own requests');
+    }
+
+    const allowed: InternPoolApplicationStatus[] = [
+      InternPoolApplicationStatus.ACCEPTED,
+      InternPoolApplicationStatus.DECLINED,
+      InternPoolApplicationStatus.CONFIRMED,
+    ];
+    if (!allowed.includes(dto.status)) {
+      throw new BadRequestException(`Invalid response status: ${dto.status}`);
     }
 
     const terminal: InternPoolApplicationStatus[] = [
