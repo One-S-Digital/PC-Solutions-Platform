@@ -7,6 +7,7 @@ import MainLayout from './components/layout/MainLayout';
 import DashboardPage from './pages/DashboardPage'; // This will be the Foundation default dashboard
 import MarketplacePage from './pages/MarketplacePage';
 import RecruitmentPage from './pages/RecruitmentPage';
+import InternPoolPage from './pages/InternPoolPage';
 import HRProceduresPage from './pages/HRProceduresPage';
 import StatePoliciesPage from './pages/StatePoliciesPage';
 import ELearningPage from './pages/ELearningPage';
@@ -169,7 +170,7 @@ const RoleBasedDashboardRedirect: React.FC = () => {
       return <Navigate to="/parent/dashboard" replace />; // Updated Parent redirect
     case UserRole.ADMIN:
     case UserRole.SUPER_ADMIN:
-      return <Navigate to="/admin/content-dashboard" replace />;
+      return <Navigate to="/users/all" replace />;
     default:
       return <Navigate to="/login" replace />; // Fallback to login
   }
@@ -327,6 +328,28 @@ const ProtectedLayout: React.FC = () => {
         <Route path="/recruitment/candidate-pool" element={
           <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
             <RecruitmentPage />
+          </SubscriptionGatedRoute>
+        } />
+        {/* /staffing/* — aliases for /recruitment/* during v2 transition (both URLs work; old → 301 in Phase 7) */}
+        <Route path="/staffing" element={<Navigate to="/staffing/jobs" replace />} />
+        <Route path="/staffing/jobs" element={
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
+            <RecruitmentPage />
+          </SubscriptionGatedRoute>
+        } />
+        <Route path="/staffing/candidates" element={
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
+            <RecruitmentPage />
+          </SubscriptionGatedRoute>
+        } />
+        <Route path="/staffing/applications" element={
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
+            <RecruitmentPage />
+          </SubscriptionGatedRoute>
+        } />
+        <Route path="/staffing/interns" element={
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
+            <InternPoolPage />
           </SubscriptionGatedRoute>
         } />
         <Route path="/candidate/:candidateId" element={

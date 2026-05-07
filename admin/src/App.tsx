@@ -13,6 +13,7 @@ import ProductsPage from './pages/Products';
 import ServicesPage from './pages/Services';
 import JobListingsPage from './pages/JobListings';
 import CandidatesPage from './pages/Candidates';
+import InternPoolPage from './pages/InternPool';
 import ParentLeadsPage from './pages/ParentLeads';
 import OrdersPage from './pages/Orders';
 import ContentPage from './pages/Content';
@@ -99,6 +100,7 @@ function App() {
           <Route path="job-listings" element={<JobListingsPage />} />
           <Route path="candidates" element={<CandidatesPage />} />
           <Route path="replacements" element={<ReplacementsPage />} />
+          <Route path="intern-pool" element={<InternPoolPage />} />
           <Route path="parent-leads" element={<ParentLeadsPage />} />
           <Route path="orders" element={<OrdersPage />} />
           <Route path="content" element={<ContentPage />}>

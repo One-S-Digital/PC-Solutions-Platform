@@ -1133,6 +1133,14 @@
     "confirmedHint": "Placement confirmed! You are set to start this internship.",
     "declinedHint": "Your application was not selected this time."
   },
+  "internPool": {
+    "title": "Intern Pool",
+    "subtitle": "Manage internship positions and discover candidates available for internships.",
+    "listingsTab": "Internship Positions",
+    "candidatesTab": "Intern Candidates",
+    "noListings": "No internship positions posted yet.",
+    "postFirst": "Post your first internship"
+  },
   "recruitmentPage": {
     "buttons": {
       "addCandidate": "Add Candidate",
@@ -1427,10 +1435,16 @@
     "productMarketplace": "Product Marketplace",
     "productSuppliers": "Product Suppliers",
     "products": "Products",
-    "recruitment": "Recruitment",
+    "findCandidates": "Find candidates",
+    "findReplacements": "Find replacement staff",
     "internPool": "Intern Pool",
+    "hrCompliance": "HR & Compliance",
+    "postJob": "Post a job",
+    "recruitment": "Recruitment",
     "replacements": "Replacements",
+    "reviewApplications": "Review applications",
     "staffing": "Staffing",
+    "suppliersServices": "Suppliers & Services",
     "serviceMarketplace": "Service Marketplace",
     "serviceProviders": "Service Providers",
     "services": "Services",

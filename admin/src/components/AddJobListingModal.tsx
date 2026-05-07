@@ -18,6 +18,8 @@ export interface JobListingFormData {
   location?: string;
   salary?: string;
   contractType?: string;
+  employmentType?: string;
+  startDate?: string;
   foundationId: string;
   requirements?: string[];
   responsibilities?: string[];
@@ -25,6 +27,12 @@ export interface JobListingFormData {
   benefits?: string[];
   status?: string;
 }
+
+const EMPLOYMENT_TYPES = [
+  { value: 'FULL_TIME', label: 'Full-Time' },
+  { value: 'PART_TIME', label: 'Part-Time' },
+  { value: 'REPLACEMENT', label: 'Replacement' },
+];
 
 const CONTRACT_TYPES = [
   { value: 'FULL_TIME', label: 'Full-Time' },
@@ -76,6 +84,8 @@ const AddJobListingModal: React.FC<AddJobListingModalProps> = ({
     location: '',
     salary: '',
     contractType: 'FULL_TIME',
+    employmentType: 'FULL_TIME',
+    startDate: '',
     foundationId: '',
     requirements: [],
     responsibilities: [],
@@ -190,6 +200,8 @@ const AddJobListingModal: React.FC<AddJobListingModalProps> = ({
         location: '',
         salary: '',
         contractType: 'FULL_TIME',
+        employmentType: 'FULL_TIME',
+        startDate: '',
         foundationId: foundations.length > 0 ? foundations[0].id : '',
         requirements: [],
         responsibilities: [],
@@ -317,7 +329,7 @@ const AddJobListingModal: React.FC<AddJobListingModalProps> = ({
                     placeholder={t('admin:forms.job.locationPlaceholder')}
                   />
                 </div>
-                
+
                 <div>
                   <label htmlFor="salary" className="block text-sm font-medium text-gray-700 mb-1">
                     {t('admin:jobListings.form.salary', 'Salary Range')}
@@ -332,7 +344,7 @@ const AddJobListingModal: React.FC<AddJobListingModalProps> = ({
                     placeholder={t('admin:forms.job.salaryPlaceholder')}
                   />
                 </div>
-                
+
                 <div>
                   <label htmlFor="contractType" className="block text-sm font-medium text-gray-700 mb-1">
                     {t('admin:jobListings.form.contractType', 'Contract Type')}
@@ -348,6 +360,39 @@ const AddJobListingModal: React.FC<AddJobListingModalProps> = ({
                       <option key={type.value} value={type.value}>{type.label}</option>
                     ))}
                   </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="employmentType" className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('admin:jobListings.form.employmentType', 'Employment Type')}
+                  </label>
+                  <select
+                    id="employmentType"
+                    name="employmentType"
+                    value={formData.employmentType}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    {EMPLOYMENT_TYPES.map(type => (
+                      <option key={type.value} value={type.value}>{type.label}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('admin:jobListings.form.startDate', 'Start Date')}
+                  </label>
+                  <input
+                    type="date"
+                    id="startDate"
+                    name="startDate"
+                    value={formData.startDate}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
                 </div>
               </div>
 

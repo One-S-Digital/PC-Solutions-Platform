@@ -90,7 +90,7 @@ const EducatorJobBoardPage: React.FC = () => {
   const [selectedJob, setSelectedJob] = useState<JobListing | null>(null);
 
   const cantons = SWISS_CANTONS_WITH_ALL;
-  const contractTypes = ['All', 'CDI', 'CDD', 'INTERNSHIP', 'PART_TIME', 'FULL_TIME'];
+  const contractTypes = ['All', 'CDI', 'CDD', 'INTERNSHIP', 'PART_TIME', 'FULL_TIME', 'REPLACEMENT', 'TEMPORARY', 'FREELANCE'];
 
   const fetchJobs = useCallback(async () => {
     setLoading(true);

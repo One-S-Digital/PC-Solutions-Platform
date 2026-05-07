@@ -643,7 +643,16 @@
     "systemMonitoring": "Surveillance du système",
     "translations": "Traductions",
     "designSystem": "Système de design",
-    "settings": "Paramètres"
+    "settings": "Paramètres",
+    "staffing": "Dotation en personnel",
+    "hrCompliance": "RH et conformité",
+    "suppliersServices": "Fournisseurs et services",
+    "platformOps": "Opérations plateforme",
+    "replacements": "Remplacements",
+    "internPool": "Vivier de stagiaires",
+    "internPoolSubtitle": "Postes de stage — {{count}} annonce(s)",
+    "noInterns": "Aucune annonce de stage pour l'instant.",
+    "applications": "Candidatures"
   },
   "policyCrawler": {
     "title": "Exploration des politiques",
@@ -1384,6 +1393,7 @@
       "published": "Publié",
       "draft": "Brouillon",
       "closed": "Fermé",
+      "filled": "Pourvu",
       "paused": "En pause",
       "all": "Tous les statuts"
     },

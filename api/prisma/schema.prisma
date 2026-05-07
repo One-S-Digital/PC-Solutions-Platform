@@ -104,6 +104,10 @@ enum ApplicationStatus {
   REVIEWED
   ACCEPTED
   REJECTED
+  SHORTLISTED
+  INTERVIEW
+  OFFER
+  HIRED
 }
 
 enum CourseStatus {
@@ -412,6 +416,9 @@ model Organization {
   serviceCategories    String[] // For service providers
   deliveryType         String? // On-site, Remote, Hybrid for service providers
   bookingLink          String? // For service providers
+
+  // Foundation shortlist — stored as JSON array of User IDs; avoids a join table
+  savedCandidateIds Json @default("[]")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

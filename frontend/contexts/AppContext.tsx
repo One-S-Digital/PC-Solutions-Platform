@@ -465,13 +465,17 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
 
   const toggleFavoriteCandidate = useCallback((candidateId: string) => {
     setFavoriteCandidateIds(prev => {
-      const newFavorites = prev.includes(candidateId)
+      const isSaved = prev.includes(candidateId);
+      const newFavorites = isSaved
         ? prev.filter(id => id !== candidateId)
         : [...prev, candidateId];
       localStorage.setItem('favoriteCandidateIds', JSON.stringify(newFavorites));
+      // Mirror to server for FOUNDATION users (fire-and-forget)
+      const method = isSaved ? 'DELETE' : 'POST';
+      authenticatedRequest(`/recruitment/shortlist/${candidateId}`, { method }).catch(() => {});
       return newFavorites;
     });
-  }, []);
+  }, [authenticatedRequest]);
 
   const isCandidateFavorite = useCallback((candidateId: string): boolean => {
     return favoriteCandidateIds.includes(candidateId);

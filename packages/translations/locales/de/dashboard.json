@@ -496,6 +496,14 @@
     "confirmedHint": "Platz bestätigt! Sie können dieses Praktikum beginnen.",
     "declinedHint": "Ihre Bewerbung wurde diesmal nicht ausgewählt."
   },
+  "internPool": {
+    "title": "Praktikantenpool",
+    "subtitle": "Praktikumsstellen verwalten und Kandidaten für Praktika entdecken.",
+    "listingsTab": "Praktikumsstellen",
+    "candidatesTab": "Praktikumskandidaten",
+    "noListings": "Noch keine Praktikumsstellen ausgeschrieben.",
+    "postFirst": "Erstes Praktikum ausschreiben"
+  },
   "recruitmentPage": {
     "subtitle": "Stellenanzeigen verwalten und qualifizierte Kandidaten finden",
     "title": "Rekrutierung",
@@ -635,10 +643,16 @@
     "productMarketplace": "Produktmarktplatz",
     "productSuppliers": "Produktlieferanten",
     "products": "Produkte",
-    "recruitment": "Rekrutierung",
+    "findCandidates": "Kandidaten finden",
+    "findReplacements": "Ersatzpersonal finden",
     "internPool": "Praktikantenpool",
+    "hrCompliance": "HR & Compliance",
+    "postJob": "Stelle ausschreiben",
+    "recruitment": "Rekrutierung",
     "replacements": "Vertretungen",
+    "reviewApplications": "Bewerbungen prüfen",
     "staffing": "Personal",
+    "suppliersServices": "Lieferanten & Dienste",
     "serviceMarketplace": "Dienstleistungsmarktplatz",
     "serviceProviders": "Dienstleister",
     "services": "Dienste",

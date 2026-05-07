@@ -95,6 +95,10 @@ exports.ApplicationStatus = {
     REVIEWED: 'REVIEWED',
     ACCEPTED: 'ACCEPTED',
     REJECTED: 'REJECTED',
+    SHORTLISTED: 'SHORTLISTED',
+    INTERVIEW: 'INTERVIEW',
+    OFFER: 'OFFER',
+    HIRED: 'HIRED',
 };
 // Course Status
 exports.CourseStatus = {

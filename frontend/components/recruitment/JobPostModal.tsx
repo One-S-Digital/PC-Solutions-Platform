@@ -15,18 +15,19 @@ interface JobPostModalProps {
   onClose: () => void;
   onSubmit: (data: JobListingInput) => Promise<void> | void;
   existingJob?: JobListing | null;
+  initialContractType?: string;
 }
 
 type JobFormData = JobListingInput;
 
-const JobPostModal: React.FC<JobPostModalProps> = ({ isOpen, onClose, onSubmit, existingJob }) => {
+const JobPostModal: React.FC<JobPostModalProps> = ({ isOpen, onClose, onSubmit, existingJob, initialContractType }) => {
   const { t } = useTranslation(['recruitment', 'common']);
   const { currentUser } = useAppContext();
 
   const initialFormState: JobFormData = {
     title: '',
     location: '',
-    contractType: 'FULL_TIME',
+    contractType: (initialContractType ?? 'FULL_TIME') as any,
     employmentType: 'FULL_TIME' as JobEmploymentType,
     workSchedule: {
       expectedHoursPerWeek: 40,
@@ -69,7 +70,7 @@ const JobPostModal: React.FC<JobPostModalProps> = ({ isOpen, onClose, onSubmit, 
           });
           return;
         }
-        setFormData(initialFormState);
+        setFormData({ ...initialFormState, contractType: (initialContractType ?? 'FULL_TIME') as any });
     }
   }, [isOpen, existingJob]);
 

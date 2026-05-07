@@ -5,7 +5,6 @@ import {
   Plus,
   Search,
   Edit,
-  Trash2,
   MoreVertical,
   Phone,
   Mail,
@@ -394,16 +393,6 @@ const Candidates: React.FC = () => {
                                   >
                                     <Edit className="h-4 w-4 mr-2" />
                                     Edit User
-                                  </button>
-                                )}
-                              </Menu.Item>
-                              <Menu.Item>
-                                {({ active }) => (
-                                  <button
-                                    className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-red-600`}
-                                  >
-                                    <Trash2 className="h-4 w-4 mr-2" />
-                                    Delete
                                   </button>
                                 )}
                               </Menu.Item>

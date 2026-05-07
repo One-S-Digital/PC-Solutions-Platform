@@ -54,7 +54,7 @@ const transformConversation = (conv: any, currentUserId?: string): Conversation 
     organizationName: otherUser?.orgName || '',
     lastMessageSnippet: lastMessage?.content || '',
     lastMessageAt: conv.lastMessageAt || conv.updatedAt || new Date().toISOString(),
-    unreadCount: 0, // TODO: Calculate from message read status
+    unreadCount: conv.unreadCount ?? 0,
   }
 }
 

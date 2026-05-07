@@ -610,7 +610,16 @@
     "systemMonitoring": "System Monitoring",
     "translations": "Translations",
     "designSystem": "Design System",
-    "settings": "Settings"
+    "settings": "Settings",
+    "staffing": "Staffing",
+    "hrCompliance": "HR & Compliance",
+    "suppliersServices": "Suppliers & Services",
+    "platformOps": "Platform Ops",
+    "replacements": "Replacements",
+    "internPool": "Intern Pool",
+    "internPoolSubtitle": "Internship positions — {{count}} listing(s)",
+    "noInterns": "No internship listings yet.",
+    "applications": "Applications"
   },
   "policyCrawler": {
     "title": "Policy Crawler",
@@ -1442,6 +1451,7 @@
       "published": "Published",
       "draft": "Draft",
       "closed": "Closed",
+      "filled": "Filled",
       "paused": "Paused",
       "all": "All Status"
     },
