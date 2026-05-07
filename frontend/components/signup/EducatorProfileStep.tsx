@@ -11,7 +11,11 @@ import {
 } from '@heroicons/react/24/outline';
 import Button from '../ui/Button';
 import FileUploadZone from '../ui/FileUploadZone';
-import { STANDARD_INPUT_FIELD, SWISS_CANTONS, EDUCATOR_JOB_ROLES, type EducatorJobRole } from '../../constants';
+import { STANDARD_INPUT_FIELD, SWISS_CANTONS } from '../../constants';
+
+// Only the three profile types relevant to this signup step
+const EDUCATOR_PROFILE_ROLES = ['EDE', 'ASE', 'Auxiliaire'] as const;
+type EducatorProfileRole = typeof EDUCATOR_PROFILE_ROLES[number];
 
 export interface EducatorProfileStepData {
   firstName: string;
@@ -24,7 +28,7 @@ export interface EducatorProfileStepData {
   professionalExperience: string;
   cvUrl: string;
   cvAssetId: string;
-  jobRole: EducatorJobRole | '';
+  jobRole: EducatorProfileRole | '';
 }
 
 interface EducatorProfileStepErrors {
@@ -235,8 +239,8 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
         <p className="text-xs text-gray-500">
           {t('signup:educatorProfile.profileTypeHint', 'Select the qualification that best describes your role')}
         </p>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {EDUCATOR_JOB_ROLES.map(role => (
+        <div className="grid grid-cols-3 gap-3">
+          {EDUCATOR_PROFILE_ROLES.map(role => (
             <button
               key={role}
               type="button"
@@ -247,7 +251,7 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
                   : 'border-gray-300 bg-white text-gray-600 hover:border-swiss-mint hover:bg-gray-50'
               }`}
             >
-              {t(`common:educatorJobRoles.${role.replace(/\s+/g, '')}`, role)}
+              {role}
             </button>
           ))}
         </div>
