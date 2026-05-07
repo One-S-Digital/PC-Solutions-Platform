@@ -281,7 +281,7 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
             >
               <option value="">{t('settings:educatorProfile.rolePlaceholder', 'Select a role')}</option>
               {EDUCATOR_JOB_ROLES.map((role) => (
-                <option key={role} value={role}>{t(`common:educatorJobRoles.${role.replace(/\s+/g, '')}`, role)}</option>
+                <option key={role} value={role}>{role}</option>
               ))}
             </select>
           </div>

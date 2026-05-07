@@ -12,7 +12,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-export const ALLOWED_JOB_ROLES = ['Direction', 'EDE', 'ASE', 'Auxiliaire', 'Cleaning', 'Director', 'Cleaning Staff', 'Intern'] as const;
+export const ALLOWED_JOB_ROLES = ['Direction', 'EDE', 'ASE', 'Auxiliaire', 'Cleaning'] as const;
 import { Type } from 'class-transformer';
 import { EducatorAvailabilitySettingsDto } from './educator-availability.dto';
 
