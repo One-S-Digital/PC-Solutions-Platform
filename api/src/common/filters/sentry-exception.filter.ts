@@ -20,10 +20,15 @@ export class SentryExceptionFilter implements ExceptionFilter {
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
+    const exceptionResponse = exception instanceof HttpException
+      ? exception.getResponse()
+      : null;
     const message =
-      exception instanceof HttpException
-        ? exception.getResponse()
-        : 'Internal server error';
+      typeof exceptionResponse === 'string'
+        ? exceptionResponse
+        : exceptionResponse && typeof exceptionResponse === 'object'
+          ? (exceptionResponse as any).message || 'An error occurred'
+          : 'Internal server error';
 
     // Only report server errors (5xx) and unexpected errors to Sentry
     if (status >= 500) {

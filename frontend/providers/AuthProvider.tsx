@@ -238,14 +238,30 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         return fetchUserFromBackend(clerkId, attempt + 1);
       }
 
+      // Retry once on 401 — may be a transient JWT-key resolution failure on a
+      // cold-started backend instance (e.g. Render.com free tier spin-up).
+      if (response.status === 401 && attempt === 0) {
+        await new Promise(resolve => setTimeout(resolve, 2500));
+        return fetchUserFromBackend(clerkId, attempt + 1);
+      }
+
       if (!response.ok) {
         console.error('Backend returned error:', {
           status: response.status,
           statusText: response.statusText,
           body: responseBody || responseText,
         });
+        // Safely extract message — response may nest it inside an object
+        // (e.g. SentryExceptionFilter forwarding the full HttpException payload)
+        const rawMsg = responseBody?.message;
+        const errMessage =
+          typeof rawMsg === 'string'
+            ? rawMsg
+            : rawMsg && typeof rawMsg === 'object'
+              ? (rawMsg as any).message || `Failed to fetch user: ${response.statusText}`
+              : `Failed to fetch user: ${response.statusText}`;
         throw new ApiError(
-          responseBody?.message || `Failed to fetch user: ${response.statusText}`, 
+          errMessage,
           response.status,
           responseBody?.code || 'backend_error'
         );
