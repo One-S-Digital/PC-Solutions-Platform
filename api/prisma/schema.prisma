@@ -214,7 +214,8 @@ model User {
   availabilitySettings Json?   // New: structured Calendly-style availability schedule
   cvUrl                String? // URL to CV document
   shortBio             String? // Short bio/description for profile
-  candidatePoolVisible Boolean  @default(true) // Educator-controlled visibility in candidate pool
+  candidatePoolVisible        Boolean  @default(true) // Educator-controlled visibility in candidate pool
+  availableForReplacement     Boolean  @default(false) // Educator opted in for short-notice replacement shifts
   region               String? // Candidate location (e.g., canton/city)
   jobRole              String? // Candidate role/title (e.g., "Educator", "Assistant")
   jobRoles             String[] @default([]) // Candidate roles/titles for multi-role matching
@@ -307,6 +308,13 @@ model User {
 
   // Mailing custom list memberships
   mailingCustomListMemberships MailingCustomListMember[]
+
+  // Replacement staffing relations
+  replacementRequests  ReplacementRequest[]  @relation("UserReplacementRequests")
+  replacementMatches   ReplacementMatch[]    @relation("EducatorReplacementMatches")
+
+  // In-app notifications
+  notifications        Notification[]        @relation("UserNotifications")
 
   @@map("users")
 }
@@ -451,6 +459,9 @@ model Organization {
   // Vendor client relationships (discount termination workflow)
   vendorClientsAsVendor VendorClient[] @relation("VendorClientVendor")
   vendorClientsAsOrg    VendorClient[] @relation("VendorClientOrg")
+
+  // Replacement staffing
+  replacementRequests ReplacementRequest[] @relation("FoundationReplacementRequests")
 
   @@map("organizations")
 }
@@ -2627,4 +2638,94 @@ model MailingCustomListMember {
   @@index([listId])
   @@index([userId])
   @@map("mailing_custom_list_members")
+}
+
+// ─── Replacement Staffing (Phase 3) ───────────────────────────────────────────
+
+enum ReplacementRequestStatus {
+  OPEN
+  MATCHED
+  FILLED
+  CANCELLED
+}
+
+enum ReplacementMatchStatus {
+  PROPOSED
+  ACCEPTED
+  DECLINED
+  CONFIRMED
+}
+
+model ReplacementRequest {
+  id             String                   @id @default(uuid())
+  foundationId   String
+  requestedById  String
+  startDate      DateTime
+  endDate        DateTime
+  shiftStart     String?                  // e.g. "08:00"
+  shiftEnd       String?                  // e.g. "17:00"
+  role           String                   // e.g. "Educator", "Assistant"
+  description    String?                  @db.Text
+  location       String?
+  urgency        String                   @default("NORMAL") // NORMAL | URGENT
+  status         ReplacementRequestStatus @default(OPEN)
+  createdAt      DateTime                 @default(now())
+  updatedAt      DateTime                 @updatedAt
+
+  foundation     Organization             @relation("FoundationReplacementRequests", fields: [foundationId], references: [id])
+  requestedBy    User                     @relation("UserReplacementRequests", fields: [requestedById], references: [id])
+  matches        ReplacementMatch[]
+
+  @@index([foundationId])
+  @@index([status])
+  @@map("replacement_requests")
+}
+
+model ReplacementMatch {
+  id          String                 @id @default(uuid())
+  requestId   String
+  educatorId  String
+  status      ReplacementMatchStatus @default(PROPOSED)
+  proposedAt  DateTime               @default(now())
+  respondedAt DateTime?
+  note        String?
+
+  request     ReplacementRequest     @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  educator    User                   @relation("EducatorReplacementMatches", fields: [educatorId], references: [id])
+
+  @@unique([requestId, educatorId])
+  @@index([requestId])
+  @@index([educatorId])
+  @@map("replacement_matches")
+}
+
+// ─── In-App Notifications (Phase 4) ───────────────────────────────────────────
+
+enum NotificationType {
+  REPLACEMENT_REQUEST_CREATED
+  REPLACEMENT_MATCH_PROPOSED
+  REPLACEMENT_MATCH_ACCEPTED
+  REPLACEMENT_MATCH_DECLINED
+  REPLACEMENT_MATCH_CONFIRMED
+  JOB_APPLICATION_RECEIVED
+  JOB_APPLICATION_STATUS_CHANGED
+  LOW_REPLACEMENT_POOL
+  GENERAL
+}
+
+model Notification {
+  id          String           @id @default(uuid())
+  userId      String
+  type        NotificationType @default(GENERAL)
+  title       String
+  body        String
+  link        String?
+  read        Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+
+  user        User             @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+  @@index([createdAt])
+  @@map("notifications")
 }

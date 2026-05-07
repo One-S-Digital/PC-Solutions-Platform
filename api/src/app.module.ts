@@ -23,6 +23,8 @@ import { UploadModule } from './upload/upload.module';
 import { SecurityModule } from './security/security.module';
 import { MarketplaceModule } from './marketplace/marketplace.module';
 import { RecruitmentModule } from './recruitment/recruitment.module';
+import { ReplacementsModule } from './replacements/replacements.module';
+import { NotificationsModule } from './notifications/notifications.module';
 import { ElearningModule } from './elearning/elearning.module';
 import { MessagingModule } from './messaging/messaging.module';
 import { LeadsModule } from './leads/leads.module';
@@ -118,6 +120,8 @@ import {
     SecurityModule,
     MarketplaceModule,
     RecruitmentModule,
+    ReplacementsModule,
+    NotificationsModule,
     ElearningModule,
     MessagingModule,
     LeadsModule,

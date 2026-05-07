@@ -508,11 +508,23 @@
     "quickActions": {
       "addSpot": "Add Spot",
       "browseMarketplace": "Browse Marketplace",
+      "findReplacement": "Find Replacement",
       "postJob": "Post Job",
+      "reviewApplicants": "Review Applicants",
       "sendMessage": "Send Message",
       "title": "Quick Actions",
       "viewAnalytics": "View Analytics",
       "viewParentLeads": "View Parent Leads"
+    },
+    "staffing": {
+      "awaitingReview": "Awaiting Review",
+      "findStaff": "Find Staff",
+      "openPositions": "Open Positions",
+      "openReplacements": "Open Replacements",
+      "postJob": "Post a Job",
+      "postReplacement": "Post Replacement",
+      "replacementPool": "Replacement Pool",
+      "reviewApplicants": "Review Applicants"
     },
     "quickMessage": {
       "placeholder": "Type a quick message to admin...",
@@ -1052,6 +1064,33 @@
     "noListings": "No internship positions posted yet.",
     "postFirst": "Post your first internship"
   },
+  "replacementsPage": {
+    "title": "Replacement Staffing",
+    "subtitle": "Post and manage short-notice replacement requests",
+    "newRequest": "New Request",
+    "formTitle": "Post a Replacement Request",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "shiftStart": "Shift Start",
+    "shiftEnd": "Shift End",
+    "role": "Role Required",
+    "location": "Location",
+    "locationPlaceholder": "e.g. Geneva",
+    "description": "Description / Notes",
+    "markUrgent": "Mark as Urgent",
+    "submit": "Post Request",
+    "cancelRequest": "Cancel Request",
+    "empty": "No replacement requests found",
+    "loadError": "Failed to load replacement requests",
+    "createSuccess": "Replacement request posted",
+    "createError": "Failed to post replacement request",
+    "cancelSuccess": "Request cancelled",
+    "cancelError": "Failed to cancel request",
+    "kpiOpen": "Open",
+    "kpiMatched": "Matched",
+    "kpiFilled": "Filled",
+    "kpiAvgFulfillment": "Avg Fulfil. (days)"
+  },
   "recruitmentPage": {
     "buttons": {
       "addCandidate": "Add Candidate",
@@ -1352,6 +1391,7 @@
     "hrCompliance": "HR & Compliance",
     "postJob": "Post a job",
     "recruitment": "Recruitment",
+    "replacements": "Replacements",
     "reviewApplications": "Review applications",
     "staffing": "Staffing",
     "suppliersServices": "Suppliers & Services",

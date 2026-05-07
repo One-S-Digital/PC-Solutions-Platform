@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { HomeIcon, ShoppingBagIcon, BriefcaseIcon, DocumentTextIcon, AcademicCapIcon, UsersIcon, CogIcon, BookOpenIcon, BuildingStorefrontIcon, UserGroupIcon, NewspaperIcon, PresentationChartLineIcon, BuildingOfficeIcon, TruckIcon, UserCircleIcon, ChevronDownIcon, ChevronUpIcon, PuzzlePieceIcon, InboxArrowDownIcon, ClipboardDocumentListIcon, SquaresPlusIcon, QuestionMarkCircleIcon, TagIcon, ListBulletIcon, ChatBubbleLeftEllipsisIcon, ChartBarIcon, WrenchScrewdriverIcon, IdentificationIcon, CalendarDaysIcon, XMarkIcon, PaperClipIcon, AdjustmentsHorizontalIcon, SwatchIcon, WalletIcon } from '@heroicons/react/24/outline';
+import { HomeIcon, ShoppingBagIcon, BriefcaseIcon, DocumentTextIcon, AcademicCapIcon, UsersIcon, CogIcon, BookOpenIcon, BuildingStorefrontIcon, UserGroupIcon, NewspaperIcon, PresentationChartLineIcon, BuildingOfficeIcon, TruckIcon, UserCircleIcon, ChevronDownIcon, ChevronUpIcon, PuzzlePieceIcon, InboxArrowDownIcon, ClipboardDocumentListIcon, SquaresPlusIcon, QuestionMarkCircleIcon, TagIcon, ListBulletIcon, ChatBubbleLeftEllipsisIcon, ChartBarIcon, WrenchScrewdriverIcon, IdentificationIcon, CalendarDaysIcon, XMarkIcon, PaperClipIcon, AdjustmentsHorizontalIcon, SwatchIcon, WalletIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../../contexts/AppContext';
 import { useFrontendSettings } from '../../hooks/useFrontendSettings';
 import { UserRole } from '../../types';
