@@ -7,6 +7,7 @@ import MainLayout from './components/layout/MainLayout';
 import DashboardPage from './pages/DashboardPage'; // This will be the Foundation default dashboard
 import MarketplacePage from './pages/MarketplacePage';
 import RecruitmentPage from './pages/RecruitmentPage';
+import InternPoolPage from './pages/InternPoolPage';
 import HRProceduresPage from './pages/HRProceduresPage';
 import StatePoliciesPage from './pages/StatePoliciesPage';
 import ELearningPage from './pages/ELearningPage';
@@ -333,6 +334,11 @@ const ProtectedLayout: React.FC = () => {
         <Route path="/staffing/applications" element={
           <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
             <RecruitmentPage />
+          </SubscriptionGatedRoute>
+        } />
+        <Route path="/staffing/interns" element={
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
+            <InternPoolPage />
           </SubscriptionGatedRoute>
         } />
         <Route path="/candidate/:candidateId" element={

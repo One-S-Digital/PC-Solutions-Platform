@@ -83,9 +83,10 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
     {
       path: '/recruitment', nameKey: 'sidebar.staffing', icon: BriefcaseIcon, roles: [UserRole.FOUNDATION],
       subItems: [
-        { path: '/staffing/jobs',          nameKey: 'sidebar.postJob',          icon: ListBulletIcon,            roles: [UserRole.FOUNDATION] },
-        { path: '/staffing/candidates',    nameKey: 'sidebar.findCandidates',   icon: UserGroupIcon,             roles: [UserRole.FOUNDATION] },
+        { path: '/staffing/jobs',          nameKey: 'sidebar.postJob',            icon: ListBulletIcon,            roles: [UserRole.FOUNDATION] },
+        { path: '/staffing/candidates',    nameKey: 'sidebar.findCandidates',     icon: UserGroupIcon,             roles: [UserRole.FOUNDATION] },
         { path: '/staffing/applications',  nameKey: 'sidebar.reviewApplications', icon: ClipboardDocumentListIcon, roles: [UserRole.FOUNDATION] },
+        { path: '/staffing/interns',       nameKey: 'sidebar.internPool',         icon: AcademicCapIcon,           roles: [UserRole.FOUNDATION] },
       ],
     },
     {

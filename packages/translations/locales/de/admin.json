@@ -628,6 +628,9 @@
     "suppliersServices": "Lieferanten & Dienste",
     "platformOps": "Plattformbetrieb",
     "replacements": "Ersatz",
+    "internPool": "Praktikantenpool",
+    "internPoolSubtitle": "Praktikumsstellen — {{count}} Eintrag/Einträge",
+    "noInterns": "Noch keine Praktikumsstellen.",
     "applications": "Bewerbungen"
   },
   "policyCrawler": {

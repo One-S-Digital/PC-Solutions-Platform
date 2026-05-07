@@ -407,6 +407,14 @@
     "editTitle": "Bearbeiten Titel"
   },
   "productsAvailable": "Produkte im Katalog",
+  "internPool": {
+    "title": "Praktikantenpool",
+    "subtitle": "Praktikumsstellen verwalten und Kandidaten für Praktika entdecken.",
+    "listingsTab": "Praktikumsstellen",
+    "candidatesTab": "Praktikumskandidaten",
+    "noListings": "Noch keine Praktikumsstellen ausgeschrieben.",
+    "postFirst": "Erstes Praktikum ausschreiben"
+  },
   "recruitmentPage": {
     "subtitle": "Stellenanzeigen verwalten und qualifizierte Kandidaten finden",
     "title": "Rekrutierung",
@@ -548,6 +556,7 @@
     "products": "Produkte",
     "findCandidates": "Kandidaten finden",
     "findReplacements": "Ersatzpersonal finden",
+    "internPool": "Praktikantenpool",
     "hrCompliance": "HR & Compliance",
     "postJob": "Stelle ausschreiben",
     "recruitment": "Rekrutierung",

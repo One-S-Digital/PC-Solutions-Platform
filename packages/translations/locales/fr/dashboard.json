@@ -406,6 +406,14 @@
     "editTitle": "Modifier Titre"
   },
   "productsAvailable": "produits dans le catalogue",
+  "internPool": {
+    "title": "Vivier de stagiaires",
+    "subtitle": "Gérez les offres de stage et découvrez les candidats disponibles pour un stage.",
+    "listingsTab": "Postes de stage",
+    "candidatesTab": "Candidats stagiaires",
+    "noListings": "Aucun poste de stage publié pour l'instant.",
+    "postFirst": "Publier votre premier stage"
+  },
   "recruitmentPage": {
     "subtitle": "Gérer les offres d'emploi et trouver des candidats qualifiés",
     "title": "Recrutement",
@@ -547,6 +555,7 @@
     "products": "Produits",
     "findCandidates": "Trouver des candidats",
     "findReplacements": "Trouver du personnel de remplacement",
+    "internPool": "Vivier de stagiaires",
     "hrCompliance": "RH et conformité",
     "postJob": "Publier un poste",
     "recruitment": "Recrutement",

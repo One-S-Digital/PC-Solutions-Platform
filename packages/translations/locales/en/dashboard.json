@@ -1044,6 +1044,14 @@
     "addTitle": "add Title",
     "editTitle": "edit Title"
   },
+  "internPool": {
+    "title": "Intern Pool",
+    "subtitle": "Manage internship positions and discover candidates available for internships.",
+    "listingsTab": "Internship Positions",
+    "candidatesTab": "Intern Candidates",
+    "noListings": "No internship positions posted yet.",
+    "postFirst": "Post your first internship"
+  },
   "recruitmentPage": {
     "buttons": {
       "addCandidate": "Add Candidate",
@@ -1340,6 +1348,7 @@
     "products": "Products",
     "findCandidates": "Find candidates",
     "findReplacements": "Find replacement staff",
+    "internPool": "Intern Pool",
     "hrCompliance": "HR & Compliance",
     "postJob": "Post a job",
     "recruitment": "Recruitment",
