@@ -227,6 +227,27 @@ export class RecruitmentController {
     return this.recruitmentService.findMatchingCandidates(id);
   }
 
+  // Shortlist endpoints
+  @Get('shortlist')
+  @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  getSavedCandidates(@Request() req) {
+    return this.recruitmentService.getSavedCandidates(req.user.organizationId);
+  }
+
+  @Post('shortlist/:candidateId')
+  @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  async saveCandidate(@Param('candidateId') candidateId: string, @Request() req) {
+    const ids = await this.recruitmentService.saveCandidate(req.user.organizationId, candidateId);
+    return { savedCandidateIds: ids };
+  }
+
+  @Delete('shortlist/:candidateId')
+  @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  async unsaveCandidate(@Param('candidateId') candidateId: string, @Request() req) {
+    const ids = await this.recruitmentService.unsaveCandidate(req.user.organizationId, candidateId);
+    return { savedCandidateIds: ids };
+  }
+
   // Analytics endpoints
   @Get('stats')
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)

@@ -828,7 +828,11 @@ export enum ApplicationStatus {
     PENDING = 'PENDING',
     REVIEWED = 'REVIEWED',
     ACCEPTED = 'ACCEPTED',
-    REJECTED = 'REJECTED'
+    REJECTED = 'REJECTED',
+    SHORTLISTED = 'SHORTLISTED',
+    INTERVIEW = 'INTERVIEW',
+    OFFER = 'OFFER',
+    HIRED = 'HIRED',
 }
 
 export interface Application {
