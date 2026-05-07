@@ -202,12 +202,21 @@ const SignupPage: React.FC = () => {
       selectedRole !== null &&
       [SignupRole.FOUNDATION, SignupRole.SUPPLIER, SignupRole.SERVICE_PROVIDER].includes(selectedRole);
 
-  // Redirect if user is already logged in AND has a backend profile (currentUser is set)
-  // If currentUser is null, it means they need to complete their profile (e.g. after Google Sign Up)
+  // Redirect if user is already logged in AND has a backend profile (currentUser is set).
+  // Exception: educators who completed step 2 but not step 3 (no shortBio yet) must be
+  // returned to step 3 instead of the dashboard so they can finish their profile.
   useEffect(() => {
-    if (isSignedIn && currentUser && !hasStartedSignup) {
-      navigate('/dashboard', { replace: true });
+    if (!isSignedIn || !currentUser || hasStartedSignup) return;
+
+    if (currentUser.role === UserRole.EDUCATOR && !currentUser.shortBio) {
+      // Educator profile incomplete — resume at step 3
+      setSelectedRole(SignupRole.EDUCATOR);
+      setHasStartedSignup(true);
+      setCurrentStep(3);
+      return;
     }
+
+    navigate('/dashboard', { replace: true });
   }, [isSignedIn, currentUser, hasStartedSignup, navigate]);
 
   // Handle successful verification - redirect if user becomes authenticated after showing success
@@ -1239,10 +1248,10 @@ const SignupPage: React.FC = () => {
             {currentStep === 3 && selectedRole === SignupRole.EDUCATOR && (
               <EducatorProfileStep
                 initialData={{
-                  email: formData.email,
-                  firstName: formData.contactPerson.trim().split(' ')[0] || '',
-                  lastName: formData.contactPerson.trim().split(' ').slice(1).join(' ') || '',
-                  phone: formData.phone || '',
+                  email: formData.email || currentUser?.email || '',
+                  firstName: formData.contactPerson.trim().split(' ')[0] || currentUser?.firstName || '',
+                  lastName: formData.contactPerson.trim().split(' ').slice(1).join(' ') || currentUser?.lastName || '',
+                  phone: formData.phone || currentUser?.phoneNumber || '',
                   canton: formData.canton || '',
                 }}
                 onSubmit={handleEducatorProfileSubmit}

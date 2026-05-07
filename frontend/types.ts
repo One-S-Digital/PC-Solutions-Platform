@@ -38,6 +38,7 @@ export interface User {
   skills?: string[];
   availability?: string;
   cvUrl?: string;
+  shortBio?: string | null;
   stripeCustomerId?: string;
   lastActiveAt?: string;
   isActive: boolean;
