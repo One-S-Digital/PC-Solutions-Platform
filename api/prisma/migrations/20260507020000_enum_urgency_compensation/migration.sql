@@ -4,14 +4,22 @@
 
 -- 1. Create UrgencyLevel enum if it doesn't exist yet
 DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'UrgencyLevel') THEN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_type t
+    JOIN pg_namespace n ON n.oid = t.typnamespace
+    WHERE t.typname = 'UrgencyLevel' AND n.nspname = 'public'
+  ) THEN
     CREATE TYPE "UrgencyLevel" AS ENUM ('NORMAL', 'URGENT');
   END IF;
 END $$;
 
 -- 2. Create CompensationType enum if it doesn't exist yet
 DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'CompensationType') THEN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_type t
+    JOIN pg_namespace n ON n.oid = t.typnamespace
+    WHERE t.typname = 'CompensationType' AND n.nspname = 'public'
+  ) THEN
     CREATE TYPE "CompensationType" AS ENUM ('PAID', 'UNPAID', 'STIPEND');
   END IF;
 END $$;
