@@ -214,7 +214,9 @@ model User {
   availabilitySettings Json?   // New: structured Calendly-style availability schedule
   cvUrl                String? // URL to CV document
   shortBio             String? // Short bio/description for profile
-  candidatePoolVisible Boolean  @default(true) // Educator-controlled visibility in candidate pool
+  candidatePoolVisible        Boolean  @default(true) // Educator-controlled visibility in candidate pool
+  availableForReplacement     Boolean  @default(false) // Educator opted in for short-notice replacement shifts
+  availableForInternship      Boolean  @default(false) // Educator/student available for internship placements
   region               String? // Candidate location (e.g., canton/city)
   jobRole              String? // Candidate role/title (e.g., "Educator", "Assistant")
   jobRoles             String[] @default([]) // Candidate roles/titles for multi-role matching
@@ -303,6 +305,17 @@ model User {
 
   // Mailing custom list memberships
   mailingCustomListMemberships MailingCustomListMember[]
+
+  // Replacement staffing relations
+  replacementRequests  ReplacementRequest[]  @relation("UserReplacementRequests")
+  replacementMatches   ReplacementMatch[]    @relation("EducatorReplacementMatches")
+
+  // Intern pool relations
+  internPoolRequests      InternPoolRequest[]      @relation("UserInternPoolRequests")
+  internPoolApplications  InternPoolApplication[]  @relation("InternPoolApplications")
+
+  // In-app notifications
+  notifications        Notification[]        @relation("UserNotifications")
 
   @@map("users")
 }
@@ -447,6 +460,12 @@ model Organization {
   // Vendor client relationships (discount termination workflow)
   vendorClientsAsVendor VendorClient[] @relation("VendorClientVendor")
   vendorClientsAsOrg    VendorClient[] @relation("VendorClientOrg")
+
+  // Replacement staffing
+  replacementRequests ReplacementRequest[] @relation("FoundationReplacementRequests")
+
+  // Intern pool
+  internPoolRequests InternPoolRequest[] @relation("FoundationInternPoolRequests")
 
   @@map("organizations")
 }
@@ -2637,4 +2656,172 @@ model MailingCustomListMember {
   @@index([listId])
   @@index([userId])
   @@map("mailing_custom_list_members")
+}
+
+// ─── Replacement Staffing (Phase 3) ───────────────────────────────────────────
+
+enum UrgencyLevel {
+  NORMAL
+  URGENT
+}
+
+enum CompensationType {
+  PAID
+  UNPAID
+  STIPEND
+}
+
+enum ReplacementRequestStatus {
+  OPEN
+  MATCHED
+  FILLED
+  CANCELLED
+}
+
+enum ReplacementMatchStatus {
+  PROPOSED
+  ACCEPTED
+  DECLINED
+  CONFIRMED
+}
+
+model ReplacementRequest {
+  id             String                   @id @default(uuid())
+  foundationId   String
+  requestedById  String
+  startDate      DateTime
+  endDate        DateTime
+  shiftStart     String?                  // e.g. "08:00"
+  shiftEnd       String?                  // e.g. "17:00"
+  role           String                   // e.g. "Educator", "Assistant"
+  description    String?                  @db.Text
+  location       String?
+  urgency        UrgencyLevel             @default(NORMAL)
+  status         ReplacementRequestStatus @default(OPEN)
+  createdAt      DateTime                 @default(now())
+  updatedAt      DateTime                 @updatedAt
+
+  foundation     Organization             @relation("FoundationReplacementRequests", fields: [foundationId], references: [id])
+  requestedBy    User                     @relation("UserReplacementRequests", fields: [requestedById], references: [id])
+  matches        ReplacementMatch[]
+
+  @@index([foundationId])
+  @@index([status])
+  @@map("replacement_requests")
+}
+
+model ReplacementMatch {
+  id          String                 @id @default(uuid())
+  requestId   String
+  educatorId  String
+  status      ReplacementMatchStatus @default(PROPOSED)
+  proposedAt  DateTime               @default(now())
+  respondedAt DateTime?
+  note        String?
+
+  request     ReplacementRequest     @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  educator    User                   @relation("EducatorReplacementMatches", fields: [educatorId], references: [id])
+
+  @@unique([requestId, educatorId])
+  @@index([requestId])
+  @@index([educatorId])
+  @@map("replacement_matches")
+}
+
+// ─── In-App Notifications (Phase 4) ───────────────────────────────────────────
+
+enum NotificationType {
+  REPLACEMENT_REQUEST_CREATED
+  REPLACEMENT_MATCH_PROPOSED
+  REPLACEMENT_MATCH_ACCEPTED
+  REPLACEMENT_MATCH_DECLINED
+  REPLACEMENT_MATCH_CONFIRMED
+  JOB_APPLICATION_RECEIVED
+  JOB_APPLICATION_STATUS_CHANGED
+  LOW_REPLACEMENT_POOL
+  INTERN_REQUEST_POSTED
+  INTERN_APPLICATION_RECEIVED
+  INTERN_APPLICATION_ACCEPTED
+  INTERN_APPLICATION_DECLINED
+  INTERN_APPLICATION_CONFIRMED
+  GENERAL
+}
+
+model Notification {
+  id          String           @id @default(uuid())
+  userId      String
+  type        NotificationType @default(GENERAL)
+  title       String
+  body        String
+  link        String?
+  read        Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+
+  user        User             @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+// ─── Intern Pool (Hybrid: interns apply + foundations can propose) ─────────────
+
+enum InternPoolRequestStatus {
+  OPEN
+  REVIEWING
+  FILLED
+  CANCELLED
+}
+
+enum InternPoolApplicationStatus {
+  APPLIED
+  REVIEWING
+  ACCEPTED
+  DECLINED
+  CONFIRMED
+}
+
+model InternPoolRequest {
+  id               String                  @id @default(uuid())
+  foundationId     String
+  postedById       String
+  title            String
+  startDate        DateTime
+  endDate          DateTime
+  role             String
+  description      String?                 @db.Text
+  location         String?
+  supervisorName   String?
+  compensationType CompensationType         @default(UNPAID)
+  weeklyHours      Int?
+  status           InternPoolRequestStatus @default(OPEN)
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
+
+  foundation   Organization           @relation("FoundationInternPoolRequests", fields: [foundationId], references: [id])
+  postedBy     User                   @relation("UserInternPoolRequests", fields: [postedById], references: [id])
+  applications InternPoolApplication[]
+
+  @@index([foundationId])
+  @@index([status])
+  @@map("intern_pool_requests")
+}
+
+model InternPoolApplication {
+  id               String                     @id @default(uuid())
+  requestId        String
+  applicantId      String
+  status           InternPoolApplicationStatus @default(APPLIED)
+  motivationLetter String?                    @db.Text
+  appliedAt        DateTime                   @default(now())
+  respondedAt      DateTime?
+  note             String?
+
+  request   InternPoolRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  applicant User              @relation("InternPoolApplications", fields: [applicantId], references: [id])
+
+  @@unique([requestId, applicantId])
+  @@index([requestId])
+  @@index([applicantId])
+  @@map("intern_pool_applications")
 }

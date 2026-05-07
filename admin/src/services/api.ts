@@ -1193,6 +1193,20 @@ export const apiService = {
 
   mailingGetCustomListMembers: (apiClient: AxiosInstance, listId: string, params?: { page?: number; pageSize?: number }) =>
     apiClient.get(`/admin/mailing/custom-lists/${listId}/members`, { params }),
+
+  // Replacement Staffing (Phase 3)
+  getReplacementRequests: (apiClient: AxiosInstance, params?: { status?: string; foundationId?: string }) =>
+    apiClient.get('/replacements/requests', { params }),
+  getReplacementRequestById: (apiClient: AxiosInstance, id: string) =>
+    apiClient.get(`/replacements/requests/${id}`),
+  cancelReplacementRequest: (apiClient: AxiosInstance, id: string) =>
+    apiClient.delete(`/replacements/requests/${id}`),
+  proposeReplacementMatch: (apiClient: AxiosInstance, requestId: string, educatorId: string) =>
+    apiClient.post(`/replacements/requests/${requestId}/matches`, { educatorId }),
+  respondReplacementMatch: (apiClient: AxiosInstance, matchId: string, status: string, note?: string) =>
+    apiClient.patch(`/replacements/matches/${matchId}/respond`, { status, note }),
+  getStaffingSignals: (apiClient: AxiosInstance, foundationId?: string) =>
+    apiClient.get('/replacements/signals', { params: foundationId ? { foundationId } : {} }),
 }
 
 // Export individual content functions for easier imports

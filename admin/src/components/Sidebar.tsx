@@ -22,6 +22,7 @@ import {
   Tag,
   FileSearch,
   Mail,
+  RefreshCw,
   ChevronDown,
   ChevronRight,
   GraduationCap,
@@ -67,6 +68,7 @@ const navStructure: NavEntry[] = [
     items: [
       { key: 'jobListings',   href: '/job-listings', icon: Briefcase },
       { key: 'candidatePool', href: '/candidates',   icon: UserCheck },
+      { key: 'replacements',  href: '/replacements', icon: RefreshCw },
       { key: 'internPool',    href: '/intern-pool',  icon: GraduationCap },
     ],
   },

@@ -2395,5 +2395,13 @@
     "selectAll": "Select all",
     "deselectAll": "Deselect all",
     "confirmBulkDelete": "Permanently delete {{count}} item(s)? This cannot be undone."
+  },
+  "educatorJobRoles": {
+    "EDE": "EDE",
+    "ASE": "ASE",
+    "Auxiliaire": "Auxiliaire",
+    "Director": "Director",
+    "CleaningStaff": "Cleaning Staff",
+    "Intern": "Intern"
   }
 }

@@ -28,6 +28,7 @@ import PolicyCrawlerPage from './pages/PolicyCrawler';
 import AdminUserProfileEdit from './pages/AdminUserProfileEdit';
 import AdminOrganizationProfileEdit from './pages/AdminOrganizationProfileEdit';
 import ResetPassword from './pages/ResetPassword';
+import ReplacementsPage from './pages/Replacements';
 import MailingListPage from './pages/MailingList';
 import MailingCampaignDetailPage from './pages/MailingCampaignDetail';
 import ELearningContentPage from './pages/content/ELearningContentPage';
@@ -98,6 +99,7 @@ function App() {
           <Route path="services" element={<ServicesPage />} />
           <Route path="job-listings" element={<JobListingsPage />} />
           <Route path="candidates" element={<CandidatesPage />} />
+          <Route path="replacements" element={<ReplacementsPage />} />
           <Route path="intern-pool" element={<InternPoolPage />} />
           <Route path="parent-leads" element={<ParentLeadsPage />} />
           <Route path="orders" element={<OrdersPage />} />

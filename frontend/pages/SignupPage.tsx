@@ -17,6 +17,7 @@ import { apiService } from '../services/api';
 import { API_ENDPOINTS } from '../services/api-endpoints';
 import { getHomePath } from '../utils/navigation';
 import LogoLink from '../components/shared/LogoLink';
+import EducatorProfileStep, { EducatorProfileStepData } from '../components/signup/EducatorProfileStep';
 
 const SIGNUP_ROLE_TO_USER_ROLE: Record<SignupRole, UserRole> = {
   [SignupRole.FOUNDATION]: UserRole.FOUNDATION,
@@ -122,7 +123,7 @@ const SignupPage: React.FC = () => {
 
         if (currentStatus === 'ready') {
           setSuccessRedirect(getSuccessRedirectForRole());
-          setCurrentStep(3);
+          setCurrentStep(getPostSignupStep());
           return;
         }
 
@@ -147,7 +148,7 @@ const SignupPage: React.FC = () => {
     }
   };
 
-  const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
+  const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4>(1);
   const [selectedRole, setSelectedRole] = useState<SignupRole | null>(null);
   const [hasStartedSignup, setHasStartedSignup] = useState(false);
   const [successRedirect, setSuccessRedirect] = useState<{ path: string; state?: Record<string, unknown> }>({ path: '/dashboard' });
@@ -184,8 +185,16 @@ const SignupPage: React.FC = () => {
   const [webhookStatus, setWebhookStatus] = useState<'pending' | 'processing' | 'ready' | 'error'>('pending');
   const [webhookError, setWebhookError] = useState<string | null>(null);
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
+  const [isEducatorProfileLoading, setIsEducatorProfileLoading] = useState(false);
 
   const getSuccessRedirectForRole = () => ({ path: '/dashboard' });
+
+  // Returns whether the currently selected role is EDUCATOR
+  const isEducatorRole = () => selectedRole === SignupRole.EDUCATOR;
+
+  // For educators, step 3 = profile setup, step 4 = success.
+  // For all other roles, we skip step 3 and go directly to step 4 (success).
+  const getPostSignupStep = (): 3 | 4 => (isEducatorRole() ? 3 : 4);
 
   const successButtonLabel = t('goToDashboardButton');
 
@@ -203,7 +212,7 @@ const SignupPage: React.FC = () => {
 
   // Handle successful verification - redirect if user becomes authenticated after showing success
   useEffect(() => {
-    if (isSignedIn && currentStep === 3) {
+    if (isSignedIn && currentStep === 4) {
       const timeoutId = setTimeout(() => {
         navigate(successRedirect.path, { replace: true, state: successRedirect.state });
       }, 2000);
@@ -488,7 +497,7 @@ const SignupPage: React.FC = () => {
        if (response.ok) {
            await refreshCurrentUser();
            setSuccessRedirect(getSuccessRedirectForRole());
-           setCurrentStep(3);
+           setCurrentStep(getPostSignupStep());
        } else {
            const errorData = await response.json().catch(() => ({}));
            
@@ -575,7 +584,7 @@ const SignupPage: React.FC = () => {
           try {
             await setActive({ session: result.createdSessionId });
             setSuccessRedirect(getSuccessRedirectForRole());
-            setCurrentStep(3);
+            setCurrentStep(getPostSignupStep());
           } catch (setActiveError: any) {
             console.error('Session activation failed:', setActiveError);
             setErrors({ email: 'Failed to activate session. Please try logging in.' });
@@ -745,6 +754,53 @@ const SignupPage: React.FC = () => {
     }
   };
   
+  const handleEducatorProfileSubmit = async (profileData: EducatorProfileStepData) => {
+    setIsEducatorProfileLoading(true);
+    try {
+      const token = await getToken();
+      if (!token) throw new Error('Authentication token not available');
+
+      const payload = {
+        firstName: profileData.firstName,
+        lastName: profileData.lastName,
+        phoneNumber: profileData.phone,
+        region: profileData.canton,
+        cities: profileData.city ? [profileData.city] : [],
+        shortBio: profileData.shortBio,
+        workExperience: profileData.professionalExperience,
+        jobRole: profileData.jobRole || undefined,
+        cvUrl: profileData.cvUrl || undefined,
+        cvAssetId: profileData.cvAssetId || undefined,
+      };
+
+      const response = await fetch(
+        `${apiService.apiBaseUrl}${API_ENDPOINTS.settings.educator}`,
+        {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        },
+      );
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.message || 'Failed to save profile');
+      }
+
+      await refreshCurrentUser();
+      setCurrentStep(4);
+    } catch (err: any) {
+      console.error('Educator profile save error:', err);
+      // Surface the error – the component stays on step 3 so the user can retry
+      alert(err.message || 'An error occurred while saving your profile. Please try again.');
+    } finally {
+      setIsEducatorProfileLoading(false);
+    }
+  };
+
   const renderField = (name: keyof SignupFormData, labelKey: string, type: string = 'text', required: boolean = true, placeholderKey?: string, options?: readonly string[]) => (
     <div>
       <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">
@@ -794,12 +850,21 @@ const SignupPage: React.FC = () => {
     </div>
   );
 
-  const progressText = currentStep === 1 
-    ? (needsProfileCompletion ? t('signup:progress.oauthStep1', 'Step 1: Select your role') : t('signup:progress.step1')) 
-    : (needsProfileCompletion ? t('signup:progress.oauthStep2', 'Step 2: Complete your profile') : t('signup:progress.step2'));
-  const formTitle = currentStep === 1 
-    ? (needsProfileCompletion ? t('signup:selectRoleTitle.oauth', 'Complete Your Registration') : t('signup:selectRoleTitle')) 
-    : t('signup:detailsTitle', { role: selectedRole ? t(rolesConfig.find(rc => rc.role === selectedRole)!.nameKey) : '' });
+  const progressText =
+    currentStep === 1
+      ? (needsProfileCompletion ? t('signup:progress.oauthStep1', 'Step 1: Select your role') : t('signup:progress.step1'))
+      : currentStep === 2
+        ? (needsProfileCompletion ? t('signup:progress.oauthStep2', 'Step 2: Complete your profile') : t('signup:progress.step2'))
+        : currentStep === 3
+          ? t('signup:progress.step3Educator', 'Step 3: Set up your educator profile')
+          : '';
+
+  const formTitle =
+    currentStep === 1
+      ? (needsProfileCompletion ? t('signup:selectRoleTitle.oauth', 'Complete Your Registration') : t('signup:selectRoleTitle'))
+      : currentStep === 3
+        ? t('signup:educatorProfile.setupTitle', 'Set Up Your Educator Profile')
+        : t('signup:detailsTitle', { role: selectedRole ? t(rolesConfig.find(rc => rc.role === selectedRole)!.nameKey) : '' });
 
   if (!isLoaded) {
     return (
@@ -812,7 +877,7 @@ const SignupPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-3 sm:p-4 md:p-6">
       <Card className="w-full max-w-2xl p-4 sm:p-6 md:p-8 shadow-xl">
-        {currentStep === 3 ? (
+        {currentStep === 4 ? (
           <div className="text-center">
             <CheckCircleIcon className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 text-swiss-mint mx-auto mb-3 sm:mb-4"/>
             <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-swiss-charcoal">{t('submissionSuccessTitle')}</h1>
@@ -850,8 +915,14 @@ const SignupPage: React.FC = () => {
               <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-swiss-charcoal">{formTitle}</h1>
               <p className="text-xs sm:text-sm text-gray-500 mt-1">{progressText}</p>
             </div>
+            {/* Progress bar — 4 steps for educators, 3 for everyone else */}
             <div className="w-full bg-gray-200 rounded-full h-1.5 sm:h-2 mb-4 sm:mb-6">
-              <div className="bg-swiss-mint h-1.5 sm:h-2 rounded-full transition-all duration-300 ease-in-out" style={{ width: currentStep === 1 ? '50%' : '100%' }}></div>
+              <div
+                className="bg-swiss-mint h-1.5 sm:h-2 rounded-full transition-all duration-300 ease-in-out"
+                style={{
+                  width: currentStep === 1 ? '33%' : currentStep === 2 ? '66%' : '100%',
+                }}
+              />
             </div>
 
             {currentStep === 1 && (
@@ -1164,7 +1235,22 @@ const SignupPage: React.FC = () => {
                 )}
               </>
             )}
-            
+
+            {currentStep === 3 && selectedRole === SignupRole.EDUCATOR && (
+              <EducatorProfileStep
+                initialData={{
+                  email: formData.email,
+                  firstName: formData.contactPerson.trim().split(' ')[0] || '',
+                  lastName: formData.contactPerson.trim().split(' ').slice(1).join(' ') || '',
+                  phone: formData.phone || '',
+                  canton: formData.canton || '',
+                }}
+                onSubmit={handleEducatorProfileSubmit}
+                onBack={() => { setCurrentStep(2); setShowVerificationStep(false); }}
+                isLoading={isEducatorProfileLoading}
+              />
+            )}
+
             <p className="mt-4 sm:mt-6 text-center text-xs sm:text-sm text-gray-600">
               {t('common:loginPage.alreadyAccount')}{' '}
               <Link to="/login" className="font-medium text-swiss-mint hover:underline">

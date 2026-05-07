@@ -2397,5 +2397,13 @@
     "selectAll": "Alle auswählen",
     "deselectAll": "Auswahl aufheben",
     "confirmBulkDelete": "{{count}} Element(e) dauerhaft löschen? Dies kann nicht rückgängig gemacht werden."
+  },
+  "educatorJobRoles": {
+    "EDE": "EDE",
+    "ASE": "ASE",
+    "Auxiliaire": "Hilfskraft",
+    "Director": "Direktor/in",
+    "CleaningStaff": "Reinigungspersonal",
+    "Intern": "Praktikant/in"
   }
 }
