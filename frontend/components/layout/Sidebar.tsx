@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { HomeIcon, ShoppingBagIcon, BriefcaseIcon, DocumentTextIcon, AcademicCapIcon, UsersIcon, CogIcon, BookOpenIcon, BuildingStorefrontIcon, UserGroupIcon, NewspaperIcon, PresentationChartLineIcon, BuildingOfficeIcon, TruckIcon, UserCircleIcon, ChevronDownIcon, ChevronUpIcon, PuzzlePieceIcon, InboxArrowDownIcon, ClipboardDocumentListIcon, SquaresPlusIcon, QuestionMarkCircleIcon, TagIcon, ListBulletIcon, ChatBubbleLeftEllipsisIcon, ChartBarIcon, WrenchScrewdriverIcon, IdentificationIcon, CalendarDaysIcon, XMarkIcon, PaperClipIcon, AdjustmentsHorizontalIcon, SwatchIcon, WalletIcon } from '@heroicons/react/24/outline';
+import { HomeIcon, ShoppingBagIcon, BriefcaseIcon, DocumentTextIcon, AcademicCapIcon, UsersIcon, CogIcon, BookOpenIcon, BuildingStorefrontIcon, UserGroupIcon, NewspaperIcon, PresentationChartLineIcon, BuildingOfficeIcon, TruckIcon, UserCircleIcon, ChevronDownIcon, ChevronUpIcon, PuzzlePieceIcon, InboxArrowDownIcon, ClipboardDocumentListIcon, SquaresPlusIcon, QuestionMarkCircleIcon, TagIcon, ListBulletIcon, ChatBubbleLeftEllipsisIcon, ChartBarIcon, WrenchScrewdriverIcon, IdentificationIcon, CalendarDaysIcon, XMarkIcon, PaperClipIcon, AdjustmentsHorizontalIcon, SwatchIcon, WalletIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../../contexts/AppContext';
 import { useFrontendSettings } from '../../hooks/useFrontendSettings';
 import { UserRole } from '../../types';
@@ -45,7 +45,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
     'sidebar.content': true, // Corrected key
     'sidebar.marketplace': true, // Corrected key
     'sidebar.users': true, // Corrected key
-    'sidebar.recruitment': true, // Corrected key
+    'sidebar.staffing': true, // Replaces sidebar.recruitment
   });
 
   React.useEffect(() => {
@@ -85,11 +85,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
     },
     { path: '/foundation/orders-appointments', nameKey: 'sidebar.ordersAppointments', icon: CalendarDaysIcon, roles: [UserRole.FOUNDATION] },
     { path: '/foundation/leads', nameKey: 'sidebar.parentLeads', icon: InboxArrowDownIcon, roles: [UserRole.FOUNDATION] },
-    { 
-      path: '/recruitment', nameKey: 'sidebar.recruitment', icon: BriefcaseIcon, roles: [UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN],
+    {
+      path: '/staffing', nameKey: 'sidebar.staffing', icon: BriefcaseIcon, roles: [UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN],
       subItems: [
         { path: '/recruitment/job-listings', nameKey: 'sidebar.jobListings', icon: ListBulletIcon, roles: [UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]},
         { path: '/recruitment/candidate-pool', nameKey: 'sidebar.candidatePool', icon: UserGroupIcon, roles: [UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]},
+        { path: '/foundation/replacements', nameKey: 'sidebar.replacements', icon: ArrowPathIcon, roles: [UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]},
       ]
     },
     { path: '/hr-procedures', nameKey: 'sidebar.hrProcedures', icon: DocumentTextIcon, roles: [UserRole.FOUNDATION] },

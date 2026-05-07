@@ -22,6 +22,7 @@ import {
   Tag,
   FileSearch,
   Mail,
+  RefreshCw,
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useSettings } from '../hooks/useSettings'
@@ -42,6 +43,7 @@ const navigation = [
   { key: 'services', href: '/services', icon: Wrench },
   { key: 'jobListings', href: '/job-listings', icon: Briefcase },
   { key: 'candidatePool', href: '/candidates', icon: UserCheck },
+  { key: 'replacements', href: '/replacements', icon: RefreshCw },
   { key: 'parentLeads', href: '/parent-leads', icon: Heart },
   { key: 'ordersAppointments', href: '/orders', icon: ShoppingCart },
   { key: 'content', href: '/content', icon: FileText },

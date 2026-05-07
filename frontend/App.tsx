@@ -17,6 +17,7 @@ import { AppContextProvider, AppContextProviderE2E, useAppContext } from './cont
 import { CartProvider } from './contexts/CartContext';
 import { MessagingProvider } from './contexts/MessagingContext';
 import { NotificationProvider } from './contexts/NotificationContext';
+import { InAppNotificationProvider } from './contexts/InAppNotificationContext';
 import { SubscriptionProvider, SubscriptionProviderE2E } from './contexts/SubscriptionContext';
 import { SubscriptionPaywall } from './components/shared/SubscriptionPaywall';
 import { useAuthContext } from './providers/AuthProvider';
@@ -70,6 +71,7 @@ import ServiceProviderSupportPage from './pages/service-provider/ServiceProvider
 import ServiceProviderSettingsPage from './pages/ServiceProviderSettingsPage';
 
 // Foundation Pages (some may reuse existing top-level pages)
+import FoundationReplacementsPage from './pages/foundation/FoundationReplacementsPage';
 import FoundationDashboardPage from './pages/foundation/FoundationDashboardPage';
 import FoundationOrdersAppointmentsPage from './pages/foundation/FoundationOrdersAppointmentsPage';
 import FoundationAnalyticsPage from './pages/foundation/FoundationAnalyticsPage';
@@ -306,7 +308,13 @@ const ProtectedLayout: React.FC = () => {
           </SubscriptionGatedRoute>
         } />
         
-        {/* Recruitment - Gated for Foundation users */}
+        {/* Staffing canonical paths (new) — /staffing/* → /recruitment/* aliases */}
+        <Route path="/staffing" element={<Navigate to="/recruitment/job-listings" replace />} />
+        <Route path="/staffing/job-listings" element={<Navigate to="/recruitment/job-listings" replace />} />
+        <Route path="/staffing/candidate-pool" element={<Navigate to="/recruitment/candidate-pool" replace />} />
+        <Route path="/staffing/replacements" element={<Navigate to="/foundation/replacements" replace />} />
+
+        {/* Recruitment - kept for back-compat; canonical is /staffing/* */}
         <Route path="/recruitment" element={<Navigate to="/recruitment/job-listings" replace />} />
         <Route path="/recruitment/job-listings" element={
           <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
@@ -498,8 +506,11 @@ const ProtectedLayout: React.FC = () => {
         <Route path="/foundation/analytics" element={
           <SubscriptionGatedRoute roles={[UserRole.FOUNDATION]}><FoundationAnalyticsPage /></SubscriptionGatedRoute>
         } />
+        <Route path="/foundation/replacements" element={
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION]}><FoundationReplacementsPage /></SubscriptionGatedRoute>
+        } />
         {/* Profile/Support routes don't require subscription */}
-        <Route path="/foundation/organisation-profile" element={ 
+        <Route path="/foundation/organisation-profile" element={
           <ProtectedRoute roles={[UserRole.FOUNDATION]}><FoundationOrganisationProfilePage /></ProtectedRoute>
         } />
         <Route path="/foundation/support" element={
@@ -615,6 +626,7 @@ const App: React.FC = () => {
       <FrontendSettingsManager />
       <CartProvider>
         <NotificationProvider>
+          <InAppNotificationProvider>
           <MessagingProvider>
             <SubscriptionProvider>
               <Routes>
@@ -630,6 +642,7 @@ const App: React.FC = () => {
               </Routes>
             </SubscriptionProvider>
           </MessagingProvider>
+          </InAppNotificationProvider>
         </NotificationProvider>
       </CartProvider>
     </AppContextProvider>
