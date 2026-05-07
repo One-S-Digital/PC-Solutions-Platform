@@ -1091,21 +1091,30 @@ CREATE UNIQUE INDEX IF NOT EXISTS "mt_cost_tracking_date_provider_sourceLang_tar
  */
 const ensureEnumUrgencyCompensation = () => {
   const sql = `
--- Create UrgencyLevel enum if it doesn't exist
+-- Create UrgencyLevel enum if it doesn't exist in the public schema
 DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'UrgencyLevel') THEN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_type t
+    JOIN pg_namespace n ON n.oid = t.typnamespace
+    WHERE t.typname = 'UrgencyLevel' AND n.nspname = 'public'
+  ) THEN
     CREATE TYPE "UrgencyLevel" AS ENUM ('NORMAL', 'URGENT');
   END IF;
 END $$;
 
--- Create CompensationType enum if it doesn't exist
+-- Create CompensationType enum if it doesn't exist in the public schema
 DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'CompensationType') THEN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_type t
+    JOIN pg_namespace n ON n.oid = t.typnamespace
+    WHERE t.typname = 'CompensationType' AND n.nspname = 'public'
+  ) THEN
     CREATE TYPE "CompensationType" AS ENUM ('PAID', 'UNPAID', 'STIPEND');
   END IF;
 END $$;
 
 -- Convert replacement_requests.urgency TEXT → UrgencyLevel (only if still TEXT)
+-- Must drop default first; Postgres cannot auto-cast a TEXT default to an enum.
 DO $$ BEGIN
   IF EXISTS (
     SELECT 1 FROM information_schema.columns
@@ -1118,6 +1127,8 @@ DO $$ BEGIN
       SET "urgency" = 'NORMAL'
       WHERE "urgency" NOT IN ('NORMAL', 'URGENT');
 
+    ALTER TABLE "replacement_requests" ALTER COLUMN "urgency" DROP DEFAULT;
+
     ALTER TABLE "replacement_requests"
       ALTER COLUMN "urgency" TYPE "UrgencyLevel"
       USING "urgency"::"UrgencyLevel";
@@ -1128,6 +1139,7 @@ DO $$ BEGIN
 END $$;
 
 -- Convert intern_pool_requests.compensationType TEXT → CompensationType (only if still TEXT)
+-- Must drop default first for the same reason.
 DO $$ BEGIN
   IF EXISTS (
     SELECT 1 FROM information_schema.columns
@@ -1139,6 +1151,8 @@ DO $$ BEGIN
     UPDATE "intern_pool_requests"
       SET "compensationType" = 'UNPAID'
       WHERE "compensationType" NOT IN ('PAID', 'UNPAID', 'STIPEND');
+
+    ALTER TABLE "intern_pool_requests" ALTER COLUMN "compensationType" DROP DEFAULT;
 
     ALTER TABLE "intern_pool_requests"
       ALTER COLUMN "compensationType" TYPE "CompensationType"
