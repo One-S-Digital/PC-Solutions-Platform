@@ -485,22 +485,35 @@ const SignupPage: React.FC = () => {
            childStartDate: formData.childStartDate || undefined,
        };
 
-       const response = await fetch(`${apiService.apiBaseUrl}${API_ENDPOINTS.users.completeProfile}`, {
-           method: 'POST',
-           headers: {
-               'Authorization': `Bearer ${token}`,
-               'Content-Type': 'application/json'
-           },
-           body: JSON.stringify(payload)
-       });
-       
+       const makeCompleteProfileRequest = async (authToken: string) =>
+           fetch(`${apiService.apiBaseUrl}${API_ENDPOINTS.users.completeProfile}`, {
+               method: 'POST',
+               headers: {
+                   'Authorization': `Bearer ${authToken}`,
+                   'Content-Type': 'application/json'
+               },
+               body: JSON.stringify(payload)
+           });
+
+       let response = await makeCompleteProfileRequest(token);
+
+       // On 401, retry once after a short delay — the backend may have had a
+       // transient JWT-key resolution failure (e.g. cold start on Render.com).
+       if (response.status === 401) {
+           await new Promise(resolve => setTimeout(resolve, 2500));
+           const freshToken = await getToken();
+           if (freshToken) {
+               response = await makeCompleteProfileRequest(freshToken);
+           }
+       }
+
        if (response.ok) {
            await refreshCurrentUser();
            setSuccessRedirect(getSuccessRedirectForRole());
            setCurrentStep(getPostSignupStep());
        } else {
            const errorData = await response.json().catch(() => ({}));
-           
+
            // Check for email conflict error (EMAIL_ALREADY_EXISTS)
            // This happens when user started Google SSO but an account was created
            // with email/password before they completed the Google signup
@@ -508,8 +521,19 @@ const SignupPage: React.FC = () => {
                setEmailConflictError(true);
                return;
            }
-           
-           throw new Error(errorData.message || 'Failed to complete profile');
+
+           // Safely extract message — the error response may nest it inside an object
+           // (e.g. when the backend exception filter forwards the full HttpException payload)
+           const rawMsg = errorData?.message;
+           const errorMessage =
+               response.status === 401
+                   ? 'Authentication error. Please refresh the page and try again.'
+                   : typeof rawMsg === 'string'
+                       ? rawMsg
+                       : rawMsg && typeof rawMsg === 'object'
+                           ? (rawMsg as any).message || JSON.stringify(rawMsg)
+                           : 'Failed to complete profile';
+           throw new Error(errorMessage);
        }
     } catch (err: any) {
         console.error('Profile completion error:', err);

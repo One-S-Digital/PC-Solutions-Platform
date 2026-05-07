@@ -217,12 +217,19 @@ export class ClerkAuthGuard implements CanActivate {
       }
       return true;
     } catch (error: any) {
+      // Deliberate HttpExceptions (e.g. account suspension thrown by the inner
+      // try block and re-thrown by its catch handler) must propagate with their
+      // original status — do NOT convert them to a generic 401.
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
       const reason = error?.reason || error?.message || 'unknown';
       const action = error?.action;
-       
+
       console.error('Token verification failed:', { reason, action });
       if (reason === 'jwk-failed-to-resolve' && !this.jwtKey) {
-         
+
         console.error('Clerk JWK fetch failed. Set CLERK_JWT_KEY env with your instance JWT public key to enable offline verification.');
       }
       throw new UnauthorizedException('Invalid token');
