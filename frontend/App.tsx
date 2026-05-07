@@ -73,6 +73,7 @@ import ServiceProviderSettingsPage from './pages/ServiceProviderSettingsPage';
 
 // Foundation Pages (some may reuse existing top-level pages)
 import FoundationReplacementsPage from './pages/foundation/FoundationReplacementsPage';
+import FoundationInternPoolPage from './pages/foundation/FoundationInternPoolPage';
 import FoundationDashboardPage from './pages/foundation/FoundationDashboardPage';
 import FoundationOrdersAppointmentsPage from './pages/foundation/FoundationOrdersAppointmentsPage';
 import FoundationAnalyticsPage from './pages/foundation/FoundationAnalyticsPage';
@@ -84,6 +85,7 @@ import EducatorDashboardPage from './pages/educator/EducatorDashboardPage';
 import EducatorJobBoardPage from './pages/educator/EducatorJobBoardPage';
 import EducatorProfilePage from './pages/educator/EducatorProfilePage';
 import EducatorApplicationsPage from './pages/educator/EducatorApplicationsPage';
+import EducatorInternPoolPage from './pages/educator/EducatorInternPoolPage';
 import EducatorSupportPage from './pages/educator/EducatorSupportPage';
 
 // Parent Pages
@@ -314,6 +316,7 @@ const ProtectedLayout: React.FC = () => {
         <Route path="/staffing/job-listings" element={<Navigate to="/recruitment/job-listings" replace />} />
         <Route path="/staffing/candidate-pool" element={<Navigate to="/recruitment/candidate-pool" replace />} />
         <Route path="/staffing/replacements" element={<Navigate to="/foundation/replacements" replace />} />
+        <Route path="/staffing/intern-pool" element={<Navigate to="/foundation/intern-pool" replace />} />
 
         {/* Recruitment - kept for back-compat; canonical is /staffing/* */}
         <Route path="/recruitment" element={<Navigate to="/recruitment/job-listings" replace />} />
@@ -532,6 +535,9 @@ const ProtectedLayout: React.FC = () => {
         <Route path="/foundation/replacements" element={
           <SubscriptionGatedRoute roles={[UserRole.FOUNDATION]}><FoundationReplacementsPage /></SubscriptionGatedRoute>
         } />
+        <Route path="/foundation/intern-pool" element={
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION]}><FoundationInternPoolPage /></SubscriptionGatedRoute>
+        } />
         {/* Profile/Support routes don't require subscription */}
         <Route path="/foundation/organisation-profile" element={
           <ProtectedRoute roles={[UserRole.FOUNDATION]}><FoundationOrganisationProfilePage /></ProtectedRoute>
@@ -552,6 +558,9 @@ const ProtectedLayout: React.FC = () => {
         } />
         <Route path="/educator/applications" element={
           <ProtectedRoute roles={[UserRole.EDUCATOR]}><EducatorApplicationsPage /></ProtectedRoute>
+        } />
+        <Route path="/educator/intern-pool" element={
+          <ProtectedRoute roles={[UserRole.EDUCATOR]}><EducatorInternPoolPage /></ProtectedRoute>
         } />
         <Route path="/educator/support" element={
           <ProtectedRoute roles={[UserRole.EDUCATOR]}><EducatorSupportPage /></ProtectedRoute>

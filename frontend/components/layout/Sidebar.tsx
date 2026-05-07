@@ -130,6 +130,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
     { path: '/educator/job-board', nameKey: 'sidebar.jobBoard', icon: BriefcaseIcon, roles: [UserRole.EDUCATOR] },
     { path: '/educator/profile', nameKey: 'sidebar.myProfile', icon: IdentificationIcon, roles: [UserRole.EDUCATOR] },
     { path: '/educator/applications', nameKey: 'sidebar.applications', icon: ClipboardDocumentListIcon, roles: [UserRole.EDUCATOR] },
+    { path: '/educator/intern-pool', nameKey: 'sidebar.internPool', icon: AcademicCapIcon, roles: [UserRole.EDUCATOR] },
     { path: '/file-gallery', nameKey: 'sidebar.fileGallery', icon: PaperClipIcon, roles: [UserRole.EDUCATOR] },
     { path: '/messages', nameKey: 'sidebar.messages', icon: ChatBubbleLeftEllipsisIcon, roles: [UserRole.EDUCATOR]},
     { path: '/educator/support', nameKey: 'sidebar.support', icon: QuestionMarkCircleIcon, roles: [UserRole.EDUCATOR] },

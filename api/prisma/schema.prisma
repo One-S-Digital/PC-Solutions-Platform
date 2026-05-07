@@ -216,6 +216,7 @@ model User {
   shortBio             String? // Short bio/description for profile
   candidatePoolVisible        Boolean  @default(true) // Educator-controlled visibility in candidate pool
   availableForReplacement     Boolean  @default(false) // Educator opted in for short-notice replacement shifts
+  availableForInternship      Boolean  @default(false) // Educator/student available for internship placements
   region               String? // Candidate location (e.g., canton/city)
   jobRole              String? // Candidate role/title (e.g., "Educator", "Assistant")
   jobRoles             String[] @default([]) // Candidate roles/titles for multi-role matching
@@ -312,6 +313,10 @@ model User {
   // Replacement staffing relations
   replacementRequests  ReplacementRequest[]  @relation("UserReplacementRequests")
   replacementMatches   ReplacementMatch[]    @relation("EducatorReplacementMatches")
+
+  // Intern pool relations
+  internPoolRequests      InternPoolRequest[]      @relation("UserInternPoolRequests")
+  internPoolApplications  InternPoolApplication[]  @relation("InternPoolApplications")
 
   // In-app notifications
   notifications        Notification[]        @relation("UserNotifications")
@@ -462,6 +467,9 @@ model Organization {
 
   // Replacement staffing
   replacementRequests ReplacementRequest[] @relation("FoundationReplacementRequests")
+
+  // Intern pool
+  internPoolRequests InternPoolRequest[] @relation("FoundationInternPoolRequests")
 
   @@map("organizations")
 }
@@ -2710,6 +2718,11 @@ enum NotificationType {
   JOB_APPLICATION_RECEIVED
   JOB_APPLICATION_STATUS_CHANGED
   LOW_REPLACEMENT_POOL
+  INTERN_REQUEST_POSTED
+  INTERN_APPLICATION_RECEIVED
+  INTERN_APPLICATION_ACCEPTED
+  INTERN_APPLICATION_DECLINED
+  INTERN_APPLICATION_CONFIRMED
   GENERAL
 }
 
@@ -2728,4 +2741,66 @@ model Notification {
   @@index([userId, read])
   @@index([createdAt])
   @@map("notifications")
+}
+
+// ─── Intern Pool (Hybrid: interns apply + foundations can propose) ─────────────
+
+enum InternPoolRequestStatus {
+  OPEN
+  REVIEWING
+  FILLED
+  CANCELLED
+}
+
+enum InternPoolApplicationStatus {
+  APPLIED
+  REVIEWING
+  ACCEPTED
+  DECLINED
+  CONFIRMED
+}
+
+model InternPoolRequest {
+  id               String                  @id @default(uuid())
+  foundationId     String
+  postedById       String
+  title            String
+  startDate        DateTime
+  endDate          DateTime
+  role             String
+  description      String?                 @db.Text
+  location         String?
+  supervisorName   String?
+  compensationType String                  @default("UNPAID") // PAID | UNPAID | STIPEND
+  weeklyHours      Int?
+  status           InternPoolRequestStatus @default(OPEN)
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
+
+  foundation   Organization           @relation("FoundationInternPoolRequests", fields: [foundationId], references: [id])
+  postedBy     User                   @relation("UserInternPoolRequests", fields: [postedById], references: [id])
+  applications InternPoolApplication[]
+
+  @@index([foundationId])
+  @@index([status])
+  @@map("intern_pool_requests")
+}
+
+model InternPoolApplication {
+  id               String                     @id @default(uuid())
+  requestId        String
+  applicantId      String
+  status           InternPoolApplicationStatus @default(APPLIED)
+  motivationLetter String?                    @db.Text
+  appliedAt        DateTime                   @default(now())
+  respondedAt      DateTime?
+  note             String?
+
+  request   InternPoolRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  applicant User              @relation("InternPoolApplications", fields: [applicantId], references: [id])
+
+  @@unique([requestId, applicantId])
+  @@index([requestId])
+  @@index([applicantId])
+  @@map("intern_pool_applications")
 }
