@@ -259,7 +259,7 @@ const FoundationDashboardPage: React.FC = () => {
         <StaffingKpiCard
           icon={BriefcaseIcon}
           label={t('foundationDashboard.staffing.openPositions', 'Open Positions')}
-          value={quickStats?.pendingApplications ?? 0}
+          value={quickStats?.activeJobListings ?? 0}
           color="text-swiss-teal"
           onClick={() => navigate('/recruitment/job-listings')}
         />

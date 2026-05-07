@@ -1,9 +1,7 @@
 import { IsDateString, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { UrgencyLevel } from '@prisma/client';
 
-export enum UrgencyLevel {
-  NORMAL = 'NORMAL',
-  URGENT = 'URGENT',
-}
+export { UrgencyLevel };
 
 export class CreateReplacementRequestDto {
   @IsDateString()

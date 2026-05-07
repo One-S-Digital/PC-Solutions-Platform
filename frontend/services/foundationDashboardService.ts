@@ -8,6 +8,7 @@ export interface FoundationQuickStats {
   capacity: number;
   availableSpots: number;
   pendingApplications: number;
+  activeJobListings: number;
   upcomingAppointments: number;
   newLeads: number;
   trend: {

@@ -1,10 +1,7 @@
 import { IsDateString, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'class-validator';
+import { CompensationType } from '@prisma/client';
 
-export enum CompensationType {
-  PAID = 'PAID',
-  UNPAID = 'UNPAID',
-  STIPEND = 'STIPEND',
-}
+export { CompensationType };
 
 export class CreateInternPoolRequestDto {
   @IsNotEmpty()

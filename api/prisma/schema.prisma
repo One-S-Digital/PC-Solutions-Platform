@@ -2653,6 +2653,17 @@ model MailingCustomListMember {
 
 // ─── Replacement Staffing (Phase 3) ───────────────────────────────────────────
 
+enum UrgencyLevel {
+  NORMAL
+  URGENT
+}
+
+enum CompensationType {
+  PAID
+  UNPAID
+  STIPEND
+}
+
 enum ReplacementRequestStatus {
   OPEN
   MATCHED
@@ -2678,7 +2689,7 @@ model ReplacementRequest {
   role           String                   // e.g. "Educator", "Assistant"
   description    String?                  @db.Text
   location       String?
-  urgency        String                   @default("NORMAL") // NORMAL | URGENT
+  urgency        UrgencyLevel             @default(NORMAL)
   status         ReplacementRequestStatus @default(OPEN)
   createdAt      DateTime                 @default(now())
   updatedAt      DateTime                 @updatedAt
@@ -2774,7 +2785,7 @@ model InternPoolRequest {
   description      String?                 @db.Text
   location         String?
   supervisorName   String?
-  compensationType String                  @default("UNPAID") // PAID | UNPAID | STIPEND
+  compensationType CompensationType         @default(UNPAID)
   weeklyHours      Int?
   status           InternPoolRequestStatus @default(OPEN)
   createdAt        DateTime                @default(now())

@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { NotificationType, ReplacementMatchStatus, ReplacementRequestStatus, UserRole } from '@prisma/client';
+import { NotificationType, ReplacementMatchStatus, ReplacementRequestStatus, UrgencyLevel, UserRole } from '@prisma/client';
 import { CreateReplacementRequestDto } from './dto/create-replacement-request.dto';
 import { UpdateReplacementRequestDto } from './dto/update-replacement-request.dto';
 import { RespondMatchDto } from './dto/respond-match.dto';
@@ -40,7 +40,7 @@ export class ReplacementsService {
         role: dto.role,
         description: dto.description,
         location: dto.location,
-        urgency: dto.urgency ?? 'NORMAL',
+        urgency: dto.urgency ?? UrgencyLevel.NORMAL,
       },
       include: { matches: { include: { educator: { select: { id: true, firstName: true, lastName: true, email: true } } } } },
     });
@@ -282,13 +282,23 @@ export class ReplacementsService {
   }
 
   async findAvailableEducators(filters?: { role?: string; region?: string }) {
+    const roleFilter = filters?.role
+      ? {
+          OR: [
+            { jobRole: { contains: filters.role, mode: 'insensitive' as const } },
+            { jobRoles: { has: filters.role } },
+          ],
+        }
+      : {};
+
     return this.prisma.user.findMany({
       where: {
         role: UserRole.EDUCATOR,
         availableForReplacement: true,
+        candidatePoolVisible: true,
         isActive: true,
         ...(filters?.region ? { region: filters.region } : {}),
-        ...(filters?.role ? { jobRole: { contains: filters.role, mode: 'insensitive' } } : {}),
+        ...roleFilter,
       },
       select: {
         id: true,
