@@ -220,6 +220,106 @@ async function seedEmailTemplates() {
         The Pro Crèche Solutions Team
       `,
     },
+    // v2 staffing email templates
+    {
+      name: 'New application received',
+      event: 'new_application',
+      subject: 'New Application for {{jobTitle}} - Pro Crèche Solutions',
+      category: 'jobRecruitment',
+      variables: ['firstName', 'jobTitle', 'candidateName', 'dashboardUrl'],
+      htmlContent: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2>New Application Received</h2>
+          <p>Hello {{firstName}},</p>
+          <p><strong>{{candidateName}}</strong> has applied for <strong>{{jobTitle}}</strong>.</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="{{dashboardUrl}}" style="background-color: #3B82F6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Review Application</a>
+          </div>
+          <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+        </div>
+      `,
+      textContent: `
+        New Application Received
+
+        Hello {{firstName}},
+
+        {{candidateName}} has applied for {{jobTitle}}.
+
+        Review the application: {{dashboardUrl}}
+
+        Best regards,
+        The Pro Crèche Solutions Team
+      `,
+    },
+    {
+      name: 'Application status update',
+      event: 'application_status_update',
+      subject: 'Your Application Status Has Been Updated - Pro Crèche Solutions',
+      category: 'jobRecruitment',
+      variables: ['firstName', 'jobTitle', 'foundationName', 'newStatus', 'dashboardUrl'],
+      htmlContent: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2>Application Status Update</h2>
+          <p>Hello {{firstName}},</p>
+          <p>Your application for <strong>{{jobTitle}}</strong> at <strong>{{foundationName}}</strong> has been updated to: <strong>{{newStatus}}</strong>.</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="{{dashboardUrl}}" style="background-color: #3B82F6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">View My Applications</a>
+          </div>
+          <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+        </div>
+      `,
+      textContent: `
+        Application Status Update
+
+        Hello {{firstName}},
+
+        Your application for {{jobTitle}} at {{foundationName}} has been updated to: {{newStatus}}.
+
+        View your applications: {{dashboardUrl}}
+
+        Best regards,
+        The Pro Crèche Solutions Team
+      `,
+    },
+    {
+      name: 'Job match',
+      event: 'job_match',
+      subject: 'New Job Match: {{jobTitle}} - Pro Crèche Solutions',
+      category: 'jobRecruitment',
+      variables: ['firstName', 'jobTitle', 'foundationName', 'location', 'contractType', 'applyUrl'],
+      htmlContent: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2>We Found a Job Match For You!</h2>
+          <p>Hello {{firstName}},</p>
+          <p>A new position that matches your profile has been posted:</p>
+          <div style="background-color: #F3F4F6; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="margin: 0 0 8px 0;">{{jobTitle}}</h3>
+            <p style="margin: 4px 0; color: #6B7280;">{{foundationName}}</p>
+            <p style="margin: 4px 0; color: #6B7280;">{{location}} · {{contractType}}</p>
+          </div>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="{{applyUrl}}" style="background-color: #10B981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">View &amp; Apply</a>
+          </div>
+          <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+        </div>
+      `,
+      textContent: `
+        We Found a Job Match For You!
+
+        Hello {{firstName}},
+
+        A new position that matches your profile has been posted:
+
+        {{jobTitle}}
+        {{foundationName}}
+        {{location}} - {{contractType}}
+
+        Apply here: {{applyUrl}}
+
+        Best regards,
+        The Pro Crèche Solutions Team
+      `,
+    },
     {
       name: 'Subscription payment failed',
       event: 'subscription_payment_failed',
