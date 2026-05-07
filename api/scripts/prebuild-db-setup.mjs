@@ -1084,6 +1084,77 @@ CREATE UNIQUE INDEX IF NOT EXISTS "mt_cost_tracking_date_provider_sourceLang_tar
   log('✅ Translation infrastructure verified.');
 };
 
+/**
+ * Ensure urgency and compensationType enum types exist and columns are converted.
+ * Matches migration `20260507020000_enum_urgency_compensation`.
+ * Idempotent: skips steps whose state is already correct.
+ */
+const ensureEnumUrgencyCompensation = () => {
+  const sql = `
+-- Create UrgencyLevel enum if it doesn't exist
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'UrgencyLevel') THEN
+    CREATE TYPE "UrgencyLevel" AS ENUM ('NORMAL', 'URGENT');
+  END IF;
+END $$;
+
+-- Create CompensationType enum if it doesn't exist
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'CompensationType') THEN
+    CREATE TYPE "CompensationType" AS ENUM ('PAID', 'UNPAID', 'STIPEND');
+  END IF;
+END $$;
+
+-- Convert replacement_requests.urgency TEXT → UrgencyLevel (only if still TEXT)
+DO $$ BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'replacement_requests'
+      AND column_name = 'urgency'
+      AND data_type = 'text'
+  ) THEN
+    UPDATE "replacement_requests"
+      SET "urgency" = 'NORMAL'
+      WHERE "urgency" NOT IN ('NORMAL', 'URGENT');
+
+    ALTER TABLE "replacement_requests"
+      ALTER COLUMN "urgency" TYPE "UrgencyLevel"
+      USING "urgency"::"UrgencyLevel";
+
+    ALTER TABLE "replacement_requests"
+      ALTER COLUMN "urgency" SET DEFAULT 'NORMAL'::"UrgencyLevel";
+  END IF;
+END $$;
+
+-- Convert intern_pool_requests.compensationType TEXT → CompensationType (only if still TEXT)
+DO $$ BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'intern_pool_requests'
+      AND column_name = 'compensationType'
+      AND data_type = 'text'
+  ) THEN
+    UPDATE "intern_pool_requests"
+      SET "compensationType" = 'UNPAID'
+      WHERE "compensationType" NOT IN ('PAID', 'UNPAID', 'STIPEND');
+
+    ALTER TABLE "intern_pool_requests"
+      ALTER COLUMN "compensationType" TYPE "CompensationType"
+      USING "compensationType"::"CompensationType";
+
+    ALTER TABLE "intern_pool_requests"
+      ALTER COLUMN "compensationType" SET DEFAULT 'UNPAID'::"CompensationType";
+  END IF;
+END $$;
+`;
+
+  log('Ensuring UrgencyLevel/CompensationType enums and column conversions exist...');
+  runSql(sql);
+  log('✅ Enum urgency/compensation schema verified.');
+};
+
 const main = async () => {
   log(`Using schema: ${SCHEMA_PATH}`);
   log(`Using Prisma CLI: ${PRISMA_BIN ? PRISMA_BIN : 'npx prisma (fallback)'}`);
@@ -1244,6 +1315,35 @@ const main = async () => {
     try {
       forceMarkMigrationRolledBack('20260211090000_link_parent_leads_to_users');
       ensureParentLeadAccountLink();
+    } catch (e2) {
+      error(`❌ Could not prepare for migration: ${e2.message}`);
+    }
+  }
+
+  // Enum urgency + compensationType conversion (TEXT → proper DB enums)
+  // The migration SQL is idempotent (DO $$ blocks guard each step), so pre-applying
+  // the schema here ensures Prisma's re-run will succeed even if enums were partially
+  // created in a previous failed attempt.
+  try {
+    log('🔧 Preparing for enum_urgency_compensation migration...');
+
+    let cleared = await resolveMigration('rolled-back', '20260507020000_enum_urgency_compensation');
+    if (!cleared) {
+      log('⚠️  Standard resolve failed, force-marking as rolled-back...');
+      cleared = forceMarkMigrationRolledBack('20260507020000_enum_urgency_compensation');
+    }
+    if (cleared) {
+      log('✅ Migration cleared from failed state. Prisma will re-run it.');
+    }
+
+    ensureEnumUrgencyCompensation();
+    log('✅ Enum urgency/compensation schema prepared.');
+    log('📋 Prisma migrate deploy will now run this migration and mark it complete.');
+  } catch (e) {
+    warn(`⚠️  enum_urgency_compensation preparation failed: ${e.message}`);
+    try {
+      forceMarkMigrationRolledBack('20260507020000_enum_urgency_compensation');
+      ensureEnumUrgencyCompensation();
     } catch (e2) {
       error(`❌ Could not prepare for migration: ${e2.message}`);
     }
