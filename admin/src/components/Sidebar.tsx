@@ -24,6 +24,7 @@ import {
   Mail,
   ChevronDown,
   ChevronRight,
+  GraduationCap,
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useSettings } from '../hooks/useSettings'
@@ -66,6 +67,7 @@ const navStructure: NavEntry[] = [
     items: [
       { key: 'jobListings',   href: '/job-listings', icon: Briefcase },
       { key: 'candidatePool', href: '/candidates',   icon: UserCheck },
+      { key: 'internPool',    href: '/intern-pool',  icon: GraduationCap },
     ],
   },
   {

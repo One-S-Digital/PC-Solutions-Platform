@@ -615,6 +615,9 @@
     "suppliersServices": "Suppliers & Services",
     "platformOps": "Platform Ops",
     "replacements": "Replacements",
+    "internPool": "Intern Pool",
+    "internPoolSubtitle": "Internship positions — {{count}} listing(s)",
+    "noInterns": "No internship listings yet.",
     "applications": "Applications"
   },
   "policyCrawler": {

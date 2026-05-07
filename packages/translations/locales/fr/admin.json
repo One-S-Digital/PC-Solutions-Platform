@@ -648,6 +648,9 @@
     "suppliersServices": "Fournisseurs et services",
     "platformOps": "Opérations plateforme",
     "replacements": "Remplacements",
+    "internPool": "Vivier de stagiaires",
+    "internPoolSubtitle": "Postes de stage — {{count}} annonce(s)",
+    "noInterns": "Aucune annonce de stage pour l'instant.",
     "applications": "Candidatures"
   },
   "policyCrawler": {
