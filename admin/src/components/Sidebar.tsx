@@ -64,7 +64,7 @@ const navStructure: NavEntry[] = [
   { type: 'single', key: 'dashboard',    href: '/dashboard',    icon: BarChart3 },
   { type: 'single', key: 'users',        href: '/users',        icon: Users },
   {
-    type: 'group', key: 'staffing', icon: Briefcase,
+    type: 'group', key: 'recruitment', icon: Briefcase,
     items: [
       { key: 'jobListings',   href: '/job-listings', icon: Briefcase },
       { key: 'candidatePool', href: '/candidates',   icon: UserCheck },
@@ -72,11 +72,13 @@ const navStructure: NavEntry[] = [
       { key: 'internPool',    href: '/intern-pool',  icon: GraduationCap },
     ],
   },
+  { type: 'single', key: 'eLearning', href: '/content/e-learning', icon: GraduationCap },
   {
     type: 'group', key: 'hrCompliance', icon: FileText,
     items: [
-      { key: 'content',       href: '/content',        icon: FileText },
-      { key: 'policyCrawler', href: '/policy-crawler', icon: FileSearch },
+      { key: 'hrDocuments',   href: '/content/hr-documents',   icon: FileText },
+      { key: 'statePolicies', href: '/content/state-policies', icon: FileSearch },
+      { key: 'policyCrawler', href: '/policy-crawler',         icon: FileSearch },
     ],
   },
   { type: 'single', key: 'parentLeads', href: '/parent-leads', icon: Heart },
@@ -110,7 +112,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
   const notifications = useNotificationData()
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
-    staffing: true,
+    recruitment: true,
     hrCompliance: false,
     suppliersServices: false,
     platformOps: false,

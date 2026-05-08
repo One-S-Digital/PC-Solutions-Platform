@@ -396,7 +396,7 @@ const Dashboard: React.FC = () => {
 
       {/* Staffing Signal Cards (Phase 6) */}
       <div>
-        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Staffing Signals</h2>
+        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Recruitment Signals</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {staffingStats.map((stat) => (
             <Card
