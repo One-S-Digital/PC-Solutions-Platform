@@ -46,6 +46,12 @@ export class ReplacementsController {
       viewerRole === UserRole.ADMIN || viewerRole === UserRole.SUPER_ADMIN;
     const resolvedFoundationId =
       isAdmin ? foundationId : req?.user?.organizationId;
+
+    // Foundation user with no linked organization: return nothing
+    if (!isAdmin && !resolvedFoundationId) {
+      return [];
+    }
+
     return this.replacementsService.findAllRequests({
       foundationId: resolvedFoundationId,
       status,
