@@ -891,7 +891,7 @@ export class RecruitmentService {
     if (!foundationId) return;
     const members = await this.prisma.user.findMany({
       where: {
-        organizationId: foundationId,
+        organizations: { some: { organizationId: foundationId } },
         role: { in: ['FOUNDATION' as any, 'ADMIN' as any, 'SUPER_ADMIN' as any] },
         isActive: { not: false },
       },

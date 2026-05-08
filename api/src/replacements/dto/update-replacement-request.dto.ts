@@ -1,5 +1,5 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
-import { ReplacementRequestStatus } from '@prisma/client';
+import { ReplacementRequestStatus, UrgencyLevel } from '@prisma/client';
 
 export class UpdateReplacementRequestDto {
   @IsOptional()
@@ -11,6 +11,6 @@ export class UpdateReplacementRequestDto {
   description?: string;
 
   @IsOptional()
-  @IsString()
-  urgency?: string;
+  @IsEnum(UrgencyLevel)
+  urgency?: UrgencyLevel;
 }
