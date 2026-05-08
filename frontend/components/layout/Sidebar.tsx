@@ -113,8 +113,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
     {
       path: '/recruitment', nameKey: 'sidebar.recruitment', icon: BriefcaseIcon, roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN],
       subItems: [
-        { path: '/recruitment/job-listings',   nameKey: 'sidebar.jobListings',   icon: ListBulletIcon, roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
-        { path: '/recruitment/candidate-pool', nameKey: 'sidebar.candidatePool', icon: UserGroupIcon,  roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+        { path: '/staffing/jobs',           nameKey: 'sidebar.postJob',            icon: ListBulletIcon,            roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+        { path: '/staffing/candidates',     nameKey: 'sidebar.findCandidates',     icon: UserGroupIcon,             roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+        { path: '/staffing/applications',   nameKey: 'sidebar.reviewApplications', icon: ClipboardDocumentListIcon, roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+        { path: '/foundation/replacements', nameKey: 'sidebar.replacements',       icon: ArrowPathIcon,             roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+        { path: '/foundation/intern-pool',  nameKey: 'sidebar.internPool',         icon: AcademicCapIcon,           roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
       ],
     },
     { path: '/e-learning', nameKey: 'sidebar.eLearning', icon: AcademicCapIcon, roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
