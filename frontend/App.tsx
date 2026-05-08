@@ -533,10 +533,10 @@ const ProtectedLayout: React.FC = () => {
           <SubscriptionGatedRoute roles={[UserRole.FOUNDATION]}><FoundationAnalyticsPage /></SubscriptionGatedRoute>
         } />
         <Route path="/foundation/replacements" element={
-          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION]}><FoundationReplacementsPage /></SubscriptionGatedRoute>
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}><FoundationReplacementsPage /></SubscriptionGatedRoute>
         } />
         <Route path="/foundation/intern-pool" element={
-          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION]}><FoundationInternPoolPage /></SubscriptionGatedRoute>
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}><FoundationInternPoolPage /></SubscriptionGatedRoute>
         } />
         {/* Profile/Support routes don't require subscription */}
         <Route path="/foundation/organisation-profile" element={

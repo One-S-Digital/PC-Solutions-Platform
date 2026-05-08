@@ -75,9 +75,8 @@ const navStructure: NavEntry[] = [
   {
     type: 'group', key: 'hrCompliance', icon: FileText,
     items: [
-      { key: 'hrDocuments',   href: '/content/hr-documents',   icon: FileText },
-      { key: 'statePolicies', href: '/content/state-policies', icon: FileSearch },
-      { key: 'policyCrawler', href: '/policy-crawler',         icon: FileSearch },
+      { key: 'content',       href: '/content',        icon: FileText },
+      { key: 'policyCrawler', href: '/policy-crawler', icon: FileSearch },
     ],
   },
   { type: 'single', key: 'parentLeads', href: '/parent-leads', icon: Heart },
