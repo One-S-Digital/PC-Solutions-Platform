@@ -82,7 +82,7 @@ const Replacements: React.FC = () => {
     <div className="p-6 space-y-6">
       <div className="flex items-center gap-3">
         <ArrowPathIcon className="w-6 h-6 text-gray-600" />
-        <h1 className="text-2xl font-bold text-gray-800">Replacement Staffing</h1>
+        <h1 className="text-2xl font-bold text-gray-800">Replacements</h1>
       </div>
 
       {/* Filters */}

@@ -41,6 +41,12 @@ export class InternPoolController {
     const isAdmin = req?.user?.role === UserRole.ADMIN || req?.user?.role === UserRole.SUPER_ADMIN;
     const isFoundation = req?.user?.role === UserRole.FOUNDATION;
     const resolvedFoundationId = isAdmin ? foundationId : isFoundation ? req?.user?.organizationId : undefined;
+
+    // Foundation user with no linked organization: return nothing
+    if (isFoundation && !resolvedFoundationId) {
+      return [];
+    }
+
     return this.internPoolService.findAllRequests({ foundationId: resolvedFoundationId, status, isAdmin });
   }
 
