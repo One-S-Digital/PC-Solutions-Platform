@@ -71,7 +71,7 @@ const navStructure: NavEntry[] = [
       { key: 'internPool',    href: '/intern-pool',  icon: GraduationCap },
     ],
   },
-  { type: 'single', key: 'eLearning', href: '/content/e-learning', icon: GraduationCap },
+  { type: 'single', key: 'eLearning', href: '/e-learning', icon: GraduationCap },
   {
     type: 'group', key: 'hrCompliance', icon: FileText,
     items: [
