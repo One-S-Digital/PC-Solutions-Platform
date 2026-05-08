@@ -103,9 +103,9 @@ function App() {
           <Route path="intern-pool" element={<InternPoolPage />} />
           <Route path="parent-leads" element={<ParentLeadsPage />} />
           <Route path="orders" element={<OrdersPage />} />
+          <Route path="e-learning" element={<ELearningContentPage />} />
           <Route path="content" element={<ContentPage />}>
-            <Route index element={<Navigate to="/content/e-learning" replace />} />
-            <Route path="e-learning" element={<ELearningContentPage />} />
+            <Route index element={<Navigate to="/content/hr-documents" replace />} />
             <Route path="hr-documents" element={<HrDocumentsPage />} />
             <Route path="state-policies" element={<StatePoliciesPage />} />
           </Route>
