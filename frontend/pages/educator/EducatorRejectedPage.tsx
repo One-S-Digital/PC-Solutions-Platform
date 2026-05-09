@@ -1,7 +1,7 @@
 import React from 'react';
 import { XCircleIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
 import { useClerk } from '@clerk/clerk-react';
-import { useAppContext } from '../../providers/AppContext';
+import { useAppContext } from '../../contexts/AppContext';
 
 const EducatorRejectedPage: React.FC = () => {
   const { signOut } = useClerk();

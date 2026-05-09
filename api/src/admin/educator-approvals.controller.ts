@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Param, Body, Query, ParseUUIDPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, Query, ParseUUIDPipe, UseGuards, BadRequestException } from '@nestjs/common';
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -21,9 +21,14 @@ export class EducatorApprovalsController {
     @Query('page') page?: string,
     @Query('limit') limit?: string,
   ) {
-    const approvalStatus = status ? (status as EducatorApprovalStatus) : undefined;
+    const validStatuses = Object.values(EducatorApprovalStatus);
+    if (status && !validStatuses.includes(status as EducatorApprovalStatus)) {
+      throw new BadRequestException(
+        `Invalid status. Must be one of: ${validStatuses.join(', ')}`,
+      );
+    }
     return this.educatorApprovalsService.listEducators(
-      approvalStatus,
+      status as EducatorApprovalStatus | undefined,
       page ? parseInt(page, 10) : 1,
       limit ? parseInt(limit, 10) : 20,
     );
