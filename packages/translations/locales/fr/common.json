@@ -593,6 +593,8 @@
     "tryAgain": "Réessayer"
   },
   "errors": {
+    "errorrate": "Taux d'erreur",
+    "errors": "Erreurs",
     "deleteFailed": "Supprimer failed",
     "deleteMessageFailed": "Supprimer message failed",
     "downloadFailed": "download Failed",
@@ -2403,5 +2405,30 @@
     "Director": "Directeur/Directrice",
     "CleaningStaff": "Personnel de nettoyage",
     "Intern": "Stagiaire"
+  },
+  "export": "Exporter",
+  "info": "Info",
+  "warnings": "Avertissements",
+  "titles": {
+    "cpuusage": "Utilisation CPU",
+    "memoryusage": "Utilisation mémoire",
+    "diskusage": "Utilisation disque",
+    "uptime": "Disponibilité",
+    "activealerts": "Alertes actives",
+    "responsetime": "Temps de réponse",
+    "throughput": "Débit",
+    "activeusers": "Utilisateurs actifs",
+    "newuserstoday": "Nouveaux utilisateurs aujourd'hui",
+    "sessionduration": "Durée moy. de session",
+    "pageviews": "Pages vues",
+    "activeconnections": "Connexions actives",
+    "avgquerytime": "Temps moy. de requête",
+    "storageused": "Stockage utilisé",
+    "connectionhealth": "Santé de connexion",
+    "requestsmin": "Requêtes / min",
+    "failedlogins": "Connexions échouées",
+    "blockedips": "IPs bloquées",
+    "apihealth": "Santé API",
+    "lastscan": "Dernier scan"
   }
 }
