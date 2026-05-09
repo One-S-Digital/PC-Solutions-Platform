@@ -748,6 +748,11 @@ export const apiService = {
     apiClient.get<ApiResponse<SystemUsageAnalytics>>('/admin/analytics/system', { params: { timeRange } }),
   getClerkOverview: (apiClient: AxiosInstance) =>
     apiClient.get<ApiResponse<any>>('/admin/analytics/clerk-overview'),
+  getUserActivityHeatmap: (apiClient: AxiosInstance, userId: string, year?: number) =>
+    apiClient.get<ApiResponse<{ year: number; activeDays: string[]; totalActiveDays: number; currentStreak: number }>>(
+      `/admin/analytics/user-activity/${userId}`,
+      { params: year ? { year } : undefined },
+    ),
 
   // Partners Management
   getPartners: (apiClient: AxiosInstance, params?: { type?: PartnerType; isActive?: boolean; isFeatured?: boolean; search?: string }) => 

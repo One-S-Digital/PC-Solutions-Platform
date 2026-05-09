@@ -441,6 +441,34 @@ export class AnalyticsService {
     return result;
   }
 
+  async getUserActivityHeatmap(userId: string, year: number) {
+    const yearStart = new Date(Date.UTC(year, 0, 1));
+    const yearEnd = new Date(Date.UTC(year + 1, 0, 1));
+
+    const logs = await this.prisma.userActivityLog.findMany({
+      where: { userId, date: { gte: yearStart, lt: yearEnd } },
+      select: { date: true },
+      orderBy: { date: 'asc' },
+    });
+
+    const activeDays = logs.map(l => l.date.toISOString().split('T')[0]);
+    const totalActiveDays = activeDays.length;
+
+    // Current streak (consecutive days ending today or yesterday)
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+    let streak = 0;
+    const dayMs = 24 * 60 * 60 * 1000;
+    let cursor = new Date(today);
+    const activeSet = new Set(activeDays);
+    while (activeSet.has(cursor.toISOString().split('T')[0])) {
+      streak++;
+      cursor = new Date(cursor.getTime() - dayMs);
+    }
+
+    return { year, activeDays, totalActiveDays, currentStreak: streak };
+  }
+
   private _clerkOverviewCache: any = null;
   private _clerkOverviewCacheAt = 0;
 
