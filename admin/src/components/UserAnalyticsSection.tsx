@@ -37,11 +37,13 @@ function formatWeek(isoDate: string) {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
-// Fill gaps in weekly series so every week in the last 13 has an entry
+// Fill gaps in weekly series so every week in the last 13 has an entry.
+// Uses Monday-based week starts to match Postgres DATE_TRUNC('week').
 function fillWeeklySeries(points: WeeklyPoint[], weeks = 13): WeeklyPoint[] {
   const now = new Date()
-  const day = now.getUTCDay()
-  const currentWeekStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - day))
+  const dow = now.getUTCDay()
+  const daysFromMonday = dow === 0 ? 6 : dow - 1
+  const currentWeekStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - daysFromMonday))
 
   const map = new Map(points.map(p => [p.week.split('T')[0], p.count]))
   const result: WeeklyPoint[] = []

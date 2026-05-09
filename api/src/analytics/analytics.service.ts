@@ -373,7 +373,7 @@ export class AnalyticsService {
     const nineWeeksAgo = new Date(currentWeekStart.getTime() - 9 * 7 * 24 * 60 * 60 * 1000);
     const yearStart = new Date(Date.UTC(now.getUTCFullYear(), 0, 1));
 
-    const [weeklySignups, weeklySignins, totalSignups, activityHeatmap, cohortUsers] = await Promise.all([
+    const [weeklySignups, weeklySignins, totalSignups, activityHeatmap, cohortUsers, activeThisWeek, newThisWeek, retainedThisWeek] = await Promise.all([
       this.prisma.$queryRaw<{ week: Date; count: bigint }[]>`
         SELECT DATE_TRUNC('week', "createdAt") AS week, COUNT(*)::bigint AS count
         FROM "User"
@@ -397,16 +397,11 @@ export class AnalyticsService {
         select: { id: true, createdAt: true, lastActiveAt: true },
         where: { createdAt: { gte: nineWeeksAgo } },
       }),
+      // Stats counted from the full user table, not the cohort-limited subset
+      this.prisma.user.count({ where: { lastActiveAt: { gte: currentWeekStart } } }),
+      this.prisma.user.count({ where: { createdAt: { gte: currentWeekStart } } }),
+      this.prisma.user.count({ where: { createdAt: { lt: currentWeekStart }, lastActiveAt: { gte: currentWeekStart } } }),
     ]);
-
-    // Week-level summary stats
-    const activeThisWeek = cohortUsers.filter(
-      u => u.lastActiveAt && u.lastActiveAt >= currentWeekStart,
-    ).length;
-    const newThisWeek = cohortUsers.filter(u => u.createdAt >= currentWeekStart).length;
-    const retainedThisWeek = cohortUsers.filter(
-      u => u.createdAt < currentWeekStart && u.lastActiveAt && u.lastActiveAt >= currentWeekStart,
-    ).length;
 
     // Cohort retention (group users by sign-up week, check activity per subsequent week)
     const usersByCohort = new Map<string, typeof cohortUsers>();
@@ -451,8 +446,9 @@ export class AnalyticsService {
 
   private getWeekStart(date: Date): Date {
     const d = new Date(date);
-    const day = d.getUTCDay();
-    return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() - day));
+    const dow = d.getUTCDay(); // 0=Sun … 6=Sat
+    const daysFromMonday = dow === 0 ? 6 : dow - 1; // Monday-based, matching DATE_TRUNC('week')
+    return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() - daysFromMonday));
   }
 
   private getDaysFromRange(timeRange: string): number {
