@@ -594,6 +594,38 @@
       "enabled": "Aktiv",
       "disabled": "Deaktiviert",
       "manage": "Verwalten"
+    },
+    "userAnalytics": {
+      "title": "Benutzeranalyse",
+      "updated": "Aktualisiert {{time}}",
+      "stats": {
+        "active": "Aktiv",
+        "new": "Neu",
+        "retained": "Gehalten",
+        "totalSignups": "Registrierungen gesamt",
+        "thisWeek": "Diese Woche",
+        "allTime": "Insgesamt"
+      },
+      "chart": {
+        "signups": "Anmeldungen",
+        "signins": "Einloggungen",
+        "weekOf": "Woche vom {{date}}"
+      },
+      "miniCharts": {
+        "signupsPerWeek": "Anmeldungen pro Woche",
+        "signinsPerWeek": "Einloggungen pro Woche"
+      },
+      "heatmap": {
+        "title": "Benutzeraktivität — {{year}}",
+        "less": "Weniger",
+        "more": "Mehr"
+      },
+      "cohort": {
+        "title": "Wöchentliche Kohortenretention",
+        "subtitle": "% der Benutzer aus jeder Anmeldewoche, die in den Folgewochen aktiv waren (basierend auf der letzten Anmeldung)",
+        "cohortWeek": "Kohortenwoche",
+        "size": "Grösse"
+      }
     }
   },
   "contentUpload": {
