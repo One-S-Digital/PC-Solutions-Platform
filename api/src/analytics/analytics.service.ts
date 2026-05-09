@@ -376,20 +376,20 @@ export class AnalyticsService {
     const [weeklySignups, weeklySignins, totalSignups, activityHeatmap, cohortUsers, activeThisWeek, newThisWeek, retainedThisWeek] = await Promise.all([
       this.prisma.$queryRaw<{ week: Date; count: bigint }[]>`
         SELECT DATE_TRUNC('week', "createdAt") AS week, COUNT(*)::bigint AS count
-        FROM "User"
+        FROM users
         WHERE "createdAt" >= ${thirteenWeeksAgo}
         GROUP BY 1 ORDER BY 1
       `,
       this.prisma.$queryRaw<{ week: Date; count: bigint }[]>`
         SELECT DATE_TRUNC('week', "lastActiveAt") AS week, COUNT(*)::bigint AS count
-        FROM "User"
+        FROM users
         WHERE "lastActiveAt" >= ${thirteenWeeksAgo} AND "lastActiveAt" IS NOT NULL
         GROUP BY 1 ORDER BY 1
       `,
       this.prisma.user.count(),
       this.prisma.$queryRaw<{ day: string; count: bigint }[]>`
-        SELECT TO_CHAR(DATE("lastActiveAt"), 'YYYY-MM-DD') AS day, COUNT(*)::bigint AS count
-        FROM "User"
+        SELECT TO_CHAR("lastActiveAt"::date, 'YYYY-MM-DD') AS day, COUNT(*)::bigint AS count
+        FROM users
         WHERE "lastActiveAt" >= ${yearStart} AND "lastActiveAt" IS NOT NULL
         GROUP BY 1 ORDER BY 1
       `,
