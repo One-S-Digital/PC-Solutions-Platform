@@ -362,6 +362,99 @@ export class AnalyticsService {
     };
   }
 
+  async getClerkStyleOverview() {
+    if (this._clerkOverviewCache && Date.now() - this._clerkOverviewCacheAt < 5 * 60 * 1000) {
+      return this._clerkOverviewCache;
+    }
+
+    const now = new Date();
+    const currentWeekStart = this.getWeekStart(now);
+    const thirteenWeeksAgo = new Date(currentWeekStart.getTime() - 13 * 7 * 24 * 60 * 60 * 1000);
+    const nineWeeksAgo = new Date(currentWeekStart.getTime() - 9 * 7 * 24 * 60 * 60 * 1000);
+    const yearStart = new Date(Date.UTC(now.getUTCFullYear(), 0, 1));
+
+    const [weeklySignups, weeklySignins, totalSignups, activityHeatmap, cohortUsers] = await Promise.all([
+      this.prisma.$queryRaw<{ week: Date; count: bigint }[]>`
+        SELECT DATE_TRUNC('week', "createdAt") AS week, COUNT(*)::bigint AS count
+        FROM "User"
+        WHERE "createdAt" >= ${thirteenWeeksAgo}
+        GROUP BY 1 ORDER BY 1
+      `,
+      this.prisma.$queryRaw<{ week: Date; count: bigint }[]>`
+        SELECT DATE_TRUNC('week', "lastActiveAt") AS week, COUNT(*)::bigint AS count
+        FROM "User"
+        WHERE "lastActiveAt" >= ${thirteenWeeksAgo} AND "lastActiveAt" IS NOT NULL
+        GROUP BY 1 ORDER BY 1
+      `,
+      this.prisma.user.count(),
+      this.prisma.$queryRaw<{ day: string; count: bigint }[]>`
+        SELECT TO_CHAR(DATE("lastActiveAt"), 'YYYY-MM-DD') AS day, COUNT(*)::bigint AS count
+        FROM "User"
+        WHERE "lastActiveAt" >= ${yearStart} AND "lastActiveAt" IS NOT NULL
+        GROUP BY 1 ORDER BY 1
+      `,
+      this.prisma.user.findMany({
+        select: { id: true, createdAt: true, lastActiveAt: true },
+        where: { createdAt: { gte: nineWeeksAgo } },
+      }),
+    ]);
+
+    // Week-level summary stats
+    const activeThisWeek = cohortUsers.filter(
+      u => u.lastActiveAt && u.lastActiveAt >= currentWeekStart,
+    ).length;
+    const newThisWeek = cohortUsers.filter(u => u.createdAt >= currentWeekStart).length;
+    const retainedThisWeek = cohortUsers.filter(
+      u => u.createdAt < currentWeekStart && u.lastActiveAt && u.lastActiveAt >= currentWeekStart,
+    ).length;
+
+    // Cohort retention (group users by sign-up week, check activity per subsequent week)
+    const usersByCohort = new Map<string, typeof cohortUsers>();
+    for (const user of cohortUsers) {
+      const key = this.getWeekStart(user.createdAt).toISOString().split('T')[0];
+      if (!usersByCohort.has(key)) usersByCohort.set(key, []);
+      usersByCohort.get(key)!.push(user);
+    }
+
+    const cohortRetention: { week: string; size: number; retention: number[] }[] = [];
+    for (const [weekKey, users] of usersByCohort.entries()) {
+      const cohortWeekStart = new Date(weekKey);
+      const retention: number[] = [];
+      for (let w = 0; w <= 8; w++) {
+        const wStart = new Date(cohortWeekStart.getTime() + w * 7 * 24 * 60 * 60 * 1000);
+        const wEnd = new Date(wStart.getTime() + 7 * 24 * 60 * 60 * 1000);
+        const active = users.filter(
+          u => u.lastActiveAt && u.lastActiveAt >= wStart && u.lastActiveAt < wEnd,
+        ).length;
+        retention.push(users.length > 0 ? Math.round((active * 100) / users.length) : 0);
+      }
+      cohortRetention.push({ week: weekKey, size: users.length, retention });
+    }
+    cohortRetention.sort((a, b) => a.week.localeCompare(b.week));
+
+    const result = {
+      stats: { active: activeThisWeek, new: newThisWeek, retained: retainedThisWeek, total: totalSignups },
+      weeklySignups: weeklySignups.map(r => ({ week: r.week.toISOString().split('T')[0], count: Number(r.count) })),
+      weeklySignins: weeklySignins.map(r => ({ week: r.week.toISOString().split('T')[0], count: Number(r.count) })),
+      activityHeatmap: activityHeatmap.map(r => ({ day: r.day, count: Number(r.count) })),
+      cohortRetention,
+      lastUpdated: now.toISOString(),
+    };
+
+    this._clerkOverviewCache = result;
+    this._clerkOverviewCacheAt = Date.now();
+    return result;
+  }
+
+  private _clerkOverviewCache: any = null;
+  private _clerkOverviewCacheAt = 0;
+
+  private getWeekStart(date: Date): Date {
+    const d = new Date(date);
+    const day = d.getUTCDay();
+    return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() - day));
+  }
+
   private getDaysFromRange(timeRange: string): number {
     switch (timeRange) {
       case '7d': return 7;

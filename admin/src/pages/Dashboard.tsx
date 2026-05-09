@@ -23,6 +23,7 @@ import LoadingSpinner from '../components/ui/LoadingSpinner'
 import Card from '../components/design-system/Card'
 import Button from '../components/design-system/Button'
 import ContentUploadModal from '../components/ContentUploadModal'
+import UserAnalyticsSection from '../components/UserAnalyticsSection'
 import { useTranslation } from 'react-i18next'
 
 type ContentType = 'e-learning' | 'hr' | 'policy';
@@ -85,6 +86,14 @@ const Dashboard: React.FC = () => {
   })
 
   const staffingSignals = staffingSignalsResp as { openRequests: number; matchedRequests: number; filledRequests: number; replacementPoolSize: number } | null
+
+  const { data: clerkOverviewResp, isLoading: clerkOverviewLoading } = useQuery({
+    queryKey: ['admin-clerk-overview'],
+    queryFn: () => apiService.getClerkOverview(apiClient),
+    enabled: !!apiClient,
+    staleTime: 5 * 60 * 1000,
+    select: (res: any) => res?.data?.data ?? null,
+  })
 
   const staffingStats = [
     {
@@ -568,6 +577,9 @@ const Dashboard: React.FC = () => {
           </Card>
         </div>
       </Card>
+
+      {/* User Analytics */}
+      <UserAnalyticsSection data={clerkOverviewResp} isLoading={clerkOverviewLoading} />
 
       {/* Platform Summary */}
       <Card className="p-6">

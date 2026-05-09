@@ -59,4 +59,10 @@ export class AnalyticsController {
     const data = await this.analyticsService.getSystemUsageMetrics(timeRange);
     return wrapResponse(data);
   }
+
+  @Get('clerk-overview')
+  async getClerkStyleOverview() {
+    const data = await this.analyticsService.getClerkStyleOverview();
+    return wrapResponse(data);
+  }
 }
