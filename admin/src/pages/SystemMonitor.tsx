@@ -20,18 +20,14 @@ import {
   Trash2,
   Bell,
   BellOff,
-  BarChart3,
-  PieChart,
-  LineChart,
   AlertCircle,
-  Info,
   Zap,
-  Globe,
   Shield,
   Settings
 } from 'lucide-react'
-import { publicApi } from '../services/api'
+import { publicApi, useApiClient, apiService } from '../services/api'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
+import UserAnalyticsSection from '../components/UserAnalyticsSection'
 import { LucideIcon } from 'lucide-react'
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next';
@@ -40,7 +36,8 @@ const SystemMonitor: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'metrics' | 'alerts' | 'logs' | 'analytics' | 'security'>('overview')
   const [logFilter, setLogFilter] = useState<'all' | 'error' | 'warning' | 'info'>('all')
   const queryClient = useQueryClient()
-  const { t } = useTranslation(['common', 'admin']);
+  const { t } = useTranslation(['common', 'admin'])
+  const apiClient = useApiClient()
 
   const { data: healthData, isLoading, error } = useQuery({
     queryKey: ['system-health'],
@@ -67,23 +64,18 @@ const SystemMonitor: React.FC = () => {
     refetchInterval: 10000, // Refresh every 10 seconds
   })
 
-  // Additional analytics queries
-  const { data: performanceMetrics, isLoading: performanceLoading } = useQuery({
-    queryKey: ['performance-metrics'],
-    queryFn: () => publicApi.get('/api/system-monitoring/performance'),
-    refetchInterval: 30000, // Refresh every 30 seconds
-  })
-
-  const { data: userAnalytics, isLoading: analyticsLoading } = useQuery({
-    queryKey: ['user-analytics'],
-    queryFn: () => publicApi.get('/api/system-monitoring/analytics'),
-    refetchInterval: 60000, // Refresh every minute
-  })
-
   const { data: securityMetrics, isLoading: securityLoading } = useQuery({
     queryKey: ['security-metrics'],
     queryFn: () => publicApi.get('/api/system-monitoring/security'),
     refetchInterval: 120000, // Refresh every 2 minutes
+  })
+
+  const { data: clerkOverviewResp, isLoading: clerkOverviewLoading } = useQuery({
+    queryKey: ['admin-clerk-overview'],
+    queryFn: () => apiService.getClerkOverview(apiClient),
+    enabled: !!apiClient,
+    staleTime: 5 * 60 * 1000,
+    select: (res: any) => res?.data?.data ?? null,
   })
 
   // Mutations
@@ -604,129 +596,7 @@ const SystemMonitor: React.FC = () => {
       )}
 
       {activeTab === 'analytics' && (
-        <div className="space-y-6">
-          {/* Performance Analytics */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center">
-                <BarChart3 className="h-5 w-5 mr-2 text-swiss-teal" />
-                {t('admin:systemMonitor.analytics.performanceAnalytics', 'Performance Analytics')}
-              </h2>
-            </div>
-
-            {!performanceMetrics?.data && (
-              <div className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                <p className="text-sm text-amber-800">
-                  {t('admin:systemMonitor.analytics.requiresBackend', 'Performance analytics require backend monitoring infrastructure to be configured.')}
-                </p>
-              </div>
-            )}
-
-            {performanceLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <LoadingSpinner size="large" />
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <MetricCard
-                  title={t('common:titles.responsetime')}
-                  value={performanceMetrics?.data?.avgResponseTime ?? 'N/A'}
-                  unit={performanceMetrics?.data?.avgResponseTime ? 'ms' : ''}
-                  icon={Zap}
-                  color="blue"
-                />
-                <MetricCard
-                  title={t('common:titles.throughput')}
-                  value={performanceMetrics?.data?.requestsPerSecond ?? 'N/A'}
-                  unit={performanceMetrics?.data?.requestsPerSecond ? 'req/s' : ''}
-                  icon={TrendingUp}
-                  color="green"
-                />
-                <MetricCard
-                  title={t('common:errors.errorrate')}
-                  value={performanceMetrics?.data?.errorRate ?? 'N/A'}
-                  unit={performanceMetrics?.data?.errorRate !== undefined ? '%' : ''}
-                  icon={AlertCircle}
-                  color="red"
-                />
-                <MetricCard
-                  title={t('common:titles.uptime')}
-                  value={healthData?.data?.uptime ? `${Math.floor(healthData.data.uptime / 3600)}h ${Math.floor((healthData.data.uptime % 3600) / 60)}m` : 'N/A'}
-                  icon={CheckCircle}
-                  color="green"
-                />
-              </div>
-            )}
-          </div>
-
-          {/* User Analytics */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center">
-                <Users className="h-5 w-5 mr-2 text-swiss-teal" />
-                {t('admin:systemMonitor.analytics.userAnalytics', 'User Analytics')}
-              </h2>
-            </div>
-
-            {!userAnalytics?.data && (
-              <div className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                <p className="text-sm text-amber-800">
-                  {t('admin:systemMonitor.analytics.requiresTracking', 'User analytics require tracking infrastructure to be configured. See the main Dashboard for available user statistics.')}
-                </p>
-              </div>
-            )}
-
-            {analyticsLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <LoadingSpinner size="large" />
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <MetricCard
-                  title={t('common:titles.activeusers')}
-                  value={userAnalytics?.data?.activeUsers ?? 'N/A'}
-                  icon={Users}
-                  color="blue"
-                />
-                <MetricCard
-                  title={t('common:titles.newuserstoday')}
-                  value={userAnalytics?.data?.newUsersToday ?? 'N/A'}
-                  icon={TrendingUp}
-                  color="green"
-                />
-                <MetricCard
-                  title={t('common:titles.sessionduration')}
-                  value={userAnalytics?.data?.avgSessionDuration ?? 'N/A'}
-                  unit={userAnalytics?.data?.avgSessionDuration ? 'min' : ''}
-                  icon={Clock}
-                  color="purple"
-                />
-                <MetricCard
-                  title={t('common:titles.pageviews')}
-                  value={userAnalytics?.data?.pageViews ?? 'N/A'}
-                  icon={Eye}
-                  color="yellow"
-                />
-              </div>
-            )}
-          </div>
-
-          {/* Geographic Analytics Notice */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center">
-                <Globe className="h-5 w-5 mr-2 text-swiss-teal" />
-                {t('admin:systemMonitor.analytics.geographicDistribution', 'Geographic Distribution')}
-              </h2>
-            </div>
-
-            <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
-              <p className="text-sm text-gray-600 text-center">
-                {t('admin:systemMonitor.analytics.requiresLocation', 'Geographic analytics require user location tracking to be implemented. This feature will display user distribution by region once the tracking infrastructure is configured.')}
-              </p>
-            </div>
-          </div>
-        </div>
+        <UserAnalyticsSection data={clerkOverviewResp} isLoading={clerkOverviewLoading} />
       )}
 
       {activeTab === 'security' && (
