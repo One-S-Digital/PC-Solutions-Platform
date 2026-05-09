@@ -372,6 +372,7 @@ export class SettingsController {
     const { user } = await this.principal.getOrBootstrapAccountAndProfile(clerkUserId, {
       avatarAsset: true, // Include avatar asset relation
       coverAsset: true, // Include cover asset relation
+      cvAsset: true, // Include CV asset relation
       contactInfo: true,
       workExperienceItems: { orderBy: { sortOrder: 'asc' } },
       educationItems: { orderBy: { sortOrder: 'asc' } },
@@ -396,7 +397,7 @@ export class SettingsController {
         certificationItems: user.certificationItems ?? [],
         skills: user.skills ?? [],
         availability: user.availability ?? '',
-        cvUrl: user.cvUrl ?? '',
+        cvUrl: (user as any).cvAsset?.publicUrl ?? user.cvUrl ?? '',
         cvAssetId: (user as any).cvAssetId ?? '',
         shortBio: user.shortBio ?? '',
         candidatePoolVisible: !!(user as any).candidatePoolVisible,

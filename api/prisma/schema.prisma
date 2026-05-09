@@ -224,6 +224,10 @@ model User {
   coverAssetId String?
   coverAsset   Asset?  @relation("UserCover", fields: [coverAssetId], references: [id])
 
+  // CV document asset relation (educator profile CV)
+  cvAssetId String?
+  cvAsset   Asset?  @relation("UserCV", fields: [cvAssetId], references: [id])
+
   // Stripe integration
   stripeCustomerId String? @unique
 
@@ -609,6 +613,7 @@ model Asset {
   // User asset relations
   userAvatars User[] @relation("UserAvatar")
   userCovers  User[] @relation("UserCover")
+  userCVs     User[] @relation("UserCV")
 
   // Product relations
   products Product[]
