@@ -172,6 +172,10 @@ export class UpdateEducatorSettingsDto {
 
   @IsOptional()
   @IsString()
+  cvAssetId?: string;
+
+  @IsOptional()
+  @IsString()
   avatarAssetId?: string;
 
   @IsOptional()
