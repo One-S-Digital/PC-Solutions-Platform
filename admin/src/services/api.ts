@@ -758,8 +758,10 @@ export const apiService = {
     apiClient.get<ApiResponse<JobAnalytics>>('/admin/analytics/jobs', { params: { timeRange } }),
   getRevenueAnalytics: (apiClient: AxiosInstance, timeRange: '7d' | '30d' | '90d' | '1y' = '30d') => 
     apiClient.get<ApiResponse<RevenueAnalytics>>('/admin/analytics/revenue', { params: { timeRange } }),
-  getSystemUsageAnalytics: (apiClient: AxiosInstance, timeRange: '7d' | '30d' | '90d' | '1y' = '30d') => 
+  getSystemUsageAnalytics: (apiClient: AxiosInstance, timeRange: '7d' | '30d' | '90d' | '1y' = '30d') =>
     apiClient.get<ApiResponse<SystemUsageAnalytics>>('/admin/analytics/system', { params: { timeRange } }),
+  getClerkOverview: (apiClient: AxiosInstance) =>
+    apiClient.get<ApiResponse<any>>('/admin/analytics/clerk-overview'),
 
   // Partners Management
   getPartners: (apiClient: AxiosInstance, params?: { type?: PartnerType; isActive?: boolean; isFeatured?: boolean; search?: string }) => 
