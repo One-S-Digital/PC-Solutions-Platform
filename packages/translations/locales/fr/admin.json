@@ -645,7 +645,9 @@
         "subtitle": "% d'utilisateurs de chaque semaine d'inscription actifs dans les semaines suivantes (basé sur la dernière connexion)",
         "cohortWeek": "Semaine de cohorte",
         "size": "Taille"
-      }
+      },
+      "errorState": "Impossible de charger les analyses — assurez-vous que l'API exécute le dernier code et actualisez la page.",
+      "emptyState": "Les données analytiques ne sont pas encore disponibles."
     }
   },
   "contentUpload": {

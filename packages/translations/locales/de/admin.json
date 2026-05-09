@@ -625,7 +625,9 @@
         "subtitle": "% der Benutzer aus jeder Anmeldewoche, die in den Folgewochen aktiv waren (basierend auf der letzten Anmeldung)",
         "cohortWeek": "Kohortenwoche",
         "size": "Grösse"
-      }
+      },
+      "errorState": "Analyse konnte nicht geladen werden – stellen Sie sicher, dass die API den neuesten Code ausführt, und aktualisieren Sie die Seite.",
+      "emptyState": "Analysedaten sind noch nicht verfügbar."
     }
   },
   "contentUpload": {

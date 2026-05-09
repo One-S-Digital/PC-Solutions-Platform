@@ -30,6 +30,7 @@ interface ClerkOverviewData {
 interface Props {
   data: ClerkOverviewData | null | undefined
   isLoading: boolean
+  isError?: boolean
 }
 
 function formatWeek(isoDate: string) {
@@ -115,7 +116,7 @@ function retentionColor(pct: number) {
 const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 const DOW_LABELS = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
 
-export const UserAnalyticsSection: React.FC<Props> = ({ data, isLoading }) => {
+export const UserAnalyticsSection: React.FC<Props> = ({ data, isLoading, isError }) => {
   const { t } = useTranslation('admin')
   const signupsData = useMemo(() => fillWeeklySeries(data?.weeklySignups ?? []), [data])
   const signinsData = useMemo(() => fillWeeklySeries(data?.weeklySignins ?? []), [data])
@@ -157,7 +158,22 @@ export const UserAnalyticsSection: React.FC<Props> = ({ data, isLoading }) => {
     )
   }
 
-  if (!data) return null
+  if (isError || !data) {
+    return (
+      <Card className="p-6">
+        <div className="flex flex-col items-center justify-center h-40 gap-3 text-center">
+          <p className="text-sm font-medium text-gray-700">
+            {t('dashboard.userAnalytics.title')}
+          </p>
+          <p className="text-sm text-gray-400 max-w-sm">
+            {isError
+              ? t('dashboard.userAnalytics.errorState')
+              : t('dashboard.userAnalytics.emptyState')}
+          </p>
+        </div>
+      </Card>
+    )
+  }
 
   const { stats, cohortRetention } = data
   const currentWeek = combinedWeekly[combinedWeekly.length - 1]
