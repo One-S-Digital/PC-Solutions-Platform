@@ -195,6 +195,12 @@ enum SubscriptionCancellationRequestStatus {
   CANCELLED  // Request withdrawn/cancelled by customer (future use)
 }
 
+enum EducatorApprovalStatus {
+  PENDING_REVIEW // Educator signed up, awaiting admin approval
+  APPROVED       // Admin approved - educator can access the platform
+  REJECTED       // Admin rejected - educator cannot access the platform
+}
+
 // Core Models
 model User {
   id        String   @id @default(uuid())
@@ -239,6 +245,11 @@ model User {
   deactivatedAt DateTime?
   deactivatedReasonCode String?
   deactivatedReasonText String? @db.Text
+
+  // Educator approval workflow
+  approvalStatus  EducatorApprovalStatus? // Only set for EDUCATOR role
+  approvalNotes   String?                 @db.Text // Admin rejection reason
+  approvedAt      DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

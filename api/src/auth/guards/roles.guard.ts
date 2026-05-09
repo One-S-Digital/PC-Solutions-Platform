@@ -1,6 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { UserRole } from '@prisma/client';
+import { UserRole, EducatorApprovalStatus } from '@prisma/client';
 import { ROLES_KEY } from '../decorators/roles.decorator';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import { ALLOW_PENDING_KEY } from '../decorators/allow-pending.decorator';
@@ -65,6 +65,22 @@ export class RolesGuard implements CanActivate {
     // 6. Handle suspended users
     if (userContext.role === 'SUSPENDED' || userContext.isSuspended) {
       throw new ForbiddenException(userContext.suspensionMessage || 'Account is suspended');
+    }
+
+    // 7. Handle educators pending admin approval
+    if (userContext.role === UserRole.EDUCATOR) {
+      if (userContext.approvalStatus === EducatorApprovalStatus.PENDING_REVIEW) {
+        throw new ForbiddenException({
+          message: 'Your educator profile is awaiting admin approval. You will be notified once reviewed.',
+          code: 'EDUCATOR_PENDING_APPROVAL',
+        });
+      }
+      if (userContext.approvalStatus === EducatorApprovalStatus.REJECTED) {
+        throw new ForbiddenException({
+          message: userContext.approvalNotes || 'Your educator application was not approved. Please contact support for more information.',
+          code: 'EDUCATOR_REJECTED',
+        });
+      }
     }
 
     const hasRole = requiredRoles.includes(userContext.role as UserRole);

@@ -620,6 +620,7 @@
     "suppliersServices": "Suppliers & Services",
     "platformOps": "Platform Ops",
     "replacements": "Replacements",
+    "educatorApprovals": "Educator Approvals",
     "internPool": "Intern Pool",
     "internPoolSubtitle": "Internship positions — {{count}} listing(s)",
     "noInterns": "No internship listings yet.",

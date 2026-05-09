@@ -26,11 +26,14 @@ import {
   ChevronDown,
   ChevronRight,
   GraduationCap,
+  ClipboardCheck,
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useSettings } from '../hooks/useSettings'
 import { useNotificationData } from '../hooks/useNotificationData'
 import { useTranslation } from 'react-i18next'
+import { useQuery } from '@tanstack/react-query'
+import { useApiClient, apiService } from '../services/api'
 
 interface SidebarProps {
   sidebarOpen: boolean
@@ -66,10 +69,11 @@ const navStructure: NavEntry[] = [
   {
     type: 'group', key: 'recruitment', icon: Briefcase,
     items: [
-      { key: 'jobListings',   href: '/job-listings', icon: Briefcase },
-      { key: 'candidatePool', href: '/candidates',   icon: UserCheck },
-      { key: 'replacements',  href: '/replacements', icon: RefreshCw },
-      { key: 'internPool',    href: '/intern-pool',  icon: GraduationCap },
+      { key: 'educatorApprovals', href: '/educator-approvals', icon: ClipboardCheck },
+      { key: 'jobListings',       href: '/job-listings',       icon: Briefcase },
+      { key: 'candidatePool',     href: '/candidates',         icon: UserCheck },
+      { key: 'replacements',      href: '/replacements',       icon: RefreshCw },
+      { key: 'internPool',        href: '/intern-pool',        icon: GraduationCap },
     ],
   },
   { type: 'single', key: 'eLearning', href: '/e-learning', icon: GraduationCap },
@@ -109,6 +113,16 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
   const { settings } = useSettings()
   const { t } = useTranslation(['dashboard', 'admin', 'common'])
   const notifications = useNotificationData()
+  const apiClient = useApiClient()
+
+  const { data: educatorPendingCountData } = useQuery({
+    queryKey: ['educator-approvals-pending-count'],
+    queryFn: () => apiService.getEducatorApprovalsPendingCount(apiClient),
+    enabled: !!apiClient,
+    refetchInterval: 60_000,
+    staleTime: 30_000,
+  })
+  const educatorPendingCount = (educatorPendingCountData?.data as any)?.count ?? 0
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     recruitment: true,
@@ -126,6 +140,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
     services: notifications.services.count,
     subscriptions: notifications.subscriptions.count,
     support: notifications.support.count,
+    educatorApprovals: educatorPendingCount,
   }
 
   const adminLogoUrl = settings?.adminLogoAsset?.publicUrl
