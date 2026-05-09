@@ -612,7 +612,9 @@
         "subtitle": "% of users from each sign-up week who were active in subsequent weeks (based on last sign-in)",
         "cohortWeek": "Cohort week",
         "size": "Size"
-      }
+      },
+      "errorState": "Could not load analytics — make sure the API is running the latest code and try refreshing.",
+      "emptyState": "Analytics data is not available yet."
     }
   },
   "contentUpload": {
