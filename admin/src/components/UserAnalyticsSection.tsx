@@ -10,6 +10,7 @@ import {
   Area,
   CartesianGrid,
 } from 'recharts'
+import { useTranslation } from 'react-i18next'
 import Card from './design-system/Card'
 import LoadingSpinner from './ui/LoadingSpinner'
 
@@ -113,6 +114,7 @@ const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'S
 const DOW_LABELS = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
 
 export const UserAnalyticsSection: React.FC<Props> = ({ data, isLoading }) => {
+  const { t } = useTranslation('admin')
   const signupsData = useMemo(() => fillWeeklySeries(data?.weeklySignups ?? []), [data])
   const signinsData = useMemo(() => fillWeeklySeries(data?.weeklySignins ?? []), [data])
 
@@ -159,18 +161,18 @@ export const UserAnalyticsSection: React.FC<Props> = ({ data, isLoading }) => {
   const currentWeek = combinedWeekly[combinedWeekly.length - 1]
 
   const statCards = [
-    { label: 'Active', value: stats.active, sub: 'This week' },
-    { label: 'New', value: stats.new, sub: 'This week' },
-    { label: 'Retained', value: stats.retained, sub: 'This week' },
-    { label: 'Total sign-ups', value: stats.total, sub: 'All time' },
+    { label: t('dashboard.userAnalytics.stats.active'), value: stats.active, sub: t('dashboard.userAnalytics.stats.thisWeek') },
+    { label: t('dashboard.userAnalytics.stats.new'), value: stats.new, sub: t('dashboard.userAnalytics.stats.thisWeek') },
+    { label: t('dashboard.userAnalytics.stats.retained'), value: stats.retained, sub: t('dashboard.userAnalytics.stats.thisWeek') },
+    { label: t('dashboard.userAnalytics.stats.totalSignups'), value: stats.total, sub: t('dashboard.userAnalytics.stats.allTime') },
   ]
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-swiss-charcoal">User Analytics</h2>
+        <h2 className="text-xl font-semibold text-swiss-charcoal">{t('dashboard.userAnalytics.title')}</h2>
         <span className="text-xs text-gray-400">
-          Updated {new Date(data.lastUpdated).toLocaleTimeString()}
+          {t('dashboard.userAnalytics.updated', { time: new Date(data.lastUpdated).toLocaleTimeString() })}
         </span>
       </div>
 
@@ -189,10 +191,10 @@ export const UserAnalyticsSection: React.FC<Props> = ({ data, isLoading }) => {
       <Card className="p-6">
         <div className="flex items-center gap-6 mb-4">
           <div className="flex items-center gap-2 text-xs text-gray-500">
-            <span className="inline-block w-3 h-3 rounded-sm bg-indigo-500" /> Sign-ups
+            <span className="inline-block w-3 h-3 rounded-sm bg-indigo-500" /> {t('dashboard.userAnalytics.chart.signups')}
           </div>
           <div className="flex items-center gap-2 text-xs text-gray-500">
-            <span className="inline-block w-3 h-3 rounded-sm bg-indigo-200" /> Sign-ins
+            <span className="inline-block w-3 h-3 rounded-sm bg-indigo-200" /> {t('dashboard.userAnalytics.chart.signins')}
           </div>
         </div>
         <ResponsiveContainer width="100%" height={200}>
@@ -208,8 +210,8 @@ export const UserAnalyticsSection: React.FC<Props> = ({ data, isLoading }) => {
             />
             <YAxis tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} allowDecimals={false} />
             <Tooltip
-              labelFormatter={v => `Week of ${formatWeek(String(v))}`}
-              formatter={(value: number, name: string) => [value, name === 'signups' ? 'Sign-ups' : 'Sign-ins']}
+              labelFormatter={v => t('dashboard.userAnalytics.chart.weekOf', { date: formatWeek(String(v)) })}
+              formatter={(value: number, name: string) => [value, name === 'signups' ? t('dashboard.userAnalytics.chart.signups') : t('dashboard.userAnalytics.chart.signins')]}
               contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #e5e7eb' }}
             />
             <Bar dataKey="signups" fill="#6366f1" radius={[3, 3, 0, 0]} />
@@ -221,9 +223,9 @@ export const UserAnalyticsSection: React.FC<Props> = ({ data, isLoading }) => {
       {/* Mini charts row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="p-4">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Sign-ups per week</p>
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{t('dashboard.userAnalytics.miniCharts.signupsPerWeek')}</p>
           <p className="text-2xl font-bold text-swiss-charcoal mt-1">{currentWeek?.signups ?? 0}</p>
-          <p className="text-xs text-gray-400 mb-3">This week</p>
+          <p className="text-xs text-gray-400 mb-3">{t('dashboard.userAnalytics.stats.thisWeek')}</p>
           <ResponsiveContainer width="100%" height={60}>
             <AreaChart data={signupsData}>
               <defs>
@@ -238,9 +240,9 @@ export const UserAnalyticsSection: React.FC<Props> = ({ data, isLoading }) => {
         </Card>
 
         <Card className="p-4">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Sign-ins per week</p>
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{t('dashboard.userAnalytics.miniCharts.signinsPerWeek')}</p>
           <p className="text-2xl font-bold text-swiss-charcoal mt-1">{currentWeek?.signins ?? 0}</p>
-          <p className="text-xs text-gray-400 mb-3">This week</p>
+          <p className="text-xs text-gray-400 mb-3">{t('dashboard.userAnalytics.stats.thisWeek')}</p>
           <ResponsiveContainer width="100%" height={60}>
             <AreaChart data={signinsData}>
               <defs>
@@ -255,9 +257,9 @@ export const UserAnalyticsSection: React.FC<Props> = ({ data, isLoading }) => {
         </Card>
 
         <Card className="p-4">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Total sign-ups</p>
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{t('dashboard.userAnalytics.stats.totalSignups')}</p>
           <p className="text-2xl font-bold text-swiss-charcoal mt-1">{stats.total.toLocaleString()}</p>
-          <p className="text-xs text-gray-400 mb-3">All time</p>
+          <p className="text-xs text-gray-400 mb-3">{t('dashboard.userAnalytics.stats.allTime')}</p>
           {/* Cumulative growth line */}
           <ResponsiveContainer width="100%" height={60}>
             <AreaChart
@@ -281,7 +283,7 @@ export const UserAnalyticsSection: React.FC<Props> = ({ data, isLoading }) => {
 
       {/* Activity heatmap */}
       <Card className="p-6">
-        <p className="text-sm font-semibold text-swiss-charcoal mb-4">User activity — {new Date().getUTCFullYear()}</p>
+        <p className="text-sm font-semibold text-swiss-charcoal mb-4">{t('dashboard.userAnalytics.heatmap.title', { year: new Date().getUTCFullYear() })}</p>
         <div className="overflow-x-auto">
           <div className="inline-flex gap-0.5">
             {/* Day-of-week labels */}
@@ -313,11 +315,11 @@ export const UserAnalyticsSection: React.FC<Props> = ({ data, isLoading }) => {
             })}
           </div>
           <div className="flex items-center gap-1 mt-3 text-xs text-gray-400">
-            <span>Less</span>
+            <span>{t('dashboard.userAnalytics.heatmap.less')}</span>
             {INTENSITY_COLORS.map((c, i) => (
               <div key={i} className={`w-3 h-3 rounded-sm ${c}`} />
             ))}
-            <span>More</span>
+            <span>{t('dashboard.userAnalytics.heatmap.more')}</span>
           </div>
         </div>
       </Card>
@@ -325,16 +327,14 @@ export const UserAnalyticsSection: React.FC<Props> = ({ data, isLoading }) => {
       {/* Cohort retention table */}
       {cohortRetention.length > 0 && (
         <Card className="p-6">
-          <p className="text-sm font-semibold text-swiss-charcoal mb-1">Weekly cohort retention</p>
-          <p className="text-xs text-gray-400 mb-4">
-            % of users from each sign-up week who were active in subsequent weeks (based on last sign-in)
-          </p>
+          <p className="text-sm font-semibold text-swiss-charcoal mb-1">{t('dashboard.userAnalytics.cohort.title')}</p>
+          <p className="text-xs text-gray-400 mb-4">{t('dashboard.userAnalytics.cohort.subtitle')}</p>
           <div className="overflow-x-auto">
             <table className="text-xs w-full">
               <thead>
                 <tr>
-                  <th className="text-left font-medium text-gray-500 pb-2 pr-4 whitespace-nowrap">Cohort week</th>
-                  <th className="text-right font-medium text-gray-500 pb-2 pr-3 whitespace-nowrap">Size</th>
+                  <th className="text-left font-medium text-gray-500 pb-2 pr-4 whitespace-nowrap">{t('dashboard.userAnalytics.cohort.cohortWeek')}</th>
+                  <th className="text-right font-medium text-gray-500 pb-2 pr-3 whitespace-nowrap">{t('dashboard.userAnalytics.cohort.size')}</th>
                   {Array.from({ length: 9 }, (_, i) => (
                     <th key={i} className="text-center font-medium text-gray-500 pb-2 px-1 whitespace-nowrap">
                       W{i}

@@ -581,6 +581,38 @@
       "enabled": "Enabled",
       "disabled": "Disabled",
       "manage": "Manage"
+    },
+    "userAnalytics": {
+      "title": "User Analytics",
+      "updated": "Updated {{time}}",
+      "stats": {
+        "active": "Active",
+        "new": "New",
+        "retained": "Retained",
+        "totalSignups": "Total sign-ups",
+        "thisWeek": "This week",
+        "allTime": "All time"
+      },
+      "chart": {
+        "signups": "Sign-ups",
+        "signins": "Sign-ins",
+        "weekOf": "Week of {{date}}"
+      },
+      "miniCharts": {
+        "signupsPerWeek": "Sign-ups per week",
+        "signinsPerWeek": "Sign-ins per week"
+      },
+      "heatmap": {
+        "title": "User activity — {{year}}",
+        "less": "Less",
+        "more": "More"
+      },
+      "cohort": {
+        "title": "Weekly cohort retention",
+        "subtitle": "% of users from each sign-up week who were active in subsequent weeks (based on last sign-in)",
+        "cohortWeek": "Cohort week",
+        "size": "Size"
+      }
     }
   },
   "contentUpload": {
