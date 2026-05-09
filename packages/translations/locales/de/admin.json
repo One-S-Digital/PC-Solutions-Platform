@@ -633,6 +633,7 @@
     "suppliersServices": "Lieferanten & Dienste",
     "platformOps": "Plattformbetrieb",
     "replacements": "Ersatz",
+    "educatorApprovals": "Pädagogen-Genehmigungen",
     "internPool": "Praktikantenpool",
     "internPoolSubtitle": "Praktikumsstellen — {{count}} Eintrag/Einträge",
     "noInterns": "Noch keine Praktikumsstellen.",

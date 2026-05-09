@@ -34,6 +34,7 @@ import MailingCampaignDetailPage from './pages/MailingCampaignDetail';
 import ELearningContentPage from './pages/content/ELearningContentPage';
 import HrDocumentsPage from './pages/content/HrDocumentsPage';
 import StatePoliciesPage from './pages/content/StatePoliciesPage';
+import EducatorApprovalsPage from './pages/EducatorApprovals';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -99,6 +100,7 @@ function App() {
           <Route path="services" element={<ServicesPage />} />
           <Route path="job-listings" element={<JobListingsPage />} />
           <Route path="candidates" element={<CandidatesPage />} />
+          <Route path="educator-approvals" element={<EducatorApprovalsPage />} />
           <Route path="intern-pool" element={<InternPoolPage />} />
           <Route path="replacements" element={<ReplacementsPage />} />
           <Route path="parent-leads" element={<ParentLeadsPage />} />

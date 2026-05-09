@@ -22,7 +22,7 @@ import { InAppNotificationProvider } from './contexts/InAppNotificationContext';
 import { SubscriptionProvider, SubscriptionProviderE2E } from './contexts/SubscriptionContext';
 import { SubscriptionPaywall } from './components/shared/SubscriptionPaywall';
 import { useAuthContext } from './providers/AuthProvider';
-import { UserRole } from './types';
+import { UserRole, EducatorApprovalStatus } from './types';
 import { useFrontendSettings } from './hooks/useFrontendSettings';
 
 // Development-only logging helper
@@ -87,6 +87,8 @@ import EducatorProfilePage from './pages/educator/EducatorProfilePage';
 import EducatorApplicationsPage from './pages/educator/EducatorApplicationsPage';
 import EducatorInternPoolPage from './pages/educator/EducatorInternPoolPage';
 import EducatorSupportPage from './pages/educator/EducatorSupportPage';
+import EducatorPendingApprovalPage from './pages/educator/EducatorPendingApprovalPage';
+import EducatorRejectedPage from './pages/educator/EducatorRejectedPage';
 
 // Parent Pages
 import ParentDashboardPage from './pages/parent/ParentDashboardPage';
@@ -165,6 +167,12 @@ const RoleBasedDashboardRedirect: React.FC = () => {
     case UserRole.FOUNDATION:
       return <Navigate to="/foundation/dashboard" replace />;
     case UserRole.EDUCATOR:
+      if (currentUser.approvalStatus === EducatorApprovalStatus.PENDING_REVIEW) {
+        return <Navigate to="/educator/pending-approval" replace />;
+      }
+      if (currentUser.approvalStatus === EducatorApprovalStatus.REJECTED) {
+        return <Navigate to="/educator/rejected" replace />;
+      }
       return <Navigate to="/educator/dashboard" replace />;
     case UserRole.PARENT:
       return <Navigate to="/parent/dashboard" replace />; // Updated Parent redirect
@@ -544,6 +552,14 @@ const ProtectedLayout: React.FC = () => {
         } />
         <Route path="/foundation/support" element={
           <ProtectedRoute roles={[UserRole.FOUNDATION]}><FoundationSupportPage /></ProtectedRoute>
+        } />
+
+        {/* Educator approval status routes — no subscription or approval gate needed */}
+        <Route path="/educator/pending-approval" element={
+          <ProtectedRoute roles={[UserRole.EDUCATOR]}><EducatorPendingApprovalPage /></ProtectedRoute>
+        } />
+        <Route path="/educator/rejected" element={
+          <ProtectedRoute roles={[UserRole.EDUCATOR]}><EducatorRejectedPage /></ProtectedRoute>
         } />
 
         {/* Educator Routes */}

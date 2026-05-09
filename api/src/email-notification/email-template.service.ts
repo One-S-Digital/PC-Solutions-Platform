@@ -370,6 +370,85 @@ export class EmailTemplateService {
         textContent: `Hello {{firstName}},\n\nReplacement pool in your region is low ({{poolSize}} available).\nView at: {{adminUrl}}\n\nBest regards,\nThe Pro Crèche Solutions Team`.trim(),
         isActive: true,
       },
+      // ── Educator Approval ──────────────────────────────────────────────────
+      {
+        name: 'Educator profile approved',
+        event: 'educator_approved',
+        subject: 'Your educator profile has been approved!',
+        category: 'userManagement',
+        variables: ['firstName', 'dashboardUrl'],
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Your Profile Has Been Approved!</h2>
+            <p>Hello {{firstName}},</p>
+            <p>Great news! Your educator profile on Pro Crèche Solutions has been reviewed and <strong>approved</strong> by our team.</p>
+            <p>You now have full access to the platform. Here's what you can do:</p>
+            <ul>
+              <li>Browse and apply for job listings</li>
+              <li>Complete your professional profile</li>
+              <li>Join the candidate pool for replacement shifts</li>
+              <li>Connect with childcare organisations</li>
+            </ul>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="{{dashboardUrl}}" style="background-color: #14B8A6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Go to My Dashboard</a>
+            </div>
+            <p>Welcome to the Pro Crèche Solutions community!</p>
+            <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+          </div>
+        `.trim(),
+        textContent: `
+          Your Profile Has Been Approved!
+
+          Hello {{firstName}},
+
+          Great news! Your educator profile on Pro Crèche Solutions has been reviewed and approved by our team.
+
+          You now have full access to the platform. Go to your dashboard: {{dashboardUrl}}
+
+          Welcome to the Pro Crèche Solutions community!
+
+          Best regards,
+          The Pro Crèche Solutions Team
+        `.trim(),
+        isActive: true,
+      },
+      {
+        name: 'Educator profile rejected',
+        event: 'educator_rejected',
+        subject: 'Update on your educator profile application',
+        category: 'userManagement',
+        variables: ['firstName', 'rejectionNotes', 'supportUrl'],
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Update on Your Educator Application</h2>
+            <p>Hello {{firstName}},</p>
+            <p>Thank you for your interest in joining Pro Crèche Solutions as an educator. After reviewing your profile, we are unable to approve your application at this time.</p>
+            <div style="background-color: #FEF2F2; border-left: 4px solid #EF4444; padding: 12px 16px; margin: 20px 0; border-radius: 4px;">
+              <p style="margin: 0;"><strong>Reason:</strong> {{rejectionNotes}}</p>
+            </div>
+            <p>If you believe this decision was made in error, or if you have additional information to share, please contact our support team.</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="{{supportUrl}}" style="background-color: #6B7280; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Contact Support</a>
+            </div>
+            <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+          </div>
+        `.trim(),
+        textContent: `
+          Update on Your Educator Application
+
+          Hello {{firstName}},
+
+          Thank you for your interest in joining Pro Crèche Solutions as an educator. After reviewing your profile, we are unable to approve your application at this time.
+
+          Reason: {{rejectionNotes}}
+
+          If you believe this decision was made in error, please contact our support team: {{supportUrl}}
+
+          Best regards,
+          The Pro Crèche Solutions Team
+        `.trim(),
+        isActive: true,
+      },
     ];
   }
 

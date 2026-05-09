@@ -443,6 +443,20 @@ export const apiService = {
 
   // Candidates
   getCandidates: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Candidate[]>>('/compat/candidates?includeHidden=true'),
+
+  // Educator Approvals
+  getEducatorApprovals: (
+    apiClient: AxiosInstance,
+    params?: { status?: string; page?: number; limit?: number },
+  ) => apiClient.get<ApiResponse<any>>('/admin/educator-approvals', { params }),
+  getEducatorApprovalsPendingCount: (apiClient: AxiosInstance) =>
+    apiClient.get<ApiResponse<{ count: number }>>('/admin/educator-approvals/pending-count'),
+  getEducatorApprovalById: (apiClient: AxiosInstance, id: string) =>
+    apiClient.get<ApiResponse<any>>(`/admin/educator-approvals/${id}`),
+  approveEducator: (apiClient: AxiosInstance, id: string) =>
+    apiClient.post<ApiResponse<any>>(`/admin/educator-approvals/${id}/approve`),
+  rejectEducator: (apiClient: AxiosInstance, id: string, notes: string) =>
+    apiClient.post<ApiResponse<any>>(`/admin/educator-approvals/${id}/reject`, { notes }),
   createCandidate: (apiClient: AxiosInstance, candidateData: {
     firstName: string;
     lastName: string;
