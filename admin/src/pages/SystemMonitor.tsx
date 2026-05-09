@@ -70,11 +70,12 @@ const SystemMonitor: React.FC = () => {
     refetchInterval: 120000, // Refresh every 2 minutes
   })
 
-  const { data: clerkOverviewResp, isLoading: clerkOverviewLoading } = useQuery({
+  const { data: clerkOverviewResp, isLoading: clerkOverviewLoading, isError: clerkOverviewError } = useQuery({
     queryKey: ['admin-clerk-overview'],
     queryFn: () => apiService.getClerkOverview(apiClient),
     enabled: !!apiClient,
     staleTime: 5 * 60 * 1000,
+    retry: 1,
     select: (res: any) => res?.data?.data ?? null,
   })
 
@@ -596,7 +597,11 @@ const SystemMonitor: React.FC = () => {
       )}
 
       {activeTab === 'analytics' && (
-        <UserAnalyticsSection data={clerkOverviewResp} isLoading={clerkOverviewLoading} />
+        <UserAnalyticsSection
+          data={clerkOverviewResp}
+          isLoading={clerkOverviewLoading || !apiClient}
+          isError={clerkOverviewError}
+        />
       )}
 
       {activeTab === 'security' && (
