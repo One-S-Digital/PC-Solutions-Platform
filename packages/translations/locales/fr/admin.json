@@ -2514,6 +2514,14 @@
       "close": "Fermer"
     }
   },
+  "userProfile": {
+    "activityHeatmap": {
+      "title": "Activité de connexion",
+      "subtitle": "{{count}} jours actifs en {{year}}",
+      "less": "Moins",
+      "more": "Plus"
+    }
+  },
   "userProfileEdit": {
     "cv": {
       "title": "CV / Curriculum vitae",

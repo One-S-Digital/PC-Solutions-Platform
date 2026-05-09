@@ -206,6 +206,18 @@ export class ClerkAuthGuard implements CanActivate {
           if (this.authDebug) {
             console.log('🔐 Auth Debug: request.context and request.user populated', { context: request.context, user: request.user });
           }
+          // Record daily login activity (fire-and-forget — never block the request)
+          if (userProfile?.id) {
+            const today = new Date();
+            today.setUTCHours(0, 0, 0, 0);
+            this.prisma.userActivityLog
+              .upsert({
+                where: { userId_date: { userId: userProfile.id, date: today } },
+                create: { userId: userProfile.id, date: today },
+                update: {},
+              })
+              .catch(() => {});
+          }
         }
       } catch (e) {
         // Important: do NOT swallow suspension exceptions (or other intentional HttpExceptions).

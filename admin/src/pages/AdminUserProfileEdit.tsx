@@ -42,6 +42,7 @@ import {
 } from '../constants/design-system';
 import { UserRole } from '../types';
 import { useAdminRole } from '../hooks/useAdminRole';
+import { UserActivityHeatmap } from '../components/UserActivityHeatmap';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -394,6 +395,7 @@ const AdminUserProfileEdit: React.FC = () => {
   const [formData, setFormData] = useState<Partial<UserProfile>>({});
   const [isDirty, setIsDirty] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
+  const [heatmapYear, setHeatmapYear] = useState(new Date().getUTCFullYear());
   const cvInputRef = useRef<HTMLInputElement>(null);
   const { uploadAsset, uploading: cvUploading } = useAssetUpload();
 
@@ -408,6 +410,13 @@ const AdminUserProfileEdit: React.FC = () => {
   });
 
   const profile = profileResponse?.data?.data;
+
+  const { data: activityData, isLoading: activityLoading } = useQuery({
+    queryKey: ['user-activity-heatmap', profile?.id, heatmapYear],
+    queryFn: () => apiService.getUserActivityHeatmap(apiClient, profile!.id, heatmapYear),
+    enabled: !!apiClient && !!profile?.id,
+  });
+  const activityHeatmap = activityData?.data?.data;
 
   useEffect(() => {
     if (profile) {
@@ -916,6 +925,17 @@ const AdminUserProfileEdit: React.FC = () => {
             </div>
           </Card>
         )}
+
+        {/* Activity heatmap */}
+        <UserActivityHeatmap
+          userId={profile.id}
+          activeDays={activityHeatmap?.activeDays ?? []}
+          totalActiveDays={activityHeatmap?.totalActiveDays ?? 0}
+          currentStreak={activityHeatmap?.currentStreak ?? 0}
+          year={heatmapYear}
+          onYearChange={setHeatmapYear}
+          isLoading={activityLoading || !activityHeatmap}
+        />
 
         {/* Main content */}
         {isEducator ? educatorTabLayout : simpleLayout}

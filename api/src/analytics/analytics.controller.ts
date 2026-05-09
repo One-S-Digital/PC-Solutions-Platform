@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { AnalyticsService } from './analytics.service';
 
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -63,6 +63,16 @@ export class AnalyticsController {
   @Get('clerk-overview')
   async getClerkStyleOverview() {
     const data = await this.analyticsService.getClerkStyleOverview();
+    return wrapResponse(data);
+  }
+
+  @Get('user-activity/:userId')
+  async getUserActivityHeatmap(
+    @Param('userId') userId: string,
+    @Query('year') year?: string,
+  ) {
+    const targetYear = year ? parseInt(year, 10) : new Date().getUTCFullYear();
+    const data = await this.analyticsService.getUserActivityHeatmap(userId, targetYear);
     return wrapResponse(data);
   }
 }

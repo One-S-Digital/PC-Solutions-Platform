@@ -2489,6 +2489,14 @@
       "close": "Close"
     }
   },
+  "userProfile": {
+    "activityHeatmap": {
+      "title": "Login Activity",
+      "subtitle": "{{count}} active days in {{year}}",
+      "less": "Less",
+      "more": "More"
+    }
+  },
   "userProfileEdit": {
     "cv": {
       "title": "CV / Resume",
