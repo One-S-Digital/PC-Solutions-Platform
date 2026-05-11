@@ -632,7 +632,6 @@ export class AdminProfilesController {
       include: {
         logoAsset: true,
         coverAsset: true,
-        contactInfo: true,
         members: {
           include: {
             user: true,
@@ -651,7 +650,7 @@ export class AdminProfilesController {
         id: org.id,
         name: org.name,
         type: org.type,
-        contactEmail: org.contactInfo?.contactEmail ?? '',
+        contactEmail: org.contactEmail ?? '',
         phoneNumber: org.phoneNumber ?? '',
         contactPerson: org.contactPerson ?? '',
         region: org.region ?? '',
@@ -722,26 +721,13 @@ export class AdminProfilesController {
       dto.regionsServed !== undefined ? normalizeRegionsServed(dto.regionsServed) : undefined;
 
     await this.prisma.$transaction(async (tx) => {
-      // Update contact email separately
-      if (dto.contactEmail !== undefined) {
-        await tx.organizationContactInfo.upsert({
-          where: { organizationId: id },
-          create: {
-            organizationId: id,
-            contactEmail: dto.contactEmail || null,
-          },
-          update: {
-            contactEmail: dto.contactEmail || null,
-          },
-        });
-      }
-
       // Update organization
       await tx.organization.update({
         where: { id },
         data: {
           ...(dto.name !== undefined && { name: dto.name }),
           ...(dto.type !== undefined && { type: dto.type as OrganizationType }),
+          ...(dto.contactEmail !== undefined && { contactEmail: dto.contactEmail || null }),
           ...(dto.phoneNumber !== undefined && { phoneNumber: dto.phoneNumber }),
           ...(dto.contactPerson !== undefined && { contactPerson: dto.contactPerson }),
           ...(dto.region !== undefined && { region: dto.region }),

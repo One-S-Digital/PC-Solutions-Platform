@@ -176,7 +176,6 @@ export class SettingsController {
             include: {
               logoAsset: true,
               coverAsset: true,
-              contactInfo: true,
             },
           },
         },
@@ -198,11 +197,8 @@ export class SettingsController {
       success: true,
       data: {
         companyName: organization.name,
-        // Contact email is stored separately from authentication email.
-        // For backward compatibility, fall back to the user's auth email if unset.
-        // Use appUser.email as the final fallback since User.email can be null for
-        // users created before the email-sync migration.
-        contactEmail: (organization as any).contactInfo?.contactEmail ?? user.email ?? appUser.email,
+        // Fall back to the user's auth email when no contact email has been set.
+        contactEmail: organization.contactEmail ?? user.email ?? appUser.email,
         phoneNumber: organization.phoneNumber ?? '',
         contactPerson: organization.contactPerson ?? '',
         address: organization.region ?? '',
@@ -253,26 +249,12 @@ export class SettingsController {
       });
 
       if (userOrg?.organization) {
-        // PATCH semantics: only update contactEmail when provided.
-        // Store contact email separately (does NOT touch auth email).
-        if (settings.contactEmail !== undefined) {
-          await tx.organizationContactInfo.upsert({
-            where: { organizationId: userOrg.organizationId },
-            create: {
-              organizationId: userOrg.organizationId,
-              contactEmail: settings.contactEmail || null,
-            },
-            update: {
-              contactEmail: settings.contactEmail || null,
-            },
-          });
-        }
-
         // Update existing organization
         await tx.organization.update({
           where: { id: userOrg.organizationId },
           data: {
             name: settings.companyName,
+            ...(settings.contactEmail !== undefined && { contactEmail: settings.contactEmail || null }),
             phoneNumber: settings.phoneNumber,
             contactPerson: settings.contactPerson,
             region: settings.address,
@@ -295,6 +277,7 @@ export class SettingsController {
           data: {
             name: settings.companyName,
             type: 'FOUNDATION',
+            contactEmail: settings.contactEmail || null,
             phoneNumber: settings.phoneNumber,
             contactPerson: settings.contactPerson,
             region: settings.address,
@@ -310,14 +293,6 @@ export class SettingsController {
             isActive: true,
             ...(settings.logoAssetId !== undefined && { logoAssetId: settings.logoAssetId || null }),
             ...(settings.coverAssetId !== undefined && { coverAssetId: settings.coverAssetId || null }),
-          },
-        });
-
-        // Create contact info record for the new org (does NOT touch auth email).
-        await tx.organizationContactInfo.create({
-          data: {
-            organizationId: newOrganization.id,
-            contactEmail: settings.contactEmail,
           },
         });
 
@@ -659,7 +634,6 @@ export class SettingsController {
             include: {
               logoAsset: true,
               coverAsset: true,
-              contactInfo: true,
             },
           },
         },
@@ -681,11 +655,8 @@ export class SettingsController {
       success: true,
       data: {
         companyName: organization.name,
-        // Contact email is stored separately from authentication email.
-        // For backward compatibility, fall back to the user's auth email if unset.
-        // Use appUser.email as the final fallback since User.email can be null for
-        // users created before the email-sync migration.
-        contactEmail: (organization as any).contactInfo?.contactEmail ?? user.email ?? appUser.email,
+        // Fall back to the user's auth email when no contact email has been set.
+        contactEmail: organization.contactEmail ?? user.email ?? appUser.email,
         phoneNumber: organization.phoneNumber ?? '',
         contactPerson: organization.contactPerson ?? '',
         address: organization.region ?? '',
@@ -747,26 +718,12 @@ export class SettingsController {
       });
 
       if (userOrg?.organization) {
-        // PATCH semantics: only update contactEmail when provided.
-        // Store contact email separately (does NOT touch auth email).
-        if (settings.contactEmail !== undefined) {
-          await tx.organizationContactInfo.upsert({
-            where: { organizationId: userOrg.organizationId },
-            create: {
-              organizationId: userOrg.organizationId,
-              contactEmail: settings.contactEmail || null,
-            },
-            update: {
-              contactEmail: settings.contactEmail || null,
-            },
-          });
-        }
-
         // Update existing organization
         const updatedOrganization = await tx.organization.update({
           where: { id: userOrg.organizationId },
           data: {
             name: settings.companyName,
+            ...(settings.contactEmail !== undefined && { contactEmail: settings.contactEmail || null }),
             phoneNumber: settings.phoneNumber,
             contactPerson: settings.contactPerson,
             region: settings.address,
@@ -797,6 +754,7 @@ export class SettingsController {
           data: {
             name: settings.companyName,
             type: 'PRODUCT_SUPPLIER',
+            contactEmail: settings.contactEmail || null,
             phoneNumber: settings.phoneNumber,
             contactPerson: settings.contactPerson,
             region: settings.address,
@@ -818,14 +776,6 @@ export class SettingsController {
             isActive: true,
             ...(settings.logoAssetId !== undefined && { logoAssetId: settings.logoAssetId || null }),
             ...(settings.coverAssetId !== undefined && { coverAssetId: settings.coverAssetId || null }),
-          },
-        });
-
-        // Create contact info record for the new org (does NOT touch auth email).
-        await tx.organizationContactInfo.create({
-          data: {
-            organizationId: newOrganization.id,
-            contactEmail: settings.contactEmail,
           },
         });
 
@@ -883,7 +833,6 @@ export class SettingsController {
             include: {
               logoAsset: true,
               coverAsset: true,
-              contactInfo: true,
             },
           },
         },
@@ -905,11 +854,8 @@ export class SettingsController {
       success: true,
       data: {
         companyName: organization.name,
-        // Contact email is stored separately from authentication email.
-        // For backward compatibility, fall back to the user's auth email if unset.
-        // Use appUser.email as the final fallback since User.email can be null for
-        // users created before the email-sync migration.
-        contactEmail: (organization as any).contactInfo?.contactEmail ?? user.email ?? appUser.email,
+        // Fall back to the user's auth email when no contact email has been set.
+        contactEmail: organization.contactEmail ?? user.email ?? appUser.email,
         phoneNumber: organization.phoneNumber ?? '',
         contactPerson: organization.contactPerson ?? '',
         address: organization.region ?? '',
@@ -950,25 +896,11 @@ export class SettingsController {
       });
 
       if (userOrg?.organization) {
-        // PATCH semantics: only update contactEmail when provided.
-        // Store contact email separately (does NOT touch auth email).
-        if (settings.contactEmail !== undefined) {
-          await tx.organizationContactInfo.upsert({
-            where: { organizationId: userOrg.organizationId },
-            create: {
-              organizationId: userOrg.organizationId,
-              contactEmail: settings.contactEmail || null,
-            },
-            update: {
-              contactEmail: settings.contactEmail || null,
-            },
-          });
-        }
-
         await tx.organization.update({
           where: { id: userOrg.organizationId },
           data: {
             name: settings.companyName,
+            ...(settings.contactEmail !== undefined && { contactEmail: settings.contactEmail || null }),
             phoneNumber: settings.phoneNumber,
             contactPerson: settings.contactPerson,
             region: settings.address,
@@ -995,6 +927,7 @@ export class SettingsController {
         data: {
           name: settings.companyName,
           type: 'SERVICE_PROVIDER',
+          contactEmail: settings.contactEmail || null,
           phoneNumber: settings.phoneNumber,
           contactPerson: settings.contactPerson,
           region: settings.address,
@@ -1012,14 +945,6 @@ export class SettingsController {
           isActive: true,
           ...(settings.logoAssetId !== undefined && { logoAssetId: settings.logoAssetId || null }),
           ...(settings.coverAssetId !== undefined && { coverAssetId: settings.coverAssetId || null }),
-        },
-      });
-
-      // Store contact email separately (does NOT touch auth email).
-      await tx.organizationContactInfo.create({
-        data: {
-          organizationId: newOrganization.id,
-          contactEmail: settings.contactEmail,
         },
       });
 
