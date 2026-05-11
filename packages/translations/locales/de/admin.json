@@ -637,6 +637,7 @@
     "version": "Backend-Verwaltung v1.0",
     "adminLogo": "Admin-Logo",
     "dashboard": "Dashboard",
+    "analytics": "Analytik",
     "users": "Benutzer",
     "foundations": "Stiftungen",
     "partners": "Partner",
@@ -2487,6 +2488,14 @@
       "successMessage": "Kampagne erfolgreich gesendet!",
       "cancelSending": "Versand abbrechen",
       "close": "Schliessen"
+    }
+  },
+  "userProfile": {
+    "activityHeatmap": {
+      "title": "Anmeldeaktivität",
+      "subtitle": "{{count}} aktive Tage in {{year}}",
+      "less": "Weniger",
+      "more": "Mehr"
     }
   },
   "userProfileEdit": {

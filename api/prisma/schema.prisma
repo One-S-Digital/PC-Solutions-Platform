@@ -328,6 +328,9 @@ model User {
   // In-app notifications
   notifications        Notification[]        @relation("UserNotifications")
 
+  // Per-day login activity (used for activity heatmap)
+  activityLogs         UserActivityLog[]     @relation("UserActivityLogs")
+
   @@map("users")
 }
 
@@ -1698,6 +1701,19 @@ model UserActivity {
   user User @relation("UserActivity", fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_activities")
+}
+
+// Per-day login activity log — one row per (user, UTC calendar date)
+// Written fire-and-forget from auth guard on every authenticated request.
+model UserActivityLog {
+  id     String   @id @default(uuid())
+  userId String
+  date   DateTime // midnight UTC of the calendar day
+
+  user User @relation("UserActivityLogs", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@map("user_activity_logs")
 }
 
 // Content Moderation System

@@ -376,20 +376,20 @@ export class AnalyticsService {
     const [weeklySignups, weeklySignins, totalSignups, activityHeatmap, cohortUsers, activeThisWeek, newThisWeek, retainedThisWeek] = await Promise.all([
       this.prisma.$queryRaw<{ week: Date; count: bigint }[]>`
         SELECT DATE_TRUNC('week', "createdAt") AS week, COUNT(*)::bigint AS count
-        FROM "User"
+        FROM users
         WHERE "createdAt" >= ${thirteenWeeksAgo}
         GROUP BY 1 ORDER BY 1
       `,
       this.prisma.$queryRaw<{ week: Date; count: bigint }[]>`
         SELECT DATE_TRUNC('week', "lastActiveAt") AS week, COUNT(*)::bigint AS count
-        FROM "User"
+        FROM users
         WHERE "lastActiveAt" >= ${thirteenWeeksAgo} AND "lastActiveAt" IS NOT NULL
         GROUP BY 1 ORDER BY 1
       `,
       this.prisma.user.count(),
       this.prisma.$queryRaw<{ day: string; count: bigint }[]>`
-        SELECT TO_CHAR(DATE("lastActiveAt"), 'YYYY-MM-DD') AS day, COUNT(*)::bigint AS count
-        FROM "User"
+        SELECT TO_CHAR("lastActiveAt"::date, 'YYYY-MM-DD') AS day, COUNT(*)::bigint AS count
+        FROM users
         WHERE "lastActiveAt" >= ${yearStart} AND "lastActiveAt" IS NOT NULL
         GROUP BY 1 ORDER BY 1
       `,
@@ -439,6 +439,43 @@ export class AnalyticsService {
     this._clerkOverviewCache = result;
     this._clerkOverviewCacheAt = Date.now();
     return result;
+  }
+
+  async getUserActivityHeatmap(userId: string, year: number) {
+    const yearStart = new Date(Date.UTC(year, 0, 1));
+    const yearEnd = new Date(Date.UTC(year + 1, 0, 1));
+    const dayMs = 24 * 60 * 60 * 1000;
+
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+
+    // Fetch year-scoped days for the heatmap display
+    const [yearLogs, recentLogs] = await Promise.all([
+      this.prisma.userActivityLog.findMany({
+        where: { userId, date: { gte: yearStart, lt: yearEnd } },
+        select: { date: true },
+        orderBy: { date: 'asc' },
+      }),
+      // Streak window: up to 366 days back from today — crosses year boundaries correctly
+      this.prisma.userActivityLog.findMany({
+        where: { userId, date: { gte: new Date(today.getTime() - 366 * dayMs), lte: today } },
+        select: { date: true },
+      }),
+    ]);
+
+    const activeDays = yearLogs.map(l => l.date.toISOString().split('T')[0]);
+    const totalActiveDays = activeDays.length;
+
+    // Compute streak from the unbounded recent window
+    const recentSet = new Set(recentLogs.map(l => l.date.toISOString().split('T')[0]));
+    let streak = 0;
+    let cursor = new Date(today);
+    while (recentSet.has(cursor.toISOString().split('T')[0])) {
+      streak++;
+      cursor = new Date(cursor.getTime() - dayMs);
+    }
+
+    return { year, activeDays, totalActiveDays, currentStreak: streak };
   }
 
   private _clerkOverviewCache: any = null;

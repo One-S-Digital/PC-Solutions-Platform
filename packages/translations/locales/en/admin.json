@@ -624,6 +624,7 @@
     "version": "Backend Management v1.0",
     "adminLogo": "Admin Logo",
     "dashboard": "Dashboard",
+    "analytics": "Analytics",
     "users": "Users",
     "foundations": "Foundations",
     "partners": "Partners",
@@ -2487,6 +2488,14 @@
       "successMessage": "Campaign sent successfully!",
       "cancelSending": "Cancel Sending",
       "close": "Close"
+    }
+  },
+  "userProfile": {
+    "activityHeatmap": {
+      "title": "Login Activity",
+      "subtitle": "{{count}} active days in {{year}}",
+      "less": "Less",
+      "more": "More"
     }
   },
   "userProfileEdit": {
