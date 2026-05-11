@@ -12,7 +12,7 @@ BEGIN
     UPDATE "organizations" o
     SET "contactEmail" = oci."contactEmail"
     FROM "organization_contact_infos" oci
-    WHERE oci."organization_id" = o."id"
+    WHERE oci."organizationId" = o."id"
       AND oci."contactEmail" IS NOT NULL;
 
     -- Drop the now-redundant contact-info table
