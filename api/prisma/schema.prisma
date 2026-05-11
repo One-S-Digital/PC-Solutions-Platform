@@ -386,6 +386,7 @@ model Organization {
 
   // Additional fields from onboarding guide
   contactPerson        String?
+  contactEmail         String? // Public contact email (falls back to user auth email if unset)
   phoneNumber          String?
   canton               String? // Legacy single canton field
   city                 String? // City where the organization is located
@@ -415,7 +416,6 @@ model Organization {
   coverAsset   Asset?  @relation("OrganizationCover", fields: [coverAssetId], references: [id])
 
   // Relations
-  contactInfo      OrganizationContactInfo?
   members          UserOrganization[]
   products         Product[]
   catalogs         Catalog[]
@@ -448,21 +448,6 @@ model Organization {
   @@map("organizations")
 }
 
-// Organization contact info is intentionally separated from the authentication email.
-// This allows organizations to publish a "contact" email without changing the user's
-// login/authentication email (User.email / AppUser.email).
-model OrganizationContactInfo {
-  id             String   @id @default(uuid())
-  organizationId String   @unique
-  contactEmail   String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-
-  @@map("organization_contact_infos")
-}
 
 model UserOrganization {
   userId         String
