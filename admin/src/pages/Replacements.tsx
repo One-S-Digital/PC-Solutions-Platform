@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { formatRole } from '../utils/formatRole'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ArrowPathIcon, CalendarDaysIcon, MapPinIcon, ExclamationTriangleIcon, EyeIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useApiClient, apiService } from '../services/api'
@@ -127,7 +128,7 @@ const Replacements: React.FC = () => {
                     <tr key={req.id} className={`hover:bg-gray-50 transition-colors ${selected?.id === req.id ? 'bg-indigo-50' : ''}`}>
                       <td className="px-4 py-3 font-medium text-gray-800">{req.foundation?.name || '—'}</td>
                       <td className="px-4 py-3">
-                        <span className="font-medium">{req.role}</span>
+                        <span className="font-medium">{formatRole(req.role)}</span>
                         {req.urgency === 'URGENT' && (
                           <span className="ml-2 inline-flex items-center gap-0.5 text-xs text-red-600 font-semibold">
                             <ExclamationTriangleIcon className="w-3 h-3" /> Urgent
@@ -172,7 +173,7 @@ const Replacements: React.FC = () => {
           <div className="w-80 shrink-0 bg-white rounded-xl border p-4 space-y-4">
             <div className="flex items-start justify-between">
               <div>
-                <h2 className="font-semibold text-gray-800">{selected.role}</h2>
+                <h2 className="font-semibold text-gray-800">{formatRole(selected.role)}</h2>
                 <p className="text-xs text-gray-500">{selected.foundation?.name}</p>
               </div>
               <button onClick={() => setSelected(null)} className="text-gray-400 hover:text-gray-600">
