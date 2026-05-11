@@ -652,7 +652,6 @@ export class ProfileController {
         logoAsset: true,
         coverAsset: true,
         members: {
-          orderBy: { createdAt: 'asc' },
           include: {
             user: {
               include: {
@@ -669,14 +668,12 @@ export class ProfileController {
     }
 
     const { members, ...orgRest } = organization as any;
-    // Fall back to the primary member's user email when no explicit contact email is set.
-    const primaryMemberEmail: string | null = members?.[0]?.user?.email ?? null;
     return {
       success: true,
       data: {
         ...orgRest,
         members,
-        contactEmail: organization.contactEmail ?? primaryMemberEmail,
+        contactEmail: organization.contactEmail ?? null,
       },
     };
   }
