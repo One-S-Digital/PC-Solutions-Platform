@@ -191,7 +191,6 @@ const verifyCriticalTables = () => {
     // Separate contact email storage (must exist for profile settings updates)
     'user_contact_infos',
     'organizations',
-    'organization_contact_infos',
     'assets',
     // Policy crawler (feature-flagged, but schema must exist once migrations run)
     'cantons',
