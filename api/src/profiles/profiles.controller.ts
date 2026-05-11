@@ -652,6 +652,7 @@ export class ProfileController {
         logoAsset: true,
         coverAsset: true,
         members: {
+          orderBy: { createdAt: 'asc' },
           include: {
             user: {
               include: {
