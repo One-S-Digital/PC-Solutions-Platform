@@ -1084,6 +1084,38 @@ CREATE UNIQUE INDEX IF NOT EXISTS "mt_cost_tracking_date_provider_sourceLang_tar
   log('✅ Translation infrastructure verified.');
 };
 
+/**
+ * Ensure organizations.contactEmail exists and organization_contact_infos is dropped.
+ * Matches migration `20260511000000_add_contact_email_to_organization`.
+ */
+const ensureOrganizationContactEmail = () => {
+  const sql = `
+-- Add contactEmail to organizations if missing
+ALTER TABLE "organizations" ADD COLUMN IF NOT EXISTS "contactEmail" TEXT;
+
+-- Migrate data and drop source table only if it still exists
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.tables
+    WHERE table_schema = 'public' AND table_name = 'organization_contact_infos'
+  ) THEN
+    UPDATE "organizations" o
+    SET "contactEmail" = oci."contactEmail"
+    FROM "organization_contact_infos" oci
+    WHERE oci."organization_id" = o."id"
+      AND oci."contactEmail" IS NOT NULL;
+
+    DROP TABLE "organization_contact_infos";
+  END IF;
+END $$;
+`;
+
+  log('Ensuring organizations.contactEmail exists and organization_contact_infos is cleaned up...');
+  runSql(sql);
+  log('✅ Organization contactEmail schema verified.');
+};
+
 const main = async () => {
   log(`Using schema: ${SCHEMA_PATH}`);
   log(`Using Prisma CLI: ${PRISMA_BIN ? PRISMA_BIN : 'npx prisma (fallback)'}`);
@@ -1244,6 +1276,35 @@ const main = async () => {
     try {
       forceMarkMigrationRolledBack('20260211090000_link_parent_leads_to_users');
       ensureParentLeadAccountLink();
+    } catch (e2) {
+      error(`❌ Could not prepare for migration: ${e2.message}`);
+    }
+  }
+
+  // Add contactEmail to organizations + drop organization_contact_infos
+  // Strategy:
+  // 1. Clear failed migration state so Prisma can re-run it
+  // 2. Pre-apply changes idempotently so the re-run succeeds even on a drifted DB
+  try {
+    log('🔧 Preparing for add_contact_email_to_organization migration...');
+
+    let cleared = await resolveMigration('rolled-back', '20260511000000_add_contact_email_to_organization');
+    if (!cleared) {
+      log('⚠️  Standard resolve failed, force-marking as rolled-back...');
+      cleared = forceMarkMigrationRolledBack('20260511000000_add_contact_email_to_organization');
+    }
+    if (cleared) {
+      log('✅ Migration cleared from failed state. Prisma will re-run it.');
+    }
+
+    ensureOrganizationContactEmail();
+    log('✅ Organization contactEmail schema prepared.');
+    log('📋 Prisma migrate deploy will now run this migration and mark it complete.');
+  } catch (e) {
+    warn(`⚠️  Organization contactEmail preparation failed: ${e.message}`);
+    try {
+      forceMarkMigrationRolledBack('20260511000000_add_contact_email_to_organization');
+      ensureOrganizationContactEmail();
     } catch (e2) {
       error(`❌ Could not prepare for migration: ${e2.message}`);
     }
