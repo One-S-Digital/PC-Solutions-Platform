@@ -444,24 +444,33 @@ export class AnalyticsService {
   async getUserActivityHeatmap(userId: string, year: number) {
     const yearStart = new Date(Date.UTC(year, 0, 1));
     const yearEnd = new Date(Date.UTC(year + 1, 0, 1));
+    const dayMs = 24 * 60 * 60 * 1000;
 
-    const logs = await this.prisma.userActivityLog.findMany({
-      where: { userId, date: { gte: yearStart, lt: yearEnd } },
-      select: { date: true },
-      orderBy: { date: 'asc' },
-    });
-
-    const activeDays = logs.map(l => l.date.toISOString().split('T')[0]);
-    const totalActiveDays = activeDays.length;
-
-    // Current streak (consecutive days ending today or yesterday)
     const today = new Date();
     today.setUTCHours(0, 0, 0, 0);
+
+    // Fetch year-scoped days for the heatmap display
+    const [yearLogs, recentLogs] = await Promise.all([
+      this.prisma.userActivityLog.findMany({
+        where: { userId, date: { gte: yearStart, lt: yearEnd } },
+        select: { date: true },
+        orderBy: { date: 'asc' },
+      }),
+      // Streak window: up to 366 days back from today — crosses year boundaries correctly
+      this.prisma.userActivityLog.findMany({
+        where: { userId, date: { gte: new Date(today.getTime() - 366 * dayMs), lte: today } },
+        select: { date: true },
+      }),
+    ]);
+
+    const activeDays = yearLogs.map(l => l.date.toISOString().split('T')[0]);
+    const totalActiveDays = activeDays.length;
+
+    // Compute streak from the unbounded recent window
+    const recentSet = new Set(recentLogs.map(l => l.date.toISOString().split('T')[0]));
     let streak = 0;
-    const dayMs = 24 * 60 * 60 * 1000;
     let cursor = new Date(today);
-    const activeSet = new Set(activeDays);
-    while (activeSet.has(cursor.toISOString().split('T')[0])) {
+    while (recentSet.has(cursor.toISOString().split('T')[0])) {
       streak++;
       cursor = new Date(cursor.getTime() - dayMs);
     }
