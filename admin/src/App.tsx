@@ -31,6 +31,7 @@ import ResetPassword from './pages/ResetPassword';
 import ReplacementsPage from './pages/Replacements';
 import MailingListPage from './pages/MailingList';
 import MailingCampaignDetailPage from './pages/MailingCampaignDetail';
+import AnalyticsPage from './pages/AnalyticsPage';
 import ELearningContentPage from './pages/content/ELearningContentPage';
 import HrDocumentsPage from './pages/content/HrDocumentsPage';
 import StatePoliciesPage from './pages/content/StatePoliciesPage';
@@ -114,6 +115,8 @@ function App() {
           <Route path="support/tickets/:ticketId" element={<SupportTicketPage />} />
           <Route path="discount-terminations" element={<DiscountTerminationsPage />} />
           <Route path="subscriptions" element={<SubscriptionsPage />} />
+
+          <Route path="analytics" element={<AnalyticsPage />} />
 
           <Route path="mailing" element={<MailingListPage />} />
           <Route path="mailing/campaigns/:id" element={<MailingCampaignDetailPage />} />
