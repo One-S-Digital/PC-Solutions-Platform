@@ -1,4 +1,6 @@
-const ROLE_LABELS: Record<string, string> = {
+import i18n from '../i18n'
+
+const ROLE_FALLBACKS: Record<string, string> = {
   SUPER_ADMIN: 'Super Admin',
   ADMIN: 'Admin',
   FOUNDATION: 'Foundation',
@@ -9,5 +11,6 @@ const ROLE_LABELS: Record<string, string> = {
 }
 
 export function formatRole(role: string): string {
-  return ROLE_LABELS[role] ?? role
+  const fallback = ROLE_FALLBACKS[role] ?? role
+  return i18n.t(`common:userRoles.${role}`, fallback)
 }
