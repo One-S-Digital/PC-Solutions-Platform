@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { formatRole } from '../utils/formatRole'
 import { X, Building2, Plus, Loader2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { User, Organization } from '../types/api'
@@ -248,14 +249,14 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
                 disabled={lockRole}
               >
                 {(canAssignSuperAdmin || isEditingSuperAdmin) && (
-                  <option value={UserRole.SUPER_ADMIN}>{t('common:superadmin')}</option>
+                  <option value={UserRole.SUPER_ADMIN}>{formatRole(UserRole.SUPER_ADMIN)}</option>
                 )}
-                <option value={UserRole.ADMIN}>{t('common:admin')}</option>
-                <option value={UserRole.FOUNDATION}>{t('common:foundation')}</option>
-                <option value={UserRole.PRODUCT_SUPPLIER}>{t('common:productsupplier')}</option>
-                <option value={UserRole.SERVICE_PROVIDER}>{t('common:serviceprovider')}</option>
-                <option value={UserRole.EDUCATOR}>{t('common:educator')}</option>
-                <option value={UserRole.PARENT}>{t('common:parent')}</option>
+                <option value={UserRole.ADMIN}>{formatRole(UserRole.ADMIN)}</option>
+                <option value={UserRole.FOUNDATION}>{formatRole(UserRole.FOUNDATION)}</option>
+                <option value={UserRole.PRODUCT_SUPPLIER}>{formatRole(UserRole.PRODUCT_SUPPLIER)}</option>
+                <option value={UserRole.SERVICE_PROVIDER}>{formatRole(UserRole.SERVICE_PROVIDER)}</option>
+                <option value={UserRole.EDUCATOR}>{formatRole(UserRole.EDUCATOR)}</option>
+                <option value={UserRole.PARENT}>{formatRole(UserRole.PARENT)}</option>
               </select>
               {!canAssignSuperAdmin && (
                 <p className="mt-1 text-xs text-gray-500">

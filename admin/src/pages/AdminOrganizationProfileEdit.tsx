@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { formatRole } from '../utils/formatRole';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useApiClient, apiService } from '../services/api';
@@ -575,7 +576,7 @@ function StaffSection({ orgId, orgProfileId, apiClient, safeNavigate }: StaffSec
                   {m.user?.email && <p className="text-xs text-gray-400">{m.user.email}</p>}
                 </div>
                 <div className="flex shrink-0 items-center gap-2">
-                  <span className="rounded-full bg-swiss-teal/10 px-2 py-0.5 text-xs font-medium text-swiss-teal">{m.role}</span>
+                  <span className="rounded-full bg-swiss-teal/10 px-2 py-0.5 text-xs font-medium text-swiss-teal">{formatRole(m.role)}</span>
                   <button type="button" onClick={() => { setSelectedRole(m.role); setRoleModalUserId(m.userId); }} className="rounded px-2 py-1 text-xs text-gray-500 hover:bg-gray-100">Role</button>
                   <button
                     type="button"
