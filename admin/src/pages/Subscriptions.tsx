@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { formatRole } from '../utils/formatRole';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   CreditCard,
@@ -301,7 +302,7 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
                 </p>
                 <p className="text-sm text-gray-500">{user.email}</p>
                 <span className="inline-flex px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 text-gray-700 mt-1">
-                  {user.role}
+                  {formatRole(user.role)}
                 </span>
               </div>
             </div>

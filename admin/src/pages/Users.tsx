@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
+import { formatRole } from '../utils/formatRole'
 import { useNavigate } from 'react-router-dom'
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import {
@@ -211,7 +212,7 @@ const ElevateToAdminModal: React.FC<ElevateToAdminModalProps> = ({ isOpen, onClo
                   <p className="font-medium text-gray-900">{user.name || t('admin:users.labels.unknown', 'Unknown')}</p>
                   <p className="text-sm text-gray-500">{user.email || t('admin:users.labels.noEmail', 'No email')}</p>
                   <p className="text-xs text-gray-400 mt-1">
-                    {t('admin:users.elevateUser.currentRole', 'Current role:')} <span className="font-medium">{user.role}</span>
+                    {t('admin:users.elevateUser.currentRole', 'Current role:')} <span className="font-medium">{formatRole(user.role)}</span>
                   </p>
                 </div>
               </div>
@@ -333,13 +334,13 @@ const RoleSelect: React.FC<{ value: UserRole; onChange: (r: UserRole) => void; c
   t,
 }) => (
   <select className={STANDARD_INPUT_FIELD} value={value} onChange={(e) => onChange(e.target.value as UserRole)}>
-    {canInviteSuperAdmin && <option value={UserRole.SUPER_ADMIN}>{t('common:superadmin')}</option>}
-    <option value={UserRole.ADMIN}>{t('common:admin')}</option>
-    <option value={UserRole.FOUNDATION}>{t('common:foundation')}</option>
-    <option value={UserRole.PRODUCT_SUPPLIER}>{t('common:productsupplier')}</option>
-    <option value={UserRole.SERVICE_PROVIDER}>{t('common:serviceprovider')}</option>
-    <option value={UserRole.EDUCATOR}>{t('common:educator')}</option>
-    <option value={UserRole.PARENT}>{t('common:parent')}</option>
+    {canInviteSuperAdmin && <option value={UserRole.SUPER_ADMIN}>{formatRole(UserRole.SUPER_ADMIN)}</option>}
+    <option value={UserRole.ADMIN}>{formatRole(UserRole.ADMIN)}</option>
+    <option value={UserRole.FOUNDATION}>{formatRole(UserRole.FOUNDATION)}</option>
+    <option value={UserRole.PRODUCT_SUPPLIER}>{formatRole(UserRole.PRODUCT_SUPPLIER)}</option>
+    <option value={UserRole.SERVICE_PROVIDER}>{formatRole(UserRole.SERVICE_PROVIDER)}</option>
+    <option value={UserRole.EDUCATOR}>{formatRole(UserRole.EDUCATOR)}</option>
+    <option value={UserRole.PARENT}>{formatRole(UserRole.PARENT)}</option>
   </select>
 )
 
@@ -900,7 +901,7 @@ const PendingInvitationsSection: React.FC<PendingInvitationsSectionProps> = ({
                   <div className="flex items-center gap-3 ml-4 shrink-0">
                     {inv.role && (
                       <span className={`inline-flex px-2 py-0.5 text-xs font-semibold rounded-full ${roleColors[inv.role] ?? 'bg-gray-100 text-gray-800'}`}>
-                        {inv.role}
+                        {formatRole(inv.role)}
                       </span>
                     )}
                     <button
@@ -1667,13 +1668,13 @@ const Users: React.FC = () => {
               onChange={(e) => setSelectedRole(e.target.value)}
             >
               <option value="">{t('common:filters.roles.all')}</option>
-              <option value={UserRole.SUPER_ADMIN}>{t('common:superadmin')}</option>
-              <option value={UserRole.ADMIN}>{t('common:admin')}</option>
-              <option value={UserRole.FOUNDATION}>{t('common:foundation')}</option>
-              <option value={UserRole.PRODUCT_SUPPLIER}>{t('common:productsupplier')}</option>
-              <option value={UserRole.SERVICE_PROVIDER}>{t('common:serviceprovider')}</option>
-              <option value={UserRole.EDUCATOR}>{t('common:educator')}</option>
-              <option value={UserRole.PARENT}>{t('common:parent')}</option>
+              <option value={UserRole.SUPER_ADMIN}>{formatRole(UserRole.SUPER_ADMIN)}</option>
+              <option value={UserRole.ADMIN}>{formatRole(UserRole.ADMIN)}</option>
+              <option value={UserRole.FOUNDATION}>{formatRole(UserRole.FOUNDATION)}</option>
+              <option value={UserRole.PRODUCT_SUPPLIER}>{formatRole(UserRole.PRODUCT_SUPPLIER)}</option>
+              <option value={UserRole.SERVICE_PROVIDER}>{formatRole(UserRole.SERVICE_PROVIDER)}</option>
+              <option value={UserRole.EDUCATOR}>{formatRole(UserRole.EDUCATOR)}</option>
+              <option value={UserRole.PARENT}>{formatRole(UserRole.PARENT)}</option>
             </select>
           </div>
           <div className="sm:w-48">
@@ -1748,7 +1749,7 @@ const Users: React.FC = () => {
                   </td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${roleColors[user.role] || 'bg-gray-100 text-gray-800'}`}>
-                      {user.role}
+                      {formatRole(user.role)}
                     </span>
                   </td>
                   <td className="px-6 py-4 max-w-xs">

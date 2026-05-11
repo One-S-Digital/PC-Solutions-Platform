@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { formatRole } from '../utils/formatRole';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useApiClient, apiService } from '../services/api';
@@ -874,7 +875,7 @@ const AdminUserProfileEdit: React.FC = () => {
                 Edit User Profile
               </h1>
               <p className="mt-1 text-gray-600">
-                {fullName} • <span className="text-swiss-teal">{profile.role}</span>
+                {fullName} • <span className="text-swiss-teal">{formatRole(profile.role)}</span>
               </p>
             </div>
           </div>
