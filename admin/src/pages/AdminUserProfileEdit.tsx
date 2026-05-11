@@ -866,7 +866,7 @@ function SettingsTab({
       <Card className="p-6">
         <h3 className="mb-5 flex items-center text-base font-semibold text-gray-900">
           <UserCog className="mr-2 h-5 w-5 text-swiss-teal" />
-          Role & Permissions
+          Role &amp; Permissions
         </h3>
         <div className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50 px-4 py-3">
           <div>
@@ -949,6 +949,9 @@ const AdminUserProfileEdit: React.FC = () => {
   const [heatmapYear, setHeatmapYear] = useState(new Date().getUTCFullYear());
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deletePhrase, setDeletePhrase] = useState('');
+  const [showElevateModal, setShowElevateModal] = useState(false);
+  const [elevateRole, setElevateRole] = useState<'ADMIN' | 'SUPER_ADMIN'>('ADMIN');
+  const [elevateReason, setElevateReason] = useState('');
   const cvInputRef = useRef<HTMLInputElement>(null);
   const { uploadAsset, uploading: cvUploading } = useAssetUpload();
 
@@ -1015,6 +1018,28 @@ const AdminUserProfileEdit: React.FC = () => {
       toast.success(profile?.isActive ? 'User suspended' : 'User reactivated');
     },
     onError: () => toast.error('Failed to update user status'),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: () => apiService.deleteUserHard(apiClient, id!),
+    onSuccess: () => {
+      toast.success('User deleted');
+      navigate('/users');
+    },
+    onError: (err: any) => toast.error(err?.response?.data?.message || 'Failed to delete user'),
+  });
+
+  const elevateMutation = useMutation({
+    mutationFn: ({ targetRole, reason }: { targetRole: 'ADMIN' | 'SUPER_ADMIN'; reason: string }) =>
+      apiService.elevateUserToAdmin(apiClient, id!, targetRole, reason),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-user-profile', id] });
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+      setShowElevateModal(false);
+      setElevateReason('');
+      toast.success('Role updated successfully');
+    },
+    onError: (err: any) => toast.error(err?.response?.data?.message || 'Failed to update role'),
   });
 
   const impersonateMutation = useMutation({
@@ -1206,7 +1231,7 @@ const AdminUserProfileEdit: React.FC = () => {
               isSuperAdmin={isSuperAdmin}
               onSuspend={() => suspendMutation.mutate()}
               onDelete={() => setShowDeleteConfirm(true)}
-              onElevate={() => navigate(`/users?elevate=${id}`)}
+              onElevate={() => { setElevateRole('ADMIN'); setElevateReason(''); setShowElevateModal(true); }}
               suspendPending={suspendMutation.isPending}
             />
           )}
@@ -1249,15 +1274,76 @@ const AdminUserProfileEdit: React.FC = () => {
             <div className="flex justify-end gap-3">
               <Button variant="secondary" onClick={() => { setShowDeleteConfirm(false); setDeletePhrase(''); }}>Cancel</Button>
               <button
-                disabled={deletePhrase !== 'SUDO DELETE USER'}
-                onClick={() => {
-                  // navigate back and let parent handle the delete via the Users page flow
-                  setShowDeleteConfirm(false);
-                  navigate(`/users?deleteConfirmed=${id}`);
-                }}
+                disabled={deletePhrase !== 'SUDO DELETE USER' || deleteMutation.isPending}
+                onClick={() => deleteMutation.mutate()}
                 className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-40"
               >
-                Delete Permanently
+                {deleteMutation.isPending ? 'Deleting…' : 'Delete Permanently'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Elevate / change-role modal ─────────────────────────── */}
+      {showElevateModal && isSuperAdmin && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+            <h2 className="mb-1 text-lg font-bold text-gray-900">Change Admin Role</h2>
+            <p className="mb-5 text-sm text-gray-500">
+              Current role: <span className="font-medium text-gray-800">{profile?.role}</span>
+            </p>
+
+            <div className="mb-4 space-y-2">
+              {(['ADMIN', 'SUPER_ADMIN'] as const).map((r) => (
+                <label
+                  key={r}
+                  className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-colors ${
+                    elevateRole === r ? 'border-swiss-teal bg-swiss-teal/5' : 'border-gray-200 hover:bg-gray-50'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="elevateRole"
+                    value={r}
+                    checked={elevateRole === r}
+                    onChange={() => setElevateRole(r)}
+                    className="mt-0.5 accent-swiss-teal"
+                  />
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">{r === 'ADMIN' ? 'Admin' : 'Super Admin'}</p>
+                    <p className="text-xs text-gray-500">
+                      {r === 'ADMIN'
+                        ? 'Can manage users, content, and organizations'
+                        : 'Full system access including role management'}
+                    </p>
+                  </div>
+                </label>
+              ))}
+            </div>
+
+            <div className="mb-5">
+              <label className="mb-1 block text-sm font-medium text-gray-700">
+                Reason <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                rows={3}
+                value={elevateReason}
+                onChange={(e) => setElevateReason(e.target.value)}
+                placeholder="Explain why this role change is needed…"
+                className={STANDARD_INPUT_FIELD}
+              />
+              <p className="mt-1 text-xs text-gray-400">This reason will be recorded in the audit log.</p>
+            </div>
+
+            <div className="flex justify-end gap-3">
+              <Button variant="secondary" onClick={() => setShowElevateModal(false)}>Cancel</Button>
+              <button
+                disabled={!elevateReason.trim() || elevateMutation.isPending}
+                onClick={() => elevateMutation.mutate({ targetRole: elevateRole, reason: elevateReason.trim() })}
+                className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700 disabled:opacity-40"
+              >
+                {elevateMutation.isPending ? 'Saving…' : 'Confirm Role Change'}
               </button>
             </div>
           </div>
