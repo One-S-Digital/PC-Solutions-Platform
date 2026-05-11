@@ -169,7 +169,7 @@ export class SettingsController {
   async getFoundationSettings(@Request() req) {
     const { clerkUserId } = this.getContext(req);
 
-    const { user } = await this.principal.getOrBootstrapAccountAndProfile(clerkUserId, {
+    const { user, appUser } = await this.principal.getOrBootstrapAccountAndProfile(clerkUserId, {
       organizations: {
         include: {
           organization: {
@@ -200,7 +200,9 @@ export class SettingsController {
         companyName: organization.name,
         // Contact email is stored separately from authentication email.
         // For backward compatibility, fall back to the user's auth email if unset.
-        contactEmail: (organization as any).contactInfo?.contactEmail ?? user.email,
+        // Use appUser.email as the final fallback since User.email can be null for
+        // users created before the email-sync migration.
+        contactEmail: (organization as any).contactInfo?.contactEmail ?? user.email ?? appUser.email,
         phoneNumber: organization.phoneNumber ?? '',
         contactPerson: organization.contactPerson ?? '',
         address: organization.region ?? '',
@@ -650,7 +652,7 @@ export class SettingsController {
   @ApiResponse({ status: 200, description: 'Settings retrieved successfully' })
   async getSupplierSettings(@Request() req) {
     const { clerkUserId } = this.getContext(req);
-    const { user } = await this.principal.getOrBootstrapAccountAndProfile(clerkUserId, {
+    const { user, appUser } = await this.principal.getOrBootstrapAccountAndProfile(clerkUserId, {
       organizations: {
         include: {
           organization: {
@@ -681,7 +683,9 @@ export class SettingsController {
         companyName: organization.name,
         // Contact email is stored separately from authentication email.
         // For backward compatibility, fall back to the user's auth email if unset.
-        contactEmail: (organization as any).contactInfo?.contactEmail ?? user.email,
+        // Use appUser.email as the final fallback since User.email can be null for
+        // users created before the email-sync migration.
+        contactEmail: (organization as any).contactInfo?.contactEmail ?? user.email ?? appUser.email,
         phoneNumber: organization.phoneNumber ?? '',
         contactPerson: organization.contactPerson ?? '',
         address: organization.region ?? '',
@@ -872,7 +876,7 @@ export class SettingsController {
   @ApiResponse({ status: 200, description: 'Settings retrieved successfully' })
   async getServiceProviderSettings(@Request() req) {
     const { clerkUserId } = this.getContext(req);
-    const { user } = await this.principal.getOrBootstrapAccountAndProfile(clerkUserId, {
+    const { user, appUser } = await this.principal.getOrBootstrapAccountAndProfile(clerkUserId, {
       organizations: {
         include: {
           organization: {
@@ -903,7 +907,9 @@ export class SettingsController {
         companyName: organization.name,
         // Contact email is stored separately from authentication email.
         // For backward compatibility, fall back to the user's auth email if unset.
-        contactEmail: (organization as any).contactInfo?.contactEmail ?? user.email,
+        // Use appUser.email as the final fallback since User.email can be null for
+        // users created before the email-sync migration.
+        contactEmail: (organization as any).contactInfo?.contactEmail ?? user.email ?? appUser.email,
         phoneNumber: organization.phoneNumber ?? '',
         contactPerson: organization.contactPerson ?? '',
         address: organization.region ?? '',

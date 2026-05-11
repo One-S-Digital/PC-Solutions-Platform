@@ -668,12 +668,17 @@ export class ProfileController {
       throw new NotFoundException('Organization not found');
     }
 
-    const { contactInfo, ...orgRest } = organization as any;
+    const { contactInfo, members, ...orgRest } = organization as any;
+    // Fall back to the primary member's user email when no explicit contact email is set.
+    // This mirrors the behaviour of the owner's own settings view, which already falls back
+    // to the user's auth email so public and private views stay consistent.
+    const primaryMemberEmail: string | null = members?.[0]?.user?.email ?? null;
     return {
       success: true,
       data: {
         ...orgRest,
-        contactEmail: contactInfo?.contactEmail ?? null,
+        members,
+        contactEmail: contactInfo?.contactEmail ?? primaryMemberEmail,
       },
     };
   }
