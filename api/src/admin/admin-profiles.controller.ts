@@ -358,7 +358,6 @@ export class AdminProfilesController {
                 include: {
                   logoAsset: true,
                   coverAsset: true,
-                  contactInfo: true,
                 },
               },
             },
@@ -390,7 +389,6 @@ export class AdminProfilesController {
               include: {
                 logoAsset: true,
                 coverAsset: true,
-                contactInfo: true,
               },
             },
           },
