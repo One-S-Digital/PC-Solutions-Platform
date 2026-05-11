@@ -171,11 +171,12 @@ export class MessagingService {
         return Object.values(UserRole);
       
       case UserRole.EDUCATOR:
-        // Educator can message: EDUCATOR, ADMIN, PARENT
+        // Educator can message: EDUCATOR, ADMIN, PARENT, FOUNDATION
         return [
           UserRole.EDUCATOR,
           UserRole.ADMIN,
           UserRole.PARENT,
+          UserRole.FOUNDATION,
         ];
       
       case UserRole.PARENT:
@@ -187,12 +188,13 @@ export class MessagingService {
         ];
       
       case UserRole.FOUNDATION:
-        // Foundation can message: FOUNDATION, PRODUCT_SUPPLIER, SERVICE_PROVIDER, ADMIN
+        // Foundation can message: FOUNDATION, PRODUCT_SUPPLIER, SERVICE_PROVIDER, ADMIN, EDUCATOR
         return [
           UserRole.FOUNDATION,
           UserRole.PRODUCT_SUPPLIER,
           UserRole.SERVICE_PROVIDER,
           UserRole.ADMIN,
+          UserRole.EDUCATOR,
         ];
       
       case UserRole.PRODUCT_SUPPLIER:
