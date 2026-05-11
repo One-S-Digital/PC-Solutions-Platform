@@ -367,7 +367,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
             fetch(`${apiService.apiBaseUrl}${API_ENDPOINTS.users.lastActive}`, {
               method: 'PATCH',
               headers: { Authorization: `Bearer ${token}` },
-            });
+            }).catch(() => {});
           }
         } catch {
           // Non-critical — do not block the login flow
