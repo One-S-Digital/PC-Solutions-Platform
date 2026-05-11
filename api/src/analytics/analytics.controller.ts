@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { AnalyticsService } from './analytics.service';
 
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -71,7 +71,11 @@ export class AnalyticsController {
     @Param('userId') userId: string,
     @Query('year') year?: string,
   ) {
-    const targetYear = year ? parseInt(year, 10) : new Date().getUTCFullYear();
+    const currentYear = new Date().getUTCFullYear();
+    const targetYear = year ? parseInt(year, 10) : currentYear;
+    if (!Number.isInteger(targetYear) || targetYear < 2000 || targetYear > currentYear) {
+      throw new BadRequestException('year must be an integer between 2000 and the current year');
+    }
     const data = await this.analyticsService.getUserActivityHeatmap(userId, targetYear);
     return wrapResponse(data);
   }
