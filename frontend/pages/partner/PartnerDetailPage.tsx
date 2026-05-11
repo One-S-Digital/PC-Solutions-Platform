@@ -381,9 +381,17 @@ const PartnerDetailPage: React.FC = () => {
                   {`${partner.region || partner.canton}, Switzerland`}
                 </p>
               )}
+              {partner.contactEmail && (
+                <p className="flex items-center">
+                  <EnvelopeIcon className="w-5 h-5 mr-2 text-gray-400" />
+                  <a href={`mailto:${partner.contactEmail}`} className="hover:text-swiss-mint truncate">
+                    {partner.contactEmail}
+                  </a>
+                </p>
+              )}
               {partner.phoneNumber && (
                 <p className="flex items-center">
-                  <PhoneIcon className="w-5 h-5 mr-2 text-gray-400" /> 
+                  <PhoneIcon className="w-5 h-5 mr-2 text-gray-400" />
                   <a href={`tel:${partner.phoneNumber}`} className="hover:text-swiss-mint">
                     {partner.phoneNumber}
                   </a>
