@@ -1728,7 +1728,10 @@ const Users: React.FC = () => {
               ) : users.map((user) => (
                 <tr key={user.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
-                    <div className="flex items-center">
+                    <button
+                      onClick={() => navigate(`/users/${user.id}/profile`)}
+                      className="flex items-center text-left hover:opacity-80 transition-opacity"
+                    >
                       <div className="h-10 w-10 flex-shrink-0">
                         {user.avatarUrl ? (
                           <img className="h-10 w-10 rounded-full" src={user.avatarUrl} alt="" />
@@ -1741,10 +1744,10 @@ const Users: React.FC = () => {
                         )}
                       </div>
                       <div className="ml-4 min-w-0">
-                        <div className="text-sm font-medium text-gray-900 break-words">{user.name || t('admin:users.labels.unknown', 'Unknown')}</div>
+                        <div className="text-sm font-medium text-swiss-teal hover:underline break-words">{user.name || t('admin:users.labels.unknown', 'Unknown')}</div>
                         <div className="text-sm text-gray-500 break-all">{user.email || t('admin:users.labels.noEmail', 'No email')}</div>
                       </div>
-                    </div>
+                    </button>
                   </td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${roleColors[user.role] || 'bg-gray-100 text-gray-800'}`}>
