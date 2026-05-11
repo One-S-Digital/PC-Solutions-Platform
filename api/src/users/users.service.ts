@@ -1189,6 +1189,14 @@ export class UsersService {
     return { success: true, removed: result.count > 0 };
   }
 
+  async touchLastActive(clerkId: string): Promise<void> {
+    const now = new Date();
+    await this.prisma.user.updateMany({
+      where: { clerkId },
+      data: { lastActiveAt: now },
+    });
+  }
+
   async updateByClerkId(clerkId: string, updateUserDto: UpdateUserDto) {
     console.log('🔄 [BACKEND UPDATE] Starting updateByClerkId');
     console.log('📝 UpdateUserDto received:', updateUserDto);
