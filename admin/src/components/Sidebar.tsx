@@ -3,6 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom'
 import { Dialog, Transition } from '@headlessui/react'
 import {
   BarChart3,
+  TrendingUp,
   Users,
   Building2,
   Package,
@@ -65,6 +66,7 @@ type NavEntry = NavGroup | NavSingle
 // Strategy-locked order per STAFFING_REMODEL_PLAN.md §2
 const navStructure: NavEntry[] = [
   { type: 'single', key: 'dashboard',    href: '/dashboard',    icon: BarChart3 },
+  { type: 'single', key: 'analytics',   href: '/analytics',    icon: TrendingUp },
   { type: 'single', key: 'users',        href: '/users',        icon: Users },
   {
     type: 'group', key: 'recruitment', icon: Briefcase,
