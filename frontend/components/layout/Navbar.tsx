@@ -9,6 +9,7 @@ import OrderSummaryDrawer from '../cart/OrderSummaryDrawer';
 import HelpModal from '../help/HelpModal';
 import { UserRole, AppNotification } from '../../types';
 import { useNotifications } from '../../contexts/NotificationContext';
+import { useInAppNotifications } from '../../contexts/InAppNotificationContext';
 import LanguageSwitcher from '../../components/ui/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
 
@@ -22,6 +23,7 @@ const Navbar: React.FC<NavbarProps> = ({ onMobileMenuToggle }) => {
   const { getCartItemCount } = useCart();
   const { conversations, getUnreadCountForConversation } = useMessaging();
   const { notifications, removeNotification } = useNotifications();
+  const { unreadCount: inAppUnreadCount } = useInAppNotifications();
   
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -58,7 +60,7 @@ const Navbar: React.FC<NavbarProps> = ({ onMobileMenuToggle }) => {
     return conversations.reduce((acc, conv) => acc + getUnreadCountForConversation(conv.id), 0);
   }, [conversations, getUnreadCountForConversation, currentUser]);
 
-  const totalNotificationsCount = notifications.length + totalUnreadMessages;
+  const totalNotificationsCount = notifications.length + totalUnreadMessages + inAppUnreadCount;
 
   const handleLogout = async () => {
     try {
@@ -144,7 +146,9 @@ const Navbar: React.FC<NavbarProps> = ({ onMobileMenuToggle }) => {
               >
                 <BellIcon className="h-5 w-5 sm:h-6 sm:w-6" />
                 {totalNotificationsCount > 0 && (
-                    <span className="absolute -top-0.5 sm:-top-1 -right-1 sm:-right-1.5 block h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full bg-swiss-coral ring-2 ring-white"></span>
+                  <span className="absolute -top-0.5 sm:-top-1 -right-1 sm:-right-1.5 flex items-center justify-center min-w-[1.1rem] h-4 px-0.5 text-[10px] font-bold rounded-full bg-swiss-coral text-white ring-2 ring-white">
+                    {totalNotificationsCount > 99 ? '99+' : totalNotificationsCount}
+                  </span>
                 )}
               </button>
                {notificationsOpen && (

@@ -13,7 +13,7 @@ import { BriefcaseIcon, UserGroupIcon, MapPinIcon, CalendarDaysIcon, EyeIcon, Pe
 import { useAppContext } from '../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
 import JobPostModal from '../components/recruitment/JobPostModal';
-import ViewApplicantsModal from '../components/recruitment/ViewApplicantsModal';
+import ApplicationReviewModal from '../components/recruitment/ApplicationReviewModal';
 import { useRecruitmentApi, JobListingInput } from '../hooks/useRecruitmentApi';
 
 interface FoundationJobListingCardProps {
@@ -181,7 +181,13 @@ const CandidateCard: React.FC<CandidateCardProps> = ({ candidate, onViewProfile,
     <Card className="mb-4 flex flex-col" hoverEffect>
       <div className="p-5 flex-grow">
         <div className="flex items-center mb-3">
-          <img src={candidate.avatarUrl || 'https://picsum.photos/100/100'} alt={candidate.name} className="w-16 h-16 rounded-full mr-4" />
+          {candidate.avatarUrl ? (
+            <img src={candidate.avatarUrl} alt={candidate.name} className="w-16 h-16 rounded-full mr-4 object-cover" />
+          ) : (
+            <div className="w-16 h-16 rounded-full mr-4 bg-swiss-teal/10 flex items-center justify-center text-swiss-teal font-semibold text-xl shrink-0">
+              {(candidate.name ?? '?').charAt(0).toUpperCase()}
+            </div>
+          )}
           <div>
             <h3 className="text-xl font-semibold text-swiss-mint">{candidate.name}</h3>
             <p className="text-sm text-gray-500">{roleDisplay}</p>
@@ -905,7 +911,7 @@ const RecruitmentPage: React.FC = () => {
         existingJob={editingJob}
       />
       {selectedJobForApplicants && (
-        <ViewApplicantsModal
+        <ApplicationReviewModal
           isOpen={isApplicantsModalOpen}
           onClose={() => {
             setIsApplicantsModalOpen(false);
@@ -917,6 +923,7 @@ const RecruitmentPage: React.FC = () => {
           applications={selectedJobApplications}
           isLoading={applicationsLoading}
           error={applicationsError}
+          onApplicationsChange={setSelectedJobApplications}
         />
       )}
     </div>

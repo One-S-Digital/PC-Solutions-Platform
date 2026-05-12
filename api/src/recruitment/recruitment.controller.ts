@@ -119,6 +119,7 @@ export class RecruitmentController {
   }
 
   @Get('applications')
+  @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   findAllJobApplications(
     @Query('candidateId') candidateId?: string,
     @Query('jobListingId') jobListingId?: string,
@@ -159,6 +160,7 @@ export class RecruitmentController {
   }
 
   @Get('applications/:id')
+  @Roles(UserRole.FOUNDATION, UserRole.EDUCATOR, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   findJobApplicationById(@Param('id') id: string) {
     return this.recruitmentService.findJobApplicationById(id);
   }
@@ -223,6 +225,27 @@ export class RecruitmentController {
   @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   findMatchingCandidates(@Param('id') id: string) {
     return this.recruitmentService.findMatchingCandidates(id);
+  }
+
+  // Shortlist endpoints
+  @Get('shortlist')
+  @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  getSavedCandidates(@Request() req) {
+    return this.recruitmentService.getSavedCandidates(req.user.organizationId);
+  }
+
+  @Post('shortlist/:candidateId')
+  @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  async saveCandidate(@Param('candidateId') candidateId: string, @Request() req) {
+    const ids = await this.recruitmentService.saveCandidate(req.user.organizationId, candidateId);
+    return { savedCandidateIds: ids };
+  }
+
+  @Delete('shortlist/:candidateId')
+  @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  async unsaveCandidate(@Param('candidateId') candidateId: string, @Request() req) {
+    const ids = await this.recruitmentService.unsaveCandidate(req.user.organizationId, candidateId);
+    return { savedCandidateIds: ids };
   }
 
   // Analytics endpoints

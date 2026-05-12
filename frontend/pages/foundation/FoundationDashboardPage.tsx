@@ -2,23 +2,26 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
-import { 
-  UsersIcon, 
-  InboxArrowDownIcon, 
-  CalendarDaysIcon, 
-  UserPlusIcon, 
-  DocumentTextIcon, 
-  BanknotesIcon, 
-  BriefcaseIcon, 
-  ShoppingBagIcon, 
-  UserGroupIcon, 
-  PresentationChartLineIcon, 
+import {
+  UsersIcon,
+  InboxArrowDownIcon,
+  CalendarDaysIcon,
+  UserPlusIcon,
+  DocumentTextIcon,
+  BanknotesIcon,
+  BriefcaseIcon,
+  ShoppingBagIcon,
+  UserGroupIcon,
+  PresentationChartLineIcon,
   ChatBubbleLeftEllipsisIcon,
   SunIcon,
   CloudIcon,
   ExclamationCircleIcon,
-  ArrowPathIcon
+  ArrowPathIcon,
+  MagnifyingGlassIcon,
+  ClipboardDocumentCheckIcon,
 } from '@heroicons/react/24/outline';
+import { replacementsService, StaffingSignals } from '../../services/replacementsService';
 import { useAppContext } from '../../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
@@ -29,6 +32,28 @@ import {
   CalendarEvent, 
   WeatherData 
 } from '../../services/foundationDashboardService';
+
+// ── Staffing KPI Card ─────────────────────────────────────────────────────────
+interface StaffingKpiCardProps {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  value: number;
+  color: string;
+  onClick?: () => void;
+}
+
+const StaffingKpiCard: React.FC<StaffingKpiCardProps> = ({ icon: Icon, label, value, color, onClick }) => (
+  <button
+    onClick={onClick}
+    className="bg-white rounded-card shadow-minimal border border-gray-100 p-4 text-left w-full hover:shadow-interactive transition-shadow"
+  >
+    <div className={`w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center mb-2 ${color}`}>
+      <Icon className="w-5 h-5" />
+    </div>
+    <p className="text-2xl font-bold text-swiss-charcoal">{value}</p>
+    <p className="text-xs text-gray-500 mt-0.5">{label}</p>
+  </button>
+);
 
 // Activity type to icon mapping
 const ACTIVITY_ICONS: Record<string, React.ComponentType<any>> = {
@@ -61,6 +86,7 @@ const FoundationDashboardPage: React.FC = () => {
   const [activities, setActivities] = useState<FoundationActivity[]>([]);
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
   const [weather, setWeather] = useState<WeatherData | null>(null);
+  const [staffingSignals, setStaffingSignals] = useState<StaffingSignals | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [quickMessage, setQuickMessage] = useState('');
@@ -73,11 +99,12 @@ const FoundationDashboardPage: React.FC = () => {
     
     try {
       // Fetch all dashboard data in parallel
-      const [statsRes, activitiesRes, calendarRes, weatherRes] = await Promise.all([
+      const [statsRes, activitiesRes, calendarRes, weatherRes, signalsData] = await Promise.all([
         request<FoundationQuickStats>(foundationDashboardApi.getQuickStatsEndpoint()),
         request<FoundationActivity[]>(foundationDashboardApi.getActivitiesEndpoint(10)),
         request<CalendarEvent[]>(foundationDashboardApi.getCalendarEndpoint()),
         request<WeatherData>(foundationDashboardApi.getWeatherEndpoint()),
+        replacementsService.getStaffingSignals().catch(() => null),
       ]);
 
       if (statsRes.success && statsRes.data) {
@@ -91,6 +118,9 @@ const FoundationDashboardPage: React.FC = () => {
       }
       if (weatherRes.success && weatherRes.data) {
         setWeather(weatherRes.data);
+      }
+      if (signalsData) {
+        setStaffingSignals(signalsData);
       }
     } catch (err) {
       console.error('Error fetching dashboard data:', err);
@@ -142,7 +172,9 @@ const FoundationDashboardPage: React.FC = () => {
 
   // Quick actions (no change needed)
   const quickActions = [
-    { labelKey: 'foundationDashboard.quickActions.postJob', onClick: () => navigate('/recruitment'), icon: BriefcaseIcon },
+    { labelKey: 'foundationDashboard.quickActions.postJob', onClick: () => navigate('/recruitment/job-listings'), icon: BriefcaseIcon },
+    { labelKey: 'foundationDashboard.quickActions.findReplacement', onClick: () => navigate('/foundation/replacements'), icon: ArrowPathIcon },
+    { labelKey: 'foundationDashboard.quickActions.reviewApplicants', onClick: () => navigate('/recruitment/candidate-pool'), icon: ClipboardDocumentCheckIcon },
     { labelKey: 'foundationDashboard.quickActions.browseMarketplace', onClick: () => navigate('/marketplace'), icon: ShoppingBagIcon },
     { labelKey: 'foundationDashboard.quickActions.viewParentLeads', onClick: () => navigate('/foundation/leads'), icon: UserGroupIcon },
     { labelKey: 'foundationDashboard.quickActions.viewAnalytics', onClick: () => navigate('/foundation/analytics'), icon: PresentationChartLineIcon },
@@ -220,6 +252,54 @@ const FoundationDashboardPage: React.FC = () => {
           {t('foundationDashboard.title')}
         </h1>
         <p className="text-gray-500 mt-1">{t('foundationDashboard.welcomeMessage', { name: currentUser?.name?.split(' ')[0] })}</p>
+      </div>
+
+      {/* ── Staffing KPI Row ──────────────────────────────────────────── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <StaffingKpiCard
+          icon={BriefcaseIcon}
+          label={t('foundationDashboard.staffing.openPositions', 'Open Positions')}
+          value={quickStats?.activeJobListings ?? 0}
+          color="text-swiss-teal"
+          onClick={() => navigate('/recruitment/job-listings')}
+        />
+        <StaffingKpiCard
+          icon={InboxArrowDownIcon}
+          label={t('foundationDashboard.staffing.awaitingReview', 'Awaiting Review')}
+          value={quickStats?.pendingApplications ?? 0}
+          color="text-swiss-coral"
+          onClick={() => navigate('/recruitment/candidate-pool')}
+        />
+        <StaffingKpiCard
+          icon={ArrowPathIcon}
+          label={t('foundationDashboard.staffing.openReplacements', 'Open Replacements')}
+          value={staffingSignals?.openRequests ?? 0}
+          color="text-swiss-mint"
+          onClick={() => navigate('/foundation/replacements')}
+        />
+        <StaffingKpiCard
+          icon={UserGroupIcon}
+          label={t('foundationDashboard.staffing.replacementPool', 'Replacement Pool')}
+          value={staffingSignals?.replacementPoolSize ?? 0}
+          color="text-swiss-sand"
+          onClick={() => navigate('/foundation/replacements')}
+        />
+      </div>
+
+      {/* ── Action Row ────────────────────────────────────────────────── */}
+      <div className="flex flex-wrap gap-3">
+        <Button variant="primary" leftIcon={BriefcaseIcon} onClick={() => navigate('/recruitment/job-listings')}>
+          {t('foundationDashboard.staffing.postJob', 'Post a Job')}
+        </Button>
+        <Button variant="secondary" leftIcon={MagnifyingGlassIcon} onClick={() => navigate('/recruitment/candidate-pool')}>
+          {t('foundationDashboard.staffing.findStaff', 'Find Staff')}
+        </Button>
+        <Button variant="outline" leftIcon={ClipboardDocumentCheckIcon} onClick={() => navigate('/recruitment/candidate-pool')}>
+          {t('foundationDashboard.staffing.reviewApplicants', 'Review Applicants')}
+        </Button>
+        <Button variant="outline" leftIcon={ArrowPathIcon} onClick={() => navigate('/foundation/replacements')}>
+          {t('foundationDashboard.staffing.postReplacement', 'Post Replacement')}
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
