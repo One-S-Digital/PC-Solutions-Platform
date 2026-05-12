@@ -277,7 +277,7 @@ const SignupPage: React.FC = () => {
     { role: SignupRole.SUPPLIER, nameKey: 'role.supplier', icon: UserIcon },
     { role: SignupRole.SERVICE_PROVIDER, nameKey: 'role.serviceProvider', icon: CogIcon },
     { role: SignupRole.PARENT, nameKey: 'role.parent', icon: UsersIcon },
-    { role: SignupRole.EDUCATOR, nameKey: 'role.educator', icon: UsersIcon, subtitleKey: 'roleSubtitle.educator', tags: ['EDE', 'ASE', 'Auxiliaire', 'Intern'] },
+    { role: SignupRole.EDUCATOR, nameKey: 'role.educator', icon: UsersIcon, subtitleKey: 'roleSubtitle.educator', tags: ['roleTags.EDE', 'roleTags.ASE', 'roleTags.Auxiliaire', 'roleTags.Intern'] },
   ];
 
   const handleRoleSelect = (role: SignupRole) => {
@@ -939,9 +939,9 @@ const SignupPage: React.FC = () => {
                     {subtitleKey && <span className="block text-xs sm:text-sm text-gray-500 mt-1">{t(subtitleKey)}</span>}
                     {tags && tags.length > 0 && (
                       <div className="flex flex-wrap justify-center gap-1 mt-2">
-                        {tags.map((tag) => (
-                          <span key={tag} className="inline-block text-xs px-2 py-0.5 rounded-full bg-swiss-mint/10 text-swiss-teal font-medium">
-                            {tag}
+                        {tags.map((tagKey) => (
+                          <span key={tagKey} className="inline-block text-xs px-2 py-0.5 rounded-full bg-swiss-mint/10 text-swiss-teal font-medium">
+                            {t(tagKey, { defaultValue: tagKey.split('.').pop() })}
                           </span>
                         ))}
                       </div>

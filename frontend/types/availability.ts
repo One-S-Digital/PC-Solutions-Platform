@@ -76,8 +76,8 @@ export interface DateOverride {
 
 // Complete availability settings
 export interface EducatorAvailabilitySettings {
-  employmentType?: EmploymentType;   // Legacy single-value (kept for backward compat)
-  employmentTypes: EmploymentType[]; // Multi-select: educator can be open to multiple types
+  employmentType?: EmploymentType;    // Legacy single-value (kept for backward compat)
+  employmentTypes?: EmploymentType[]; // Multi-select; when both present, this takes precedence
   weeklySchedule: WeeklySchedule;
   dateOverrides: DateOverride[];
   timezone: string;           // e.g., "Europe/Zurich"

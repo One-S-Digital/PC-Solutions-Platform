@@ -325,12 +325,14 @@ const EducatorProfilePage: React.FC = () => {
   const handleDocumentUpload = async (asset: { url: string; id: string }, fileName: string) => {
     if (!profile) return;
     const existing = profile.documents || [];
-    if (existing.length >= MAX_DOCUMENTS) return;
+    // Count legacy cvUrl slot in the limit so the total never exceeds MAX_DOCUMENTS
+    const totalUsed = existing.length + (profile.cvUrl ? 1 : 0);
+    if (totalUsed >= MAX_DOCUMENTS) return;
     const newDoc: DocumentItem = {
       id: asset.id,
       name: fileName,
       url: asset.url,
-      type: existing.length === 0 ? 'CV' : 'Other',
+      type: totalUsed === 0 ? 'CV' : 'Other',
       uploadDate: new Date().toISOString(),
       size: 0,
     };
