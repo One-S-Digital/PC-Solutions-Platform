@@ -24,7 +24,7 @@ import {
   CreateInternPoolRequestData,
   CompensationType,
 } from '../../services/internPoolService';
-import { EDUCATOR_JOB_ROLES } from '../../constants';
+import { EDUCATOR_JOB_ROLES, STANDARD_INPUT_FIELD } from '../../constants';
 
 type FilterStatus = 'ALL' | 'OPEN' | 'REVIEWING' | 'FILLED' | 'CANCELLED';
 
@@ -303,15 +303,15 @@ export default function FoundationInternPoolPage() {
   const filters: FilterStatus[] = ['ALL', 'OPEN', 'REVIEWING', 'FILLED', 'CANCELLED'];
 
   return (
-    <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <AcademicCapIcon className="w-7 h-7 text-indigo-600" />
+          <h1 className="text-3xl font-bold text-swiss-charcoal flex items-center gap-3">
+            <AcademicCapIcon className="w-8 h-8 text-swiss-teal" />
             {t('internPoolPage.title', 'Intern Pool')}
           </h1>
-          <p className="text-gray-500 text-sm mt-1">{t('internPoolPage.subtitle', 'Post placements and review intern applications')}</p>
+          <p className="text-gray-500 mt-1 text-sm">{t('internPoolPage.subtitle', 'Post placements and review intern applications')}</p>
         </div>
         <Button variant="primary" leftIcon={PlusCircleIcon} onClick={() => setShowForm(true)}>
           {t('internPoolPage.postPlacement', 'Post Placement')}
@@ -324,31 +324,31 @@ export default function FoundationInternPoolPage() {
           <KpiPill label={t('internPoolPage.kpiOpen', 'Open')} value={signals.openRequests} icon={ChartBarIcon} color="bg-blue-50 text-blue-700" />
           <KpiPill label={t('internPoolPage.kpiReviewing', 'Reviewing')} value={signals.reviewingRequests} icon={EyeIcon} color="bg-yellow-50 text-yellow-700" />
           <KpiPill label={t('internPoolPage.kpiFilled', 'Filled')} value={signals.filledRequests} icon={UserPlusIcon} color="bg-green-50 text-green-700" />
-          <KpiPill label={t('internPoolPage.kpiPool', 'Available Interns')} value={signals.internPoolSize} icon={UserGroupIcon} color="bg-indigo-50 text-indigo-700" />
+          <KpiPill label={t('internPoolPage.kpiPool', 'Available Interns')} value={signals.internPoolSize} icon={UserGroupIcon} color="bg-swiss-mint/10 text-swiss-teal" />
         </div>
       )}
 
       {/* Create form */}
       {showForm && (
-        <Card className="border border-indigo-200 bg-indigo-50/30">
-          <h2 className="font-semibold text-gray-900 mb-4">{t('internPoolPage.newPlacement', 'New Intern Placement')}</h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <Card>
+          <h2 className="text-lg font-semibold text-swiss-charcoal mb-5">{t('internPoolPage.newPlacement', 'New Intern Placement')}</h2>
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">{t('internPoolPage.placementTitle', 'Placement Title')} *</label>
               <input
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className={STANDARD_INPUT_FIELD}
                 value={formData.title}
                 onChange={e => setFormData(f => ({ ...f, title: e.target.value }))}
                 placeholder="e.g. Childcare Intern – Summer 2026"
                 required
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('internPoolPage.startDate', 'Start Date')} *</label>
                 <input
                   type="date"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className={STANDARD_INPUT_FIELD}
                   value={formData.startDate}
                   onChange={e => setFormData(f => ({ ...f, startDate: e.target.value }))}
                   required
@@ -358,18 +358,18 @@ export default function FoundationInternPoolPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('internPoolPage.endDate', 'End Date')} *</label>
                 <input
                   type="date"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className={STANDARD_INPUT_FIELD}
                   value={formData.endDate}
                   onChange={e => setFormData(f => ({ ...f, endDate: e.target.value }))}
                   required
                 />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('internPoolPage.role', 'Role')} *</label>
                 <select
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className={STANDARD_INPUT_FIELD}
                   value={formData.role}
                   onChange={e => setFormData(f => ({ ...f, role: e.target.value }))}
                   required
@@ -381,18 +381,18 @@ export default function FoundationInternPoolPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('internPoolPage.location', 'Location')}</label>
                 <input
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className={STANDARD_INPUT_FIELD}
                   value={formData.location}
                   onChange={e => setFormData(f => ({ ...f, location: e.target.value }))}
                   placeholder="e.g. Geneva, on-site"
                 />
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('internPoolPage.compensation', 'Compensation')}</label>
                 <select
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className={STANDARD_INPUT_FIELD}
                   value={formData.compensationType}
                   onChange={e => setFormData(f => ({ ...f, compensationType: e.target.value as CompensationType }))}
                 >
@@ -407,7 +407,7 @@ export default function FoundationInternPoolPage() {
                   type="number"
                   min={1}
                   max={40}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className={STANDARD_INPUT_FIELD}
                   value={formData.weeklyHours}
                   onChange={e => setFormData(f => ({ ...f, weeklyHours: e.target.value }))}
                   placeholder="e.g. 20"
@@ -416,7 +416,7 @@ export default function FoundationInternPoolPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('internPoolPage.supervisor', 'Supervisor')}</label>
                 <input
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className={STANDARD_INPUT_FIELD}
                   value={formData.supervisorName}
                   onChange={e => setFormData(f => ({ ...f, supervisorName: e.target.value }))}
                   placeholder="Supervisor name"
@@ -426,14 +426,14 @@ export default function FoundationInternPoolPage() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">{t('internPoolPage.description', 'Description')}</label>
               <textarea
-                rows={3}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
+                rows={4}
+                className={`${STANDARD_INPUT_FIELD} resize-none`}
                 value={formData.description}
                 onChange={e => setFormData(f => ({ ...f, description: e.target.value }))}
                 placeholder="Describe the internship tasks and expectations…"
               />
             </div>
-            <div className="flex gap-3 justify-end">
+            <div className="flex gap-3 justify-end pt-1">
               <Button variant="outline" type="button" onClick={() => setShowForm(false)}>
                 {t('common:cancel', 'Cancel')}
               </Button>
@@ -451,10 +451,10 @@ export default function FoundationInternPoolPage() {
           <button
             key={f}
             onClick={() => setFilterStatus(f)}
-            className={`px-4 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+            className={`px-4 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
               filterStatus === f
-                ? 'border-indigo-600 text-indigo-600'
-                : 'border-transparent text-gray-500 hover:text-gray-800'
+                ? 'border-swiss-mint text-swiss-teal'
+                : 'border-transparent text-gray-500 hover:text-swiss-charcoal'
             }`}
           >
             {f === 'ALL' ? t('internPoolPage.filterAll', 'All') : f}
