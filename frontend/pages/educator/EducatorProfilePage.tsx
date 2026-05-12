@@ -15,7 +15,9 @@ import { useAppContext } from '../../contexts/AppContext';
 import { useNotifications } from '../../contexts/NotificationContext';
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
 import FileUploadZone from '../../components/ui/FileUploadZone';
-import { WorkExperienceItem, EducationItem, CertificationItem } from '../../types';
+import { WorkExperienceItem, EducationItem, CertificationItem, DocumentItem } from '../../types';
+
+const MAX_DOCUMENTS = 5;
 
 interface EducatorProfileData {
   firstName: string;
@@ -31,10 +33,12 @@ interface EducatorProfileData {
   skills: string[];
   availability: string;
   cvUrl: string;
+  documents: DocumentItem[];
   shortBio: string;
   avatarAssetId: string;
   avatarUrl?: string;
   candidatePoolVisible: boolean;
+  availableForReplacement: boolean;
   region: string;
   jobRole: string;
   cities: string[];
@@ -133,10 +137,12 @@ const EducatorProfilePage: React.FC = () => {
           skills: Array.isArray(data.skills) ? data.skills : [],
           availability: data.availability || '',
           cvUrl: data.cvUrl || '',
+          documents: Array.isArray(data.documents) ? data.documents : [],
           shortBio: data.shortBio || '',
           avatarAssetId: data.avatarAssetId || '',
           avatarUrl: data.avatarUrl || currentUser.avatarUrl, // Use backend avatarUrl, fallback to currentUser
           candidatePoolVisible: !!data.candidatePoolVisible,
+          availableForReplacement: !!data.availableForReplacement,
         });
       } else {
         // Initialize with defaults if no data
@@ -157,10 +163,12 @@ const EducatorProfilePage: React.FC = () => {
           skills: [],
           availability: '',
           cvUrl: '',
+          documents: [],
           shortBio: '',
           avatarAssetId: '',
           avatarUrl: currentUser.avatarUrl || '', // Fallback to currentUser
           candidatePoolVisible: false,
+          availableForReplacement: false,
         });
       }
     } catch (err) {
@@ -313,9 +321,35 @@ const EducatorProfilePage: React.FC = () => {
     }
   };
 
-  // CV upload handler
+  // Document management handlers
+  const handleDocumentUpload = async (asset: { url: string; id: string }, fileName: string) => {
+    if (!profile) return;
+    const existing = profile.documents || [];
+    if (existing.length >= MAX_DOCUMENTS) return;
+    const newDoc: DocumentItem = {
+      id: asset.id,
+      name: fileName,
+      url: asset.url,
+      type: existing.length === 0 ? 'CV' : 'Other',
+      uploadDate: new Date().toISOString(),
+      size: 0,
+    };
+    const updated = [...existing, newDoc];
+    await saveProfile({ documents: updated });
+  };
+
+  const handleRemoveDocument = async (docId: string) => {
+    if (!profile) return;
+    if (!window.confirm(t('educatorProfilePage.documents.confirmRemove', 'Are you sure you want to remove this document?'))) {
+      return;
+    }
+    const updated = (profile.documents || []).filter((d) => d.id !== docId);
+    await saveProfile({ documents: updated });
+  };
+
+  // Legacy CV upload handler (kept for backward compat — adds as first document)
   const handleCvUpload = async (asset: { url: string; id: string }) => {
-    await saveProfile({ cvUrl: asset.url });
+    await handleDocumentUpload(asset, asset.url.split('/').pop() || 'CV Document');
   };
 
   const handleRemoveCv = async () => {
@@ -565,53 +599,105 @@ const EducatorProfilePage: React.FC = () => {
 
           {/* Documents Section */}
           <SectionCard titleKey="educatorProfilePage.documents.title" icon={PaperClipIcon}>
-            <div className="space-y-4">
-              {profile.cvUrl ? (
-                <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
-                  <div className="flex items-center">
-                    <DocumentTextIcon className="w-6 h-6 text-green-600 mr-3" />
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">
-                        {profile.cvUrl.split('/').pop() || t('educatorProfilePage.documents.cvDocument', 'CV Document')}
-                      </p>
-                      <a 
-                        href={profile.cvUrl} 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        className="text-xs text-green-700 hover:underline"
+            <div className="space-y-3">
+              {/* Existing documents list */}
+              {(profile.documents && profile.documents.length > 0) || profile.cvUrl ? (
+                <div className="space-y-2">
+                  {/* Legacy cvUrl shown as first doc if documents array is empty */}
+                  {profile.cvUrl && (!profile.documents || profile.documents.length === 0) && (
+                    <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg gap-2">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <DocumentTextIcon className="w-5 h-5 text-green-600 flex-shrink-0" />
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-gray-900 truncate">
+                            {profile.cvUrl.split('/').pop() || t('educatorProfilePage.documents.cvDocument', 'CV Document')}
+                          </p>
+                          <a
+                            href={profile.cvUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-green-700 hover:underline"
+                          >
+                            {t('educatorProfilePage.documents.viewDocument', 'View Document')}
+                          </a>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleRemoveCv}
+                        disabled={saving}
+                        className="flex-shrink-0 text-gray-400 hover:text-red-500 transition-colors p-1 rounded"
+                        aria-label={t('common:buttons.remove', 'Remove')}
                       >
-                        {t('educatorProfilePage.documents.viewDocument', 'View Document')}
-                      </a>
+                        <TrashIcon className="w-4 h-4" />
+                      </button>
                     </div>
-                  </div>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleRemoveCv}
-                    leftIcon={TrashIcon}
-                    disabled={saving}
-                  >
-                    {t('common:buttons.remove', 'Remove')}
-                  </Button>
+                  )}
+
+                  {/* Multi-document list */}
+                  {(profile.documents || []).map((doc) => (
+                    <div key={doc.id} className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg gap-2">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <DocumentTextIcon className="w-5 h-5 text-green-600 flex-shrink-0" />
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-gray-900 truncate" title={doc.name}>
+                            {doc.name}
+                          </p>
+                          <a
+                            href={doc.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-green-700 hover:underline"
+                          >
+                            {t('educatorProfilePage.documents.viewDocument', 'View Document')}
+                          </a>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveDocument(doc.id)}
+                        disabled={saving}
+                        className="flex-shrink-0 text-gray-400 hover:text-red-500 transition-colors p-1 rounded"
+                        aria-label={t('common:buttons.remove', 'Remove')}
+                      >
+                        <TrashIcon className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
                 </div>
               ) : (
-                <div className="space-y-3">
-                  <p className="text-sm text-gray-500 text-center">
-                    {t('educatorProfilePage.documents.empty', 'No documents uploaded yet.')}
-                  </p>
+                <p className="text-sm text-gray-500 text-center">
+                  {t('educatorProfilePage.documents.empty', 'No documents uploaded yet.')}
+                </p>
+              )}
+
+              {/* Upload zone — shown while under limit */}
+              {((profile.documents?.length ?? 0) + (profile.cvUrl ? 1 : 0)) < MAX_DOCUMENTS && (
+                <div className="space-y-2">
                   <FileUploadZone
-                    label={t('educatorProfilePage.documents.uploadCv', 'Upload your CV/Resume')}
+                    label={t('educatorProfilePage.documents.uploadDocument', 'Upload a document (CV, diploma, certificate…)')}
                     acceptedMimeTypes=".pdf,.doc,.docx"
                     maxFileSizeMB={5}
                     assetKind="CV"
-                    onUploadSuccess={handleCvUpload}
+                    onUploadSuccess={(asset) =>
+                      handleDocumentUpload(asset, asset.url.split('/').pop() || 'Document')
+                    }
                     autoUpload={true}
                   />
                   <p className="text-xs text-gray-500 text-center">
-                    {t('educatorProfilePage.documents.hint', 'Accepted formats: PDF, DOC, DOCX (Max 5MB)')}
+                    {t(
+                      'educatorProfilePage.documents.hint',
+                      `PDF, DOC, DOCX · Max 5 MB · Up to ${MAX_DOCUMENTS} documents (${(profile.documents?.length ?? 0) + (profile.cvUrl ? 1 : 0)}/${MAX_DOCUMENTS} used)`,
+                      { max: MAX_DOCUMENTS, used: (profile.documents?.length ?? 0) + (profile.cvUrl ? 1 : 0) },
+                    )}
                   </p>
                 </div>
+              )}
+
+              {((profile.documents?.length ?? 0) + (profile.cvUrl ? 1 : 0)) >= MAX_DOCUMENTS && (
+                <p className="text-xs text-amber-600 text-center">
+                  {t('educatorProfilePage.documents.maxReached', `Maximum of ${MAX_DOCUMENTS} documents reached. Remove one to upload another.`)}
+                </p>
               )}
             </div>
           </SectionCard>

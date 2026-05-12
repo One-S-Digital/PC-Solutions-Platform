@@ -76,18 +76,30 @@ export interface DateOverride {
 
 // Complete availability settings
 export interface EducatorAvailabilitySettings {
-  employmentType: EmploymentType;
+  employmentType?: EmploymentType;   // Legacy single-value (kept for backward compat)
+  employmentTypes: EmploymentType[]; // Multi-select: educator can be open to multiple types
   weeklySchedule: WeeklySchedule;
   dateOverrides: DateOverride[];
   timezone: string;           // e.g., "Europe/Zurich"
   effectiveFrom?: string;     // When availability starts (ISO date)
   effectiveUntil?: string;    // When availability ends (ISO date)
   notes?: string;             // Additional notes for daycares
-  
+
   // Quick availability indicator (computed)
   isCurrentlyAvailable?: boolean;
   nextAvailableDate?: string;
 }
+
+// Resolve employmentTypes from settings, handling legacy single-value field
+export const getEmploymentTypes = (settings: EducatorAvailabilitySettings): EmploymentType[] => {
+  if (settings.employmentTypes && settings.employmentTypes.length > 0) {
+    return settings.employmentTypes;
+  }
+  if (settings.employmentType) {
+    return [settings.employmentType];
+  }
+  return ['FULL_TIME'];
+};
 
 // Helper functions
 export const createEmptyTimeSlot = (): TimeSlot => ({
@@ -112,7 +124,7 @@ export const createDefaultWeeklySchedule = (): WeeklySchedule => ({
 });
 
 export const createEmptyAvailabilitySettings = (): EducatorAvailabilitySettings => ({
-  employmentType: 'CUSTOM_SCHEDULE',
+  employmentTypes: ['CUSTOM_SCHEDULE'],
   weeklySchedule: createDefaultWeeklySchedule(),
   dateOverrides: [],
   timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/Zurich',
@@ -133,7 +145,7 @@ export const SCHEDULE_PRESETS: SchedulePreset[] = [
     name: 'Full-Time Standard',
     description: 'Monday to Friday, 8:00 AM - 5:00 PM',
     settings: {
-      employmentType: 'FULL_TIME',
+      employmentTypes: ['FULL_TIME'],
       weeklySchedule: {
         0: { enabled: false, slots: [] },
         1: { enabled: true, slots: [{ id: '1', start: '08:00', end: '17:00' }] },
@@ -150,7 +162,7 @@ export const SCHEDULE_PRESETS: SchedulePreset[] = [
     name: 'Part-Time Mornings',
     description: 'Monday to Friday, 8:00 AM - 12:00 PM',
     settings: {
-      employmentType: 'PART_TIME',
+      employmentTypes: ['PART_TIME'],
       weeklySchedule: {
         0: { enabled: false, slots: [] },
         1: { enabled: true, slots: [{ id: '1', start: '08:00', end: '12:00' }] },
@@ -167,7 +179,7 @@ export const SCHEDULE_PRESETS: SchedulePreset[] = [
     name: 'Part-Time Afternoons',
     description: 'Monday to Friday, 1:00 PM - 6:00 PM',
     settings: {
-      employmentType: 'PART_TIME',
+      employmentTypes: ['PART_TIME'],
       weeklySchedule: {
         0: { enabled: false, slots: [] },
         1: { enabled: true, slots: [{ id: '1', start: '13:00', end: '18:00' }] },
@@ -184,7 +196,7 @@ export const SCHEDULE_PRESETS: SchedulePreset[] = [
     name: 'Flexible Weekdays',
     description: 'Monday to Friday, flexible hours',
     settings: {
-      employmentType: 'CUSTOM_SCHEDULE',
+      employmentTypes: ['CUSTOM_SCHEDULE'],
       weeklySchedule: {
         0: { enabled: false, slots: [] },
         1: { enabled: true, slots: [{ id: '1', start: '07:00', end: '19:00' }] },

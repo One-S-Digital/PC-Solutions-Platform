@@ -272,12 +272,12 @@ const SignupPage: React.FC = () => {
     currentUser,
   ]);
 
-  const rolesConfig: { role: SignupRole; nameKey: string; icon: React.ElementType; subtitleKey?: string }[] = [
+  const rolesConfig: { role: SignupRole; nameKey: string; icon: React.ElementType; subtitleKey?: string; tags?: string[] }[] = [
     { role: SignupRole.FOUNDATION, nameKey: 'role.foundation', icon: BuildingOffice2Icon },
     { role: SignupRole.SUPPLIER, nameKey: 'role.supplier', icon: UserIcon },
     { role: SignupRole.SERVICE_PROVIDER, nameKey: 'role.serviceProvider', icon: CogIcon },
     { role: SignupRole.PARENT, nameKey: 'role.parent', icon: UsersIcon },
-    { role: SignupRole.EDUCATOR, nameKey: 'role.educator', icon: UsersIcon, subtitleKey: 'roleSubtitle.educator' },
+    { role: SignupRole.EDUCATOR, nameKey: 'role.educator', icon: UsersIcon, subtitleKey: 'roleSubtitle.educator', tags: ['EDE', 'ASE', 'Auxiliaire', 'Intern'] },
   ];
 
   const handleRoleSelect = (role: SignupRole) => {
@@ -951,16 +951,25 @@ const SignupPage: React.FC = () => {
 
             {currentStep === 1 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                {rolesConfig.map(({ role, nameKey, icon: Icon, subtitleKey }, index) => (
-                  <button 
-                    key={role} 
-                    onClick={() => handleRoleSelect(role)} 
+                {rolesConfig.map(({ role, nameKey, icon: Icon, subtitleKey, tags }, index) => (
+                  <button
+                    key={role}
+                    onClick={() => handleRoleSelect(role)}
                     aria-pressed={selectedRole === role}
                     className={`p-4 sm:p-5 md:p-6 border-2 rounded-lg text-center transition-all duration-200 ease-in-out hover:shadow-lg hover:border-swiss-mint hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-swiss-mint border-gray-300 bg-white ${index === rolesConfig.length - 1 ? 'sm:col-span-2' : ''}`}
                   >
                     <Icon className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 mx-auto mb-2 text-gray-400" />
                     <span className="block text-sm sm:text-base font-semibold text-swiss-charcoal">{t(nameKey)}</span>
                     {subtitleKey && <span className="block text-xs sm:text-sm text-gray-500 mt-1">{t(subtitleKey)}</span>}
+                    {tags && tags.length > 0 && (
+                      <div className="flex flex-wrap justify-center gap-1 mt-2">
+                        {tags.map((tag) => (
+                          <span key={tag} className="inline-block text-xs px-2 py-0.5 rounded-full bg-swiss-mint/10 text-swiss-teal font-medium">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </button>
                 ))}
               </div>

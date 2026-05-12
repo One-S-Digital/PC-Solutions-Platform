@@ -218,7 +218,8 @@ model User {
   skills               String[] // Array of skills
   availability         String? // Legacy: simple text availability information
   availabilitySettings Json?   // New: structured Calendly-style availability schedule
-  cvUrl                String? // URL to CV document
+  cvUrl                String? // URL to CV document (legacy single document)
+  documents            Json?   // Array of DocumentItem objects (up to 5 documents)
   shortBio             String? // Short bio/description for profile
   candidatePoolVisible        Boolean  @default(true) // Educator-controlled visibility in candidate pool
   availableForReplacement     Boolean  @default(false) // Educator opted in for short-notice replacement shifts

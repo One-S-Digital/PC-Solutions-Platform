@@ -13,7 +13,7 @@ import Button from '../components/ui/Button';
 import { ArrowLeftIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import Tabs from '../components/ui/Tabs';
 import { AvailabilityScheduler } from '../components/availability';
-import { EducatorAvailabilitySettings, createEmptyAvailabilitySettings } from '../types/availability';
+import { EducatorAvailabilitySettings, createEmptyAvailabilitySettings, getEmploymentTypes } from '../types/availability';
 import {
   certificationItemsFromNames,
   fallbackEducationFromText,
@@ -31,11 +31,15 @@ const parseAvailabilitySettings = (
   if (typeof value === 'string') {
     try {
       const parsed = JSON.parse(value);
-      if (parsed && typeof parsed === 'object' && 'employmentType' in parsed) {
-        return parsed as EducatorAvailabilitySettings;
+      if (parsed && typeof parsed === 'object') {
+        const defaults = createEmptyAvailabilitySettings();
+        // Migrate legacy single employmentType → employmentTypes array
+        if (!parsed.employmentTypes && parsed.employmentType) {
+          parsed.employmentTypes = [parsed.employmentType];
+        }
+        return { ...defaults, ...parsed } as EducatorAvailabilitySettings;
       }
     } catch {
-      // If string can't be parsed, return default with notes containing the old value
       return {
         ...createEmptyAvailabilitySettings(),
         notes: value,
@@ -43,8 +47,14 @@ const parseAvailabilitySettings = (
     }
   }
 
-  if (typeof value === 'object' && 'employmentType' in value) {
-    return value as EducatorAvailabilitySettings;
+  if (typeof value === 'object') {
+    const defaults = createEmptyAvailabilitySettings();
+    const obj = value as any;
+    // Migrate legacy single employmentType → employmentTypes array
+    if (!obj.employmentTypes && obj.employmentType) {
+      obj.employmentTypes = [obj.employmentType];
+    }
+    return { ...defaults, ...obj } as EducatorAvailabilitySettings;
   }
 
   return createEmptyAvailabilitySettings();
@@ -349,6 +359,10 @@ const ProfileEditPage: React.FC = () => {
 
         if (payload.availabilitySettings !== undefined) {
           educatorPayload.availabilitySettings = payload.availabilitySettings;
+          // Automatically link educator to replacement pool when they select Replacement/Substitute
+          const parsedSettings = parseAvailabilitySettings(payload.availabilitySettings);
+          const types = getEmploymentTypes(parsedSettings);
+          educatorPayload.availableForReplacement = types.includes('CUSTOM_SCHEDULE');
         }
         if (payload.coverAssetId !== undefined) {
           educatorPayload.coverAssetId = payload.coverAssetId || null;

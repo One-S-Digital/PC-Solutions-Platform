@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { 
+import {
   EducatorAvailabilitySettings,
   createEmptyAvailabilitySettings,
   SchedulePreset,
   calculateWeeklyHours,
+  getEmploymentTypes,
 } from '../../types/availability';
 import EmploymentTypeSelector from './EmploymentTypeSelector';
 import WeeklyScheduleEditor from './WeeklyScheduleEditor';
 import DateOverridesList from './DateOverridesList';
 import AvailabilityCalendarPreview from './AvailabilityCalendarPreview';
 import SchedulePresets from './SchedulePresets';
-import { 
-  CalendarDaysIcon, 
+import {
+  CalendarDaysIcon,
   InformationCircleIcon,
   ChevronDownIcon,
   ChevronUpIcon,
+  UserGroupIcon,
 } from '@heroicons/react/24/outline';
 
 interface AvailabilitySchedulerProps {
@@ -104,11 +106,25 @@ const AvailabilityScheduler: React.FC<AvailabilitySchedulerProps> = ({
       {/* Employment Type Selection */}
       <div className="bg-white rounded-lg border border-gray-200 p-4">
         <EmploymentTypeSelector
-          value={settings.employmentType}
-          onChange={(type) => handleChange({ ...settings, employmentType: type })}
+          value={getEmploymentTypes(settings)}
+          onChange={(types) => handleChange({ ...settings, employmentTypes: types })}
           disabled={disabled}
         />
       </div>
+
+      {/* Replacement Pool Notice */}
+      {getEmploymentTypes(settings).includes('CUSTOM_SCHEDULE') && (
+        <div className="flex items-start gap-2 p-3 bg-teal-50 rounded-lg border border-teal-200">
+          <UserGroupIcon className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
+          <div className="text-sm text-teal-700">
+            <p className="font-medium">Replacement Pool</p>
+            <p className="mt-0.5 text-teal-600">
+              By selecting Replacement/Substitute, your profile will be added to the replacement
+              staff pool so daycares can find you for short-notice shifts.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Quick Setup Presets */}
       <SchedulePresets
