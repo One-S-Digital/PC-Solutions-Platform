@@ -166,10 +166,10 @@ function RequestCard({ request, onSelect, onCancel }: RequestCardProps) {
   const appCount = request.applications?.length ?? 0;
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+    <Card className="p-4" hoverEffect>
       <div className="flex items-start justify-between gap-2 mb-2">
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-gray-900 truncate">{request.title}</h3>
+          <h3 className="font-semibold text-swiss-charcoal truncate">{request.title}</h3>
           <p className="text-sm text-gray-500">{request.role}</p>
         </div>
         <span className={`text-xs px-2 py-0.5 rounded-full font-semibold whitespace-nowrap ${STATUS_COLORS[request.status] ?? 'bg-gray-100 text-gray-600'}`}>
@@ -214,7 +214,7 @@ function RequestCard({ request, onSelect, onCancel }: RequestCardProps) {
           )}
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -330,7 +330,7 @@ export default function FoundationInternPoolPage() {
 
       {/* Create form */}
       {showForm && (
-        <Card>
+        <Card className="p-6">
           <h2 className="text-lg font-semibold text-swiss-charcoal mb-5">{t('internPoolPage.newPlacement', 'New Intern Placement')}</h2>
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
@@ -498,7 +498,7 @@ export default function FoundationInternPoolPage() {
 
         {/* Detail panel */}
         {selectedRequest && (
-          <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-4 self-start sticky top-20">
+          <Card className="p-5 space-y-4 self-start sticky top-20">
             <div className="flex items-start justify-between gap-2">
               <div>
                 <h3 className="font-semibold text-gray-900">{selectedRequest.title}</h3>
@@ -535,7 +535,7 @@ export default function FoundationInternPoolPage() {
                 </div>
               )}
             </div>
-          </div>
+          </Card>
         )}
       </div>
     </div>
