@@ -2432,5 +2432,11 @@
     "blockedips": "Blockierte IPs",
     "apihealth": "API-Status",
     "lastscan": "Letzter Scan"
+  },
+  "maintenancePage": {
+    "title": "Seite in Wartung",
+    "subtitle": "Wir sind bald wieder online. Vielen Dank für Ihre Geduld.",
+    "adminLogin": "Administrator-Anmeldung",
+    "status": "Planmäßige Wartung läuft"
   }
 }
