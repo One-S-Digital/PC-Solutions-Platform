@@ -1,11 +1,12 @@
 import React from 'react';
+import maintenanceGif from '../assets/maintenance.gif';
 
 const MaintenancePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center px-4">
       <div className="max-w-lg w-full text-center">
         <img
-          src="/maintenance.gif"
+          src={maintenanceGif}
           alt="Site under maintenance"
           className="w-80 h-auto mx-auto mb-8"
         />
