@@ -8,6 +8,7 @@ import {
   IsString,
   IsUrl,
   IsNumber,
+  Min,
   ArrayMaxSize,
   ValidateIf,
   ValidateNested,
@@ -38,6 +39,7 @@ export class EducatorDocumentItemDto {
 
   @IsOptional()
   @IsNumber()
+  @Min(0)
   size?: number;
 }
 import { EducatorAvailabilitySettingsDto } from './educator-availability.dto';

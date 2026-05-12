@@ -98,16 +98,26 @@ export class WeeklyScheduleDto {
 // Employment type enum
 export type EmploymentType = 'FULL_TIME' | 'PART_TIME' | 'CUSTOM_SCHEDULE';
 
-// Main educator availability settings DTO
+/**
+ * Educator availability settings.
+ *
+ * Employment type precedence (highest → lowest):
+ *   1. employmentTypes[] — new multi-select field; used when present and non-empty
+ *   2. employmentType    — legacy single-value field; only consulted as a fallback
+ *
+ * Clients SHOULD send employmentTypes[]. When both are present they MUST be
+ * consistent; employmentTypes[] always wins on the read path.
+ */
 export class EducatorAvailabilitySettingsDto {
+  /** @deprecated Use employmentTypes[] instead. Kept for backward compat. */
   @IsOptional()
   @IsEnum(['FULL_TIME', 'PART_TIME', 'CUSTOM_SCHEDULE'])
-  employmentType?: EmploymentType; // Legacy single-value (kept for backward compat)
+  employmentType?: EmploymentType;
 
   @IsOptional()
   @IsArray()
   @IsEnum(['FULL_TIME', 'PART_TIME', 'CUSTOM_SCHEDULE'], { each: true })
-  employmentTypes?: EmploymentType[]; // Multi-select: educator can select multiple types
+  employmentTypes?: EmploymentType[];
 
   @IsObject()
   @ValidateNested()
