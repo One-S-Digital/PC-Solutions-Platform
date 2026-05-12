@@ -98,7 +98,7 @@ export const getEmploymentTypes = (settings: EducatorAvailabilitySettings): Empl
   if (settings.employmentType) {
     return [settings.employmentType];
   }
-  return ['FULL_TIME'];
+  return [];
 };
 
 // Helper functions

@@ -12,7 +12,7 @@ const AnalyticsPage: React.FC = () => {
     enabled: !!apiClient,
     staleTime: 5 * 60 * 1000,
     retry: 1,
-    select: (res: any) => res?.data?.data ?? null,
+    select: (res) => res?.data?.data ?? null,
   })
 
   return (

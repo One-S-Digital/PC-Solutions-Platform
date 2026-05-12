@@ -60,6 +60,10 @@ const EducatorApplicationsPage: React.FC = () => {
     switch (status) {
       case ApplicationStatus.PENDING: return { className: 'bg-swiss-sand/30 text-amber-800', label: t('educatorApplicationsPage.status.pending') };
       case ApplicationStatus.REVIEWED: return { className: 'bg-blue-100 text-blue-800', label: t('educatorApplicationsPage.status.reviewed') };
+      case ApplicationStatus.SHORTLISTED: return { className: 'bg-yellow-100 text-yellow-800', label: t('educatorApplicationsPage.status.shortlisted', 'Shortlisted') };
+      case ApplicationStatus.INTERVIEW: return { className: 'bg-purple-100 text-purple-800', label: t('educatorApplicationsPage.status.interview', 'Interview') };
+      case ApplicationStatus.OFFER: return { className: 'bg-orange-100 text-orange-800', label: t('educatorApplicationsPage.status.offer', 'Offer') };
+      case ApplicationStatus.HIRED: return { className: 'bg-green-100 text-green-800', label: t('educatorApplicationsPage.status.hired', 'Hired') };
       case ApplicationStatus.ACCEPTED: return { className: 'bg-swiss-mint text-white', label: t('educatorApplicationsPage.status.accepted') };
       case ApplicationStatus.REJECTED: return { className: 'bg-swiss-coral/20 text-swiss-coral', label: t('educatorApplicationsPage.status.rejected') };
       default: return { className: 'bg-gray-100 text-gray-700', label: status };

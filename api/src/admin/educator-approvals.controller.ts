@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Param, Body, Query, ParseUUIDPipe, UseGuards, BadRequestException } from '@nestjs/common';
+import { IsNotEmpty, IsString, MinLength } from 'class-validator';
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -6,6 +7,9 @@ import { UserRole, EducatorApprovalStatus } from '@prisma/client';
 import { EducatorApprovalsService } from './educator-approvals.service';
 
 class RejectEducatorDto {
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(1)
   notes: string;
 }
 

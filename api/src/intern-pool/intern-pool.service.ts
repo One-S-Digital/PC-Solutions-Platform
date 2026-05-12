@@ -318,7 +318,7 @@ export class InternPoolService {
       this.prisma.internPoolRequest.count({ where: { ...where, status: InternPoolRequestStatus.OPEN } }),
       this.prisma.internPoolRequest.count({ where: { ...where, status: InternPoolRequestStatus.REVIEWING } }),
       this.prisma.internPoolRequest.count({ where: { ...where, status: InternPoolRequestStatus.FILLED } }),
-      this.prisma.user.count({ where: { availableForInternship: true, isActive: true } }),
+      this.prisma.user.count({ where: { availableForInternship: true, candidatePoolVisible: true, isActive: true } }),
     ]);
     return { openRequests: open, reviewingRequests: reviewing, filledRequests: filled, internPoolSize: poolSize };
   }

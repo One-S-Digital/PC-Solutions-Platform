@@ -42,7 +42,7 @@ const EducatorRejectedPage: React.FC = () => {
             Contact Support
           </a>
           <button
-            onClick={() => signOut()}
+            onClick={() => signOut().catch((err) => console.error('Sign out failed:', err))}
             className="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors"
           >
             Sign Out

@@ -138,6 +138,7 @@ function FormField({ label, children }: { label: string; children: React.ReactNo
 function formatRelativeTime(dateStr: string | null | undefined): string {
   if (!dateStr) return 'Never';
   const date = new Date(dateStr);
+  if (Number.isNaN(date.getTime())) return 'Unknown';
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));

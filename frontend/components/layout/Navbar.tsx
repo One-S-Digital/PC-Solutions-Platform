@@ -177,11 +177,11 @@ const Navbar: React.FC<NavbarProps> = ({ onMobileMenuToggle }) => {
                             <p className="text-xs text-gray-500">{t('navbar.unreadMessages', { count: totalUnreadMessages })}</p>
                         </Link>
                       )}
-                      {notifications.length === 0 && totalUnreadMessages === 0 && (
+                      {notifications.length === 0 && totalUnreadMessages === 0 && inAppUnreadCount === 0 && (
                          <p className="px-4 py-3 text-sm text-gray-500 text-center">{t('navbar.noNewNotifications')}</p>
                       )}
                   </div>
-                   {(notifications.length > 0 || totalUnreadMessages > 0) &&
+                   {(notifications.length > 0 || totalUnreadMessages > 0 || inAppUnreadCount > 0) &&
                         <Link to="/notifications" className="block px-4 py-2 text-center text-sm font-medium text-swiss-mint hover:underline" onClick={() => setNotificationsOpen(false)}>
                           {t('navbar.viewAll')}
                         </Link>

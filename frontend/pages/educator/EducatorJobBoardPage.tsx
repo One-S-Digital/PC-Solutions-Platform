@@ -218,6 +218,12 @@ const EducatorJobBoardPage: React.FC = () => {
                         return t('recruitment:contractTypes.partTime', 'Part-time');
                       case 'FULL_TIME':
                         return t('recruitment:contractTypes.fullTime', 'Full-time');
+                      case 'REPLACEMENT':
+                        return t('recruitment:contractTypes.replacement', 'Replacement');
+                      case 'TEMPORARY':
+                        return t('recruitment:contractTypes.temporary', 'Temporary');
+                      case 'FREELANCE':
+                        return t('recruitment:contractTypes.freelance', 'Freelance');
                       default:
                         return t('common:labels.allContractTypes');
                     }
