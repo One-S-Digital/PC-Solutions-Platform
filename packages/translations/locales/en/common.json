@@ -2430,5 +2430,11 @@
     "blockedips": "Blocked IPs",
     "apihealth": "API Health",
     "lastscan": "Last Scan"
+  },
+  "maintenancePage": {
+    "title": "Site Under Maintenance",
+    "subtitle": "We'll be back online shortly. Thank you for your patience.",
+    "adminLogin": "Administrator login",
+    "status": "Currently undergoing scheduled maintenance"
   }
 }

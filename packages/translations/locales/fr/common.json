@@ -2430,5 +2430,11 @@
     "blockedips": "IPs bloquées",
     "apihealth": "Santé API",
     "lastscan": "Dernier scan"
+  },
+  "maintenancePage": {
+    "title": "Site en maintenance",
+    "subtitle": "Nous serons bientôt de retour. Merci pour votre patience.",
+    "adminLogin": "Connexion administrateur",
+    "status": "Maintenance planifiée en cours"
   }
 }
