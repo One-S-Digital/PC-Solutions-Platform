@@ -295,6 +295,13 @@
   "roleSubtitle": {
     "educator": "Trouver un emploi"
   },
+  "roleTags": {
+    "EDE": "EDE",
+    "ASE": "ASE",
+    "Auxiliaire": "Auxiliaire",
+    "Intern": "Stagiaire",
+    "Cleaning_Staff": "Personnel d'entretien"
+  },
   "role": {
     "productSupplier": "Fournisseur de produits",
     "serviceProvider": "Prestataire de services",
