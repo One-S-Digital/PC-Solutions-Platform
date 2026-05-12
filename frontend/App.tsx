@@ -1,7 +1,7 @@
 
 
 import React from 'react';
-import { Routes, Route, Navigate, useLocation, useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, useNavigate, Link } from 'react-router-dom';
 import { useAuth, useUser, useClerk, AuthenticateWithRedirectCallback } from '@clerk/clerk-react';
 import MainLayout from './components/layout/MainLayout';
 import DashboardPage from './pages/DashboardPage'; // This will be the Foundation default dashboard
@@ -104,15 +104,6 @@ import PricingPage from './pages/PricingPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import MaintenancePage from './pages/MaintenancePage';
 
-
-const LoginRouteGuard: React.FC<{ isMaintenanceMode: boolean }> = ({ isMaintenanceMode }) => {
-  const [searchParams] = useSearchParams();
-  const adminBypass = searchParams.get('admin') === '1';
-  if (isMaintenanceMode && !adminBypass) {
-    return <Navigate to="/maintenance" replace />;
-  }
-  return <LoginPage />;
-};
 
 const ProtectedRoute: React.FC<{ children: React.ReactElement; roles: UserRole[] }> = ({ children, roles }): React.ReactElement | null => {
   const { currentUser } = useAppContext();
@@ -697,7 +688,7 @@ const App: React.FC = () => {
             <SubscriptionProvider>
               <Routes>
                 <Route path="/maintenance" element={<MaintenancePage />} />
-                <Route path="/login" element={<LoginRouteGuard isMaintenanceMode={isMaintenanceMode} />} />
+                <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={isMaintenanceMode ? <Navigate to="/maintenance" replace /> : <SignupPage />} />
                 <Route path="/pricing" element={<PricingPage />} />
                 <Route path="/partners" element={<PublicPartnersPage />} />
