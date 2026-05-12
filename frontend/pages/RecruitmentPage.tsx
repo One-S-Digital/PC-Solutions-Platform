@@ -6,7 +6,6 @@ import { JobListing, CandidateProfile, UserRole, JobStatus, JobContractType, Job
 import { STANDARD_INPUT_FIELD, ICON_INPUT_FIELD, EDUCATOR_JOB_ROLES } from '../constants';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
-import Tabs from '../components/ui/Tabs';
 import Pagination from '../components/ui/Pagination';
 import { isDateTimeAvailable } from '../types/availability';
 import { BriefcaseIcon, UserGroupIcon, MapPinIcon, CalendarDaysIcon, EyeIcon, PencilIcon, TrashIcon, PlusCircleIcon, MagnifyingGlassIcon, FunnelIcon, StarIcon, LockClosedIcon, LockOpenIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
@@ -233,7 +232,6 @@ const RecruitmentPage: React.FC = () => {
     listApplicationsForJob,
   } = useRecruitmentApi();
 
-  const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [searchTermJobs, setSearchTermJobs] = useState('');
   const [searchTermCandidates, setSearchTermCandidates] = useState('');
   const [showFilters, setShowFilters] = useState(false);
@@ -326,30 +324,12 @@ const RecruitmentPage: React.FC = () => {
   }, [listCandidates, canViewCandidatePool, t]);
 
   useEffect(() => {
-    const path = location.pathname;
-    if (path.includes('/candidate-pool')) {
-      setActiveTabIndex(1);
-    } else {
-      setActiveTabIndex(0);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
     fetchJobs();
   }, [fetchJobs]);
 
   useEffect(() => {
     fetchCandidates();
   }, [fetchCandidates]);
-
-  const handleTabChange = (index: number) => {
-    setActiveTabIndex(index);
-    if (index === 0) {
-      navigate('/recruitment/job-listings');
-    } else if (index === 1) {
-      navigate('/recruitment/candidate-pool');
-    }
-  };
 
   const filteredJobs = useMemo(
     () =>
@@ -889,10 +869,7 @@ const RecruitmentPage: React.FC = () => {
     </div>
   );
 
-  const tabsConfig = [
-    { label: t('recruitment:tabs.jobOffers'), icon: BriefcaseIcon, content: JobOffersTab },
-    { label: t('recruitment:tabs.candidatePool'), icon: UserGroupIcon, content: CandidateAvailabilityTab },
-  ];
+  const isCandidatePoolRoute = location.pathname.includes('/candidate-pool') || location.pathname.includes('/candidates');
 
   return (
     <div className="space-y-6">
@@ -900,7 +877,7 @@ const RecruitmentPage: React.FC = () => {
         <h1 className="text-3xl font-bold text-swiss-charcoal">{t('dashboard:recruitmentPage.title')}</h1>
         <p className="text-gray-500 mt-1">{t('dashboard:recruitmentPage.subtitle')}</p>
       </div>
-      <Tabs tabs={tabsConfig} variant="pills" activeTab={activeTabIndex} onTabChange={handleTabChange} />
+      {isCandidatePoolRoute ? CandidateAvailabilityTab : JobOffersTab}
       <JobPostModal
         isOpen={isJobModalOpen}
         onClose={() => {

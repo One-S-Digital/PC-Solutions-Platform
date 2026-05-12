@@ -83,7 +83,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
       path: '/recruitment', nameKey: 'sidebar.recruitment', icon: BriefcaseIcon, roles: [UserRole.FOUNDATION],
       subItems: [
         { path: '/staffing/jobs',            nameKey: 'sidebar.postJob',            icon: ListBulletIcon,            roles: [UserRole.FOUNDATION] },
-        { path: '/staffing/candidates',      nameKey: 'sidebar.findCandidates',     icon: UserGroupIcon,             roles: [UserRole.FOUNDATION] },
+        { path: '/recruitment/candidate-pool', nameKey: 'sidebar.findCandidates',     icon: UserGroupIcon,             roles: [UserRole.FOUNDATION] },
         { path: '/staffing/applications',    nameKey: 'sidebar.reviewApplications', icon: ClipboardDocumentListIcon, roles: [UserRole.FOUNDATION] },
         { path: '/foundation/replacements',  nameKey: 'sidebar.replacements',       icon: ArrowPathIcon,             roles: [UserRole.FOUNDATION] },
         { path: '/foundation/intern-pool',   nameKey: 'sidebar.internPool',         icon: AcademicCapIcon,           roles: [UserRole.FOUNDATION] },
@@ -115,7 +115,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
       path: '/recruitment', nameKey: 'sidebar.recruitment', icon: BriefcaseIcon, roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN],
       subItems: [
         { path: '/staffing/jobs',           nameKey: 'sidebar.postJob',            icon: ListBulletIcon,            roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
-        { path: '/staffing/candidates',     nameKey: 'sidebar.findCandidates',     icon: UserGroupIcon,             roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+        { path: '/recruitment/candidate-pool', nameKey: 'sidebar.findCandidates',     icon: UserGroupIcon,             roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
         { path: '/staffing/applications',   nameKey: 'sidebar.reviewApplications', icon: ClipboardDocumentListIcon, roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
         { path: '/foundation/replacements', nameKey: 'sidebar.replacements',       icon: ArrowPathIcon,             roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
         { path: '/foundation/intern-pool',  nameKey: 'sidebar.internPool',         icon: AcademicCapIcon,           roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
