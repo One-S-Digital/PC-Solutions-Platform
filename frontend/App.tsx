@@ -102,6 +102,7 @@ import LoginPageE2E from './pages/LoginPageE2E';
 import SignupPageE2E from './pages/SignupPageE2E';
 import PricingPage from './pages/PricingPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import MaintenancePage from './pages/MaintenancePage';
 
 
 const ProtectedRoute: React.FC<{ children: React.ReactElement; roles: UserRole[] }> = ({ children, roles }): React.ReactElement | null => {
@@ -292,6 +293,13 @@ const ProtectedLayout: React.FC = () => {
         </div>
       </div>
     );
+  }
+
+  const isMaintenanceMode = import.meta.env.VITE_MAINTENANCE_MODE === 'true';
+  const isAdmin = currentUser.role === UserRole.ADMIN || currentUser.role === UserRole.SUPER_ADMIN;
+
+  if (isMaintenanceMode && !isAdmin) {
+    return <MaintenancePage />;
   }
 
   return (
