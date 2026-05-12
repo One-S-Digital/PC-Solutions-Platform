@@ -277,7 +277,7 @@ const SignupPage: React.FC = () => {
     { role: SignupRole.SUPPLIER, nameKey: 'role.supplier', icon: UserIcon },
     { role: SignupRole.SERVICE_PROVIDER, nameKey: 'role.serviceProvider', icon: CogIcon },
     { role: SignupRole.PARENT, nameKey: 'role.parent', icon: UsersIcon },
-    { role: SignupRole.EDUCATOR, nameKey: 'role.educator', icon: UsersIcon, subtitleKey: 'roleSubtitle.educator', tags: ['roleTags.EDE', 'roleTags.ASE', 'roleTags.Auxiliaire', 'roleTags.Intern'] },
+    { role: SignupRole.EDUCATOR, nameKey: 'role.educator', icon: UsersIcon, subtitleKey: 'roleSubtitle.educator', tags: ['roleTags.EDE', 'roleTags.ASE', 'roleTags.Auxiliaire', 'roleTags.Intern', 'roleTags.Cleaning_Staff'] },
   ];
 
   const handleRoleSelect = (role: SignupRole) => {
@@ -965,7 +965,7 @@ const SignupPage: React.FC = () => {
                       <div className="flex flex-wrap justify-center gap-1 mt-2">
                         {tags.map((tagKey) => (
                           <span key={tagKey} className="inline-block text-xs px-2 py-0.5 rounded-full bg-swiss-mint/10 text-swiss-teal font-medium">
-                            {t(tagKey, { defaultValue: tagKey.split('.').pop() })}
+                            {t(tagKey, { defaultValue: tagKey.split('.').pop()?.replace(/_/g, ' ') })}
                           </span>
                         ))}
                       </div>
