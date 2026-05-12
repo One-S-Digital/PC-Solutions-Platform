@@ -100,8 +100,14 @@ export type EmploymentType = 'FULL_TIME' | 'PART_TIME' | 'CUSTOM_SCHEDULE';
 
 // Main educator availability settings DTO
 export class EducatorAvailabilitySettingsDto {
+  @IsOptional()
   @IsEnum(['FULL_TIME', 'PART_TIME', 'CUSTOM_SCHEDULE'])
-  employmentType: EmploymentType;
+  employmentType?: EmploymentType; // Legacy single-value (kept for backward compat)
+
+  @IsOptional()
+  @IsArray()
+  @IsEnum(['FULL_TIME', 'PART_TIME', 'CUSTOM_SCHEDULE'], { each: true })
+  employmentTypes?: EmploymentType[]; // Multi-select: educator can select multiple types
 
   @IsObject()
   @ValidateNested()
