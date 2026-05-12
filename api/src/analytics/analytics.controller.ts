@@ -72,7 +72,7 @@ export class AnalyticsController {
     @Query('year') year?: string,
   ) {
     const currentYear = new Date().getUTCFullYear();
-    if (year && !/^\d+$/.test(year)) {
+    if (year !== undefined && !/^\d+$/.test(year)) {
       throw new BadRequestException('year must be an integer between 2000 and the current year');
     }
     const targetYear = year ? parseInt(year, 10) : currentYear;

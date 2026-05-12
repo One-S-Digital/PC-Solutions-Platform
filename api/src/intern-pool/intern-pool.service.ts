@@ -7,6 +7,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import {
   CompensationType,
+  EducatorApprovalStatus,
   InternPoolApplicationStatus,
   InternPoolRequestStatus,
   NotificationType,
@@ -53,11 +54,17 @@ export class InternPoolService {
   }
 
   async findAllRequests(filters: { foundationId?: string; status?: string; isAdmin?: boolean; includeApplicants?: boolean }) {
-    const where: Record<string, unknown> = {};
+    const validStatuses = Object.values(InternPoolRequestStatus);
+    const where: { foundationId?: string; status?: InternPoolRequestStatus | { in: InternPoolRequestStatus[] } } = {};
     if (filters.foundationId) where.foundationId = filters.foundationId;
     if (filters.status) {
       const statuses = filters.status.split(',').map((s) => s.trim()).filter(Boolean);
-      where.status = statuses.length === 1 ? statuses[0] : { in: statuses };
+      const invalid = statuses.find((s) => !validStatuses.includes(s as InternPoolRequestStatus));
+      if (invalid) throw new BadRequestException(`Invalid status: "${invalid}". Must be one of: ${validStatuses.join(', ')}`);
+      where.status =
+        statuses.length === 1
+          ? (statuses[0] as InternPoolRequestStatus)
+          : { in: statuses as InternPoolRequestStatus[] };
     }
 
     return this.prisma.internPoolRequest.findMany({
@@ -124,40 +131,42 @@ export class InternPoolService {
   // ── Applications (intern self-applies) ───────────────────────────────────
 
   async applyToRequest(requestId: string, applicantId: string, dto: ApplyInternPoolDto) {
-    const request = await this.prisma.internPoolRequest.findUnique({ where: { id: requestId } });
-    if (!request) throw new NotFoundException('Intern pool request not found');
-    if (request.status !== InternPoolRequestStatus.OPEN && request.status !== InternPoolRequestStatus.REVIEWING) {
-      throw new BadRequestException('This placement request is no longer accepting applications');
-    }
+    const application = await this.prisma.$transaction(async (tx) => {
+      const request = await tx.internPoolRequest.findUnique({ where: { id: requestId } });
+      if (!request) throw new NotFoundException('Intern pool request not found');
+      if (request.status !== InternPoolRequestStatus.OPEN && request.status !== InternPoolRequestStatus.REVIEWING) {
+        throw new BadRequestException('This placement request is no longer accepting applications');
+      }
 
-    const existing = await this.prisma.internPoolApplication.findUnique({
-      where: { requestId_applicantId: { requestId, applicantId } },
-    });
-    if (existing) throw new BadRequestException('You have already applied to this placement');
-
-    const application = await this.prisma.internPoolApplication.create({
-      data: { requestId, applicantId, motivationLetter: dto.motivationLetter },
-      include: { applicant: { select: { id: true, firstName: true, lastName: true, email: true } } },
-    });
-
-    // Move request to REVIEWING
-    if (request.status === InternPoolRequestStatus.OPEN) {
-      await this.prisma.internPoolRequest.update({
-        where: { id: requestId },
-        data: { status: InternPoolRequestStatus.REVIEWING },
+      const existing = await tx.internPoolApplication.findUnique({
+        where: { requestId_applicantId: { requestId, applicantId } },
       });
-    }
+      if (existing) throw new BadRequestException('You have already applied to this placement');
 
-    // Notify foundation
+      const created = await tx.internPoolApplication.create({
+        data: { requestId, applicantId, motivationLetter: dto.motivationLetter },
+        include: { applicant: { select: { id: true, firstName: true, lastName: true, email: true } } },
+      });
+
+      if (request.status === InternPoolRequestStatus.OPEN) {
+        await tx.internPoolRequest.update({
+          where: { id: requestId },
+          data: { status: InternPoolRequestStatus.REVIEWING },
+        });
+      }
+
+      return { application: created, request };
+    });
+
     await this.notify(
-      request.postedById,
+      application.request.postedById,
       NotificationType.INTERN_APPLICATION_RECEIVED,
       'New intern application',
-      `An intern has applied to your placement: ${request.title}`,
+      `An intern has applied to your placement: ${application.request.title}`,
       `/foundation/intern-pool`,
     );
 
-    return application;
+    return application.application;
   }
 
   async getMyApplications(applicantId: string) {
@@ -206,18 +215,22 @@ export class InternPoolService {
       throw new BadRequestException(`Application is already ${application.status.toLowerCase()} and cannot be changed`);
     }
 
-    const updated = await this.prisma.internPoolApplication.update({
-      where: { id: applicationId },
-      data: { status: dto.status, note: dto.note, respondedAt: new Date() },
-    });
-
-    // When confirmed → fill the request
-    if (dto.status === InternPoolApplicationStatus.CONFIRMED) {
-      await this.prisma.internPoolRequest.update({
-        where: { id: application.requestId },
-        data: { status: InternPoolRequestStatus.FILLED },
+    const updated = await this.prisma.$transaction(async (tx) => {
+      if (dto.status === InternPoolApplicationStatus.CONFIRMED) {
+        const currentRequest = await tx.internPoolRequest.findUnique({ where: { id: application.requestId } });
+        if (currentRequest?.status === InternPoolRequestStatus.FILLED) {
+          throw new BadRequestException('This placement request has already been filled by another applicant');
+        }
+        await tx.internPoolRequest.update({
+          where: { id: application.requestId },
+          data: { status: InternPoolRequestStatus.FILLED },
+        });
+      }
+      return tx.internPoolApplication.update({
+        where: { id: applicationId },
+        data: { status: dto.status, note: dto.note, respondedAt: new Date() },
       });
-    }
+    });
 
     const notifType =
       dto.status === InternPoolApplicationStatus.ACCEPTED
@@ -289,6 +302,8 @@ export class InternPoolService {
 
     return this.prisma.user.findMany({
       where: {
+        role: UserRole.EDUCATOR,
+        approvalStatus: EducatorApprovalStatus.APPROVED,
         availableForInternship: true,
         candidatePoolVisible: true,
         isActive: true,
@@ -318,7 +333,7 @@ export class InternPoolService {
       this.prisma.internPoolRequest.count({ where: { ...where, status: InternPoolRequestStatus.OPEN } }),
       this.prisma.internPoolRequest.count({ where: { ...where, status: InternPoolRequestStatus.REVIEWING } }),
       this.prisma.internPoolRequest.count({ where: { ...where, status: InternPoolRequestStatus.FILLED } }),
-      this.prisma.user.count({ where: { availableForInternship: true, candidatePoolVisible: true, isActive: true } }),
+      this.prisma.user.count({ where: { role: UserRole.EDUCATOR, approvalStatus: EducatorApprovalStatus.APPROVED, availableForInternship: true, candidatePoolVisible: true, isActive: true } }),
     ]);
     return { openRequests: open, reviewingRequests: reviewing, filledRequests: filled, internPoolSize: poolSize };
   }

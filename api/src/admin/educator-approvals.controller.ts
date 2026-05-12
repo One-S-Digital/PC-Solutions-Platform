@@ -33,8 +33,20 @@ export class EducatorApprovalsController {
     }
     return this.educatorApprovalsService.listEducators(
       status as EducatorApprovalStatus | undefined,
-      page ? parseInt(page, 10) : 1,
-      limit ? parseInt(limit, 10) : 20,
+      (() => {
+        if (!page) return 1;
+        if (!/^\d+$/.test(page)) throw new BadRequestException('page must be a positive integer');
+        const p = parseInt(page, 10);
+        if (p < 1) throw new BadRequestException('page must be a positive integer');
+        return p;
+      })(),
+      (() => {
+        if (!limit) return 20;
+        if (!/^\d+$/.test(limit)) throw new BadRequestException('limit must be a positive integer between 1 and 100');
+        const l = parseInt(limit, 10);
+        if (l < 1 || l > 100) throw new BadRequestException('limit must be a positive integer between 1 and 100');
+        return l;
+      })(),
     );
   }
 

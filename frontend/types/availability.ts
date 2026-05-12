@@ -92,7 +92,7 @@ export interface EducatorAvailabilitySettings {
 
 // Resolve employmentTypes from settings, handling legacy single-value field
 export const getEmploymentTypes = (settings: EducatorAvailabilitySettings): EmploymentType[] => {
-  if (settings.employmentTypes && settings.employmentTypes.length > 0) {
+  if (settings.employmentTypes !== undefined && settings.employmentTypes !== null) {
     return settings.employmentTypes;
   }
   if (settings.employmentType) {
