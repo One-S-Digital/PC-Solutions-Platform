@@ -179,7 +179,7 @@ const RoleBasedDashboardRedirect: React.FC = () => {
       return <Navigate to="/parent/dashboard" replace />; // Updated Parent redirect
     case UserRole.ADMIN:
     case UserRole.SUPER_ADMIN:
-      return <Navigate to="/users/all" replace />;
+      return <Navigate to="/admin/content-dashboard" replace />;
     default:
       return <Navigate to="/login" replace />; // Fallback to login
   }
