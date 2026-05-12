@@ -295,6 +295,13 @@
   "roleSubtitle": {
     "educator": "Find Job"
   },
+  "roleTags": {
+    "EDE": "EDE",
+    "ASE": "ASE",
+    "Auxiliaire": "Auxiliary",
+    "Intern": "Intern",
+    "Cleaning_Staff": "Cleaning Staff"
+  },
   "role": {
     "productSupplier": "Product Supplier",
     "serviceProvider": "Service Provider",
