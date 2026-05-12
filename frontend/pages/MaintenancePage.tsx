@@ -19,7 +19,7 @@ const MaintenancePage: React.FC = () => {
         </p>
       </div>
       <p className="absolute bottom-6 text-xs text-gray-300">
-        <Link to="/login?admin=1" className="hover:text-gray-400 transition-colors">
+        <Link to="/login" className="hover:text-gray-400 transition-colors">
           Administrator login
         </Link>
       </p>
