@@ -603,8 +603,8 @@ const EducatorProfilePage: React.FC = () => {
               {/* Existing documents list */}
               {(profile.documents && profile.documents.length > 0) || profile.cvUrl ? (
                 <div className="space-y-2">
-                  {/* Legacy cvUrl shown as first doc if documents array is empty */}
-                  {profile.cvUrl && (!profile.documents || profile.documents.length === 0) && (
+                  {/* Legacy cvUrl — always shown (and removable) when set */}
+                  {profile.cvUrl && (
                     <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg gap-2">
                       <div className="flex items-center gap-3 min-w-0">
                         <DocumentTextIcon className="w-5 h-5 text-green-600 flex-shrink-0" />
