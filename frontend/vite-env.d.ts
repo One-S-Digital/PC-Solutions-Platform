@@ -10,7 +10,12 @@ interface ImportMetaEnv {
   readonly VITE_NODE_ENV: string;
   readonly VITE_E2E_TEST?: string;
   readonly VITE_USE_BUNDLED_TRANSLATIONS?: string;
-  // Add other env variables here as needed
+  readonly VITE_MAINTENANCE_MODE?: string;
+}
+
+declare module '*.gif' {
+  const src: string;
+  export default src;
 }
 
 interface ImportMeta {
