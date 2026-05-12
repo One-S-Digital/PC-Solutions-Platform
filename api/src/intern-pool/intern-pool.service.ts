@@ -52,7 +52,7 @@ export class InternPoolService {
     });
   }
 
-  async findAllRequests(filters: { foundationId?: string; status?: string; isAdmin?: boolean }) {
+  async findAllRequests(filters: { foundationId?: string; status?: string; isAdmin?: boolean; includeApplicants?: boolean }) {
     const where: Record<string, unknown> = {};
     if (filters.foundationId) where.foundationId = filters.foundationId;
     if (filters.status) {
@@ -65,11 +65,15 @@ export class InternPoolService {
       orderBy: { createdAt: 'desc' },
       include: {
         foundation: { select: { id: true, name: true } },
-        applications: {
-          include: {
-            applicant: { select: { id: true, firstName: true, lastName: true, jobRole: true, region: true } },
-          },
-        },
+        ...(filters.includeApplicants
+          ? {
+              applications: {
+                include: {
+                  applicant: { select: { id: true, firstName: true, lastName: true, jobRole: true, region: true } },
+                },
+              },
+            }
+          : {}),
       },
     });
   }

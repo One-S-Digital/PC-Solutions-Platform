@@ -69,23 +69,24 @@ export class ReplacementsService {
     });
   }
 
-  async findRequestById(id: string) {
+  async findRequestById(id: string, viewer?: { callerId: string; callerRole: UserRole }) {
+    const isEducator = viewer?.callerRole === UserRole.EDUCATOR;
     const request = await this.prisma.replacementRequest.findUnique({
       where: { id },
       include: {
         foundation: { select: { id: true, name: true } },
         matches: {
+          // Educators can only see their own match entry; foundation/admin see all
+          where: isEducator ? { educatorId: viewer!.callerId } : undefined,
           include: {
             educator: {
               select: {
                 id: true,
                 firstName: true,
                 lastName: true,
-                email: true,
+                ...(isEducator ? {} : { email: true, skills: true, cvUrl: true }),
                 jobRole: true,
                 region: true,
-                skills: true,
-                cvUrl: true,
               },
             },
           },

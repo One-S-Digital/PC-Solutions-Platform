@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -28,9 +29,11 @@ export class ReplacementsController {
   @Post('requests')
   @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   createRequest(@Body() dto: CreateReplacementRequestDto, @Request() req) {
-    const foundationId = req.user.organizationId;
-    const userId = req.user.id;
-    return this.replacementsService.createRequest(dto, foundationId, userId);
+    const foundationId: string | undefined = req.user.organizationId;
+    if (!foundationId) {
+      throw new BadRequestException('A foundationId is required. Admins must be linked to an organization to create replacement requests.');
+    }
+    return this.replacementsService.createRequest(dto, foundationId, req.user.id);
   }
 
   // ── 2. List requests ──────────────────────────────────────────────────────
@@ -62,8 +65,8 @@ export class ReplacementsController {
   // ── 3. Get single request ─────────────────────────────────────────────────
   @Get('requests/:id')
   @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.EDUCATOR)
-  findRequestById(@Param('id') id: string) {
-    return this.replacementsService.findRequestById(id);
+  findRequestById(@Param('id') id: string, @Request() req) {
+    return this.replacementsService.findRequestById(id, { callerId: req.user.id, callerRole: req.user.role });
   }
 
   // ── 4. Update request status / details ───────────────────────────────────

@@ -47,7 +47,12 @@ export class InternPoolController {
       return [];
     }
 
-    return this.internPoolService.findAllRequests({ foundationId: resolvedFoundationId, status, isAdmin });
+    return this.internPoolService.findAllRequests({
+      foundationId: resolvedFoundationId,
+      status,
+      isAdmin,
+      includeApplicants: isAdmin || isFoundation,
+    });
   }
 
   // ── 3. Get single request ─────────────────────────────────────────────────
