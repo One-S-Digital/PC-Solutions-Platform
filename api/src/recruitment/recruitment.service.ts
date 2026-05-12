@@ -1,20 +1,32 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, Logger } from '@nestjs/common';
 import { instanceToPlain } from 'class-transformer';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateJobListingDto } from './dto/create-job-listing.dto';
 import { UpdateJobListingDto } from './dto/update-job-listing.dto';
 import { CreateJobApplicationDto } from './dto/create-job-application.dto';
-import { UpdateJobApplicationDto } from './dto/update-job-application.dto';
+import { UpdateJobApplicationDto } from './dto/create-job-application.dto';
 import { JobContractType, JobStatus } from '@workspace/types';
 import { JobEmploymentType, Prisma } from '@prisma/client';
 import { TranslationService } from '../translation/translation.service';
 import { FIELDS_BY_ENTITY } from '../translation/translation.config';
+import { EmailNotificationService } from '../email-notification/email-notification.service';
+
+/** Candidate scored by the v2 matching algorithm. */
+export interface ScoredCandidate {
+  candidate: any;
+  score: number;
+  reasons: string[];
+}
 
 @Injectable()
 export class RecruitmentService {
+  private readonly logger = new Logger(RecruitmentService.name);
+  private readonly matchEmailLimit = parseInt(process.env.STAFFING_MATCH_EMAIL_LIMIT ?? '20', 10);
+
   constructor(
     private prisma: PrismaService,
     private translationService: TranslationService,
+    private emailNotification: EmailNotificationService,
   ) {}
 
   // Job Listing Management
@@ -388,6 +400,13 @@ export class RecruitmentService {
       );
     }
 
+    // Fan-out job_match emails when transitioning to PUBLISHED (non-blocking)
+    if (status === JobStatus.PUBLISHED && currentListing?.status !== JobStatus.PUBLISHED) {
+      this.notifyMatchingCandidatesOfJob(updatedJobListing).catch((err) =>
+        this.logger.error('job_match fan-out failed', err?.message),
+      );
+    }
+
     return updatedJobListing;
   }
 
@@ -432,6 +451,11 @@ export class RecruitmentService {
           translatableFields,
         );
       }
+
+      // Notify foundation members of new application (non-blocking)
+      this.notifyFoundationOfNewApplication(jobApplication).catch((err) =>
+        this.logger.error('new_application email failed', err?.message),
+      );
 
       return jobApplication;
     } catch (error) {
@@ -490,6 +514,11 @@ export class RecruitmentService {
   }
 
   async updateJobApplication(id: string, updateJobApplicationDto: UpdateJobApplicationDto) {
+    const previous = await this.prisma.jobApplication.findUnique({
+      where: { id },
+      select: { status: true },
+    });
+
     const updatedJobApplication = await this.prisma.jobApplication.update({
       where: { id },
       data: updateJobApplicationDto,
@@ -518,6 +547,13 @@ export class RecruitmentService {
           translatableFields,
         );
       }
+    }
+
+    // Notify candidate when status changes (non-blocking)
+    if (updateJobApplicationDto.status && updateJobApplicationDto.status !== previous?.status) {
+      this.notifyCandidateOfStatusUpdate(updatedJobApplication).catch((err) =>
+        this.logger.error('application_status_update email failed', err?.message),
+      );
     }
 
     return updatedJobApplication;
@@ -689,45 +725,233 @@ export class RecruitmentService {
     });
   }
 
-  // Matching Algorithm
-  async findMatchingCandidates(jobListingId: string) {
+  // Matching Algorithm — v2 weighted scorer
+  // Weights: role 40 | city 25 | skills 15 | availability 15 | recency 5
+  async findMatchingCandidates(jobListingId: string): Promise<ScoredCandidate[]> {
     const jobListing = await this.prisma.jobListing.findUnique({
       where: { id: jobListingId },
-      include: {
-        foundation: true,
-      },
+      include: { foundation: true },
     });
 
     if (!jobListing) {
       throw new Error('Job listing not found');
     }
 
-    // Simple matching algorithm based on skills and location
     const candidates = await this.prisma.user.findMany({
       where: {
         role: 'EDUCATOR',
-        // Exclude suspended / inactive educators from matching results.
         isActive: { not: false },
-        // Only match educators who opted into the candidate pool,
-        // consistent with the findAllCandidates visibility filter.
         candidatePoolVisible: true,
-        // Add more sophisticated matching logic here
-        // For now, we'll return all active, pool-visible educators
       },
       include: {
         workExperienceItems: { orderBy: { sortOrder: 'asc' } },
         educationItems: { orderBy: { sortOrder: 'asc' } },
         certificationItems: { orderBy: { sortOrder: 'asc' } },
-        applications: {
-          where: {
-            jobListingId,
-          },
-        },
+        applications: { where: { jobListingId } },
       },
     });
 
-    // Filter out candidates who already applied
-    return candidates.filter(candidate => candidate.applications.length === 0);
+    const jobLocation = (jobListing.location ?? '').toLowerCase();
+    const jobTitleWords = (jobListing.title ?? '').toLowerCase().split(/\s+/);
+    const jobRequirements: string[] = Array.isArray(jobListing.requirements)
+      ? (jobListing.requirements as string[]).map((r: string) => r.toLowerCase())
+      : [];
+    const workSchedule = jobListing.workSchedule as Record<string, unknown> | null;
+
+    const scored: ScoredCandidate[] = candidates
+      .filter((c) => c.applications.length === 0)
+      .map((candidate) => {
+        let score = 0;
+        const reasons: string[] = [];
+
+        // Role match — 40 pts
+        const candidateRoles: string[] = [
+          ...(candidate.jobRole ? [candidate.jobRole.toLowerCase()] : []),
+          ...(Array.isArray(candidate.jobRoles)
+            ? (candidate.jobRoles as string[]).map((r: string) => r.toLowerCase())
+            : []),
+        ];
+        const roleMatch = candidateRoles.some((r) =>
+          jobTitleWords.some((w) => w.length > 3 && (r.includes(w) || w.includes(r))),
+        );
+        if (roleMatch) {
+          score += 40;
+          reasons.push('Role match');
+        }
+
+        // City overlap — 25 pts
+        const candidateCities: string[] = Array.isArray(candidate.cities)
+          ? (candidate.cities as string[]).map((c: string) => c.toLowerCase())
+          : [];
+        const candidateRegion = (candidate.region ?? '').toLowerCase();
+        const locationMatch =
+          (jobLocation &&
+            candidateCities.some(
+              (city) => jobLocation.includes(city) || city.includes(jobLocation),
+            )) ||
+          (candidateRegion &&
+            jobLocation &&
+            (jobLocation.includes(candidateRegion) || candidateRegion.includes(jobLocation)));
+        if (locationMatch) {
+          score += 25;
+          reasons.push('Location match');
+        }
+
+        // Skills intersection — 15 pts (pro-rated)
+        const candidateSkills: string[] = Array.isArray(candidate.skills)
+          ? (candidate.skills as string[]).map((s: string) => s.toLowerCase())
+          : [];
+        if (jobRequirements.length > 0 && candidateSkills.length > 0) {
+          const overlap = jobRequirements.filter((req) =>
+            candidateSkills.some((skill) => skill.includes(req) || req.includes(skill)),
+          ).length;
+          const skillScore = Math.round((overlap / jobRequirements.length) * 15);
+          if (skillScore > 0) {
+            score += skillScore;
+            reasons.push(`${overlap}/${jobRequirements.length} requirements matched`);
+          }
+        }
+
+        // Availability overlap — 15 pts
+        if (workSchedule && candidate.availability) {
+          score += 15;
+          reasons.push('Availability match');
+        } else if (candidate.availability) {
+          score += 8;
+        }
+
+        // Recency bonus — up to 5 pts
+        if (candidate.updatedAt) {
+          const daysSince = (Date.now() - new Date(candidate.updatedAt).getTime()) / 86_400_000;
+          if (daysSince <= 30) {
+            score += 5;
+            reasons.push('Recently active');
+          } else if (daysSince <= 90) {
+            score += 3;
+          } else if (daysSince <= 180) {
+            score += 1;
+          }
+        }
+
+        return { candidate, score, reasons };
+      });
+
+    return scored.sort((a, b) => b.score - a.score);
+  }
+
+  // Shortlist (savedCandidateIds on Organization)
+  async getSavedCandidates(foundationId: string) {
+    const org = await this.prisma.organization.findUnique({
+      where: { id: foundationId },
+      select: { savedCandidateIds: true },
+    });
+    const ids: string[] = Array.isArray(org?.savedCandidateIds)
+      ? (org.savedCandidateIds as string[])
+      : [];
+    if (!ids.length) return [];
+    return this.prisma.user.findMany({
+      where: { id: { in: ids }, role: 'EDUCATOR' },
+      include: { avatarAsset: true },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async saveCandidate(foundationId: string, candidateId: string) {
+    const org = await this.prisma.organization.findUnique({
+      where: { id: foundationId },
+      select: { savedCandidateIds: true },
+    });
+    const ids: string[] = Array.isArray(org?.savedCandidateIds)
+      ? [...(org.savedCandidateIds as string[])]
+      : [];
+    if (!ids.includes(candidateId)) ids.push(candidateId);
+    await this.prisma.organization.update({
+      where: { id: foundationId },
+      data: { savedCandidateIds: ids },
+    });
+    return ids;
+  }
+
+  async unsaveCandidate(foundationId: string, candidateId: string) {
+    const org = await this.prisma.organization.findUnique({
+      where: { id: foundationId },
+      select: { savedCandidateIds: true },
+    });
+    const ids = ((org?.savedCandidateIds as string[]) ?? []).filter((i) => i !== candidateId);
+    await this.prisma.organization.update({
+      where: { id: foundationId },
+      data: { savedCandidateIds: ids },
+    });
+    return ids;
+  }
+
+  // Private notification helpers
+  private async notifyFoundationOfNewApplication(application: any) {
+    const foundationId = application.jobListing?.foundationId;
+    if (!foundationId) return;
+    const members = await this.prisma.user.findMany({
+      where: {
+        organizations: { some: { organizationId: foundationId } },
+        role: { in: ['FOUNDATION' as any, 'ADMIN' as any, 'SUPER_ADMIN' as any] },
+        isActive: { not: false },
+      },
+      select: { email: true, firstName: true },
+    });
+    for (const member of members) {
+      if (!member.email) continue;
+      await this.emailNotification.sendNotification({
+        event: 'new_application',
+        recipient: member.email,
+        recipientName: member.firstName ?? undefined,
+        payload: {
+          firstName: member.firstName ?? 'Team',
+          jobTitle: application.jobListing?.title ?? 'Job',
+          candidateName: `${application.candidate?.firstName ?? ''} ${application.candidate?.lastName ?? ''}`.trim() || 'Candidate',
+          dashboardUrl: `${process.env.APP_URL ?? ''}/staffing/applications`,
+        },
+        bypassPreferences: false,
+      });
+    }
+  }
+
+  private async notifyCandidateOfStatusUpdate(application: any) {
+    const candidate = application.candidate;
+    if (!candidate?.email) return;
+    await this.emailNotification.sendNotification({
+      event: 'application_status_update',
+      recipient: candidate.email,
+      recipientName: candidate.firstName ?? undefined,
+      payload: {
+        firstName: candidate.firstName ?? 'Candidate',
+        jobTitle: application.jobListing?.title ?? 'Job',
+        foundationName: application.jobListing?.foundation?.name ?? 'Organization',
+        newStatus: application.status,
+        dashboardUrl: `${process.env.APP_URL ?? ''}/staffing/applications`,
+      },
+      bypassPreferences: false,
+    });
+  }
+
+  private async notifyMatchingCandidatesOfJob(jobListing: any) {
+    const scored = await this.findMatchingCandidates(jobListing.id);
+    const toNotify = scored.slice(0, this.matchEmailLimit);
+    for (const { candidate } of toNotify) {
+      if (!candidate.email) continue;
+      await this.emailNotification.sendNotification({
+        event: 'job_match',
+        recipient: candidate.email,
+        recipientName: candidate.firstName ?? undefined,
+        payload: {
+          firstName: candidate.firstName ?? 'Candidate',
+          jobTitle: jobListing.title,
+          foundationName: jobListing.foundation?.name ?? 'Organization',
+          location: jobListing.location ?? 'N/A',
+          contractType: jobListing.contractType,
+          applyUrl: `${process.env.APP_URL ?? ''}/recruitment`,
+        },
+        bypassPreferences: false,
+      });
+    }
   }
 
   // Analytics

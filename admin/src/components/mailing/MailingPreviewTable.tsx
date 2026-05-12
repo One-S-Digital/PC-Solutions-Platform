@@ -1,6 +1,7 @@
 import React from 'react'
 import { MailingPreviewRow } from '../../types/api'
 import LoadingSpinner from '../ui/LoadingSpinner'
+import { formatRole } from '../../utils/formatRole'
 
 interface Props {
   rows: MailingPreviewRow[]
@@ -22,16 +23,9 @@ const roleBadge = (role: string) => {
     EDUCATOR: 'bg-blue-100 text-blue-700',
     PARENT: 'bg-pink-100 text-pink-700',
   }
-  const label: Record<string, string> = {
-    FOUNDATION: 'Foundation',
-    PRODUCT_SUPPLIER: 'Supplier',
-    SERVICE_PROVIDER: 'Service',
-    EDUCATOR: 'Educator',
-    PARENT: 'Parent',
-  }
   return (
     <span className={`text-xs px-2 py-0.5 rounded-full ${colors[role] || 'bg-gray-100 text-gray-600'}`}>
-      {label[role] || role}
+      {formatRole(role)}
     </span>
   )
 }

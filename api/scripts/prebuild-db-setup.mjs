@@ -1085,6 +1085,141 @@ CREATE UNIQUE INDEX IF NOT EXISTS "mt_cost_tracking_date_provider_sourceLang_tar
 };
 
 /**
+ * Ensure urgency and compensationType enum types exist and columns are converted.
+ * Matches migration `20260507020000_enum_urgency_compensation`.
+ * Idempotent: skips steps whose state is already correct.
+ */
+const ensureEnumUrgencyCompensation = () => {
+  const sql = `
+-- Create UrgencyLevel enum if it doesn't exist in the public schema
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_type t
+    JOIN pg_namespace n ON n.oid = t.typnamespace
+    WHERE t.typname = 'UrgencyLevel' AND n.nspname = 'public'
+  ) THEN
+    CREATE TYPE "UrgencyLevel" AS ENUM ('NORMAL', 'URGENT');
+  END IF;
+END $$;
+
+-- Create CompensationType enum if it doesn't exist in the public schema
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_type t
+    JOIN pg_namespace n ON n.oid = t.typnamespace
+    WHERE t.typname = 'CompensationType' AND n.nspname = 'public'
+  ) THEN
+    CREATE TYPE "CompensationType" AS ENUM ('PAID', 'UNPAID', 'STIPEND');
+  END IF;
+END $$;
+
+-- Convert replacement_requests.urgency TEXT → UrgencyLevel (only if still TEXT)
+-- Must drop default first; Postgres cannot auto-cast a TEXT default to an enum.
+DO $$ BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'replacement_requests'
+      AND column_name = 'urgency'
+      AND data_type = 'text'
+  ) THEN
+    UPDATE "replacement_requests"
+      SET "urgency" = 'NORMAL'
+      WHERE "urgency" NOT IN ('NORMAL', 'URGENT');
+
+    ALTER TABLE "replacement_requests" ALTER COLUMN "urgency" DROP DEFAULT;
+
+    ALTER TABLE "replacement_requests"
+      ALTER COLUMN "urgency" TYPE "UrgencyLevel"
+      USING "urgency"::"UrgencyLevel";
+
+    ALTER TABLE "replacement_requests"
+      ALTER COLUMN "urgency" SET DEFAULT 'NORMAL'::"UrgencyLevel";
+  END IF;
+END $$;
+
+-- Convert intern_pool_requests.compensationType TEXT → CompensationType (only if still TEXT)
+-- Must drop default first for the same reason.
+DO $$ BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'intern_pool_requests'
+      AND column_name = 'compensationType'
+      AND data_type = 'text'
+  ) THEN
+    UPDATE "intern_pool_requests"
+      SET "compensationType" = 'UNPAID'
+      WHERE "compensationType" NOT IN ('PAID', 'UNPAID', 'STIPEND');
+
+    ALTER TABLE "intern_pool_requests" ALTER COLUMN "compensationType" DROP DEFAULT;
+
+    ALTER TABLE "intern_pool_requests"
+      ALTER COLUMN "compensationType" TYPE "CompensationType"
+      USING "compensationType"::"CompensationType";
+
+    ALTER TABLE "intern_pool_requests"
+      ALTER COLUMN "compensationType" SET DEFAULT 'UNPAID'::"CompensationType";
+  END IF;
+END $$;
+`;
+
+  log('Ensuring UrgencyLevel/CompensationType enums and column conversions exist...');
+  runSql(sql);
+  log('✅ Enum urgency/compensation schema verified.');
+};
+
+/**
+ * Ensure EducatorApprovalStatus enum and approval columns exist on the users table.
+ * Matches migration `20260509000000_add_educator_approval_status`.
+ * Idempotent: each step is guarded so it is safe to re-run.
+ */
+const ensureEducatorApprovalStatus = () => {
+  const sql = `
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_type t
+    JOIN pg_namespace n ON n.oid = t.typnamespace
+    WHERE t.typname = 'EducatorApprovalStatus' AND n.nspname = 'public'
+  ) THEN
+    CREATE TYPE "EducatorApprovalStatus" AS ENUM ('PENDING_REVIEW', 'APPROVED', 'REJECTED');
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'users' AND column_name = 'approvalStatus'
+  ) THEN
+    ALTER TABLE "users" ADD COLUMN "approvalStatus" "EducatorApprovalStatus";
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'users' AND column_name = 'approvalNotes'
+  ) THEN
+    ALTER TABLE "users" ADD COLUMN "approvalNotes" TEXT;
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'users' AND column_name = 'approvedAt'
+  ) THEN
+    ALTER TABLE "users" ADD COLUMN "approvedAt" TIMESTAMP(3);
+  END IF;
+END $$;
+`;
+
+  log('Ensuring EducatorApprovalStatus enum and approval columns exist...');
+  runSql(sql);
+  log('✅ EducatorApprovalStatus schema verified.');
+};
+
+/**
  * Ensure organizations.contactEmail exists and organization_contact_infos is dropped.
  * Matches migration `20260511000000_add_contact_email_to_organization`.
  */
@@ -1281,10 +1416,59 @@ const main = async () => {
     }
   }
 
+  // Enum urgency + compensationType conversion (TEXT → proper DB enums)
+  try {
+    log('🔧 Preparing for enum_urgency_compensation migration...');
+
+    let cleared = await resolveMigration('rolled-back', '20260507020000_enum_urgency_compensation');
+    if (!cleared) {
+      log('⚠️  Standard resolve failed, force-marking as rolled-back...');
+      cleared = forceMarkMigrationRolledBack('20260507020000_enum_urgency_compensation');
+    }
+    if (cleared) {
+      log('✅ Migration cleared from failed state. Prisma will re-run it.');
+    }
+
+    ensureEnumUrgencyCompensation();
+    log('✅ Enum urgency/compensation schema prepared.');
+    log('📋 Prisma migrate deploy will now run this migration and mark it complete.');
+  } catch (e) {
+    warn(`⚠️  enum_urgency_compensation preparation failed: ${e.message}`);
+    try {
+      forceMarkMigrationRolledBack('20260507020000_enum_urgency_compensation');
+      ensureEnumUrgencyCompensation();
+    } catch (e2) {
+      error(`❌ Could not prepare for migration: ${e2.message}`);
+    }
+  }
+
+  // EducatorApprovalStatus enum + approval columns on users table
+  try {
+    log('🔧 Preparing for add_educator_approval_status migration...');
+
+    let cleared = await resolveMigration('rolled-back', '20260509000000_add_educator_approval_status');
+    if (!cleared) {
+      log('⚠️  Standard resolve failed, force-marking as rolled-back...');
+      cleared = forceMarkMigrationRolledBack('20260509000000_add_educator_approval_status');
+    }
+    if (cleared) {
+      log('✅ Migration cleared from failed state. Prisma will re-run it.');
+    }
+
+    ensureEducatorApprovalStatus();
+    log('✅ EducatorApprovalStatus schema prepared.');
+    log('📋 Prisma migrate deploy will now run this migration and mark it complete.');
+  } catch (e) {
+    warn(`⚠️  add_educator_approval_status preparation failed: ${e.message}`);
+    try {
+      forceMarkMigrationRolledBack('20260509000000_add_educator_approval_status');
+      ensureEducatorApprovalStatus();
+    } catch (e2) {
+      error(`❌ Could not prepare for migration: ${e2.message}`);
+    }
+  }
+
   // Add contactEmail to organizations + drop organization_contact_infos
-  // Strategy:
-  // 1. Clear failed migration state so Prisma can re-run it
-  // 2. Pre-apply changes idempotently so the re-run succeeds even on a drifted DB
   try {
     log('🔧 Preparing for add_contact_email_to_organization migration...');
 

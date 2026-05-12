@@ -139,7 +139,7 @@ export class ClerkAuthGuard implements CanActivate {
         // Also fetch the User profile record
         const userProfile = await this.prisma.user.findUnique({
           where: { clerkId: payload.sub },
-          select: { id: true, isActive: true, deactivatedReasonText: true },
+          select: { id: true, isActive: true, deactivatedReasonText: true, approvalStatus: true, approvalNotes: true },
         });
         if (userProfile && userProfile.isActive === false) {
           const message =
@@ -192,6 +192,8 @@ export class ClerkAuthGuard implements CanActivate {
             profileUserId: userProfile?.id || null,
             organizationId: primaryOrganizationId,
             clerkUserId: payload.sub,
+            approvalStatus: userProfile?.approvalStatus || null,
+            approvalNotes: userProfile?.approvalNotes || null,
           };
           // FIX: Also set request.user for backward compatibility with UsersController
           request.user = {
@@ -199,9 +201,22 @@ export class ClerkAuthGuard implements CanActivate {
             role: appUser.role,
             id: userProfile?.id || null,
             organizationId: primaryOrganizationId,
+            approvalStatus: userProfile?.approvalStatus || null,
           };
           if (this.authDebug) {
             console.log('🔐 Auth Debug: request.context and request.user populated', { context: request.context, user: request.user });
+          }
+          // Record daily login activity (fire-and-forget — never block the request)
+          if (userProfile?.id) {
+            const today = new Date();
+            today.setUTCHours(0, 0, 0, 0);
+            this.prisma.userActivityLog
+              .upsert({
+                where: { userId_date: { userId: userProfile.id, date: today } },
+                create: { userId: userProfile.id, date: today },
+                update: {},
+              })
+              .catch(() => {});
           }
         }
       } catch (e) {

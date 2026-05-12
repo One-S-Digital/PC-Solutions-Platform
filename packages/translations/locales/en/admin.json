@@ -581,6 +581,40 @@
       "enabled": "Enabled",
       "disabled": "Disabled",
       "manage": "Manage"
+    },
+    "userAnalytics": {
+      "title": "User Analytics",
+      "updated": "Updated {{time}}",
+      "stats": {
+        "active": "Active",
+        "new": "New",
+        "retained": "Retained",
+        "totalSignups": "Total sign-ups",
+        "thisWeek": "This week",
+        "allTime": "All time"
+      },
+      "chart": {
+        "signups": "Sign-ups",
+        "signins": "Sign-ins",
+        "weekOf": "Week of {{date}}"
+      },
+      "miniCharts": {
+        "signupsPerWeek": "Sign-ups per week",
+        "signinsPerWeek": "Sign-ins per week"
+      },
+      "heatmap": {
+        "title": "User activity — {{year}}",
+        "less": "Less",
+        "more": "More"
+      },
+      "cohort": {
+        "title": "Weekly cohort retention",
+        "subtitle": "% of users from each sign-up week who were active in subsequent weeks (based on last sign-in)",
+        "cohortWeek": "Cohort week",
+        "size": "Size"
+      },
+      "errorState": "Could not load analytics — make sure the API is running the latest code and try refreshing.",
+      "emptyState": "Analytics data is not available yet."
     }
   },
   "contentUpload": {
@@ -590,6 +624,7 @@
     "version": "Backend Management v1.0",
     "adminLogo": "Admin Logo",
     "dashboard": "Dashboard",
+    "analytics": "Analytics",
     "users": "Users",
     "foundations": "Foundations",
     "partners": "Partners",
@@ -609,7 +644,21 @@
     "systemMonitoring": "System Monitoring",
     "translations": "Translations",
     "designSystem": "Design System",
-    "settings": "Settings"
+    "settings": "Settings",
+    "recruitment": "Recruitment",
+    "staffing": "Staffing",
+    "eLearning": "E-Learning",
+    "hrDocuments": "HR Documents",
+    "statePolicies": "State Policies",
+    "hrCompliance": "HR & Compliance",
+    "suppliersServices": "Suppliers & Services",
+    "platformOps": "Platform Ops",
+    "replacements": "Replacements",
+    "educatorApprovals": "Educator Approvals",
+    "internPool": "Intern Pool",
+    "internPoolSubtitle": "Internship positions — {{count}} listing(s)",
+    "noInterns": "No internship listings yet.",
+    "applications": "Applications"
   },
   "policyCrawler": {
     "title": "Policy Crawler",
@@ -1441,6 +1490,7 @@
       "published": "Published",
       "draft": "Draft",
       "closed": "Closed",
+      "filled": "Filled",
       "paused": "Paused",
       "all": "All Status"
     },
@@ -2437,6 +2487,14 @@
       "successMessage": "Campaign sent successfully!",
       "cancelSending": "Cancel Sending",
       "close": "Close"
+    }
+  },
+  "userProfile": {
+    "activityHeatmap": {
+      "title": "Login Activity",
+      "subtitle": "{{count}} active days in {{year}}",
+      "less": "Less",
+      "more": "More"
     }
   },
   "userProfileEdit": {

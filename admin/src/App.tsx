@@ -13,6 +13,7 @@ import ProductsPage from './pages/Products';
 import ServicesPage from './pages/Services';
 import JobListingsPage from './pages/JobListings';
 import CandidatesPage from './pages/Candidates';
+import InternPoolPage from './pages/InternPool';
 import ParentLeadsPage from './pages/ParentLeads';
 import OrdersPage from './pages/Orders';
 import ContentPage from './pages/Content';
@@ -27,11 +28,14 @@ import PolicyCrawlerPage from './pages/PolicyCrawler';
 import AdminUserProfileEdit from './pages/AdminUserProfileEdit';
 import AdminOrganizationProfileEdit from './pages/AdminOrganizationProfileEdit';
 import ResetPassword from './pages/ResetPassword';
+import ReplacementsPage from './pages/Replacements';
 import MailingListPage from './pages/MailingList';
 import MailingCampaignDetailPage from './pages/MailingCampaignDetail';
+import AnalyticsPage from './pages/AnalyticsPage';
 import ELearningContentPage from './pages/content/ELearningContentPage';
 import HrDocumentsPage from './pages/content/HrDocumentsPage';
 import StatePoliciesPage from './pages/content/StatePoliciesPage';
+import EducatorApprovalsPage from './pages/EducatorApprovals';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -97,11 +101,14 @@ function App() {
           <Route path="services" element={<ServicesPage />} />
           <Route path="job-listings" element={<JobListingsPage />} />
           <Route path="candidates" element={<CandidatesPage />} />
+          <Route path="educator-approvals" element={<EducatorApprovalsPage />} />
+          <Route path="intern-pool" element={<InternPoolPage />} />
+          <Route path="replacements" element={<ReplacementsPage />} />
           <Route path="parent-leads" element={<ParentLeadsPage />} />
           <Route path="orders" element={<OrdersPage />} />
+          <Route path="e-learning" element={<ELearningContentPage />} />
           <Route path="content" element={<ContentPage />}>
-            <Route index element={<Navigate to="/content/e-learning" replace />} />
-            <Route path="e-learning" element={<ELearningContentPage />} />
+            <Route index element={<Navigate to="/content/hr-documents" replace />} />
             <Route path="hr-documents" element={<HrDocumentsPage />} />
             <Route path="state-policies" element={<StatePoliciesPage />} />
           </Route>
@@ -110,6 +117,8 @@ function App() {
           <Route path="support/tickets/:ticketId" element={<SupportTicketPage />} />
           <Route path="discount-terminations" element={<DiscountTerminationsPage />} />
           <Route path="subscriptions" element={<SubscriptionsPage />} />
+
+          <Route path="analytics" element={<AnalyticsPage />} />
 
           <Route path="mailing" element={<MailingListPage />} />
           <Route path="mailing/campaigns/:id" element={<MailingCampaignDetailPage />} />

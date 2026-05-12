@@ -359,6 +359,19 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
           status: 'success',
           lastAttempt: Date.now(),
         };
+
+        // Stamp lastActiveAt on every successful login/session-restore
+        try {
+          const token = await getToken();
+          if (token) {
+            fetch(`${apiService.apiBaseUrl}${API_ENDPOINTS.users.lastActive}`, {
+              method: 'PATCH',
+              headers: { Authorization: `Bearer ${token}` },
+            }).catch(() => {});
+          }
+        } catch {
+          // Non-critical — do not block the login flow
+        }
         
       } catch (error) {
         if (cancelled) {

@@ -283,6 +283,7 @@ export class AdminProfilesController {
     user: any,
     appUserId: string,
     primaryOrg: any | null,
+    appUser?: any,
   ) {
     return {
       success: true,
@@ -292,6 +293,10 @@ export class AdminProfilesController {
         clerkId: user.clerkId,
         role: user.role,
         email: user.email,
+        createdAt: (user as any).createdAt ?? null,
+        updatedAt: (user as any).updatedAt ?? null,
+        lastActiveAt: appUser?.lastActiveAt ?? null,
+        isActive: appUser?.isActive ?? true,
         firstName: user.firstName ?? '',
         lastName: user.lastName ?? '',
         contactEmail: user.contactInfo?.contactEmail ?? user.email,
@@ -322,6 +327,13 @@ export class AdminProfilesController {
               logoUrl: primaryOrg.logoAsset?.publicUrl ?? null,
             }
           : null,
+        organizations: (user.organizations ?? []).map((m: any) => ({
+          id: m.organization?.id,
+          name: m.organization?.name,
+          type: m.organization?.type,
+          logoUrl: m.organization?.logoAsset?.publicUrl ?? null,
+          joinedAt: m.createdAt ?? null,
+        })),
       },
     };
   }
@@ -370,7 +382,7 @@ export class AdminProfilesController {
       }
 
       const primaryOrg = user.organizations?.[0]?.organization;
-      return this.buildUserProfileResponse(user, appUser.id, primaryOrg);
+      return this.buildUserProfileResponse(user, appUser.id, primaryOrg, appUser);
     }
 
     // Try by profile ID (User.id)
@@ -411,6 +423,7 @@ export class AdminProfilesController {
       user,
       relatedAppUser?.id || user.id,
       primaryOrg,
+      relatedAppUser,
     );
   }
 

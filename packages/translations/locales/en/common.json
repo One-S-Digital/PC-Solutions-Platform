@@ -623,6 +623,8 @@
     "tryAgain": "Try Again"
   },
   "errors": {
+    "errorrate": "Error Rate",
+    "errors": "Errors",
     "deleteFailed": "delete Failed",
     "deleteMessageFailed": "delete Message Failed",
     "downloadFailed": "download Failed",
@@ -2403,5 +2405,36 @@
     "Director": "Director",
     "CleaningStaff": "Cleaning Staff",
     "Intern": "Intern"
+  },
+  "export": "Export",
+  "info": "Info",
+  "warnings": "Warnings",
+  "titles": {
+    "cpuusage": "CPU Usage",
+    "memoryusage": "Memory Usage",
+    "diskusage": "Disk Usage",
+    "uptime": "Uptime",
+    "activealerts": "Active Alerts",
+    "responsetime": "Response Time",
+    "throughput": "Throughput",
+    "activeusers": "Active Users",
+    "newuserstoday": "New Users Today",
+    "sessionduration": "Avg Session Duration",
+    "pageviews": "Page Views",
+    "activeconnections": "Active Connections",
+    "avgquerytime": "Avg Query Time",
+    "storageused": "Storage Used",
+    "connectionhealth": "Connection Health",
+    "requestsmin": "Requests / min",
+    "failedlogins": "Failed Logins",
+    "blockedips": "Blocked IPs",
+    "apihealth": "API Health",
+    "lastscan": "Last Scan"
+  },
+  "maintenancePage": {
+    "title": "Site Under Maintenance",
+    "subtitle": "We'll be back online shortly. Thank you for your patience.",
+    "adminLogin": "Administrator login",
+    "status": "Currently undergoing scheduled maintenance"
   }
 }

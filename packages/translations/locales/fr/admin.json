@@ -614,6 +614,40 @@
       "enabled": "Activée",
       "disabled": "Désactivée",
       "manage": "Gérer"
+    },
+    "userAnalytics": {
+      "title": "Analyse des utilisateurs",
+      "updated": "Mis à jour {{time}}",
+      "stats": {
+        "active": "Actifs",
+        "new": "Nouveaux",
+        "retained": "Retenus",
+        "totalSignups": "Inscriptions totales",
+        "thisWeek": "Cette semaine",
+        "allTime": "Depuis toujours"
+      },
+      "chart": {
+        "signups": "Inscriptions",
+        "signins": "Connexions",
+        "weekOf": "Semaine du {{date}}"
+      },
+      "miniCharts": {
+        "signupsPerWeek": "Inscriptions par semaine",
+        "signinsPerWeek": "Connexions par semaine"
+      },
+      "heatmap": {
+        "title": "Activité des utilisateurs — {{year}}",
+        "less": "Moins",
+        "more": "Plus"
+      },
+      "cohort": {
+        "title": "Rétention de cohorte hebdomadaire",
+        "subtitle": "% d'utilisateurs de chaque semaine d'inscription actifs dans les semaines suivantes (basé sur la dernière connexion)",
+        "cohortWeek": "Semaine de cohorte",
+        "size": "Taille"
+      },
+      "errorState": "Impossible de charger les analyses — assurez-vous que l'API exécute le dernier code et actualisez la page.",
+      "emptyState": "Les données analytiques ne sont pas encore disponibles."
     }
   },
   "contentUpload": {
@@ -623,6 +657,7 @@
     "version": "Gestion Backend v1.0",
     "adminLogo": "Logo Admin",
     "dashboard": "Tableau de bord",
+    "analytics": "Analyses",
     "users": "Utilisateurs",
     "foundations": "Fondations",
     "partners": "Partenaires",
@@ -642,7 +677,21 @@
     "systemMonitoring": "Surveillance du système",
     "translations": "Traductions",
     "designSystem": "Système de design",
-    "settings": "Paramètres"
+    "settings": "Paramètres",
+    "recruitment": "Recrutement",
+    "staffing": "Dotation en personnel",
+    "eLearning": "E-Learning",
+    "hrDocuments": "Documents RH",
+    "statePolicies": "Politiques cantonales",
+    "hrCompliance": "RH et conformité",
+    "suppliersServices": "Fournisseurs et services",
+    "platformOps": "Opérations plateforme",
+    "replacements": "Remplacements",
+    "educatorApprovals": "Approbations des éducateurs",
+    "internPool": "Vivier de stagiaires",
+    "internPoolSubtitle": "Postes de stage — {{count}} annonce(s)",
+    "noInterns": "Aucune annonce de stage pour l'instant.",
+    "applications": "Candidatures"
   },
   "policyCrawler": {
     "title": "Exploration des politiques",
@@ -1383,6 +1432,7 @@
       "published": "Publié",
       "draft": "Brouillon",
       "closed": "Fermé",
+      "filled": "Pourvu",
       "paused": "En pause",
       "all": "Tous les statuts"
     },
@@ -2462,6 +2512,14 @@
       "successMessage": "Campagne envoyée avec succès !",
       "cancelSending": "Annuler l'envoi",
       "close": "Fermer"
+    }
+  },
+  "userProfile": {
+    "activityHeatmap": {
+      "title": "Activité de connexion",
+      "subtitle": "{{count}} jours actifs en {{year}}",
+      "less": "Moins",
+      "more": "Plus"
     }
   },
   "userProfileEdit": {

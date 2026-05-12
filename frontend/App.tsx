@@ -7,6 +7,7 @@ import MainLayout from './components/layout/MainLayout';
 import DashboardPage from './pages/DashboardPage'; // This will be the Foundation default dashboard
 import MarketplacePage from './pages/MarketplacePage';
 import RecruitmentPage from './pages/RecruitmentPage';
+import InternPoolPage from './pages/InternPoolPage';
 import HRProceduresPage from './pages/HRProceduresPage';
 import StatePoliciesPage from './pages/StatePoliciesPage';
 import ELearningPage from './pages/ELearningPage';
@@ -17,10 +18,11 @@ import { AppContextProvider, AppContextProviderE2E, useAppContext } from './cont
 import { CartProvider } from './contexts/CartContext';
 import { MessagingProvider } from './contexts/MessagingContext';
 import { NotificationProvider } from './contexts/NotificationContext';
+import { InAppNotificationProvider } from './contexts/InAppNotificationContext';
 import { SubscriptionProvider, SubscriptionProviderE2E } from './contexts/SubscriptionContext';
 import { SubscriptionPaywall } from './components/shared/SubscriptionPaywall';
 import { useAuthContext } from './providers/AuthProvider';
-import { UserRole } from './types';
+import { UserRole, EducatorApprovalStatus } from './types';
 import { useFrontendSettings } from './hooks/useFrontendSettings';
 
 // Development-only logging helper
@@ -70,6 +72,8 @@ import ServiceProviderSupportPage from './pages/service-provider/ServiceProvider
 import ServiceProviderSettingsPage from './pages/ServiceProviderSettingsPage';
 
 // Foundation Pages (some may reuse existing top-level pages)
+import FoundationReplacementsPage from './pages/foundation/FoundationReplacementsPage';
+import FoundationInternPoolPage from './pages/foundation/FoundationInternPoolPage';
 import FoundationDashboardPage from './pages/foundation/FoundationDashboardPage';
 import FoundationOrdersAppointmentsPage from './pages/foundation/FoundationOrdersAppointmentsPage';
 import FoundationAnalyticsPage from './pages/foundation/FoundationAnalyticsPage';
@@ -81,7 +85,10 @@ import EducatorDashboardPage from './pages/educator/EducatorDashboardPage';
 import EducatorJobBoardPage from './pages/educator/EducatorJobBoardPage';
 import EducatorProfilePage from './pages/educator/EducatorProfilePage';
 import EducatorApplicationsPage from './pages/educator/EducatorApplicationsPage';
+import EducatorInternPoolPage from './pages/educator/EducatorInternPoolPage';
 import EducatorSupportPage from './pages/educator/EducatorSupportPage';
+import EducatorPendingApprovalPage from './pages/educator/EducatorPendingApprovalPage';
+import EducatorRejectedPage from './pages/educator/EducatorRejectedPage';
 
 // Parent Pages
 import ParentDashboardPage from './pages/parent/ParentDashboardPage';
@@ -95,6 +102,7 @@ import LoginPageE2E from './pages/LoginPageE2E';
 import SignupPageE2E from './pages/SignupPageE2E';
 import PricingPage from './pages/PricingPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import MaintenancePage from './pages/MaintenancePage';
 
 
 const ProtectedRoute: React.FC<{ children: React.ReactElement; roles: UserRole[] }> = ({ children, roles }): React.ReactElement | null => {
@@ -160,6 +168,12 @@ const RoleBasedDashboardRedirect: React.FC = () => {
     case UserRole.FOUNDATION:
       return <Navigate to="/foundation/dashboard" replace />;
     case UserRole.EDUCATOR:
+      if (currentUser.approvalStatus === EducatorApprovalStatus.PENDING_REVIEW) {
+        return <Navigate to="/educator/pending-approval" replace />;
+      }
+      if (currentUser.approvalStatus === EducatorApprovalStatus.REJECTED) {
+        return <Navigate to="/educator/rejected" replace />;
+      }
       return <Navigate to="/educator/dashboard" replace />;
     case UserRole.PARENT:
       return <Navigate to="/parent/dashboard" replace />; // Updated Parent redirect
@@ -281,6 +295,13 @@ const ProtectedLayout: React.FC = () => {
     );
   }
 
+  const isMaintenanceMode = import.meta.env.VITE_MAINTENANCE_MODE === 'true';
+  const isAdmin = currentUser.role === UserRole.ADMIN || currentUser.role === UserRole.SUPER_ADMIN;
+
+  if (isMaintenanceMode && !isAdmin) {
+    return <MaintenancePage />;
+  }
+
   return (
       <MainLayout>
         <Routes>
@@ -306,7 +327,14 @@ const ProtectedLayout: React.FC = () => {
           </SubscriptionGatedRoute>
         } />
         
-        {/* Recruitment - Gated for Foundation users */}
+        {/* Staffing canonical paths (new) — /staffing/* → /recruitment/* aliases */}
+        <Route path="/staffing" element={<Navigate to="/recruitment/job-listings" replace />} />
+        <Route path="/staffing/job-listings" element={<Navigate to="/recruitment/job-listings" replace />} />
+        <Route path="/staffing/candidate-pool" element={<Navigate to="/recruitment/candidate-pool" replace />} />
+        <Route path="/staffing/replacements" element={<Navigate to="/foundation/replacements" replace />} />
+        <Route path="/staffing/intern-pool" element={<Navigate to="/foundation/intern-pool" replace />} />
+
+        {/* Recruitment - kept for back-compat; canonical is /staffing/* */}
         <Route path="/recruitment" element={<Navigate to="/recruitment/job-listings" replace />} />
         <Route path="/recruitment/job-listings" element={
           <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
@@ -316,6 +344,28 @@ const ProtectedLayout: React.FC = () => {
         <Route path="/recruitment/candidate-pool" element={
           <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
             <RecruitmentPage />
+          </SubscriptionGatedRoute>
+        } />
+        {/* /staffing/* — aliases for /recruitment/* during v2 transition (both URLs work; old → 301 in Phase 7) */}
+        <Route path="/staffing" element={<Navigate to="/staffing/jobs" replace />} />
+        <Route path="/staffing/jobs" element={
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
+            <RecruitmentPage />
+          </SubscriptionGatedRoute>
+        } />
+        <Route path="/staffing/candidates" element={
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
+            <RecruitmentPage />
+          </SubscriptionGatedRoute>
+        } />
+        <Route path="/staffing/applications" element={
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
+            <RecruitmentPage />
+          </SubscriptionGatedRoute>
+        } />
+        <Route path="/staffing/interns" element={
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
+            <InternPoolPage />
           </SubscriptionGatedRoute>
         } />
         <Route path="/candidate/:candidateId" element={
@@ -498,12 +548,26 @@ const ProtectedLayout: React.FC = () => {
         <Route path="/foundation/analytics" element={
           <SubscriptionGatedRoute roles={[UserRole.FOUNDATION]}><FoundationAnalyticsPage /></SubscriptionGatedRoute>
         } />
+        <Route path="/foundation/replacements" element={
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}><FoundationReplacementsPage /></SubscriptionGatedRoute>
+        } />
+        <Route path="/foundation/intern-pool" element={
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}><FoundationInternPoolPage /></SubscriptionGatedRoute>
+        } />
         {/* Profile/Support routes don't require subscription */}
-        <Route path="/foundation/organisation-profile" element={ 
+        <Route path="/foundation/organisation-profile" element={
           <ProtectedRoute roles={[UserRole.FOUNDATION]}><FoundationOrganisationProfilePage /></ProtectedRoute>
         } />
         <Route path="/foundation/support" element={
           <ProtectedRoute roles={[UserRole.FOUNDATION]}><FoundationSupportPage /></ProtectedRoute>
+        } />
+
+        {/* Educator approval status routes — no subscription or approval gate needed */}
+        <Route path="/educator/pending-approval" element={
+          <ProtectedRoute roles={[UserRole.EDUCATOR]}><EducatorPendingApprovalPage /></ProtectedRoute>
+        } />
+        <Route path="/educator/rejected" element={
+          <ProtectedRoute roles={[UserRole.EDUCATOR]}><EducatorRejectedPage /></ProtectedRoute>
         } />
 
         {/* Educator Routes */}
@@ -518,6 +582,9 @@ const ProtectedLayout: React.FC = () => {
         } />
         <Route path="/educator/applications" element={
           <ProtectedRoute roles={[UserRole.EDUCATOR]}><EducatorApplicationsPage /></ProtectedRoute>
+        } />
+        <Route path="/educator/intern-pool" element={
+          <ProtectedRoute roles={[UserRole.EDUCATOR]}><EducatorInternPoolPage /></ProtectedRoute>
         } />
         <Route path="/educator/support" element={
           <ProtectedRoute roles={[UserRole.EDUCATOR]}><EducatorSupportPage /></ProtectedRoute>
@@ -581,6 +648,7 @@ const FrontendSettingsManager: React.FC = () => {
 
 const App: React.FC = () => {
   const isE2E = import.meta.env.MODE === 'e2e' || import.meta.env.VITE_E2E_TEST === 'true';
+  const isMaintenanceMode = import.meta.env.VITE_MAINTENANCE_MODE === 'true';
 
   // E2E mode: avoid external dependencies (Clerk/backend) and keep routes deterministic for Playwright.
   if (isE2E) {
@@ -615,11 +683,13 @@ const App: React.FC = () => {
       <FrontendSettingsManager />
       <CartProvider>
         <NotificationProvider>
+          <InAppNotificationProvider>
           <MessagingProvider>
             <SubscriptionProvider>
               <Routes>
+                <Route path="/maintenance" element={<MaintenancePage />} />
                 <Route path="/login" element={<LoginPage />} />
-                <Route path="/signup" element={<SignupPage />} />
+                <Route path="/signup" element={isMaintenanceMode ? <Navigate to="/maintenance" replace /> : <SignupPage />} />
                 <Route path="/pricing" element={<PricingPage />} />
                 <Route path="/partners" element={<PublicPartnersPage />} />
                 <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
@@ -630,6 +700,7 @@ const App: React.FC = () => {
               </Routes>
             </SubscriptionProvider>
           </MessagingProvider>
+          </InAppNotificationProvider>
         </NotificationProvider>
       </CartProvider>
     </AppContextProvider>

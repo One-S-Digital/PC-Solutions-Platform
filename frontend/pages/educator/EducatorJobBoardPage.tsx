@@ -31,8 +31,15 @@ const EducatorJobCard: React.FC<EducatorJobCardProps> = ({ job, onViewDetails })
       case 'CDD':
         return { className: 'bg-yellow-100 text-yellow-700', label: t('recruitment:contractTypes.cdd', 'CDD') };
       case 'INTERNSHIP':
-      default:
         return { className: 'bg-purple-100 text-purple-700', label: t('recruitment:contractTypes.internship', 'Internship') };
+      case 'REPLACEMENT':
+        return { className: 'bg-orange-100 text-orange-700', label: t('recruitment:contractTypes.replacement', 'Replacement') };
+      case 'TEMPORARY':
+        return { className: 'bg-amber-100 text-amber-700', label: t('recruitment:contractTypes.temporary', 'Temporary') };
+      case 'FREELANCE':
+        return { className: 'bg-indigo-100 text-indigo-700', label: t('recruitment:contractTypes.freelance', 'Freelance') };
+      default:
+        return { className: 'bg-gray-100 text-gray-700', label: job.contractType ?? '' };
     }
   }, [job.contractType, t]);
 
@@ -90,7 +97,7 @@ const EducatorJobBoardPage: React.FC = () => {
   const [selectedJob, setSelectedJob] = useState<JobListing | null>(null);
 
   const cantons = SWISS_CANTONS_WITH_ALL;
-  const contractTypes = ['All', 'CDI', 'CDD', 'INTERNSHIP', 'PART_TIME', 'FULL_TIME'];
+  const contractTypes = ['All', 'CDI', 'CDD', 'INTERNSHIP', 'PART_TIME', 'FULL_TIME', 'REPLACEMENT', 'TEMPORARY', 'FREELANCE'];
 
   const fetchJobs = useCallback(async () => {
     setLoading(true);
@@ -218,6 +225,12 @@ const EducatorJobBoardPage: React.FC = () => {
                         return t('recruitment:contractTypes.partTime', 'Part-time');
                       case 'FULL_TIME':
                         return t('recruitment:contractTypes.fullTime', 'Full-time');
+                      case 'REPLACEMENT':
+                        return t('recruitment:contractTypes.replacement', 'Replacement');
+                      case 'TEMPORARY':
+                        return t('recruitment:contractTypes.temporary', 'Temporary');
+                      case 'FREELANCE':
+                        return t('recruitment:contractTypes.freelance', 'Freelance');
                       default:
                         return t('common:labels.allContractTypes');
                     }

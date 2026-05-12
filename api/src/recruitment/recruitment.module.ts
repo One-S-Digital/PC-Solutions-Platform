@@ -4,9 +4,10 @@ import { AuthModule } from '../auth/auth.module';
 import { RecruitmentController } from './recruitment.controller';
 import { RecruitmentService } from './recruitment.service';
 import { TranslationModule } from '../translation/translation.module';
+import { EmailNotificationModule } from '../email-notification/email-notification.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, TranslationModule],
+  imports: [PrismaModule, AuthModule, TranslationModule, EmailNotificationModule],
   controllers: [RecruitmentController],
   providers: [RecruitmentService],
   exports: [RecruitmentService],

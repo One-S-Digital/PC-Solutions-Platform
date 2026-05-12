@@ -280,6 +280,175 @@ export class EmailTemplateService {
         `.trim(),
         isActive: true,
       },
+      // ── Replacement Staffing ───────────────────────────────────────────────
+      {
+        name: 'Replacement request posted',
+        event: 'replacement_request_posted',
+        subject: 'New replacement shift available',
+        category: 'jobRecruitment',
+        variables: ['firstName', 'role', 'startDate', 'endDate', 'location', 'urgency', 'requestUrl'],
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>A replacement shift is available</h2>
+            <p>Hello {{firstName}},</p>
+            <p>A new replacement request matching your profile has been posted:</p>
+            <ul>
+              <li><strong>Role:</strong> {{role}}</li>
+              <li><strong>Dates:</strong> {{startDate}} – {{endDate}}</li>
+              <li><strong>Location:</strong> {{location}}</li>
+              <li><strong>Urgency:</strong> {{urgency}}</li>
+            </ul>
+            <div style="text-align: center; margin: 24px 0;">
+              <a href="{{requestUrl}}" style="background-color: #14B8A6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">View Request</a>
+            </div>
+            <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+          </div>
+        `.trim(),
+        textContent: `A replacement shift is available\n\nHello {{firstName}},\n\nRole: {{role}} | Dates: {{startDate}} – {{endDate}} | Location: {{location}} | Urgency: {{urgency}}\n\nView: {{requestUrl}}\n\nBest regards,\nThe Pro Crèche Solutions Team`.trim(),
+        isActive: true,
+      },
+      {
+        name: 'Replacement match accepted',
+        event: 'replacement_match_accepted',
+        subject: 'Replacement match accepted — {{role}}',
+        category: 'jobRecruitment',
+        variables: ['firstName', 'role', 'startDate', 'endDate', 'requestUrl'],
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>An educator accepted your replacement request</h2>
+            <p>Hello {{firstName}},</p>
+            <p>An educator has accepted your replacement request for <strong>{{role}}</strong> ({{startDate}} – {{endDate}}).</p>
+            <p>Please confirm the match in your dashboard.</p>
+            <div style="text-align: center; margin: 24px 0;">
+              <a href="{{requestUrl}}" style="background-color: #14B8A6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Confirm Match</a>
+            </div>
+            <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+          </div>
+        `.trim(),
+        textContent: `Hello {{firstName}},\n\nAn educator accepted your replacement request for {{role}} ({{startDate}} – {{endDate}}).\nConfirm at: {{requestUrl}}\n\nBest regards,\nThe Pro Crèche Solutions Team`.trim(),
+        isActive: true,
+      },
+      {
+        name: 'Replacement match declined',
+        event: 'replacement_match_declined',
+        subject: 'Replacement match declined — {{role}}',
+        category: 'jobRecruitment',
+        variables: ['firstName', 'role', 'startDate', 'endDate', 'requestUrl'],
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Replacement match declined</h2>
+            <p>Hello {{firstName}},</p>
+            <p>An educator has declined your replacement request for <strong>{{role}}</strong> ({{startDate}} – {{endDate}}).</p>
+            <p>You can find another match or re-open the request from your dashboard.</p>
+            <div style="text-align: center; margin: 24px 0;">
+              <a href="{{requestUrl}}" style="background-color: #14B8A6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Manage Request</a>
+            </div>
+            <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+          </div>
+        `.trim(),
+        textContent: `Hello {{firstName}},\n\nAn educator declined your replacement request for {{role}} ({{startDate}} – {{endDate}}).\nManage at: {{requestUrl}}\n\nBest regards,\nThe Pro Crèche Solutions Team`.trim(),
+        isActive: true,
+      },
+      {
+        name: 'Replacement pool low',
+        event: 'replacement_pool_low',
+        subject: 'Low replacement pool alert for your region',
+        category: 'systemAdmin',
+        variables: ['firstName', 'poolSize', 'adminUrl'],
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Replacement Pool Alert</h2>
+            <p>Hello {{firstName}},</p>
+            <p>The number of educators available for replacement shifts in your region has dropped below the recommended level (<strong>{{poolSize}}</strong> available).</p>
+            <p>Consider encouraging educators to enable their availability for replacement shifts.</p>
+            <div style="text-align: center; margin: 24px 0;">
+              <a href="{{adminUrl}}" style="background-color: #F59E0B; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">View Replacement Pool</a>
+            </div>
+            <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+          </div>
+        `.trim(),
+        textContent: `Hello {{firstName}},\n\nReplacement pool in your region is low ({{poolSize}} available).\nView at: {{adminUrl}}\n\nBest regards,\nThe Pro Crèche Solutions Team`.trim(),
+        isActive: true,
+      },
+      // ── Educator Approval ──────────────────────────────────────────────────
+      {
+        name: 'Educator profile approved',
+        event: 'educator_approved',
+        subject: 'Your educator profile has been approved!',
+        category: 'userManagement',
+        variables: ['firstName', 'dashboardUrl'],
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Your Profile Has Been Approved!</h2>
+            <p>Hello {{firstName}},</p>
+            <p>Great news! Your educator profile on Pro Crèche Solutions has been reviewed and <strong>approved</strong> by our team.</p>
+            <p>You now have full access to the platform. Here's what you can do:</p>
+            <ul>
+              <li>Browse and apply for job listings</li>
+              <li>Complete your professional profile</li>
+              <li>Join the candidate pool for replacement shifts</li>
+              <li>Connect with childcare organisations</li>
+            </ul>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="{{dashboardUrl}}" style="background-color: #14B8A6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Go to My Dashboard</a>
+            </div>
+            <p>Welcome to the Pro Crèche Solutions community!</p>
+            <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+          </div>
+        `.trim(),
+        textContent: `
+          Your Profile Has Been Approved!
+
+          Hello {{firstName}},
+
+          Great news! Your educator profile on Pro Crèche Solutions has been reviewed and approved by our team.
+
+          You now have full access to the platform. Go to your dashboard: {{dashboardUrl}}
+
+          Welcome to the Pro Crèche Solutions community!
+
+          Best regards,
+          The Pro Crèche Solutions Team
+        `.trim(),
+        isActive: true,
+      },
+      {
+        name: 'Educator profile rejected',
+        event: 'educator_rejected',
+        subject: 'Update on your educator profile application',
+        category: 'userManagement',
+        variables: ['firstName', 'rejectionNotes', 'supportUrl'],
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Update on Your Educator Application</h2>
+            <p>Hello {{firstName}},</p>
+            <p>Thank you for your interest in joining Pro Crèche Solutions as an educator. After reviewing your profile, we are unable to approve your application at this time.</p>
+            <div style="background-color: #FEF2F2; border-left: 4px solid #EF4444; padding: 12px 16px; margin: 20px 0; border-radius: 4px;">
+              <p style="margin: 0;"><strong>Reason:</strong> {{rejectionNotes}}</p>
+            </div>
+            <p>If you believe this decision was made in error, or if you have additional information to share, please contact our support team.</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="{{supportUrl}}" style="background-color: #6B7280; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Contact Support</a>
+            </div>
+            <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+          </div>
+        `.trim(),
+        textContent: `
+          Update on Your Educator Application
+
+          Hello {{firstName}},
+
+          Thank you for your interest in joining Pro Crèche Solutions as an educator. After reviewing your profile, we are unable to approve your application at this time.
+
+          Reason: {{rejectionNotes}}
+
+          If you believe this decision was made in error, please contact our support team: {{supportUrl}}
+
+          Best regards,
+          The Pro Crèche Solutions Team
+        `.trim(),
+        isActive: true,
+      },
     ];
   }
 
@@ -692,6 +861,115 @@ export class EmailTemplateService {
           If you already have an account, you can track enquiries here:
           {{enquiriesUrl}}
           
+          Best regards,
+          The Pro Crèche Solutions Team
+        `,
+      },
+
+      // Replacement Staffing
+      replacement_request_posted: {
+        subject: 'New Replacement Request Posted',
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>A replacement shift is available</h2>
+            <p>Hello {{firstName}},</p>
+            <p>A new replacement request matching your profile has been posted:</p>
+            <ul>
+              <li><strong>Role:</strong> {{role}}</li>
+              <li><strong>Dates:</strong> {{startDate}} – {{endDate}}</li>
+              <li><strong>Location:</strong> {{location}}</li>
+              <li><strong>Urgency:</strong> {{urgency}}</li>
+            </ul>
+            <div style="text-align: center; margin: 24px 0;">
+              <a href="{{requestUrl}}" style="background-color: #14B8A6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">View Request</a>
+            </div>
+            <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+          </div>
+        `,
+        textContent: `
+          A replacement shift is available
+
+          Hello {{firstName}},
+
+          Role: {{role}} | Dates: {{startDate}} – {{endDate}} | Location: {{location}} | Urgency: {{urgency}}
+
+          View: {{requestUrl}}
+
+          Best regards,
+          The Pro Crèche Solutions Team
+        `,
+      },
+
+      replacement_match_accepted: {
+        subject: 'Replacement match accepted — {{role}}',
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>An educator accepted your replacement request</h2>
+            <p>Hello {{firstName}},</p>
+            <p>An educator has accepted your replacement request for <strong>{{role}}</strong> ({{startDate}} – {{endDate}}).</p>
+            <p>Please confirm the match in your dashboard.</p>
+            <div style="text-align: center; margin: 24px 0;">
+              <a href="{{requestUrl}}" style="background-color: #14B8A6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Confirm Match</a>
+            </div>
+            <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+          </div>
+        `,
+        textContent: `
+          Hello {{firstName}},
+
+          An educator accepted your replacement request for {{role}} ({{startDate}} – {{endDate}}).
+          Confirm at: {{requestUrl}}
+
+          Best regards,
+          The Pro Crèche Solutions Team
+        `,
+      },
+
+      replacement_match_declined: {
+        subject: 'Replacement match declined — {{role}}',
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Replacement match declined</h2>
+            <p>Hello {{firstName}},</p>
+            <p>An educator has declined your replacement request for <strong>{{role}}</strong> ({{startDate}} – {{endDate}}).</p>
+            <p>You can find another match or re-open the request from your dashboard.</p>
+            <div style="text-align: center; margin: 24px 0;">
+              <a href="{{requestUrl}}" style="background-color: #14B8A6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Manage Request</a>
+            </div>
+            <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+          </div>
+        `,
+        textContent: `
+          Hello {{firstName}},
+
+          An educator declined your replacement request for {{role}} ({{startDate}} – {{endDate}}).
+          Manage at: {{requestUrl}}
+
+          Best regards,
+          The Pro Crèche Solutions Team
+        `,
+      },
+
+      replacement_pool_low: {
+        subject: 'Low replacement pool alert for your region',
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Replacement Pool Alert</h2>
+            <p>Hello {{firstName}},</p>
+            <p>The number of educators available for replacement shifts in your region has dropped below the recommended level (<strong>{{poolSize}}</strong> available).</p>
+            <p>Consider encouraging educators to enable their availability for replacement shifts.</p>
+            <div style="text-align: center; margin: 24px 0;">
+              <a href="{{adminUrl}}" style="background-color: #F59E0B; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">View Replacement Pool</a>
+            </div>
+            <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+          </div>
+        `,
+        textContent: `
+          Hello {{firstName}},
+
+          Replacement pool in your region is low ({{poolSize}} available).
+          View at: {{adminUrl}}
+
           Best regards,
           The Pro Crèche Solutions Team
         `,

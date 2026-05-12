@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react'
+import { formatRole } from '../../utils/formatRole'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { X, Search, User, Building2, Mail } from 'lucide-react'
@@ -317,7 +318,7 @@ const NewConversationModal: React.FC<NewConversationModalProps> = ({
                             </div>
                           )}
                           <div className="text-xs text-gray-400 mt-1">
-                            {user.role}
+                            {formatRole(user.role)}
                           </div>
                         </div>
                         {isSelected && (

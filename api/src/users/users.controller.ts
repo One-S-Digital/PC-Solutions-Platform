@@ -490,6 +490,12 @@ export class UsersController {
     };
   }
 
+  @Patch('me/last-active')
+  async touchLastActive(@Request() request) {
+    await this.usersService.touchLastActive(request.user.clerkId);
+    return { success: true };
+  }
+
   @Patch('me')
   async updateCurrentUser(@Request() request, @Body() updateUserDto: UpdateUserDto) {
     const user = await this.usersService.updateByClerkId(request.user.clerkId, updateUserDto);

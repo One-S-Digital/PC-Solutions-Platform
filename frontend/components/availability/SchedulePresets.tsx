@@ -1,8 +1,9 @@
 import React from 'react';
-import { 
-  EducatorAvailabilitySettings, 
-  SCHEDULE_PRESETS, 
-  SchedulePreset 
+import {
+  EducatorAvailabilitySettings,
+  SCHEDULE_PRESETS,
+  SchedulePreset,
+  getEmploymentTypes,
 } from '../../types/availability';
 import { SparklesIcon, CheckIcon } from '@heroicons/react/24/outline';
 
@@ -19,7 +20,16 @@ const SchedulePresets: React.FC<SchedulePresetsProps> = ({
 }) => {
   // Check if current settings match a preset
   const isPresetActive = (preset: SchedulePreset): boolean => {
-    if (preset.settings.employmentType !== currentSettings.employmentType) {
+    // Compare employment types using getEmploymentTypes() for both sides so that
+    // the new employmentTypes[] array and legacy single employmentType field are
+    // both handled correctly.
+    const presetTypes = preset.settings.employmentTypes
+      ? [...preset.settings.employmentTypes].sort()
+      : preset.settings.employmentType
+        ? [preset.settings.employmentType]
+        : [];
+    const currentTypes = [...getEmploymentTypes(currentSettings)].sort();
+    if (JSON.stringify(presetTypes) !== JSON.stringify(currentTypes)) {
       return false;
     }
     // Simple check - compare enabled days and first slot times

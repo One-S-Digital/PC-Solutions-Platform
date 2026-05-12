@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
+import { formatRole } from '../utils/formatRole'
 import { useNavigate } from 'react-router-dom'
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import {
@@ -37,8 +38,7 @@ import LoadingSpinner from '../components/ui/LoadingSpinner'
 import Card from '../components/design-system/Card'
 import Button from '../components/design-system/Button'
 import { STANDARD_INPUT_FIELD } from '../constants/design-system'
-import { Menu, Transition } from '@headlessui/react'
-import { Fragment } from 'react'
+import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react'
 import EditUserModal from '../components/EditUserModal'
 import AdminQuickEditModal, { QuickEditUserData } from '../components/AdminQuickEditModal'
 import { useDebouncedValue } from '../hooks/useDebouncedValue'
@@ -211,7 +211,7 @@ const ElevateToAdminModal: React.FC<ElevateToAdminModalProps> = ({ isOpen, onClo
                   <p className="font-medium text-gray-900">{user.name || t('admin:users.labels.unknown', 'Unknown')}</p>
                   <p className="text-sm text-gray-500">{user.email || t('admin:users.labels.noEmail', 'No email')}</p>
                   <p className="text-xs text-gray-400 mt-1">
-                    {t('admin:users.elevateUser.currentRole', 'Current role:')} <span className="font-medium">{user.role}</span>
+                    {t('admin:users.elevateUser.currentRole', 'Current role:')} <span className="font-medium">{formatRole(user.role)}</span>
                   </p>
                 </div>
               </div>
@@ -333,13 +333,13 @@ const RoleSelect: React.FC<{ value: UserRole; onChange: (r: UserRole) => void; c
   t,
 }) => (
   <select className={STANDARD_INPUT_FIELD} value={value} onChange={(e) => onChange(e.target.value as UserRole)}>
-    {canInviteSuperAdmin && <option value={UserRole.SUPER_ADMIN}>{t('common:superadmin')}</option>}
-    <option value={UserRole.ADMIN}>{t('common:admin')}</option>
-    <option value={UserRole.FOUNDATION}>{t('common:foundation')}</option>
-    <option value={UserRole.PRODUCT_SUPPLIER}>{t('common:productsupplier')}</option>
-    <option value={UserRole.SERVICE_PROVIDER}>{t('common:serviceprovider')}</option>
-    <option value={UserRole.EDUCATOR}>{t('common:educator')}</option>
-    <option value={UserRole.PARENT}>{t('common:parent')}</option>
+    {canInviteSuperAdmin && <option value={UserRole.SUPER_ADMIN}>{formatRole(UserRole.SUPER_ADMIN)}</option>}
+    <option value={UserRole.ADMIN}>{formatRole(UserRole.ADMIN)}</option>
+    <option value={UserRole.FOUNDATION}>{formatRole(UserRole.FOUNDATION)}</option>
+    <option value={UserRole.PRODUCT_SUPPLIER}>{formatRole(UserRole.PRODUCT_SUPPLIER)}</option>
+    <option value={UserRole.SERVICE_PROVIDER}>{formatRole(UserRole.SERVICE_PROVIDER)}</option>
+    <option value={UserRole.EDUCATOR}>{formatRole(UserRole.EDUCATOR)}</option>
+    <option value={UserRole.PARENT}>{formatRole(UserRole.PARENT)}</option>
   </select>
 )
 
@@ -900,7 +900,7 @@ const PendingInvitationsSection: React.FC<PendingInvitationsSectionProps> = ({
                   <div className="flex items-center gap-3 ml-4 shrink-0">
                     {inv.role && (
                       <span className={`inline-flex px-2 py-0.5 text-xs font-semibold rounded-full ${roleColors[inv.role] ?? 'bg-gray-100 text-gray-800'}`}>
-                        {inv.role}
+                        {formatRole(inv.role)}
                       </span>
                     )}
                     <button
@@ -1667,13 +1667,13 @@ const Users: React.FC = () => {
               onChange={(e) => setSelectedRole(e.target.value)}
             >
               <option value="">{t('common:filters.roles.all')}</option>
-              <option value={UserRole.SUPER_ADMIN}>{t('common:superadmin')}</option>
-              <option value={UserRole.ADMIN}>{t('common:admin')}</option>
-              <option value={UserRole.FOUNDATION}>{t('common:foundation')}</option>
-              <option value={UserRole.PRODUCT_SUPPLIER}>{t('common:productsupplier')}</option>
-              <option value={UserRole.SERVICE_PROVIDER}>{t('common:serviceprovider')}</option>
-              <option value={UserRole.EDUCATOR}>{t('common:educator')}</option>
-              <option value={UserRole.PARENT}>{t('common:parent')}</option>
+              <option value={UserRole.SUPER_ADMIN}>{formatRole(UserRole.SUPER_ADMIN)}</option>
+              <option value={UserRole.ADMIN}>{formatRole(UserRole.ADMIN)}</option>
+              <option value={UserRole.FOUNDATION}>{formatRole(UserRole.FOUNDATION)}</option>
+              <option value={UserRole.PRODUCT_SUPPLIER}>{formatRole(UserRole.PRODUCT_SUPPLIER)}</option>
+              <option value={UserRole.SERVICE_PROVIDER}>{formatRole(UserRole.SERVICE_PROVIDER)}</option>
+              <option value={UserRole.EDUCATOR}>{formatRole(UserRole.EDUCATOR)}</option>
+              <option value={UserRole.PARENT}>{formatRole(UserRole.PARENT)}</option>
             </select>
           </div>
           <div className="sm:w-48">
@@ -1728,7 +1728,10 @@ const Users: React.FC = () => {
               ) : users.map((user) => (
                 <tr key={user.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
-                    <div className="flex items-center">
+                    <button
+                      onClick={() => navigate(`/users/${user.id}/profile`)}
+                      className="flex items-center text-left hover:opacity-80 transition-opacity"
+                    >
                       <div className="h-10 w-10 flex-shrink-0">
                         {user.avatarUrl ? (
                           <img className="h-10 w-10 rounded-full" src={user.avatarUrl} alt="" />
@@ -1741,14 +1744,14 @@ const Users: React.FC = () => {
                         )}
                       </div>
                       <div className="ml-4 min-w-0">
-                        <div className="text-sm font-medium text-gray-900 break-words">{user.name || t('admin:users.labels.unknown', 'Unknown')}</div>
+                        <div className="text-sm font-medium text-swiss-teal hover:underline break-words">{user.name || t('admin:users.labels.unknown', 'Unknown')}</div>
                         <div className="text-sm text-gray-500 break-all">{user.email || t('admin:users.labels.noEmail', 'No email')}</div>
                       </div>
-                    </div>
+                    </button>
                   </td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${roleColors[user.role] || 'bg-gray-100 text-gray-800'}`}>
-                      {user.role}
+                      {formatRole(user.role)}
                     </span>
                   </td>
                   <td className="px-6 py-4 max-w-xs">
@@ -1776,163 +1779,156 @@ const Users: React.FC = () => {
                     {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : t('admin:users.labels.never', 'Never')}
                   </td>
                   <td className="px-6 py-4 text-right text-sm font-medium">
-                    <Menu as="div" className="relative inline-block text-left">
-                      <Menu.Button className="p-2 rounded-full hover:bg-gray-100">
+                    <Menu>
+                      <MenuButton className="p-2 rounded-full hover:bg-gray-100">
                         <MoreVertical className="h-4 w-4" />
-                      </Menu.Button>
-                      <Transition
-                        as={Fragment}
-                        enter="transition ease-out duration-100"
-                        enterFrom="transform opacity-0 scale-95"
-                        enterTo="transform opacity-100 scale-100"
-                        leave="transition ease-in duration-75"
-                        leaveFrom="transform opacity-100 scale-100"
-                        leaveTo="transform opacity-0 scale-95"
+                      </MenuButton>
+                      <MenuItems
+                        anchor="bottom end"
+                        className="z-50 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none origin-top-right py-1 [--anchor-gap:4px]"
                       >
-                        <Menu.Items className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
-                          <div className="py-1">
-                            <Menu.Item>
-                              {({ active }) => (
-                                <button
-                                  onClick={() =>
-                                    user.status === 'ACTIVE'
-                                      ? handleSuspendClick(user)
-                                      : updateUserStatusMutation.mutate({ userId: user.id, payload: { status: 'ACTIVE' } })
-                                  }
-                                  className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
-                                  disabled={updateUserStatusMutation.isPending}
-                                >
-                                  {user.status === 'ACTIVE' ? (
-                                    <>
-                                      <Ban className="h-4 w-4 mr-2" />
-                                      {t('admin:users.actions.suspend', 'Suspend')}
-                                    </>
-                                  ) : (
-                                    <>
-                                      <CheckCircle className="h-4 w-4 mr-2" />
-                                      {t('admin:users.actions.reactivate', 'Reactivate')}
-                                    </>
-                                  )}
-                                </button>
+                        <MenuItem>
+                          {({ focus }) => (
+                            <button
+                              onClick={() =>
+                                user.status === 'ACTIVE'
+                                  ? handleSuspendClick(user)
+                                  : updateUserStatusMutation.mutate({ userId: user.id, payload: { status: 'ACTIVE' } })
+                              }
+                              className={`${focus ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
+                              disabled={updateUserStatusMutation.isPending}
+                            >
+                              {user.status === 'ACTIVE' ? (
+                                <>
+                                  <Ban className="h-4 w-4 mr-2" />
+                                  {t('admin:users.actions.suspend', 'Suspend')}
+                                </>
+                              ) : (
+                                <>
+                                  <CheckCircle className="h-4 w-4 mr-2" />
+                                  {t('admin:users.actions.reactivate', 'Reactivate')}
+                                </>
                               )}
-                            </Menu.Item>
+                            </button>
+                          )}
+                        </MenuItem>
 
-                            {user.role === UserRole.EDUCATOR && (
-                              <Menu.Item>
-                                {({ active }) => (
-                                  <button
-                                    onClick={() =>
-                                      updateCandidatePoolVisibilityMutation.mutate({
-                                        userId: user.id,
-                                        candidatePoolVisible: !user.candidatePoolVisible,
-                                      })
-                                    }
-                                    className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
-                                    disabled={updateCandidatePoolVisibilityMutation.isPending}
-                                  >
-                                    {user.candidatePoolVisible ? (
-                                      <>
-                                        <UserX className="h-4 w-4 mr-2" />
-                                        {t('admin:users.actions.removeFromPool', 'Remove from candidate pool')}
-                                      </>
-                                    ) : (
-                                      <>
-                                        <UserCheckIcon className="h-4 w-4 mr-2" />
-                                        {t('admin:users.actions.addToPool', 'Add to candidate pool')}
-                                      </>
-                                    )}
-                                  </button>
+                        {user.role === UserRole.EDUCATOR && (
+                          <MenuItem>
+                            {({ focus }) => (
+                              <button
+                                onClick={() =>
+                                  updateCandidatePoolVisibilityMutation.mutate({
+                                    userId: user.id,
+                                    candidatePoolVisible: !user.candidatePoolVisible,
+                                  })
+                                }
+                                className={`${focus ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
+                                disabled={updateCandidatePoolVisibilityMutation.isPending}
+                              >
+                                {user.candidatePoolVisible ? (
+                                  <>
+                                    <UserX className="h-4 w-4 mr-2" />
+                                    {t('admin:users.actions.removeFromPool', 'Remove from candidate pool')}
+                                  </>
+                                ) : (
+                                  <>
+                                    <UserCheckIcon className="h-4 w-4 mr-2" />
+                                    {t('admin:users.actions.addToPool', 'Add to candidate pool')}
+                                  </>
                                 )}
-                              </Menu.Item>
+                              </button>
                             )}
+                          </MenuItem>
+                        )}
 
-                            {/* Edit Full Profile — SUPER_ADMIN only */}
-                            {isSuperAdmin && (
-                              <Menu.Item>
-                                {({ active }) => (
-                                  <button
-                                    onClick={() => navigate(`/users/${user.id}/profile`)}
-                                    className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-swiss-teal font-medium`}
-                                  >
-                                    <Edit className="h-4 w-4 mr-2" />
-                                    {t('admin:users.editFullProfile', 'Edit Full Profile')}
-                                  </button>
-                                )}
-                              </Menu.Item>
+                        {/* Edit Full Profile — SUPER_ADMIN only */}
+                        {isSuperAdmin && (
+                          <MenuItem>
+                            {({ focus }) => (
+                              <button
+                                onClick={() => navigate(`/users/${user.id}/profile`)}
+                                className={`${focus ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-swiss-teal font-medium`}
+                              >
+                                <Edit className="h-4 w-4 mr-2" />
+                                {t('admin:users.editFullProfile', 'Edit Full Profile')}
+                              </button>
                             )}
+                          </MenuItem>
+                        )}
 
-                            {/* Quick Edit Profile — ADMIN role only (limited fields) */}
-                            {!isSuperAdmin && (
-                              <Menu.Item>
-                                {({ active }) => (
-                                  <button
-                                    onClick={() => handleQuickEditUser(user)}
-                                    className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-swiss-teal font-medium`}
-                                  >
-                                    <Edit className="h-4 w-4 mr-2" />
-                                    {t('admin:users.quickEditProfile', 'Quick Edit Profile')}
-                                  </button>
-                                )}
-                              </Menu.Item>
+                        {/* Quick Edit Profile — ADMIN role only (limited fields) */}
+                        {!isSuperAdmin && (
+                          <MenuItem>
+                            {({ focus }) => (
+                              <button
+                                onClick={() => handleQuickEditUser(user)}
+                                className={`${focus ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-swiss-teal font-medium`}
+                              >
+                                <Edit className="h-4 w-4 mr-2" />
+                                {t('admin:users.quickEditProfile', 'Quick Edit Profile')}
+                              </button>
                             )}
+                          </MenuItem>
+                        )}
 
-                            {/* View Profile - Only for users with organizations (suppliers/service providers) */}
-                            {user.orgId && (user.role === UserRole.PRODUCT_SUPPLIER || user.role === UserRole.SERVICE_PROVIDER) && (
-                              <Menu.Item>
-                                {({ active }) => (
-                                  <button
-                                    onClick={() => handleViewProfile(user)}
-                                    className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
-                                  >
-                                    <ExternalLink className="h-4 w-4 mr-2" />
-                                    {t('admin:users.viewProfile.title', 'View Profile')}
-                                  </button>
-                                )}
-                              </Menu.Item>
+                        {/* View Profile - Only for users with organizations (suppliers/service providers) */}
+                        {user.orgId && (user.role === UserRole.PRODUCT_SUPPLIER || user.role === UserRole.SERVICE_PROVIDER) && (
+                          <MenuItem>
+                            {({ focus }) => (
+                              <button
+                                onClick={() => handleViewProfile(user)}
+                                className={`${focus ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
+                              >
+                                <ExternalLink className="h-4 w-4 mr-2" />
+                                {t('admin:users.viewProfile.title', 'View Profile')}
+                              </button>
                             )}
+                          </MenuItem>
+                        )}
 
-                            {/* Edit User Account (role / status / org assignment) — both roles */}
-                            <Menu.Item>
-                              {({ active }) => (
-                                <button
-                                  onClick={() => handleEditUser(user)}
-                                  className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
-                                >
-                                  <Edit className="h-4 w-4 mr-2" />
-                                  {t('admin:users.editUser.title', 'Edit User')}
-                                </button>
-                              )}
-                            </Menu.Item>
-                            {/* Show Elevate to Admin option only for Super Admins */}
-                            {isSuperAdmin && (
-                              <Menu.Item>
-                                {({ active }) => (
-                                  <button
-                                    onClick={() => handleElevateClick(user)}
-                                    className={`${active ? 'bg-orange-50' : ''} flex items-center w-full px-4 py-2 text-sm text-orange-600`}
-                                  >
-                                    <UserCog className="h-4 w-4 mr-2" />
-                                    {user.role === UserRole.ADMIN || user.role === UserRole.SUPER_ADMIN
-                                      ? t('admin:users.elevateUser.changeRole', 'Change Admin Role')
-                                      : t('admin:users.elevateUser.elevate', 'Elevate to Admin')}
-                                  </button>
-                                )}
-                              </Menu.Item>
+                        {/* Edit User Account (role / status / org assignment) — both roles */}
+                        <MenuItem>
+                          {({ focus }) => (
+                            <button
+                              onClick={() => handleEditUser(user)}
+                              className={`${focus ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
+                            >
+                              <Edit className="h-4 w-4 mr-2" />
+                              {t('admin:users.editUser.title', 'Edit User')}
+                            </button>
+                          )}
+                        </MenuItem>
+
+                        {/* Show Elevate to Admin option only for Super Admins */}
+                        {isSuperAdmin && (
+                          <MenuItem>
+                            {({ focus }) => (
+                              <button
+                                onClick={() => handleElevateClick(user)}
+                                className={`${focus ? 'bg-orange-50' : ''} flex items-center w-full px-4 py-2 text-sm text-orange-600`}
+                              >
+                                <UserCog className="h-4 w-4 mr-2" />
+                                {user.role === UserRole.ADMIN || user.role === UserRole.SUPER_ADMIN
+                                  ? t('admin:users.elevateUser.changeRole', 'Change Admin Role')
+                                  : t('admin:users.elevateUser.elevate', 'Elevate to Admin')}
+                              </button>
                             )}
-                            <Menu.Item>
-                              {({ active }) => (
-                                <button
-                                  onClick={() => handleDeleteClick(user)}
-                                  className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-red-600`}
-                                >
-                                  <Trash2 className="h-4 w-4 mr-2" />
-                                  {t('admin:users.deleteUser.delete', 'Delete User')}
-                                </button>
-                              )}
-                            </Menu.Item>
-                          </div>
-                        </Menu.Items>
-                      </Transition>
+                          </MenuItem>
+                        )}
+
+                        <MenuItem>
+                          {({ focus }) => (
+                            <button
+                              onClick={() => handleDeleteClick(user)}
+                              className={`${focus ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-red-600`}
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              {t('admin:users.deleteUser.delete', 'Delete User')}
+                            </button>
+                          )}
+                        </MenuItem>
+                      </MenuItems>
                     </Menu>
                   </td>
                 </tr>

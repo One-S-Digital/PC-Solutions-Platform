@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, ConflictException, ForbiddenException, Logger, BadRequestException, InternalServerErrorException } from '@nestjs/common';
-import { Prisma, UserRole, SubscriptionStatus } from '@prisma/client';
+import { Prisma, UserRole, SubscriptionStatus, EducatorApprovalStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -519,6 +519,9 @@ export class UsersService {
       stripeCustomerId: user.stripeCustomerId,
       lastActiveAt: this.serializeDate(user.lastActiveAt),
       isActive: user.isActive,
+      approvalStatus: user.approvalStatus ?? null,
+      approvalNotes: user.approvalNotes ?? null,
+      approvedAt: this.serializeDate(user.approvedAt),
       createdAt: this.serializeDate(user.createdAt),
       updatedAt: this.serializeDate(user.updatedAt),
       organizations,
@@ -648,6 +651,9 @@ export class UsersService {
             lastName: lastName || null,
             phoneNumber: dto.phone,
             isActive: true,
+            ...(dto.role === UserRole.EDUCATOR && {
+              approvalStatus: EducatorApprovalStatus.PENDING_REVIEW,
+            }),
           },
         });
         profileUserIdToLink = user.id;
@@ -1181,6 +1187,14 @@ export class UsersService {
       where: { userId: profileUserId, organizationId },
     });
     return { success: true, removed: result.count > 0 };
+  }
+
+  async touchLastActive(clerkId: string): Promise<void> {
+    const now = new Date();
+    await this.prisma.user.updateMany({
+      where: { clerkId },
+      data: { lastActiveAt: now },
+    });
   }
 
   async updateByClerkId(clerkId: string, updateUserDto: UpdateUserDto) {

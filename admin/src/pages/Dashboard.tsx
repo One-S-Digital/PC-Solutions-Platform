@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import { 
-  Users, 
-  Building2, 
-  Package, 
-  ShoppingCart, 
+import {
+  Users,
+  Building2,
+  Package,
+  ShoppingCart,
   Heart,
   TrendingUp,
   Activity,
@@ -13,7 +13,9 @@ import {
   FileText,
   Scale,
   PlusCircle,
-  Briefcase
+  Briefcase,
+  RefreshCw,
+  UserCheck,
 } from 'lucide-react'
 import { publicApi, useApiClient, apiService } from '../services/api'
 import * as api from '../services/api'
@@ -72,6 +74,56 @@ const Dashboard: React.FC = () => {
   const leadsData = dashboardCounts?.totalParentLeads ?? 0
   const totalJobs = dashboardCounts?.totalJobs ?? 0
   const totalApplications = dashboardCounts?.totalApplications ?? 0
+
+  // Staffing signals
+  const { data: staffingSignalsResp, isLoading: signalsLoading } = useQuery({
+    queryKey: ['admin-staffing-signals'],
+    queryFn: () => apiService.getStaffingSignals(apiClient),
+    enabled: !!apiClient,
+    staleTime: 60000,
+    select: (res: any) => res?.data?.data ?? res?.data ?? null,
+  })
+
+  const staffingSignals = staffingSignalsResp as { openRequests: number; matchedRequests: number; filledRequests: number; replacementPoolSize: number } | null
+
+  const staffingStats = [
+    {
+      name: 'Open Replacements',
+      value: staffingSignals?.openRequests ?? 0,
+      icon: RefreshCw,
+      loading: signalsLoading,
+      color: 'text-swiss-teal',
+      bgColor: 'bg-swiss-teal/10',
+      link: '/replacements',
+    },
+    {
+      name: 'Matched Replacements',
+      value: staffingSignals?.matchedRequests ?? 0,
+      icon: Briefcase,
+      loading: signalsLoading,
+      color: 'text-swiss-mint',
+      bgColor: 'bg-swiss-mint/10',
+      link: '/replacements?status=MATCHED',
+    },
+    {
+      name: 'Replacement Pool',
+      value: staffingSignals?.replacementPoolSize ?? 0,
+      icon: UserCheck,
+      loading: signalsLoading,
+      color: 'text-indigo-600',
+      bgColor: 'bg-indigo-100',
+      link: '/candidates',
+    },
+    {
+      name: 'Job Listings',
+      value: totalJobs,
+      icon: FileText,
+      loading: countsLoading,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-100',
+      link: '/job-listings',
+    },
+  ]
 
   const stats = [
     {
@@ -341,6 +393,35 @@ const Dashboard: React.FC = () => {
           </Button>
         </div>
       </Card>
+
+      {/* Staffing Signal Cards (Phase 6) */}
+      <div>
+        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Recruitment Signals</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {staffingStats.map((stat) => (
+            <Card
+              key={stat.name}
+              className="p-0 overflow-hidden cursor-pointer"
+              hoverEffect
+              onClick={() => stat.link && navigate(stat.link)}
+            >
+              <div className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className={`p-2 rounded-lg ${stat.bgColor}`}>
+                    <stat.icon className={`h-5 w-5 ${stat.color}`} />
+                  </div>
+                  {stat.loading ? (
+                    <LoadingSpinner size="small" />
+                  ) : (
+                    <p className="text-2xl font-bold text-swiss-charcoal">{stat.value}</p>
+                  )}
+                </div>
+                <p className="mt-3 text-xs text-gray-500">{stat.name}</p>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -7,6 +7,8 @@ import {
   IsOptional,
   IsString,
   IsUrl,
+  IsNumber,
+  Min,
   ArrayMaxSize,
   ValidateIf,
   ValidateNested,
@@ -14,6 +16,32 @@ import {
 
 export const ALLOWED_JOB_ROLES = ['EDE', 'ASE', 'Auxiliaire', 'Director', 'Cleaning Staff', 'Intern'] as const;
 import { Type } from 'class-transformer';
+
+const MAX_DOCUMENTS = 5;
+
+export class EducatorDocumentItemDto {
+  @IsString()
+  id: string;
+
+  @IsString()
+  name: string;
+
+  @IsString()
+  url: string;
+
+  @IsOptional()
+  @IsIn(['CV', 'Diploma', 'Certificate', 'Reference', 'Other'])
+  type?: string;
+
+  @IsOptional()
+  @IsString()
+  uploadDate?: string;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  size?: number;
+}
 import { EducatorAvailabilitySettingsDto } from './educator-availability.dto';
 
 const MAX_EDUCATOR_ITEMS = 20;
@@ -167,6 +195,13 @@ export class UpdateEducatorSettingsDto {
   cvUrl?: string;
 
   @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(MAX_DOCUMENTS)
+  @ValidateNested({ each: true })
+  @Type(() => EducatorDocumentItemDto)
+  documents?: EducatorDocumentItemDto[];
+
+  @IsOptional()
   @IsString()
   shortBio?: string;
 
@@ -212,4 +247,12 @@ export class UpdateEducatorSettingsDto {
   @IsOptional()
   @IsBoolean()
   candidatePoolVisible?: boolean;
+
+  /**
+   * When true, the educator is in the replacement/substitute staff pool.
+   * Automatically set to true when CUSTOM_SCHEDULE is among the selected employment types.
+   */
+  @IsOptional()
+  @IsBoolean()
+  availableForReplacement?: boolean;
 }

@@ -256,27 +256,7 @@ i18n
         // PRODUCTION MODE: Use bundled translations directly (faster, no API calls)
         if (USE_BUNDLED_TRANSLATIONS) {
           const bundled = getBundledTranslations();
-          if (bundled) {
-            callback(null, { status: 200, data: bundled });
-            return;
-          }
-          // If not in bundle, try dynamic import
-          try {
-            const module = await import(`../packages/translations/locales/${lng}/${ns}.json`);
-            let data = stripPrefixes(module.default || module);
-            // If the namespace is 'content' and the module has a 'content' wrapper, unwrap it
-            if (ns === 'content' && data && typeof data === 'object' && 'content' in data) {
-              data = (data as { content: unknown }).content;
-              if (import.meta.env.DEV) {
-                console.log(`[i18n] Unwrapped content namespace in dynamic import for ${lng}/${ns}`);
-                console.log(`[i18n] Sample keys after unwrap:`, Object.keys(data as Record<string, unknown>).slice(0, 5));
-              }
-            }
-            callback(null, { status: 200, data });
-          } catch (e) {
-            console.warn(`No bundled translation for ${lng}/${ns}`);
-            callback(null, { status: 200, data: {} });
-          }
+          callback(null, { status: bundled ? 200 : 404, data: bundled ?? {} });
           return;
         }
 
@@ -352,29 +332,23 @@ i18n
             return;
           }
           
-          // Try to load from bundled files as fallback
-          try {
-            const module = await import(`../packages/translations/locales/${lng}/${ns}.json`);
-            const data = stripPrefixes(module.default || module);
-            callback(null, { status: 200, data });
+          // Try bundled resources as fallback (avoids duplicate static+dynamic imports)
+          const lngBundled = fallbackResources[lng]?.[ns];
+          if (lngBundled) {
+            callback(null, { status: 200, data: stripPrefixes(lngBundled) });
             return;
-          } catch (e) {
-            // Last resort: Try English fallback if target language failed
-            if (lng !== 'en') {
-              try {
-                const enModule = await import(`../packages/translations/locales/en/${ns}.json`);
-                const enData = stripPrefixes(enModule.default || enModule);
-                console.warn(`Using English fallback for ${lng}/${ns}`);
-                callback(null, { status: 200, data: enData });
-                return;
-              } catch (enError) {
-                // If even English fails, return empty object
-                console.error(`Failed to load even English fallback for ${ns}:`, enError);
-              }
-            }
-            // Return empty object as last resort (i18next will handle missing keys)
-            callback(null, { status: 200, data: {} });
           }
+          // Last resort: Try English fallback if target language failed
+          if (lng !== 'en') {
+            const enBundled = fallbackResources['en']?.[ns];
+            if (enBundled) {
+              console.warn(`Using English fallback for ${lng}/${ns}`);
+              callback(null, { status: 200, data: stripPrefixes(enBundled) });
+              return;
+            }
+          }
+          // Return empty object as last resort (i18next will handle missing keys)
+          callback(null, { status: 200, data: {} });
         }
       },
     },

@@ -443,6 +443,20 @@ export const apiService = {
 
   // Candidates
   getCandidates: (apiClient: AxiosInstance) => apiClient.get<ApiResponse<Candidate[]>>('/compat/candidates?includeHidden=true'),
+
+  // Educator Approvals
+  getEducatorApprovals: (
+    apiClient: AxiosInstance,
+    params?: { status?: string; page?: number; limit?: number },
+  ) => apiClient.get<ApiResponse<any>>('/admin/educator-approvals', { params }),
+  getEducatorApprovalsPendingCount: (apiClient: AxiosInstance) =>
+    apiClient.get<ApiResponse<{ count: number }>>('/admin/educator-approvals/pending-count'),
+  getEducatorApprovalById: (apiClient: AxiosInstance, id: string) =>
+    apiClient.get<ApiResponse<any>>(`/admin/educator-approvals/${id}`),
+  approveEducator: (apiClient: AxiosInstance, id: string) =>
+    apiClient.post<ApiResponse<any>>(`/admin/educator-approvals/${id}/approve`),
+  rejectEducator: (apiClient: AxiosInstance, id: string, notes: string) =>
+    apiClient.post<ApiResponse<any>>(`/admin/educator-approvals/${id}/reject`, { notes }),
   createCandidate: (apiClient: AxiosInstance, candidateData: {
     firstName: string;
     lastName: string;
@@ -744,8 +758,15 @@ export const apiService = {
     apiClient.get<ApiResponse<JobAnalytics>>('/admin/analytics/jobs', { params: { timeRange } }),
   getRevenueAnalytics: (apiClient: AxiosInstance, timeRange: '7d' | '30d' | '90d' | '1y' = '30d') => 
     apiClient.get<ApiResponse<RevenueAnalytics>>('/admin/analytics/revenue', { params: { timeRange } }),
-  getSystemUsageAnalytics: (apiClient: AxiosInstance, timeRange: '7d' | '30d' | '90d' | '1y' = '30d') => 
+  getSystemUsageAnalytics: (apiClient: AxiosInstance, timeRange: '7d' | '30d' | '90d' | '1y' = '30d') =>
     apiClient.get<ApiResponse<SystemUsageAnalytics>>('/admin/analytics/system', { params: { timeRange } }),
+  getClerkOverview: (apiClient: AxiosInstance) =>
+    apiClient.get<ApiResponse<any>>('/admin/analytics/clerk-overview'),
+  getUserActivityHeatmap: (apiClient: AxiosInstance, userId: string, year?: number) =>
+    apiClient.get<ApiResponse<{ year: number; activeDays: string[]; totalActiveDays: number; currentStreak: number }>>(
+      `/admin/analytics/user-activity/${userId}`,
+      { params: year ? { year } : undefined },
+    ),
 
   // Partners Management
   getPartners: (apiClient: AxiosInstance, params?: { type?: PartnerType; isActive?: boolean; isFeatured?: boolean; search?: string }) => 
@@ -1193,6 +1214,20 @@ export const apiService = {
 
   mailingGetCustomListMembers: (apiClient: AxiosInstance, listId: string, params?: { page?: number; pageSize?: number }) =>
     apiClient.get(`/admin/mailing/custom-lists/${listId}/members`, { params }),
+
+  // Replacement Staffing (Phase 3)
+  getReplacementRequests: (apiClient: AxiosInstance, params?: { status?: string; foundationId?: string }) =>
+    apiClient.get('/replacements/requests', { params }),
+  getReplacementRequestById: (apiClient: AxiosInstance, id: string) =>
+    apiClient.get(`/replacements/requests/${id}`),
+  cancelReplacementRequest: (apiClient: AxiosInstance, id: string) =>
+    apiClient.delete(`/replacements/requests/${id}`),
+  proposeReplacementMatch: (apiClient: AxiosInstance, requestId: string, educatorId: string) =>
+    apiClient.post(`/replacements/requests/${requestId}/matches`, { educatorId }),
+  respondReplacementMatch: (apiClient: AxiosInstance, matchId: string, status: string, note?: string) =>
+    apiClient.patch(`/replacements/matches/${matchId}/respond`, { status, note }),
+  getStaffingSignals: (apiClient: AxiosInstance, foundationId?: string) =>
+    apiClient.get('/replacements/signals', { params: foundationId ? { foundationId } : {} }),
 }
 
 // Export individual content functions for easier imports

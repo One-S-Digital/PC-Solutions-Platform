@@ -13,7 +13,7 @@ import { Request, Response } from 'express';
 import { PrismaService } from '../prisma/prisma.service';
 import { createClerkClient } from '@clerk/clerk-sdk-node';
 import { ConfigService } from '@nestjs/config';
-import { UserRole } from '@prisma/client';
+import { UserRole, EducatorApprovalStatus } from '@prisma/client';
 import { EmailNotificationService } from '../email-notification/email-notification.service';
 
 // Simple in-memory set for idempotency (replace with Redis in production)
@@ -664,6 +664,9 @@ ${'='.repeat(100)}`);
           role: validRole as UserRole,
           phoneNumber,
           isActive: true,
+          ...(validRole === UserRole.EDUCATOR && {
+            approvalStatus: EducatorApprovalStatus.PENDING_REVIEW,
+          }),
         };
 
         if (lastActiveAt !== undefined) {

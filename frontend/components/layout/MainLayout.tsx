@@ -12,9 +12,9 @@ interface MainLayoutProps {
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const { t } = useTranslation(['common']);
 
   const toggleMobileSidebar = () => {
-    const { t } = useTranslation(['common']);
     setIsMobileSidebarOpen(!isMobileSidebarOpen);
   };
 

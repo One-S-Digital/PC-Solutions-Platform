@@ -91,6 +91,10 @@ export declare const ApplicationStatus: {
     readonly REVIEWED: "REVIEWED";
     readonly ACCEPTED: "ACCEPTED";
     readonly REJECTED: "REJECTED";
+    readonly SHORTLISTED: "SHORTLISTED";
+    readonly INTERVIEW: "INTERVIEW";
+    readonly OFFER: "OFFER";
+    readonly HIRED: "HIRED";
 };
 export type ApplicationStatus = (typeof ApplicationStatus)[keyof typeof ApplicationStatus];
 export declare const CourseStatus: {

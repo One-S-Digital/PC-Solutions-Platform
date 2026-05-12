@@ -11,6 +11,12 @@ export enum UserRole {
   PARENT = 'PARENT',
 }
 
+export enum EducatorApprovalStatus {
+  PENDING_REVIEW = 'PENDING_REVIEW',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+}
+
 export enum SubscriptionTier {
   BASIC = 'BASIC',
   ESSENTIAL = 'ESSENTIAL',
@@ -41,6 +47,9 @@ export interface User {
   stripeCustomerId?: string;
   lastActiveAt?: string;
   isActive: boolean;
+  approvalStatus?: EducatorApprovalStatus | null;
+  approvalNotes?: string | null;
+  approvedAt?: string | null;
   createdAt: string;
   updatedAt: string;
   
@@ -828,7 +837,11 @@ export enum ApplicationStatus {
     PENDING = 'PENDING',
     REVIEWED = 'REVIEWED',
     ACCEPTED = 'ACCEPTED',
-    REJECTED = 'REJECTED'
+    REJECTED = 'REJECTED',
+    SHORTLISTED = 'SHORTLISTED',
+    INTERVIEW = 'INTERVIEW',
+    OFFER = 'OFFER',
+    HIRED = 'HIRED',
 }
 
 export interface Application {

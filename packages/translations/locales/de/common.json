@@ -599,6 +599,8 @@
     "tryAgain": "Erneut versuchen"
   },
   "errors": {
+    "errorrate": "Fehlerrate",
+    "errors": "Fehler",
     "deleteFailed": "Löschen failed",
     "deleteMessageFailed": "Löschen message failed",
     "downloadFailed": "download Failed",
@@ -2405,5 +2407,36 @@
     "Director": "Direktor/in",
     "CleaningStaff": "Reinigungspersonal",
     "Intern": "Praktikant/in"
+  },
+  "export": "Exportieren",
+  "info": "Info",
+  "warnings": "Warnungen",
+  "titles": {
+    "cpuusage": "CPU-Auslastung",
+    "memoryusage": "Speicherauslastung",
+    "diskusage": "Festplattenauslastung",
+    "uptime": "Betriebszeit",
+    "activealerts": "Aktive Warnungen",
+    "responsetime": "Antwortzeit",
+    "throughput": "Durchsatz",
+    "activeusers": "Aktive Benutzer",
+    "newuserstoday": "Neue Benutzer heute",
+    "sessionduration": "Ø Sitzungsdauer",
+    "pageviews": "Seitenaufrufe",
+    "activeconnections": "Aktive Verbindungen",
+    "avgquerytime": "Ø Abfragezeit",
+    "storageused": "Genutzter Speicher",
+    "connectionhealth": "Verbindungsstatus",
+    "requestsmin": "Anfragen / min",
+    "failedlogins": "Fehlgeschlagene Logins",
+    "blockedips": "Blockierte IPs",
+    "apihealth": "API-Status",
+    "lastscan": "Letzter Scan"
+  },
+  "maintenancePage": {
+    "title": "Seite in Wartung",
+    "subtitle": "Wir sind bald wieder online. Vielen Dank für Ihre Geduld.",
+    "adminLogin": "Administrator-Anmeldung",
+    "status": "Planmäßige Wartung läuft"
   }
 }

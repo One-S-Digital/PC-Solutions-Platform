@@ -594,6 +594,40 @@
       "enabled": "Aktiv",
       "disabled": "Deaktiviert",
       "manage": "Verwalten"
+    },
+    "userAnalytics": {
+      "title": "Benutzeranalyse",
+      "updated": "Aktualisiert {{time}}",
+      "stats": {
+        "active": "Aktiv",
+        "new": "Neu",
+        "retained": "Gehalten",
+        "totalSignups": "Registrierungen gesamt",
+        "thisWeek": "Diese Woche",
+        "allTime": "Insgesamt"
+      },
+      "chart": {
+        "signups": "Anmeldungen",
+        "signins": "Einloggungen",
+        "weekOf": "Woche vom {{date}}"
+      },
+      "miniCharts": {
+        "signupsPerWeek": "Anmeldungen pro Woche",
+        "signinsPerWeek": "Einloggungen pro Woche"
+      },
+      "heatmap": {
+        "title": "Benutzeraktivität — {{year}}",
+        "less": "Weniger",
+        "more": "Mehr"
+      },
+      "cohort": {
+        "title": "Wöchentliche Kohortenretention",
+        "subtitle": "% der Benutzer aus jeder Anmeldewoche, die in den Folgewochen aktiv waren (basierend auf der letzten Anmeldung)",
+        "cohortWeek": "Kohortenwoche",
+        "size": "Grösse"
+      },
+      "errorState": "Analyse konnte nicht geladen werden – stellen Sie sicher, dass die API den neuesten Code ausführt, und aktualisieren Sie die Seite.",
+      "emptyState": "Analysedaten sind noch nicht verfügbar."
     }
   },
   "contentUpload": {
@@ -603,6 +637,7 @@
     "version": "Backend-Verwaltung v1.0",
     "adminLogo": "Admin-Logo",
     "dashboard": "Dashboard",
+    "analytics": "Analytik",
     "users": "Benutzer",
     "foundations": "Stiftungen",
     "partners": "Partner",
@@ -610,6 +645,7 @@
     "services": "Dienste",
     "jobListings": "Stellenangebote",
     "candidatePool": "Bewerberpool",
+    "replacements": "Vertretungen",
     "parentLeads": "Eltern-Leads",
     "ordersAppointments": "Bestellungen und Termine",
     "content": "Inhalt",
@@ -622,7 +658,20 @@
     "systemMonitoring": "Systemüberwachung",
     "translations": "Übersetzungen",
     "designSystem": "Design-System",
-    "settings": "Einstellungen"
+    "settings": "Einstellungen",
+    "recruitment": "Rekrutierung",
+    "staffing": "Personalbesetzung",
+    "eLearning": "E-Learning",
+    "hrDocuments": "HR-Dokumente",
+    "statePolicies": "Kantonsrichtlinien",
+    "hrCompliance": "HR & Compliance",
+    "suppliersServices": "Lieferanten & Dienste",
+    "platformOps": "Plattformbetrieb",
+    "educatorApprovals": "Pädagogen-Genehmigungen",
+    "internPool": "Praktikantenpool",
+    "internPoolSubtitle": "Praktikumsstellen — {{count}} Eintrag/Einträge",
+    "noInterns": "Noch keine Praktikumsstellen.",
+    "applications": "Bewerbungen"
   },
   "policyCrawler": {
     "title": "Richtlinien-Crawler",
@@ -1465,6 +1514,7 @@
       "published": "Veröffentlicht",
       "draft": "Entwurf",
       "closed": "Geschlossen",
+      "filled": "Besetzt",
       "paused": "Pausiert",
       "all": "Alle Status"
     },
@@ -2437,6 +2487,14 @@
       "successMessage": "Kampagne erfolgreich gesendet!",
       "cancelSending": "Versand abbrechen",
       "close": "Schliessen"
+    }
+  },
+  "userProfile": {
+    "activityHeatmap": {
+      "title": "Anmeldeaktivität",
+      "subtitle": "{{count}} aktive Tage in {{year}}",
+      "less": "Weniger",
+      "more": "Mehr"
     }
   },
   "userProfileEdit": {
