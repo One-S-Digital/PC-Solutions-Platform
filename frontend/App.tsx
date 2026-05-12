@@ -648,6 +648,7 @@ const FrontendSettingsManager: React.FC = () => {
 
 const App: React.FC = () => {
   const isE2E = import.meta.env.MODE === 'e2e' || import.meta.env.VITE_E2E_TEST === 'true';
+  const isMaintenanceMode = import.meta.env.VITE_MAINTENANCE_MODE === 'true';
 
   // E2E mode: avoid external dependencies (Clerk/backend) and keep routes deterministic for Playwright.
   if (isE2E) {
@@ -686,8 +687,9 @@ const App: React.FC = () => {
           <MessagingProvider>
             <SubscriptionProvider>
               <Routes>
+                <Route path="/maintenance" element={<MaintenancePage />} />
                 <Route path="/login" element={<LoginPage />} />
-                <Route path="/signup" element={<SignupPage />} />
+                <Route path="/signup" element={isMaintenanceMode ? <Navigate to="/maintenance" replace /> : <SignupPage />} />
                 <Route path="/pricing" element={<PricingPage />} />
                 <Route path="/partners" element={<PublicPartnersPage />} />
                 <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />

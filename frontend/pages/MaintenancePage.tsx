@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import maintenanceGif from '../assets/maintenance.gif';
 
 const MaintenancePage: React.FC = () => {
@@ -17,6 +18,11 @@ const MaintenancePage: React.FC = () => {
           Site will be live again soon
         </p>
       </div>
+      <p className="absolute bottom-6 text-xs text-gray-300">
+        <Link to="/login" className="hover:text-gray-400 transition-colors">
+          Administrator login
+        </Link>
+      </p>
     </div>
   );
 };
