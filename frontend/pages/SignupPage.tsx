@@ -904,8 +904,27 @@ const SignupPage: React.FC = () => {
         {currentStep === 4 ? (
           <div className="text-center">
             <CheckCircleIcon className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 text-swiss-mint mx-auto mb-3 sm:mb-4"/>
-            <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-swiss-charcoal">{t('submissionSuccessTitle')}</h1>
-            <p className="text-sm sm:text-base text-gray-600 mt-2 mb-4 sm:mb-6">{t('submissionSuccessMessage')}</p>
+            {isEducatorRole() ? (
+              <>
+                <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-swiss-charcoal">Application Submitted!</h1>
+                <p className="text-sm sm:text-base text-gray-600 mt-2 mb-4 sm:mb-6">
+                  Your account has been created. Your application is pending admin approval — you will be notified by email once it has been reviewed.
+                </p>
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4 text-left space-y-1">
+                  <p className="text-sm font-medium text-amber-800">What happens next?</p>
+                  <ul className="text-sm text-amber-700 space-y-1 list-disc list-inside">
+                    <li>Our team reviews your submitted profile</li>
+                    <li>You receive an approval or feedback email</li>
+                    <li>Once approved, you get full access to the platform</li>
+                  </ul>
+                </div>
+              </>
+            ) : (
+              <>
+                <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-swiss-charcoal">{t('submissionSuccessTitle')}</h1>
+                <p className="text-sm sm:text-base text-gray-600 mt-2 mb-4 sm:mb-6">{t('submissionSuccessMessage')}</p>
+              </>
+            )}
             <div className="space-y-3">
               <Button
                 onClick={() => navigate(successRedirect.path, { state: successRedirect.state })}

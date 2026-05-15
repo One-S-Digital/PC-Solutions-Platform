@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 import {
   CheckCircle,
   XCircle,
@@ -9,8 +10,6 @@ import {
   User,
   MapPin,
   Briefcase,
-  FileText,
-  X,
 } from 'lucide-react'
 import { useApiClient, apiService } from '../services/api'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
@@ -54,12 +53,11 @@ const STATUS_STYLES: Record<ApprovalStatus, string> = {
 const EducatorApprovals: React.FC = () => {
   const apiClient = useApiClient()
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
 
   const [activeTab, setActiveTab] = useState<ApprovalStatus>('PENDING_REVIEW')
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
-  const [selectedEducator, setSelectedEducator] = useState<Educator | null>(null)
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false)
   const [rejectNotes, setRejectNotes] = useState('')
   const [rejectTarget, setRejectTarget] = useState<string | null>(null)
@@ -96,8 +94,6 @@ const EducatorApprovals: React.FC = () => {
     onSuccess: () => {
       toast.success('Educator approved successfully')
       queryClient.invalidateQueries({ queryKey: ['educator-approvals'] })
-      setIsDrawerOpen(false)
-      setSelectedEducator(null)
     },
     onError: (err: any) => {
       toast.error(err?.response?.data?.message || 'Failed to approve educator')
@@ -113,18 +109,11 @@ const EducatorApprovals: React.FC = () => {
       setIsRejectModalOpen(false)
       setRejectNotes('')
       setRejectTarget(null)
-      setIsDrawerOpen(false)
-      setSelectedEducator(null)
     },
     onError: (err: any) => {
       toast.error(err?.response?.data?.message || 'Failed to reject educator')
     },
   })
-
-  const openDrawer = (educator: Educator) => {
-    setSelectedEducator(educator)
-    setIsDrawerOpen(true)
-  }
 
   const openRejectModal = (id: string) => {
     setRejectTarget(id)
@@ -275,7 +264,7 @@ const EducatorApprovals: React.FC = () => {
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <button
-                        onClick={() => openDrawer(educator)}
+                        onClick={() => navigate(`/users/${educator.id}/profile`)}
                         className="text-xs px-3 py-1.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
                       >
                         Review
@@ -329,159 +318,6 @@ const EducatorApprovals: React.FC = () => {
           </div>
         )}
       </div>
-
-      {/* Profile Drawer */}
-      {isDrawerOpen && selectedEducator && (
-        <div className="fixed inset-0 z-50 flex">
-          <div className="flex-1 bg-black/40" onClick={() => setIsDrawerOpen(false)} />
-          <div className="w-full max-w-lg bg-white shadow-2xl overflow-y-auto flex flex-col">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
-              <h2 className="font-semibold text-gray-900">Educator Profile</h2>
-              <button onClick={() => setIsDrawerOpen(false)} className="text-gray-400 hover:text-gray-600">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="flex-1 p-6 space-y-6">
-              {/* Identity */}
-              <div className="flex items-center gap-4">
-                {selectedEducator.avatarAsset?.publicUrl ? (
-                  <img src={selectedEducator.avatarAsset.publicUrl} alt="" className="w-16 h-16 rounded-full object-cover" />
-                ) : (
-                  <div className="w-16 h-16 rounded-full bg-swiss-mint/20 flex items-center justify-center">
-                    <span className="text-swiss-mint text-xl font-bold">
-                      {(selectedEducator.firstName?.[0] ?? selectedEducator.email?.[0] ?? '?').toUpperCase()}
-                    </span>
-                  </div>
-                )}
-                <div>
-                  <p className="text-lg font-semibold text-gray-900">
-                    {selectedEducator.firstName} {selectedEducator.lastName}
-                  </p>
-                  <p className="text-gray-500 text-sm">{selectedEducator.email}</p>
-                  {selectedEducator.phoneNumber && (
-                    <p className="text-gray-500 text-sm">{selectedEducator.phoneNumber}</p>
-                  )}
-                  <span className={`mt-1 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_STYLES[selectedEducator.approvalStatus]}`}>
-                    {STATUS_LABELS[selectedEducator.approvalStatus]}
-                  </span>
-                </div>
-              </div>
-
-              {/* Bio */}
-              {selectedEducator.shortBio && (
-                <div>
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">About</p>
-                  <p className="text-sm text-gray-700">{selectedEducator.shortBio}</p>
-                </div>
-              )}
-
-              {/* Role & Location */}
-              <div className="grid grid-cols-2 gap-4">
-                {selectedEducator.jobRole && (
-                  <div>
-                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Role</p>
-                    <p className="text-sm text-gray-700">{selectedEducator.jobRole}</p>
-                  </div>
-                )}
-                {selectedEducator.region && (
-                  <div>
-                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Region</p>
-                    <p className="text-sm text-gray-700">{selectedEducator.region}</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Skills */}
-              {selectedEducator.skills && selectedEducator.skills.length > 0 && (
-                <div>
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Skills</p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {selectedEducator.skills.map(skill => (
-                      <span key={skill} className="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-xs">
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Certifications */}
-              {selectedEducator.certifications && selectedEducator.certifications.length > 0 && (
-                <div>
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Certifications</p>
-                  <ul className="text-sm text-gray-700 space-y-1 list-disc list-inside">
-                    {selectedEducator.certifications.map(cert => (
-                      <li key={cert}>{cert}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Work Experience */}
-              {selectedEducator.workExperience && (
-                <div>
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Work Experience</p>
-                  <p className="text-sm text-gray-700 whitespace-pre-line">{selectedEducator.workExperience}</p>
-                </div>
-              )}
-
-              {/* Education */}
-              {selectedEducator.education && (
-                <div>
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Education</p>
-                  <p className="text-sm text-gray-700 whitespace-pre-line">{selectedEducator.education}</p>
-                </div>
-              )}
-
-              {/* CV */}
-              {selectedEducator.cvUrl && (
-                <div>
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">CV</p>
-                  <a
-                    href={selectedEducator.cvUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-sm text-swiss-mint hover:underline"
-                  >
-                    <FileText className="w-4 h-4" />
-                    View CV
-                  </a>
-                </div>
-              )}
-
-              {/* Rejection notes if already rejected */}
-              {selectedEducator.approvalStatus === 'REJECTED' && selectedEducator.approvalNotes && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                  <p className="text-xs font-semibold text-red-700 uppercase tracking-wide mb-1">Rejection Reason</p>
-                  <p className="text-sm text-red-600">{selectedEducator.approvalNotes}</p>
-                </div>
-              )}
-            </div>
-
-            {/* Actions */}
-            {selectedEducator.approvalStatus === 'PENDING_REVIEW' && (
-              <div className="border-t border-gray-100 p-6 flex gap-3 sticky bottom-0 bg-white">
-                <button
-                  onClick={() => approveMutation.mutate(selectedEducator.id)}
-                  disabled={approveMutation.isPending}
-                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors disabled:opacity-50"
-                >
-                  <CheckCircle className="w-4 h-4" />
-                  Approve
-                </button>
-                <button
-                  onClick={() => openRejectModal(selectedEducator.id)}
-                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-red-600 text-white text-sm font-medium hover:bg-red-700 transition-colors"
-                >
-                  <XCircle className="w-4 h-4" />
-                  Reject
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* Reject Modal */}
       {isRejectModalOpen && (

@@ -11,6 +11,7 @@ import { PrincipalService } from '../principal/principal.service';
 import { RoleSyncService } from '../sync/role-sync.service';
 import { ConfigService } from '@nestjs/config';
 import { createClerkClient } from '@clerk/clerk-sdk-node';
+import { EmailNotificationService } from '../email-notification/email-notification.service';
 
 /**
  * Roles considered "admin-level" roles in the system.
@@ -62,6 +63,7 @@ export class UsersService {
     private readonly principal: PrincipalService,
     private readonly roleSyncService: RoleSyncService,
     private readonly configService: ConfigService,
+    private readonly emailNotificationService: EmailNotificationService,
   ) {
     const clerkSecretKey = this.configService.get<string>('CLERK_SECRET_KEY');
     if (clerkSecretKey) {
@@ -657,6 +659,23 @@ export class UsersService {
           },
         });
         profileUserIdToLink = user.id;
+
+        if (dto.role === UserRole.EDUCATOR) {
+          const appUrl = this.configService.get<string>('APP_URL') || this.configService.get<string>('FRONTEND_URL') || '';
+          this.emailNotificationService.sendNotification({
+            event: 'educator_pending',
+            recipient: email,
+            recipientName: firstName || undefined,
+            payload: {
+              firstName: firstName || 'Educator',
+              supportUrl: `${appUrl}/support`,
+            },
+            bypassPreferences: true,
+            allowUnknownRecipient: false,
+          }).catch((err: any) => {
+            this.logger.warn(`Educator pending email failed for ${email}: ${err?.message || err}`);
+          });
+        }
 
         // Create organization and link user for organization-based roles
         const orgBasedRoles: UserRole[] = [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER];
