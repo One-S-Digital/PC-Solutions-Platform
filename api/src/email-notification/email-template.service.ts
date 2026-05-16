@@ -1098,7 +1098,36 @@ export class EmailTemplateService {
           {{description}}
           
           We apologize for any inconvenience and appreciate your patience.
-          
+
+          Best regards,
+          The Pro Crèche Solutions Team
+        `,
+      },
+      educator_pending: {
+        subject: 'Application received — pending review',
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Application Received!</h2>
+            <p>Hello {{firstName}},</p>
+            <p>Thank you for signing up as an educator on Pro Crèche Solutions. We have received your application and it is now being reviewed by our team.</p>
+            <p>You will receive another email once your application has been processed.</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="{{supportUrl}}" style="background-color: #6B7280; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Contact Support</a>
+            </div>
+            <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+          </div>
+        `,
+        textContent: `
+          Application Received!
+
+          Hello {{firstName}},
+
+          Thank you for signing up as an educator on Pro Crèche Solutions. We have received your application and it is now being reviewed by our team.
+
+          You will receive another email once your application has been processed.
+
+          Questions? Contact our support team: {{supportUrl}}
+
           Best regards,
           The Pro Crèche Solutions Team
         `,

@@ -660,23 +660,6 @@ export class UsersService {
         });
         profileUserIdToLink = user.id;
 
-        if (dto.role === UserRole.EDUCATOR) {
-          const appUrl = this.configService.get<string>('APP_URL') || this.configService.get<string>('FRONTEND_URL') || '';
-          this.emailNotificationService.sendNotification({
-            event: 'educator_pending',
-            recipient: email,
-            recipientName: firstName || undefined,
-            payload: {
-              firstName: firstName || 'Educator',
-              supportUrl: `${appUrl}/support`,
-            },
-            bypassPreferences: true,
-            allowUnknownRecipient: false,
-          }).catch((err: any) => {
-            this.logger.warn(`Educator pending email failed for ${email}: ${err?.message || err}`);
-          });
-        }
-
         // Create organization and link user for organization-based roles
         const orgBasedRoles: UserRole[] = [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER];
         if (orgBasedRoles.includes(dto.role)) {
@@ -717,6 +700,25 @@ export class UsersService {
           this.logger.log(`🏢 [COMPLETE PROFILE] Created organization "${organization.name}" (${orgType}) and linked to user ${user.id}`);
         }
       });
+
+      // Fire educator pending email after the transaction commits so the new
+      // user row is visible to EmailNotificationService.findUnique({ email }).
+      if (dto.role === UserRole.EDUCATOR) {
+        const appUrl = this.configService.get<string>('APP_URL') || this.configService.get<string>('FRONTEND_URL') || '';
+        this.emailNotificationService.sendNotification({
+          event: 'educator_pending',
+          recipient: email,
+          recipientName: firstName || undefined,
+          payload: {
+            firstName: firstName || 'Educator',
+            supportUrl: `${appUrl}/support`,
+          },
+          bypassPreferences: true,
+          allowUnknownRecipient: false,
+        }).catch((err: any) => {
+          this.logger.warn(`Educator pending email failed: ${err?.message || err}`);
+        });
+      }
     }
 
     if (dto.role === UserRole.PARENT) {
