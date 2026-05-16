@@ -13,6 +13,15 @@ The AI staffing engine is a layered system, not a single feature. The right buil
 
 This plan deliberately defers external job-board APIs to Phase 5. Building them earlier inverts the strategic value: external routing should feed the internal pool, not replace it.
 
+**Cost stance.** The plan is engineered around cheap models — **Gemini Flash and DeepSeek** as defaults — without compromising defensibility. The cost discipline is structural, not a per-feature decision:
+
+1. **Deterministic code does the heavy lifting** (SQL filters → rule-based scoring); the LLM only narrates the top 3–5 results.
+2. **Templates replace LLM calls** for any repeated text (reactivation messages, status emails, screener acknowledgments).
+3. **Persistent caching** keyed by content hash means parsed CVs, parsed requests, match explanations, and job-ad drafts are written to the model exactly once.
+4. **An AI Gateway** at `api/src/ai/` enforces per-agent input-field allowlists, output-token ceilings, JSON-schema validation, and daily token budgets — and lets us escalate any single agent to a stronger model via one config line without touching callers.
+
+The result: a Gemini-Flash-default architecture today, fully reversible to Gemini Pro / Claude / DeepSeek per agent tomorrow, with hard cost guardrails enforced in code.
+
 ---
 
 ## 2. What Already Exists (Keep & Extend)
@@ -53,16 +62,53 @@ Confirmed by codebase audit. Re-usable foundations:
 
 These are the technical bets that shape every later phase. Each one favours long-term defensibility over near-term cost.
 
-### 3.1 LLM provider and gateway
+### 3.1 LLM provider, AI Gateway, and model routing
 
-- **Use Anthropic Claude exclusively at first**, via a single internal gateway module `api/src/ai/`. No direct `@anthropic-ai/sdk` imports outside that module.
-- **Model selection by task** — picked per call, not globally:
-  - `claude-haiku-4-5-20251001` → CV parsing, request parsing, short reactivation messages, classification.
-  - `claude-sonnet-4-6` → match explanations, job-ad generation, multilingual rewrites, anything user-facing or auditable.
-  - Reserve `claude-opus-4-7` for evaluation harness and admin-only "deep search" features later.
-- **Always use tool-use / structured outputs** for parsing (never free-text JSON parsing). Define one Zod schema per agent; share it between the prompt-tool definition and the DB write.
-- **Prompt caching** on system prompts and the role taxonomy block — recruitment requests reuse the same canton list, role list, qualification taxonomy, so cache hit rate should be high.
-- **Provider abstraction is a thin interface, not a port-to-everything layer.** A single `LlmClient.run({task, schema, input})` method; swapping providers later means writing one new implementation, not refactoring callers.
+The platform never calls an LLM directly from a feature module. Every call goes through a single **AI Gateway** at `api/src/ai/` that owns model selection, cost limits, caching, structured-output validation, and audit logging. This is the architectural lever that lets us run on cheap models today and swap any of them tomorrow without touching callers.
+
+**Default model tier — cheapest viable, by task:**
+
+| Task | Default model | Escalation (rare, flagged) |
+|---|---|---|
+| Request parsing (extract structured criteria) | **Gemini 2.5 Flash** or **DeepSeek-V3** | none — these models are already over-spec for field extraction |
+| CV parsing (text → structured JSON) | **Gemini 2.5 Flash** | Gemini Pro only when validation fails twice |
+| Match explanation (40–80 words) | **Gemini 2.5 Flash** | none |
+| Reactivation message (template-filled, see §3.10) | **template only**, no LLM call | Flash only when the daycare writes a custom tone request |
+| Routing recommendation (3 bullets) | **Gemini 2.5 Flash** | none |
+| Short job-ad blurb (≤180 words) | **Gemini 2.5 Flash** | none |
+| Full job ad (300–500 words, Swiss FR/DE/EN) | **Gemini 2.5 Flash** | Gemini Pro / Claude Sonnet for German output until quality stabilises |
+| Compliance-sensitive copy (consent text, rejection wording) | **template + legal review**, no LLM authorship | n/a — never LLM-authored |
+| Weekly admin intelligence narrative | **Gemini 2.5 Flash** | Pro tier on demand |
+| Embeddings | **Gemini text-embedding-004** or **Voyage-3-lite** | — |
+
+DeepSeek and Gemini Flash are interchangeable for most of these — pick whichever has a stable Swiss-region availability and acceptable latency at integration time. Both should be wired through OpenAI-compatible adapters in the gateway. The gateway's job is to make this a configuration choice per agent, not a code change.
+
+**Why this tiering survives the "cheapest model" mandate without breaking quality:**
+
+- **Structured output, not free text.** Every agent returns JSON validated against a Zod schema. A cheap model that returns valid JSON is functionally identical to an expensive model that returns valid JSON. Quality risk lives in *prose*, which we minimise in §3.10.
+- **Deterministic code does the matching, not the model.** Match scoring is rule-based (§3.3). The model only narrates the top 3–5 results.
+- **Templates for repeated language.** Reactivation messages, status updates, screener acknowledgments are all template-driven — no LLM call at all.
+- **Escalation is a feature flag, not a hardcoded path.** If Gemini Flash German output is weak in early pilots, flip one config value to route only that agent to Pro / Claude Sonnet. The schema is identical.
+
+**Gateway contract:**
+
+```ts
+// api/src/ai/llm-client.ts
+interface LlmRunOptions<TSchema> {
+  agent: AgentName;            // selects model, prompt, output schema
+  input: unknown;              // typed per agent
+  schema: TSchema;             // Zod schema — single source of truth
+  cacheKey?: string;           // see §3.9
+  maxOutputTokens?: number;    // hard ceiling per task class
+  locale?: 'fr' | 'de' | 'en';
+}
+```
+
+Adapters live under `api/src/ai/providers/{gemini,deepseek,anthropic}.adapter.ts` — each implements the same gateway contract. Switching the default for an agent is a one-line config change in `ai-agents.config.ts`.
+
+**Structured outputs everywhere.** OpenAI-compatible providers (DeepSeek, Gemini via the compat layer) all support `response_format: json_schema`. We use it unconditionally — no string-parsing JSON, no regex repair, no "please return JSON" prompting.
+
+**Prompt caching where the provider supports it.** Gemini has implicit and explicit caching with strong discounts on cached tokens; DeepSeek offers context caching. We keep the role taxonomy, canton list, qualification ontology, and system prompt in a stable cached block at the top of every request — high hit rate, large per-call discount.
 
 ### 3.2 Vector search — `pgvector`, not a separate database
 
@@ -110,6 +156,90 @@ These are the technical bets that shape every later phase. Each one favours long
 
 Every AI call is enqueued through BullMQ. Synchronous UI calls only for the parser preview (where the daycare expects sub-second feedback). Reasons: rate-limit smoothing, automatic retry with backoff, separable scaling, and no request-timeout cliffs on Render's 30s HTTP limit.
 
+### 3.9 AI Intermediary pattern — deterministic-first, narrow inputs
+
+The gateway is more than a model-picker. It enforces an **intermediary discipline** between user input and the LLM, so the model only ever sees the minimum needed for one well-defined task. This single pattern is responsible for the majority of cost savings.
+
+The flow for **every** AI feature is:
+
+```
+user / daycare input
+     │
+     ▼
+1. clean & validate input (code)
+2. classify task type → pick the agent (code)
+3. fetch ONLY the database fields that agent needs (code)
+4. assemble minimal prompt with cached system block (gateway)
+5. call cheapest viable model with json_schema output (gateway)
+6. validate against Zod schema (gateway)
+7. cache the result by canonical input hash (gateway)
+     │
+     ▼
+platform action
+```
+
+Concrete rules the gateway enforces — not conventions, code:
+
+- **Hard filter before model call.** No agent that compares candidates is allowed to receive more than N candidates in its input. The matcher service prunes 2,000 → ~12 via SQL hard filters and weighted scoring before the explanation agent ever runs.
+- **Field-level minimisation.** Each agent declares its `requiredInputFields` array. The gateway throws in dev if a caller passes anything outside that allowlist. CVs, full profiles, full daycare records never reach the LLM as a blob.
+- **Per-task output ceilings**, hard-coded per agent, never overridable by the caller:
+
+| Agent | Max output |
+|---|---|
+| Request parser | JSON only — ~120 tokens |
+| Match explanation | 80 words |
+| Reactivation rewrite (when needed) | 100 words |
+| Short job ad | 180 words |
+| Full job ad | 500 words |
+| Routing recommendation | 3 bullets |
+| Weekly intelligence narrative | 400 words |
+
+Exceeding the ceiling is a validation failure, not a soft hint.
+
+- **Single-task agents.** No "do everything" prompt. If a feature needs two things (parse + explain), it's two gateway calls with two schemas. This keeps each prompt short, cacheable, and cheap to swap.
+- **Prompt template registry** under `api/src/ai/agents/`. One file per agent, containing: model default, schema, prompt template, required-input allowlist, cache TTL, output ceiling. Reviewable, diffable, lintable.
+
+### 3.10 Caching and templating — the second cost lever
+
+Caching is treated as a first-class part of the pipeline, not an optimisation.
+
+**Persistent caches (Postgres-backed):**
+
+| Cached artifact | Key | Invalidated when |
+|---|---|---|
+| Parsed CV → structured JSON | `cvAssetId` content hash | CV is replaced |
+| Educator profile summary | `userId` + profile updatedAt | profile changes |
+| Educator embedding | same | same |
+| Parsed staffing request | hash of raw text + locale | never (immutable input → immutable parse) |
+| Match explanation | `(staffingRequestId, educatorId)` | request or profile changes |
+| Generated job-ad draft | `staffingRequestId` + variant | request changes |
+| Translation variants of static copy | source text + target locale | source text changes |
+| Routing recommendation | hash of structured request | request changes |
+
+Implementation: a small `AiResultCache` table (key, agent, payload JSON, modelUsed, createdAt, expiresAt) consulted by the gateway before every call. Cache-hit cost is one Postgres lookup; cache-miss cost is one LLM call. Cache hit rate is the headline metric on the gateway dashboard.
+
+**Provider-level caching** (Gemini implicit/explicit cache, DeepSeek context cache) stacks on top of this for the system-prompt block, giving a second discount on the few calls that actually do hit the model.
+
+**Templates instead of LLM calls for repeated text.** The reactivation flow is the cleanest example:
+
+```
+Bonjour {{firstName}}, une crèche à {{city}} recherche {{role}} à {{percentage}}%,
+avec disponibilité {{days}}. Votre profil semble proche de cette opportunité.
+Souhaitez-vous recevoir les détails ?
+```
+
+- 90% of reactivation messages will be 100% template — **zero LLM calls**.
+- The "rewrite for tone" path (e.g. the daycare wants a warmer voice) is the only branch that hits the model, and only with ~50 input tokens and a 100-word output ceiling.
+- Templates are stored per locale (`fr-CH`, `de-CH`, `en`) and per role-archetype to feel natural without being generic. Maintained as plain `.hbs` files under `api/src/ai/templates/`.
+
+The same template-first approach applies to: status update emails, screener acknowledgments, "no match found yet" notifications, and the daycare-facing structured-request confirmation card.
+
+### 3.11 Cost guardrails as code
+
+- **Daily token budget per agent and per foundation**, surfaced on the gateway dashboard. Soft-warn at 70%, hard-fail at 100% with a templated fallback (e.g. for explanations, show the structured score breakdown without the prose).
+- **Single source of truth for pricing**: a `model-costs.ts` file mapping provider → input/output cost. Every gateway call records actual token usage; every audit-log row is priced. Monthly cost-per-foundation rolls up automatically.
+- **Anomaly alerts** (Sentry) when an agent's average token usage drifts >25% from its 7-day baseline — catches prompt regressions before the bill does.
+
 ---
 
 ## 4. Data Model Strategy
@@ -156,8 +286,10 @@ The active staffing remodel (`IMPLEMENTATION_PHASES.md` Phases 1–7) must land 
 
 **Goal:** Land the AI gateway, the audit log, and the schema migrations everything else depends on. No user-visible features.
 
-- Add `api/src/ai/` module: `LlmClient`, `EmbeddingClient`, agent registry, prompt-template loader, structured-output schemas.
-- Wire Anthropic SDK; enable prompt caching; set per-agent model defaults.
+- Add `api/src/ai/` module: `LlmClient`, `EmbeddingClient`, agent registry, prompt-template loader, structured-output schemas, `AiResultCache` lookup, per-agent input-field allowlist, output-token ceilings, daily budget enforcement.
+- Wire **Gemini Flash and DeepSeek** adapters behind the gateway contract (OpenAI-compatible). Anthropic adapter built in the same shape but kept inactive — the gateway can route any single agent to it via config when escalation is warranted.
+- Enable provider-level prompt caching on the system-prompt block (canton list, role taxonomy, qualification ontology).
+- Per-agent config file (`ai-agents.config.ts`) defines default model, max output tokens, cache TTL, required input fields, locale routing.
 - New Prisma migrations:
   - Enable `vector`, `cube`, `earthdistance` Postgres extensions.
   - Create `StaffingRequest`, `MatchResult`, `EducatorEmbedding`, `StaffingRequestEmbedding`, `AiAuditLog`, `AiAgentRun`, `CandidateConsent`.
@@ -172,13 +304,13 @@ The active staffing remodel (`IMPLEMENTATION_PHASES.md` Phases 1–7) must land 
 
 **Goal:** A daycare types a free-form request and sees a ranked shortlist with explanations. Internal pool only.
 
-- **Request Parser agent** (Haiku) — converts free text into structured `StaffingRequest` rows. Tool-use schema with the Swiss canton list, role taxonomy (Auxiliaire, ASE, EDE, FaBe, Educateur diplômé HES, Stagiaire, Apprenti, Directeur), employment types, language codes, age groups (nursery 0–18mo / toddlers 18mo–3yr / preschool 3–5yr / school-age).
+- **Request Parser agent** (Gemini Flash, JSON schema output, ~120-token ceiling) — converts free text into structured `StaffingRequest` rows. Schema includes the Swiss canton list, role taxonomy (Auxiliaire, ASE, EDE, FaBe, Educateur diplômé HES, Stagiaire, Apprenti, Directeur), employment types, language codes, age groups (nursery 0–18mo / toddlers 18mo–3yr / preschool 3–5yr / school-age). Parsed result is cached by canonical request-text hash — identical requests never hit the model twice.
 - **Hybrid Matcher service** (`api/src/ai/match/`):
   - SQL hard filters: canton overlap, language overlap, work-percentage band overlap, role overlap, contract-type compatibility, start-date feasibility, `candidatePoolVisible=true`, `approvalStatus=APPROVED`.
   - Score weights from the source plan (Role 20 / Availability 20 / Location 15 / Qualification 15 / Language 10 / Age-group 10 / Contract 5 / Responsiveness 5).
   - Distance via `earthdistance` extension on lat/lon; convert km → score with a piecewise function bounded by `maxCommuteKm`.
   - Vector similarity used as a tiebreaker and to recover candidates dropped by the soft-experience filter only.
-- **Match Explanation agent** (Sonnet) — given the structured scoring breakdown and the candidate's structured profile, produces a 2–3 sentence rationale in the daycare's preferred locale. Persisted to `MatchResult.explanation`.
+- **Match Explanation agent** (Gemini Flash, 80-word ceiling, JSON output with `strengths[]`, `missing_info[]`, `recommended_action`) — runs only on the **top 3–5 candidates** that the deterministic scorer surfaced. Input is the structured score breakdown + a narrow allowlisted slice of the candidate profile — never the full row. Result cached by `(staffingRequestId, educatorId)`; invalidated only when either changes.
 - **Replace `findMatchingCandidates` stub** in `recruitment.service.ts`. The new endpoint `POST /staffing/requests` and `GET /staffing/requests/:id/matches` lives in a new `staffing` module to keep concerns clean; the legacy endpoint can stay as a thin proxy.
 - **Foundation UI**: replace the placeholder candidate list on the foundation dashboard with the staffing-request box + shortlist table. Reuse the existing replacement-request component shells where possible.
 - **Admin observability**: surface `AiAgentRun` rows on a new admin page `Staffing > AI Runs`.
@@ -191,7 +323,7 @@ The active staffing remodel (`IMPLEMENTATION_PHASES.md` Phases 1–7) must land 
 
 - **CV Parser pipeline**:
   - On `cvAssetId` set or replaced → enqueue `ai.parse-cv`.
-  - Worker: pull from R2 → text extraction (`pdf-parse` for PDF, `mammoth` for DOCX) → Haiku with a strict tool-use schema mirroring the source plan's `CandidateExperience` / `CandidateCertification` shape.
+  - Worker: pull from R2 → text extraction (`pdf-parse` for PDF, `mammoth` for DOCX) → **Gemini Flash** with a strict JSON schema mirroring the source plan's `CandidateExperience` / `CandidateCertification` shape. Parsed result cached by CV content hash; re-parsing only happens on file replacement.
   - **Now is the right time to split** `CandidateExperience` and `CandidateCertification` into real tables (the source plan's §4B/§4C). One Prisma migration, one backfill from existing JSON.
   - Confirmation step in the educator UI: parser fills the form; educator confirms or edits; nothing auto-publishes.
 - **Availability calendar upgrade**: extend `availabilitySettings` JSON into proper columns (`availableDays[]`, `availableTimeBlocks[]`, `earliestStartDate`, `openToReplacement`, `openToPermanent`, `openToTemporary`). Keep the JSON as a compatibility shim during migration.
@@ -204,7 +336,8 @@ The active staffing remodel (`IMPLEMENTATION_PHASES.md` Phases 1–7) must land 
 
 **Goal:** Convert the long tail of near-fit candidates into responses.
 
-- **Reactivation Writer agent** (Sonnet, locale-aware) — short, personal opener, never templated-looking. Tool output includes subject, body, and a structured CTA payload.
+- **Templates do the work, not the model.** Per-locale (`fr-CH`, `de-CH`, `en`) and per-role-archetype Handlebars templates produce the message with zero LLM calls. The structured `StaffingRequest` already supplies every field the template needs (`firstName`, `city`, `role`, `percentage`, `days`).
+- **Optional "tone rewrite" agent** (Gemini Flash, 100-word ceiling) — only invoked when the daycare explicitly asks for a warmer/firmer/shorter variant. Otherwise no model call at all.
 - New `ReactivationCampaign` table: groups outbound messages per `StaffingRequest` for analytics. Each message is a `Notification` + an email send (existing transport) + optionally an in-app DM via the messaging gateway.
 - Quiet-hours and frequency caps enforced at the queue level. A candidate can receive at most N reactivation outreaches per rolling 30 days.
 - Response capture: links in the email are tokenised and route through a tracking endpoint that writes to `MatchResult.candidateResponse` and surfaces to the foundation dashboard.
@@ -216,8 +349,8 @@ The active staffing remodel (`IMPLEMENTATION_PHASES.md` Phases 1–7) must land 
 
 **Goal:** When internal matching is thin, route externally with full source attribution — before touching any external API.
 
-- **Job-Ad Generator agent** (Sonnet, locale-aware) — produces an admin-reviewable job ad from a `StaffingRequest`. Output schema is the existing `JobListing` shape; admin approves → `JobListing.status=PUBLISHED`, `staffingRequestId` set.
-- **External Routing Recommender agent** (Haiku) — given the request, suggests a channel mix (e.g. "JobCloud + LinkedIn + training schools" for a director role). Outputs are recommendations only; admin chooses.
+- **Job-Ad Generator agent** (Gemini Flash, locale-aware, two variants: short ≤180 words and full ≤500 words) — produces an admin-reviewable job ad from a `StaffingRequest`. Output schema is the existing `JobListing` shape; admin approves → `JobListing.status=PUBLISHED`, `staffingRequestId` set. Drafts cached by `staffingRequestId` + variant; regeneration only on request change. Swiss-German output is the one path that may escalate to a stronger model (config-flagged) until quality is validated.
+- **External Routing Recommender agent** (Gemini Flash, 3-bullet ceiling) — given the structured request, suggests a channel mix (e.g. "JobCloud + LinkedIn + training schools" for a director role). Outputs are recommendations only; admin chooses. Cached by request hash.
 - **Manual partner channel workflow**:
   - Generate copy variants per channel (long for LinkedIn, short for WhatsApp groups, formal for school newsletters).
   - Tracked short-link generator: every external link is `apply.procreche.ch/:slug?src=<channel>&c=<campaign>`. Slugs are stable, sources are not.
@@ -255,7 +388,7 @@ api/src/external-channels/<channel>/
 **Goal:** Turn accumulated request/match/application data into the dashboards the source plan §16 promises.
 
 - **Materialised views** in Postgres for: requests by canton/month, fill-rate by role, average time-to-shortlist, source performance, replacement demand patterns, candidate responsiveness curves.
-- **Demand-heatmap agent** (Sonnet, weekly cron) — narrative summary on top of the views, surfaced on the admin dashboard.
+- **Demand-heatmap agent** (Gemini Flash, weekly cron, 400-word ceiling) — narrative summary on top of the views, surfaced on the admin dashboard. Runs once per week per canton — total cost is trivial. Output cached for the week.
 - **Predictive flag**: simple regression (not Claude) for "Foundation X is likely to need a replacement within 14 days" based on historical `ReplacementRequest` cadence. Promotes to a notification of type `LOW_REPLACEMENT_POOL`.
 - KPI tiles on the admin dashboard replace the current generic count cards.
 
@@ -297,7 +430,8 @@ Feature flags double as paywall gates. The `FeatureFlag` model + per-user resolv
 |---|---|
 | Weak internal pool at launch makes matcher look bad | Phase 2 ships before Phase 1 goes GA; profile-completion campaign + referral incentives run in parallel; Phase 4 capture flow seeds the pool from day one. |
 | LLM hallucination on structured outputs | Tool-use only; Zod-validated schemas; reject + retry on validation failure; never display raw LLM text without an explanation contract. |
-| Cost overruns from per-search LLM calls | Prompt caching on system blocks (~70% reuse); Haiku for parsing; Sonnet only for explanations and ad generation; daily token budget per foundation with alerting. |
+| Cost overruns from per-search LLM calls | Gemini Flash / DeepSeek as default for all agents (§3.1); deterministic SQL+score before any model call (§3.3, §3.9); templates instead of LLM for repeated text (§3.10); persistent `AiResultCache` keyed by content hash; provider-level prompt caching on the system block; daily token budget per agent and per foundation with hard-fail to templated fallback (§3.11). |
+| Cheap model produces weak Swiss-French or Swiss-German prose | Structured-output JSON contract limits prose surface area; explanation agent caps at 80 words; per-agent escalation flag routes one agent at a time to a stronger model without code changes; small human-review queue for the first month of German output. |
 | pgvector saturation | Monitor index size and query latency; have a documented migration to Qdrant/Weaviate via the embedding queue. Not premature work. |
 | External API instability or credential delays | Adapter framework is independent per channel; manual fallback in Phase 4 covers every channel; Phase 5 enables one channel at a time. |
 | Bias or discrimination claims | Sensitive-field strip-list in CI; explanation persisted for legal defense; human approval on all outbound messages. |
@@ -326,8 +460,9 @@ Concrete proposal: Remodel P2 should **not** build a final scoring algorithm —
 
 ## 10. Open Questions
 
-1. **Embedding provider** — Voyage, Cohere multilingual, or self-hosted? Defer to Phase 0 kickoff; the gateway abstraction makes the choice reversible.
+1. **Embedding provider** — Gemini `text-embedding-004` (cheapest, multilingual, OpenAI-compatible) is the default proposal; Voyage-3-lite as a fallback. Gateway abstraction makes the choice reversible.
 2. **Geocoding provider** — Swisstopo is free and Swiss-accurate but rate-limited; Mapbox is paid but global. Suggest Swisstopo with Mapbox fallback.
 3. **Job-Room credentials** — Application timing affects Phase 5 sequencing. Should be requested in Phase 0.
 4. **Pricing of the AI Assistant tier** — needs commercial input before Phase 1 GA. Build doesn't block on it.
-5. **Multilingual quality bar** — Swiss-German vs. German for the DACH region. Recommend Sonnet for German output with a small human-review queue for the first month.
+5. **Multilingual quality bar** — Swiss-German vs. German for the DACH region. Recommend Gemini Flash for first-month pilot with a small human-review queue; escalate the job-ad agent (only that one) to Gemini Pro or Claude Sonnet via config if review-queue rework rate exceeds 20%.
+6. **Provider primary: Gemini Flash vs DeepSeek** — both are viable defaults. Decision criteria for Phase 0: Swiss-region latency (Gemini routes through European endpoints; DeepSeek currently does not), data-residency compliance, and rate-limit headroom for the matching workload. The gateway supports both; choose one as primary, keep the other as cold standby.
