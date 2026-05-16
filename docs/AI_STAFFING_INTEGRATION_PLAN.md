@@ -9,7 +9,9 @@
 
 ## 1. Executive Summary
 
-The AI staffing engine is a layered system, not a single feature. The right build order is **internal → reactivation → external**, mirroring the technical recommendation in the source plan. The platform already provides most of the substrate (Prisma/Postgres, BullMQ, Redis, R2, WebSockets, Notification table, ReplacementRequest tables, feature flags, fr/en/de translation, messaging gateway). The work is therefore **less about new infrastructure and more about three additions**: an AI orchestration layer, structured profile/geography upgrades, and an external-channel adapter framework.
+The work is structured as **two distinct layers**. Layer 1 is a **Shared AI Foundation** owned by core engineering — gateway, model routing with fallback, prompt-template registry with versioning, RAG, logging/audit, role-based permissions, cost tracking, and safety guards. Layer 2 is the **AI Staffing Engine** built on top — request parser, internal matching, candidate reactivation, external routing, and job-ad generation. Future AI features (parent-lead qualification, support assistant, content moderation, policy Q&A, e-learning) are also Layer-2 consumers and re-use Layer 1 without modification.
+
+Within the Staffing Engine, the right build order is **internal → reactivation → external**, mirroring the technical recommendation in the source plan. The platform already provides most of the substrate (Prisma/Postgres, BullMQ, Redis, R2, WebSockets, Notification table, ReplacementRequest tables, feature flags, fr/en/de translation, messaging gateway). The work is therefore **less about new infrastructure and more about three additions**: an AI orchestration layer, structured profile/geography upgrades, and an external-channel adapter framework.
 
 This plan deliberately defers external job-board APIs to Phase 5. Building them earlier inverts the strategic value: external routing should feed the internal pool, not replace it.
 
@@ -21,6 +23,59 @@ This plan deliberately defers external job-board APIs to Phase 5. Building them 
 4. **An AI Gateway** at `api/src/ai/` enforces per-agent input-field allowlists, output-token ceilings, JSON-schema validation, and daily token budgets — and lets us escalate any single agent to a stronger model via one config line without touching callers.
 
 The result: a Gemini-Flash-default architecture today, fully reversible to Gemini Pro / Claude / DeepSeek per agent tomorrow, with hard cost guardrails enforced in code.
+
+---
+
+## 1.5 Layered Architecture
+
+The build is structured as **two distinct layers**. The lower layer is a platform capability owned by core engineering; the upper layer is a feature owned by the staffing team. Future AI features (parent-lead qualification, support assistant, content moderation, e-learning tutoring, policy Q&A) consume the same lower layer without re-implementing any of it.
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│ Layer 2 — AI Staffing Engine        (Phases 1–6 of this plan)  │
+│ ├── Staffing request parser                                    │
+│ ├── Internal candidate matching                                │
+│ ├── Candidate reactivation                                     │
+│ ├── External routing                                           │
+│ └── Job-ad generation                                          │
+└────────────────────────────────────────────────────────────────┘
+                            ▲
+                            │ uses
+                            ▼
+┌────────────────────────────────────────────────────────────────┐
+│ Layer 1 — Shared AI Foundation      (Phase 0 of this plan)     │
+│ ├── AI Gateway / intermediary                                  │
+│ ├── Model routing (default + fallback chain)                   │
+│ ├── Prompt template registry + versioning                      │
+│ ├── RAG / knowledge retrieval                                  │
+│ ├── Logging + audit trail (AiAuditLog, AiAgentRun)             │
+│ ├── Permissions / role-based access                            │
+│ ├── Cost tracking + per-agent + per-foundation budgets         │
+│ └── Safety, compliance, and sensitive-field guards             │
+└────────────────────────────────────────────────────────────────┘
+                            ▲
+                            │ uses
+                            ▼
+┌────────────────────────────────────────────────────────────────┐
+│ Layer 0 — Existing platform substrate (no work here)           │
+│   Postgres + Prisma · BullMQ + Redis · R2 · WebSockets · Clerk │
+│   Email transport · Feature flags · i18n · Sentry · Messaging  │
+└────────────────────────────────────────────────────────────────┘
+```
+
+**Rule of the layering:** no feature module ever imports an LLM provider SDK, an embedding client, a vector store, or a prompt template directly. The only allowed entry point is the gateway's typed agent interface (`LlmClient.run({agent, input, schema, locale, principal})`). This is enforced by an ESLint rule and a CI check on the `api/src/ai/` module boundary.
+
+The Staffing Engine is the first consumer. The next ones likely:
+
+| Future engine | Reuses from the foundation |
+|---|---|
+| Parent-lead qualification | parser agent pattern, gateway, audit, cost tracking |
+| Support assistant | RAG (knowledge base), permission scoping, fallback chain |
+| Content moderation (mailing list, marketplace listings) | structured output, audit, safety guards |
+| Policy Q&A for daycares | RAG over canton sources (already crawled by `CantonSource`), gateway |
+| E-learning tutor / quiz generator | model routing (cheap), structured output, cost budgets per foundation |
+
+Designing the foundation for one consumer would make all of these expensive later. Designing it for several from day one costs maybe 20% more in Phase 0 and saves multiples of that across each subsequent feature.
 
 ---
 
@@ -240,6 +295,88 @@ The same template-first approach applies to: status update emails, screener ackn
 - **Single source of truth for pricing**: a `model-costs.ts` file mapping provider → input/output cost. Every gateway call records actual token usage; every audit-log row is priced. Monthly cost-per-foundation rolls up automatically.
 - **Anomaly alerts** (Sentry) when an agent's average token usage drifts >25% from its 7-day baseline — catches prompt regressions before the bill does.
 
+### 3.12 Fallback model chain
+
+Each agent declares a **chain** of providers, not a single default. The gateway tries primary → secondary → tertiary on transient failures (rate limit, 5xx, timeout, JSON-validation failure on the first retry). The chain is configuration, not code.
+
+Default chains:
+
+| Agent | Primary | Secondary | Tertiary |
+|---|---|---|---|
+| Request parser | Gemini Flash | DeepSeek-V3 | Claude Haiku (config-flagged) |
+| CV parser | Gemini Flash | DeepSeek-V3 | Gemini Pro |
+| Match explanation | Gemini Flash | DeepSeek-V3 | — |
+| Job-ad (FR/EN) | Gemini Flash | DeepSeek-V3 | — |
+| Job-ad (DE/Swiss-DE) | Gemini Flash | Gemini Pro | Claude Sonnet (config-flagged) |
+| Routing recommendation | Gemini Flash | DeepSeek-V3 | — |
+| Weekly intelligence | Gemini Flash | Gemini Pro | — |
+| Embeddings | Gemini text-embedding-004 | Voyage-3-lite | — |
+
+Fallbacks are recorded in `AiAuditLog.fallbackUsed`, so the dashboard surfaces when primary providers are degrading. A circuit breaker opens after N consecutive primary failures and routes traffic to secondary for a cooling period (5–15 min) before retrying primary — same pattern as standard HTTP client resilience.
+
+### 3.13 Prompt template registry & versioning
+
+Prompts are first-class artifacts, not strings inline in TypeScript.
+
+- One file per agent under `api/src/ai/agents/<agent-name>/`:
+  ```
+  index.ts            — agent definition (model chain, schema, ceilings, allowlist)
+  prompt.v1.ts        — versioned prompt template (Handlebars)
+  prompt.v2.ts        — current default
+  schema.ts           — Zod output schema
+  fixtures/           — golden inputs + expected outputs for the eval harness
+  ```
+- Every gateway call resolves the **active prompt version** through a config table (`AiAgentConfig`), defaulting to the latest checked-in version but overridable per environment (dev/staging/prod) and per foundation for A/B rollouts.
+- The active version is logged on every `AiAuditLog` row — every output is traceable to the exact prompt that produced it.
+- Prompt updates ship through PRs like any code change. Removing a version requires a migration to repoint any pinned config row.
+- **Eval harness** (a small Jest suite) runs the agent against its `fixtures/` on every PR that touches its directory. A new prompt version that regresses on golden cases fails CI before review.
+
+### 3.14 RAG / knowledge retrieval
+
+Some agents need facts the platform owns but the model doesn't. The foundation ships RAG as a first-class capability so feature modules consume it the same way they consume the model.
+
+**Knowledge sources at launch:**
+
+| Source | Used by |
+|---|---|
+| Role taxonomy (Auxiliaire, ASE, EDE, FaBe, HES, etc., with definitions + canton-level equivalences) | Staffing parser, match explanation, job-ad generator |
+| Canton-specific staffing rules (work permit, diploma equivalence, ratio rules) | Job-ad generator, compliance copy |
+| Crawled canton policy documents (existing `CantonSource` table + crawler at `api/src/canton-source/`) | Future policy Q&A; not used in Phase 1 |
+| Daycare-specific facts (mission, age groups served, languages of operation, neighbourhood) | Job-ad generator, reactivation rewrite |
+| Glossary of internal status terms (replacement, shortlist, trial day) | All agents — kept in the cached system block |
+
+**Implementation:**
+
+- New table `KnowledgeDocument` with embedding column (pgvector) and metadata (`source`, `cantonScope`, `locale`, `audience`).
+- Gateway exposes a `retrieve({query, scope, k, principal})` method that runs a hybrid search (BM25 via Postgres FTS + vector similarity), filters by `principal`'s access (a daycare cannot retrieve another daycare's facts), and returns the top-k passages.
+- Agents that need RAG declare `retrieval: { scope: 'role-taxonomy' | 'canton-rules' | ..., k: 3 }` in their config. The gateway runs retrieval and injects the passages as a tagged section of the prompt, separate from user input — never concatenated into the user message (prompt-injection safety).
+- Retrieved passages are recorded on `AiAuditLog.retrievedDocIds` for explainability ("the model said X because it was given source Y").
+- **Static knowledge (role taxonomy, canton rules) is curated, not crawled.** Stored as versioned Markdown in `api/src/ai/knowledge/` and re-embedded on commit. Crawled sources (canton policy PDFs) come later.
+
+The same retrieval primitive is what future features (policy Q&A, support assistant) will consume — no work duplicated.
+
+### 3.15 Permissions and role-based access
+
+The gateway is the enforcement point for who can invoke which agent and over which data.
+
+- Every `LlmClient.run` call requires a `principal` (the Clerk user, with role + organization).
+- Each agent declares `allowedRoles: UserRole[]` and `scopeRule: 'self' | 'organization' | 'admin-only'`.
+- The gateway throws `ForbiddenException` if the principal lacks the role or attempts cross-tenant data (e.g. a daycare requesting an explanation for a candidate not in their own shortlist).
+- Service-internal calls (BullMQ workers running on behalf of a user) pass the original principal through job metadata; no "system god mode" account.
+- **Reuses existing `@Roles()` decorator pattern** from `api/src/auth/` — same primitive that already guards REST endpoints, applied at the agent layer.
+
+This matters more than it looks: it's the only thing that prevents a curious daycare admin from prompting "summarise candidate X" where X is outside their pool, or a parent-side feature later from accessing recruitment data.
+
+### 3.16 Safety and compliance guards
+
+Three concrete enforcement points in the gateway:
+
+1. **Sensitive-field strip list.** Static set of forbidden field names (age, nationality, race, health, religion, family status, photo URLs, etc.). The gateway scans every agent's resolved input against this list at request build time and refuses the call. A CI check additionally rejects any prompt template that references a forbidden field by name.
+2. **Output safety classifier.** A cheap downstream check on user-facing prose outputs (reactivation rewrite, job ads) that flags clearly inappropriate content. Failure routes to admin review rather than user.
+3. **Consent gate.** For any agent that reads a `User` profile, the gateway checks for an active `CandidateConsent` row before the call. No consent → no LLM call, with a templated empty-state message returned to the caller.
+
+All three are gateway-level, not per-agent, so feature teams can't accidentally skip them.
+
 ---
 
 ## 4. Data Model Strategy
@@ -282,28 +419,99 @@ AiAgentRun                            — coarser-grain log of multi-step orches
 
 The active staffing remodel (`IMPLEMENTATION_PHASES.md` Phases 1–7) must land first or in parallel — it builds the surfaces this plan plugs into (foundation dashboard, replacement UI, notification bell, application pipeline). The AI phases here begin once Remodel Phase 3 (Replacement Staffing) is in.
 
-### Phase 0 — Foundations (2 weeks)
+## Layer 1 — Shared AI Foundation
 
-**Goal:** Land the AI gateway, the audit log, and the schema migrations everything else depends on. No user-visible features.
+### Phase 0 — AI Foundation (3 weeks, single deliverable)
 
-- Add `api/src/ai/` module: `LlmClient`, `EmbeddingClient`, agent registry, prompt-template loader, structured-output schemas, `AiResultCache` lookup, per-agent input-field allowlist, output-token ceilings, daily budget enforcement.
-- Wire **Gemini Flash and DeepSeek** adapters behind the gateway contract (OpenAI-compatible). Anthropic adapter built in the same shape but kept inactive — the gateway can route any single agent to it via config when escalation is warranted.
-- Enable provider-level prompt caching on the system-prompt block (canton list, role taxonomy, qualification ontology).
-- Per-agent config file (`ai-agents.config.ts`) defines default model, max output tokens, cache TTL, required input fields, locale routing.
-- New Prisma migrations:
-  - Enable `vector`, `cube`, `earthdistance` Postgres extensions.
-  - Create `StaffingRequest`, `MatchResult`, `EducatorEmbedding`, `StaffingRequestEmbedding`, `AiAuditLog`, `AiAgentRun`, `CandidateConsent`.
-  - Add geo columns to `User` and `Organization`.
-- New BullMQ queues: `ai.parse-request`, `ai.embed-profile`, `ai.embed-request`, `ai.geocode`, `ai.match`, `ai.explain`.
-- Geocoding worker (Mapbox or Swisstopo Geo Admin API). Backfill all existing `User` and `Organization` rows.
-- Feature flags: `ai_request_parser`, `ai_internal_matching`, `ai_cv_parsing`, `ai_reactivation`, `ai_external_routing`, `ai_external_apis`. All off by default.
+**Goal:** Land the entire shared AI Foundation in one focused effort. No user-visible features yet. Every subsequent phase consumes this layer; no phase rebuilds any part of it.
 
-**Exit criteria:** `LlmClient.run(...)` works end-to-end against a test agent; geocoding backfill complete; audit log records every call.
+The phase ships eight capabilities, each independently demonstrable but built together because they share the same module boundary:
+
+**0.A — AI Gateway / intermediary**
+
+- Module `api/src/ai/` with `LlmClient.run({agent, input, schema, locale, principal, cacheKey?})` as the only public surface.
+- Agent registry (`api/src/ai/agents/<name>/`) — one folder per agent: `index.ts` (definition), `prompt.vN.ts` (versioned template), `schema.ts` (Zod), `fixtures/` (eval golden cases).
+- ESLint rule + CI check forbidding LLM SDK imports outside `api/src/ai/`.
+- One health-check agent shipped as the proof-of-life: `echo-validate` (round-trips a tiny JSON object through every provider).
+
+**0.B — Model routing with fallback chain**
+
+- Provider adapters under `api/src/ai/providers/`: `gemini.adapter.ts`, `deepseek.adapter.ts`, `anthropic.adapter.ts` — all implementing the same gateway contract.
+- Per-agent chain config in `ai-agents.config.ts` (primary → secondary → tertiary).
+- Circuit breaker on consecutive primary failures; fallback flagged on `AiAuditLog.fallbackUsed`.
+- Anthropic adapter built but inactive on all agents at launch — proves the abstraction works.
+
+**0.C — Prompt template registry + versioning**
+
+- Versioned prompt files (`prompt.v1.ts`, `prompt.v2.ts`, …) — no inline strings.
+- `AiAgentConfig` table holds the active version per environment + per foundation.
+- Eval harness (Jest) runs every agent's `fixtures/` on PRs that touch its directory. Regression fails CI.
+- `AiAuditLog.promptVersion` records the exact version used.
+
+**0.D — RAG / knowledge retrieval**
+
+- `KnowledgeDocument` table with pgvector column, metadata (source, cantonScope, locale, audience, version).
+- Curated static knowledge under `api/src/ai/knowledge/` (Markdown): role taxonomy, canton equivalence map, internal status glossary. Re-embedded on commit via a build step.
+- `LlmClient.retrieve({query, scope, k, principal})` — hybrid BM25 + vector, principal-scoped, returns top-k passages.
+- Agents declare `retrieval` in their config; gateway injects passages as a tagged section, never concatenated into user input (prompt-injection safety).
+- `AiAuditLog.retrievedDocIds` records what was provided.
+
+**0.E — Logging + audit trail**
+
+- `AiAuditLog` (append-only): `agentName`, `promptVersion`, `model`, `fallbackUsed`, `inputHash`, `outputHash`, `tokenUsage`, `latencyMs`, `costUsd`, `principalId`, `organizationId`, `retrievedDocIds[]`, `cacheHit`, `entityRef`, `createdAt`.
+- `AiAgentRun` for multi-step orchestrations (parse → retrieve → match → explain): groups child `AiAuditLog` rows under one parent.
+- Sentry breadcrumbs with `ai.agent` tag.
+- Retention policy aligned with Swiss data-protection norms (configurable; default 24 months).
+
+**0.F — Permissions / role-based access**
+
+- Every gateway call requires a `principal` (Clerk user + role + org).
+- Agents declare `allowedRoles` and `scopeRule` (`self` / `organization` / `admin-only`).
+- Gateway throws `ForbiddenException` on role mismatch or cross-tenant access attempt.
+- Reuses existing `@Roles()` patterns from `api/src/auth/`.
+
+**0.G — Cost tracking + budgets**
+
+- `model-costs.ts` — single source of truth for per-provider per-token pricing.
+- Every audit-log row priced at write time (`costUsd`).
+- Daily token budgets per agent and per foundation, enforced at gateway call time.
+- Soft-warn at 70%, hard-fail at 100% with a templated fallback contract per agent (e.g. explanation agent returns the structured score breakdown without prose).
+- Admin dashboard tile: cost per foundation per day, with anomaly flag on >25% drift from 7-day baseline.
+
+**0.H — Safety + compliance**
+
+- Sensitive-field strip list enforced at request-build time (age, nationality, race, health, religion, family status, photo URL, etc.).
+- CI prompt-template linter rejects forbidden field references.
+- `CandidateConsent` table + gateway pre-check on any agent reading a `User` profile.
+- Output safety classifier on user-facing prose; failures route to admin review.
+
+**Cross-cutting infra delivered in this phase:**
+
+- Prisma migrations: enable `vector`, `cube`, `earthdistance` extensions; create `AiAuditLog`, `AiAgentRun`, `AiAgentConfig`, `AiResultCache`, `KnowledgeDocument`, `CandidateConsent`.
+- New BullMQ queues: `ai.exec` (generic gateway-call worker), `ai.embed` (embedding generation), `ai.geocode`. Staffing-specific queues land in Phase 1.
+- Geocoding worker (Swisstopo primary, Mapbox fallback). Backfill of existing `User`/`Organization` rows runs as part of the phase.
+- Feature flags: `ai_foundation_enabled` (master kill switch), then per-engine flags added in their own phases.
+
+**Exit criteria:**
+1. `LlmClient.run(...)` works end-to-end with primary, secondary, and tertiary providers all reachable.
+2. Eval harness green on the health-check agent across all three providers.
+3. RAG retrieval returns role-taxonomy passages for a sample query, scoped to a test principal.
+4. Audit log captures token usage, cost, principal, prompt version, retrieved docs, and fallback flag on every call.
+5. Geocoding backfill complete for all existing users and organizations.
+6. Daily budget hard-fail demonstrated against a synthetic agent.
+
+---
+
+## Layer 2 — AI Staffing Engine
+
+The Staffing Engine is the first consumer of the foundation. Each agent below is a thin definition in `api/src/ai/agents/staffing-*/` — no new gateway features, no new providers, no new compliance plumbing. Phases run roughly sequentially but can overlap once the foundation is in.
 
 ### Phase 1 — Internal Matching MVP (3 weeks)
 
 **Goal:** A daycare types a free-form request and sees a ranked shortlist with explanations. Internal pool only.
 
+- **Staffing schema migrations** (additive on top of the foundation): create `StaffingRequest`, `MatchResult`, `EducatorEmbedding`, `StaffingRequestEmbedding`, `ReactivationCampaign` (Phase 3), `ExternalPosting` (Phase 4), `ExternalApplicant` (Phase 4). Add columns to `User`/`JobListing`/`JobApplication` per §4.3.
+- New staffing-specific BullMQ queues: `staffing.parse-request`, `staffing.match`, `staffing.explain`, `staffing.embed-profile`, `staffing.embed-request`.
 - **Request Parser agent** (Gemini Flash, JSON schema output, ~120-token ceiling) — converts free text into structured `StaffingRequest` rows. Schema includes the Swiss canton list, role taxonomy (Auxiliaire, ASE, EDE, FaBe, Educateur diplômé HES, Stagiaire, Apprenti, Directeur), employment types, language codes, age groups (nursery 0–18mo / toddlers 18mo–3yr / preschool 3–5yr / school-age). Parsed result is cached by canonical request-text hash — identical requests never hit the model twice.
 - **Hybrid Matcher service** (`api/src/ai/match/`):
   - SQL hard filters: canton overlap, language overlap, work-percentage band overlap, role overlap, contract-type compatibility, start-date feasibility, `candidatePoolVisible=true`, `approvalStatus=APPROVED`.
@@ -393,6 +601,22 @@ api/src/external-channels/<channel>/
 - KPI tiles on the admin dashboard replace the current generic count cards.
 
 **Exit criteria:** Admin dashboard shows live staffing KPIs; weekly intelligence email lands for super-admins.
+
+---
+
+## Beyond Layer 2 — future engines on the same foundation
+
+These are out of scope for this plan but called out so the foundation isn't accidentally narrowed to staffing-only:
+
+| Engine | Foundation pieces it would reuse | Net-new work |
+|---|---|---|
+| Parent-lead qualification | Gateway, parser pattern, model routing, audit, cost | One agent definition; lead-specific schema |
+| Support assistant for daycares | RAG (canton policies), permissions, fallback chain, safety classifier | Knowledge ingestion of support docs; one chat agent |
+| Marketplace listing moderation | Structured output, audit, safety classifier | One classifier agent |
+| Policy Q&A (consumer of `CantonSource`) | RAG, principal scoping | Crawled-doc ingestion pipeline |
+| E-learning quiz generator | Model routing, cost budgets per foundation | One agent + lesson-content retrieval |
+
+Each is a single agent definition under `api/src/ai/agents/<name>/` plus a thin feature module. None requires touching the gateway.
 
 ---
 
