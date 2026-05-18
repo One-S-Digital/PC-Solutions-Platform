@@ -38,6 +38,8 @@ import { TranslationService } from '../translation/translation.service';
 import { FIELDS_BY_ENTITY } from '../translation/translation.config';
 import { normalizeRegionsServed } from '../common/utils/regions.util';
 import { AllowPendingEducator } from '../auth/decorators/allow-pending-educator.decorator';
+import { EmailNotificationService } from '../email-notification/email-notification.service';
+import { ConfigService } from '@nestjs/config';
 
 @ApiTags('settings')
 @Controller('settings')
@@ -50,6 +52,8 @@ export class SettingsController {
     private readonly principal: PrincipalService,
     private readonly translationService: TranslationService,
     private readonly uploadService: UploadService,
+    private readonly emailNotificationService: EmailNotificationService,
+    private readonly configService: ConfigService,
   ) {}
 
   /**
@@ -406,7 +410,7 @@ export class SettingsController {
     // 2) delete the underlying uploaded asset (best-effort)
     const existingCv = await this.prisma.user.findUnique({
       where: { id: profileId },
-      select: { cvUrl: true },
+      select: { cvUrl: true, shortBio: true, approvalStatus: true, email: true, firstName: true },
     });
     const previousCvUrl = existingCv?.cvUrl || '';
     const normalizedIncomingCvUrl =
@@ -582,6 +586,29 @@ export class SettingsController {
         // Do not fail settings update if deletion fails; leaving an orphaned file is preferable
         // to blocking the user from updating their profile.
       }
+    }
+
+    // Send "application received" email the first time an educator submits their profile.
+    // Condition: previously had no shortBio (blank profile) and is now submitting one,
+    // and their account is still PENDING_REVIEW (not yet reviewed by admin).
+    // This covers the email/password signup path; OAuth educators get it via completeProfile.
+    const isFirstSubmission =
+      !existingCv?.shortBio?.trim() &&
+      settings.shortBio?.trim() &&
+      existingCv?.approvalStatus === 'PENDING_REVIEW';
+
+    if (isFirstSubmission && existingCv?.email) {
+      const appUrl = this.configService.get<string>('APP_URL') || this.configService.get<string>('FRONTEND_URL') || '';
+      this.emailNotificationService.sendNotification({
+        event: 'educator_pending',
+        recipient: existingCv.email,
+        recipientName: existingCv.firstName ?? undefined,
+        payload: {
+          firstName: existingCv.firstName || 'Educator',
+          supportUrl: `${appUrl}/support`,
+        },
+        bypassPreferences: true,
+      }).catch(() => {});
     }
 
     return {
