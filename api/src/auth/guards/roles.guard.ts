@@ -4,6 +4,7 @@ import { UserRole, EducatorApprovalStatus } from '@prisma/client';
 import { ROLES_KEY } from '../decorators/roles.decorator';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import { ALLOW_PENDING_KEY } from '../decorators/allow-pending.decorator';
+import { ALLOW_PENDING_EDUCATOR_KEY } from '../decorators/allow-pending-educator.decorator';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -11,24 +12,30 @@ export class RolesGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
-    
+
     // 1. Allow OPTIONS requests (CORS preflight)
     if (request.method === 'OPTIONS') {
       return true;
     }
-    
+
     // 2. Check if route is marked as @Public()
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);
-    
+
     if (isPublic) {
       return true;
     }
-    
+
     // 3. Check if route allows pending users via @AllowPending()
     const allowPending = this.reflector.getAllAndOverride<boolean>(ALLOW_PENDING_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
+    // 3b. Check if route allows educators with PENDING_REVIEW approval status
+    const allowPendingEducator = this.reflector.getAllAndOverride<boolean>(ALLOW_PENDING_EDUCATOR_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);
@@ -69,7 +76,7 @@ export class RolesGuard implements CanActivate {
 
     // 7. Handle educators pending admin approval
     if (userContext.role === UserRole.EDUCATOR) {
-      if (userContext.approvalStatus === EducatorApprovalStatus.PENDING_REVIEW) {
+      if (userContext.approvalStatus === EducatorApprovalStatus.PENDING_REVIEW && !allowPendingEducator) {
         throw new ForbiddenException({
           message: 'Your educator profile is awaiting admin approval. You will be notified once reviewed.',
           code: 'EDUCATOR_PENDING_APPROVAL',

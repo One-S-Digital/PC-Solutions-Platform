@@ -37,6 +37,7 @@ import { UpdateNotificationSettingsDto } from './dto/notification-settings.dto';
 import { TranslationService } from '../translation/translation.service';
 import { FIELDS_BY_ENTITY } from '../translation/translation.config';
 import { normalizeRegionsServed } from '../common/utils/regions.util';
+import { AllowPendingEducator } from '../auth/decorators/allow-pending-educator.decorator';
 
 @ApiTags('settings')
 @Controller('settings')
@@ -342,6 +343,7 @@ export class SettingsController {
 
   @Get('educator')
   @Roles(UserRole.EDUCATOR)
+  @AllowPendingEducator()
   @ApiOperation({ summary: 'Get educator settings' })
   @ApiResponse({ status: 200, description: 'Settings retrieved successfully' })
   async getEducatorSettings(@Request() req) {
@@ -393,6 +395,7 @@ export class SettingsController {
 
   @Patch('educator')
   @Roles(UserRole.EDUCATOR)
+  @AllowPendingEducator()
   @ApiOperation({ summary: 'Update educator settings' })
   @ApiResponse({ status: 200, description: 'Settings updated successfully' })
   async updateEducatorSettings(@Request() req, @Body() settings: UpdateEducatorSettingsDto) {
