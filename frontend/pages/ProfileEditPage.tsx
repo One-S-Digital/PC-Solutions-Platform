@@ -204,6 +204,7 @@ const ProfileEditPage: React.FC = () => {
           availability: data.availability || '',
           availabilitySettings: data.availabilitySettings,
           cvUrl: data.cvUrl || '',
+          documents: Array.isArray(data.documents) ? data.documents : [],
           shortBio: data.shortBio || '',
           avatarAssetId: data.avatarAssetId || '',
           avatarUrl: data.avatarUrl || '', // Computed from asset relation on backend
@@ -353,6 +354,7 @@ const ProfileEditPage: React.FC = () => {
           skills: Array.isArray(payload.skills) ? payload.skills : [],
           availability: payload.availability || '',
           cvUrl: payload.cvUrl || '',
+          documents: Array.isArray(payload.documents) ? payload.documents : [],
           shortBio: payload.shortBio || '',
           avatarAssetId: payload.avatarAssetId || '',
         };

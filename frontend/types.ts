@@ -953,6 +953,7 @@ interface BaseSettings {
     availability?: string; // Legacy: simple text availability
     availabilitySettings?: EducatorAvailabilitySettings; // New: structured availability schedule
     cvUrl?: string;
+    documents?: DocumentItem[];
 }
 
 // Supplier-specific settings

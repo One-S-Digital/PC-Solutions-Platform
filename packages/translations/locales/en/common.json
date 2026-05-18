@@ -691,8 +691,8 @@
     }
   },
   "fileUploadZone": {
-    "defaultLabel": "default",
-    "dragAndDrop": "Drag and drop files here",
+    "defaultLabel": "Upload a file",
+    "dragAndDrop": "or drag and drop",
     "errors": {
       "sizeExceeded": "File size exceeds {{max}}MB.",
       "invalidType": "Invalid file type. Accepted: {{types}}",

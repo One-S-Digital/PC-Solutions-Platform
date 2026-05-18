@@ -663,8 +663,8 @@
     }
   },
   "fileUploadZone": {
-    "defaultLabel": "default",
-    "dragAndDrop": "Dateien hierher ziehen und ablegen",
+    "defaultLabel": "Datei hochladen",
+    "dragAndDrop": "oder per Drag & Drop ablegen",
     "errors": {
       "sizeExceeded": "Dateigröße überschreitet {{max}} MB.",
       "invalidType": "Ungültiger Dateityp. Erlaubt: {{types}}",
