@@ -1173,30 +1173,40 @@ const SignupPage: React.FC = () => {
                       {errors.termsAccepted && <p className="text-xs text-swiss-coral mt-1">{errors.termsAccepted}</p>}
                     </div>
 
-                    {/* CAPTCHA Section */}
-                    <div className="pt-4">
-                      <label className="block text-sm font-medium text-gray-700 mb-2 text-center">
-                        {t('signup:labels.verifyCaptcha', 'Please verify you are human')}
-                      </label>
-                      <Captcha
-                        siteKey={HCAPTCHA_SITE_KEY}
-                        theme={HCAPTCHA_THEME}
-                        size={HCAPTCHA_SIZE}
-                        onVerify={handleCaptchaVerify}
-                        onExpire={handleCaptchaExpire}
-                        onError={handleCaptchaError}
-                        className="flex justify-center"
-                      />
-                      {captchaError && (
-                        <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded">
-                          <p className="text-xs text-red-700 text-center">{captchaError}</p>
-                          <p className="text-xs text-red-600 text-center mt-1">
-                            {t('signup:errors.captchaRefreshHint', 'Try refreshing the page or using a different browser.')}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                    
+                    {/* CAPTCHA Section — mounted lazily once the user has
+                        completed the password fields (or, for OAuth profile
+                        completion, the terms checkbox). The hCaptcha iframe
+                        installs global focus/input listeners that can stall
+                        Safari's password-manager UI when mounted alongside
+                        password inputs, so we keep it out of the DOM until
+                        the user is past those fields. */}
+                    {(needsProfileCompletion
+                      ? formData.termsAccepted
+                      : Boolean(formData.password) && Boolean(formData.confirmPassword)) && (
+                      <div className="pt-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-2 text-center">
+                          {t('signup:labels.verifyCaptcha', 'Please verify you are human')}
+                        </label>
+                        <Captcha
+                          siteKey={HCAPTCHA_SITE_KEY}
+                          theme={HCAPTCHA_THEME}
+                          size={HCAPTCHA_SIZE}
+                          onVerify={handleCaptchaVerify}
+                          onExpire={handleCaptchaExpire}
+                          onError={handleCaptchaError}
+                          className="flex justify-center"
+                        />
+                        {captchaError && (
+                          <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded">
+                            <p className="text-xs text-red-700 text-center">{captchaError}</p>
+                            <p className="text-xs text-red-600 text-center mt-1">
+                              {t('signup:errors.captchaRefreshHint', 'Try refreshing the page or using a different browser.')}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                     <div className="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-3 pt-3 sm:pt-4">
                       <Button type="button" variant="light" onClick={handleBackToRoleSelection} leftIcon={ArrowLeftIcon} className="w-full sm:w-auto text-sm sm:text-base">
                         {t('common:buttons.goBack')}
