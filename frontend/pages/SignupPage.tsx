@@ -7,6 +7,7 @@ import { APP_NAME, STANDARD_INPUT_FIELD, SWISS_CANTONS } from '../constants';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import { useWebhookStatus } from '../src/hooks/useWebhookStatus';
+import { installSafariDebug } from '../src/utils/safariDebug';
 import VerificationProgress from '../src/components/verification/VerificationProgress';
 import { BuildingOffice2Icon, UserIcon, CogIcon, UsersIcon, CheckCircleIcon, EyeIcon, EyeSlashIcon, ArrowLeftIcon, SquaresPlusIcon, ArrowRightOnRectangleIcon, QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
 import { useFrontendSettings } from '../hooks/useFrontendSettings';
@@ -73,6 +74,16 @@ const SignupPage: React.FC = () => {
       console.warn('Failed to load frontend settings:', settingsError);
     }
   }, [settingsError]);
+
+  // Diagnostic for the Safari signup-password freeze. Opt in by appending
+  // ?debug=1 to the URL. The helper installs PerformanceObserver, focus
+  // listeners, and a MutationObserver, then exposes dumpSafariDebug() on
+  // the console for the user to copy/paste the log back to us.
+  useEffect(() => {
+    if (searchParams.get('debug') === '1') {
+      installSafariDebug();
+    }
+  }, [searchParams]);
 
   // Strip sensitive lead params from URL if present to avoid PII in browser history.
   useEffect(() => {
