@@ -804,6 +804,7 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
           {totalDocs < MAX_DOCUMENTS && (
             <div className="space-y-2">
               <FileUploadZone
+                key={totalDocs}
                 label={t('settings:educatorProfile.cvDragDrop', 'Upload a document (CV, diploma, certificate…)')}
                 acceptedMimeTypes=".pdf,.doc,.docx"
                 maxFileSizeMB={5}

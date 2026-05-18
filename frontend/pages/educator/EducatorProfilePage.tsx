@@ -677,6 +677,7 @@ const EducatorProfilePage: React.FC = () => {
               {((profile.documents?.length ?? 0) + (profile.cvUrl ? 1 : 0)) < MAX_DOCUMENTS && (
                 <div className="space-y-2">
                   <FileUploadZone
+                    key={(profile.documents?.length ?? 0) + (profile.cvUrl ? 1 : 0)}
                     label={t('educatorProfilePage.documents.uploadDocument', 'Upload a document (CV, diploma, certificate…)')}
                     acceptedMimeTypes=".pdf,.doc,.docx"
                     maxFileSizeMB={5}
