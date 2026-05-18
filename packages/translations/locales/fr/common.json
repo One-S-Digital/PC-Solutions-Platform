@@ -656,8 +656,8 @@
     }
   },
   "fileUploadZone": {
-    "defaultLabel": "default",
-    "dragAndDrop": "Glissez-déposez les fichiers ici",
+    "defaultLabel": "Télécharger un fichier",
+    "dragAndDrop": "ou glisser-déposer",
     "errors": {
       "sizeExceeded": "La taille du fichier dépasse {{max}} Mo.",
       "invalidType": "Type de fichier invalide. Accepté : {{types}}",
