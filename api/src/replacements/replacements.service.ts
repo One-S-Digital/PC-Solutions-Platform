@@ -4,6 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationType, ReplacementMatchStatus, ReplacementRequestStatus, UrgencyLevel, UserRole } from '@prisma/client';
 import { CreateReplacementRequestDto } from './dto/create-replacement-request.dto';
@@ -20,6 +21,7 @@ export class ReplacementsService {
     private notificationsService: NotificationsService,
     private notificationsGateway: NotificationsGateway,
     private emailNotificationService: EmailNotificationService,
+    private configService: ConfigService,
   ) {}
 
   private async notify(userId: string, type: NotificationType, title: string, body: string, link?: string) {
@@ -166,7 +168,7 @@ export class ReplacementsService {
     // Send email to educator (fire-and-forget — never block the response)
     const educator = match.educator;
     if (educator?.email) {
-      const appUrl = process.env.APP_URL || process.env.FRONTEND_URL || '';
+      const appUrl = this.configService.get<string>('APP_URL') || this.configService.get<string>('FRONTEND_URL') || '';
       this.emailNotificationService.sendNotification({
         event: 'replacement_match_proposed',
         recipient: educator.email,
@@ -233,7 +235,8 @@ export class ReplacementsService {
     );
 
     // Send email to the foundation's requester for accepted/declined responses
-    const requester = (match.request as any).requestedBy;
+    type Requester = { id: string; firstName: string | null; email: string | null } | null;
+    const requester = (match.request as typeof match.request & { requestedBy: Requester }).requestedBy;
     const emailEvent =
       dto.status === ReplacementMatchStatus.ACCEPTED
         ? 'replacement_match_accepted'
@@ -242,7 +245,7 @@ export class ReplacementsService {
           : null;
 
     if (emailEvent && requester?.email) {
-      const appUrl = process.env.APP_URL || process.env.FRONTEND_URL || '';
+      const appUrl = this.configService.get<string>('APP_URL') || this.configService.get<string>('FRONTEND_URL') || '';
       this.emailNotificationService.sendNotification({
         event: emailEvent,
         recipient: requester.email,

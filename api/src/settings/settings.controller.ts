@@ -10,7 +10,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { AssetKind } from '@prisma/client';
+import { AssetKind, EducatorApprovalStatus } from '@prisma/client';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
@@ -595,7 +595,7 @@ export class SettingsController {
     const isFirstSubmission =
       !existingCv?.shortBio?.trim() &&
       settings.shortBio?.trim() &&
-      existingCv?.approvalStatus === 'PENDING_REVIEW';
+      existingCv?.approvalStatus === EducatorApprovalStatus.PENDING_REVIEW;
 
     if (isFirstSubmission && existingCv?.email) {
       const appUrl = this.configService.get<string>('APP_URL') || this.configService.get<string>('FRONTEND_URL') || '';
@@ -608,6 +608,7 @@ export class SettingsController {
           supportUrl: `${appUrl}/support`,
         },
         bypassPreferences: true,
+        allowUnknownRecipient: false,
       }).catch(() => {});
     }
 

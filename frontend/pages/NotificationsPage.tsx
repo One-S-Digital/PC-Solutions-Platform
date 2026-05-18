@@ -70,10 +70,10 @@ const NotificationsPage: React.FC = () => {
                 <div className="flex-grow min-w-0">
                   {notif.link ? (
                     <Link to={notif.link} className="hover:underline" onClick={() => !notif.read && markRead(notif.id)}>
-                      <p className={`font-semibold text-swiss-charcoal truncate ${!notif.read ? 'font-bold' : ''}`}>{notif.title}</p>
+                      <p className={`${notif.read ? 'font-semibold' : 'font-bold'} text-swiss-charcoal truncate`}>{notif.title}</p>
                     </Link>
                   ) : (
-                    <p className={`font-semibold text-swiss-charcoal truncate ${!notif.read ? 'font-bold' : ''}`}>{notif.title}</p>
+                    <p className={`${notif.read ? 'font-semibold' : 'font-bold'} text-swiss-charcoal truncate`}>{notif.title}</p>
                   )}
                   <p className="text-sm text-gray-600 mt-0.5">{notif.body}</p>
                   <p className="text-xs text-gray-400 mt-1">{new Date(notif.createdAt).toLocaleString()}</p>
