@@ -825,17 +825,29 @@ const SignupPage: React.FC = () => {
     }
   };
 
+  const autoCompleteFor = (name: keyof SignupFormData): string | undefined => {
+    switch (name) {
+      case 'email': return 'email';
+      case 'password': return 'new-password';
+      case 'confirmPassword': return 'new-password';
+      case 'contactPerson': return 'name';
+      case 'organisationName': return 'organization';
+      case 'phone': return 'tel';
+      default: return undefined;
+    }
+  };
+
   const renderField = (name: keyof SignupFormData, labelKey: string, type: string = 'text', required: boolean = true, placeholderKey?: string, options?: readonly string[]) => (
     <div>
       <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">
         {t(labelKey)}{required ? <span className="text-swiss-coral">*</span> : ''}
       </label>
       {type === 'select' && options ? (
-        <select 
-          id={name} 
-          name={name} 
-          value={formData[name as keyof SignupFormData] as string || ''} 
-          onChange={handleChange} 
+        <select
+          id={name}
+          name={name}
+          value={formData[name as keyof SignupFormData] as string || ''}
+          onChange={handleChange}
           className={`${STANDARD_INPUT_FIELD} ${errors[name as keyof SignupFormData] ? 'border-swiss-coral' : ''}`}
         >
           <option value="">{t('signup:placeholders.select')}</option>
@@ -843,7 +855,7 @@ const SignupPage: React.FC = () => {
         </select>
       ) : (
         <div className="relative">
-          <input 
+          <input
             type={
               name === 'password'
                 ? (showPassword ? 'text' : 'password')
@@ -851,12 +863,13 @@ const SignupPage: React.FC = () => {
                   ? (showConfirmPassword ? 'text' : 'password')
                   : type
             }
-            id={name} 
-            name={name} 
+            id={name}
+            name={name}
+            autoComplete={autoCompleteFor(name)}
             value={String(formData[name as keyof SignupFormData] != null ? formData[name as keyof SignupFormData] : '')}
             onChange={handleChange}
             className={`${STANDARD_INPUT_FIELD} ${errors[name as keyof SignupFormData] ? 'border-swiss-coral' : ''}`}
-            placeholder={placeholderKey ? t(placeholderKey) : ''} 
+            placeholder={placeholderKey ? t(placeholderKey) : ''}
           />
           {(name === 'password' || name === 'confirmPassword') && (
             <button 
@@ -1099,10 +1112,11 @@ const SignupPage: React.FC = () => {
                         <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                           {t('signup:labels.email')}<span className="text-swiss-coral">*</span>
                         </label>
-                        <input 
+                        <input
                           type="email"
-                          id="email" 
-                          name="email" 
+                          id="email"
+                          name="email"
+                          autoComplete="email"
                           value={formData.email}
                           readOnly
                           className={`${STANDARD_INPUT_FIELD} bg-gray-100 cursor-not-allowed`}
