@@ -3,10 +3,9 @@ import { useNavigate, Link, useLocation, useSearchParams } from 'react-router-do
 import { useTranslation } from 'react-i18next';
 import { useSignUp, useAuth, useUser } from '@clerk/clerk-react';
 import { SignupRole, SignupFormData, SwissCanton, SupportedLanguage, UserRole } from '../types';
-import { APP_NAME, STANDARD_INPUT_FIELD, SWISS_CANTONS, HCAPTCHA_SITE_KEY, HCAPTCHA_THEME, HCAPTCHA_SIZE } from '../constants';
+import { APP_NAME, STANDARD_INPUT_FIELD, SWISS_CANTONS } from '../constants';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
-import Captcha from '../components/ui/Captcha';
 import { useWebhookStatus } from '../src/hooks/useWebhookStatus';
 import VerificationProgress from '../src/components/verification/VerificationProgress';
 import { BuildingOffice2Icon, UserIcon, CogIcon, UsersIcon, CheckCircleIcon, EyeIcon, EyeSlashIcon, ArrowLeftIcon, SquaresPlusIcon, ArrowRightOnRectangleIcon, QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
@@ -179,8 +178,6 @@ const SignupPage: React.FC = () => {
   const [isResendingCode, setIsResendingCode] = useState(false);
   const [resendSuccessMessage, setResendSuccessMessage] = useState('');
   const [resendCooldownSeconds, setResendCooldownSeconds] = useState(0);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  const [captchaError, setCaptchaError] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [webhookStatus, setWebhookStatus] = useState<'pending' | 'processing' | 'ready' | 'error'>('pending');
   const [webhookError, setWebhookError] = useState<string | null>(null);
@@ -358,18 +355,11 @@ const SignupPage: React.FC = () => {
         newErrors.childStartDate = t('signup:errors.childStartDateRequired');
     }
 
-    if (!formData.termsAccepted) 
+    if (!formData.termsAccepted)
       newErrors.termsAccepted = t('signup:errors.termsRequired');
 
-    // CAPTCHA validation
-    if (!captchaToken) {
-      setCaptchaError(t('signup:errors.captchaRequired'));
-    } else {
-      setCaptchaError('');
-    }
-
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0 && captchaToken !== null;
+    return Object.keys(newErrors).length === 0;
   };
 
   // Validation for users completing their profile (no password required - they already have a Clerk account)
@@ -413,35 +403,11 @@ const SignupPage: React.FC = () => {
         newErrors.childStartDate = t('signup:errors.childStartDateRequired');
     }
 
-    if (!formData.termsAccepted) 
+    if (!formData.termsAccepted)
       newErrors.termsAccepted = t('signup:errors.termsRequired');
 
-    // CAPTCHA validation - still required for OAuth users
-    if (!captchaToken) {
-      setCaptchaError(t('signup:errors.captchaRequired'));
-    } else {
-      setCaptchaError('');
-    }
-
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0 && captchaToken !== null;
-  };
-
-  const handleCaptchaVerify = (token: string) => {
-    setCaptchaToken(token);
-    setCaptchaError('');
-  };
-
-  const handleCaptchaExpire = () => {
-    setCaptchaToken(null);
-    setCaptchaError(t('signup:errors.captchaExpired'));
-  };
-
-  const handleCaptchaError = (error: any) => {
-    setCaptchaToken(null);
-    const errorMessage = t('signup:errors.captchaError', 'CAPTCHA verification failed. Please refresh the page and try again.');
-    setCaptchaError(errorMessage);
-    console.error('CAPTCHA error:', error);
+    return Object.keys(newErrors).length === 0;
   };
 
   // Cooldown timer for resending verification code
@@ -1173,39 +1139,12 @@ const SignupPage: React.FC = () => {
                       {errors.termsAccepted && <p className="text-xs text-swiss-coral mt-1">{errors.termsAccepted}</p>}
                     </div>
 
-                    {/* CAPTCHA Section — mounted lazily once the user has
-                        completed the password fields (or, for OAuth profile
-                        completion, the terms checkbox). The hCaptcha iframe
-                        installs global focus/input listeners that can stall
-                        Safari's password-manager UI when mounted alongside
-                        password inputs, so we keep it out of the DOM until
-                        the user is past those fields. */}
-                    {(needsProfileCompletion
-                      ? formData.termsAccepted
-                      : Boolean(formData.password) && Boolean(formData.confirmPassword)) && (
-                      <div className="pt-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-2 text-center">
-                          {t('signup:labels.verifyCaptcha', 'Please verify you are human')}
-                        </label>
-                        <Captcha
-                          siteKey={HCAPTCHA_SITE_KEY}
-                          theme={HCAPTCHA_THEME}
-                          size={HCAPTCHA_SIZE}
-                          onVerify={handleCaptchaVerify}
-                          onExpire={handleCaptchaExpire}
-                          onError={handleCaptchaError}
-                          className="flex justify-center"
-                        />
-                        {captchaError && (
-                          <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded">
-                            <p className="text-xs text-red-700 text-center">{captchaError}</p>
-                            <p className="text-xs text-red-600 text-center mt-1">
-                              {t('signup:errors.captchaRefreshHint', 'Try refreshing the page or using a different browser.')}
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    )}
+                    {/* Clerk Managed CAPTCHA mount point. Clerk only renders
+                        its bot-protection widget into this element when
+                        signUp.create() is called, so no CAPTCHA scripts run
+                        on page load — that eager preload was what was
+                        stalling Safari's password-manager UI on focus. */}
+                    <div id="clerk-captcha" className="pt-2" />
 
                     <div className="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-3 pt-3 sm:pt-4">
                       <Button type="button" variant="light" onClick={handleBackToRoleSelection} leftIcon={ArrowLeftIcon} className="w-full sm:w-auto text-sm sm:text-base">

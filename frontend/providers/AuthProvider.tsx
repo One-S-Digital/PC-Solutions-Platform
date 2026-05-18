@@ -899,17 +899,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }
 
   return (
-    <ClerkProvider 
+    <ClerkProvider
       publishableKey={publishableKey}
       afterSignOutUrl="/login"
-      appearance={{
-        elements: {
-          // Disable Clerk's built-in CAPTCHA since we're using hCaptcha
-          captcha: {
-            display: 'none'
-          }
-        }
-      }}
     >
       <AuthProviderInner>{children}</AuthProviderInner>
     </ClerkProvider>
