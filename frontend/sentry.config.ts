@@ -4,13 +4,21 @@ import * as Sentry from '@sentry/react';
 // Session Replay integration, particularly around input/focus events on
 // password fields, which can cause the browser to freeze with a spinning
 // cursor. Detect Safari and skip the Replay integration there.
+//
+// Apple requires every iOS browser to use WebKit, so Firefox iOS, Edge iOS,
+// Chrome iOS, etc. hit the same bug as Safari and must also be opted out.
 function isSafariBrowser(): boolean {
   if (typeof navigator === 'undefined') return false;
   const ua = navigator.userAgent;
-  const isChromium = /Chrome|Chromium|CriOS|EdgiOS|FxiOS|OPR\//.test(ua);
-  const isSafariUA = /Safari/.test(ua) && !isChromium;
-  const isIOSWebKit = /iPad|iPhone|iPod/.test(ua) && !isChromium;
-  return isSafariUA || isIOSWebKit;
+
+  // Any iOS browser is WebKit under the hood, regardless of branding.
+  const isIOS = /iPad|iPhone|iPod/.test(ua);
+  if (isIOS) return true;
+
+  // Desktop: real Safari is the only Safari-branded UA that isn't also a
+  // Chromium variant (Chrome, Edge, Opera, etc. all include "Safari").
+  const isDesktopChromium = /Chrome\/|Chromium\/|Edg\/|OPR\//.test(ua);
+  return /Safari\//.test(ua) && !isDesktopChromium;
 }
 
 export function initSentry() {
