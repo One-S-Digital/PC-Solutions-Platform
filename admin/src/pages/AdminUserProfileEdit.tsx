@@ -84,6 +84,9 @@ interface UserProfile {
   avatarAssetId: string | null;
   coverImageUrl: string | null;
   coverAssetId: string | null;
+  approvalStatus?: 'PENDING_REVIEW' | 'APPROVED' | 'REJECTED' | null;
+  approvalNotes?: string | null;
+  approvedAt?: string | null;
   organization?: {
     id: string;
     name: string;
@@ -1055,6 +1058,31 @@ const AdminUserProfileEdit: React.FC = () => {
     onError: () => toast.error('Failed to start impersonation'),
   });
 
+  const approveMutation = useMutation({
+    mutationFn: () => apiService.approveEducator(apiClient, id!),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-user-profile', id] });
+      queryClient.invalidateQueries({ queryKey: ['educator-approvals'] });
+      toast.success('Educator approved successfully');
+    },
+    onError: (err: any) => toast.error(err?.response?.data?.message || 'Failed to approve educator'),
+  });
+
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [rejectNotes, setRejectNotes] = useState('');
+
+  const rejectMutation = useMutation({
+    mutationFn: (notes: string) => apiService.rejectEducator(apiClient, id!, notes),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-user-profile', id] });
+      queryClient.invalidateQueries({ queryKey: ['educator-approvals'] });
+      setShowRejectModal(false);
+      setRejectNotes('');
+      toast.success('Educator application rejected');
+    },
+    onError: (err: any) => toast.error(err?.response?.data?.message || 'Failed to reject educator'),
+  });
+
   const handleChange = (field: keyof UserProfile, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     setIsDirty(true);
@@ -1197,6 +1225,53 @@ const AdminUserProfileEdit: React.FC = () => {
 
         {/* ── Tab content ─────────────────────────────────────────── */}
         <div className="p-6">
+          {/* Educator approval banner */}
+          {isEducator && profile.approvalStatus === 'PENDING_REVIEW' && (
+            <div className="mb-4 flex items-center justify-between gap-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3">
+              <div className="flex items-center gap-3 text-sm text-amber-800">
+                <Clock className="h-4 w-4 shrink-0 text-amber-500" />
+                <span>This educator's application is <strong>pending review</strong>. Approve or reject below.</span>
+              </div>
+              <div className="flex shrink-0 gap-2">
+                <button
+                  onClick={() => approveMutation.mutate()}
+                  disabled={approveMutation.isPending}
+                  className="flex items-center gap-1.5 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700 disabled:opacity-50 transition-colors"
+                >
+                  <CheckCircle className="h-3.5 w-3.5" />
+                  Approve
+                </button>
+                <button
+                  onClick={() => { setRejectNotes(''); setShowRejectModal(true); }}
+                  className="flex items-center gap-1.5 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700 transition-colors"
+                >
+                  <Shield className="h-3.5 w-3.5" />
+                  Reject
+                </button>
+              </div>
+            </div>
+          )}
+          {isEducator && profile.approvalStatus === 'REJECTED' && (
+            <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm">
+              <p className="font-medium text-red-800">Application rejected</p>
+              {profile.approvalNotes && <p className="mt-1 text-red-700">{profile.approvalNotes}</p>}
+              <button
+                onClick={() => approveMutation.mutate()}
+                disabled={approveMutation.isPending}
+                className="mt-2 flex items-center gap-1.5 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700 disabled:opacity-50 transition-colors"
+              >
+                <CheckCircle className="h-3.5 w-3.5" />
+                Approve Anyway
+              </button>
+            </div>
+          )}
+          {isEducator && profile.approvalStatus === 'APPROVED' && profile.approvedAt && (
+            <div className="mb-4 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+              <CheckCircle className="h-4 w-4 text-green-500" />
+              <span>Approved on {new Date(profile.approvedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+            </div>
+          )}
+
           {/* Admin-only warning banner */}
           {!isSuperAdmin && activeTab === 'Profile' && (
             <div className="mb-4 flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
@@ -1346,6 +1421,34 @@ const AdminUserProfileEdit: React.FC = () => {
                 className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700 disabled:opacity-40"
               >
                 {elevateMutation.isPending ? 'Saving…' : 'Confirm Role Change'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* ── Educator reject modal ───────────────────────────────── */}
+      {showRejectModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl space-y-4">
+            <h2 className="text-lg font-bold text-gray-900">Reject Educator Application</h2>
+            <p className="text-sm text-gray-600">
+              Please provide a reason for rejecting this application. This will be shared with the educator.
+            </p>
+            <textarea
+              value={rejectNotes}
+              onChange={(e) => setRejectNotes(e.target.value)}
+              placeholder="E.g. Incomplete profile, missing certifications, does not meet minimum experience requirements..."
+              rows={4}
+              className="w-full rounded-lg border border-gray-300 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-300 resize-none"
+            />
+            <div className="flex justify-end gap-3">
+              <Button variant="secondary" onClick={() => setShowRejectModal(false)}>Cancel</Button>
+              <button
+                disabled={!rejectNotes.trim() || rejectMutation.isPending}
+                onClick={() => rejectMutation.mutate(rejectNotes.trim())}
+                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-40 transition-colors"
+              >
+                {rejectMutation.isPending ? 'Rejecting…' : 'Confirm Rejection'}
               </button>
             </div>
           </div>

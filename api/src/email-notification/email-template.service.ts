@@ -372,6 +372,49 @@ export class EmailTemplateService {
       },
       // ── Educator Approval ──────────────────────────────────────────────────
       {
+        name: 'Educator application received',
+        event: 'educator_pending',
+        subject: 'Application received — pending review',
+        category: 'userManagement',
+        variables: ['firstName', 'supportUrl'],
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Application Received!</h2>
+            <p>Hello {{firstName}},</p>
+            <p>Thank you for signing up as an educator on Pro Crèche Solutions. We have received your application and it is now being reviewed by our team.</p>
+            <p>You will receive another email once your application has been processed. In the meantime, you can log in and explore the platform — full access will be unlocked once approved.</p>
+            <div style="background-color: #FFFBEB; border-left: 4px solid #F59E0B; padding: 12px 16px; margin: 20px 0; border-radius: 4px;">
+              <p style="margin: 0;"><strong>What happens next?</strong></p>
+              <ul style="margin: 8px 0 0 0; padding-left: 16px;">
+                <li>Our team reviews your submitted profile</li>
+                <li>You receive an approval or feedback email</li>
+                <li>Once approved, you get full access to the platform</li>
+              </ul>
+            </div>
+            <p>If you have any questions, please don't hesitate to contact our support team.</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="{{supportUrl}}" style="background-color: #6B7280; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Contact Support</a>
+            </div>
+            <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+          </div>
+        `.trim(),
+        textContent: `
+          Application Received!
+
+          Hello {{firstName}},
+
+          Thank you for signing up as an educator on Pro Crèche Solutions. We have received your application and it is now being reviewed by our team.
+
+          You will receive another email once your application has been processed.
+
+          Questions? Contact our support team: {{supportUrl}}
+
+          Best regards,
+          The Pro Crèche Solutions Team
+        `.trim(),
+        isActive: true,
+      },
+      {
         name: 'Educator profile approved',
         event: 'educator_approved',
         subject: 'Your educator profile has been approved!',
@@ -1055,7 +1098,36 @@ export class EmailTemplateService {
           {{description}}
           
           We apologize for any inconvenience and appreciate your patience.
-          
+
+          Best regards,
+          The Pro Crèche Solutions Team
+        `,
+      },
+      educator_pending: {
+        subject: 'Application received — pending review',
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Application Received!</h2>
+            <p>Hello {{firstName}},</p>
+            <p>Thank you for signing up as an educator on Pro Crèche Solutions. We have received your application and it is now being reviewed by our team.</p>
+            <p>You will receive another email once your application has been processed.</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="{{supportUrl}}" style="background-color: #6B7280; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Contact Support</a>
+            </div>
+            <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+          </div>
+        `,
+        textContent: `
+          Application Received!
+
+          Hello {{firstName}},
+
+          Thank you for signing up as an educator on Pro Crèche Solutions. We have received your application and it is now being reviewed by our team.
+
+          You will receive another email once your application has been processed.
+
+          Questions? Contact our support team: {{supportUrl}}
+
           Best regards,
           The Pro Crèche Solutions Team
         `,
