@@ -205,7 +205,7 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
                 >
                   <span>{displayLabel}</span>
                 </span>
-                <p className="pl-1 text-gray-500">{t("fileUploadZone.dragAndDrop")}</p>
+                <p className="pl-1 text-gray-500">{t("common:fileUploadZone.dragAndDrop")}</p>
               </div>
               <p className="text-xs text-gray-500">
                 {acceptedMimeTypes.replace(/\/\*/g, '').split(',').join(', ').toUpperCase()}. Max {maxFileSizeMB}MB.
