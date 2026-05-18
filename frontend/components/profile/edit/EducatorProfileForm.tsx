@@ -176,16 +176,24 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
 
   const handleDocumentUpload = (asset: any) => {
     if (totalDocs >= MAX_DOCUMENTS) return;
-    const fileName = (asset.url || asset.publicUrl || '').split('/').pop() || 'Document';
+    const url = asset.url || asset.publicUrl;
+    const fileName = url.split('/').pop() || 'Document';
+    const isFirst = totalDocs === 0;
     const newDoc: DocumentItem = {
       id: asset.id || String(Date.now()),
       name: fileName,
-      url: asset.url || asset.publicUrl,
-      type: totalDocs === 0 ? 'CV' : 'Other',
+      url,
+      type: isFirst ? 'CV' : 'Other',
       uploadDate: new Date().toISOString(),
       size: 0,
     };
     onChange('documents', [...documents, newDoc]);
+    // Keep legacy cvUrl in sync so profile-completion checks and backend
+    // mappings that still read cvUrl directly see the first uploaded document.
+    if (isFirst && !formData.cvUrl) {
+      onChange('cvUrl', url);
+      if (asset.id) onChange('cvAssetId', asset.id);
+    }
   };
 
   const handleRemoveDocument = (docId: string) => {
