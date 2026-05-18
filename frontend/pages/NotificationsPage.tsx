@@ -1,25 +1,32 @@
 
-
 import React from 'react';
-import { useNotifications } from '../contexts/NotificationContext';
+import { useInAppNotifications } from '../contexts/InAppNotificationContext';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
-import { BellIcon, CheckCircleIcon, InformationCircleIcon, ExclamationTriangleIcon, XCircleIcon, TrashIcon, InboxIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import {
+  BellIcon,
+  CheckCircleIcon,
+  BriefcaseIcon,
+  UserGroupIcon,
+  ArrowPathIcon,
+  InboxIcon,
+  CheckIcon,
+} from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
+const getNotificationIcon = (type: string) => {
+  if (type.startsWith('REPLACEMENT')) return <ArrowPathIcon className="w-5 h-5 text-swiss-teal" />;
+  if (type.startsWith('JOB') || type.startsWith('APPLICATION')) return <BriefcaseIcon className="w-5 h-5 text-swiss-mint" />;
+  if (type.startsWith('INTERN')) return <UserGroupIcon className="w-5 h-5 text-blue-500" />;
+  return <BellIcon className="w-5 h-5 text-gray-400" />;
+};
+
 const NotificationsPage: React.FC = () => {
   const { t } = useTranslation(['dashboard', 'common']);
-  const { notifications, removeNotification } = useNotifications();
+  const { notifications, isLoading, markRead, markAllRead } = useInAppNotifications();
 
-  const getNotificationIcon = (type: 'success' | 'info' | 'warning' | 'error') => {
-    switch (type) {
-      case 'success': return <CheckCircleIcon className="w-6 h-6 text-green-500" />;
-      case 'info': return <InformationCircleIcon className="w-6 h-6 text-blue-500" />;
-      case 'warning': return <ExclamationTriangleIcon className="w-6 h-6 text-yellow-500" />;
-      case 'error': return <XCircleIcon className="w-6 h-6 text-red-500" />;
-    }
-  };
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
     <div className="space-y-6">
@@ -28,49 +35,58 @@ const NotificationsPage: React.FC = () => {
           <BellIcon className="w-8 h-8 mr-3 text-swiss-mint" />
           {t('notificationsPage.title')}
         </h1>
-        {notifications.length > 0 && (
-          <Button 
-            variant="light" 
-            size="sm" 
-            leftIcon={TrashIcon}
-            onClick={() => notifications.forEach(n => removeNotification(n.id))}
+        {unreadCount > 0 && (
+          <Button
+            variant="light"
+            size="sm"
+            leftIcon={CheckIcon}
+            onClick={markAllRead}
             className="mt-4 sm:mt-0"
-           >
-             {t('notificationsPage.clearAll')}
+          >
+            {t('notificationsPage.markAllRead', 'Mark all as read')}
           </Button>
         )}
       </div>
-      
+
       <Card className="p-4 md:p-6">
-        {notifications.length === 0 ? (
+        {isLoading ? (
+          <div className="text-center py-12 text-gray-400">{t('common:loading', 'Loading…')}</div>
+        ) : notifications.length === 0 ? (
           <div className="text-center py-12">
             <InboxIcon className="w-16 h-16 mx-auto text-gray-300 mb-4" />
             <h2 className="text-xl font-semibold text-swiss-charcoal">{t('notificationsPage.emptyState.title')}</h2>
             <p className="text-gray-500 mt-1">{t('notificationsPage.emptyState.message')}</p>
           </div>
         ) : (
-          <ul className="space-y-3">
+          <ul className="space-y-2">
             {notifications.map(notif => (
-              <li key={notif.id} className="p-4 flex items-start bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                <div className="flex-shrink-0 mr-4">
+              <li
+                key={notif.id}
+                className={`p-4 flex items-start rounded-lg transition-colors ${notif.read ? 'bg-white hover:bg-gray-50' : 'bg-blue-50 hover:bg-blue-100'}`}
+              >
+                <div className="flex-shrink-0 mr-3 mt-0.5">
                   {getNotificationIcon(notif.type)}
                 </div>
-                <div className="flex-grow">
-                  <Link to={notif.link || '#'} className={`${notif.link ? 'cursor-pointer hover:underline' : 'cursor-default'}`}>
-                    <p className="font-semibold text-swiss-charcoal">{notif.title}</p>
-                    <p className="text-sm text-gray-600">{notif.message}</p>
-                  </Link>
-                  <p className="text-xs text-gray-400 mt-1">{new Date(notif.timestamp).toLocaleString()}</p>
+                <div className="flex-grow min-w-0">
+                  {notif.link ? (
+                    <Link to={notif.link} className="hover:underline" onClick={() => !notif.read && markRead(notif.id)}>
+                      <p className={`font-semibold text-swiss-charcoal truncate ${!notif.read ? 'font-bold' : ''}`}>{notif.title}</p>
+                    </Link>
+                  ) : (
+                    <p className={`font-semibold text-swiss-charcoal truncate ${!notif.read ? 'font-bold' : ''}`}>{notif.title}</p>
+                  )}
+                  <p className="text-sm text-gray-600 mt-0.5">{notif.body}</p>
+                  <p className="text-xs text-gray-400 mt-1">{new Date(notif.createdAt).toLocaleString()}</p>
                 </div>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="!p-2 text-gray-400 hover:text-swiss-coral"
-                  onClick={() => removeNotification(notif.id)}
-                  aria-label={t('common:buttons.dismiss')}
-                >
-                  <XMarkIcon className="w-5 h-5" />
-                </Button>
+                {!notif.read && (
+                  <button
+                    onClick={() => markRead(notif.id)}
+                    className="flex-shrink-0 ml-3 mt-0.5 p-1 rounded text-swiss-teal hover:text-swiss-mint"
+                    aria-label={t('common:buttons.markRead', 'Mark as read')}
+                  >
+                    <CheckCircleIcon className="w-5 h-5" />
+                  </button>
+                )}
               </li>
             ))}
           </ul>

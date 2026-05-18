@@ -11,6 +11,7 @@ import { UpdateReplacementRequestDto } from './dto/update-replacement-request.dt
 import { RespondMatchDto } from './dto/respond-match.dto';
 import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationsGateway } from '../notifications/notifications.gateway';
+import { EmailNotificationService } from '../email-notification/email-notification.service';
 
 @Injectable()
 export class ReplacementsService {
@@ -18,6 +19,7 @@ export class ReplacementsService {
     private prisma: PrismaService,
     private notificationsService: NotificationsService,
     private notificationsGateway: NotificationsGateway,
+    private emailNotificationService: EmailNotificationService,
   ) {}
 
   private async notify(userId: string, type: NotificationType, title: string, body: string, link?: string) {
@@ -161,13 +163,36 @@ export class ReplacementsService {
       `/educator/replacements`,
     );
 
+    // Send email to educator (fire-and-forget — never block the response)
+    const educator = match.educator;
+    if (educator?.email) {
+      const appUrl = process.env.APP_URL || process.env.FRONTEND_URL || '';
+      this.emailNotificationService.sendNotification({
+        event: 'replacement_match_proposed',
+        recipient: educator.email,
+        recipientName: educator.firstName ?? undefined,
+        payload: {
+          firstName: educator.firstName ?? 'there',
+          role: request.role,
+          startDate: request.startDate.toLocaleDateString(),
+          endDate: request.endDate.toLocaleDateString(),
+          location: request.location ?? '',
+          requestUrl: `${appUrl}/educator/replacements`,
+        },
+      }).catch(() => {});
+    }
+
     return match;
   }
 
   async respondToMatch(matchId: string, dto: RespondMatchDto, educatorId: string, isAdmin: boolean) {
     const match = await this.prisma.replacementMatch.findUnique({
       where: { id: matchId },
-      include: { request: true },
+      include: {
+        request: {
+          include: { requestedBy: { select: { id: true, firstName: true, email: true } } },
+        },
+      },
     });
     if (!match) throw new NotFoundException('Match not found');
     if (!isAdmin && match.educatorId !== educatorId) {
@@ -206,6 +231,31 @@ export class ReplacementsService {
       `An educator has ${dto.status.toLowerCase()} your replacement request.`,
       `/foundation/replacements`,
     );
+
+    // Send email to the foundation's requester for accepted/declined responses
+    const requester = (match.request as any).requestedBy;
+    const emailEvent =
+      dto.status === ReplacementMatchStatus.ACCEPTED
+        ? 'replacement_match_accepted'
+        : dto.status === ReplacementMatchStatus.DECLINED
+          ? 'replacement_match_declined'
+          : null;
+
+    if (emailEvent && requester?.email) {
+      const appUrl = process.env.APP_URL || process.env.FRONTEND_URL || '';
+      this.emailNotificationService.sendNotification({
+        event: emailEvent,
+        recipient: requester.email,
+        recipientName: requester.firstName ?? undefined,
+        payload: {
+          firstName: requester.firstName ?? 'there',
+          role: match.request.role,
+          startDate: match.request.startDate.toLocaleDateString(),
+          endDate: match.request.endDate.toLocaleDateString(),
+          requestUrl: `${appUrl}/foundation/replacements`,
+        },
+      }).catch(() => {});
+    }
 
     return updated;
   }

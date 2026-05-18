@@ -282,6 +282,32 @@ export class EmailTemplateService {
       },
       // ── Replacement Staffing ───────────────────────────────────────────────
       {
+        name: 'Replacement match proposed',
+        event: 'replacement_match_proposed',
+        subject: 'You have been proposed for a replacement shift',
+        category: 'jobRecruitment',
+        variables: ['firstName', 'role', 'startDate', 'endDate', 'location', 'requestUrl'],
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Replacement shift proposed</h2>
+            <p>Hello {{firstName}},</p>
+            <p>You have been proposed for the following replacement shift:</p>
+            <ul>
+              <li><strong>Role:</strong> {{role}}</li>
+              <li><strong>Dates:</strong> {{startDate}} – {{endDate}}</li>
+              <li><strong>Location:</strong> {{location}}</li>
+            </ul>
+            <p>Please log in to accept or decline this proposal.</p>
+            <div style="text-align: center; margin: 24px 0;">
+              <a href="{{requestUrl}}" style="background-color: #14B8A6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">View Proposal</a>
+            </div>
+            <p>Best regards,<br>The Pro Crèche Solutions Team</p>
+          </div>
+        `.trim(),
+        textContent: `Hello {{firstName}},\n\nYou have been proposed for a replacement shift.\n\nRole: {{role}} | Dates: {{startDate}} – {{endDate}} | Location: {{location}}\n\nView and respond: {{requestUrl}}\n\nBest regards,\nThe Pro Crèche Solutions Team`.trim(),
+        isActive: true,
+      },
+      {
         name: 'Replacement request posted',
         event: 'replacement_request_posted',
         subject: 'New replacement shift available',
