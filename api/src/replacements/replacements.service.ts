@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
-import { NotificationType, ReplacementMatchStatus, ReplacementRequestStatus, UrgencyLevel, UserRole } from '@prisma/client';
+import { EducatorApprovalStatus, NotificationType, ReplacementMatchStatus, ReplacementRequestStatus, UrgencyLevel, UserRole } from '@prisma/client';
 import { CreateReplacementRequestDto } from './dto/create-replacement-request.dto';
 import { UpdateReplacementRequestDto } from './dto/update-replacement-request.dto';
 import { RespondMatchDto } from './dto/respond-match.dto';
@@ -366,6 +366,7 @@ export class ReplacementsService {
         availableForReplacement: true,
         candidatePoolVisible: true,
         isActive: true,
+        approvalStatus: EducatorApprovalStatus.APPROVED,
         ...(filters?.region ? { region: filters.region } : {}),
         ...roleFilter,
       },

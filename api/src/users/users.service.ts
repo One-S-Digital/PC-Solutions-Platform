@@ -705,18 +705,50 @@ export class UsersService {
       // user row is visible to EmailNotificationService.findUnique({ email }).
       if (dto.role === UserRole.EDUCATOR) {
         const appUrl = this.configService.get<string>('APP_URL') || this.configService.get<string>('FRONTEND_URL') || '';
-        this.emailNotificationService.sendNotification({
-          event: 'educator_pending',
-          recipient: email,
-          recipientName: firstName || undefined,
-          payload: {
-            firstName: firstName || 'Educator',
-            supportUrl: `${appUrl}/support`,
-          },
-          bypassPreferences: true,
-          allowUnknownRecipient: false,
+
+        // educator_pending email — gated by v2_staffing_emails (defaults enabled when flag absent)
+        this.prisma.featureFlag.findUnique({ where: { key: 'v2_staffing_emails' } }).then(async (flag) => {
+          if (flag && !flag.isActive) return;
+          await this.emailNotificationService.sendNotification({
+            event: 'educator_pending',
+            recipient: email,
+            recipientName: firstName || undefined,
+            payload: {
+              firstName: firstName || 'Educator',
+              supportUrl: appUrl ? `${appUrl}/support` : '',
+            },
+            bypassPreferences: true,
+            allowUnknownRecipient: false,
+          });
         }).catch((err: any) => {
           this.logger.warn(`Educator pending email failed: ${err?.message || err}`);
+        });
+
+        // Admin in-app notifications — gated by v2_in_app_notifications
+        const adminLink = appUrl ? `${appUrl}/admin/content-dashboard` : '/admin/content-dashboard';
+        this.prisma.featureFlag.findUnique({ where: { key: 'v2_in_app_notifications' } }).then(async (flag) => {
+          if (flag && !flag.isActive) return;
+          const admins = await this.prisma.user.findMany({
+            where: {
+              role: { in: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+              isActive: { not: false },
+            },
+            select: { id: true },
+          });
+          const educatorName = firstName || email || 'An educator';
+          for (const admin of admins) {
+            await this.prisma.notification.create({
+              data: {
+                userId: admin.id,
+                type: 'GENERAL' as any,
+                title: 'New Educator Application',
+                body: `${educatorName} has submitted their profile and is awaiting approval.`,
+                link: adminLink,
+              },
+            }).catch(() => {});
+          }
+        }).catch((err: any) => {
+          this.logger.warn(`Admin notification for educator signup failed: ${err?.message || err}`);
         });
       }
     }

@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Prisma, UserRole } from '@prisma/client';
+import { Prisma, UserRole, EducatorApprovalStatus } from '@prisma/client';
 
 type UserPayload<TInclude extends Prisma.UserInclude | undefined> = Prisma.UserGetPayload<
   TInclude extends Prisma.UserInclude ? { include: TInclude } : {}
@@ -63,7 +63,7 @@ export class PrincipalService {
       emailForCreate = existingUser?.email ?? null;
     }
 
-    const user = await this.prisma.user.upsert({
+    let user = await this.prisma.user.upsert({
       where: { clerkId },
       update: {
         email: appUser.email ?? undefined,
@@ -71,12 +71,22 @@ export class PrincipalService {
       },
       create: {
         clerkId,
-        email: emailForCreate, // Use existing User email if AppUser email is null
+        email: emailForCreate,
         role: appUser.role,
         isActive: true,
+        ...(appUser.role === UserRole.EDUCATOR ? { approvalStatus: EducatorApprovalStatus.PENDING_REVIEW } : {}),
       },
       ...(include ? { include } : {}),
     } as Prisma.UserUpsertArgs);
+
+    // Backfill: educators created before this fix may have null approvalStatus
+    if (appUser.role === UserRole.EDUCATOR && !(user as any).approvalStatus) {
+      user = await this.prisma.user.update({
+        where: { clerkId },
+        data: { approvalStatus: EducatorApprovalStatus.PENDING_REVIEW },
+        ...(include ? { include } : {}),
+      } as Prisma.UserUpdateArgs);
+    }
 
     const duration = Date.now() - startTime;
 

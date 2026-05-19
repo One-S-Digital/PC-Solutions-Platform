@@ -159,7 +159,7 @@ const SubscriptionGatedRoute: React.FC<{
 
 const RoleBasedDashboardRedirect: React.FC = () => {
   const { currentUser } = useAppContext();
-  if (!currentUser) return <Navigate to="/login" replace />; // Default to login for non-logged-in
+  if (!currentUser) return <Navigate to="/login" replace />;
 
   switch (currentUser.role) {
     case UserRole.PRODUCT_SUPPLIER:
@@ -168,15 +168,19 @@ const RoleBasedDashboardRedirect: React.FC = () => {
       return <Navigate to="/service-provider/dashboard" replace />;
     case UserRole.FOUNDATION:
       return <Navigate to="/foundation/dashboard" replace />;
-    case UserRole.EDUCATOR:
+    case UserRole.EDUCATOR: {
+      const approvalStatus = (currentUser as any).approvalStatus;
+      if (approvalStatus === 'REJECTED') return <Navigate to="/educator/rejected" replace />;
+      if (approvalStatus !== 'APPROVED') return <Navigate to="/educator/pending-approval" replace />;
       return <Navigate to="/educator/dashboard" replace />;
+    }
     case UserRole.PARENT:
-      return <Navigate to="/parent/dashboard" replace />; // Updated Parent redirect
+      return <Navigate to="/parent/dashboard" replace />;
     case UserRole.ADMIN:
     case UserRole.SUPER_ADMIN:
       return <Navigate to="/admin/content-dashboard" replace />;
     default:
-      return <Navigate to="/login" replace />; // Fallback to login
+      return <Navigate to="/login" replace />;
   }
 };
 
@@ -557,7 +561,13 @@ const ProtectedLayout: React.FC = () => {
           <ProtectedRoute roles={[UserRole.FOUNDATION]}><FoundationSupportPage /></ProtectedRoute>
         } />
 
-        {/* Educator Routes — EducatorApprovalGate overlays gated content until approved */}
+        {/* Educator Routes */}
+        <Route path="/educator/pending-approval" element={
+          <ProtectedRoute roles={[UserRole.EDUCATOR]}><EducatorPendingApprovalPage /></ProtectedRoute>
+        } />
+        <Route path="/educator/rejected" element={
+          <ProtectedRoute roles={[UserRole.EDUCATOR]}><EducatorRejectedPage /></ProtectedRoute>
+        } />
         <Route path="/educator/dashboard" element={
           <ProtectedRoute roles={[UserRole.EDUCATOR]}>
             <EducatorApprovalGate><EducatorDashboardPage /></EducatorApprovalGate>

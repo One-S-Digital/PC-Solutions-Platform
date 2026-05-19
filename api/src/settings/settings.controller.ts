@@ -9,8 +9,9 @@ import {
   BadRequestException,
   UseGuards,
   UseInterceptors,
+  Logger,
 } from '@nestjs/common';
-import { AssetKind, EducatorApprovalStatus } from '@prisma/client';
+import { AssetKind, EducatorApprovalStatus, NotificationType, UserRole as PrismaUserRole } from '@prisma/client';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
@@ -47,6 +48,8 @@ import { ConfigService } from '@nestjs/config';
 @UseInterceptors(EnsureProfileInterceptor)
 @ApiBearerAuth()
 export class SettingsController {
+  private readonly logger = new Logger(SettingsController.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly principal: PrincipalService,
@@ -594,23 +597,26 @@ export class SettingsController {
     }
 
     // Send "application received" email the first time an educator submits their profile.
-    // Condition: previously had no shortBio (blank profile) and is now submitting one,
-    // and their account is still PENDING_REVIEW (not yet reviewed by admin).
+    // Fires when: profile was blank (no shortBio) and is now being filled in,
+    // AND the educator has not yet been approved or rejected.
     // This covers the email/password signup path; OAuth educators get it via completeProfile.
     const isFirstSubmission =
       !existingCv?.shortBio?.trim() &&
       settings.shortBio?.trim() &&
-      existingCv?.approvalStatus === EducatorApprovalStatus.PENDING_REVIEW;
+      existingCv?.approvalStatus !== EducatorApprovalStatus.APPROVED &&
+      existingCv?.approvalStatus !== EducatorApprovalStatus.REJECTED;
 
     // Use settings values (post-update) for name/email, falling back to pre-update snapshot.
     const recipientEmail = settings.email ?? existingCv?.email;
     const recipientName = settings.firstName ?? existingCv?.firstName;
 
     if (isFirstSubmission && recipientEmail) {
-      this.isFeatureEnabled('v2_staffing_emails').then(enabled => {
+      const appUrl = this.configService.get<string>('APP_URL') || this.configService.get<string>('FRONTEND_URL') || '';
+
+      // educator_pending email — gated by v2_staffing_emails (defaults enabled when flag absent)
+      this.isFeatureEnabled('v2_staffing_emails').then(async (enabled) => {
         if (!enabled) return;
-        const appUrl = this.configService.get<string>('APP_URL') || this.configService.get<string>('FRONTEND_URL') || '';
-        return this.emailNotificationService.sendNotification({
+        await this.emailNotificationService.sendNotification({
           event: 'educator_pending',
           recipient: recipientEmail,
           recipientName: recipientName ?? undefined,
@@ -621,7 +627,36 @@ export class SettingsController {
           bypassPreferences: true,
           allowUnknownRecipient: false,
         });
-      }).catch(() => {});
+      }).catch((err: any) => {
+        this.logger.warn(`Educator pending email failed: ${(err as Error)?.message || err}`);
+      });
+
+      // Admin in-app notifications — gated by v2_in_app_notifications
+      this.isFeatureEnabled('v2_in_app_notifications').then(async (enabled) => {
+        if (!enabled) return;
+        const admins = await this.prisma.user.findMany({
+          where: {
+            role: { in: [PrismaUserRole.ADMIN, PrismaUserRole.SUPER_ADMIN] },
+            isActive: { not: false },
+          },
+          select: { id: true },
+        });
+        const educatorName = [recipientName, existingCv?.firstName].find(Boolean) || 'An educator';
+        const adminLink = appUrl ? `${appUrl}/admin/content-dashboard` : '/admin/content-dashboard';
+        for (const admin of admins) {
+          await this.prisma.notification.create({
+            data: {
+              userId: admin.id,
+              type: NotificationType.GENERAL,
+              title: 'New Educator Application',
+              body: `${educatorName} has submitted their profile and is awaiting approval.`,
+              link: adminLink,
+            },
+          }).catch(() => {});
+        }
+      }).catch((err: any) => {
+        this.logger.warn(`Admin notification for educator signup failed: ${(err as Error)?.message || err}`);
+      });
     }
 
     return {
