@@ -58,6 +58,12 @@ export class MailingController {
     return { status: 'ok', module: 'mailing', timestamp: new Date().toISOString() };
   }
 
+  @Get('transport-status')
+  @ApiOperation({ summary: 'Check email transport configuration (admin only)' })
+  async transportStatus() {
+    return this.mailingService.getTransportStatus();
+  }
+
   /* ================================================================ */
   /*  PREVIEW                                                          */
   /* ================================================================ */

@@ -144,6 +144,27 @@ const MailingListPage: React.FC = () => {
     retry: noRetryOnClientError,
   })
 
+  // Transport status — loaded once on mount so we can show a config warning
+  const { data: transportStatus } = useQuery({
+    queryKey: ['mailing-transport-status'],
+    queryFn: async () => {
+      const res = await apiService.mailingTransportStatus(apiClient)
+      return res.data as {
+        configured: boolean
+        activeProvider: string | null
+        providers: {
+          mailgun: { configured: boolean; present: Record<string, boolean> }
+          smtp: { configured: boolean; present: Record<string, boolean> }
+          sendgrid: { configured: boolean; present: Record<string, boolean> }
+        }
+        fromEmail: string | null
+        fromName: string | null
+      }
+    },
+    staleTime: 60_000,
+    retry: false,
+  })
+
   // Custom Lists query
   const { data: customListsData, isLoading: customListsLoading } = useQuery({
     queryKey: ['mailing-custom-lists'],
@@ -328,6 +349,47 @@ const MailingListPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Transport not configured warning */}
+      {transportStatus && !transportStatus.configured && (
+        <div className="rounded-lg border border-amber-300 bg-amber-50 p-4">
+          <div className="flex items-start gap-3">
+            <Mail className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-amber-800">Email transport not configured — newsletters cannot be sent</p>
+              <p className="text-xs text-amber-700 mt-1">
+                Set one of the following in your server environment, then redeploy:
+              </p>
+              <ul className="text-xs text-amber-700 mt-1 list-disc list-inside space-y-0.5">
+                {!transportStatus.providers.mailgun.configured && (
+                  <li>
+                    Mailgun: <code className="bg-amber-100 px-1 rounded">MAILGUN_API_KEY</code> +{' '}
+                    <code className="bg-amber-100 px-1 rounded">MAILGUN_DOMAIN</code>
+                    {transportStatus.providers.mailgun.present.MAILGUN_API_KEY && !transportStatus.providers.mailgun.present.MAILGUN_DOMAIN && (
+                      <span className="ml-1 text-amber-600">(API key found — only MAILGUN_DOMAIN is missing)</span>
+                    )}
+                    {!transportStatus.providers.mailgun.present.MAILGUN_API_KEY && transportStatus.providers.mailgun.present.MAILGUN_DOMAIN && (
+                      <span className="ml-1 text-amber-600">(domain found — only MAILGUN_API_KEY is missing)</span>
+                    )}
+                  </li>
+                )}
+                {!transportStatus.providers.smtp.configured && (
+                  <li>
+                    SMTP: <code className="bg-amber-100 px-1 rounded">MAILING_SMTP_HOST</code> +{' '}
+                    <code className="bg-amber-100 px-1 rounded">MAILING_SMTP_USER</code> +{' '}
+                    <code className="bg-amber-100 px-1 rounded">MAILING_SMTP_PASS</code>
+                  </li>
+                )}
+                {!transportStatus.providers.sendgrid.configured && (
+                  <li>
+                    SendGrid: <code className="bg-amber-100 px-1 rounded">SENDGRID_API_KEY</code>
+                  </li>
+                )}
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="border-b border-gray-200">

@@ -1128,6 +1128,9 @@ export const apiService = {
   // Mailing List
   // ========================
 
+  mailingTransportStatus: (apiClient: AxiosInstance) =>
+    apiClient.get('/admin/mailing/transport-status'),
+
   mailingPreview: (apiClient: AxiosInstance, data: {
     filters: any;
     page?: number;
