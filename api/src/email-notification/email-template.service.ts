@@ -304,7 +304,21 @@ export class EmailTemplateService {
             <p>Best regards,<br>The Pro Crèche Solutions Team</p>
           </div>
         `.trim(),
-        textContent: `Hello {{firstName}},\n\nYou have been proposed for a replacement shift.\n\nRole: {{role}} | Dates: {{startDate}} – {{endDate}} | Location: {{location}}\n\nView and respond: {{requestUrl}}\n\nBest regards,\nThe Pro Crèche Solutions Team`.trim(),
+        textContent: `
+          Hello {{firstName}},
+
+          You have been proposed for the following replacement shift:
+
+          Role: {{role}}
+          Dates: {{startDate}} – {{endDate}}
+          Location: {{location}}
+
+          Please log in to accept or decline this proposal:
+          {{requestUrl}}
+
+          Best regards,
+          The Pro Crèche Solutions Team
+        `.trim(),
         isActive: true,
       },
       {

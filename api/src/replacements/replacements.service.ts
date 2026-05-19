@@ -30,6 +30,15 @@ export class ReplacementsService {
     return notification;
   }
 
+  private async isFeatureEnabled(flagKey: string): Promise<boolean> {
+    const flag = await this.prisma.featureFlag.findUnique({ where: { key: flagKey } });
+    return flag ? flag.isActive : true;
+  }
+
+  private resolveAppUrl(): string {
+    return this.configService.get<string>('APP_URL') || this.configService.get<string>('FRONTEND_URL') || '';
+  }
+
   // ── Requests ──────────────────────────────────────────────────────────────
 
   async createRequest(dto: CreateReplacementRequestDto, foundationId: string, userId: string) {
@@ -168,19 +177,22 @@ export class ReplacementsService {
     // Send email to educator (fire-and-forget — never block the response)
     const educator = match.educator;
     if (educator?.email) {
-      const appUrl = this.configService.get<string>('APP_URL') || this.configService.get<string>('FRONTEND_URL') || '';
-      this.emailNotificationService.sendNotification({
-        event: 'replacement_match_proposed',
-        recipient: educator.email,
-        recipientName: educator.firstName ?? undefined,
-        payload: {
-          firstName: educator.firstName ?? 'there',
-          role: request.role,
-          startDate: request.startDate.toLocaleDateString(),
-          endDate: request.endDate.toLocaleDateString(),
-          location: request.location ?? '',
-          requestUrl: `${appUrl}/educator/replacements`,
-        },
+      this.isFeatureEnabled('v2_staffing_emails').then(enabled => {
+        if (!enabled) return;
+        const appUrl = this.resolveAppUrl();
+        return this.emailNotificationService.sendNotification({
+          event: 'replacement_match_proposed',
+          recipient: educator.email!,
+          recipientName: educator.firstName ?? undefined,
+          payload: {
+            firstName: educator.firstName ?? 'there',
+            role: request.role,
+            startDate: request.startDate.toISOString().slice(0, 10),
+            endDate: request.endDate.toISOString().slice(0, 10),
+            location: request.location ?? '',
+            requestUrl: appUrl ? `${appUrl}/educator/replacements` : '',
+          },
+        });
       }).catch(() => {});
     }
 
@@ -245,18 +257,21 @@ export class ReplacementsService {
           : null;
 
     if (emailEvent && requester?.email) {
-      const appUrl = this.configService.get<string>('APP_URL') || this.configService.get<string>('FRONTEND_URL') || '';
-      this.emailNotificationService.sendNotification({
-        event: emailEvent,
-        recipient: requester.email,
-        recipientName: requester.firstName ?? undefined,
-        payload: {
-          firstName: requester.firstName ?? 'there',
-          role: match.request.role,
-          startDate: match.request.startDate.toLocaleDateString(),
-          endDate: match.request.endDate.toLocaleDateString(),
-          requestUrl: `${appUrl}/foundation/replacements`,
-        },
+      this.isFeatureEnabled('v2_staffing_emails').then(enabled => {
+        if (!enabled) return;
+        const appUrl = this.resolveAppUrl();
+        return this.emailNotificationService.sendNotification({
+          event: emailEvent!,
+          recipient: requester!.email!,
+          recipientName: requester!.firstName ?? undefined,
+          payload: {
+            firstName: requester!.firstName ?? 'there',
+            role: match.request.role,
+            startDate: match.request.startDate.toISOString().slice(0, 10),
+            endDate: match.request.endDate.toISOString().slice(0, 10),
+            requestUrl: appUrl ? `${appUrl}/foundation/replacements` : '',
+          },
+        });
       }).catch(() => {});
     }
 

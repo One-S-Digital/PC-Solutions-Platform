@@ -127,6 +127,11 @@ export class SettingsController {
     return { profileId, accountId, clerkUserId };
   }
 
+  private async isFeatureEnabled(flagKey: string): Promise<boolean> {
+    const flag = await this.prisma.featureFlag.findUnique({ where: { key: flagKey } });
+    return flag ? flag.isActive : true;
+  }
+
   /**
    * Validates that an asset exists, belongs to the user, and has the correct kind.
    * @param tx Prisma transaction client
@@ -597,18 +602,25 @@ export class SettingsController {
       settings.shortBio?.trim() &&
       existingCv?.approvalStatus === EducatorApprovalStatus.PENDING_REVIEW;
 
-    if (isFirstSubmission && existingCv?.email) {
-      const appUrl = this.configService.get<string>('APP_URL') || this.configService.get<string>('FRONTEND_URL') || '';
-      this.emailNotificationService.sendNotification({
-        event: 'educator_pending',
-        recipient: existingCv.email,
-        recipientName: existingCv.firstName ?? undefined,
-        payload: {
-          firstName: existingCv.firstName || 'Educator',
-          supportUrl: `${appUrl}/support`,
-        },
-        bypassPreferences: true,
-        allowUnknownRecipient: false,
+    // Use settings values (post-update) for name/email, falling back to pre-update snapshot.
+    const recipientEmail = settings.email ?? existingCv?.email;
+    const recipientName = settings.firstName ?? existingCv?.firstName;
+
+    if (isFirstSubmission && recipientEmail) {
+      this.isFeatureEnabled('v2_staffing_emails').then(enabled => {
+        if (!enabled) return;
+        const appUrl = this.configService.get<string>('APP_URL') || this.configService.get<string>('FRONTEND_URL') || '';
+        return this.emailNotificationService.sendNotification({
+          event: 'educator_pending',
+          recipient: recipientEmail,
+          recipientName: recipientName ?? undefined,
+          payload: {
+            firstName: recipientName || 'Educator',
+            supportUrl: appUrl ? `${appUrl}/support` : '',
+          },
+          bypassPreferences: true,
+          allowUnknownRecipient: false,
+        });
       }).catch(() => {});
     }
 
