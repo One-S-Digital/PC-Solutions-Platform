@@ -5,6 +5,7 @@ import { CreateConversationDto } from './dto/create-conversation.dto';
 import { MessageType } from '@workspace/types';
 import { MessagingGateway } from './messaging.gateway';
 import { UserRole } from '@prisma/client';
+import { EmailNotificationService } from '../email-notification/email-notification.service';
 
 @Injectable()
 export class MessagingService {
@@ -103,6 +104,7 @@ export class MessagingService {
   constructor(
     private prisma: PrismaService,
     @Optional() @Inject(MessagingGateway) private messagingGateway?: MessagingGateway,
+    @Optional() private emailNotificationService?: EmailNotificationService,
   ) {}
 
   /**
@@ -187,9 +189,10 @@ export class MessagingService {
         ];
       
       case UserRole.FOUNDATION:
-        // Foundation can message: FOUNDATION, PRODUCT_SUPPLIER, SERVICE_PROVIDER, ADMIN
+        // Foundation can message: FOUNDATION, EDUCATOR, PRODUCT_SUPPLIER, SERVICE_PROVIDER, ADMIN
         return [
           UserRole.FOUNDATION,
+          UserRole.EDUCATOR,
           UserRole.PRODUCT_SUPPLIER,
           UserRole.SERVICE_PROVIDER,
           UserRole.ADMIN,
@@ -924,7 +927,38 @@ export class MessagingService {
       if (message.conversationId && this.messagingGateway) {
         this.messagingGateway.broadcastNewMessage(message.conversationId, transformedMessage);
       }
-      
+
+      // Send email notifications to other conversation participants
+      if (this.emailNotificationService) {
+        const senderName = message.sender
+          ? `${message.sender.firstName || ''} ${message.sender.lastName || ''}`.trim() || message.sender.email
+          : 'Someone';
+        const messagePreview = finalMessageType === 'TEXT'
+          ? (trimmedContent.length > 200 ? trimmedContent.substring(0, 200) + '...' : trimmedContent)
+          : `[${finalMessageType.toLowerCase()} attachment]`;
+        const frontendUrl = process.env.FRONTEND_URL || process.env.APP_URL || 'https://app.procrechesolutions.com';
+        const messageUrl = `${frontendUrl}/messages/${conversationId}`;
+
+        const otherParticipants = message.conversation?.participants?.filter(
+          p => p.userId !== finalSenderUserId,
+        ) || [];
+
+        for (const participant of otherParticipants) {
+          if (participant.user?.email) {
+            this.emailNotificationService.sendNotification({
+              event: 'new_message',
+              recipient: participant.user.email,
+              payload: {
+                firstName: participant.user.firstName || participant.user.email,
+                senderName,
+                messagePreview,
+                messageUrl,
+              },
+            }).catch(err => this.logger.error(`Failed to send new_message email: ${err.message}`));
+          }
+        }
+      }
+
       return transformedMessage;
     } catch (error) {
       this.logger.error({
