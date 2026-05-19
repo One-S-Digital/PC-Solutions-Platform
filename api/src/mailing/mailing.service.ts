@@ -114,9 +114,14 @@ export class MailingService {
     }
 
     // C2) Educator approval status ---------------------------------
+    // Scoped to EDUCATOR role only: non-educator users in a mixed audience
+    // are not filtered out because they have no approvalStatus at all.
     if (filters.educatorApprovalStatuses?.length) {
       andConditions.push({
-        approvalStatus: { in: filters.educatorApprovalStatuses },
+        OR: [
+          { role: { not: UserRole.EDUCATOR } },
+          { approvalStatus: { in: filters.educatorApprovalStatuses } },
+        ],
       });
     }
 

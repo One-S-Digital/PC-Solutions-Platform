@@ -58,7 +58,12 @@ const MailingFilterPanel: React.FC<Props> = ({ filters, onChange }) => {
   const toggleRole = (role: string) => {
     const current = filters.roles || []
     const next = current.includes(role) ? current.filter((r) => r !== role) : [...current, role]
-    update({ roles: next.length > 0 ? next : undefined })
+    const patch: Partial<MailingFilters> = { roles: next.length > 0 ? next : undefined }
+    // Clear educator-specific filters when EDUCATOR is no longer in the active role set
+    if (role === 'EDUCATOR' && !next.includes('EDUCATOR')) {
+      patch.educatorApprovalStatuses = undefined
+    }
+    update(patch)
   }
 
   const activeFilterCount = Object.entries(filters).filter(
