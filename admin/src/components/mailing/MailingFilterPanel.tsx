@@ -15,6 +15,12 @@ const SUBSCRIPTION_STATUSES = [
   'ACTIVE', 'TRIAL', 'PAST_DUE', 'EXPIRED', 'CANCELLED', 'PAUSED', 'PENDING', 'GRACE_PERIOD',
 ]
 
+const EDUCATOR_APPROVAL_STATUSES = [
+  { value: 'PENDING_REVIEW', label: 'Pending Review' },
+  { value: 'APPROVED', label: 'Approved' },
+  { value: 'REJECTED', label: 'Rejected' },
+]
+
 const SUBSCRIPTION_TIERS = ['BASIC', 'ESSENTIAL', 'PROFESSIONAL', 'ENTERPRISE']
 
 interface Props {
@@ -159,6 +165,52 @@ const MailingFilterPanel: React.FC<Props> = ({ filters, onChange }) => {
           ))}
         </div>
       </Section>
+
+      {/* Show educator approval filter only when EDUCATOR role is selected, or no role filter is set */}
+      {(!filters.roles?.length || filters.roles.includes('EDUCATOR')) && (
+        <Section title={t('admin:mailing.filters.educatorApproval', 'Educator Approval Status')} defaultOpen={filters.educatorApprovalStatuses !== undefined}>
+          <p className="text-xs text-gray-500 mb-2">
+            {t('admin:mailing.filters.educatorApprovalDesc', 'Filter by profile approval status (applies to Educator accounts only)')}
+          </p>
+          <div className="space-y-1.5">
+            {EDUCATOR_APPROVAL_STATUSES.map((status) => (
+              <label key={status.value} className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={filters.educatorApprovalStatuses?.includes(status.value) || false}
+                  onChange={() => {
+                    const current = filters.educatorApprovalStatuses || []
+                    const next = current.includes(status.value)
+                      ? current.filter((s) => s !== status.value)
+                      : [...current, status.value]
+                    update({ educatorApprovalStatuses: next.length > 0 ? next : undefined })
+                  }}
+                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <span
+                  className={`inline-flex items-center gap-1 ${
+                    status.value === 'APPROVED'
+                      ? 'text-green-700'
+                      : status.value === 'REJECTED'
+                        ? 'text-red-700'
+                        : 'text-amber-700'
+                  }`}
+                >
+                  {status.label}
+                </span>
+              </label>
+            ))}
+          </div>
+          {filters.educatorApprovalStatuses?.length ? (
+            <button
+              onClick={() => update({ educatorApprovalStatuses: undefined })}
+              className="mt-1 text-xs text-gray-400 hover:text-gray-600"
+            >
+              {t('admin:mailing.filters.clearSelection', 'Clear selection')}
+            </button>
+          ) : null}
+        </Section>
+      )}
 
       <Section title="Account Status">
         <div className="space-y-1.5">

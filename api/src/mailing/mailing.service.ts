@@ -113,6 +113,13 @@ export class MailingService {
       }
     }
 
+    // C2) Educator approval status ---------------------------------
+    if (filters.educatorApprovalStatuses?.length) {
+      andConditions.push({
+        approvalStatus: { in: filters.educatorApprovalStatuses },
+      });
+    }
+
     // D) Location & language (via Organization) ------------------
     const orgWhere: Prisma.OrganizationWhereInput = {};
     if (filters.cantons?.length) {
