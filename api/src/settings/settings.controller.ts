@@ -612,28 +612,35 @@ export class SettingsController {
 
     if (isFirstSubmission && recipientEmail) {
       const appUrl = this.configService.get<string>('APP_URL') || this.configService.get<string>('FRONTEND_URL') || '';
-      this.emailNotificationService.sendNotification({
-        event: 'educator_pending',
-        recipient: recipientEmail,
-        recipientName: recipientName ?? undefined,
-        payload: {
-          firstName: recipientName || 'Educator',
-          supportUrl: appUrl ? `${appUrl}/support` : '',
-        },
-        bypassPreferences: true,
-        allowUnknownRecipient: false,
+
+      // educator_pending email — gated by v2_staffing_emails (defaults enabled when flag absent)
+      this.isFeatureEnabled('v2_staffing_emails').then(async (enabled) => {
+        if (!enabled) return;
+        await this.emailNotificationService.sendNotification({
+          event: 'educator_pending',
+          recipient: recipientEmail,
+          recipientName: recipientName ?? undefined,
+          payload: {
+            firstName: recipientName || 'Educator',
+            supportUrl: appUrl ? `${appUrl}/support` : '',
+          },
+          bypassPreferences: true,
+          allowUnknownRecipient: false,
+        });
       }).catch((err: any) => {
         this.logger.warn(`Educator pending email failed: ${(err as Error)?.message || err}`);
       });
 
-      // Notify all admin users that a new educator application was received (Step 11)
-      this.prisma.user.findMany({
-        where: {
-          role: { in: [PrismaUserRole.ADMIN, PrismaUserRole.SUPER_ADMIN] },
-          isActive: { not: false },
-        },
-        select: { id: true },
-      }).then(async (admins) => {
+      // Admin in-app notifications — gated by v2_in_app_notifications
+      this.isFeatureEnabled('v2_in_app_notifications').then(async (enabled) => {
+        if (!enabled) return;
+        const admins = await this.prisma.user.findMany({
+          where: {
+            role: { in: [PrismaUserRole.ADMIN, PrismaUserRole.SUPER_ADMIN] },
+            isActive: { not: false },
+          },
+          select: { id: true },
+        });
         const educatorName = [recipientName, existingCv?.firstName].find(Boolean) || 'An educator';
         const adminLink = appUrl ? `${appUrl}/admin/content-dashboard` : '/admin/content-dashboard';
         for (const admin of admins) {
