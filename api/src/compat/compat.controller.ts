@@ -2,7 +2,7 @@ import { Controller, Get, Post, Put, Patch, Delete, Body, Param, Query, UseGuard
 import { Public } from '../auth/decorators/public.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { Prisma, UserRole, JobStatus, JobContractType, OrganizationType, SubscriptionStatus } from '@prisma/client';
+import { Prisma, UserRole, JobStatus, JobContractType, OrganizationType, SubscriptionStatus, EducatorApprovalStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCandidateDto } from './dto/create-candidate.dto';
 import { CreateJobListingDto } from '../recruitment/dto/create-job-listing.dto';
@@ -446,7 +446,7 @@ export class CompatController {
         where: {
           role: UserRole.EDUCATOR,
           isActive: { not: false },
-          ...(!showAll ? { candidatePoolVisible: true } : {}),
+          ...(!showAll ? { candidatePoolVisible: true, approvalStatus: EducatorApprovalStatus.APPROVED } : {}),
         },
         orderBy: { createdAt: 'desc' },
         take: 100,

@@ -6,7 +6,7 @@ import { UpdateJobListingDto } from './dto/update-job-listing.dto';
 import { CreateJobApplicationDto } from './dto/create-job-application.dto';
 import { UpdateJobApplicationDto } from './dto/create-job-application.dto';
 import { JobContractType, JobStatus } from '@workspace/types';
-import { JobEmploymentType, Prisma } from '@prisma/client';
+import { JobEmploymentType, Prisma, EducatorApprovalStatus } from '@prisma/client';
 import { TranslationService } from '../translation/translation.service';
 import { FIELDS_BY_ENTITY } from '../translation/translation.config';
 import { EmailNotificationService } from '../email-notification/email-notification.service';
@@ -669,10 +669,8 @@ export class RecruitmentService {
       where: {
         ...where,
         role: 'EDUCATOR',
-        // Exclude suspended / inactive educators from the candidate pool.
-        // Use { not: false } so legacy rows with null isActive are treated
-        // as active, consistent with the rest of the codebase.
         isActive: { not: false },
+        approvalStatus: EducatorApprovalStatus.APPROVED,
       },
       include: {
         avatarAsset: true,
@@ -742,6 +740,7 @@ export class RecruitmentService {
         role: 'EDUCATOR',
         isActive: { not: false },
         candidatePoolVisible: true,
+        approvalStatus: EducatorApprovalStatus.APPROVED,
       },
       include: {
         workExperienceItems: { orderBy: { sortOrder: 'asc' } },
@@ -850,7 +849,7 @@ export class RecruitmentService {
       : [];
     if (!ids.length) return [];
     return this.prisma.user.findMany({
-      where: { id: { in: ids }, role: 'EDUCATOR' },
+      where: { id: { in: ids }, role: 'EDUCATOR', approvalStatus: EducatorApprovalStatus.APPROVED },
       include: { avatarAsset: true },
       orderBy: { createdAt: 'desc' },
     });
