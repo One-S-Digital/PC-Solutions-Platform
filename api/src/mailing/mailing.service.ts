@@ -113,6 +113,18 @@ export class MailingService {
       }
     }
 
+    // C2) Educator approval status ---------------------------------
+    // Scoped to EDUCATOR role only: non-educator users in a mixed audience
+    // are not filtered out because they have no approvalStatus at all.
+    if (filters.educatorApprovalStatuses?.length) {
+      andConditions.push({
+        OR: [
+          { role: { not: UserRole.EDUCATOR } },
+          { approvalStatus: { in: filters.educatorApprovalStatuses } },
+        ],
+      });
+    }
+
     // D) Location & language (via Organization) ------------------
     const orgWhere: Prisma.OrganizationWhereInput = {};
     if (filters.cantons?.length) {
@@ -537,12 +549,6 @@ export class MailingService {
     filters?: MailingFiltersDto,
     segmentId?: string,
   ) {
-    if (!this.transport.isConfigured()) {
-      throw new BadRequestException(
-        'No email transport configured. Set MAILING_SMTP_HOST, MAILGUN_API_KEY, or SENDGRID_API_KEY.',
-      );
-    }
-
     let resolvedFilters = filters;
 
     // If segmentId is provided, load its filters
@@ -679,7 +685,9 @@ export class MailingService {
     }
 
     if (!this.transport.isConfigured()) {
-      throw new BadRequestException('No email transport configured');
+      throw new BadRequestException(
+        'No email transport configured. Set MAILGUN_API_KEY + MAILGUN_DOMAIN, MAILING_SMTP_HOST + MAILING_SMTP_USER + MAILING_SMTP_PASS, or SENDGRID_API_KEY in your environment.',
+      );
     }
 
     // Resolve filters from the campaign itself or from the associated segment
@@ -929,6 +937,55 @@ export class MailingService {
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#39;');
+  }
+
+  /** Returns current transport configuration status for admin diagnostics. */
+  getTransportStatus() {
+    const configured = this.transport.isConfigured();
+    const provider = this.transport.getProviderName();
+
+    const vars = {
+      smtp: {
+        configured: !!(
+          process.env.MAILING_SMTP_HOST &&
+          process.env.MAILING_SMTP_USER &&
+          process.env.MAILING_SMTP_PASS
+        ),
+        vars: ['MAILING_SMTP_HOST', 'MAILING_SMTP_USER', 'MAILING_SMTP_PASS'],
+        present: {
+          MAILING_SMTP_HOST: !!process.env.MAILING_SMTP_HOST,
+          MAILING_SMTP_USER: !!process.env.MAILING_SMTP_USER,
+          MAILING_SMTP_PASS: !!process.env.MAILING_SMTP_PASS,
+        },
+      },
+      mailgun: {
+        configured: !!(process.env.MAILGUN_API_KEY && process.env.MAILGUN_DOMAIN),
+        vars: ['MAILGUN_API_KEY', 'MAILGUN_DOMAIN'],
+        present: {
+          MAILGUN_API_KEY: !!process.env.MAILGUN_API_KEY,
+          MAILGUN_DOMAIN: !!process.env.MAILGUN_DOMAIN,
+        },
+      },
+      sendgrid: {
+        configured: !!process.env.SENDGRID_API_KEY,
+        vars: ['SENDGRID_API_KEY'],
+        present: {
+          SENDGRID_API_KEY: !!process.env.SENDGRID_API_KEY,
+        },
+      },
+    };
+
+    return {
+      configured,
+      activeProvider: configured ? provider : null,
+      providers: vars,
+      fromEmail:
+        process.env.MAILING_FROM_EMAIL ||
+        process.env.MAILING_SMTP_USER ||
+        process.env.FROM_EMAIL ||
+        null,
+      fromName: process.env.MAILING_FROM_NAME || process.env.FROM_NAME || null,
+    };
   }
 
   /** Resolve filters: either from a segment or from the provided filters directly. */

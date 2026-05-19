@@ -1,5 +1,5 @@
 import { IsOptional, IsArray, IsBoolean, IsString, IsEnum, ArrayMaxSize } from 'class-validator';
-import { UserRole, SubscriptionStatus, SubscriptionTier } from '@prisma/client';
+import { UserRole, SubscriptionStatus, SubscriptionTier, EducatorApprovalStatus } from '@prisma/client';
 
 export class MailingFiltersDto {
   @IsOptional()
@@ -81,6 +81,11 @@ export class MailingFiltersDto {
   @IsOptional()
   @IsString()
   lastActiveTo?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsEnum(EducatorApprovalStatus, { each: true })
+  educatorApprovalStatuses?: EducatorApprovalStatus[];
 
   @IsOptional()
   @IsString()

@@ -573,6 +573,7 @@ export interface MailingFilters {
   createdTo?: string;
   lastActiveFrom?: string;
   lastActiveTo?: string;
+  educatorApprovalStatuses?: string[];
   search?: string;
 }
 
