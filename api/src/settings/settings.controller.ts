@@ -10,7 +10,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { AssetKind } from '@prisma/client';
+import { AssetKind, EducatorApprovalStatus } from '@prisma/client';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
@@ -37,6 +37,9 @@ import { UpdateNotificationSettingsDto } from './dto/notification-settings.dto';
 import { TranslationService } from '../translation/translation.service';
 import { FIELDS_BY_ENTITY } from '../translation/translation.config';
 import { normalizeRegionsServed } from '../common/utils/regions.util';
+import { AllowPendingEducator } from '../auth/decorators/allow-pending-educator.decorator';
+import { EmailNotificationService } from '../email-notification/email-notification.service';
+import { ConfigService } from '@nestjs/config';
 
 @ApiTags('settings')
 @Controller('settings')
@@ -49,6 +52,8 @@ export class SettingsController {
     private readonly principal: PrincipalService,
     private readonly translationService: TranslationService,
     private readonly uploadService: UploadService,
+    private readonly emailNotificationService: EmailNotificationService,
+    private readonly configService: ConfigService,
   ) {}
 
   /**
@@ -120,6 +125,11 @@ export class SettingsController {
       throw new UnauthorizedException('Authenticated user context missing');
     }
     return { profileId, accountId, clerkUserId };
+  }
+
+  private async isFeatureEnabled(flagKey: string): Promise<boolean> {
+    const flag = await this.prisma.featureFlag.findUnique({ where: { key: flagKey } });
+    return flag ? flag.isActive : true;
   }
 
   /**
@@ -342,6 +352,7 @@ export class SettingsController {
 
   @Get('educator')
   @Roles(UserRole.EDUCATOR)
+  @AllowPendingEducator()
   @ApiOperation({ summary: 'Get educator settings' })
   @ApiResponse({ status: 200, description: 'Settings retrieved successfully' })
   async getEducatorSettings(@Request() req) {
@@ -393,6 +404,7 @@ export class SettingsController {
 
   @Patch('educator')
   @Roles(UserRole.EDUCATOR)
+  @AllowPendingEducator()
   @ApiOperation({ summary: 'Update educator settings' })
   @ApiResponse({ status: 200, description: 'Settings updated successfully' })
   async updateEducatorSettings(@Request() req, @Body() settings: UpdateEducatorSettingsDto) {
@@ -403,7 +415,7 @@ export class SettingsController {
     // 2) delete the underlying uploaded asset (best-effort)
     const existingCv = await this.prisma.user.findUnique({
       where: { id: profileId },
-      select: { cvUrl: true },
+      select: { cvUrl: true, shortBio: true, approvalStatus: true, email: true, firstName: true },
     });
     const previousCvUrl = existingCv?.cvUrl || '';
     const normalizedIncomingCvUrl =
@@ -579,6 +591,37 @@ export class SettingsController {
         // Do not fail settings update if deletion fails; leaving an orphaned file is preferable
         // to blocking the user from updating their profile.
       }
+    }
+
+    // Send "application received" email the first time an educator submits their profile.
+    // Condition: previously had no shortBio (blank profile) and is now submitting one,
+    // and their account is still PENDING_REVIEW (not yet reviewed by admin).
+    // This covers the email/password signup path; OAuth educators get it via completeProfile.
+    const isFirstSubmission =
+      !existingCv?.shortBio?.trim() &&
+      settings.shortBio?.trim() &&
+      existingCv?.approvalStatus === EducatorApprovalStatus.PENDING_REVIEW;
+
+    // Use settings values (post-update) for name/email, falling back to pre-update snapshot.
+    const recipientEmail = settings.email ?? existingCv?.email;
+    const recipientName = settings.firstName ?? existingCv?.firstName;
+
+    if (isFirstSubmission && recipientEmail) {
+      this.isFeatureEnabled('v2_staffing_emails').then(enabled => {
+        if (!enabled) return;
+        const appUrl = this.configService.get<string>('APP_URL') || this.configService.get<string>('FRONTEND_URL') || '';
+        return this.emailNotificationService.sendNotification({
+          event: 'educator_pending',
+          recipient: recipientEmail,
+          recipientName: recipientName ?? undefined,
+          payload: {
+            firstName: recipientName || 'Educator',
+            supportUrl: appUrl ? `${appUrl}/support` : '',
+          },
+          bypassPreferences: true,
+          allowUnknownRecipient: false,
+        });
+      }).catch(() => {});
     }
 
     return {

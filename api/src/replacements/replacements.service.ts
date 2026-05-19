@@ -4,6 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationType, ReplacementMatchStatus, ReplacementRequestStatus, UrgencyLevel, UserRole } from '@prisma/client';
 import { CreateReplacementRequestDto } from './dto/create-replacement-request.dto';
@@ -11,6 +12,7 @@ import { UpdateReplacementRequestDto } from './dto/update-replacement-request.dt
 import { RespondMatchDto } from './dto/respond-match.dto';
 import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationsGateway } from '../notifications/notifications.gateway';
+import { EmailNotificationService } from '../email-notification/email-notification.service';
 
 @Injectable()
 export class ReplacementsService {
@@ -18,12 +20,23 @@ export class ReplacementsService {
     private prisma: PrismaService,
     private notificationsService: NotificationsService,
     private notificationsGateway: NotificationsGateway,
+    private emailNotificationService: EmailNotificationService,
+    private configService: ConfigService,
   ) {}
 
   private async notify(userId: string, type: NotificationType, title: string, body: string, link?: string) {
     const notification = await this.notificationsService.create({ userId, type, title, body, link });
     this.notificationsGateway.pushNotification(userId, notification);
     return notification;
+  }
+
+  private async isFeatureEnabled(flagKey: string): Promise<boolean> {
+    const flag = await this.prisma.featureFlag.findUnique({ where: { key: flagKey } });
+    return flag ? flag.isActive : true;
+  }
+
+  private resolveAppUrl(): string {
+    return this.configService.get<string>('APP_URL') || this.configService.get<string>('FRONTEND_URL') || '';
   }
 
   // ── Requests ──────────────────────────────────────────────────────────────
@@ -161,13 +174,39 @@ export class ReplacementsService {
       `/educator/replacements`,
     );
 
+    // Send email to educator (fire-and-forget — never block the response)
+    const educator = match.educator;
+    if (educator?.email) {
+      this.isFeatureEnabled('v2_staffing_emails').then(enabled => {
+        if (!enabled) return;
+        const appUrl = this.resolveAppUrl();
+        return this.emailNotificationService.sendNotification({
+          event: 'replacement_match_proposed',
+          recipient: educator.email!,
+          recipientName: educator.firstName ?? undefined,
+          payload: {
+            firstName: educator.firstName ?? 'there',
+            role: request.role,
+            startDate: request.startDate.toISOString().slice(0, 10),
+            endDate: request.endDate.toISOString().slice(0, 10),
+            location: request.location ?? '',
+            requestUrl: appUrl ? `${appUrl}/educator/replacements` : '',
+          },
+        });
+      }).catch(() => {});
+    }
+
     return match;
   }
 
   async respondToMatch(matchId: string, dto: RespondMatchDto, educatorId: string, isAdmin: boolean) {
     const match = await this.prisma.replacementMatch.findUnique({
       where: { id: matchId },
-      include: { request: true },
+      include: {
+        request: {
+          include: { requestedBy: { select: { id: true, firstName: true, email: true } } },
+        },
+      },
     });
     if (!match) throw new NotFoundException('Match not found');
     if (!isAdmin && match.educatorId !== educatorId) {
@@ -206,6 +245,35 @@ export class ReplacementsService {
       `An educator has ${dto.status.toLowerCase()} your replacement request.`,
       `/foundation/replacements`,
     );
+
+    // Send email to the foundation's requester for accepted/declined responses
+    type Requester = { id: string; firstName: string | null; email: string | null } | null;
+    const requester = (match.request as typeof match.request & { requestedBy: Requester }).requestedBy;
+    const emailEvent =
+      dto.status === ReplacementMatchStatus.ACCEPTED
+        ? 'replacement_match_accepted'
+        : dto.status === ReplacementMatchStatus.DECLINED
+          ? 'replacement_match_declined'
+          : null;
+
+    if (emailEvent && requester?.email) {
+      this.isFeatureEnabled('v2_staffing_emails').then(enabled => {
+        if (!enabled) return;
+        const appUrl = this.resolveAppUrl();
+        return this.emailNotificationService.sendNotification({
+          event: emailEvent!,
+          recipient: requester!.email!,
+          recipientName: requester!.firstName ?? undefined,
+          payload: {
+            firstName: requester!.firstName ?? 'there',
+            role: match.request.role,
+            startDate: match.request.startDate.toISOString().slice(0, 10),
+            endDate: match.request.endDate.toISOString().slice(0, 10),
+            requestUrl: appUrl ? `${appUrl}/foundation/replacements` : '',
+          },
+        });
+      }).catch(() => {});
+    }
 
     return updated;
   }
