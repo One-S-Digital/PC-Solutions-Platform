@@ -106,7 +106,7 @@ export class EmailNotificationService {
       const result = await this.resendTransport.sendEmail({
         to: notification.recipient,
         from: {
-          email: process.env.RESEND_FROM_EMAIL || 'notify@notify.procrechesolutions.com',
+          email: process.env.RESEND_FROM_EMAIL || 'notifications@notify.procrechesolutions.com',
           name: process.env.RESEND_FROM_NAME || 'Pro Crèche Solutions',
         },
         subject: this.processTemplate(template.subject, notification.payload),

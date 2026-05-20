@@ -20,7 +20,7 @@ export class ResendTransport implements MailingTransportAdapter {
     }
 
     const from = options.from || {
-      email: process.env.RESEND_FROM_EMAIL || 'notify@notify.procrechesolutions.com',
+      email: process.env.RESEND_FROM_EMAIL || 'notifications@notify.procrechesolutions.com',
       name: process.env.RESEND_FROM_NAME || 'Pro Crèche Solutions',
     };
 

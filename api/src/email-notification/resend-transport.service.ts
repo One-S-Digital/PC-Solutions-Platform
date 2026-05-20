@@ -27,7 +27,7 @@ export class ResendTransportService {
   getFromAddress(): { email: string; name: string } {
     return {
       email:
-        process.env.RESEND_FROM_EMAIL || 'notify@notify.procrechesolutions.com',
+        process.env.RESEND_FROM_EMAIL || 'notifications@notify.procrechesolutions.com',
       name:
         process.env.RESEND_FROM_NAME || 'Pro Crèche Solutions',
     };
