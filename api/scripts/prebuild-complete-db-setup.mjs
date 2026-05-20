@@ -432,6 +432,130 @@ const printStatusSummary = () => {
 };
 
 /**
+ * Ensure mailing list tables exist.
+ * Matches migrations:
+ *   20260210000000_add_mailing_list_feature
+ *   20260211220000_add_mailing_custom_lists
+ */
+const ensureMailingTables = () => {
+  log('Ensuring mailing list tables exist...');
+
+  const sql = `
+DO $$
+BEGIN
+  -- MailingCampaignStatus enum
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'MailingCampaignStatus') THEN
+    CREATE TYPE "MailingCampaignStatus" AS ENUM ('DRAFT', 'SENDING', 'SENT', 'FAILED', 'CANCELLED');
+  END IF;
+
+  -- mailing_segments
+  CREATE TABLE IF NOT EXISTS "mailing_segments" (
+    "id"               TEXT        NOT NULL,
+    "name"             TEXT        NOT NULL,
+    "description"      TEXT,
+    "filters_json"     JSONB       NOT NULL,
+    "created_by_id"    TEXT        NOT NULL,
+    "estimated_size"   INTEGER,
+    "last_computed_at" TIMESTAMP(3),
+    "created_at"       TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at"       TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "mailing_segments_pkey" PRIMARY KEY ("id")
+  );
+  CREATE INDEX IF NOT EXISTS "mailing_segments_created_by_id_idx" ON "mailing_segments"("created_by_id");
+
+  -- mailing_campaigns
+  CREATE TABLE IF NOT EXISTS "mailing_campaigns" (
+    "id"              TEXT                   NOT NULL,
+    "subject"         TEXT                   NOT NULL,
+    "body_html"       TEXT                   NOT NULL,
+    "body_text"       TEXT,
+    "segment_id"      TEXT,
+    "filters_json"    JSONB,
+    "status"          "MailingCampaignStatus" NOT NULL DEFAULT 'DRAFT',
+    "total_estimated" INTEGER                NOT NULL DEFAULT 0,
+    "sent_count"      INTEGER                NOT NULL DEFAULT 0,
+    "failed_count"    INTEGER                NOT NULL DEFAULT 0,
+    "cursor"          TEXT,
+    "created_by_id"   TEXT                   NOT NULL,
+    "sent_at"         TIMESTAMP(3),
+    "completed_at"    TIMESTAMP(3),
+    "created_at"      TIMESTAMP(3)           NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at"      TIMESTAMP(3)           NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "mailing_campaigns_pkey" PRIMARY KEY ("id")
+  );
+  CREATE INDEX IF NOT EXISTS "mailing_campaigns_status_idx"         ON "mailing_campaigns"("status");
+  CREATE INDEX IF NOT EXISTS "mailing_campaigns_created_by_id_idx"  ON "mailing_campaigns"("created_by_id");
+  CREATE INDEX IF NOT EXISTS "mailing_campaigns_segment_id_idx"     ON "mailing_campaigns"("segment_id");
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'mailing_campaigns_segment_id_fkey'
+  ) THEN
+    ALTER TABLE "mailing_campaigns"
+      ADD CONSTRAINT "mailing_campaigns_segment_id_fkey"
+      FOREIGN KEY ("segment_id") REFERENCES "mailing_segments"("id")
+      ON DELETE SET NULL ON UPDATE CASCADE;
+  END IF;
+
+  -- mailing_custom_lists
+  CREATE TABLE IF NOT EXISTS "mailing_custom_lists" (
+    "id"            TEXT        NOT NULL,
+    "name"          TEXT        NOT NULL,
+    "description"   TEXT,
+    "created_by_id" TEXT        NOT NULL,
+    "created_at"    TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at"    TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "mailing_custom_lists_pkey" PRIMARY KEY ("id")
+  );
+  CREATE INDEX IF NOT EXISTS "mailing_custom_lists_created_by_id_idx" ON "mailing_custom_lists"("created_by_id");
+
+  -- mailing_custom_list_members
+  CREATE TABLE IF NOT EXISTS "mailing_custom_list_members" (
+    "id"       TEXT        NOT NULL,
+    "list_id"  TEXT        NOT NULL,
+    "user_id"  TEXT        NOT NULL,
+    "added_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "mailing_custom_list_members_pkey" PRIMARY KEY ("id")
+  );
+  CREATE UNIQUE INDEX IF NOT EXISTS "mailing_custom_list_members_list_id_user_id_key"
+    ON "mailing_custom_list_members"("list_id", "user_id");
+  CREATE INDEX IF NOT EXISTS "mailing_custom_list_members_list_id_idx" ON "mailing_custom_list_members"("list_id");
+  CREATE INDEX IF NOT EXISTS "mailing_custom_list_members_user_id_idx" ON "mailing_custom_list_members"("user_id");
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'mailing_custom_list_members_list_id_fkey'
+  ) THEN
+    ALTER TABLE "mailing_custom_list_members"
+      ADD CONSTRAINT "mailing_custom_list_members_list_id_fkey"
+      FOREIGN KEY ("list_id") REFERENCES "mailing_custom_lists"("id")
+      ON DELETE CASCADE ON UPDATE CASCADE;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'mailing_custom_list_members_user_id_fkey'
+  ) THEN
+    ALTER TABLE "mailing_custom_list_members"
+      ADD CONSTRAINT "mailing_custom_list_members_user_id_fkey"
+      FOREIGN KEY ("user_id") REFERENCES "users"("id")
+      ON DELETE CASCADE ON UPDATE CASCADE;
+  END IF;
+END $$;
+`;
+
+  const result = runPrisma(['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'], {
+    silent: true,
+    input: sql,
+  });
+
+  if (!result.success) {
+    warn('Could not ensure mailing tables (continuing — prisma migrate deploy will retry)');
+    if (result.stderr) log(result.stderr.slice(0, 500));
+    return;
+  }
+
+  success('Mailing list tables verified/created');
+};
+
+/**
  * Main function
  */
 const main = async () => {
@@ -467,7 +591,9 @@ const main = async () => {
     // Step 7: Verify parent lead ownership column
     verifyParentLeadOwnershipColumn();
 
-    
+    // Step 8: Ensure mailing list tables exist
+    ensureMailingTables();
+
     // Print summary
     printStatusSummary();
     
