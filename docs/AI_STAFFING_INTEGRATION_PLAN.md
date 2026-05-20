@@ -15,14 +15,14 @@ Within the Staffing Engine, the right build order is **internal → reactivation
 
 This plan deliberately defers external job-board APIs to Phase 5. Building them earlier inverts the strategic value: external routing should feed the internal pool, not replace it.
 
-**Cost stance.** The plan is engineered around cheap models — **Gemini Flash and DeepSeek** as defaults — without compromising defensibility. The cost discipline is structural, not a per-feature decision:
+**Cost stance.** The plan is engineered around cheap models accessed through **OpenRouter** as a unified API gateway, with **Gemini Flash and DeepSeek** as the default model selections — without compromising defensibility. The cost discipline is structural, not a per-feature decision:
 
 1. **Deterministic code does the heavy lifting** (SQL filters → rule-based scoring); the LLM only narrates the top 3–5 results.
 2. **Templates replace LLM calls** for any repeated text (reactivation messages, status emails, screener acknowledgments).
 3. **Persistent caching** keyed by content hash means parsed CVs, parsed requests, match explanations, and job-ad drafts are written to the model exactly once.
-4. **An AI Gateway** at `api/src/ai/` enforces per-agent input-field allowlists, output-token ceilings, JSON-schema validation, and daily token budgets — and lets us escalate any single agent to a stronger model via one config line without touching callers.
+4. **An AI Gateway** at `api/src/ai/` enforces per-agent input-field allowlists, output-token ceilings, JSON-schema validation, and daily token budgets — and lets us swap any agent's model via one config line without touching callers.
 
-The result: a Gemini-Flash-default architecture today, fully reversible to Gemini Pro / Claude / DeepSeek per agent tomorrow, with hard cost guardrails enforced in code.
+The result: a Gemini-Flash-default architecture today, fully reversible to any other model on OpenRouter (Gemini Pro, Claude, DeepSeek, Mistral, Llama, …) per agent tomorrow, with hard cost guardrails enforced in code. **OpenRouter gives us one account, one API key, one billing source, one adapter, and a single circuit of model availability** — instead of maintaining direct integrations with three providers.
 
 ---
 
@@ -121,29 +121,39 @@ These are the technical bets that shape every later phase. Each one favours long
 
 The platform never calls an LLM directly from a feature module. Every call goes through a single **AI Gateway** at `api/src/ai/` that owns model selection, cost limits, caching, structured-output validation, and audit logging. This is the architectural lever that lets us run on cheap models today and swap any of them tomorrow without touching callers.
 
-**Default model tier — cheapest viable, by task:**
+**OpenRouter as the unified provider.** All chat/completion calls go through [openrouter.ai](https://openrouter.ai), which proxies to every major model behind a single OpenAI-compatible endpoint. This gives us:
 
-| Task | Default model | Escalation (rare, flagged) |
+- **One account, one API key, one billing source** — instead of maintaining direct Google/DeepSeek/Anthropic accounts.
+- **Model swapping is a string change**, not a code change. `model: "google/gemini-2.5-flash"` becomes `model: "deepseek/deepseek-chat"` or `model: "anthropic/claude-sonnet-4"` in one config line.
+- **Native fallback support** — OpenRouter accepts a `models` array on every request; if the primary is rate-limited or down, it auto-routes to the next without us writing retry code.
+- **Unified usage and cost data** — every response includes token usage and cost in USD; one source of truth for spend tracking.
+- **Provider-level prompt caching is passed through** — Anthropic's prompt caching, Gemini's implicit/explicit caching, and DeepSeek's context caching all work via OpenRouter with the same cache discounts.
+
+**One concession:** OpenRouter is chat/completion-focused; its embeddings coverage is limited. Embeddings go direct to **Voyage AI** (multilingual, OpenAI-compatible, cheap, one extra env var). See §3.14 for how this is isolated to a single `EmbeddingClient` interface.
+
+**Default model selection — cheapest viable, by task:**
+
+| Task | Default model (via OpenRouter) | Escalation (rare, flagged) |
 |---|---|---|
-| Request parsing (extract structured criteria) | **Gemini 2.5 Flash** or **DeepSeek-V3** | none — these models are already over-spec for field extraction |
-| CV parsing (text → structured JSON) | **Gemini 2.5 Flash** | Gemini Pro only when validation fails twice |
-| Match explanation (40–80 words) | **Gemini 2.5 Flash** | none |
+| Request parsing (extract structured criteria) | `google/gemini-2.5-flash` | none — already over-spec for field extraction |
+| CV parsing (text → structured JSON) | `google/gemini-2.5-flash` | `google/gemini-2.5-pro` when validation fails twice |
+| Match explanation (40–80 words) | `google/gemini-2.5-flash` | none |
 | Reactivation message (template-filled, see §3.10) | **template only**, no LLM call | Flash only when the daycare writes a custom tone request |
-| Routing recommendation (3 bullets) | **Gemini 2.5 Flash** | none |
-| Short job-ad blurb (≤180 words) | **Gemini 2.5 Flash** | none |
-| Full job ad (300–500 words, Swiss FR/DE/EN) | **Gemini 2.5 Flash** | Gemini Pro / Claude Sonnet for German output until quality stabilises |
+| Routing recommendation (3 bullets) | `google/gemini-2.5-flash` | none |
+| Short job-ad blurb (≤180 words) | `google/gemini-2.5-flash` | none |
+| Full job ad (300–500 words, Swiss FR/DE/EN) | `google/gemini-2.5-flash` | `anthropic/claude-sonnet-4` for German output until quality stabilises |
 | Compliance-sensitive copy (consent text, rejection wording) | **template + legal review**, no LLM authorship | n/a — never LLM-authored |
-| Weekly admin intelligence narrative | **Gemini 2.5 Flash** | Pro tier on demand |
-| Embeddings | **Gemini text-embedding-004** or **Voyage-3-lite** | — |
+| Weekly admin intelligence narrative | `google/gemini-2.5-flash` | `google/gemini-2.5-pro` on demand |
+| Embeddings (direct, not via OpenRouter) | Voyage `voyage-3-lite` (multilingual) | Voyage `voyage-3` for higher recall |
 
-DeepSeek and Gemini Flash are interchangeable for most of these — pick whichever has a stable Swiss-region availability and acceptable latency at integration time. Both should be wired through OpenAI-compatible adapters in the gateway. The gateway's job is to make this a configuration choice per agent, not a code change.
+The exact OpenRouter model slugs are pinned per agent in `ai-agents.config.ts`. Slugs change occasionally (e.g. `gemini-2.5-flash-preview` → `gemini-2.5-flash`); the config is the single point of update.
 
 **Why this tiering survives the "cheapest model" mandate without breaking quality:**
 
 - **Structured output, not free text.** Every agent returns JSON validated against a Zod schema. A cheap model that returns valid JSON is functionally identical to an expensive model that returns valid JSON. Quality risk lives in *prose*, which we minimise in §3.10.
 - **Deterministic code does the matching, not the model.** Match scoring is rule-based (§3.3). The model only narrates the top 3–5 results.
 - **Templates for repeated language.** Reactivation messages, status updates, screener acknowledgments are all template-driven — no LLM call at all.
-- **Escalation is a feature flag, not a hardcoded path.** If Gemini Flash German output is weak in early pilots, flip one config value to route only that agent to Pro / Claude Sonnet. The schema is identical.
+- **Swap is a string, not a deploy.** If Gemini Flash German output is weak in early pilots, change the model slug for the job-ad agent to `anthropic/claude-sonnet-4` in `ai-agents.config.ts`. No new adapter, no SDK install, no env var change.
 
 **Gateway contract:**
 
@@ -156,14 +166,15 @@ interface LlmRunOptions<TSchema> {
   cacheKey?: string;           // see §3.9
   maxOutputTokens?: number;    // hard ceiling per task class
   locale?: 'fr' | 'de' | 'en';
+  principal: Principal;        // required for permissions + audit
 }
 ```
 
-Adapters live under `api/src/ai/providers/{gemini,deepseek,anthropic}.adapter.ts` — each implements the same gateway contract. Switching the default for an agent is a one-line config change in `ai-agents.config.ts`.
+There is **one adapter**: `api/src/ai/providers/openrouter.adapter.ts`. It speaks the OpenAI Chat Completions API (which OpenRouter implements faithfully), reads the model slug + fallback chain from the agent's config, and returns a validated, schema-checked result. Embedding calls go through a separate `EmbeddingClient` (`voyage.adapter.ts`) so the gateway's chat surface stays narrow.
 
-**Structured outputs everywhere.** OpenAI-compatible providers (DeepSeek, Gemini via the compat layer) all support `response_format: json_schema`. We use it unconditionally — no string-parsing JSON, no regex repair, no "please return JSON" prompting.
+**Structured outputs everywhere.** OpenRouter passes through `response_format: json_schema` for any model that supports it (all Gemini and Anthropic models, recent DeepSeek). Agents declare their schema once; the gateway sets `response_format` on every call. No regex repair, no "please return JSON" prompting.
 
-**Prompt caching where the provider supports it.** Gemini has implicit and explicit caching with strong discounts on cached tokens; DeepSeek offers context caching. We keep the role taxonomy, canton list, qualification ontology, and system prompt in a stable cached block at the top of every request — high hit rate, large per-call discount.
+**Prompt caching where the provider supports it.** OpenRouter forwards cache-control headers and cache hits to the underlying provider — Gemini's implicit caching and Anthropic's `cache_control` ephemeral cache both work transparently. We keep the role taxonomy, canton list, qualification ontology, and system prompt in a stable cached block at the top of every request — high hit rate, large per-call discount, with no provider-specific code.
 
 ### 3.2 Vector search — `pgvector`, not a separate database
 
@@ -273,7 +284,7 @@ Caching is treated as a first-class part of the pipeline, not an optimisation.
 
 Implementation: a small `AiResultCache` table (key, agent, payload JSON, modelUsed, createdAt, expiresAt) consulted by the gateway before every call. Cache-hit cost is one Postgres lookup; cache-miss cost is one LLM call. Cache hit rate is the headline metric on the gateway dashboard.
 
-**Provider-level caching** (Gemini implicit/explicit cache, DeepSeek context cache) stacks on top of this for the system-prompt block, giving a second discount on the few calls that actually do hit the model.
+**Provider-level caching passes through OpenRouter.** Gemini's implicit/explicit cache, Anthropic's `cache_control` ephemeral cache, and DeepSeek's context cache all stack on top of our application-level cache for the system-prompt block — a second discount on the few calls that actually do hit the model. No provider-specific code; OpenRouter forwards the cache directives.
 
 **Templates instead of LLM calls for repeated text.** The reactivation flow is the cleanest example:
 
@@ -297,22 +308,26 @@ The same template-first approach applies to: status update emails, screener ackn
 
 ### 3.12 Fallback model chain
 
-Each agent declares a **chain** of providers, not a single default. The gateway tries primary → secondary → tertiary on transient failures (rate limit, 5xx, timeout, JSON-validation failure on the first retry). The chain is configuration, not code.
+Each agent declares a **chain** of model slugs, not a single default. **OpenRouter natively supports this** — its API accepts a `models` array on every request and falls back automatically on rate limit, 5xx, or timeout, returning which model actually answered. We use this directly rather than reimplementing fallback in our code.
 
-Default chains:
+For failures OpenRouter cannot recover from (JSON-validation failure, hallucinated tool call, policy refusal), the gateway retries once with the next model in the chain at the application level.
+
+Default chains (all via OpenRouter):
 
 | Agent | Primary | Secondary | Tertiary |
 |---|---|---|---|
-| Request parser | Gemini Flash | DeepSeek-V3 | Claude Haiku (config-flagged) |
-| CV parser | Gemini Flash | DeepSeek-V3 | Gemini Pro |
-| Match explanation | Gemini Flash | DeepSeek-V3 | — |
-| Job-ad (FR/EN) | Gemini Flash | DeepSeek-V3 | — |
-| Job-ad (DE/Swiss-DE) | Gemini Flash | Gemini Pro | Claude Sonnet (config-flagged) |
-| Routing recommendation | Gemini Flash | DeepSeek-V3 | — |
-| Weekly intelligence | Gemini Flash | Gemini Pro | — |
-| Embeddings | Gemini text-embedding-004 | Voyage-3-lite | — |
+| Request parser | `google/gemini-2.5-flash` | `deepseek/deepseek-chat` | `anthropic/claude-haiku-4-5` (config-flagged) |
+| CV parser | `google/gemini-2.5-flash` | `deepseek/deepseek-chat` | `google/gemini-2.5-pro` |
+| Match explanation | `google/gemini-2.5-flash` | `deepseek/deepseek-chat` | — |
+| Job-ad (FR/EN) | `google/gemini-2.5-flash` | `deepseek/deepseek-chat` | — |
+| Job-ad (DE/Swiss-DE) | `google/gemini-2.5-flash` | `google/gemini-2.5-pro` | `anthropic/claude-sonnet-4` (config-flagged) |
+| Routing recommendation | `google/gemini-2.5-flash` | `deepseek/deepseek-chat` | — |
+| Weekly intelligence | `google/gemini-2.5-flash` | `google/gemini-2.5-pro` | — |
+| Embeddings (direct, not OpenRouter) | Voyage `voyage-3-lite` | Voyage `voyage-3` | — |
 
-Fallbacks are recorded in `AiAuditLog.fallbackUsed`, so the dashboard surfaces when primary providers are degrading. A circuit breaker opens after N consecutive primary failures and routes traffic to secondary for a cooling period (5–15 min) before retrying primary — same pattern as standard HTTP client resilience.
+Every response from OpenRouter includes the `model` actually used, which we record in `AiAuditLog.modelUsed` and `AiAuditLog.fallbackUsed`. The dashboard surfaces fallback rate by primary model — when it climbs, we know a provider is degrading before users see it.
+
+An **application-level circuit breaker** sits on top: if OpenRouter itself returns 5xx for N consecutive requests (rare), the breaker opens for 5–15 minutes and the gateway returns a templated fallback (e.g. the explanation agent returns just the structured score breakdown).
 
 ### 3.13 Prompt template registry & versioning
 
@@ -431,15 +446,16 @@ The phase ships eight capabilities, each independently demonstrable but built to
 
 - Module `api/src/ai/` with `LlmClient.run({agent, input, schema, locale, principal, cacheKey?})` as the only public surface.
 - Agent registry (`api/src/ai/agents/<name>/`) — one folder per agent: `index.ts` (definition), `prompt.vN.ts` (versioned template), `schema.ts` (Zod), `fixtures/` (eval golden cases).
-- ESLint rule + CI check forbidding LLM SDK imports outside `api/src/ai/`.
-- One health-check agent shipped as the proof-of-life: `echo-validate` (round-trips a tiny JSON object through every provider).
+- ESLint rule + CI check forbidding LLM SDK imports and any direct HTTP calls to `openrouter.ai`, `api.voyageai.com`, `generativelanguage.googleapis.com`, or `api.anthropic.com` outside `api/src/ai/`.
+- One health-check agent shipped as the proof-of-life: `echo-validate` (round-trips a tiny JSON object through OpenRouter against three different models to prove the abstraction).
 
 **0.B — Model routing with fallback chain**
 
-- Provider adapters under `api/src/ai/providers/`: `gemini.adapter.ts`, `deepseek.adapter.ts`, `anthropic.adapter.ts` — all implementing the same gateway contract.
-- Per-agent chain config in `ai-agents.config.ts` (primary → secondary → tertiary).
-- Circuit breaker on consecutive primary failures; fallback flagged on `AiAuditLog.fallbackUsed`.
-- Anthropic adapter built but inactive on all agents at launch — proves the abstraction works.
+- One OpenRouter adapter: `api/src/ai/providers/openrouter.adapter.ts` (OpenAI-compatible Chat Completions client).
+- One Voyage embedding adapter: `api/src/ai/providers/voyage.adapter.ts` (used by `EmbeddingClient` only — never invoked from feature modules).
+- Per-agent model chain config in `ai-agents.config.ts` (primary slug → secondary slug → tertiary slug). Chains are passed to OpenRouter as a `models` array; OpenRouter handles transient fallback.
+- Application-level circuit breaker for OpenRouter-itself outages, opening after N consecutive 5xx and routing to templated fallback during the cooling period.
+- `AiAuditLog.modelUsed` records the slug OpenRouter actually returned; `AiAuditLog.fallbackUsed` records whether the primary was bypassed.
 
 **0.C — Prompt template registry + versioning**
 
@@ -494,7 +510,7 @@ The phase ships eight capabilities, each independently demonstrable but built to
 
 **Exit criteria:**
 1. `LlmClient.run(...)` works end-to-end with primary, secondary, and tertiary providers all reachable.
-2. Eval harness green on the health-check agent across all three providers.
+2. Eval harness green on the health-check agent across three distinct OpenRouter model slugs (Gemini Flash, DeepSeek Chat, Claude Sonnet) — proves the gateway is genuinely model-agnostic.
 3. RAG retrieval returns role-taxonomy passages for a sample query, scoped to a test principal.
 4. Audit log captures token usage, cost, principal, prompt version, retrieved docs, and fallback flag on every call.
 5. Geocoding backfill complete for all existing users and organizations.
@@ -654,7 +670,8 @@ Feature flags double as paywall gates. The `FeatureFlag` model + per-user resolv
 |---|---|
 | Weak internal pool at launch makes matcher look bad | Phase 2 ships before Phase 1 goes GA; profile-completion campaign + referral incentives run in parallel; Phase 4 capture flow seeds the pool from day one. |
 | LLM hallucination on structured outputs | Tool-use only; Zod-validated schemas; reject + retry on validation failure; never display raw LLM text without an explanation contract. |
-| Cost overruns from per-search LLM calls | Gemini Flash / DeepSeek as default for all agents (§3.1); deterministic SQL+score before any model call (§3.3, §3.9); templates instead of LLM for repeated text (§3.10); persistent `AiResultCache` keyed by content hash; provider-level prompt caching on the system block; daily token budget per agent and per foundation with hard-fail to templated fallback (§3.11). |
+| Cost overruns from per-search LLM calls | OpenRouter as unified provider with Gemini Flash / DeepSeek slugs as default for all agents (§3.1); deterministic SQL+score before any model call (§3.3, §3.9); templates instead of LLM for repeated text (§3.10); persistent `AiResultCache` keyed by content hash; provider-level prompt caching forwarded by OpenRouter; daily token budget per agent and per foundation with hard-fail to templated fallback (§3.11); OpenRouter account-level monthly cap as a backstop. |
+| OpenRouter outage or rate-limit | Native OpenRouter `models` array provides transparent provider-level fallback; application-level circuit breaker opens on consecutive 5xx and routes to templated fallback during cooling period (§3.12); embeddings path is independent (Voyage direct) so profile-indexing degrades separately from chat. |
 | Cheap model produces weak Swiss-French or Swiss-German prose | Structured-output JSON contract limits prose surface area; explanation agent caps at 80 words; per-agent escalation flag routes one agent at a time to a stronger model without code changes; small human-review queue for the first month of German output. |
 | pgvector saturation | Monitor index size and query latency; have a documented migration to Qdrant/Weaviate via the embedding queue. Not premature work. |
 | External API instability or credential delays | Adapter framework is independent per channel; manual fallback in Phase 4 covers every channel; Phase 5 enables one channel at a time. |
@@ -684,9 +701,9 @@ Concrete proposal: Remodel P2 should **not** build a final scoring algorithm —
 
 ## 10. Open Questions
 
-1. **Embedding provider** — Gemini `text-embedding-004` (cheapest, multilingual, OpenAI-compatible) is the default proposal; Voyage-3-lite as a fallback. Gateway abstraction makes the choice reversible.
+1. **Embedding provider** — Voyage `voyage-3-lite` is the default proposal (multilingual, OpenAI-compatible, cheap, single direct integration since OpenRouter does not broadly cover embeddings). Gateway abstraction (`EmbeddingClient`) makes the choice reversible if OpenRouter adds embedding support later.
 2. **Geocoding provider** — Swisstopo is free and Swiss-accurate but rate-limited; Mapbox is paid but global. Suggest Swisstopo with Mapbox fallback.
 3. **Job-Room credentials** — Application timing affects Phase 5 sequencing. Should be requested in Phase 0.
 4. **Pricing of the AI Assistant tier** — needs commercial input before Phase 1 GA. Build doesn't block on it.
 5. **Multilingual quality bar** — Swiss-German vs. German for the DACH region. Recommend Gemini Flash for first-month pilot with a small human-review queue; escalate the job-ad agent (only that one) to Gemini Pro or Claude Sonnet via config if review-queue rework rate exceeds 20%.
-6. **Provider primary: Gemini Flash vs DeepSeek** — both are viable defaults. Decision criteria for Phase 0: Swiss-region latency (Gemini routes through European endpoints; DeepSeek currently does not), data-residency compliance, and rate-limit headroom for the matching workload. The gateway supports both; choose one as primary, keep the other as cold standby.
+6. **OpenRouter routing options** — OpenRouter supports provider preferences (`provider.order`, `provider.allow_fallbacks`, data-policy filters). For Swiss-region latency and data-residency, Phase 0 should configure provider preferences to favour EU-routed inference where the model supports it (Gemini via Google's EU regions, Anthropic via EU endpoints). DeepSeek is China-routed and may be excluded from agents touching personal data — this is a per-agent config decision, not a code change.

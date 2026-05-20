@@ -26,20 +26,28 @@ These block Phase 0 (the AI Foundation). Nothing can be wired up without them.
 ### A.1 — AI model provider accounts and API keys
 
 **Who:** Platform lead / infra
-**Lead time:** Minutes to hours (instant approval)
+**Lead time:** Minutes (instant approval)
+
+All chat/completion models are accessed through **OpenRouter** — a unified OpenAI-compatible API that proxies to Google, Anthropic, DeepSeek, Mistral, Meta, and others behind a single key. This replaces the need for direct Google/DeepSeek/Anthropic accounts.
 
 | Provider | What to do | Notes |
 |---|---|---|
-| **Google AI Studio (Gemini)** | Create account at [aistudio.google.com](https://aistudio.google.com) → create API key | Covers Gemini 2.5 Flash, Gemini Pro, and `text-embedding-004` — one key for all |
-| **DeepSeek** | Create account at [platform.deepseek.com](https://platform.deepseek.com) → create API key | DeepSeek-V3 is the default secondary model; OpenAI-compatible endpoint |
-| **Anthropic** (optional at launch) | Create account at [console.anthropic.com](https://console.anthropic.com) → create API key | Only needed as tertiary fallback for German job-ad output; can be deferred to Phase 5 |
+| **OpenRouter** | Create account at [openrouter.ai](https://openrouter.ai) → settings → API keys → create key | One key covers Gemini 2.5 Flash, Gemini Pro, Claude Sonnet, DeepSeek-V3, and every other model we route to. Pay-as-you-go via account credits. |
+| **Voyage AI** (embeddings only) | Create account at [voyageai.com](https://www.voyageai.com) → dashboard → API keys → create key | OpenRouter does not broadly cover embeddings; Voyage is the dedicated embeddings provider (`voyage-3-lite` multilingual). One direct dependency. |
 
 After getting keys, add to Render environment as:
 ```
-GEMINI_API_KEY=...
-DEEPSEEK_API_KEY=...
-ANTHROPIC_API_KEY=...     # defer until Phase 5 if not already set
+OPENROUTER_API_KEY=sk-or-v1-...
+OPENROUTER_APP_NAME=procreche-staffing            # OpenRouter recommends sending an X-Title for traffic attribution
+OPENROUTER_SITE_URL=https://procreche.ch          # OpenRouter recommends sending an HTTP-Referer for traffic attribution
+VOYAGE_API_KEY=...
 ```
+
+**Optional OpenRouter configuration to do during account setup:**
+
+- **Provider preferences for data residency.** In OpenRouter account settings → privacy/data, set "Only use providers that comply with data policies" and prefer EU-hosted inference where available. This is the recommended posture for Swiss personal data handling.
+- **Allowed providers list.** If you want to exclude DeepSeek from agents touching personal data, configure it on the OpenRouter dashboard's provider preferences (or per-request in code — both work). The plan defaults to including DeepSeek as a secondary; revisit after Phase 0.
+- **Account-level spending limit.** OpenRouter dashboard → settings → set a hard monthly spending cap. This is the backstop if our in-app per-foundation budgets ever fail. Suggested initial cap: $50/month.
 
 ### A.2 — Geocoding provider accounts
 
@@ -100,15 +108,19 @@ These must be done before the specified phase can go live.
 
 ### B.0 — Required before Phase 0 completes
 
-**B.0.1 — Set billing limits on provider accounts**
+**B.0.1 — Set billing limits on OpenRouter and Voyage**
 **Who:** Platform lead / finance
-**What:** Log into Google AI Studio and DeepSeek and set account-level monthly
-spend caps. This is separate from the per-foundation budget enforcement in code
-— it is the provider-side safety net if code budgets fail.
+**What:** Log into OpenRouter and Voyage and set account-level monthly spend
+caps. This is separate from the per-foundation budget enforcement in code — it
+is the provider-side safety net if code budgets fail.
 
 Suggested initial caps:
-- Google AI Studio: $50/month (adjust after first 30 days of real usage data)
-- DeepSeek: equivalent ceiling
+- OpenRouter: $50/month combined for all chat/completion models (adjust after first 30 days of real usage data)
+- Voyage AI: $20/month for embeddings (Voyage is cheap — even with full profile re-embedding this is generous)
+
+Also: top up OpenRouter credits manually before Phase 0 deploy. OpenRouter is
+pay-as-you-go from a prepaid balance, so an empty balance means hard-stop
+errors — not a soft warning. Suggested initial credit: $20.
 
 **B.0.2 — Decide per-foundation daily token budget**
 **Who:** Product / commercial
@@ -269,14 +281,7 @@ Once approved: `INDEED_API_KEY` + `INDEED_EMPLOYER_ID` to Render env.
 Note: Indeed's API approval is faster than Job-Room but still not instant.
 Initiate during Phase 3.
 
-**B.5.4 — Voyage AI (embedding fallback)**
-**Who:** Platform lead / infra
-**What:** If Gemini `text-embedding-004` degrades or is unavailable, the fallback
-is `voyage-3-lite`. Create an account at [voyageai.com](https://www.voyageai.com)
-and add `VOYAGE_API_KEY` to Render.
-
-This is low urgency — only needed if the Gemini embedding pipeline has issues.
-Can be deferred to immediately before Phase 5.
+**B.5.4 — (removed — Voyage AI is now a Phase 0 dependency, see §A.1)**
 
 ### B.6 — Required before Phase 6 goes live (Intelligence)
 
@@ -295,7 +300,8 @@ These are not build tasks or one-time setups. They are part of running the syste
 
 | Task | Who | Frequency | Notes |
 |---|---|---|---|
-| Monitor provider billing dashboards | Infra | Weekly until stable | Cross-check against in-app cost tracking; provider billing lags by hours |
+| Monitor OpenRouter credit balance + auto-top-up | Infra | Weekly | OpenRouter is prepaid; an empty balance is a hard-stop. Enable auto-top-up on the OpenRouter dashboard once usage patterns stabilise. |
+| Monitor OpenRouter + Voyage billing dashboards | Infra | Weekly until stable | Cross-check against in-app cost tracking; provider billing lags by minutes (OpenRouter is near-real-time) |
 | Review admin AI audit log for anomalies | Platform lead | Weekly | The admin dashboard surfaces >25% token drift; investigate when flagged |
 | Review failed output-safety-classifier hits | Admin team | Daily when live | Failures route to admin review queue; someone must clear them |
 | Update role taxonomy knowledge doc | Domain expert | When Swiss childcare roles change | Re-embedding triggered automatically on commit |
@@ -315,7 +321,7 @@ Listed here as a summary so the manual tasks document is self-contained.
 
 ### Phase 0 — Shared AI Foundation
 
-- `api/src/ai/` module: gateway, model routing, provider adapters, circuit breaker
+- `api/src/ai/` module: gateway, model routing, OpenRouter chat adapter, Voyage embedding adapter, application-level circuit breaker for OpenRouter outages
 - Prisma migrations: pgvector/cube/earthdistance extensions, all new tables (AiAuditLog, AiAgentRun, AiAgentConfig, AiResultCache, KnowledgeDocument, CandidateConsent)
 - Prompt template registry, versioning config, eval harness (Jest)
 - RAG retrieval service (hybrid BM25 + vector, principal-scoped)
@@ -387,7 +393,7 @@ Listed here as a summary so the manual tasks document is self-contained.
 ## Dependency map
 
 ```
-Manual A.1 (API keys)            → unblocks Phase 0 build
+Manual A.1 (OpenRouter + Voyage) → unblocks Phase 0 build
 Manual A.2 (geocoding keys)      → unblocks Phase 0 geocoding worker
 Manual A.3 (Postgres extensions) → unblocks Phase 0 migrations
 Manual A.4 (Redis prod)          → unblocks Phase 0 BullMQ workers
@@ -412,7 +418,6 @@ Manual B.4.2 (apply domain)      → must be decided before Phase 4 dev starts
 Manual B.5.1 (JobCloud)          → start during Phase 2, needed for Phase 5.1
 Manual B.5.2 (Job-Room)          → start during Phase 2, needed for Phase 5.2
 Manual B.5.3 (Indeed)            → start during Phase 3, needed for Phase 5.3
-Manual B.5.4 (Voyage AI)         → low urgency, before Phase 5 deploys
 ```
 
 ---
@@ -423,9 +428,11 @@ All variables that must be set on Render before going live, by phase:
 
 **Before Phase 0 deploys:**
 ```
-GEMINI_API_KEY
-DEEPSEEK_API_KEY
-MAPBOX_API_KEY
+OPENROUTER_API_KEY                 # all chat/completion models, one key
+OPENROUTER_APP_NAME=procreche-staffing
+OPENROUTER_SITE_URL=https://procreche.ch
+VOYAGE_API_KEY                     # embeddings only
+MAPBOX_API_KEY                     # geocoding fallback (Swisstopo is primary, no key)
 REDIS_URL
 REDIS_ENABLED=true
 ```
@@ -449,8 +456,9 @@ INDEED_API_KEY
 INDEED_EMPLOYER_ID
 ```
 
-**Deferred / optional:**
+**Removed by the OpenRouter switch (no longer needed):**
 ```
-ANTHROPIC_API_KEY            # tertiary fallback; defer until Phase 5 if not set
-VOYAGE_API_KEY               # embedding fallback; low urgency
+GEMINI_API_KEY                     # superseded by OPENROUTER_API_KEY
+DEEPSEEK_API_KEY                   # superseded by OPENROUTER_API_KEY
+ANTHROPIC_API_KEY                  # superseded by OPENROUTER_API_KEY
 ```
