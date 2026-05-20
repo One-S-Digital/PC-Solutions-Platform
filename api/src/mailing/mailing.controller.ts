@@ -40,8 +40,9 @@ export class MailingController {
 
   /** Extract admin user ID from request context, or throw if missing. */
   private getAdminId(req: any): string {
-    // Use the database UUID, not the Clerk ID (req.context.userId is 'user_xxx' format)
-    const adminId = req.context?.appUserId || req.user?.id;
+    // req.user.id is the DB UUID populated by the auth middleware after Clerk verification.
+    // req.context.userId is the Clerk ID ("user_xxx") — never use it as a DB FK.
+    const adminId = req.user?.id;
     if (!adminId) {
       throw new BadRequestException('Unable to determine admin user ID from request context');
     }

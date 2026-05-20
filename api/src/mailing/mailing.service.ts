@@ -813,6 +813,7 @@ export class MailingService {
 
       if (result.success) {
         sentThisBatch++;
+        this.logger.debug(`Sent via ${result.provider} to user ${recipient.id} (msgId: ${result.messageId ?? 'n/a'})`);
       } else {
         failedThisBatch++;
         this.logger.warn(`Failed to send to user ${recipient.id}: ${result.error}`);
