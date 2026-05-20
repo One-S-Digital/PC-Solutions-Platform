@@ -2490,8 +2490,11 @@
         "subjectLabel": "Betreff",
         "preview": "Vorschau",
         "selectHint": "Vorlage auswählen, um eine Vorschau anzuzeigen",
-        "useTemplate": "Diese Vorlage verwenden"
+        "useTemplate": "Diese Vorlage verwenden",
+        "loadError": "Vorlagen konnten nicht geladen werden. Bitte erneut versuchen.",
+        "previewError": "Vorlagenvorschau konnte nicht geladen werden."
       },
+      "loadFailed": "Vorlage konnte nicht geladen werden",
       "edit": "Bearbeiten",
       "delete": "Löschen"
     },

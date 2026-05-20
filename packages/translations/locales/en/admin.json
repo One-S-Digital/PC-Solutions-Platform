@@ -2490,8 +2490,11 @@
         "subjectLabel": "Subject",
         "preview": "Preview",
         "selectHint": "Select a template to preview",
-        "useTemplate": "Use this template"
+        "useTemplate": "Use this template",
+        "loadError": "Failed to load templates. Please try again.",
+        "previewError": "Failed to load template preview."
       },
+      "loadFailed": "Failed to load template",
       "edit": "Edit",
       "delete": "Delete"
     },

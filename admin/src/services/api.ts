@@ -1221,7 +1221,7 @@ export const apiService = {
   // Email Templates
   mailingCreateTemplate: (apiClient: AxiosInstance, data: {
     name: string;
-    description?: string;
+    description?: string | null;
     subject: string;
     bodyHtml: string;
     bodyText?: string;
@@ -1235,7 +1235,7 @@ export const apiService = {
 
   mailingUpdateTemplate: (apiClient: AxiosInstance, id: string, data: {
     name?: string;
-    description?: string;
+    description?: string | null;
     subject?: string;
     bodyHtml?: string;
     bodyText?: string;

@@ -12,7 +12,7 @@ const TOKENS = [
 interface Props {
   isOpen: boolean
   onClose: () => void
-  onSave: (data: { name: string; description?: string; subject: string; bodyHtml: string }) => Promise<void>
+  onSave: (data: { name: string; description?: string | null; subject: string; bodyHtml: string }) => Promise<void>
   loading: boolean
   initial?: Partial<MailingTemplate>
   title?: string
@@ -61,6 +61,7 @@ const TemplateEditorModal: React.FC<Props> = ({ isOpen, onClose, onSave, loading
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder={t('admin:mailing.template.namePlaceholder')}
+                maxLength={200}
                 className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
@@ -73,6 +74,7 @@ const TemplateEditorModal: React.FC<Props> = ({ isOpen, onClose, onSave, loading
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder={t('admin:mailing.template.descriptionPlaceholder')}
+                maxLength={1000}
                 className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
@@ -87,6 +89,7 @@ const TemplateEditorModal: React.FC<Props> = ({ isOpen, onClose, onSave, loading
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               placeholder={t('admin:mailing.template.subjectPlaceholder')}
+              maxLength={998}
               className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
@@ -148,7 +151,7 @@ const TemplateEditorModal: React.FC<Props> = ({ isOpen, onClose, onSave, loading
             {t('admin:mailing.campaign.detail.cancel')}
           </button>
           <button
-            onClick={() => onSave({ name, description: description || undefined, subject, bodyHtml })}
+            onClick={() => onSave({ name, description: description.trim() || null, subject, bodyHtml })}
             disabled={!name.trim() || !subject.trim() || !bodyHtml.trim() || loading}
             className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"
           >

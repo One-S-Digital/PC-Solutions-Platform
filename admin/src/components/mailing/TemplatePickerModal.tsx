@@ -19,7 +19,7 @@ const TemplatePickerModal: React.FC<Props> = ({ isOpen, onClose, onSelect }) => 
   const [search, setSearch] = useState('')
   const [previewId, setPreviewId] = useState<string | null>(null)
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error: listError } = useQuery({
     queryKey: ['mailing-templates-picker'],
     queryFn: async () => {
       const res = await apiService.mailingListTemplates(apiClient, { pageSize: 100 })
@@ -28,7 +28,7 @@ const TemplatePickerModal: React.FC<Props> = ({ isOpen, onClose, onSelect }) => 
     enabled: isOpen,
   })
 
-  const { data: previewTemplate } = useQuery({
+  const { data: previewTemplate, error: previewError } = useQuery({
     queryKey: ['mailing-template-detail', previewId],
     queryFn: async () => {
       const res = await apiService.mailingGetTemplate(apiClient, previewId!)
@@ -74,6 +74,10 @@ const TemplatePickerModal: React.FC<Props> = ({ isOpen, onClose, onSelect }) => 
             <div className="flex-1 overflow-y-auto">
               {isLoading ? (
                 <div className="flex justify-center py-8"><LoadingSpinner /></div>
+              ) : listError ? (
+                <div className="text-center py-12 text-red-500 px-4 text-sm">
+                  {t('admin:mailing.template.picker.loadError')}
+                </div>
               ) : filtered.length === 0 ? (
                 <div className="text-center py-12 text-gray-400 px-4">
                   <FileText className="w-8 h-8 mx-auto mb-2 text-gray-300" />
@@ -105,7 +109,11 @@ const TemplatePickerModal: React.FC<Props> = ({ isOpen, onClose, onSelect }) => 
 
           {/* Right: preview */}
           <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-            {previewTemplate ? (
+            {previewError ? (
+              <div className="flex-1 flex items-center justify-center text-red-500 text-sm px-4">
+                {t('admin:mailing.template.picker.previewError')}
+              </div>
+            ) : previewTemplate ? (
               <>
                 {/* Subject bar */}
                 <div className="p-3 border-b bg-gray-50 shrink-0">

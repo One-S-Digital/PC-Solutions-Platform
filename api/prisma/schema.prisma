@@ -321,6 +321,7 @@ model User {
 
   // Mailing custom list memberships
   mailingCustomListMemberships MailingCustomListMember[]
+  mailingTemplates             MailingTemplate[]          @relation("MailingTemplateCreator")
 
   // Replacement staffing relations
   replacementRequests  ReplacementRequest[]  @relation("UserReplacementRequests")
@@ -2684,6 +2685,7 @@ model MailingTemplate {
   bodyHtml    String   @db.Text @map("body_html")
   bodyText    String?  @db.Text @map("body_text")
   createdById String   @map("created_by_id")
+  createdBy   User     @relation("MailingTemplateCreator", fields: [createdById], references: [id])
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

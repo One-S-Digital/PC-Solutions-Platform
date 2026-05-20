@@ -1197,13 +1197,13 @@ export class MailingService {
   ) {
     await this.getTemplate(id);
     const updateData: any = { ...data };
-    if (data.bodyHtml) {
+    if (data.bodyHtml !== undefined) {
       updateData.bodyHtml = this.sanitiseHtml(data.bodyHtml);
-      if (!data.bodyText) {
+      if (data.bodyText === undefined) {
         updateData.bodyText = updateData.bodyHtml.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
       }
     }
-    if (data.subject) updateData.subject = data.subject.slice(0, 998);
+    if (data.subject !== undefined) updateData.subject = data.subject.slice(0, 998);
     return this.prisma.mailingTemplate.update({ where: { id }, data: updateData });
   }
 

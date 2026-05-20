@@ -2515,8 +2515,11 @@
         "subjectLabel": "Objet",
         "preview": "Aperçu",
         "selectHint": "Sélectionnez un modèle pour le prévisualiser",
-        "useTemplate": "Utiliser ce modèle"
+        "useTemplate": "Utiliser ce modèle",
+        "loadError": "Échec du chargement des modèles. Veuillez réessayer.",
+        "previewError": "Échec du chargement de l'aperçu du modèle."
       },
+      "loadFailed": "Échec du chargement du modèle",
       "edit": "Modifier",
       "delete": "Supprimer"
     },

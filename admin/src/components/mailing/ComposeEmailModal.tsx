@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { X, Send, Eye, FileText, Save } from 'lucide-react'
+
+const MAILING_TEMPLATES_ENABLED = import.meta.env.VITE_MAILING_TEMPLATES !== 'false'
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
 import { useApiClient, apiService } from '../../services/api'
@@ -62,12 +64,14 @@ const ComposeEmailModal: React.FC<Props> = ({ isOpen, onClose, onSend, loading, 
           <div className="flex items-center justify-between p-4 border-b shrink-0">
             <h3 className="text-lg font-semibold text-gray-900">{t('admin:mailing.compose.title')}</h3>
             <div className="flex items-center gap-2">
-              <button
-                onClick={() => setTemplatePickerOpen(true)}
-                className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50"
-              >
-                <FileText className="w-3.5 h-3.5" /> {t('admin:mailing.compose.loadTemplate')}
-              </button>
+              {MAILING_TEMPLATES_ENABLED && (
+                <button
+                  onClick={() => setTemplatePickerOpen(true)}
+                  className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50"
+                >
+                  <FileText className="w-3.5 h-3.5" /> {t('admin:mailing.compose.loadTemplate')}
+                </button>
+              )}
               <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
                 <X className="w-5 h-5" />
               </button>
@@ -139,7 +143,7 @@ const ComposeEmailModal: React.FC<Props> = ({ isOpen, onClose, onSend, loading, 
               <p className="text-xs text-gray-400 mt-1">{t('admin:mailing.compose.tokenHint')}</p>
             </div>
 
-            {showSaveAs ? (
+            {MAILING_TEMPLATES_ENABLED && (showSaveAs ? (
               <div className="bg-gray-50 border border-gray-200 rounded-md p-3 space-y-2">
                 <label className="text-xs font-medium text-gray-700">
                   {t('admin:mailing.compose.saveAsTemplate')}
@@ -175,7 +179,7 @@ const ComposeEmailModal: React.FC<Props> = ({ isOpen, onClose, onSend, loading, 
               >
                 <Save className="w-3 h-3" /> {t('admin:mailing.compose.saveCurrentAsTemplate')}
               </button>
-            )}
+            ))}
           </div>
 
           <div className="flex justify-end gap-2 p-4 border-t shrink-0">
@@ -194,11 +198,13 @@ const ComposeEmailModal: React.FC<Props> = ({ isOpen, onClose, onSend, loading, 
         </div>
       </div>
 
-      <TemplatePickerModal
-        isOpen={templatePickerOpen}
-        onClose={() => setTemplatePickerOpen(false)}
-        onSelect={handleSelectTemplate}
-      />
+      {MAILING_TEMPLATES_ENABLED && (
+        <TemplatePickerModal
+          isOpen={templatePickerOpen}
+          onClose={() => setTemplatePickerOpen(false)}
+          onSelect={handleSelectTemplate}
+        />
+      )}
     </>
   )
 }

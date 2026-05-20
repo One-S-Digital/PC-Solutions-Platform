@@ -22,15 +22,20 @@ import AddToListModal from '../components/mailing/AddToListModal'
 import CustomListMembersModal from '../components/mailing/CustomListMembersModal'
 import TemplateEditorModal from '../components/mailing/TemplateEditorModal'
 
+const MAILING_TEMPLATES_ENABLED = import.meta.env.VITE_MAILING_TEMPLATES !== 'false'
+
 type Tab = 'build' | 'segments' | 'campaigns' | 'lists' | 'templates'
 
-const TAB_KEYS: { key: Tab; labelKey: string; icon: React.ElementType }[] = [
+const BASE_TABS: { key: Tab; labelKey: string; icon: React.ElementType }[] = [
   { key: 'build', labelKey: 'admin:mailing.tabs.build', icon: Users },
   { key: 'lists', labelKey: 'admin:mailing.tabs.lists', icon: List },
   { key: 'segments', labelKey: 'admin:mailing.tabs.segments', icon: Save },
   { key: 'campaigns', labelKey: 'admin:mailing.tabs.campaigns', icon: BarChart3 },
-  { key: 'templates', labelKey: 'admin:mailing.tabs.templates', icon: FileText },
 ]
+
+const TAB_KEYS = MAILING_TEMPLATES_ENABLED
+  ? [...BASE_TABS, { key: 'templates' as Tab, labelKey: 'admin:mailing.tabs.templates', icon: FileText }]
+  : BASE_TABS
 
 const statusBadge = (status: string) => {
   const map: Record<string, string> = {
@@ -91,6 +96,7 @@ const MailingListPage: React.FC = () => {
   const [templateEditorOpen, setTemplateEditorOpen] = useState(false)
   const [editingTemplate, setEditingTemplate] = useState<MailingTemplate | null>(null)
   const [templateActionLoading, setTemplateActionLoading] = useState(false)
+  const [templateFetchLoading, setTemplateFetchLoading] = useState(false)
 
   const toggleSelectUser = useCallback((id: string) => {
     setSelectedUserIds((prev) => {
@@ -183,14 +189,14 @@ const MailingListPage: React.FC = () => {
     retry: noRetryOnClientError,
   })
 
-  // Templates query
+  // Templates query (only when the v2 flag is on)
   const { data: templatesData, isLoading: templatesLoading } = useQuery({
     queryKey: ['mailing-templates'],
     queryFn: async () => {
       const res = await apiService.mailingListTemplates(apiClient, { pageSize: 100 })
       return res.data
     },
-    enabled: activeTab === 'templates',
+    enabled: MAILING_TEMPLATES_ENABLED && activeTab === 'templates',
     retry: noRetryOnClientError,
   })
 
@@ -792,7 +798,7 @@ const MailingListPage: React.FC = () => {
       )}
 
       {/* TEMPLATES tab */}
-      {activeTab === 'templates' && (
+      {MAILING_TEMPLATES_ENABLED && activeTab === 'templates' && (
         <Card className="overflow-hidden">
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
             <h3 className="text-sm font-semibold text-gray-700">
@@ -836,8 +842,20 @@ const MailingListPage: React.FC = () => {
                     <td className="px-4 py-3 text-right">
                       <div className="flex items-center justify-end gap-1">
                         <button
-                          onClick={() => { setEditingTemplate(tpl); setTemplateEditorOpen(true) }}
-                          className="text-xs px-2 py-1 text-blue-600 hover:bg-blue-50 rounded"
+                          onClick={async () => {
+                            setTemplateFetchLoading(true)
+                            try {
+                              const res = await apiService.mailingGetTemplate(apiClient, tpl.id)
+                              setEditingTemplate(res.data as MailingTemplate)
+                              setTemplateEditorOpen(true)
+                            } catch (err: any) {
+                              toast.error(err?.response?.data?.message || t('admin:mailing.template.loadFailed'))
+                            } finally {
+                              setTemplateFetchLoading(false)
+                            }
+                          }}
+                          disabled={templateFetchLoading}
+                          className="text-xs px-2 py-1 text-blue-600 hover:bg-blue-50 rounded disabled:opacity-50"
                         >
                           {t('admin:mailing.template.edit')}
                         </button>
@@ -938,8 +956,8 @@ const MailingListPage: React.FC = () => {
         count={activeList?._count?.members ?? 0}
       />
 
-      {/* Template editor */}
-      <TemplateEditorModal
+      {/* Template editor — only rendered when template flag is enabled */}
+      {MAILING_TEMPLATES_ENABLED && <TemplateEditorModal
         isOpen={templateEditorOpen}
         onClose={() => { setTemplateEditorOpen(false); setEditingTemplate(null) }}
         title={editingTemplate ? t('admin:mailing.template.editTemplate') : t('admin:mailing.template.newTemplate')}
@@ -964,7 +982,7 @@ const MailingListPage: React.FC = () => {
             setTemplateActionLoading(false)
           }
         }}
-      />
+      />}
     </div>
   )
 }
