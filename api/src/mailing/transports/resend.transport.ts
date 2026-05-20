@@ -10,7 +10,7 @@ export class ResendTransport implements MailingTransportAdapter {
 
   constructor() {
     if (this.isConfigured()) {
-      this.client = new Resend(process.env.RESEND_API_KEY!);
+      this.client = new Resend(process.env.RESEND_API_KEY!.trim());
     }
   }
 
@@ -64,7 +64,7 @@ export class ResendTransport implements MailingTransportAdapter {
   }
 
   isConfigured(): boolean {
-    return !!process.env.RESEND_API_KEY;
+    return !!process.env.RESEND_API_KEY?.trim();
   }
 
   getProviderName(): string {

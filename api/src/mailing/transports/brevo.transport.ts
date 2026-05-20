@@ -18,7 +18,7 @@ export class BrevoTransport implements MailingTransportAdapter {
 
   constructor() {
     if (this.isConfigured()) {
-      this.apiKey = process.env.BREVO_API_KEY!;
+      this.apiKey = process.env.BREVO_API_KEY!.trim();
     }
   }
 
@@ -28,7 +28,7 @@ export class BrevoTransport implements MailingTransportAdapter {
     }
 
     const fromRaw = process.env.BREVO_FROM_EMAIL ?? '';
-    if (!options.from && !fromRaw) {
+    if (!options.from && !fromRaw.trim()) {
       return { success: false, error: 'BREVO_FROM_EMAIL is not set', provider: 'brevo' };
     }
 
@@ -55,6 +55,13 @@ export class BrevoTransport implements MailingTransportAdapter {
         sendSmtpEmail.tags = options.tags;
       }
 
+      // Forward campaign metadata as custom email headers for provider-side correlation
+      if (options.metadata && Object.keys(options.metadata).length) {
+        sendSmtpEmail.headers = Object.fromEntries(
+          Object.entries(options.metadata).map(([k, v]) => [`X-${k}`, v]),
+        );
+      }
+
       const response = await apiInstance.sendTransacEmail(sendSmtpEmail);
       const messageId: string | undefined =
         response?.body?.messageId ?? response?.messageId ?? undefined;
@@ -70,7 +77,7 @@ export class BrevoTransport implements MailingTransportAdapter {
   }
 
   isConfigured(): boolean {
-    return !!process.env.BREVO_API_KEY;
+    return !!process.env.BREVO_API_KEY?.trim();
   }
 
   getProviderName(): string {
