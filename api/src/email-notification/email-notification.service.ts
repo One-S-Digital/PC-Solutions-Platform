@@ -103,12 +103,9 @@ export class EmailNotificationService {
       }
 
       // Send via Resend (transactional email — notify.procrechesolutions.com)
+      // From address is driven by RESEND_FROM_EMAIL env var; no hardcoded fallback.
       const result = await this.resendTransport.sendEmail({
         to: notification.recipient,
-        from: {
-          email: process.env.RESEND_FROM_EMAIL || 'notifications@notify.procrechesolutions.com',
-          name: process.env.RESEND_FROM_NAME || 'Pro Crèche Solutions',
-        },
         subject: this.processTemplate(template.subject, notification.payload),
         html: this.processTemplate(template.htmlContent, notification.payload, { escapeHtml: true }),
         text: this.processTemplate(template.textContent, notification.payload),

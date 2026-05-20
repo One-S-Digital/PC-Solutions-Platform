@@ -22,38 +22,18 @@ export class MailingTransportService {
       if (this.adapter) {
         this.logger.log(`Campaign mailing transport initialised: ${this.adapter.getProviderName()}`);
       } else {
-        this.logger.warn(
-          'No campaign mailing transport configured. Set BREVO_API_KEY.',
-        );
+        this.logger.warn('No campaign mailing transport configured. Set BREVO_API_KEY.');
       }
     } catch (error: any) {
-      this.logger.error(
-        `Failed to initialise mailing transport: ${error?.message || error}`,
-      );
+      this.logger.error(`Failed to initialise mailing transport: ${error?.message || error}`);
     }
-  }
-
-  /** Default from address for campaign emails (Brevo / mail.procrechesolutions.com). */
-  getFromAddress(): { email: string; name: string } {
-    return {
-      email:
-        process.env.BREVO_FROM_EMAIL ||
-        process.env.MAILING_FROM_EMAIL ||
-        'mail@mail.procrechesolutions.com',
-      name:
-        process.env.BREVO_FROM_NAME ||
-        process.env.MAILING_FROM_NAME ||
-        'Pro Crèche Solutions',
-    };
   }
 
   async sendEmail(options: MailingSendOptions): Promise<MailingSendResult> {
     if (!this.adapter) {
       return { success: false, error: 'No campaign mailing transport configured', provider: 'none' };
     }
-    if (!options.from) {
-      options.from = this.getFromAddress();
-    }
+    // From address is driven by BREVO_FROM_EMAIL env var inside BrevoTransport; no hardcoded fallback.
     return this.adapter.sendEmail(options);
   }
 

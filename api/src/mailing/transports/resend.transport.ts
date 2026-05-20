@@ -19,10 +19,16 @@ export class ResendTransport implements MailingTransportAdapter {
       return { success: false, error: 'Resend transport not initialised', provider: 'resend' };
     }
 
-    const from = options.from || {
-      email: process.env.RESEND_FROM_EMAIL || 'notifications@notify.procrechesolutions.com',
-      name: process.env.RESEND_FROM_NAME || 'Pro Crèche Solutions',
-    };
+    // RESEND_FROM_EMAIL accepts "Name <email>" or plain "email" format
+    const from = options.from
+      ? `${options.from.name} <${options.from.email}>`
+      : (process.env.RESEND_FROM_EMAIL ?? '');
+
+    if (!from) {
+      return { success: false, error: 'RESEND_FROM_EMAIL is not set', provider: 'resend' };
+    }
+
+    const replyTo = options.replyTo ?? process.env.RESEND_REPLY_TO;
 
     try {
       const headers: Record<string, string> = {};
@@ -33,12 +39,12 @@ export class ResendTransport implements MailingTransportAdapter {
       }
 
       const { data, error } = await this.client.emails.send({
-        from: `${from.name} <${from.email}>`,
+        from,
         to: options.to,
         subject: options.subject,
         html: options.html,
         text: options.text,
-        replyTo: options.replyTo,
+        replyTo,
         tags: options.tags?.map((t) => ({ name: t, value: t })),
         headers: Object.keys(headers).length ? headers : undefined,
       });

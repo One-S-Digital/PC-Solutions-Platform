@@ -7,7 +7,7 @@ import {
 
 /**
  * Dedicated transport for transactional emails (Resend / notify.procrechesolutions.com).
- * Used by EmailNotificationService and SupportService.
+ * From address and reply-to are driven entirely by RESEND_FROM_EMAIL and RESEND_REPLY_TO env vars.
  */
 @Injectable()
 export class ResendTransportService {
@@ -24,21 +24,9 @@ export class ResendTransportService {
     }
   }
 
-  getFromAddress(): { email: string; name: string } {
-    return {
-      email:
-        process.env.RESEND_FROM_EMAIL || 'notifications@notify.procrechesolutions.com',
-      name:
-        process.env.RESEND_FROM_NAME || 'Pro Crèche Solutions',
-    };
-  }
-
   async sendEmail(options: MailingSendOptions): Promise<MailingSendResult> {
     if (!this.transport.isConfigured()) {
       return { success: false, error: 'Resend not configured', provider: 'resend' };
-    }
-    if (!options.from) {
-      options.from = this.getFromAddress();
     }
     return this.transport.sendEmail(options);
   }

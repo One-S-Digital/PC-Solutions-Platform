@@ -4,6 +4,15 @@ import {
   MailingSendResult,
 } from './transport.interface';
 
+/** Parse "Name <email>" or plain "email" into { name, email }. */
+function parseAddress(raw: string): { name: string; email: string } {
+  const match = raw.match(/^(.+?)\s*<(.+?)>$/);
+  if (match) {
+    return { name: match[1].trim(), email: match[2].trim() };
+  }
+  return { name: '', email: raw.trim() };
+}
+
 export class BrevoTransport implements MailingTransportAdapter {
   private apiKey: string | null = null;
 
@@ -18,10 +27,13 @@ export class BrevoTransport implements MailingTransportAdapter {
       return { success: false, error: 'Brevo transport not initialised', provider: 'brevo' };
     }
 
-    const from = options.from || {
-      email: process.env.BREVO_FROM_EMAIL || 'mail@mail.procrechesolutions.com',
-      name: process.env.BREVO_FROM_NAME || 'Pro Crèche Solutions',
-    };
+    const fromRaw = process.env.BREVO_FROM_EMAIL ?? '';
+    if (!options.from && !fromRaw) {
+      return { success: false, error: 'BREVO_FROM_EMAIL is not set', provider: 'brevo' };
+    }
+
+    const sender = options.from ?? parseAddress(fromRaw);
+    const replyToEmail = options.replyTo ?? process.env.BREVO_REPLY_TO;
 
     try {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -30,14 +42,14 @@ export class BrevoTransport implements MailingTransportAdapter {
       apiInstance.setApiKey(SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey, this.apiKey);
 
       const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
-      sendSmtpEmail.sender = { name: from.name, email: from.email };
+      sendSmtpEmail.sender = { name: sender.name, email: sender.email };
       sendSmtpEmail.to = [{ email: options.to }];
       sendSmtpEmail.subject = options.subject;
       sendSmtpEmail.htmlContent = options.html;
       sendSmtpEmail.textContent = options.text;
 
-      if (options.replyTo) {
-        sendSmtpEmail.replyTo = { email: options.replyTo };
+      if (replyToEmail) {
+        sendSmtpEmail.replyTo = { email: replyToEmail };
       }
       if (options.tags?.length) {
         sendSmtpEmail.tags = options.tags;

@@ -32,9 +32,12 @@ export class ResendService {
       return { success: false, error: 'Resend not configured' };
     }
 
-    const fromEmail =
-      process.env.RESEND_FROM_EMAIL || 'notifications@notify.procrechesolutions.com';
-    const fromName = process.env.RESEND_FROM_NAME || 'Pro Crèche Solutions';
+    const from = process.env.RESEND_FROM_EMAIL;
+    if (!from) {
+      return { success: false, error: 'RESEND_FROM_EMAIL is not set' };
+    }
+
+    const replyTo = process.env.RESEND_REPLY_TO;
 
     try {
       const headers: Record<string, string> = {};
@@ -45,11 +48,12 @@ export class ResendService {
       }
 
       const { data, error } = await this.client.emails.send({
-        from: `${fromName} <${fromEmail}>`,
+        from,
         to: options.to,
         subject: options.subject,
         html: options.html,
         text: options.text,
+        replyTo,
         tags: options.tags?.map((t) => ({ name: t, value: t })),
         headers: Object.keys(headers).length ? headers : undefined,
       });
