@@ -66,7 +66,9 @@ const MailingListPage: React.FC = () => {
   const apiClient = useApiClient()
   const queryClient = useQueryClient()
 
-  const activeTab = (searchParams.get('tab') as Tab) || 'build'
+  const allowedTabs = TAB_KEYS.map((t) => t.key)
+  const rawTab = searchParams.get('tab') as Tab | null
+  const activeTab: Tab = rawTab && allowedTabs.includes(rawTab) ? rawTab : 'build'
   const setActiveTab = (tab: Tab) => setSearchParams({ tab })
 
   // ---- Build a List state ----
@@ -807,7 +809,8 @@ const MailingListPage: React.FC = () => {
             </h3>
             <button
               onClick={() => { setEditingTemplate(null); setTemplateEditorOpen(true) }}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              disabled={templateFetchLoading}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
             >
               <Plus className="w-4 h-4" /> {t('admin:mailing.template.newTemplate')}
             </button>

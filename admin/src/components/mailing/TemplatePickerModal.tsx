@@ -34,7 +34,7 @@ const TemplatePickerModal: React.FC<Props> = ({ isOpen, onClose, onSelect }) => 
       const res = await apiService.mailingGetTemplate(apiClient, previewId!)
       return res.data as MailingTemplate
     },
-    enabled: !!previewId,
+    enabled: isOpen && !!previewId,
   })
 
   if (!isOpen) return null

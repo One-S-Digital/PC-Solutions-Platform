@@ -43,10 +43,16 @@ const ComposeEmailModal: React.FC<Props> = ({ isOpen, onClose, onSend, loading, 
   }
 
   const handleSaveAsTemplate = async () => {
-    if (!saveAsName.trim() || !subject.trim() || !bodyHtml.trim()) return
+    const trimmedName = saveAsName.trim()
+    const trimmedSubject = subject.trim()
+    if (!trimmedName || !trimmedSubject || !bodyHtml.trim()) return
+    if (trimmedName.length > 200 || trimmedSubject.length > 998) {
+      toast.error(t('admin:mailing.compose.templateSaveFailed'))
+      return
+    }
     setSavingTemplate(true)
     try {
-      await apiService.mailingCreateTemplate(apiClient, { name: saveAsName, subject, bodyHtml })
+      await apiService.mailingCreateTemplate(apiClient, { name: trimmedName, subject: trimmedSubject, bodyHtml })
       toast.success(t('admin:mailing.compose.templateSaved', { name: saveAsName }))
       setSaveAsName('')
       setShowSaveAs(false)
@@ -154,6 +160,7 @@ const ComposeEmailModal: React.FC<Props> = ({ isOpen, onClose, onSend, loading, 
                     value={saveAsName}
                     onChange={(e) => setSaveAsName(e.target.value)}
                     placeholder={t('admin:mailing.compose.templateNamePlaceholder')}
+                    maxLength={200}
                     className="flex-1 border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:ring-blue-500 focus:border-blue-500"
                   />
                   <button
