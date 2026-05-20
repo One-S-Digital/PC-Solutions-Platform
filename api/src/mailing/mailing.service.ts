@@ -742,7 +742,6 @@ export class MailingService {
     let failedThisBatch = 0;
     let lastUserId: string | null = null;
 
-    const fromAddress = this.transport.getFromAddress();
     const unsubscribeBaseUrl = process.env.APP_URL || 'https://procrechesolutions.com';
 
     for (const recipient of recipients) {
@@ -913,10 +912,14 @@ export class MailingService {
   }
 
   private appendFooter(html: string, unsubscribeUrl: string): string {
-    const fromAddr = this.transport.getFromAddress();
+    // Parse "Name <email>" from BREVO_FROM_EMAIL for footer display
+    const fromRaw = process.env.BREVO_FROM_EMAIL ?? '';
+    const fromMatch = fromRaw.match(/^(.+?)\s*<(.+?)>$/);
+    const fromName = fromMatch ? fromMatch[1].trim() : '';
+    const fromEmail = fromMatch ? fromMatch[2].trim() : fromRaw.trim();
     // SEC: escape from-address values to prevent HTML injection via env vars
-    const escapedName = this.escapeHtml(fromAddr.name);
-    const escapedEmail = this.escapeHtml(fromAddr.email);
+    const escapedName = this.escapeHtml(fromName);
+    const escapedEmail = this.escapeHtml(fromEmail);
     const escapedUrl = this.escapeHtml(unsubscribeUrl);
     const footer = `
       <div style="margin-top:32px;padding-top:16px;border-top:1px solid #e5e7eb;font-size:12px;color:#6b7280;text-align:center;">

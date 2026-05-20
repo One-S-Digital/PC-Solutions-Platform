@@ -4,9 +4,7 @@ import {
   MailingSendOptions,
   MailingSendResult,
 } from './transports/transport.interface';
-import { SmtpTransport } from './transports/smtp.transport';
-import { MailgunTransport } from './transports/mailgun.transport';
-import { SendGridTransport } from './transports/sendgrid.transport';
+import { BrevoTransport } from './transports/brevo.transport';
 
 @Injectable()
 export class MailingTransportService {
@@ -15,55 +13,27 @@ export class MailingTransportService {
 
   constructor() {
     try {
-      const smtp = new SmtpTransport();
-      const mailgun = new MailgunTransport();
-      const sendgrid = new SendGridTransport();
+      const brevo = new BrevoTransport();
 
-      if (smtp.isConfigured()) {
-        this.adapter = smtp;
-      } else if (mailgun.isConfigured()) {
-        this.adapter = mailgun;
-      } else if (sendgrid.isConfigured()) {
-        this.adapter = sendgrid;
+      if (brevo.isConfigured()) {
+        this.adapter = brevo;
       }
 
       if (this.adapter) {
-        this.logger.log(`Mailing transport initialised: ${this.adapter.getProviderName()}`);
+        this.logger.log(`Campaign mailing transport initialised: ${this.adapter.getProviderName()}`);
       } else {
-        this.logger.warn(
-          'No mailing transport configured. Set MAILING_SMTP_HOST, MAILGUN_API_KEY, or SENDGRID_API_KEY.',
-        );
+        this.logger.warn('No campaign mailing transport configured. Set BREVO_API_KEY.');
       }
     } catch (error: any) {
-      this.logger.error(
-        `Failed to initialise mailing transports: ${error?.message || error}`,
-      );
-      // Don't crash — preview/export/segment features still work without a send transport
+      this.logger.error(`Failed to initialise mailing transport: ${error?.message || error}`);
     }
-  }
-
-  /** Default from address for all campaign emails. */
-  getFromAddress(): { email: string; name: string } {
-    return {
-      email:
-        process.env.MAILING_FROM_EMAIL ||
-        process.env.MAILING_SMTP_USER ||
-        process.env.FROM_EMAIL ||
-        'noreply@procreche.ch',
-      name:
-        process.env.MAILING_FROM_NAME ||
-        process.env.FROM_NAME ||
-        'ProCreche Solutions',
-    };
   }
 
   async sendEmail(options: MailingSendOptions): Promise<MailingSendResult> {
     if (!this.adapter) {
-      return { success: false, error: 'No mailing transport configured', provider: 'none' };
+      return { success: false, error: 'No campaign mailing transport configured', provider: 'none' };
     }
-    if (!options.from) {
-      options.from = this.getFromAddress();
-    }
+    // From address is driven by BREVO_FROM_EMAIL env var inside BrevoTransport; no hardcoded fallback.
     return this.adapter.sendEmail(options);
   }
 
