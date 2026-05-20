@@ -131,6 +131,7 @@ export class MailingService {
     if (filters.cantons?.length || filters.cities?.length) {
       const orgLocationWhere: Prisma.OrganizationWhereInput = {};
       if (filters.cantons?.length) {
+        // mode:'insensitive' handles mixed-case input against stored full names
         orgLocationWhere.canton = { in: filters.cantons, mode: 'insensitive' };
       }
       if (filters.cities?.length) {
@@ -139,9 +140,16 @@ export class MailingService {
       const locationOr: Prisma.UserWhereInput[] = [
         { organizations: { some: { organization: orgLocationWhere } } },
       ];
-      // Also match users who store cities directly (educators / candidate pool)
+      // Also match users who store cities directly (educators / candidate pool).
+      // Prisma's hasSome on String[] doesn't support mode:'insensitive', so we
+      // expand each city to lowercase + title-case variants to cover common formats.
       if (filters.cities?.length) {
-        locationOr.push({ cities: { hasSome: filters.cities } });
+        const titleCase = (s: string) =>
+          s.replace(/\S+/g, (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+        const cityVariants = [...new Set(
+          filters.cities.flatMap((c) => [c, c.toLowerCase(), titleCase(c)]),
+        )];
+        locationOr.push({ cities: { hasSome: cityVariants } });
       }
       andConditions.push({ OR: locationOr });
     }
