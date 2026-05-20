@@ -2313,7 +2313,8 @@
       "build": "Créer une liste",
       "lists": "Listes personnalisées",
       "segments": "Segments",
-      "campaigns": "Campagnes"
+      "campaigns": "Campagnes",
+      "templates": "Modèles"
     },
     "filters": {
       "title": "Filtres",
@@ -2465,9 +2466,59 @@
       "bodyPlaceholder": "<p>Bonjour {{firstName}},</p><p>Votre contenu ici...</p>",
       "preview": "Aperçu",
       "edit": "Modifier",
-      "tokens": "Jetons de personnalisation disponibles",
+      "tokens": "Jetons de personnalisation — cliquer pour insérer",
+      "tokenHint": "{{logoUrl}} et {{iconUrl}} correspondent aux URLs du logo/favicon — à utiliser dans <img src=\"…\" />.",
       "creating": "Création...",
-      "send": "Créer la campagne et envoyer"
+      "send": "Créer la campagne et envoyer",
+      "loadTemplate": "Charger un modèle",
+      "saveCurrentAsTemplate": "Enregistrer le contenu actuel comme modèle",
+      "saveAsTemplate": "Enregistrer comme modèle",
+      "templateNamePlaceholder": "Nom du modèle",
+      "templateSaved": "Modèle \"{{name}}\" enregistré",
+      "templateSaveFailed": "Impossible d'enregistrer le modèle",
+      "replaceConfirm": "Remplacer le contenu actuel par ce modèle ?"
+    },
+    "template": {
+      "title": "Modèles d'email",
+      "newTemplate": "Nouveau modèle",
+      "editTemplate": "Modifier le modèle",
+      "noTemplates": "Aucun modèle",
+      "noTemplatesHint": "Créez des modèles HTML réutilisables pour accélérer la création de campagnes",
+      "nameLabel": "Nom du modèle",
+      "namePlaceholder": "ex. Newsletter mensuelle",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Description optionnelle",
+      "subjectLabel": "Objet par défaut",
+      "subjectPlaceholder": "Ligne d'objet de l'email",
+      "bodyLabel": "Corps (HTML)",
+      "tokenLabel": "Jetons de personnalisation — cliquer pour insérer",
+      "logoHint": "Utilisez <img src=\"{{logoUrl}}\" /> pour intégrer le logo de la plateforme.",
+      "saving": "Enregistrement...",
+      "save": "Enregistrer le modèle",
+      "updated": "Modèle mis à jour",
+      "created": "Modèle créé",
+      "deleted": "Modèle supprimé",
+      "saveFailed": "Impossible d'enregistrer le modèle",
+      "deleteFailed": "Impossible de supprimer le modèle",
+      "deleteConfirm": "Supprimer le modèle \"{{name}}\" ?",
+      "columns": {
+        "name": "Nom",
+        "subject": "Objet",
+        "lastUpdated": "Dernière mise à jour",
+        "actions": "Actions"
+      },
+      "picker": {
+        "title": "Choisir un modèle",
+        "searchPlaceholder": "Rechercher des modèles...",
+        "noMatch": "Aucun modèle correspondant",
+        "noTemplates": "Aucun modèle",
+        "subjectLabel": "Objet",
+        "preview": "Aperçu",
+        "selectHint": "Sélectionnez un modèle pour le prévisualiser",
+        "useTemplate": "Utiliser ce modèle"
+      },
+      "edit": "Modifier",
+      "delete": "Supprimer"
     },
     "campaign": {
       "noCampaigns": "Aucune campagne",

@@ -2283,7 +2283,8 @@
       "build": "Build a List",
       "lists": "Custom Lists",
       "segments": "Segments",
-      "campaigns": "Campaigns"
+      "campaigns": "Campaigns",
+      "templates": "Templates"
     },
     "filters": {
       "title": "Filters",
@@ -2440,9 +2441,59 @@
       "bodyPlaceholder": "<p>Hello {{firstName}},</p><p>Your email content here...</p>",
       "preview": "Preview",
       "edit": "Edit",
-      "tokens": "Available personalization tokens",
+      "tokens": "Personalization tokens — click to insert",
+      "tokenHint": "{{logoUrl}} and {{iconUrl}} resolve to the platform logo/favicon URLs — wrap in <img src=\"…\" />.",
       "creating": "Creating...",
-      "send": "Create Campaign & Send"
+      "send": "Create Campaign & Send",
+      "loadTemplate": "Load template",
+      "saveCurrentAsTemplate": "Save current content as template",
+      "saveAsTemplate": "Save as template",
+      "templateNamePlaceholder": "Template name",
+      "templateSaved": "Template \"{{name}}\" saved",
+      "templateSaveFailed": "Failed to save template",
+      "replaceConfirm": "Replace current content with this template?"
+    },
+    "template": {
+      "title": "Email Templates",
+      "newTemplate": "New Template",
+      "editTemplate": "Edit Template",
+      "noTemplates": "No templates yet",
+      "noTemplatesHint": "Create reusable HTML templates to speed up campaign creation",
+      "nameLabel": "Template name",
+      "namePlaceholder": "e.g. Monthly newsletter",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Optional description",
+      "subjectLabel": "Default subject",
+      "subjectPlaceholder": "Email subject line",
+      "bodyLabel": "Body (HTML)",
+      "tokenLabel": "Personalization tokens — click to insert",
+      "logoHint": "Use <img src=\"{{logoUrl}}\" /> to embed the platform logo.",
+      "saving": "Saving...",
+      "save": "Save Template",
+      "updated": "Template updated",
+      "created": "Template created",
+      "deleted": "Template deleted",
+      "saveFailed": "Failed to save template",
+      "deleteFailed": "Failed to delete template",
+      "deleteConfirm": "Delete template \"{{name}}\"?",
+      "columns": {
+        "name": "Name",
+        "subject": "Subject",
+        "lastUpdated": "Last Updated",
+        "actions": "Actions"
+      },
+      "picker": {
+        "title": "Choose a Template",
+        "searchPlaceholder": "Search templates...",
+        "noMatch": "No matching templates",
+        "noTemplates": "No templates yet",
+        "subjectLabel": "Subject",
+        "preview": "Preview",
+        "selectHint": "Select a template to preview",
+        "useTemplate": "Use this template"
+      },
+      "edit": "Edit",
+      "delete": "Delete"
     },
     "campaign": {
       "noCampaigns": "No campaigns yet",

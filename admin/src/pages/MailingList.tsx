@@ -796,13 +796,14 @@ const MailingListPage: React.FC = () => {
         <Card className="overflow-hidden">
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
             <h3 className="text-sm font-semibold text-gray-700">
-              Email Templates{templatesData?.total ? ` (${templatesData.total})` : ''}
+              {t('admin:mailing.template.title')}
+              {templatesData?.total ? ` (${templatesData.total})` : ''}
             </h3>
             <button
               onClick={() => { setEditingTemplate(null); setTemplateEditorOpen(true) }}
               className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
             >
-              <Plus className="w-4 h-4" /> New Template
+              <Plus className="w-4 h-4" /> {t('admin:mailing.template.newTemplate')}
             </button>
           </div>
           {templatesLoading ? (
@@ -810,17 +811,17 @@ const MailingListPage: React.FC = () => {
           ) : !templatesData?.templates?.length ? (
             <div className="text-center py-16 text-gray-400">
               <FileText className="w-10 h-10 mx-auto mb-3 text-gray-300" />
-              <p>No templates yet</p>
-              <p className="text-sm mt-1 text-gray-400">Create reusable HTML templates to speed up campaign creation</p>
+              <p>{t('admin:mailing.template.noTemplates')}</p>
+              <p className="text-sm mt-1 text-gray-400">{t('admin:mailing.template.noTemplatesHint')}</p>
             </div>
           ) : (
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Subject</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Last Updated</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin:mailing.template.columns.name')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin:mailing.template.columns.subject')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin:mailing.template.columns.lastUpdated')}</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">{t('admin:mailing.template.columns.actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -838,21 +839,21 @@ const MailingListPage: React.FC = () => {
                           onClick={() => { setEditingTemplate(tpl); setTemplateEditorOpen(true) }}
                           className="text-xs px-2 py-1 text-blue-600 hover:bg-blue-50 rounded"
                         >
-                          Edit
+                          {t('admin:mailing.template.edit')}
                         </button>
                         <button
                           onClick={async () => {
-                            if (!window.confirm(`Delete template "${tpl.name}"?`)) return
+                            if (!window.confirm(t('admin:mailing.template.deleteConfirm', { name: tpl.name }))) return
                             try {
                               await apiService.mailingDeleteTemplate(apiClient, tpl.id)
                               queryClient.invalidateQueries({ queryKey: ['mailing-templates'] })
-                              toast.success('Template deleted')
+                              toast.success(t('admin:mailing.template.deleted'))
                             } catch (err: any) {
-                              toast.error(err?.response?.data?.message || 'Failed to delete template')
+                              toast.error(err?.response?.data?.message || t('admin:mailing.template.deleteFailed'))
                             }
                           }}
                           className="p-1 text-gray-400 hover:text-red-600"
-                          title="Delete"
+                          title={t('admin:mailing.template.delete')}
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -941,7 +942,7 @@ const MailingListPage: React.FC = () => {
       <TemplateEditorModal
         isOpen={templateEditorOpen}
         onClose={() => { setTemplateEditorOpen(false); setEditingTemplate(null) }}
-        title={editingTemplate ? 'Edit Template' : 'New Template'}
+        title={editingTemplate ? t('admin:mailing.template.editTemplate') : t('admin:mailing.template.newTemplate')}
         initial={editingTemplate ?? undefined}
         loading={templateActionLoading}
         onSave={async (data) => {
@@ -949,16 +950,16 @@ const MailingListPage: React.FC = () => {
           try {
             if (editingTemplate) {
               await apiService.mailingUpdateTemplate(apiClient, editingTemplate.id, data)
-              toast.success('Template updated')
+              toast.success(t('admin:mailing.template.updated'))
             } else {
               await apiService.mailingCreateTemplate(apiClient, data)
-              toast.success('Template created')
+              toast.success(t('admin:mailing.template.created'))
             }
             queryClient.invalidateQueries({ queryKey: ['mailing-templates'] })
             setTemplateEditorOpen(false)
             setEditingTemplate(null)
           } catch (err: any) {
-            toast.error(err?.response?.data?.message || 'Failed to save template')
+            toast.error(err?.response?.data?.message || t('admin:mailing.template.saveFailed'))
           } finally {
             setTemplateActionLoading(false)
           }
