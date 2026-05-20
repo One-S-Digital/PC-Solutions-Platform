@@ -125,20 +125,31 @@ export class MailingService {
       });
     }
 
-    // D) Location & language (via Organization) ------------------
-    const orgWhere: Prisma.OrganizationWhereInput = {};
-    if (filters.cantons?.length) {
-      orgWhere.canton = { in: filters.cantons };
+    // D) Location & language ------------------------------------------
+    // Canton / city: match via organization OR via user's direct fields
+    // so that educators and parents without org links are also found.
+    if (filters.cantons?.length || filters.cities?.length) {
+      const orgLocationWhere: Prisma.OrganizationWhereInput = {};
+      if (filters.cantons?.length) {
+        orgLocationWhere.canton = { in: filters.cantons, mode: 'insensitive' };
+      }
+      if (filters.cities?.length) {
+        orgLocationWhere.city = { in: filters.cities, mode: 'insensitive' };
+      }
+      const locationOr: Prisma.UserWhereInput[] = [
+        { organizations: { some: { organization: orgLocationWhere } } },
+      ];
+      // Also match users who store cities directly (educators / candidate pool)
+      if (filters.cities?.length) {
+        locationOr.push({ cities: { hasSome: filters.cities } });
+      }
+      andConditions.push({ OR: locationOr });
     }
-    if (filters.cities?.length) {
-      orgWhere.city = { in: filters.cities, mode: 'insensitive' };
-    }
+
+    // Languages are stored on Organization; no direct user field exists
     if (filters.languages?.length) {
-      orgWhere.languages = { hasSome: filters.languages };
-    }
-    if (Object.keys(orgWhere).length > 0) {
       andConditions.push({
-        organizations: { some: { organization: orgWhere } },
+        organizations: { some: { organization: { languages: { hasSome: filters.languages } } } },
       });
     }
 

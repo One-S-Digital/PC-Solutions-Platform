@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ChevronDown, ChevronRight, X } from 'lucide-react'
 import { MailingFilters } from '../../types/api'
 import { useTranslation } from 'react-i18next'
+import { SWISS_CANTONS } from '../../constants/design-system'
 
 const ROLES = [
   { value: 'FOUNDATION', label: 'Foundation / Daycare' },
@@ -51,9 +52,36 @@ const Section: React.FC<{ title: string; children: React.ReactNode; defaultOpen?
 const MailingFilterPanel: React.FC<Props> = ({ filters, onChange }) => {
   const { t } = useTranslation(['admin'])
 
+  // Local text state for the city input so commas can be typed without being
+  // eaten on each keystroke. Parsing into the filter array happens on blur/Enter.
+  const [cityText, setCityText] = useState(filters.cities?.join(', ') || '')
+  const [cantonSearch, setCantonSearch] = useState('')
+
+  // Sync back when filters are cleared externally (e.g. "Clear all")
+  useEffect(() => {
+    if (!filters.cities?.length) setCityText('')
+  }, [filters.cities])
+
   const update = (partial: Partial<MailingFilters>) => {
     onChange({ ...filters, ...partial })
   }
+
+  const toggleCanton = (canton: string) => {
+    const current = filters.cantons || []
+    const next = current.includes(canton)
+      ? current.filter((c) => c !== canton)
+      : [...current, canton]
+    update({ cantons: next.length > 0 ? next : undefined })
+  }
+
+  const applyCities = (text: string) => {
+    const vals = text.split(',').map((s) => s.trim()).filter(Boolean)
+    update({ cities: vals.length > 0 ? vals : undefined })
+  }
+
+  const filteredCantons = cantonSearch.trim()
+    ? SWISS_CANTONS.filter((c) => c.toLowerCase().includes(cantonSearch.toLowerCase()))
+    : SWISS_CANTONS
 
   const toggleRole = (role: string) => {
     const current = filters.roles || []
@@ -309,33 +337,65 @@ const MailingFilterPanel: React.FC<Props> = ({ filters, onChange }) => {
       <Section title="Location & Language">
         <div className="space-y-2">
           <div>
-            <label className="text-xs text-gray-500 block mb-1">Cantons (comma-separated)</label>
+            <label className="text-xs text-gray-500 block mb-1">Cantons</label>
+            {filters.cantons?.length ? (
+              <div className="flex flex-wrap gap-1 mb-1.5">
+                {filters.cantons.map((c) => (
+                  <span
+                    key={c}
+                    className="inline-flex items-center gap-1 text-xs bg-blue-100 text-blue-700 rounded-full px-2 py-0.5"
+                  >
+                    {c}
+                    <button
+                      onClick={() => toggleCanton(c)}
+                      className="hover:text-blue-900 leading-none"
+                      aria-label={`Remove ${c}`}
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+            ) : null}
             <input
               type="text"
-              placeholder="VD, GE, FR..."
-              value={filters.cantons?.join(', ') || ''}
-              onChange={(e) => {
-                const vals = e.target.value
-                  .split(',')
-                  .map((s) => s.trim().toUpperCase())
-                  .filter(Boolean)
-                update({ cantons: vals.length > 0 ? vals : undefined })
-              }}
-              className="w-full text-sm border border-gray-300 rounded-md px-2 py-1.5 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Search cantons..."
+              value={cantonSearch}
+              onChange={(e) => setCantonSearch(e.target.value)}
+              className="w-full text-sm border border-gray-300 rounded-md px-2 py-1.5 focus:ring-blue-500 focus:border-blue-500 mb-1"
             />
+            <div className="max-h-32 overflow-y-auto border border-gray-200 rounded-md divide-y divide-gray-100">
+              {filteredCantons.map((canton) => (
+                <label
+                  key={canton}
+                  className="flex items-center gap-2 px-2 py-1 text-xs text-gray-700 cursor-pointer hover:bg-gray-50"
+                >
+                  <input
+                    type="checkbox"
+                    checked={filters.cantons?.includes(canton) || false}
+                    onChange={() => toggleCanton(canton)}
+                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  />
+                  {canton}
+                </label>
+              ))}
+              {filteredCantons.length === 0 && (
+                <p className="px-2 py-1.5 text-xs text-gray-400">No matching cantons</p>
+              )}
+            </div>
           </div>
           <div>
             <label className="text-xs text-gray-500 block mb-1">Cities (comma-separated)</label>
             <input
               type="text"
-              placeholder="Lausanne, Geneva..."
-              value={filters.cities?.join(', ') || ''}
-              onChange={(e) => {
-                const vals = e.target.value.split(',').map((s) => s.trim()).filter(Boolean)
-                update({ cities: vals.length > 0 ? vals : undefined })
-              }}
+              placeholder="Lausanne, Genève, Bern..."
+              value={cityText}
+              onChange={(e) => setCityText(e.target.value)}
+              onBlur={(e) => applyCities(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && applyCities(cityText)}
               className="w-full text-sm border border-gray-300 rounded-md px-2 py-1.5 focus:ring-blue-500 focus:border-blue-500"
             />
+            <p className="text-xs text-gray-400 mt-0.5">Press Enter or click away to apply</p>
           </div>
           <div>
             <label className="text-xs text-gray-500 block mb-1">Languages</label>
