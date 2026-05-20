@@ -31,4 +31,22 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-argument': 'warn'
     },
   },
+  // Prevent direct LLM imports outside the AI gateway module.
+  // All LLM calls must go through LlmClient in api/src/ai/.
+  {
+    files: ['src/**/*.ts'],
+    ignores: ['src/ai/**'],
+    rules: {
+      'no-restricted-imports': [
+        'warn',
+        {
+          patterns: [
+            { group: ['openai', 'openai/*'], message: 'Import OpenAI only inside api/src/ai/ — use LlmClient elsewhere.' },
+            { group: ['@google/generative-ai', '@google/generative-ai/*'], message: 'Direct Google AI imports are forbidden outside api/src/ai/.' },
+            { group: ['@anthropic-ai/sdk', '@anthropic-ai/sdk/*'], message: 'Direct Anthropic imports are forbidden outside api/src/ai/.' },
+          ],
+        },
+      ],
+    },
+  },
 );

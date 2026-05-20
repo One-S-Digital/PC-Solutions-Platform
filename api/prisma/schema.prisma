@@ -2848,3 +2848,105 @@ model InternPoolApplication {
   @@index([applicantId])
   @@map("intern_pool_applications")
 }
+
+// ─── AI Foundation (Phase 0) ──────────────────────────────────────────────────
+
+model CandidateConsent {
+  id        String    @id @default(uuid())
+  userId    String
+  version   Int       @default(1)
+  grantedAt DateTime  @default(now())
+  revokedAt DateTime?
+  isActive  Boolean   @default(true)
+
+  user User @relation("CandidateConsents", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isActive])
+  @@map("candidate_consents")
+}
+
+model AiAuditLog {
+  id              String   @id @default(uuid())
+  agentName       String
+  promptVersion   String
+  model           String
+  fallbackUsed    Boolean  @default(false)
+  inputHash       String
+  outputHash      String?
+  tokenUsage      Json
+  costUsd         Decimal  @default(0) @db.Decimal(10, 8)
+  latencyMs       Int
+  cacheHit        Boolean  @default(false)
+  principalId     String?
+  organizationId  String?
+  entityRef       String?
+  retrievedDocIds String[]
+  agentRunId      String?
+  createdAt       DateTime @default(now())
+
+  agentRun AiAgentRun? @relation(fields: [agentRunId], references: [id])
+
+  @@index([agentName, createdAt])
+  @@index([principalId, createdAt])
+  @@index([agentRunId])
+  @@map("ai_audit_logs")
+}
+
+model AiAgentRun {
+  id             String      @id @default(uuid())
+  orchestration  String
+  principalId    String?
+  organizationId String?
+  entityRef      String?
+  status         String      @default("running")
+  startedAt      DateTime    @default(now())
+  completedAt    DateTime?
+  logs           AiAuditLog[]
+
+  @@index([principalId, startedAt])
+  @@map("ai_agent_runs")
+}
+
+model AiAgentConfig {
+  id            String   @id @default(uuid())
+  agentName     String
+  promptVersion String
+  environment   String   @default("production")
+  foundationId  String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([agentName, environment, foundationId])
+  @@map("ai_agent_configs")
+}
+
+model AiResultCache {
+  id        String    @id @default(uuid())
+  cacheKey  String    @unique
+  agentName String
+  payload   Json
+  modelUsed String
+  createdAt DateTime  @default(now())
+  expiresAt DateTime?
+
+  @@index([agentName])
+  @@index([expiresAt])
+  @@map("ai_result_cache")
+}
+
+model KnowledgeDocument {
+  id          String   @id @default(uuid())
+  source      String
+  cantonScope String?
+  locale      String   @default("fr")
+  audience    String?
+  version     Int      @default(1)
+  title       String
+  content     String   @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([source, locale])
+  @@map("knowledge_documents")
+}

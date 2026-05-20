@@ -27,6 +27,10 @@ async function main() {
   console.log('🚩 Setting up feature flags...');
   await seedFeatureFlags();
 
+  // 6b. AI Foundation feature flag
+  console.log('🤖 Setting up AI Foundation feature flag...');
+  await seedAiFoundationFlag();
+
   // 7. Create Email Templates (for admin email template management)
   console.log('📧 Creating email templates...');
   await seedEmailTemplates();
@@ -972,6 +976,22 @@ async function seedFeatureFlags() {
       },
     });
   }
+}
+
+async function seedAiFoundationFlag() {
+  await prisma.featureFlag.upsert({
+    where: { key: 'ai_foundation_enabled' },
+    update: {},
+    create: {
+      name: 'AI Foundation',
+      description: 'Master kill switch for the AI staffing integration layer (Phase 0+)',
+      key: 'ai_foundation_enabled',
+      isActive: false,
+      rolloutPercentage: 0,
+      targetSegments: [],
+      conditions: {},
+    },
+  });
 }
 
 function getMonthlyPrice(planCode: string): number {
