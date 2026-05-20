@@ -593,16 +593,20 @@ export class MailingService {
       },
     });
 
-    // Audit log
-    await this.prisma.auditLog.create({
-      data: {
-        entity: 'MailingCampaign',
-        entityId: campaign.id,
-        action: 'create',
-        actorId: createdById,
-        metadata: { subject, segmentId, totalEstimated },
-      },
-    });
+    // Audit log — non-critical; must not roll back a successful campaign creation
+    try {
+      await this.prisma.auditLog.create({
+        data: {
+          entity: 'MailingCampaign',
+          entityId: campaign.id,
+          action: 'create',
+          actorId: createdById,
+          metadata: { subject, segmentId, totalEstimated },
+        },
+      });
+    } catch (auditErr: any) {
+      this.logger.warn(`Audit log failed for campaign ${campaign.id}: ${auditErr?.message}`);
+    }
 
     return { campaignId: campaign.id, estimatedCount: totalEstimated, status: campaign.status };
   }
