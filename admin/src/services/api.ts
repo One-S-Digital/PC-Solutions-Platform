@@ -1218,6 +1218,32 @@ export const apiService = {
   mailingGetCustomListMembers: (apiClient: AxiosInstance, listId: string, params?: { page?: number; pageSize?: number }) =>
     apiClient.get(`/admin/mailing/custom-lists/${listId}/members`, { params }),
 
+  // Email Templates
+  mailingCreateTemplate: (apiClient: AxiosInstance, data: {
+    name: string;
+    description?: string;
+    subject: string;
+    bodyHtml: string;
+    bodyText?: string;
+  }) => apiClient.post('/admin/mailing/templates', data),
+
+  mailingListTemplates: (apiClient: AxiosInstance, params?: { page?: number; pageSize?: number }) =>
+    apiClient.get('/admin/mailing/templates', { params }),
+
+  mailingGetTemplate: (apiClient: AxiosInstance, id: string) =>
+    apiClient.get(`/admin/mailing/templates/${id}`),
+
+  mailingUpdateTemplate: (apiClient: AxiosInstance, id: string, data: {
+    name?: string;
+    description?: string;
+    subject?: string;
+    bodyHtml?: string;
+    bodyText?: string;
+  }) => apiClient.put(`/admin/mailing/templates/${id}`, data),
+
+  mailingDeleteTemplate: (apiClient: AxiosInstance, id: string) =>
+    apiClient.delete(`/admin/mailing/templates/${id}`),
+
   // Replacement Staffing (Phase 3)
   getReplacementRequests: (apiClient: AxiosInstance, params?: { status?: string; foundationId?: string }) =>
     apiClient.get('/replacements/requests', { params }),

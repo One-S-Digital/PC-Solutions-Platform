@@ -2,13 +2,13 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
-  Mail, Plus, Download, Send, Save, Trash2, RefreshCw, Users, BarChart3, List, UserPlus, Pencil, Check, X,
+  Mail, Plus, Download, Send, Save, Trash2, RefreshCw, Users, BarChart3, List, UserPlus, Pencil, Check, X, FileText,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
 
 import { useApiClient, apiService } from '../services/api'
-import { MailingFilters, MailingPreviewResponse, MailingSegment, MailingCustomList } from '../types/api'
+import { MailingFilters, MailingPreviewResponse, MailingSegment, MailingCustomList, MailingTemplate } from '../types/api'
 import { useDebouncedValue } from '../hooks/useDebouncedValue'
 import Card from '../components/design-system/Card'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
@@ -20,14 +20,16 @@ import ComposeEmailModal from '../components/mailing/ComposeEmailModal'
 import SendProgressOverlay from '../components/mailing/SendProgressOverlay'
 import AddToListModal from '../components/mailing/AddToListModal'
 import CustomListMembersModal from '../components/mailing/CustomListMembersModal'
+import TemplateEditorModal from '../components/mailing/TemplateEditorModal'
 
-type Tab = 'build' | 'segments' | 'campaigns' | 'lists'
+type Tab = 'build' | 'segments' | 'campaigns' | 'lists' | 'templates'
 
 const TAB_KEYS: { key: Tab; labelKey: string; icon: React.ElementType }[] = [
   { key: 'build', labelKey: 'admin:mailing.tabs.build', icon: Users },
   { key: 'lists', labelKey: 'admin:mailing.tabs.lists', icon: List },
   { key: 'segments', labelKey: 'admin:mailing.tabs.segments', icon: Save },
   { key: 'campaigns', labelKey: 'admin:mailing.tabs.campaigns', icon: BarChart3 },
+  { key: 'templates', labelKey: 'admin:mailing.tabs.templates', icon: FileText },
 ]
 
 const statusBadge = (status: string) => {
@@ -84,6 +86,11 @@ const MailingListPage: React.FC = () => {
   const [listExportModalOpen, setListExportModalOpen] = useState(false)
   const [editingListId, setEditingListId] = useState<string | null>(null)
   const [editingListName, setEditingListName] = useState('')
+
+  // Template state
+  const [templateEditorOpen, setTemplateEditorOpen] = useState(false)
+  const [editingTemplate, setEditingTemplate] = useState<MailingTemplate | null>(null)
+  const [templateActionLoading, setTemplateActionLoading] = useState(false)
 
   const toggleSelectUser = useCallback((id: string) => {
     setSelectedUserIds((prev) => {
@@ -173,6 +180,17 @@ const MailingListPage: React.FC = () => {
       return res.data
     },
     enabled: activeTab === 'lists' || addToListModalOpen,
+    retry: noRetryOnClientError,
+  })
+
+  // Templates query
+  const { data: templatesData, isLoading: templatesLoading } = useQuery({
+    queryKey: ['mailing-templates'],
+    queryFn: async () => {
+      const res = await apiService.mailingListTemplates(apiClient, { pageSize: 100 })
+      return res.data
+    },
+    enabled: activeTab === 'templates',
     retry: noRetryOnClientError,
   })
 
@@ -773,6 +791,81 @@ const MailingListPage: React.FC = () => {
         </Card>
       )}
 
+      {/* TEMPLATES tab */}
+      {activeTab === 'templates' && (
+        <Card className="overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+            <h3 className="text-sm font-semibold text-gray-700">
+              Email Templates{templatesData?.total ? ` (${templatesData.total})` : ''}
+            </h3>
+            <button
+              onClick={() => { setEditingTemplate(null); setTemplateEditorOpen(true) }}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            >
+              <Plus className="w-4 h-4" /> New Template
+            </button>
+          </div>
+          {templatesLoading ? (
+            <div className="flex justify-center py-16"><LoadingSpinner /></div>
+          ) : !templatesData?.templates?.length ? (
+            <div className="text-center py-16 text-gray-400">
+              <FileText className="w-10 h-10 mx-auto mb-3 text-gray-300" />
+              <p>No templates yet</p>
+              <p className="text-sm mt-1 text-gray-400">Create reusable HTML templates to speed up campaign creation</p>
+            </div>
+          ) : (
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Subject</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Last Updated</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {templatesData.templates.map((tpl: MailingTemplate) => (
+                  <tr key={tpl.id} className="hover:bg-gray-50">
+                    <td className="px-4 py-3">
+                      <div className="text-sm font-medium text-gray-900">{tpl.name}</div>
+                      {tpl.description && <div className="text-xs text-gray-500 truncate max-w-xs">{tpl.description}</div>}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-600 truncate max-w-xs">{tpl.subject}</td>
+                    <td className="px-4 py-3 text-sm text-gray-500">{new Date(tpl.updatedAt).toLocaleDateString()}</td>
+                    <td className="px-4 py-3 text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <button
+                          onClick={() => { setEditingTemplate(tpl); setTemplateEditorOpen(true) }}
+                          className="text-xs px-2 py-1 text-blue-600 hover:bg-blue-50 rounded"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={async () => {
+                            if (!window.confirm(`Delete template "${tpl.name}"?`)) return
+                            try {
+                              await apiService.mailingDeleteTemplate(apiClient, tpl.id)
+                              queryClient.invalidateQueries({ queryKey: ['mailing-templates'] })
+                              toast.success('Template deleted')
+                            } catch (err: any) {
+                              toast.error(err?.response?.data?.message || 'Failed to delete template')
+                            }
+                          }}
+                          className="p-1 text-gray-400 hover:text-red-600"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </Card>
+      )}
+
       {/* Modals */}
       <AddToListModal
         isOpen={addToListModalOpen}
@@ -842,6 +935,34 @@ const MailingListPage: React.FC = () => {
         onExport={handleExportList}
         loading={actionLoading}
         count={activeList?._count?.members ?? 0}
+      />
+
+      {/* Template editor */}
+      <TemplateEditorModal
+        isOpen={templateEditorOpen}
+        onClose={() => { setTemplateEditorOpen(false); setEditingTemplate(null) }}
+        title={editingTemplate ? 'Edit Template' : 'New Template'}
+        initial={editingTemplate ?? undefined}
+        loading={templateActionLoading}
+        onSave={async (data) => {
+          setTemplateActionLoading(true)
+          try {
+            if (editingTemplate) {
+              await apiService.mailingUpdateTemplate(apiClient, editingTemplate.id, data)
+              toast.success('Template updated')
+            } else {
+              await apiService.mailingCreateTemplate(apiClient, data)
+              toast.success('Template created')
+            }
+            queryClient.invalidateQueries({ queryKey: ['mailing-templates'] })
+            setTemplateEditorOpen(false)
+            setEditingTemplate(null)
+          } catch (err: any) {
+            toast.error(err?.response?.data?.message || 'Failed to save template')
+          } finally {
+            setTemplateActionLoading(false)
+          }
+        }}
       />
     </div>
   )
