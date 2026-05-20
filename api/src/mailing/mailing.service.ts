@@ -523,16 +523,20 @@ export class MailingService {
       return row;
     });
 
-    // Audit log
-    await this.prisma.auditLog.create({
-      data: {
-        entity: 'MailingExport',
-        entityId: segmentId || 'ad-hoc',
-        action: 'export',
-        actorId: adminId,
-        metadata: { segmentId, columns: validColumns, recordCount: rows.length },
-      },
-    });
+    // Audit log — non-fatal: missing table in older deployments must not break exports
+    try {
+      await this.prisma.auditLog.create({
+        data: {
+          entity: 'MailingExport',
+          entityId: segmentId || 'ad-hoc',
+          action: 'export',
+          actorId: adminId,
+          metadata: { segmentId, columns: validColumns, recordCount: rows.length },
+        },
+      });
+    } catch (e: any) {
+      this.logger.warn(`Audit log skipped (export): ${e?.message}`);
+    }
 
     return { columns: validColumns, rows, count: rows.length };
   }
@@ -593,16 +597,20 @@ export class MailingService {
       },
     });
 
-    // Audit log
-    await this.prisma.auditLog.create({
-      data: {
-        entity: 'MailingCampaign',
-        entityId: campaign.id,
-        action: 'create',
-        actorId: createdById,
-        metadata: { subject, segmentId, totalEstimated },
-      },
-    });
+    // Audit log — non-fatal
+    try {
+      await this.prisma.auditLog.create({
+        data: {
+          entity: 'MailingCampaign',
+          entityId: campaign.id,
+          action: 'create',
+          actorId: createdById,
+          metadata: { subject, segmentId, totalEstimated },
+        },
+      });
+    } catch (e: any) {
+      this.logger.warn(`Audit log skipped (campaign create): ${e?.message}`);
+    }
 
     return { campaignId: campaign.id, estimatedCount: totalEstimated, status: campaign.status };
   }
@@ -654,15 +662,20 @@ export class MailingService {
       throw new BadRequestException('Can only cancel DRAFT or SENDING campaigns');
     }
 
-    await this.prisma.auditLog.create({
-      data: {
-        entity: 'MailingCampaign',
-        entityId: id,
-        action: 'cancel',
-        actorId: adminId,
-        metadata: { previousStatus: campaign.status },
-      },
-    });
+    // Audit log — non-fatal
+    try {
+      await this.prisma.auditLog.create({
+        data: {
+          entity: 'MailingCampaign',
+          entityId: id,
+          action: 'cancel',
+          actorId: adminId,
+          metadata: { previousStatus: campaign.status },
+        },
+      });
+    } catch (e: any) {
+      this.logger.warn(`Audit log skipped (campaign cancel): ${e?.message}`);
+    }
 
     return this.prisma.mailingCampaign.update({
       where: { id },

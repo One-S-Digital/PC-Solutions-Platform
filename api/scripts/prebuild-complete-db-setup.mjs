@@ -556,6 +556,45 @@ END $$;
 };
 
 /**
+ * Ensure audit_logs table exists.
+ * Matches migration 20251030_comprehensive_schema_audit_fix.
+ * Non-critical but its absence causes 500s in any service that writes audit entries.
+ */
+const ensureAuditLogTable = () => {
+  log('Ensuring audit_logs table exists...');
+
+  const sql = `
+CREATE TABLE IF NOT EXISTS "audit_logs" (
+  "id"        TEXT        NOT NULL,
+  "entity"    TEXT        NOT NULL,
+  "entityId"  TEXT        NOT NULL,
+  "action"    TEXT        NOT NULL,
+  "actorId"   TEXT,
+  "diff"      JSONB,
+  "metadata"  JSONB,
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "audit_logs_pkey" PRIMARY KEY ("id")
+);
+CREATE INDEX IF NOT EXISTS "audit_logs_entity_entityId_idx" ON "audit_logs"("entity", "entityId");
+CREATE INDEX IF NOT EXISTS "audit_logs_actorId_idx"         ON "audit_logs"("actorId");
+CREATE INDEX IF NOT EXISTS "audit_logs_createdAt_idx"       ON "audit_logs"("createdAt");
+CREATE INDEX IF NOT EXISTS "audit_logs_action_idx"          ON "audit_logs"("action");
+`;
+
+  const result = runPrisma(['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'], {
+    silent: true,
+    input: sql,
+  });
+
+  if (!result.success) {
+    warn('Could not ensure audit_logs table (continuing)');
+    return;
+  }
+
+  success('audit_logs table verified/created');
+};
+
+/**
  * Main function
  */
 const main = async () => {
@@ -593,6 +632,9 @@ const main = async () => {
 
     // Step 8: Ensure mailing list tables exist
     ensureMailingTables();
+
+    // Step 9: Ensure audit_logs table exists
+    ensureAuditLogTable();
 
     // Print summary
     printStatusSummary();
