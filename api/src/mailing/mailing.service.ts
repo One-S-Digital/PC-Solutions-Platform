@@ -752,8 +752,13 @@ export class MailingService {
     const platformSettings = await this.prisma.frontendSettings.findFirst({
       include: { logoAsset: true, faviconAsset: true },
     });
+    // SEC: use uploaded asset publicUrl (absolute R2 URL) when available; fall back to
+    // well-known paths relative to FRONTEND_URL so image tokens never resolve to empty src.
+    const frontendUrl = (process.env.FRONTEND_URL || process.env.APP_URL || '').replace(/\/$/, '');
     const platformLogoUrl = platformSettings?.logoAsset?.publicUrl || '';
-    const platformIconUrl = platformSettings?.faviconAsset?.publicUrl || '';
+    const platformIconUrl =
+      platformSettings?.faviconAsset?.publicUrl ||
+      (frontendUrl ? `${frontendUrl}/favicon.ico` : '');
 
     for (const recipient of recipients) {
       lastUserId = recipient.id;

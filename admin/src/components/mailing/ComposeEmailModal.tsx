@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { X, Send, Eye, FileText, Save } from 'lucide-react'
-import DOMPurify from 'dompurify'
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
 import { useApiClient, apiService } from '../../services/api'
 import { MailingTemplate } from '../../types/api'
 import TemplatePickerModal from './TemplatePickerModal'
+import EmailPreview from './EmailPreview'
 
 interface Props {
   isOpen: boolean
@@ -59,7 +59,7 @@ const ComposeEmailModal: React.FC<Props> = ({ isOpen, onClose, onSend, loading, 
     <>
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
         <div className="w-full max-w-2xl bg-white rounded-lg shadow-xl max-h-[90vh] flex flex-col">
-          <div className="flex items-center justify-between p-4 border-b">
+          <div className="flex items-center justify-between p-4 border-b shrink-0">
             <h3 className="text-lg font-semibold text-gray-900">{t('admin:mailing.compose.title')}</h3>
             <div className="flex items-center gap-2">
               <button
@@ -105,10 +105,13 @@ const ComposeEmailModal: React.FC<Props> = ({ isOpen, onClose, onSend, loading, 
               </div>
 
               {showPreview ? (
-                <div
-                  className="border border-gray-300 rounded-md p-3 min-h-[200px] text-sm bg-white prose prose-sm max-w-none"
-                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(bodyHtml) }}
-                />
+                <div className="border border-gray-200 rounded-md bg-gray-100 overflow-y-auto" style={{ maxHeight: '320px' }}>
+                  <div className="p-2">
+                    <div className="bg-white rounded shadow-sm overflow-hidden">
+                      <EmailPreview html={bodyHtml} />
+                    </div>
+                  </div>
+                </div>
               ) : (
                 <textarea
                   value={bodyHtml}
@@ -160,7 +163,7 @@ const ComposeEmailModal: React.FC<Props> = ({ isOpen, onClose, onSend, loading, 
                     onClick={() => { setShowSaveAs(false); setSaveAsName('') }}
                     className="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-700"
                   >
-                    {t('admin:mailing.segment.delete')}
+                    {t('admin:mailing.campaign.detail.cancel')}
                   </button>
                 </div>
               </div>
@@ -175,7 +178,7 @@ const ComposeEmailModal: React.FC<Props> = ({ isOpen, onClose, onSend, loading, 
             )}
           </div>
 
-          <div className="flex justify-end gap-2 p-4 border-t">
+          <div className="flex justify-end gap-2 p-4 border-t shrink-0">
             <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">
               {t('admin:mailing.campaign.detail.cancel')}
             </button>
