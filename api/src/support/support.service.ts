@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, ForbiddenException, BadRequestException,
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { SupportTicketResponse } from './dto/support.dto';
-import { MailgunService } from './mailgun.service';
+import { ResendService } from './resend.service';
 import { EmailTemplateService } from '../email-notification/email-template.service';
 import { SupportGateway } from './support.gateway';
 import { UserRole } from '@prisma/client';
@@ -16,7 +16,7 @@ export class SupportService {
 
   constructor(
     private prisma: PrismaService,
-    private mailgunService: MailgunService,
+    private mailgunService: ResendService,
     private emailTemplateService: EmailTemplateService,
     private configService: ConfigService,
     @Optional() @Inject(SupportGateway) private supportGateway?: SupportGateway,

@@ -2,14 +2,14 @@ import { Module } from '@nestjs/common';
 import { EmailNotificationController } from './email-notification.controller';
 import { EmailNotificationService } from './email-notification.service';
 import { EmailTemplateService } from './email-template.service';
+import { ResendTransportService } from './resend-transport.service';
 import { PrismaModule } from '../prisma/prisma.module';
 import { AuthModule } from '../auth/auth.module';
-import { MailingModule } from '../mailing/mailing.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, MailingModule],
+  imports: [PrismaModule, AuthModule],
   controllers: [EmailNotificationController],
-  providers: [EmailNotificationService, EmailTemplateService],
-  exports: [EmailNotificationService, EmailTemplateService],
+  providers: [EmailNotificationService, EmailTemplateService, ResendTransportService],
+  exports: [EmailNotificationService, EmailTemplateService, ResendTransportService],
 })
 export class EmailNotificationModule {}
