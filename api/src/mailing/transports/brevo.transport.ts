@@ -1,3 +1,4 @@
+import { BrevoClient } from '@getbrevo/brevo';
 import {
   MailingTransportAdapter,
   MailingSendOptions,
@@ -14,24 +15,16 @@ function parseAddress(raw: string): { name: string; email: string } {
 }
 
 export class BrevoTransport implements MailingTransportAdapter {
-  private apiInstance: any = null;
+  private client: BrevoClient | null = null;
 
   constructor() {
     if (this.isConfigured()) {
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const SibApiV3Sdk = require('sib-api-v3-sdk');
-        const defaultClient = SibApiV3Sdk.ApiClient.instance;
-        defaultClient.authentications['api-key'].apiKey = process.env.BREVO_API_KEY!.trim();
-        this.apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
-      } catch {
-        // sib-api-v3-sdk not available — adapter stays disabled
-      }
+      this.client = new BrevoClient({ apiKey: process.env.BREVO_API_KEY!.trim() });
     }
   }
 
   async sendEmail(options: MailingSendOptions): Promise<MailingSendResult> {
-    if (!this.apiInstance) {
+    if (!this.client) {
       return { success: false, error: 'Brevo transport not initialised', provider: 'brevo' };
     }
 
@@ -44,30 +37,28 @@ export class BrevoTransport implements MailingTransportAdapter {
     const replyToEmail = options.replyTo ?? process.env.BREVO_REPLY_TO;
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const SibApiV3Sdk = require('sib-api-v3-sdk');
-      const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
-
-      sendSmtpEmail.sender = { name: sender.name, email: sender.email };
-      sendSmtpEmail.to = [{ email: options.to }];
-      sendSmtpEmail.subject = options.subject;
-      sendSmtpEmail.htmlContent = options.html;
-      sendSmtpEmail.textContent = options.text;
+      const body: Record<string, any> = {
+        sender: { name: sender.name, email: sender.email },
+        to: [{ email: options.to }],
+        subject: options.subject,
+        htmlContent: options.html,
+        textContent: options.text,
+      };
 
       if (replyToEmail) {
-        sendSmtpEmail.replyTo = { email: replyToEmail };
+        body.replyTo = { email: replyToEmail };
       }
       if (options.tags?.length) {
-        sendSmtpEmail['o:tag'] = options.tags;
+        body.tags = options.tags;
       }
       if (options.metadata && Object.keys(options.metadata).length) {
-        sendSmtpEmail.headers = Object.fromEntries(
+        body.headers = Object.fromEntries(
           Object.entries(options.metadata).map(([k, v]) => [`X-${k}`, v]),
         );
       }
 
-      const response = await this.apiInstance.sendTransacEmail(sendSmtpEmail);
-      const messageId: string | undefined = response?.body?.messageId ?? response?.messageId ?? undefined;
+      const response = await this.client.transactionalEmails.sendTransacEmail(body);
+      const messageId: string | undefined = (response as any)?.messageId ?? undefined;
 
       return { success: true, messageId, provider: 'brevo' };
     } catch (error: any) {
