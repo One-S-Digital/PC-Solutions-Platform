@@ -26,6 +26,7 @@ import { CreateSegmentDto, UpdateSegmentDto } from './dto/segment.dto';
 import { CreateCampaignDto, SendBatchDto } from './dto/campaign.dto';
 import { ExportRequestDto } from './dto/export.dto';
 import { CreateCustomListDto, UpdateCustomListDto, ManageCustomListMembersDto } from './dto/custom-list.dto';
+import { CreateTemplateDto, UpdateTemplateDto } from './dto/template.dto';
 import { MailingFiltersDto } from './dto/mailing-filters.dto';
 
 @ApiTags('admin/mailing')
@@ -362,5 +363,47 @@ export class MailingController {
       page ? parseInt(page, 10) : 1,
       pageSize ? parseInt(pageSize, 10) : 20,
     );
+  }
+
+  /* ================================================================ */
+  /*  EMAIL TEMPLATES                                                  */
+  /* ================================================================ */
+
+  @Post('templates')
+  @ApiOperation({ summary: 'Create an email template' })
+  async createTemplate(@Body() body: CreateTemplateDto, @Request() req: any) {
+    const adminId = this.getAdminId(req);
+    return this.mailingService.createTemplate(body, adminId);
+  }
+
+  @Get('templates')
+  @ApiOperation({ summary: 'List email templates' })
+  async listTemplates(
+    @Query('page') page?: string,
+    @Query('pageSize') pageSize?: string,
+  ) {
+    return this.mailingService.listTemplates(
+      page ? parseInt(page, 10) : 1,
+      pageSize ? parseInt(pageSize, 10) : 50,
+    );
+  }
+
+  @Get('templates/:id')
+  @ApiOperation({ summary: 'Get email template detail' })
+  async getTemplate(@Param('id') id: string) {
+    return this.mailingService.getTemplate(id);
+  }
+
+  @Put('templates/:id')
+  @ApiOperation({ summary: 'Update an email template' })
+  async updateTemplate(@Param('id') id: string, @Body() body: UpdateTemplateDto) {
+    return this.mailingService.updateTemplate(id, body);
+  }
+
+  @Delete('templates/:id')
+  @ApiOperation({ summary: 'Delete an email template' })
+  async deleteTemplate(@Param('id') id: string) {
+    await this.mailingService.deleteTemplate(id);
+    return { success: true, message: 'Template deleted' };
   }
 }

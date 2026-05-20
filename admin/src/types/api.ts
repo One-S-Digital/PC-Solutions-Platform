@@ -695,6 +695,26 @@ export interface MailingCustomListMember {
 }
 
 
+export interface MailingTemplate {
+  id: string;
+  name: string;
+  description: string | null;
+  subject: string;
+  bodyHtml?: string;
+  bodyText?: string | null;
+  createdById: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MailingTemplateListResponse {
+  templates: MailingTemplate[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
 export interface ApiResponse<T> {
   success: boolean;
   message: string;

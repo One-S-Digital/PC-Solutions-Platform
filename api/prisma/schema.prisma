@@ -321,6 +321,7 @@ model User {
 
   // Mailing custom list memberships
   mailingCustomListMemberships MailingCustomListMember[]
+  mailingTemplates             MailingTemplate[]          @relation("MailingTemplateCreator")
 
   // Replacement staffing relations
   replacementRequests  ReplacementRequest[]  @relation("UserReplacementRequests")
@@ -2674,6 +2675,23 @@ model MailingCustomListMember {
   @@index([listId])
   @@index([userId])
   @@map("mailing_custom_list_members")
+}
+
+model MailingTemplate {
+  id          String   @id @default(uuid())
+  name        String
+  description String?  @db.Text
+  subject     String
+  bodyHtml    String   @db.Text @map("body_html")
+  bodyText    String?  @db.Text @map("body_text")
+  createdById String   @map("created_by_id")
+  createdBy   User     @relation("MailingTemplateCreator", fields: [createdById], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([createdById])
+  @@map("mailing_templates")
 }
 
 // ─── Replacement Staffing (Phase 3) ───────────────────────────────────────────

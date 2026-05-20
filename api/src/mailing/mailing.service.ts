@@ -748,6 +748,18 @@ export class MailingService {
 
     const unsubscribeBaseUrl = process.env.APP_URL || 'https://procrechesolutions.com';
 
+    // Fetch platform branding once for logo/icon tokens (same for all recipients)
+    const platformSettings = await this.prisma.frontendSettings.findFirst({
+      include: { logoAsset: true, faviconAsset: true },
+    });
+    // SEC: use uploaded asset publicUrl (absolute R2 URL) when available; fall back to
+    // well-known paths relative to FRONTEND_URL so image tokens never resolve to empty src.
+    const frontendUrl = (process.env.FRONTEND_URL || process.env.APP_URL || '').replace(/\/$/, '');
+    const platformLogoUrl = platformSettings?.logoAsset?.publicUrl || '';
+    const platformIconUrl =
+      platformSettings?.faviconAsset?.publicUrl ||
+      (frontendUrl ? `${frontendUrl}/favicon.ico` : '');
+
     for (const recipient of recipients) {
       lastUserId = recipient.id;
 
@@ -769,6 +781,8 @@ export class MailingService {
         role: recipient.role,
         orgName: org?.name || '',
         canton: org?.canton || '',
+        logoUrl: platformLogoUrl,
+        iconUrl: platformIconUrl,
         unsubscribeUrl,
       });
 
@@ -779,6 +793,8 @@ export class MailingService {
         role: recipient.role,
         orgName: org?.name || '',
         canton: org?.canton || '',
+        logoUrl: platformLogoUrl,
+        iconUrl: platformIconUrl,
         unsubscribeUrl,
       });
 
@@ -1120,5 +1136,79 @@ export class MailingService {
       pageSize: clampedPageSize,
       totalPages: Math.ceil(total / clampedPageSize),
     };
+  }
+
+  /* ================================================================ */
+  /*  EMAIL TEMPLATES                                                  */
+  /* ================================================================ */
+
+  async createTemplate(
+    data: { name: string; description?: string; subject: string; bodyHtml: string; bodyText?: string },
+    createdById: string,
+  ) {
+    const sanitisedHtml = this.sanitiseHtml(data.bodyHtml);
+    const plainText = data.bodyText || sanitisedHtml.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+    return this.prisma.mailingTemplate.create({
+      data: {
+        name: data.name,
+        description: data.description,
+        subject: data.subject.slice(0, 998),
+        bodyHtml: sanitisedHtml,
+        bodyText: plainText,
+        createdById,
+      },
+    });
+  }
+
+  async listTemplates(page = 1, pageSize = 50) {
+    const clampedPageSize = Math.min(Math.max(1, pageSize), MAX_PAGE_SIZE);
+    const clampedPage = Math.max(1, page);
+    const skip = (clampedPage - 1) * clampedPageSize;
+    const [templates, total] = await Promise.all([
+      this.prisma.mailingTemplate.findMany({
+        skip,
+        take: clampedPageSize,
+        orderBy: { updatedAt: 'desc' },
+        select: {
+          id: true, name: true, description: true, subject: true,
+          createdById: true, createdAt: true, updatedAt: true,
+        },
+      }),
+      this.prisma.mailingTemplate.count(),
+    ]);
+    return {
+      templates,
+      total,
+      page: clampedPage,
+      pageSize: clampedPageSize,
+      totalPages: Math.ceil(total / clampedPageSize),
+    };
+  }
+
+  async getTemplate(id: string) {
+    const template = await this.prisma.mailingTemplate.findUnique({ where: { id } });
+    if (!template) throw new NotFoundException('Template not found');
+    return template;
+  }
+
+  async updateTemplate(
+    id: string,
+    data: { name?: string; description?: string; subject?: string; bodyHtml?: string; bodyText?: string },
+  ) {
+    await this.getTemplate(id);
+    const updateData: any = { ...data };
+    if (data.bodyHtml !== undefined) {
+      updateData.bodyHtml = this.sanitiseHtml(data.bodyHtml);
+      if (data.bodyText === undefined) {
+        updateData.bodyText = updateData.bodyHtml.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+      }
+    }
+    if (data.subject !== undefined) updateData.subject = data.subject.slice(0, 998);
+    return this.prisma.mailingTemplate.update({ where: { id }, data: updateData });
+  }
+
+  async deleteTemplate(id: string) {
+    await this.getTemplate(id);
+    return this.prisma.mailingTemplate.delete({ where: { id } });
   }
 }

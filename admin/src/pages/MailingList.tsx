@@ -2,13 +2,13 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
-  Mail, Plus, Download, Send, Save, Trash2, RefreshCw, Users, BarChart3, List, UserPlus, Pencil, Check, X,
+  Mail, Plus, Download, Send, Save, Trash2, RefreshCw, Users, BarChart3, List, UserPlus, Pencil, Check, X, FileText,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
 
 import { useApiClient, apiService } from '../services/api'
-import { MailingFilters, MailingPreviewResponse, MailingSegment, MailingCustomList } from '../types/api'
+import { MailingFilters, MailingPreviewResponse, MailingSegment, MailingCustomList, MailingTemplate } from '../types/api'
 import { useDebouncedValue } from '../hooks/useDebouncedValue'
 import Card from '../components/design-system/Card'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
@@ -20,15 +20,22 @@ import ComposeEmailModal from '../components/mailing/ComposeEmailModal'
 import SendProgressOverlay from '../components/mailing/SendProgressOverlay'
 import AddToListModal from '../components/mailing/AddToListModal'
 import CustomListMembersModal from '../components/mailing/CustomListMembersModal'
+import TemplateEditorModal from '../components/mailing/TemplateEditorModal'
 
-type Tab = 'build' | 'segments' | 'campaigns' | 'lists'
+const MAILING_TEMPLATES_ENABLED = import.meta.env.VITE_MAILING_TEMPLATES !== 'false'
 
-const TAB_KEYS: { key: Tab; labelKey: string; icon: React.ElementType }[] = [
+type Tab = 'build' | 'segments' | 'campaigns' | 'lists' | 'templates'
+
+const BASE_TABS: { key: Tab; labelKey: string; icon: React.ElementType }[] = [
   { key: 'build', labelKey: 'admin:mailing.tabs.build', icon: Users },
   { key: 'lists', labelKey: 'admin:mailing.tabs.lists', icon: List },
   { key: 'segments', labelKey: 'admin:mailing.tabs.segments', icon: Save },
   { key: 'campaigns', labelKey: 'admin:mailing.tabs.campaigns', icon: BarChart3 },
 ]
+
+const TAB_KEYS = MAILING_TEMPLATES_ENABLED
+  ? [...BASE_TABS, { key: 'templates' as Tab, labelKey: 'admin:mailing.tabs.templates', icon: FileText }]
+  : BASE_TABS
 
 const statusBadge = (status: string) => {
   const map: Record<string, string> = {
@@ -59,7 +66,9 @@ const MailingListPage: React.FC = () => {
   const apiClient = useApiClient()
   const queryClient = useQueryClient()
 
-  const activeTab = (searchParams.get('tab') as Tab) || 'build'
+  const allowedTabs = TAB_KEYS.map((t) => t.key)
+  const rawTab = searchParams.get('tab') as Tab | null
+  const activeTab: Tab = rawTab && allowedTabs.includes(rawTab) ? rawTab : 'build'
   const setActiveTab = (tab: Tab) => setSearchParams({ tab })
 
   // ---- Build a List state ----
@@ -84,6 +93,12 @@ const MailingListPage: React.FC = () => {
   const [listExportModalOpen, setListExportModalOpen] = useState(false)
   const [editingListId, setEditingListId] = useState<string | null>(null)
   const [editingListName, setEditingListName] = useState('')
+
+  // Template state
+  const [templateEditorOpen, setTemplateEditorOpen] = useState(false)
+  const [editingTemplate, setEditingTemplate] = useState<MailingTemplate | null>(null)
+  const [templateActionLoading, setTemplateActionLoading] = useState(false)
+  const [templateFetchLoading, setTemplateFetchLoading] = useState(false)
 
   const toggleSelectUser = useCallback((id: string) => {
     setSelectedUserIds((prev) => {
@@ -173,6 +188,17 @@ const MailingListPage: React.FC = () => {
       return res.data
     },
     enabled: activeTab === 'lists' || addToListModalOpen,
+    retry: noRetryOnClientError,
+  })
+
+  // Templates query (only when the v2 flag is on)
+  const { data: templatesData, isLoading: templatesLoading } = useQuery({
+    queryKey: ['mailing-templates'],
+    queryFn: async () => {
+      const res = await apiService.mailingListTemplates(apiClient, { pageSize: 100 })
+      return res.data
+    },
+    enabled: MAILING_TEMPLATES_ENABLED && activeTab === 'templates',
     retry: noRetryOnClientError,
   })
 
@@ -773,6 +799,95 @@ const MailingListPage: React.FC = () => {
         </Card>
       )}
 
+      {/* TEMPLATES tab */}
+      {MAILING_TEMPLATES_ENABLED && activeTab === 'templates' && (
+        <Card className="overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+            <h3 className="text-sm font-semibold text-gray-700">
+              {t('admin:mailing.template.title')}
+              {templatesData?.total ? ` (${templatesData.total})` : ''}
+            </h3>
+            <button
+              onClick={() => { setEditingTemplate(null); setTemplateEditorOpen(true) }}
+              disabled={templateFetchLoading}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+            >
+              <Plus className="w-4 h-4" /> {t('admin:mailing.template.newTemplate')}
+            </button>
+          </div>
+          {templatesLoading ? (
+            <div className="flex justify-center py-16"><LoadingSpinner /></div>
+          ) : !templatesData?.templates?.length ? (
+            <div className="text-center py-16 text-gray-400">
+              <FileText className="w-10 h-10 mx-auto mb-3 text-gray-300" />
+              <p>{t('admin:mailing.template.noTemplates')}</p>
+              <p className="text-sm mt-1 text-gray-400">{t('admin:mailing.template.noTemplatesHint')}</p>
+            </div>
+          ) : (
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin:mailing.template.columns.name')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin:mailing.template.columns.subject')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin:mailing.template.columns.lastUpdated')}</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">{t('admin:mailing.template.columns.actions')}</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {templatesData.templates.map((tpl: MailingTemplate) => (
+                  <tr key={tpl.id} className="hover:bg-gray-50">
+                    <td className="px-4 py-3">
+                      <div className="text-sm font-medium text-gray-900">{tpl.name}</div>
+                      {tpl.description && <div className="text-xs text-gray-500 truncate max-w-xs">{tpl.description}</div>}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-600 truncate max-w-xs">{tpl.subject}</td>
+                    <td className="px-4 py-3 text-sm text-gray-500">{new Date(tpl.updatedAt).toLocaleDateString()}</td>
+                    <td className="px-4 py-3 text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <button
+                          onClick={async () => {
+                            setTemplateFetchLoading(true)
+                            try {
+                              const res = await apiService.mailingGetTemplate(apiClient, tpl.id)
+                              setEditingTemplate(res.data as MailingTemplate)
+                              setTemplateEditorOpen(true)
+                            } catch (err: any) {
+                              toast.error(err?.response?.data?.message || t('admin:mailing.template.loadFailed'))
+                            } finally {
+                              setTemplateFetchLoading(false)
+                            }
+                          }}
+                          disabled={templateFetchLoading}
+                          className="text-xs px-2 py-1 text-blue-600 hover:bg-blue-50 rounded disabled:opacity-50"
+                        >
+                          {t('admin:mailing.template.edit')}
+                        </button>
+                        <button
+                          onClick={async () => {
+                            if (!window.confirm(t('admin:mailing.template.deleteConfirm', { name: tpl.name }))) return
+                            try {
+                              await apiService.mailingDeleteTemplate(apiClient, tpl.id)
+                              queryClient.invalidateQueries({ queryKey: ['mailing-templates'] })
+                              toast.success(t('admin:mailing.template.deleted'))
+                            } catch (err: any) {
+                              toast.error(err?.response?.data?.message || t('admin:mailing.template.deleteFailed'))
+                            }
+                          }}
+                          className="p-1 text-gray-400 hover:text-red-600"
+                          title={t('admin:mailing.template.delete')}
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </Card>
+      )}
+
       {/* Modals */}
       <AddToListModal
         isOpen={addToListModalOpen}
@@ -843,6 +958,34 @@ const MailingListPage: React.FC = () => {
         loading={actionLoading}
         count={activeList?._count?.members ?? 0}
       />
+
+      {/* Template editor — only rendered when template flag is enabled */}
+      {MAILING_TEMPLATES_ENABLED && <TemplateEditorModal
+        isOpen={templateEditorOpen}
+        onClose={() => { setTemplateEditorOpen(false); setEditingTemplate(null) }}
+        title={editingTemplate ? t('admin:mailing.template.editTemplate') : t('admin:mailing.template.newTemplate')}
+        initial={editingTemplate ?? undefined}
+        loading={templateActionLoading}
+        onSave={async (data) => {
+          setTemplateActionLoading(true)
+          try {
+            if (editingTemplate) {
+              await apiService.mailingUpdateTemplate(apiClient, editingTemplate.id, data)
+              toast.success(t('admin:mailing.template.updated'))
+            } else {
+              await apiService.mailingCreateTemplate(apiClient, data)
+              toast.success(t('admin:mailing.template.created'))
+            }
+            queryClient.invalidateQueries({ queryKey: ['mailing-templates'] })
+            setTemplateEditorOpen(false)
+            setEditingTemplate(null)
+          } catch (err: any) {
+            toast.error(err?.response?.data?.message || t('admin:mailing.template.saveFailed'))
+          } finally {
+            setTemplateActionLoading(false)
+          }
+        }}
+      />}
     </div>
   )
 }
