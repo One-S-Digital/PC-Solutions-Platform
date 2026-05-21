@@ -1,4 +1,4 @@
-import { Injectable, Logger, BadRequestException, NotFoundException, ConflictException, ServiceUnavailableException } from '@nestjs/common';
+import { Injectable, Logger, BadRequestException, NotFoundException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { MailingTransportService } from './mailing-transport.service';
 import { MailingFiltersDto } from './dto/mailing-filters.dto';
@@ -1167,24 +1167,16 @@ export class MailingService {
   ) {
     const sanitisedHtml = this.sanitiseHtml(data.bodyHtml);
     const plainText = data.bodyText || sanitisedHtml.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
-    try {
-      return await this.prisma.mailingTemplate.create({
-        data: {
-          name: data.name,
-          description: data.description,
-          subject: data.subject.slice(0, 998),
-          bodyHtml: sanitisedHtml,
-          bodyText: plainText,
-          createdById,
-        },
-      });
-    } catch (err: any) {
-      if (err?.code === 'P2021' || err?.message?.includes('mailing_templates')) {
-        this.logger.error('mailing_templates table not found — database migration has not run yet.');
-        throw new ServiceUnavailableException('Template storage is not yet available. The database migration is pending — please retry after the next server deploy.');
-      }
-      throw err;
-    }
+    return this.prisma.mailingTemplate.create({
+      data: {
+        name: data.name,
+        description: data.description,
+        subject: data.subject.slice(0, 998),
+        bodyHtml: sanitisedHtml,
+        bodyText: plainText,
+        createdById,
+      },
+    });
   }
 
   async listTemplates(page = 1, pageSize = 50) {

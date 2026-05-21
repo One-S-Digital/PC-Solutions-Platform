@@ -372,8 +372,13 @@ export class MailingController {
   @Post('templates')
   @ApiOperation({ summary: 'Create an email template' })
   async createTemplate(@Body() body: CreateTemplateDto, @Request() req: any) {
-    const adminId = this.getAdminId(req);
-    return this.mailingService.createTemplate(body, adminId);
+    // MailingTemplate.createdById has a FK to users.id, so we need profileUserId
+    // (the User profile record), not appUserId (which is from the app_users table).
+    const creatorId = req.context?.profileUserId || req.user?.id;
+    if (!creatorId) {
+      throw new BadRequestException('Unable to determine admin user ID from request context');
+    }
+    return this.mailingService.createTemplate(body, creatorId);
   }
 
   @Get('templates')
