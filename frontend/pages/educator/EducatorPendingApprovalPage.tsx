@@ -10,7 +10,7 @@ const EducatorPendingApprovalPage: React.FC = () => {
   const { t } = useTranslation('dashboard');
 
   return (
-    <div className="min-h-screen bg-page-bg flex items-center justify-center p-4">
+    <div className="min-h-screen bg-page-bg flex items-start justify-center pt-8 px-4 pb-4">
       <div className="max-w-lg w-full bg-white rounded-2xl shadow-lg p-8 text-center">
         <div className="flex justify-center mb-6">
           <div className="w-20 h-20 rounded-full bg-amber-100 flex items-center justify-center">
