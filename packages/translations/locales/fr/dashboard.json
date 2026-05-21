@@ -165,6 +165,7 @@
     },
     "editProfile": "Modifier le profil",
     "editFullProfile": "Modifier le profil complet",
+    "goToMyProfile": "Accéder à mon profil",
     "education": {
       "empty": "Aucune formation ajoutée.",
       "graduated": "Diplômé(e)",

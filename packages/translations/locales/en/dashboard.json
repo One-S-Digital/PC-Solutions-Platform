@@ -406,6 +406,7 @@
     },
     "editProfile": "Edit Profile",
     "editFullProfile": "Edit Full Profile",
+    "goToMyProfile": "Go to My Profile",
     "education": {
       "empty": "No education added yet.",
       "graduated": "Graduated",

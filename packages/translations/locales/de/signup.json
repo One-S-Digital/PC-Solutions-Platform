@@ -186,7 +186,8 @@
     "cityRequired": "Stadt ist erforderlich",
     "shortBioRequired": "Kurzbiografie ist erforderlich",
     "professionalExperienceRequired": "Berufserfahrung ist erforderlich",
-    "jobRoleRequired": "Bitte wählen Sie Ihren Profiltyp"
+    "jobRoleRequired": "Bitte wählen Sie Ihren Profiltyp",
+    "cvRequired": "Bitte laden Sie Ihren Lebenslauf hoch"
   },
   "oauthCompletion": {
     "emailFromProvider": "E-Mail von Google bereitgestellt",

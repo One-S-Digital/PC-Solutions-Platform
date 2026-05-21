@@ -2,10 +2,12 @@ import React from 'react';
 import { ClockIcon, EnvelopeIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 import { useClerk } from '@clerk/clerk-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const EducatorPendingApprovalPage: React.FC = () => {
   const { signOut } = useClerk();
   const navigate = useNavigate();
+  const { t } = useTranslation('dashboard');
 
   return (
     <div className="min-h-screen bg-page-bg flex items-center justify-center p-4">
@@ -48,7 +50,7 @@ const EducatorPendingApprovalPage: React.FC = () => {
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-swiss-mint text-white text-sm font-medium hover:bg-opacity-90 transition-colors"
               >
                 <UserCircleIcon className="w-4 h-4" />
-                Go to My Profile
+                {t('educatorProfilePage.goToMyProfile', 'Go to My Profile')}
               </button>
             </div>
           </div>
