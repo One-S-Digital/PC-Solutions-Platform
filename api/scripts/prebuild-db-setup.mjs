@@ -1543,21 +1543,47 @@ const main = async () => {
 
   // Mailing templates table — creates the table idempotently so the non-IF-NOT-EXISTS
   // migration SQL can't block subsequent deploys if it previously failed or was skipped.
+  // Uses direct SQL against _prisma_migrations to bypass `prisma migrate resolve` quirks
+  // when a migration is in "failed" state (finished_at IS NULL).
   try {
     log('🔧 Preparing mailing_templates table...');
+
+    // Step 1: Create table + index + FK idempotently (no-op if already exists)
     ensureMailingTemplates();
-    // Mark migrations as applied so Prisma skips re-running their non-idempotent CREATE TABLE.
+
+    // Step 2: Mark both migrations as applied directly in _prisma_migrations so
+    // `prisma migrate deploy` never tries to re-run the non-idempotent CREATE TABLE SQL.
+    // This handles all states: never-run, failed, or rolled-back.
+    const markAppliedSql = `
+DO $$
+DECLARE
+  m1 TEXT := '20260520010000_add_mailing_templates';
+  m2 TEXT := '20260520020000_mailing_templates_fk';
+BEGIN
+  -- For each migration: if a row exists but is not cleanly applied, fix it.
+  -- If no row exists, prisma migrate resolve --applied will insert one later.
+  UPDATE "_prisma_migrations"
+  SET finished_at = NOW(), rolled_back_at = NULL, logs = NULL, applied_steps_count = 1
+  WHERE migration_name IN (m1, m2)
+    AND (finished_at IS NULL OR rolled_back_at IS NOT NULL);
+END $$;
+`;
+    runSql(markAppliedSql);
+
+    // Step 3: For migrations that were never in _prisma_migrations at all,
+    // use prisma migrate resolve --applied to insert the tracking row.
     await resolveMigration('applied', '20260520010000_add_mailing_templates');
     await resolveMigration('applied', '20260520020000_mailing_templates_fk');
+
     log('✅ mailing_templates ready.');
   } catch (e) {
     warn(`⚠️  mailing_templates preparation failed: ${e.message}`);
+    // Last-resort: at minimum ensure the table exists so the app can start
     try {
-      forceMarkMigrationRolledBack('20260520010000_add_mailing_templates');
-      forceMarkMigrationRolledBack('20260520020000_mailing_templates_fk');
       ensureMailingTemplates();
+      log('✅ mailing_templates table created (migration state may need manual fix).');
     } catch (e2) {
-      error(`❌ Could not prepare mailing_templates: ${e2.message}`);
+      error(`❌ Could not create mailing_templates table: ${e2.message}`);
     }
   }
 
