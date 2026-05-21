@@ -19,19 +19,20 @@ const EducatorPendingApprovalPage: React.FC = () => {
         </div>
 
         <h1 className="text-2xl font-bold text-gray-900 mb-3">
-          Profile Under Review
+          {t('educatorProfilePage.pendingApproval.title')}
         </h1>
         <p className="text-gray-600 mb-6">
-          Thank you for signing up as an educator! Your profile is currently being reviewed by our team.
-          You will receive an email once your application has been processed.
+          {t('educatorProfilePage.pendingApproval.description')}
         </p>
 
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 text-left space-y-2">
-          <p className="text-sm font-medium text-amber-800">What happens next?</p>
+          <p className="text-sm font-medium text-amber-800">
+            {t('educatorProfilePage.pendingApproval.whatHappensNext')}
+          </p>
           <ul className="text-sm text-amber-700 space-y-1 list-disc list-inside">
-            <li>Our team reviews your submitted profile</li>
-            <li>You receive an approval or feedback email</li>
-            <li>Once approved, you get full access to the platform</li>
+            <li>{t('educatorProfilePage.pendingApproval.step1')}</li>
+            <li>{t('educatorProfilePage.pendingApproval.step2')}</li>
+            <li>{t('educatorProfilePage.pendingApproval.step3')}</li>
           </ul>
         </div>
 
@@ -40,17 +41,17 @@ const EducatorPendingApprovalPage: React.FC = () => {
             <UserCircleIcon className="w-5 h-5 text-swiss-mint mt-0.5 flex-shrink-0" />
             <div className="flex-1">
               <p className="text-sm font-semibold text-swiss-charcoal mb-1">
-                Complete your profile
+                {t('educatorProfilePage.pendingApproval.completeProfileTitle')}
               </p>
               <p className="text-sm text-gray-600 mb-3">
-                While you wait for approval, make sure your profile is complete and up to date. A complete profile increases your chances of being matched with the right opportunities.
+                {t('educatorProfilePage.pendingApproval.completeProfileDescription')}
               </p>
               <button
                 onClick={() => navigate('/educator/profile')}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-swiss-mint text-white text-sm font-medium hover:bg-opacity-90 transition-colors"
               >
                 <UserCircleIcon className="w-4 h-4" />
-                {t('educatorProfilePage.goToMyProfile', 'Go to My Profile')}
+                {t('educatorProfilePage.goToMyProfile')}
               </button>
             </div>
           </div>
@@ -62,13 +63,13 @@ const EducatorPendingApprovalPage: React.FC = () => {
             className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors"
           >
             <EnvelopeIcon className="w-4 h-4" />
-            Contact Support
+            {t('educatorProfilePage.pendingApproval.contactSupport')}
           </a>
           <button
             onClick={() => signOut().catch((err) => console.error('Sign out failed:', err))}
             className="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors"
           >
-            Sign Out
+            {t('educatorProfilePage.pendingApproval.signOut')}
           </button>
         </div>
       </div>

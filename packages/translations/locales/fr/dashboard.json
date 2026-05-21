@@ -166,6 +166,18 @@
     "editProfile": "Modifier le profil",
     "editFullProfile": "Modifier le profil complet",
     "goToMyProfile": "Accéder à mon profil",
+    "pendingApproval": {
+      "title": "Profil en cours d'examen",
+      "description": "Merci de vous être inscrit(e) en tant qu'éducateur/trice ! Votre profil est actuellement examiné par notre équipe. Vous recevrez un e-mail une fois votre candidature traitée.",
+      "whatHappensNext": "Que se passe-t-il ensuite ?",
+      "step1": "Notre équipe examine votre profil soumis",
+      "step2": "Vous recevez un e-mail d'approbation ou de retour d'information",
+      "step3": "Une fois approuvé(e), vous avez pleinement accès à la plateforme",
+      "completeProfileTitle": "Complétez votre profil",
+      "completeProfileDescription": "En attendant l'approbation, assurez-vous que votre profil est complet et à jour. Un profil complet augmente vos chances d'être mis(e) en relation avec les bonnes opportunités.",
+      "contactSupport": "Contacter le support",
+      "signOut": "Se déconnecter"
+    },
     "education": {
       "empty": "Aucune formation ajoutée.",
       "graduated": "Diplômé(e)",

@@ -167,6 +167,18 @@
     "editProfile": "Profil bearbeiten",
     "editFullProfile": "Vollständiges Profil bearbeiten",
     "goToMyProfile": "Zu meinem Profil",
+    "pendingApproval": {
+      "title": "Profil wird überprüft",
+      "description": "Vielen Dank für Ihre Registrierung als Lehrperson! Ihr Profil wird derzeit von unserem Team geprüft. Sie erhalten eine E-Mail, sobald Ihre Bewerbung bearbeitet wurde.",
+      "whatHappensNext": "Was passiert als Nächstes?",
+      "step1": "Unser Team prüft Ihr eingereichtes Profil",
+      "step2": "Sie erhalten eine Genehmigungs- oder Feedback-E-Mail",
+      "step3": "Nach der Genehmigung haben Sie vollen Zugriff auf die Plattform",
+      "completeProfileTitle": "Vervollständigen Sie Ihr Profil",
+      "completeProfileDescription": "Stellen Sie sicher, dass Ihr Profil während der Wartezeit vollständig und aktuell ist. Ein vollständiges Profil erhöht Ihre Chancen, mit den richtigen Möglichkeiten vermittelt zu werden.",
+      "contactSupport": "Support kontaktieren",
+      "signOut": "Abmelden"
+    },
     "education": {
       "empty": "Keine Ausbildung hinzugefügt.",
       "graduated": "Abschluss",

@@ -407,6 +407,18 @@
     "editProfile": "Edit Profile",
     "editFullProfile": "Edit Full Profile",
     "goToMyProfile": "Go to My Profile",
+    "pendingApproval": {
+      "title": "Profile Under Review",
+      "description": "Thank you for signing up as an educator! Your profile is currently being reviewed by our team. You will receive an email once your application has been processed.",
+      "whatHappensNext": "What happens next?",
+      "step1": "Our team reviews your submitted profile",
+      "step2": "You receive an approval or feedback email",
+      "step3": "Once approved, you get full access to the platform",
+      "completeProfileTitle": "Complete your profile",
+      "completeProfileDescription": "While you wait for approval, make sure your profile is complete and up to date. A complete profile increases your chances of being matched with the right opportunities.",
+      "contactSupport": "Contact Support",
+      "signOut": "Sign Out"
+    },
     "education": {
       "empty": "No education added yet.",
       "graduated": "Graduated",
