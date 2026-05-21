@@ -169,8 +169,8 @@ export class ReplacementsService {
     await this.notify(
       educatorId,
       NotificationType.REPLACEMENT_MATCH_PROPOSED,
-      'Replacement match proposed',
-      `You have been proposed for a replacement shift: ${request.role}`,
+      'Remplacement proposé',
+      `Vous avez été proposé·e pour un remplacement : ${request.role}`,
       `/educator/replacements`,
     );
 
@@ -238,11 +238,17 @@ export class ReplacementsService {
           ? NotificationType.REPLACEMENT_MATCH_DECLINED
           : NotificationType.REPLACEMENT_MATCH_CONFIRMED;
 
+    const replacementStatusFr =
+      dto.status === ReplacementMatchStatus.ACCEPTED
+        ? 'accepté'
+        : dto.status === ReplacementMatchStatus.DECLINED
+          ? 'refusé'
+          : 'confirmé';
     await this.notify(
       match.request.requestedById,
       notifType,
-      `Replacement match ${dto.status.toLowerCase()}`,
-      `An educator has ${dto.status.toLowerCase()} your replacement request.`,
+      `Remplacement ${replacementStatusFr}`,
+      `Un·e éducateur·trice a ${replacementStatusFr} votre demande de remplacement.`,
       `/foundation/replacements`,
     );
 
