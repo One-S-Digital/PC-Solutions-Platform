@@ -2990,7 +2990,7 @@ model KnowledgeDocument {
   version     Int      @default(1)
   title       String
   content     String                      @db.Text
-  embedding   Unsupported("vector(768)")?
+  embedding   Unsupported("vector(512)")?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -3040,7 +3040,7 @@ model StaffingRequestEmbedding {
   staffingRequestId String   @unique
   model             String   @default("voyage-3-lite")
   profileHash       String
-  embedding         Unsupported("vector(768)")?
+  embedding         Unsupported("vector(512)")?
   createdAt         DateTime @default(now())
 
   staffingRequest StaffingRequest @relation(fields: [staffingRequestId], references: [id], onDelete: Cascade)
@@ -3084,7 +3084,7 @@ model EducatorEmbedding {
   userId      String   @unique
   model       String   @default("voyage-3-lite")
   profileHash String
-  embedding   Unsupported("vector(768)")?
+  embedding   Unsupported("vector(512)")?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

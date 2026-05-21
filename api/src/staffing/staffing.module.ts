@@ -6,6 +6,7 @@ import { StaffingController } from './staffing.controller';
 import { StaffingService } from './staffing.service';
 import { HybridMatcherService } from './hybrid-matcher.service';
 import { StaffingQueuesModule } from './queues/staffing-queues.module';
+import { StaffingParseProcessor } from './workers/staffing-parse.processor';
 import { StaffingMatchProcessor } from './workers/staffing-match.processor';
 import { StaffingExplainProcessor } from './workers/staffing-explain.processor';
 import { StaffingEmbedProfileProcessor, StaffingEmbedRequestProcessor } from './workers/staffing-embed.processor';
@@ -19,6 +20,7 @@ import { REDIS_ENABLED } from '../common/redis.config';
     HybridMatcherService,
     ...(REDIS_ENABLED
       ? [
+          StaffingParseProcessor,
           StaffingMatchProcessor,
           StaffingExplainProcessor,
           StaffingEmbedProfileProcessor,

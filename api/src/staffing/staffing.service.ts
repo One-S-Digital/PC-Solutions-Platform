@@ -3,17 +3,22 @@ import {
   Logger,
   NotFoundException,
   ForbiddenException,
+  Optional,
 } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { PrismaService } from '../prisma/prisma.service';
 import { LlmClient } from '../ai/llm-client';
-import { StaffingRequestParserSchema } from '../ai/agents/staffing-request-parser/schema';
+import {
+  StaffingRequestParserSchema,
+  StaffingRequestParserOutput,
+} from '../ai/agents/staffing-request-parser/schema';
 import { HybridMatcherService } from './hybrid-matcher.service';
 import { CreateStaffingRequestDto } from './dto/create-staffing-request.dto';
 import { UserRole } from '@prisma/client';
-import { REDIS_ENABLED } from '../../common/redis.config';
+import { REDIS_ENABLED } from '../common/redis.config';
 import {
+  STAFFING_PARSE_REQUEST_QUEUE,
   STAFFING_MATCH_QUEUE,
   STAFFING_EXPLAIN_QUEUE,
   STAFFING_EMBED_PROFILE_QUEUE,
@@ -38,14 +43,16 @@ export class StaffingService {
     private readonly prisma: PrismaService,
     private readonly llm: LlmClient,
     private readonly matcher: HybridMatcherService,
-    @InjectQueue(STAFFING_MATCH_QUEUE)
-    private readonly matchQueue: Queue,
-    @InjectQueue(STAFFING_EXPLAIN_QUEUE)
-    private readonly explainQueue: Queue,
-    @InjectQueue(STAFFING_EMBED_REQUEST_QUEUE)
-    private readonly embedRequestQueue: Queue,
-    @InjectQueue(STAFFING_EMBED_PROFILE_QUEUE)
-    private readonly embedProfileQueue: Queue,
+    @Optional() @InjectQueue(STAFFING_PARSE_REQUEST_QUEUE)
+    private readonly parseQueue: Queue | null = null,
+    @Optional() @InjectQueue(STAFFING_MATCH_QUEUE)
+    private readonly matchQueue: Queue | null = null,
+    @Optional() @InjectQueue(STAFFING_EXPLAIN_QUEUE)
+    private readonly explainQueue: Queue | null = null,
+    @Optional() @InjectQueue(STAFFING_EMBED_REQUEST_QUEUE)
+    private readonly embedRequestQueue: Queue | null = null,
+    @Optional() @InjectQueue(STAFFING_EMBED_PROFILE_QUEUE)
+    private readonly embedProfileQueue: Queue | null = null,
   ) {}
 
   async createRequest(
@@ -59,7 +66,6 @@ export class StaffingService {
     const locale = dto.locale ?? 'fr';
     const isShort = dto.rawText.length <= SYNC_THRESHOLD_CHARS;
 
-    // ── Create the raw record immediately ───────────────────────────────────
     const request = await this.prisma.staffingRequest.create({
       data: {
         foundationId: principal.organizationId,
@@ -71,41 +77,23 @@ export class StaffingService {
     });
 
     if (isShort) {
-      // ── Synchronous parse preview ────────────────────────────────────────
+      // Sync parse preview for snappy UI
       try {
-        const { output } = await this.llm.run({
-          agent: 'staffing-request-parser',
-          input: { rawText: dto.rawText },
-          schema: StaffingRequestParserSchema,
-          locale,
-          principal,
-          entityRef: request.id,
-        });
-
-        await this.prisma.staffingRequest.update({
-          where: { id: request.id },
-          data: {
-            ...this.parsedOutputToData(output),
-            status: 'PARSED',
-          },
-        });
-
-        // Kick off async matching in background
-        await this.enqueueMatchJobs(request.id);
-
+        await this.parseRequest(request.id, principal);
+        await this.enqueueMatchAndEmbed(request.id);
         return this.prisma.staffingRequest.findUniqueOrThrow({
           where: { id: request.id },
         });
       } catch (err) {
         this.logger.error(`Sync parse failed for request ${request.id}`, err);
-        // Return the raw record; background queue will retry parsing
-        await this.enqueueMatchJobs(request.id);
+        // Fall back to async parse path so we don't lose the request
+        await this.enqueueParse(request.id);
         return request;
       }
     }
 
-    // ── Long input — fully async ─────────────────────────────────────────────
-    await this.enqueueMatchJobs(request.id);
+    // Long input — fully async: parse first, then match
+    await this.enqueueParse(request.id);
     return request;
   }
 
@@ -151,12 +139,51 @@ export class StaffingService {
     });
   }
 
-  // Called by the match queue processor
+  // Called by parse-request processor or sync path.
+  // Runs the LLM parser and writes structured fields back to the StaffingRequest.
+  async parseRequest(requestId: string, principal?: StaffingPrincipal) {
+    const req = await this.prisma.staffingRequest.findUniqueOrThrow({
+      where: { id: requestId },
+    });
+
+    const resolvedPrincipal: StaffingPrincipal = principal ?? {
+      userId: req.createdById,
+      role: UserRole.FOUNDATION,
+      organizationId: req.foundationId,
+    };
+
+    const { output } = await this.llm.run({
+      agent: 'staffing-request-parser',
+      input: { rawText: req.rawText },
+      schema: StaffingRequestParserSchema,
+      locale: (req.locale as 'fr' | 'de' | 'en') ?? 'fr',
+      principal: resolvedPrincipal,
+      entityRef: req.id,
+    });
+
+    await this.prisma.staffingRequest.update({
+      where: { id: req.id },
+      data: { ...this.parsedOutputToData(output), status: 'PARSED' },
+    });
+  }
+
+  // Called by the match-queue processor. Defensive: if status is still
+  // PENDING_PARSE (e.g. parse failed and was retried, but caller bypassed it),
+  // run the parser before matching.
   async runMatching(requestId: string) {
+    const req = await this.prisma.staffingRequest.findUniqueOrThrow({
+      where: { id: requestId },
+      select: { id: true, status: true, createdById: true, foundationId: true },
+    });
+
+    if (req.status === 'PENDING_PARSE') {
+      this.logger.warn(`Request ${requestId} reached match worker unparsed — parsing inline`);
+      await this.parseRequest(requestId);
+    }
+
     const count = await this.matcher.match(requestId);
     this.logger.log(`Matched ${count} candidates for request ${requestId}`);
 
-    // Enqueue explanations for the top 5
     const top = await this.prisma.matchResult.findMany({
       where: { staffingRequestId: requestId },
       orderBy: { totalScore: 'desc' },
@@ -164,7 +191,7 @@ export class StaffingService {
       select: { id: true },
     });
 
-    if (REDIS_ENABLED) {
+    if (this.explainQueue) {
       for (const m of top) {
         await this.explainQueue.add({ matchResultId: m.id });
       }
@@ -173,21 +200,36 @@ export class StaffingService {
     return count;
   }
 
-  private async enqueueMatchJobs(requestId: string) {
-    if (!REDIS_ENABLED) {
-      // Fallback: run synchronously in dev when Redis is absent
+  // Called by the parse-request processor after a successful parse.
+  async enqueueMatchAndEmbed(requestId: string) {
+    if (!REDIS_ENABLED || !this.matchQueue) {
+      // No Redis → run match synchronously so the dev flow still works
       await this.matcher.match(requestId).catch((err) =>
         this.logger.error('Sync fallback match failed', err),
       );
       return;
     }
     await this.matchQueue.add({ staffingRequestId: requestId });
-    await this.embedRequestQueue.add({ staffingRequestId: requestId });
+    if (this.embedRequestQueue) {
+      await this.embedRequestQueue.add({ staffingRequestId: requestId });
+    }
   }
 
-  private parsedOutputToData(
-    output: Awaited<ReturnType<typeof StaffingRequestParserSchema.parseAsync>>,
-  ) {
+  private async enqueueParse(requestId: string) {
+    if (!REDIS_ENABLED || !this.parseQueue) {
+      // Dev fallback: parse + match inline
+      try {
+        await this.parseRequest(requestId);
+        await this.matcher.match(requestId);
+      } catch (err) {
+        this.logger.error(`Sync fallback parse/match failed for ${requestId}`, err);
+      }
+      return;
+    }
+    await this.parseQueue.add({ staffingRequestId: requestId });
+  }
+
+  private parsedOutputToData(output: StaffingRequestParserOutput) {
     return {
       roleRequired: output.roleRequired ?? null,
       contractType: output.contractType ?? null,

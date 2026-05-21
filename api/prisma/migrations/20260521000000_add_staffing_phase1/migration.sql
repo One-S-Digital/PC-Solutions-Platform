@@ -56,7 +56,7 @@ ALTER TABLE "job_listings"
 -- ─── Additive column on knowledge_documents ──────────────────────────────────
 
 ALTER TABLE "knowledge_documents"
-  ADD COLUMN IF NOT EXISTS "embedding" vector(768);
+  ADD COLUMN IF NOT EXISTS "embedding" vector(512);
 
 CREATE INDEX IF NOT EXISTS knowledge_documents_embedding_hnsw
   ON "knowledge_documents"
@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS "staffing_request_embeddings" (
   "staffingRequestId" TEXT NOT NULL,
   "model"             TEXT NOT NULL DEFAULT 'voyage-3-lite',
   "profileHash"       TEXT NOT NULL,
-  "embedding"         vector(768),
+  "embedding"         vector(512),
   "createdAt"         TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   CONSTRAINT "staffing_request_embeddings_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "staffing_request_embeddings_staffingRequestId_key" UNIQUE ("staffingRequestId"),
@@ -156,7 +156,7 @@ CREATE TABLE IF NOT EXISTS "educator_embeddings" (
   "userId"      TEXT NOT NULL,
   "model"       TEXT NOT NULL DEFAULT 'voyage-3-lite',
   "profileHash" TEXT NOT NULL,
-  "embedding"   vector(768),
+  "embedding"   vector(512),
   "createdAt"   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updatedAt"   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   CONSTRAINT "educator_embeddings_pkey" PRIMARY KEY ("id"),

@@ -67,9 +67,7 @@ export class StaffingEmbedProfileProcessor {
     if (existing?.profileHash === hash) return; // unchanged
 
     try {
-      const vector = await this.llm.embed(text);
-      // Store as raw JSON array — Prisma cannot write vector type directly;
-      // we use a raw query instead.
+      const { embedding } = await this.llm.embed(text);
       await this.prisma.$executeRawUnsafe(
         `INSERT INTO educator_embeddings ("id","userId","model","profileHash","embedding","updatedAt")
          VALUES (gen_random_uuid(), $1, 'voyage-3-lite', $2, $3::vector, NOW())
@@ -79,7 +77,7 @@ export class StaffingEmbedProfileProcessor {
                "updatedAt"   = NOW()`,
         userId,
         hash,
-        JSON.stringify(vector),
+        JSON.stringify(embedding),
       );
     } catch (err) {
       this.logger.error(`Profile embed failed for user ${userId}`, err);
@@ -119,7 +117,7 @@ export class StaffingEmbedRequestProcessor {
     const hash = createHash('sha256').update(text).digest('hex');
 
     try {
-      const vector = await this.llm.embed(text);
+      const { embedding } = await this.llm.embed(text);
       await this.prisma.$executeRawUnsafe(
         `INSERT INTO staffing_request_embeddings ("id","staffingRequestId","model","profileHash","embedding","createdAt")
          VALUES (gen_random_uuid(), $1, 'voyage-3-lite', $2, $3::vector, NOW())
@@ -128,7 +126,7 @@ export class StaffingEmbedRequestProcessor {
                "embedding"   = EXCLUDED."embedding"`,
         staffingRequestId,
         hash,
-        JSON.stringify(vector),
+        JSON.stringify(embedding),
       );
     } catch (err) {
       this.logger.error(`Request embed failed for ${staffingRequestId}`, err);
