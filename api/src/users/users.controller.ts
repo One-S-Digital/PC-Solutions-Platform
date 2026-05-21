@@ -31,6 +31,7 @@ import { Public } from '../auth/decorators/public.decorator';
 import { AllowPending } from '../auth/decorators/allow-pending.decorator';
 import { ConfigService } from '@nestjs/config';
 import { createClerkClient } from '@clerk/clerk-sdk-node';
+import { EmailNotificationService } from '../email-notification/email-notification.service';
 
 @Controller('users')
 @UseGuards(ClerkAuthGuard, RolesGuard)
@@ -41,11 +42,25 @@ export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly configService: ConfigService,
+    private readonly emailNotificationService: EmailNotificationService,
   ) {
     const clerkSecretKey = this.configService.get<string>('CLERK_SECRET_KEY');
     if (clerkSecretKey) {
       this.clerk = createClerkClient({ secretKey: clerkSecretKey });
     }
+  }
+
+  private getRoleLabelFr(role: string): string {
+    const labels: Record<string, string> = {
+      PARENT: 'Parent',
+      EDUCATOR: 'Éducateur·trice',
+      FOUNDATION: 'Fondation',
+      PRODUCT_SUPPLIER: 'Fournisseur de produits',
+      SERVICE_PROVIDER: 'Prestataire de services',
+      ADMIN: 'Administrateur·trice',
+      SUPER_ADMIN: 'Super Administrateur·trice',
+    };
+    return labels[role] ?? role;
   }
 
   /**
@@ -146,6 +161,23 @@ export class UsersController {
 
       throw new InternalServerErrorException('Failed to send invitation. Please try again later.');
     }
+
+    // Send French invitation email from our platform (fire-and-forget).
+    // Prefer the Clerk invitation's redirect URL so the link matches the actual invitation flow.
+    const inviteEmailUrl = invitation?.redirectUrl || inviteRedirectUrl;
+    this.emailNotificationService.sendNotification({
+      event: 'invite_to_apply',
+      recipient: dto.email,
+      payload: {
+        firstName: '',
+        role: this.getRoleLabelFr(dto.role),
+        inviteUrl: inviteEmailUrl,
+      },
+      allowUnknownRecipient: true,
+      bypassPreferences: true,
+    }).catch((err: any) => {
+      this.logger.warn(`French invitation email failed for ${maskedEmail}: ${err?.message || err}`);
+    });
 
     return {
       success: true,

@@ -161,8 +161,8 @@ export class InternPoolService {
     await this.notify(
       application.request.postedById,
       NotificationType.INTERN_APPLICATION_RECEIVED,
-      'New intern application',
-      `An intern has applied to your placement: ${application.request.title}`,
+      'Nouvelle candidature de stage',
+      `Un·e stagiaire a postulé à votre annonce : ${application.request.title}`,
       `/foundation/intern-pool`,
     );
 
@@ -239,11 +239,17 @@ export class InternPoolService {
           ? NotificationType.INTERN_APPLICATION_DECLINED
           : NotificationType.INTERN_APPLICATION_CONFIRMED;
 
+    const statusFr =
+      dto.status === InternPoolApplicationStatus.ACCEPTED
+        ? 'acceptée'
+        : dto.status === InternPoolApplicationStatus.DECLINED
+          ? 'refusée'
+          : 'confirmée';
     await this.notify(
       application.applicantId,
       notifType,
-      `Internship application ${dto.status.toLowerCase()}`,
-      `Your application for "${application.request.title}" has been ${dto.status.toLowerCase()}.`,
+      `Candidature de stage ${statusFr}`,
+      `Votre candidature pour « ${application.request.title} » a été ${statusFr}.`,
       `/educator/intern-pool`,
     );
 
@@ -280,8 +286,8 @@ export class InternPoolService {
     await this.notify(
       applicantId,
       NotificationType.INTERN_REQUEST_POSTED,
-      'Internship placement proposed',
-      `You have been invited to apply for an internship: ${request.title}`,
+      'Stage proposé',
+      `Vous avez été invité·e à postuler pour un stage : ${request.title}`,
       `/educator/intern-pool`,
     );
 
