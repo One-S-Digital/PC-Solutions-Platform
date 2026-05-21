@@ -1,5 +1,11 @@
 # AI Integration — Layer 1 Handover
 
+> ⚠️ **This document is historical reference.** The active strategic plan is **`docs/AI_ASSISTANT_MASTER_PLAN.md`** — which supersedes this doc's "what to build next" section. The "what was built" inventory below remains accurate for Layer 1 / Phase 0.
+>
+> **Phase 1 (Internal Matching MVP)** described in §4 below has been **completed on branch `claude/review-handover-plan-UHBvr`** (commit `9f1a9f3`). See the master plan for the remaining work.
+
+---
+
 **Branch:** `claude/analyze-ai-layer-1-8rj9s`
 **PR:** #647
 **Status:** Layer 1 (Phase 0 — Shared AI Foundation) **complete and pushed**. Layer 2 (Phases 1–6) **not started**.
