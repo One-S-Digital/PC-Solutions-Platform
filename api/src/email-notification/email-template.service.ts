@@ -576,7 +576,18 @@ export class EmailTemplateService {
   }
 
   private async ensureStarterTemplatesExist(): Promise<void> {
-    // Upsert each template so the French content is always applied, even on existing installations.
+    // Insert-only: skipDuplicates preserves any admin-edited templates already in the DB.
+    // Run the admin "Reset to defaults" action to force-overwrite with French content.
+    const data = this.getStarterTemplates();
+    await this.prisma.emailTemplate.createMany({
+      data,
+      skipDuplicates: true,
+    });
+  }
+
+  async resetTemplatesToDefaults(): Promise<void> {
+    // Admin-triggered hard reset: upserts all starter templates with the current French content.
+    // This intentionally overwrites admin edits; use only when a full French re-seed is required.
     const data = this.getStarterTemplates();
     for (const template of data) {
       await this.prisma.emailTemplate.upsert({
@@ -1343,6 +1354,108 @@ export class EmailTemplateService {
           Vous recevrez un autre e-mail dès que votre candidature aura été traitée.
 
           Des questions ? Contactez notre équipe d'assistance : {{supportUrl}}
+
+          Cordialement,
+          L'équipe Pro Crèche Solutions
+        `,
+      },
+      replacement_match_proposed: {
+        subject: 'Vous avez été proposé(e) pour un remplacement',
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Remplacement proposé</h2>
+            <p>Bonjour {{firstName}},</p>
+            <p>Vous avez été proposé(e) pour le remplacement suivant :</p>
+            <ul>
+              <li><strong>Rôle :</strong> {{role}}</li>
+              <li><strong>Dates :</strong> {{startDate}} – {{endDate}}</li>
+              <li><strong>Lieu :</strong> {{location}}</li>
+            </ul>
+            <p>Veuillez vous connecter pour accepter ou refuser cette proposition.</p>
+            <div style="text-align: center; margin: 24px 0;">
+              <a href="{{requestUrl}}" style="background-color: #14B8A6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Voir la proposition</a>
+            </div>
+            <p>Cordialement,<br>L'équipe Pro Crèche Solutions</p>
+          </div>
+        `,
+        textContent: `
+          Bonjour {{firstName}},
+
+          Vous avez été proposé(e) pour le remplacement suivant :
+
+          Rôle : {{role}}
+          Dates : {{startDate}} – {{endDate}}
+          Lieu : {{location}}
+
+          Voir : {{requestUrl}}
+
+          Cordialement,
+          L'équipe Pro Crèche Solutions
+        `,
+      },
+      educator_approved: {
+        subject: 'Votre profil d\'éducateur·trice a été approuvé !',
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Votre profil a été approuvé !</h2>
+            <p>Bonjour {{firstName}},</p>
+            <p>Excellente nouvelle ! Votre profil d'éducateur·trice sur Pro Crèche Solutions a été examiné et <strong>approuvé</strong> par notre équipe.</p>
+            <p>Vous avez désormais un accès complet à la plateforme. Voici ce que vous pouvez faire :</p>
+            <ul>
+              <li>Parcourir et postuler aux offres d'emploi</li>
+              <li>Compléter votre profil professionnel</li>
+              <li>Rejoindre le pool de candidats pour les remplacements</li>
+              <li>Entrer en contact avec des organisations de garde d'enfants</li>
+            </ul>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="{{dashboardUrl}}" style="background-color: #14B8A6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Accéder à mon tableau de bord</a>
+            </div>
+            <p>Bienvenue dans la communauté Pro Crèche Solutions !</p>
+            <p>Cordialement,<br>L'équipe Pro Crèche Solutions</p>
+          </div>
+        `,
+        textContent: `
+          Votre profil a été approuvé !
+
+          Bonjour {{firstName}},
+
+          Excellente nouvelle ! Votre profil d'éducateur·trice sur Pro Crèche Solutions a été examiné et approuvé par notre équipe.
+
+          Accéder à votre tableau de bord : {{dashboardUrl}}
+
+          Bienvenue dans la communauté Pro Crèche Solutions !
+
+          Cordialement,
+          L'équipe Pro Crèche Solutions
+        `,
+      },
+      educator_rejected: {
+        subject: 'Mise à jour de votre candidature d\'éducateur·trice',
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Mise à jour de votre candidature</h2>
+            <p>Bonjour {{firstName}},</p>
+            <p>Merci de l'intérêt que vous portez à Pro Crèche Solutions en tant qu'éducateur·trice. Après examen de votre profil, nous ne sommes pas en mesure d'approuver votre candidature pour le moment.</p>
+            <div style="background-color: #FEF2F2; border-left: 4px solid #EF4444; padding: 12px 16px; margin: 20px 0; border-radius: 4px;">
+              <p style="margin: 0;"><strong>Motif :</strong> {{rejectionNotes}}</p>
+            </div>
+            <p>Si vous pensez que cette décision est erronée, veuillez contacter notre équipe d'assistance.</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="{{supportUrl}}" style="background-color: #6B7280; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Contacter l'assistance</a>
+            </div>
+            <p>Cordialement,<br>L'équipe Pro Crèche Solutions</p>
+          </div>
+        `,
+        textContent: `
+          Mise à jour de votre candidature
+
+          Bonjour {{firstName}},
+
+          Merci de l'intérêt que vous portez à Pro Crèche Solutions en tant qu'éducateur·trice. Après examen de votre profil, nous ne sommes pas en mesure d'approuver votre candidature pour le moment.
+
+          Motif : {{rejectionNotes}}
+
+          Contacter l'assistance : {{supportUrl}}
 
           Cordialement,
           L'équipe Pro Crèche Solutions

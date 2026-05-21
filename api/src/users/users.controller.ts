@@ -163,17 +163,15 @@ export class UsersController {
     }
 
     // Send French invitation email from our platform (fire-and-forget).
-    const appUrl =
-      this.configService.get<string>('APP_URL') ||
-      this.configService.get<string>('FRONTEND_URL') ||
-      '';
+    // Prefer the Clerk invitation's redirect URL so the link matches the actual invitation flow.
+    const inviteEmailUrl = invitation?.redirectUrl || inviteRedirectUrl;
     this.emailNotificationService.sendNotification({
       event: 'invite_to_apply',
       recipient: dto.email,
       payload: {
         firstName: '',
         role: this.getRoleLabelFr(dto.role),
-        inviteUrl: `${appUrl}/login`,
+        inviteUrl: inviteEmailUrl,
       },
       allowUnknownRecipient: true,
       bypassPreferences: true,
