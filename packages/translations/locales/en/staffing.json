@@ -1,0 +1,45 @@
+{
+  "page": { "title": "Staffing Requests", "subtitle": "Find and match educators to your needs" },
+  "form": {
+    "placeholder": "Describe your staffing need in free text (role, schedule, canton, start date, languages…)",
+    "submit": "Find Candidates",
+    "submitting": "Searching…"
+  },
+  "status": {
+    "PENDING_PARSE": "Processing…",
+    "PARSED": "Parsed",
+    "MATCHING": "Matching candidates…",
+    "MATCHED": "Matches ready",
+    "NO_MATCHES": "No matches found",
+    "ERROR": "Error"
+  },
+  "request": {
+    "label": "Request",
+    "role": "Role",
+    "canton": "Canton",
+    "startDate": "Start date",
+    "contract": "Contract",
+    "hours": "h/week",
+    "languages": "Languages",
+    "ageGroups": "Age groups"
+  },
+  "matches": {
+    "title": "Candidate Matches",
+    "empty": "No candidates found yet. This may take a moment.",
+    "score": "Match score",
+    "distance": "{{km}} km away",
+    "explanation": "Why this candidate",
+    "viewProfile": "View profile",
+    "count_one": "{{count}} candidate found",
+    "count_other": "{{count}} candidates found"
+  },
+  "history": {
+    "title": "Recent Requests",
+    "empty": "No requests yet",
+    "newRequest": "New Request"
+  },
+  "errors": {
+    "createFailed": "Failed to create request. Please try again.",
+    "fetchFailed": "Failed to load matches."
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "panel": {
+    "title": "Assistant ProCrèche",
+    "placeholder": "Posez-moi n'importe quelle question… (ex. « Trouvez une EDE à Genève à 60% »)",
+    "send": "Envoyer",
+    "close": "Fermer",
+    "clear": "Effacer la conversation",
+    "thinking": "Réflexion en cours…",
+    "streaming": "Réponse en cours…"
+  },
+  "welcome": {
+    "heading": "Bonjour, je suis votre assistant ProCrèche",
+    "subheading": "Je peux vous aider à trouver des candidats, rédiger des offres d'emploi et naviguer sur la plateforme.",
+    "suggestions": {
+      "staffing": "Trouver un éducateur pour la semaine prochaine",
+      "jobPost": "Rédiger une offre d'emploi",
+      "help": "Comment publier une offre d'emploi ?"
+    }
+  },
+  "tool": {
+    "proposing": "Je vais {{action}} — confirmez pour continuer.",
+    "executing": "Exécution en cours…",
+    "done": "Terminé",
+    "failed": "Échec de l'action",
+    "confirmButton": "Confirmer",
+    "cancelButton": "Annuler",
+    "openModal": "Ouverture…",
+    "searchCandidates": "Recherche de candidats…",
+    "explainMatch": "Génération de l'explication…",
+    "draftJobPost": "Rédaction de l'offre…",
+    "draftParentReply": "Rédaction de la réponse…"
+  },
+  "modal": {
+    "prefilled": "Pré-rempli depuis votre demande — vérifiez avant de soumettre."
+  },
+  "errors": {
+    "sendFailed": "Échec de l'envoi du message. Veuillez réessayer.",
+    "streamFailed": "Connexion perdue. Veuillez réessayer.",
+    "notEnabled": "L'assistant IA n'est pas encore activé pour votre compte."
+  },
+  "role": {
+    "user": "Vous",
+    "assistant": "Assistant",
+    "system": "Système"
+  }
+}

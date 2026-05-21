@@ -1,0 +1,45 @@
+{
+  "page": { "title": "Demandes de personnel", "subtitle": "Trouvez et associez des éducateurs à vos besoins" },
+  "form": {
+    "placeholder": "Décrivez votre besoin en personnel en texte libre (rôle, horaire, canton, date de début, langues…)",
+    "submit": "Trouver des candidats",
+    "submitting": "Recherche en cours…"
+  },
+  "status": {
+    "PENDING_PARSE": "En cours de traitement…",
+    "PARSED": "Analysé",
+    "MATCHING": "Recherche de candidats…",
+    "MATCHED": "Correspondances prêtes",
+    "NO_MATCHES": "Aucune correspondance trouvée",
+    "ERROR": "Erreur"
+  },
+  "request": {
+    "label": "Demande",
+    "role": "Rôle",
+    "canton": "Canton",
+    "startDate": "Date de début",
+    "contract": "Contrat",
+    "hours": "h/semaine",
+    "languages": "Langues",
+    "ageGroups": "Groupes d'âge"
+  },
+  "matches": {
+    "title": "Candidats correspondants",
+    "empty": "Aucun candidat trouvé pour l'instant. Cela peut prendre un moment.",
+    "score": "Score de correspondance",
+    "distance": "{{km}} km",
+    "explanation": "Pourquoi ce candidat",
+    "viewProfile": "Voir le profil",
+    "count_one": "{{count}} candidat trouvé",
+    "count_other": "{{count}} candidats trouvés"
+  },
+  "history": {
+    "title": "Demandes récentes",
+    "empty": "Aucune demande pour l'instant",
+    "newRequest": "Nouvelle demande"
+  },
+  "errors": {
+    "createFailed": "Échec de la création de la demande. Veuillez réessayer.",
+    "fetchFailed": "Impossible de charger les correspondances."
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "panel": {
+    "title": "ProCrèche Assistant",
+    "placeholder": "Ask me anything… (e.g. \"Find an EDE in Geneva at 60%\")",
+    "send": "Send",
+    "close": "Close",
+    "clear": "Clear conversation",
+    "thinking": "Thinking…",
+    "streaming": "Responding…"
+  },
+  "welcome": {
+    "heading": "Hello, I'm your ProCrèche Assistant",
+    "subheading": "I can help you find candidates, draft job posts, and navigate the platform.",
+    "suggestions": {
+      "staffing": "Find me an educator for next week",
+      "jobPost": "Draft a job post",
+      "help": "How do I publish a job listing?"
+    }
+  },
+  "tool": {
+    "proposing": "I'll {{action}} — confirm to proceed.",
+    "executing": "Executing…",
+    "done": "Done",
+    "failed": "Action failed",
+    "confirmButton": "Confirm",
+    "cancelButton": "Cancel",
+    "openModal": "Opening…",
+    "searchCandidates": "Searching for candidates…",
+    "explainMatch": "Generating explanation…",
+    "draftJobPost": "Drafting job post…",
+    "draftParentReply": "Drafting reply…"
+  },
+  "modal": {
+    "prefilled": "Pre-filled from your request — review before submitting."
+  },
+  "errors": {
+    "sendFailed": "Failed to send message. Please try again.",
+    "streamFailed": "Connection lost. Please try again.",
+    "notEnabled": "AI Assistant is not yet enabled for your account."
+  },
+  "role": {
+    "user": "You",
+    "assistant": "Assistant",
+    "system": "System"
+  }
+}

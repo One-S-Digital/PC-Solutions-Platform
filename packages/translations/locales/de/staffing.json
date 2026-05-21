@@ -1,0 +1,45 @@
+{
+  "page": { "title": "Personalanfragen", "subtitle": "Finden und vermitteln Sie Erzieher für Ihren Bedarf" },
+  "form": {
+    "placeholder": "Beschreiben Sie Ihren Personalbedarf in Freitextform (Rolle, Zeitplan, Kanton, Startdatum, Sprachen…)",
+    "submit": "Kandidaten suchen",
+    "submitting": "Suche läuft…"
+  },
+  "status": {
+    "PENDING_PARSE": "Wird verarbeitet…",
+    "PARSED": "Analysiert",
+    "MATCHING": "Kandidaten werden gesucht…",
+    "MATCHED": "Treffer bereit",
+    "NO_MATCHES": "Keine Treffer gefunden",
+    "ERROR": "Fehler"
+  },
+  "request": {
+    "label": "Anfrage",
+    "role": "Rolle",
+    "canton": "Kanton",
+    "startDate": "Startdatum",
+    "contract": "Vertrag",
+    "hours": "Std./Woche",
+    "languages": "Sprachen",
+    "ageGroups": "Altersgruppen"
+  },
+  "matches": {
+    "title": "Passende Kandidaten",
+    "empty": "Noch keine Kandidaten gefunden. Dies kann einen Moment dauern.",
+    "score": "Übereinstimmung",
+    "distance": "{{km}} km entfernt",
+    "explanation": "Warum dieser Kandidat",
+    "viewProfile": "Profil ansehen",
+    "count_one": "{{count}} Kandidat gefunden",
+    "count_other": "{{count}} Kandidaten gefunden"
+  },
+  "history": {
+    "title": "Letzte Anfragen",
+    "empty": "Noch keine Anfragen",
+    "newRequest": "Neue Anfrage"
+  },
+  "errors": {
+    "createFailed": "Anfrage konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
+    "fetchFailed": "Treffer konnten nicht geladen werden."
+  }
+}

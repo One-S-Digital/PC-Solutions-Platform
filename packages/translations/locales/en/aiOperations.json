@@ -1,0 +1,94 @@
+{
+  "title": "AI Operations",
+  "tabs": {
+    "overview": "Overview",
+    "agents": "Agents",
+    "auditLog": "Audit Log",
+    "cost": "Cost",
+    "knowledge": "Knowledge",
+    "safety": "Safety",
+    "settings": "Settings"
+  },
+  "overview": {
+    "totalCalls": "Total Calls",
+    "totalTokens": "Total Tokens",
+    "totalCost": "Total Cost",
+    "cacheHitRate": "Cache Hit Rate",
+    "liveFeed": "Live Activity",
+    "providerStatus": "Provider Status",
+    "featureFlag": "AI Foundation Enabled",
+    "enable": "Enable",
+    "disable": "Disable",
+    "noActivity": "No recent activity"
+  },
+  "agents": {
+    "title": "Agent Registry",
+    "calls": "Calls (24h)",
+    "cost": "Cost (24h)",
+    "latency": "Avg Latency",
+    "cacheRate": "Cache Rate",
+    "fallbackRate": "Fallback Rate",
+    "configEditor": "Configuration",
+    "promptVersion": "Prompt Version",
+    "save": "Save",
+    "saving": "Saving…",
+    "noAgents": "No agents configured"
+  },
+  "auditLog": {
+    "title": "Audit Log",
+    "agent": "Agent",
+    "model": "Model",
+    "principal": "User",
+    "tokens": "Tokens",
+    "cost": "Cost",
+    "latency": "Latency",
+    "cache": "Cache",
+    "fallback": "Fallback",
+    "date": "Date",
+    "cacheHit": "Hit",
+    "cacheMiss": "Miss",
+    "yes": "Yes",
+    "no": "No",
+    "noEntries": "No audit log entries",
+    "filters": {
+      "agent": "Filter by agent",
+      "dateFrom": "From",
+      "dateTo": "To",
+      "cacheOnly": "Cache hits only",
+      "fallbackOnly": "Fallback only"
+    }
+  },
+  "cost": {
+    "mtdSpend": "Month-to-date spend",
+    "projectedEom": "Projected end-of-month",
+    "topAgents": "Top agents by cost",
+    "dailyChart": "Daily cost (USD)",
+    "noData": "No cost data yet"
+  },
+  "knowledge": {
+    "title": "Knowledge Documents",
+    "source": "Source",
+    "locale": "Locale",
+    "scope": "Canton scope",
+    "version": "Version",
+    "empty": "No knowledge documents indexed"
+  },
+  "safety": {
+    "title": "Safety & Consent",
+    "totalConsents": "Total Consents",
+    "revoked": "Revoked",
+    "pending": "Pending",
+    "noData": "No consent data"
+  },
+  "settings": {
+    "title": "Settings",
+    "envCheck": "Environment",
+    "envOk": "Configured",
+    "envMissing": "Missing",
+    "killSwitch": "Kill Switch",
+    "killSwitchDesc": "Disabling AI Foundation will immediately halt all AI calls."
+  },
+  "errors": {
+    "loadFailed": "Failed to load AI operations data"
+  }
+}

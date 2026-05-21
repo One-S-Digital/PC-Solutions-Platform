@@ -1,0 +1,94 @@
+{
+  "title": "Opérations IA",
+  "tabs": {
+    "overview": "Vue d'ensemble",
+    "agents": "Agents",
+    "auditLog": "Journal d'audit",
+    "cost": "Coûts",
+    "knowledge": "Connaissances",
+    "safety": "Sécurité",
+    "settings": "Paramètres"
+  },
+  "overview": {
+    "totalCalls": "Total des appels",
+    "totalTokens": "Total des jetons",
+    "totalCost": "Coût total",
+    "cacheHitRate": "Taux de cache",
+    "liveFeed": "Activité en direct",
+    "providerStatus": "Statut du fournisseur",
+    "featureFlag": "IA Foundation activée",
+    "enable": "Activer",
+    "disable": "Désactiver",
+    "noActivity": "Aucune activité récente"
+  },
+  "agents": {
+    "title": "Registre des agents",
+    "calls": "Appels (24h)",
+    "cost": "Coût (24h)",
+    "latency": "Latence moy.",
+    "cacheRate": "Taux de cache",
+    "fallbackRate": "Taux de secours",
+    "configEditor": "Configuration",
+    "promptVersion": "Version du prompt",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "noAgents": "Aucun agent configuré"
+  },
+  "auditLog": {
+    "title": "Journal d'audit",
+    "agent": "Agent",
+    "model": "Modèle",
+    "principal": "Utilisateur",
+    "tokens": "Jetons",
+    "cost": "Coût",
+    "latency": "Latence",
+    "cache": "Cache",
+    "fallback": "Secours",
+    "date": "Date",
+    "cacheHit": "Succès",
+    "cacheMiss": "Échec",
+    "yes": "Oui",
+    "no": "Non",
+    "noEntries": "Aucune entrée dans le journal d'audit",
+    "filters": {
+      "agent": "Filtrer par agent",
+      "dateFrom": "Du",
+      "dateTo": "Au",
+      "cacheOnly": "Succès de cache uniquement",
+      "fallbackOnly": "Secours uniquement"
+    }
+  },
+  "cost": {
+    "mtdSpend": "Dépenses du mois en cours",
+    "projectedEom": "Projection fin de mois",
+    "topAgents": "Agents les plus coûteux",
+    "dailyChart": "Coût journalier (USD)",
+    "noData": "Aucune donnée de coût"
+  },
+  "knowledge": {
+    "title": "Documents de connaissances",
+    "source": "Source",
+    "locale": "Langue",
+    "scope": "Canton concerné",
+    "version": "Version",
+    "empty": "Aucun document de connaissances indexé"
+  },
+  "safety": {
+    "title": "Sécurité & Consentement",
+    "totalConsents": "Total des consentements",
+    "revoked": "Révoqués",
+    "pending": "En attente",
+    "noData": "Aucune donnée de consentement"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "envCheck": "Environnement",
+    "envOk": "Configuré",
+    "envMissing": "Manquant",
+    "killSwitch": "Interrupteur d'urgence",
+    "killSwitchDesc": "La désactivation de l'IA Foundation interrompra immédiatement tous les appels IA."
+  },
+  "errors": {
+    "loadFailed": "Impossible de charger les données des opérations IA"
+  }
+}
