@@ -1,0 +1,29 @@
+import React, { useState } from 'react';
+import { useAppContext } from '../../contexts/AppContext';
+import { UserRole } from '../../types';
+import { AssistantButton } from './AssistantButton';
+import { AssistantPanel } from './AssistantPanel';
+
+const ALLOWED_ROLES: UserRole[] = [UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN];
+
+export const AssistantContainer: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { currentUser } = useAppContext();
+
+  // Only render for allowed roles
+  if (!currentUser || !ALLOWED_ROLES.includes(currentUser.role)) {
+    return null;
+  }
+
+  // Feature-flag gate: VITE_AI_ASSISTANT_ENABLED must be "true" if set
+  // If the env var is absent we still show the assistant for allowed roles
+  const featureEnabled = import.meta.env.VITE_AI_ASSISTANT_ENABLED !== 'false';
+  if (!featureEnabled) return null;
+
+  return (
+    <>
+      {!isOpen && <AssistantButton onOpen={() => setIsOpen(true)} />}
+      <AssistantPanel isOpen={isOpen} onClose={() => setIsOpen(false)} />
+    </>
+  );
+};

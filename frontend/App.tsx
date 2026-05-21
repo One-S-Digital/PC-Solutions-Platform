@@ -73,6 +73,7 @@ import ServiceProviderSettingsPage from './pages/ServiceProviderSettingsPage';
 
 // Foundation Pages (some may reuse existing top-level pages)
 import FoundationReplacementsPage from './pages/foundation/FoundationReplacementsPage';
+import { AssistantContainer } from './components/assistant';
 import FoundationInternPoolPage from './pages/foundation/FoundationInternPoolPage';
 import FoundationDashboardPage from './pages/foundation/FoundationDashboardPage';
 import FoundationOrdersAppointmentsPage from './pages/foundation/FoundationOrdersAppointmentsPage';
@@ -620,6 +621,7 @@ const ProtectedLayout: React.FC = () => {
 
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
+        <AssistantContainer />
       </MainLayout>
   );
 };
