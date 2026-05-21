@@ -1251,6 +1251,53 @@ END $$;
   log('✅ Organization contactEmail schema verified.');
 };
 
+const ensureMailingTemplates = () => {
+  const sql = `
+DO $$
+BEGIN
+  -- Create mailing_templates table if it doesn't exist
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.tables
+    WHERE table_schema = 'public' AND table_name = 'mailing_templates'
+  ) THEN
+    CREATE TABLE "mailing_templates" (
+        "id" TEXT NOT NULL,
+        "name" TEXT NOT NULL,
+        "description" TEXT,
+        "subject" TEXT NOT NULL,
+        "body_html" TEXT NOT NULL,
+        "body_text" TEXT,
+        "created_by_id" TEXT NOT NULL,
+        "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT "mailing_templates_pkey" PRIMARY KEY ("id")
+    );
+  END IF;
+
+  -- Create index if it doesn't exist
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_indexes
+    WHERE tablename = 'mailing_templates' AND indexname = 'mailing_templates_created_by_id_idx'
+  ) THEN
+    CREATE INDEX "mailing_templates_created_by_id_idx" ON "mailing_templates"("created_by_id");
+  END IF;
+
+  -- Add FK constraint if it doesn't exist
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'mailing_templates_created_by_id_fkey'
+  ) THEN
+    ALTER TABLE "mailing_templates"
+      ADD CONSTRAINT "mailing_templates_created_by_id_fkey"
+      FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+  END IF;
+END $$;
+`;
+
+  log('Ensuring mailing_templates table exists...');
+  runSql(sql);
+  log('✅ mailing_templates table verified.');
+};
+
 const main = async () => {
   log(`Using schema: ${SCHEMA_PATH}`);
   log(`Using Prisma CLI: ${PRISMA_BIN ? PRISMA_BIN : 'npx prisma (fallback)'}`);
@@ -1491,6 +1538,26 @@ const main = async () => {
       ensureOrganizationContactEmail();
     } catch (e2) {
       error(`❌ Could not prepare for migration: ${e2.message}`);
+    }
+  }
+
+  // Mailing templates table — creates the table idempotently so the non-IF-NOT-EXISTS
+  // migration SQL can't block subsequent deploys if it previously failed or was skipped.
+  try {
+    log('🔧 Preparing mailing_templates table...');
+    ensureMailingTemplates();
+    // Mark migrations as applied so Prisma skips re-running their non-idempotent CREATE TABLE.
+    await resolveMigration('applied', '20260520010000_add_mailing_templates');
+    await resolveMigration('applied', '20260520020000_mailing_templates_fk');
+    log('✅ mailing_templates ready.');
+  } catch (e) {
+    warn(`⚠️  mailing_templates preparation failed: ${e.message}`);
+    try {
+      forceMarkMigrationRolledBack('20260520010000_add_mailing_templates');
+      forceMarkMigrationRolledBack('20260520020000_mailing_templates_fk');
+      ensureMailingTemplates();
+    } catch (e2) {
+      error(`❌ Could not prepare mailing_templates: ${e2.message}`);
     }
   }
 

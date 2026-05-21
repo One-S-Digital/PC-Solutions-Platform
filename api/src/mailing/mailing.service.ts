@@ -1,4 +1,4 @@
-import { Injectable, Logger, BadRequestException, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, Logger, BadRequestException, NotFoundException, ConflictException, ServiceUnavailableException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { MailingTransportService } from './mailing-transport.service';
 import { MailingFiltersDto } from './dto/mailing-filters.dto';
@@ -1167,41 +1167,58 @@ export class MailingService {
   ) {
     const sanitisedHtml = this.sanitiseHtml(data.bodyHtml);
     const plainText = data.bodyText || sanitisedHtml.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
-    return this.prisma.mailingTemplate.create({
-      data: {
-        name: data.name,
-        description: data.description,
-        subject: data.subject.slice(0, 998),
-        bodyHtml: sanitisedHtml,
-        bodyText: plainText,
-        createdById,
-      },
-    });
+    try {
+      return await this.prisma.mailingTemplate.create({
+        data: {
+          name: data.name,
+          description: data.description,
+          subject: data.subject.slice(0, 998),
+          bodyHtml: sanitisedHtml,
+          bodyText: plainText,
+          createdById,
+        },
+      });
+    } catch (err: any) {
+      if (err?.code === 'P2021' || err?.message?.includes('mailing_templates')) {
+        this.logger.error('mailing_templates table not found — database migration has not run yet.');
+        throw new ServiceUnavailableException('Template storage is not yet available. The database migration is pending — please retry after the next server deploy.');
+      }
+      throw err;
+    }
   }
 
   async listTemplates(page = 1, pageSize = 50) {
     const clampedPageSize = Math.min(Math.max(1, pageSize), MAX_PAGE_SIZE);
     const clampedPage = Math.max(1, page);
     const skip = (clampedPage - 1) * clampedPageSize;
-    const [templates, total] = await Promise.all([
-      this.prisma.mailingTemplate.findMany({
-        skip,
-        take: clampedPageSize,
-        orderBy: { updatedAt: 'desc' },
-        select: {
-          id: true, name: true, description: true, subject: true,
-          createdById: true, createdAt: true, updatedAt: true,
-        },
-      }),
-      this.prisma.mailingTemplate.count(),
-    ]);
-    return {
-      templates,
-      total,
-      page: clampedPage,
-      pageSize: clampedPageSize,
-      totalPages: Math.ceil(total / clampedPageSize),
-    };
+    try {
+      const [templates, total] = await Promise.all([
+        this.prisma.mailingTemplate.findMany({
+          skip,
+          take: clampedPageSize,
+          orderBy: { updatedAt: 'desc' },
+          select: {
+            id: true, name: true, description: true, subject: true,
+            createdById: true, createdAt: true, updatedAt: true,
+          },
+        }),
+        this.prisma.mailingTemplate.count(),
+      ]);
+      return {
+        templates,
+        total,
+        page: clampedPage,
+        pageSize: clampedPageSize,
+        totalPages: Math.ceil(total / clampedPageSize),
+      };
+    } catch (err: any) {
+      // P2021 = table does not exist (migration pending); return empty list rather than 500.
+      if (err?.code === 'P2021' || err?.message?.includes('mailing_templates')) {
+        this.logger.warn('mailing_templates table not found — migration may be pending. Returning empty list.');
+        return { templates: [], total: 0, page: clampedPage, pageSize: clampedPageSize, totalPages: 0 };
+      }
+      throw err;
+    }
   }
 
   async getTemplate(id: string) {
