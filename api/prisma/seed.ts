@@ -992,6 +992,20 @@ async function seedAiFoundationFlag() {
       conditions: {},
     },
   });
+
+  await prisma.featureFlag.upsert({
+    where: { key: 'ai_staffing_matching' },
+    update: {},
+    create: {
+      name: 'AI Staffing Matching',
+      description: 'Phase 1 — Internal matching MVP: staffing-request-parser + hybrid matcher',
+      key: 'ai_staffing_matching',
+      isActive: false,
+      rolloutPercentage: 0,
+      targetSegments: [],
+      conditions: {},
+    },
+  });
 }
 
 function getMonthlyPrice(planCode: string): number {

@@ -64,6 +64,7 @@ import { MaintenanceModule } from './maintenance/maintenance.module';
 import { CategoriesModule } from './categories/categories.module';
 import { MailingModule } from './mailing/mailing.module';
 import { AiModule } from './ai/ai.module';
+import { StaffingModule } from './staffing/staffing.module';
 
 import {
   AUTH_REQUESTS_LIMIT,
@@ -158,6 +159,7 @@ import {
     CrawlerModule,
     MailingModule,
     AiModule,
+    StaffingModule,
   ],
   controllers: [AppController],
   providers: [

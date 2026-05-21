@@ -341,6 +341,20 @@ model User {
   // AI consent tracking
   candidateConsents    CandidateConsent[]    @relation("CandidateConsents")
 
+  // Geo + staffing matching (Phase 1)
+  latitude                  Decimal?
+  longitude                 Decimal?
+  geocodedAt                DateTime?
+  maxCommuteKm              Int?
+  availabilitySchemaVersion Int      @default(1)
+  lastMatchedAt             DateTime?
+  responsivenessScore       Decimal  @default(0)
+
+  // Staffing phase 1 relations
+  staffingRequests  StaffingRequest[]  @relation("UserStaffingRequests")
+  matchResults      MatchResult[]      @relation("UserMatchResults")
+  educatorEmbedding EducatorEmbedding? @relation("UserEducatorEmbedding")
+
   @@map("users")
 }
 
@@ -490,6 +504,14 @@ model Organization {
 
   // Intern pool
   internPoolRequests InternPoolRequest[] @relation("FoundationInternPoolRequests")
+
+  // Geo coordinates for distance matching (Phase 1)
+  latitude    Decimal?
+  longitude   Decimal?
+  geocodedAt  DateTime?
+
+  // Staffing phase 1
+  staffingRequests StaffingRequest[] @relation("FoundationStaffingRequests")
 
   @@map("organizations")
 }
@@ -903,6 +925,10 @@ model JobListing {
   publishedAt      DateTime?
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
+
+  // Staffing phase 1 — optional FK to StaffingRequest
+  staffingRequestId String?
+  staffingRequest   StaffingRequest? @relation("StaffingRequestJobListings", fields: [staffingRequestId], references: [id])
 
   // Relations
   foundation   Organization     @relation(fields: [foundationId], references: [id])
@@ -2767,7 +2793,27 @@ enum NotificationType {
   INTERN_APPLICATION_ACCEPTED
   INTERN_APPLICATION_DECLINED
   INTERN_APPLICATION_CONFIRMED
+  SHORTLIST_READY
+  CANDIDATE_RESPONDED
   GENERAL
+}
+
+enum StaffingRequestStatus {
+  PENDING_PARSE
+  PARSED
+  MATCHING
+  SHORTLISTED
+  CLOSED
+  CANCELLED
+}
+
+enum MatchResultStatus {
+  PENDING
+  EXPLAINED
+  SHORTLISTED
+  CONTACTED
+  ACCEPTED
+  DECLINED
 }
 
 model Notification {
@@ -2943,10 +2989,106 @@ model KnowledgeDocument {
   audience    String?
   version     Int      @default(1)
   title       String
-  content     String   @db.Text
+  content     String                      @db.Text
+  embedding   Unsupported("vector(768)")?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@index([source, locale])
   @@map("knowledge_documents")
+}
+
+// ─── Staffing Phase 1 ────────────────────────────────────────────────────────
+
+model StaffingRequest {
+  id           String  @id @default(uuid())
+  foundationId String
+  createdById  String
+  rawText      String  @db.Text
+
+  // Parsed structured fields (populated after staffing-request-parser runs)
+  roleRequired   String?
+  contractType   JobContractType?
+  startDate      DateTime?
+  endDate        DateTime?
+  hoursPerWeek   Int?
+  canton         String?
+  city           String?
+  ageGroups      String[] @default([])
+  languages      String[] @default([])
+  qualifications String[] @default([])
+  notes          String?  @db.Text
+
+  status StaffingRequestStatus @default(PENDING_PARSE)
+  locale String               @default("fr")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  foundation  Organization             @relation("FoundationStaffingRequests", fields: [foundationId], references: [id])
+  createdBy   User                     @relation("UserStaffingRequests", fields: [createdById], references: [id])
+  embedding   StaffingRequestEmbedding?
+  matches     MatchResult[]
+  jobListings JobListing[]             @relation("StaffingRequestJobListings")
+
+  @@index([foundationId])
+  @@map("staffing_requests")
+}
+
+model StaffingRequestEmbedding {
+  id                String   @id @default(uuid())
+  staffingRequestId String   @unique
+  model             String   @default("voyage-3-lite")
+  profileHash       String
+  embedding         Unsupported("vector(768)")?
+  createdAt         DateTime @default(now())
+
+  staffingRequest StaffingRequest @relation(fields: [staffingRequestId], references: [id], onDelete: Cascade)
+
+  @@map("staffing_request_embeddings")
+}
+
+model MatchResult {
+  id                String  @id @default(uuid())
+  staffingRequestId String
+  candidateId       String
+
+  totalScore         Decimal @db.Decimal(5, 2)
+  roleScore          Decimal @default(0) @db.Decimal(5, 2)
+  availabilityScore  Decimal @default(0) @db.Decimal(5, 2)
+  locationScore      Decimal @default(0) @db.Decimal(5, 2)
+  qualificationScore Decimal @default(0) @db.Decimal(5, 2)
+  languageScore      Decimal @default(0) @db.Decimal(5, 2)
+  ageGroupScore      Decimal @default(0) @db.Decimal(5, 2)
+  contractScore      Decimal @default(0) @db.Decimal(5, 2)
+  responsivenessScr  Decimal @default(0) @db.Decimal(5, 2)
+  distanceKm         Decimal? @db.Decimal(8, 2)
+  vectorSimilarity   Decimal? @db.Decimal(5, 4)
+
+  explanation String?          @db.Text
+  status      MatchResultStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  staffingRequest StaffingRequest @relation(fields: [staffingRequestId], references: [id], onDelete: Cascade)
+  candidate       User            @relation("UserMatchResults", fields: [candidateId], references: [id])
+
+  @@unique([staffingRequestId, candidateId])
+  @@index([staffingRequestId])
+  @@map("match_results")
+}
+
+model EducatorEmbedding {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  model       String   @default("voyage-3-lite")
+  profileHash String
+  embedding   Unsupported("vector(768)")?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation("UserEducatorEmbedding", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("educator_embeddings")
 }
