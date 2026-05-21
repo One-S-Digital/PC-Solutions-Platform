@@ -1,0 +1,46 @@
+{
+  "panel": {
+    "title": "ProCrèche-Assistent",
+    "placeholder": "Stellen Sie mir eine Frage… (z. B. „EDE in Genf zu 60% gesucht")",
+    "send": "Senden",
+    "close": "Schliessen",
+    "clear": "Gespräch löschen",
+    "thinking": "Denke nach…",
+    "streaming": "Antwort wird generiert…"
+  },
+  "welcome": {
+    "heading": "Hallo, ich bin Ihr ProCrèche-Assistent",
+    "subheading": "Ich helfe Ihnen bei der Kandidatensuche, dem Verfassen von Stellenanzeigen und der Navigation auf der Plattform.",
+    "suggestions": {
+      "staffing": "Erzieher für nächste Woche suchen",
+      "jobPost": "Stellenanzeige erstellen",
+      "help": "Wie veröffentliche ich eine Stellenanzeige?"
+    }
+  },
+  "tool": {
+    "proposing": "Ich werde {{action}} — bestätigen Sie, um fortzufahren.",
+    "executing": "Wird ausgeführt…",
+    "done": "Erledigt",
+    "failed": "Aktion fehlgeschlagen",
+    "confirmButton": "Bestätigen",
+    "cancelButton": "Abbrechen",
+    "openModal": "Wird geöffnet…",
+    "searchCandidates": "Kandidaten werden gesucht…",
+    "explainMatch": "Erklärung wird generiert…",
+    "draftJobPost": "Stellenanzeige wird erstellt…",
+    "draftParentReply": "Antwort wird verfasst…"
+  },
+  "modal": {
+    "prefilled": "Aus Ihrer Anfrage vorausgefüllt — bitte vor dem Absenden prüfen."
+  },
+  "errors": {
+    "sendFailed": "Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
+    "streamFailed": "Verbindung unterbrochen. Bitte versuchen Sie es erneut.",
+    "notEnabled": "Der KI-Assistent ist für Ihr Konto noch nicht aktiviert."
+  },
+  "role": {
+    "user": "Sie",
+    "assistant": "Assistent",
+    "system": "System"
+  }
+}

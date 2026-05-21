@@ -19,6 +19,7 @@ import {
   Clock,
   Database,
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useApiClient } from '../services/api'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import Card from '../components/design-system/Card'
@@ -181,6 +182,7 @@ const EmptyState: React.FC<{ title: string; description: string; icon?: React.El
 // ─── Tab: Overview ───────────────────────────────────────────────────────────
 
 const OverviewTab: React.FC<{ apiClient: any }> = ({ apiClient }) => {
+  const { t } = useTranslation(['aiOperations'])
   const qc = useQueryClient()
   const { data, isLoading, error, refetch } = useQuery<OverviewData>({
     queryKey: ['ai-admin-overview'],
@@ -224,7 +226,7 @@ const OverviewTab: React.FC<{ apiClient: any }> = ({ apiClient }) => {
         <Card className={`p-4 ${!data.foundation.enabled ? 'border-l-4 border-l-red-400' : ''}`}>
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1">AI Foundation</p>
+              <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1">{t('aiOperations:overview.featureFlag')}</p>
               <div className="flex items-center">
                 <StatusDot ok={data.foundation.enabled} />
                 <span className={`text-sm font-semibold ${data.foundation.enabled ? 'text-green-700' : 'text-red-600'}`}>
@@ -242,7 +244,7 @@ const OverviewTab: React.FC<{ apiClient: any }> = ({ apiClient }) => {
                   : 'bg-green-50 text-green-600 hover:bg-green-100'
               }`}
             >
-              {toggleMutation.isPending ? '…' : data.foundation.enabled ? 'Disable' : 'Enable'}
+              {toggleMutation.isPending ? '…' : data.foundation.enabled ? t('aiOperations:overview.disable') : t('aiOperations:overview.enable')}
             </button>
           </div>
         </Card>
@@ -290,13 +292,13 @@ const OverviewTab: React.FC<{ apiClient: any }> = ({ apiClient }) => {
 
       {/* Live activity feed */}
       <div className="flex items-center justify-between mb-2">
-        <h3 className="text-sm font-semibold text-gray-700">Live activity</h3>
+        <h3 className="text-sm font-semibold text-gray-700">{t('aiOperations:overview.liveFeed')}</h3>
         <button onClick={() => refetch()} className="flex items-center gap-1 text-xs text-gray-500 hover:text-swiss-teal">
           <RefreshCw className="w-3.5 h-3.5" /> Refresh
         </button>
       </div>
       {data.recentLogs.length === 0 ? (
-        <EmptyState title="No calls yet" description="Agent calls will appear here in real time once the AI Foundation is active." icon={Activity} />
+        <EmptyState title={t('aiOperations:overview.noActivity')} description="Agent calls will appear here in real time once the AI Foundation is active." icon={Activity} />
       ) : (
         <Card className="overflow-hidden">
           <div className="overflow-x-auto">
@@ -343,6 +345,7 @@ const OverviewTab: React.FC<{ apiClient: any }> = ({ apiClient }) => {
 // ─── Tab: Agents ─────────────────────────────────────────────────────────────
 
 const AgentsTab: React.FC<{ apiClient: any }> = ({ apiClient }) => {
+  const { t } = useTranslation(['aiOperations'])
   const [selected, setSelected] = useState<AgentSummary | null>(null)
   const qc = useQueryClient()
 
@@ -365,7 +368,7 @@ const AgentsTab: React.FC<{ apiClient: any }> = ({ apiClient }) => {
   })
 
   if (isLoading) return <div className="flex justify-center py-16"><LoadingSpinner /></div>
-  if (!data?.length) return <EmptyState title="No agents registered" description="Agents appear here once defined in ai-agents.config.ts." icon={Brain} />
+  if (!data?.length) return <EmptyState title={t('aiOperations:agents.noAgents')} description="Agents appear here once defined in ai-agents.config.ts." icon={Brain} />
 
   return (
     <div className="space-y-4">
@@ -419,7 +422,7 @@ const AgentsTab: React.FC<{ apiClient: any }> = ({ apiClient }) => {
                       onClick={() => setSelected(agent)}
                       className="text-xs text-swiss-teal hover:underline flex items-center gap-0.5 ml-auto"
                     >
-                      Config <ChevronRight className="w-3 h-3" />
+                      {t('aiOperations:agents.configEditor')} <ChevronRight className="w-3 h-3" />
                     </button>
                   </td>
                 </tr>
@@ -438,6 +441,7 @@ const AgentDetailPanel: React.FC<{
   onSave: (body: any) => void
   saving: boolean
 }> = ({ agent, onClose, onSave, saving }) => {
+  const { t } = useTranslation(['aiOperations'])
   const [promptVersion, setPromptVersion] = useState(agent.activePromptVersion)
 
   return (
@@ -466,7 +470,7 @@ const AgentDetailPanel: React.FC<{
           {agent.dailyTokenBudget && <p className="text-xs">Budget: <span className="font-medium">{fmt.tokens(agent.dailyTokenBudget)}/day</span></p>}
         </div>
         <div>
-          <p className="text-xs text-gray-500 mb-2">Active prompt version</p>
+          <p className="text-xs text-gray-500 mb-2">{t('aiOperations:agents.promptVersion')}</p>
           <div className="flex items-center gap-2">
             <input
               type="text"
@@ -480,7 +484,7 @@ const AgentDetailPanel: React.FC<{
               disabled={saving || promptVersion === agent.activePromptVersion}
               className="text-xs px-3 py-1.5 bg-swiss-teal text-white rounded hover:bg-swiss-teal/90 disabled:opacity-50"
             >
-              {saving ? '…' : 'Save'}
+              {saving ? t('aiOperations:agents.saving') : t('aiOperations:agents.save')}
             </button>
           </div>
           <p className="text-xs text-gray-400 mt-1">Saved to AiAgentConfig table</p>
@@ -493,6 +497,7 @@ const AgentDetailPanel: React.FC<{
 // ─── Tab: Audit Log ───────────────────────────────────────────────────────────
 
 const AuditLogTab: React.FC<{ apiClient: any }> = ({ apiClient }) => {
+  const { t } = useTranslation(['aiOperations'])
   const [page, setPage] = useState(1)
   const [agentFilter, setAgentFilter] = useState('')
   const [cacheFilter, setCacheFilter] = useState<string>('')
@@ -517,7 +522,7 @@ const AuditLogTab: React.FC<{ apiClient: any }> = ({ apiClient }) => {
       <div className="flex flex-wrap gap-3">
         <input
           type="text"
-          placeholder="Filter by agent"
+          placeholder={t('aiOperations:auditLog.filters.agent')}
           value={agentFilter}
           onChange={e => { setAgentFilter(e.target.value); setPage(1) }}
           className="text-sm border border-gray-200 rounded-md px-3 py-2 w-44"
@@ -546,7 +551,7 @@ const AuditLogTab: React.FC<{ apiClient: any }> = ({ apiClient }) => {
       {isLoading ? (
         <div className="flex justify-center py-16"><LoadingSpinner /></div>
       ) : !data?.logs?.length ? (
-        <EmptyState title="No audit logs yet" description="Every AI call is logged here. Start making agent calls to see entries." icon={FileSearch} />
+        <EmptyState title={t('aiOperations:auditLog.noEntries')} description="Every AI call is logged here. Start making agent calls to see entries." icon={FileSearch} />
       ) : (
         <>
           <Card className="overflow-hidden">
@@ -638,6 +643,7 @@ const AuditLogTab: React.FC<{ apiClient: any }> = ({ apiClient }) => {
 // ─── Tab: Cost & Budgets ──────────────────────────────────────────────────────
 
 const CostTab: React.FC<{ apiClient: any }> = ({ apiClient }) => {
+  const { t } = useTranslation(['aiOperations'])
   const { data, isLoading } = useQuery<CostData>({
     queryKey: ['ai-admin-cost'],
     queryFn: async () => (await apiClient.get('/ai/admin/cost')).data,
@@ -646,7 +652,7 @@ const CostTab: React.FC<{ apiClient: any }> = ({ apiClient }) => {
   })
 
   if (isLoading) return <div className="flex justify-center py-16"><LoadingSpinner /></div>
-  if (!data) return <EmptyState title="No cost data yet" description="Cost data accumulates as agents make calls. Check back after the first agent run." icon={DollarSign} />
+  if (!data) return <EmptyState title={t('aiOperations:cost.noData')} description="Cost data accumulates as agents make calls. Check back after the first agent run." icon={DollarSign} />
 
   const daysElapsed = new Date().getDate()
   const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate()
@@ -657,11 +663,11 @@ const CostTab: React.FC<{ apiClient: any }> = ({ apiClient }) => {
       {/* Top tiles */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <Card className="p-5">
-          <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1">Month-to-date</p>
+          <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1">{t('aiOperations:cost.mtdSpend')}</p>
           <p className="text-3xl font-bold text-swiss-charcoal">{fmt.usd(data.mtdCostUsd)}</p>
         </Card>
         <Card className="p-5">
-          <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1">Projected EOM</p>
+          <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1">{t('aiOperations:cost.projectedEom')}</p>
           <p className="text-3xl font-bold text-swiss-charcoal">{fmt.usd(projected)}</p>
           <p className="text-xs text-gray-400 mt-1">Based on {daysElapsed}d of {daysInMonth}d elapsed</p>
         </Card>
@@ -673,9 +679,9 @@ const CostTab: React.FC<{ apiClient: any }> = ({ apiClient }) => {
 
       {/* Per-agent breakdown */}
       <div>
-        <h3 className="text-sm font-semibold text-gray-700 mb-3">Top agents by cost (30 days)</h3>
+        <h3 className="text-sm font-semibold text-gray-700 mb-3">{t('aiOperations:cost.topAgents')}</h3>
         {data.topAgents.length === 0 ? (
-          <EmptyState title="No cost data" description="Agent cost breakdown will appear here after calls start." icon={BarChart2} />
+          <EmptyState title={t('aiOperations:cost.noData')} description="Agent cost breakdown will appear here after calls start." icon={BarChart2} />
         ) : (
           <Card className="overflow-hidden">
             <table className="w-full text-sm">
@@ -739,6 +745,7 @@ const CostTab: React.FC<{ apiClient: any }> = ({ apiClient }) => {
 // ─── Tab: Knowledge ───────────────────────────────────────────────────────────
 
 const KnowledgeTab: React.FC<{ apiClient: any }> = ({ apiClient }) => {
+  const { t } = useTranslation(['aiOperations'])
   const { data, isLoading } = useQuery<KnowledgeDoc[]>({
     queryKey: ['ai-admin-knowledge'],
     queryFn: async () => (await apiClient.get('/ai/admin/knowledge')).data,
@@ -749,7 +756,7 @@ const KnowledgeTab: React.FC<{ apiClient: any }> = ({ apiClient }) => {
   if (isLoading) return <div className="flex justify-center py-16"><LoadingSpinner /></div>
   if (!data?.length) return (
     <EmptyState
-      title="No knowledge documents"
+      title={t('aiOperations:knowledge.empty')}
       description="Static knowledge (role taxonomy, canton rules, status glossary) will appear here once seeded. Add docs to api/src/ai/knowledge/ and run the embedding step."
       icon={BookOpen}
     />
@@ -794,6 +801,7 @@ const KnowledgeTab: React.FC<{ apiClient: any }> = ({ apiClient }) => {
 // ─── Tab: Safety ─────────────────────────────────────────────────────────────
 
 const SafetyTab: React.FC<{ apiClient: any }> = ({ apiClient }) => {
+  const { t } = useTranslation(['aiOperations'])
   const { data, isLoading } = useQuery<SafetyData>({
     queryKey: ['ai-admin-safety'],
     queryFn: async () => (await apiClient.get('/ai/admin/safety')).data,
@@ -802,13 +810,13 @@ const SafetyTab: React.FC<{ apiClient: any }> = ({ apiClient }) => {
   })
 
   if (isLoading) return <div className="flex justify-center py-16"><LoadingSpinner /></div>
-  if (!data) return <EmptyState title="No safety data" description="Consent grants and safety events appear here once educators start accepting the AI consent policy." icon={ShieldCheck} />
+  if (!data) return <EmptyState title={t('aiOperations:safety.noData')} description="Consent grants and safety events appear here once educators start accepting the AI consent policy." icon={ShieldCheck} />
 
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <StatTile icon={CheckCircle} label="Active consents" value={String(data.activeConsents)} sub="Educators in AI matching pool" />
-        <StatTile icon={XCircle} label="Revoked consents" value={String(data.revokedConsents)} sub="Removed from matching pool" />
+        <StatTile icon={CheckCircle} label={t('aiOperations:safety.totalConsents')} value={String(data.activeConsents)} sub="Educators in AI matching pool" />
+        <StatTile icon={XCircle} label={t('aiOperations:safety.revoked')} value={String(data.revokedConsents)} sub="Removed from matching pool" />
         <StatTile icon={AlertTriangle} label="Blocked calls" value="—" sub="Sensitive field / scope violations (coming)" />
       </div>
 
@@ -846,6 +854,7 @@ const SafetyTab: React.FC<{ apiClient: any }> = ({ apiClient }) => {
 // ─── Tab: Settings ────────────────────────────────────────────────────────────
 
 const SettingsTab: React.FC<{ apiClient: any }> = ({ apiClient }) => {
+  const { t } = useTranslation(['aiOperations'])
   const qc = useQueryClient()
 
   const { data: overview } = useQuery<OverviewData>({
@@ -886,8 +895,8 @@ const SettingsTab: React.FC<{ apiClient: any }> = ({ apiClient }) => {
     <div className="space-y-8 max-w-2xl">
       {/* Kill switch */}
       <div>
-        <h3 className="text-sm font-semibold text-gray-700 mb-1">Master kill switch</h3>
-        <p className="text-xs text-gray-500 mb-3">Toggles the <code className="bg-gray-100 px-1 rounded">ai_foundation_enabled</code> feature flag. When off, all calls to <code className="bg-gray-100 px-1 rounded">LlmClient.run()</code> throw immediately.</p>
+        <h3 className="text-sm font-semibold text-gray-700 mb-1">{t('aiOperations:settings.killSwitch')}</h3>
+        <p className="text-xs text-gray-500 mb-3">{t('aiOperations:settings.killSwitchDesc')}</p>
         {overview ? (
           <div className="flex items-center gap-4">
             <div className={`flex items-center gap-2 text-sm font-medium ${overview.foundation.enabled ? 'text-green-700' : 'text-red-600'}`}>
@@ -911,7 +920,7 @@ const SettingsTab: React.FC<{ apiClient: any }> = ({ apiClient }) => {
 
       {/* Environment variables */}
       <div>
-        <h3 className="text-sm font-semibold text-gray-700 mb-1">Environment variables</h3>
+        <h3 className="text-sm font-semibold text-gray-700 mb-1">{t('aiOperations:settings.envCheck')}</h3>
         <p className="text-xs text-gray-500 mb-3">Presence check only — values are never shown. Set these in your Render environment.</p>
         {envCheck ? (
           <div className="flex flex-wrap gap-2">
@@ -948,16 +957,17 @@ const SettingsTab: React.FC<{ apiClient: any }> = ({ apiClient }) => {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 const AiOperationsPage: React.FC = () => {
+  const { t } = useTranslation(['aiOperations'])
   const apiClient = useApiClient()
 
   const tabs = [
-    { label: 'Overview',     icon: Activity,     content: <OverviewTab apiClient={apiClient} /> },
-    { label: 'Agents',       icon: Brain,        content: <AgentsTab apiClient={apiClient} /> },
-    { label: 'Audit Log',    icon: FileSearch,   content: <AuditLogTab apiClient={apiClient} /> },
-    { label: 'Cost',         icon: DollarSign,   content: <CostTab apiClient={apiClient} /> },
-    { label: 'Knowledge',    icon: BookOpen,     content: <KnowledgeTab apiClient={apiClient} /> },
-    { label: 'Safety',       icon: ShieldCheck,  content: <SafetyTab apiClient={apiClient} /> },
-    { label: 'Settings',     icon: Settings,     content: <SettingsTab apiClient={apiClient} /> },
+    { label: t('aiOperations:tabs.overview'),  icon: Activity,     content: <OverviewTab apiClient={apiClient} /> },
+    { label: t('aiOperations:tabs.agents'),    icon: Brain,        content: <AgentsTab apiClient={apiClient} /> },
+    { label: t('aiOperations:tabs.auditLog'),  icon: FileSearch,   content: <AuditLogTab apiClient={apiClient} /> },
+    { label: t('aiOperations:tabs.cost'),      icon: DollarSign,   content: <CostTab apiClient={apiClient} /> },
+    { label: t('aiOperations:tabs.knowledge'), icon: BookOpen,     content: <KnowledgeTab apiClient={apiClient} /> },
+    { label: t('aiOperations:tabs.safety'),    icon: ShieldCheck,  content: <SafetyTab apiClient={apiClient} /> },
+    { label: t('aiOperations:tabs.settings'),  icon: Settings,     content: <SettingsTab apiClient={apiClient} /> },
   ]
 
   return (
@@ -967,7 +977,7 @@ const AiOperationsPage: React.FC = () => {
           <Brain className="w-5 h-5 text-swiss-teal" />
         </div>
         <div>
-          <h1 className="text-xl font-semibold text-swiss-charcoal">AI Operations</h1>
+          <h1 className="text-xl font-semibold text-swiss-charcoal">{t('aiOperations:title')}</h1>
           <p className="text-sm text-gray-500">Shared AI Foundation — gateway, audit, cost, knowledge, safety</p>
         </div>
       </div>

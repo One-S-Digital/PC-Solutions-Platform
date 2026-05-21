@@ -1,0 +1,94 @@
+{
+  "title": "KI-Betrieb",
+  "tabs": {
+    "overview": "Übersicht",
+    "agents": "Agenten",
+    "auditLog": "Audit-Protokoll",
+    "cost": "Kosten",
+    "knowledge": "Wissen",
+    "safety": "Sicherheit",
+    "settings": "Einstellungen"
+  },
+  "overview": {
+    "totalCalls": "Anrufe gesamt",
+    "totalTokens": "Tokens gesamt",
+    "totalCost": "Gesamtkosten",
+    "cacheHitRate": "Cache-Trefferquote",
+    "liveFeed": "Live-Aktivität",
+    "providerStatus": "Anbieterstatus",
+    "featureFlag": "KI Foundation aktiviert",
+    "enable": "Aktivieren",
+    "disable": "Deaktivieren",
+    "noActivity": "Keine aktuelle Aktivität"
+  },
+  "agents": {
+    "title": "Agentenregister",
+    "calls": "Anrufe (24h)",
+    "cost": "Kosten (24h)",
+    "latency": "Durchschn. Latenz",
+    "cacheRate": "Cache-Quote",
+    "fallbackRate": "Fallback-Rate",
+    "configEditor": "Konfiguration",
+    "promptVersion": "Prompt-Version",
+    "save": "Speichern",
+    "saving": "Wird gespeichert…",
+    "noAgents": "Keine Agenten konfiguriert"
+  },
+  "auditLog": {
+    "title": "Audit-Protokoll",
+    "agent": "Agent",
+    "model": "Modell",
+    "principal": "Benutzer",
+    "tokens": "Tokens",
+    "cost": "Kosten",
+    "latency": "Latenz",
+    "cache": "Cache",
+    "fallback": "Fallback",
+    "date": "Datum",
+    "cacheHit": "Treffer",
+    "cacheMiss": "Kein Treffer",
+    "yes": "Ja",
+    "no": "Nein",
+    "noEntries": "Keine Audit-Protokolleinträge",
+    "filters": {
+      "agent": "Nach Agent filtern",
+      "dateFrom": "Von",
+      "dateTo": "Bis",
+      "cacheOnly": "Nur Cache-Treffer",
+      "fallbackOnly": "Nur Fallback"
+    }
+  },
+  "cost": {
+    "mtdSpend": "Ausgaben im laufenden Monat",
+    "projectedEom": "Prognose Monatsende",
+    "topAgents": "Teuerste Agenten",
+    "dailyChart": "Tägliche Kosten (USD)",
+    "noData": "Noch keine Kostendaten"
+  },
+  "knowledge": {
+    "title": "Wissensdokumente",
+    "source": "Quelle",
+    "locale": "Sprache",
+    "scope": "Kantonsbereich",
+    "version": "Version",
+    "empty": "Keine Wissensdokumente indexiert"
+  },
+  "safety": {
+    "title": "Sicherheit & Einwilligung",
+    "totalConsents": "Einwilligungen gesamt",
+    "revoked": "Widerrufen",
+    "pending": "Ausstehend",
+    "noData": "Keine Einwilligungsdaten"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "envCheck": "Umgebung",
+    "envOk": "Konfiguriert",
+    "envMissing": "Fehlend",
+    "killSwitch": "Notausschalter",
+    "killSwitchDesc": "Das Deaktivieren der KI Foundation stoppt sofort alle KI-Aufrufe."
+  },
+  "errors": {
+    "loadFailed": "KI-Betriebsdaten konnten nicht geladen werden"
+  }
+}
