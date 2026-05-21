@@ -165,6 +165,8 @@
       "title": "Dokumente"
     },
     "editProfile": "Profil bearbeiten",
+    "editFullProfile": "Vollständiges Profil bearbeiten",
+    "goToMyProfile": "Zu meinem Profil",
     "education": {
       "empty": "Keine Ausbildung hinzugefügt.",
       "graduated": "Abschluss",

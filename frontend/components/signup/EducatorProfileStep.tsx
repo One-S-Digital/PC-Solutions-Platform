@@ -36,6 +36,7 @@ interface EducatorProfileStepErrors {
   shortBio?: string;
   professionalExperience?: string;
   jobRole?: string;
+  cvUrl?: string;
 }
 
 interface EducatorProfileStepProps {
@@ -80,6 +81,7 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
     const url = asset.url || asset.publicUrl || '';
     const id = asset.id || '';
     setData(prev => ({ ...prev, cvUrl: url, cvAssetId: id }));
+    if (url) setErrors(prev => ({ ...prev, cvUrl: undefined }));
   };
 
   const handleRemoveCv = () => {
@@ -97,6 +99,7 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
     if (!data.shortBio.trim()) newErrors.shortBio = t('signup:errors.shortBioRequired', 'Short biography is required');
     if (!data.professionalExperience.trim()) newErrors.professionalExperience = t('signup:errors.professionalExperienceRequired', 'Professional experience is required');
     if (!data.jobRole) newErrors.jobRole = t('signup:errors.jobRoleRequired', 'Please select your profile type');
+    if (!data.cvUrl) newErrors.cvUrl = t('signup:errors.cvRequired', 'Please upload your CV');
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -290,10 +293,10 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
       </div>
 
       {/* CV Upload */}
-      <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+      <div className={`bg-gray-50 rounded-lg p-4 space-y-3 ${errors.cvUrl ? 'ring-1 ring-swiss-coral' : ''}`}>
         <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
           <PaperClipIcon className="w-4 h-4 text-swiss-mint" />
-          {t('signup:educatorProfile.cvUpload', 'Upload your CV')}
+          {t('signup:educatorProfile.cvUpload', 'Upload your CV')}<span className="text-swiss-coral">*</span>
         </h3>
 
         {data.cvUrl ? (
@@ -334,8 +337,9 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
             autoUpload={true}
           />
         )}
+        {errors.cvUrl && <p className="text-xs text-swiss-coral">{errors.cvUrl}</p>}
         <p className="text-xs text-gray-500">
-          {t('signup:educatorProfile.cvHint', 'PDF, DOC or DOCX — max 5 MB. Optional but strongly recommended.')}
+          {t('signup:educatorProfile.cvHint', 'PDF, DOC or DOCX — max 5 MB.')}
         </p>
       </div>
 

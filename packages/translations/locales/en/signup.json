@@ -186,7 +186,8 @@
     "passwordWeak": "Password is not strong enough",
     "shortBioRequired": "Short biography is required",
     "professionalExperienceRequired": "Professional experience is required",
-    "jobRoleRequired": "Please select your profile type"
+    "jobRoleRequired": "Please select your profile type",
+    "cvRequired": "Please upload your CV"
   },
   "oauthCompletion": {
     "emailFromProvider": "Email provided by Google",

@@ -1,9 +1,13 @@
 import React from 'react';
-import { ClockIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
+import { ClockIcon, EnvelopeIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 import { useClerk } from '@clerk/clerk-react';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const EducatorPendingApprovalPage: React.FC = () => {
   const { signOut } = useClerk();
+  const navigate = useNavigate();
+  const { t } = useTranslation('dashboard');
 
   return (
     <div className="min-h-screen bg-page-bg flex items-center justify-center p-4">
@@ -22,13 +26,34 @@ const EducatorPendingApprovalPage: React.FC = () => {
           You will receive an email once your application has been processed.
         </p>
 
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-8 text-left space-y-2">
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 text-left space-y-2">
           <p className="text-sm font-medium text-amber-800">What happens next?</p>
           <ul className="text-sm text-amber-700 space-y-1 list-disc list-inside">
             <li>Our team reviews your submitted profile</li>
             <li>You receive an approval or feedback email</li>
             <li>Once approved, you get full access to the platform</li>
           </ul>
+        </div>
+
+        <div className="bg-swiss-mint/10 border border-swiss-mint/30 rounded-xl p-5 mb-8 text-left">
+          <div className="flex items-start gap-3">
+            <UserCircleIcon className="w-5 h-5 text-swiss-mint mt-0.5 flex-shrink-0" />
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-swiss-charcoal mb-1">
+                Complete your profile
+              </p>
+              <p className="text-sm text-gray-600 mb-3">
+                While you wait for approval, make sure your profile is complete and up to date. A complete profile increases your chances of being matched with the right opportunities.
+              </p>
+              <button
+                onClick={() => navigate('/educator/profile')}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-swiss-mint text-white text-sm font-medium hover:bg-opacity-90 transition-colors"
+              >
+                <UserCircleIcon className="w-4 h-4" />
+                {t('educatorProfilePage.goToMyProfile', 'Go to My Profile')}
+              </button>
+            </div>
+          </div>
         </div>
 
         <div className="border-t border-gray-100 pt-6 flex flex-col sm:flex-row gap-3 justify-center">
