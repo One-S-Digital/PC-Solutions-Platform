@@ -405,6 +405,7 @@
       "title": "Documents"
     },
     "editProfile": "Edit Profile",
+    "editFullProfile": "Edit Full Profile",
     "education": {
       "empty": "No education added yet.",
       "graduated": "Graduated",

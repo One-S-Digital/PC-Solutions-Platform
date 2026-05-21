@@ -164,6 +164,7 @@
       "title": "Documents"
     },
     "editProfile": "Modifier le profil",
+    "editFullProfile": "Modifier le profil complet",
     "education": {
       "empty": "Aucune formation ajoutée.",
       "graduated": "Diplômé(e)",
