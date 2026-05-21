@@ -173,45 +173,46 @@ export class MessagingService {
         return Object.values(UserRole);
       
       case UserRole.EDUCATOR:
-        // Educator can message: EDUCATOR, ADMIN, PARENT
         return [
           UserRole.EDUCATOR,
           UserRole.ADMIN,
+          UserRole.SUPER_ADMIN,
           UserRole.PARENT,
+          UserRole.FOUNDATION,
         ];
-      
+
       case UserRole.PARENT:
-        // Parent can message: PARENT, EDUCATOR, ADMIN
         return [
           UserRole.PARENT,
           UserRole.EDUCATOR,
           UserRole.ADMIN,
+          UserRole.SUPER_ADMIN,
         ];
-      
+
       case UserRole.FOUNDATION:
-        // Foundation can message: FOUNDATION, EDUCATOR, PRODUCT_SUPPLIER, SERVICE_PROVIDER, ADMIN
         return [
           UserRole.FOUNDATION,
           UserRole.EDUCATOR,
           UserRole.PRODUCT_SUPPLIER,
           UserRole.SERVICE_PROVIDER,
           UserRole.ADMIN,
+          UserRole.SUPER_ADMIN,
         ];
-      
+
       case UserRole.PRODUCT_SUPPLIER:
-        // Product Supplier can message: PRODUCT_SUPPLIER, FOUNDATION, ADMIN
         return [
           UserRole.PRODUCT_SUPPLIER,
           UserRole.FOUNDATION,
           UserRole.ADMIN,
+          UserRole.SUPER_ADMIN,
         ];
-      
+
       case UserRole.SERVICE_PROVIDER:
-        // Service Provider can message: SERVICE_PROVIDER, FOUNDATION, ADMIN
         return [
           UserRole.SERVICE_PROVIDER,
           UserRole.FOUNDATION,
           UserRole.ADMIN,
+          UserRole.SUPER_ADMIN,
         ];
       
       default:
@@ -586,56 +587,18 @@ export class MessagingService {
         return [];
       }
 
-      // Get user's role for filtering
-      const userWithRole = await this.prisma.user.findUnique({
-        where: { id: finalUserId },
-        select: { role: true },
-      });
-
-      const userRole = userWithRole?.role || UserRole.PARENT;
-      const allowedRoles = userRole === UserRole.SUPER_ADMIN 
-        ? Object.values(UserRole) 
-        : this.getAllowedMessagingRoles(userRole);
-
-      // For SUPER_ADMIN, show all conversations they're part of
-      // For others, filter to only show conversations with allowed roles
-      const whereClause = userRole === UserRole.SUPER_ADMIN
-        ? {
-            participants: {
-              some: {
-                userId: finalUserId,
-                isActive: true,
-              },
-            },
-          }
-        : {
-            AND: [
-              {
-                participants: {
-                  some: {
-                    userId: finalUserId,
-                    isActive: true,
-                  },
-                },
-              },
-              {
-                participants: {
-                  every: {
-                    OR: [
-                      { userId: finalUserId }, // Always include user's own participation
-                      {
-                        user: {
-                          role: {
-                            in: allowedRoles,
-                          },
-                        },
-                      },
-                    ],
-                  },
-                },
-              },
-            ],
-          };
+      // Membership is the authorization: once a conversation has been created
+      // (role checks happen at creation time in createConversation), every
+      // participant should be able to see it and respond. Filtering by role
+      // here would hide conversations from legitimate participants.
+      const whereClause = {
+        participants: {
+          some: {
+            userId: finalUserId,
+            isActive: true,
+          },
+        },
+      };
 
       const conversations = await this.prisma.conversation.findMany({
         where: whereClause,
@@ -653,6 +616,16 @@ export class MessagingService {
             orderBy: { createdAt: 'desc' },
             take: 1,
           },
+          _count: {
+            select: {
+              messages: {
+                where: {
+                  isRead: false,
+                  senderId: { not: finalUserId },
+                },
+              },
+            },
+          },
         },
         orderBy: { lastMessageAt: 'desc' },
       });
@@ -664,11 +637,15 @@ export class MessagingService {
         conversationCount: conversations.length,
       });
 
-      // Transform messages in conversations to use secure download URLs
-      return conversations.map(conv => ({
-        ...conv,
-        messages: this.transformMessagesForResponse(conv.messages || []),
-      }));
+      // Transform messages and expose per-conversation unreadCount for the UI
+      return conversations.map(conv => {
+        const { _count, ...rest } = conv as typeof conv & { _count?: { messages?: number } };
+        return {
+          ...rest,
+          messages: this.transformMessagesForResponse(conv.messages || []),
+          unreadCount: _count?.messages ?? 0,
+        };
+      });
     } catch (error: unknown) {
       // Handle case where conversations table doesn't exist (P2021)
       if (error && typeof error === 'object' && 'code' in error && (error as any).code === 'P2021') {
@@ -1011,41 +988,57 @@ export class MessagingService {
     return this.transformMessagesForResponse(messages);
   }
 
-  async markMessagesAsRead(conversationId: string, userId: string) {
-    // Mark all unread messages in conversation as read for this user
-    // Messages that are not from the current user should be marked as read
+  async markMessagesAsRead(conversationId: string, rawUserId: string) {
+    // rawUserId is a Clerk ID (from req.context.userId); resolve to User.id
+    // because Message.senderId and ConversationParticipant.userId both
+    // reference User.id, not Clerk ID.
+    const finalUserId = await this.resolveUserId(rawUserId);
+
+    if (!finalUserId) {
+      throw new Error('User not found');
+    }
+
     await this.prisma.message.updateMany({
       where: {
         conversationId,
-        senderId: { not: userId }, // All messages not sent by this user
+        senderId: { not: finalUserId },
         isRead: false,
       },
       data: { isRead: true },
     });
 
-    // Update user's last read timestamp for this conversation
     await this.prisma.conversationParticipant.updateMany({
       where: {
         conversationId,
-        userId,
+        userId: finalUserId,
       },
       data: { lastReadAt: new Date() },
     });
   }
 
-  async getUnreadMessageCount(userId: string) {
-    // Count unread messages in conversations where user is a participant
+  async getUnreadMessageCount(rawUserId: string) {
+    // rawUserId is a Clerk ID; resolve to User.id before querying.
+    const finalUserId = await this.resolveUserId(rawUserId);
+
+    if (!finalUserId) {
+      return 0;
+    }
+
     const userConversations = await this.prisma.conversationParticipant.findMany({
-      where: { userId, isActive: true },
+      where: { userId: finalUserId, isActive: true },
       select: { conversationId: true },
     });
 
     const conversationIds = userConversations.map(cp => cp.conversationId);
 
+    if (conversationIds.length === 0) {
+      return 0;
+    }
+
     return this.prisma.message.count({
       where: {
         conversationId: { in: conversationIds },
-        senderId: { not: userId },
+        senderId: { not: finalUserId },
         isRead: false,
       },
     });
