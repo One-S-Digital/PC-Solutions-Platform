@@ -18,7 +18,7 @@ import { AssistantPrincipalContext } from './orchestrator.service';
 
 function extractPrincipal(req: any): AssistantPrincipalContext {
   return {
-    userId: req.context?.appUserId ?? req.user?.appUserId,
+    userId: req.context?.profileUserId ?? req.user?.id,
     role: (req.context?.role ?? req.user?.role) as UserRole,
     organizationId: req.context?.organizationId ?? req.user?.organizationId,
   };
