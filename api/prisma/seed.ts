@@ -31,6 +31,10 @@ async function main() {
   console.log('🤖 Setting up AI Foundation feature flag...');
   await seedAiFoundationFlag();
 
+  // 6c. AI Assistant feature flag
+  console.log('🤖 Setting up AI Assistant feature flag...');
+  await seedAiAssistantFlag();
+
   // 7. Create Email Templates (for admin email template management)
   console.log('📧 Creating email templates...');
   await seedEmailTemplates();
@@ -1000,6 +1004,22 @@ async function seedAiFoundationFlag() {
       name: 'AI Staffing Matching',
       description: 'Phase 1 — Internal matching MVP: staffing-request-parser + hybrid matcher',
       key: 'ai_staffing_matching',
+      isActive: false,
+      rolloutPercentage: 0,
+      targetSegments: [],
+      conditions: {},
+    },
+  });
+}
+
+async function seedAiAssistantFlag() {
+  await prisma.featureFlag.upsert({
+    where: { key: 'ai_assistant_enabled' },
+    update: {},
+    create: {
+      name: 'AI Assistant',
+      description: 'MVP M1 — ProCrèche Virtual Assistant (conversation, SSE streaming, tool orchestration)',
+      key: 'ai_assistant_enabled',
       isActive: false,
       rolloutPercentage: 0,
       targetSegments: [],

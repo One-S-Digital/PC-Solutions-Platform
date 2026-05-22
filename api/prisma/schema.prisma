@@ -356,6 +356,9 @@ model User {
   matchResults      MatchResult[]      @relation("UserMatchResults")
   educatorEmbedding EducatorEmbedding? @relation("UserEducatorEmbedding")
 
+  // AI assistant conversations
+  aiConversations AIConversation[] @relation("UserAIConversations")
+
   @@map("users")
 }
 
@@ -3109,4 +3112,125 @@ model EducatorEmbedding {
   user User @relation("UserEducatorEmbedding", fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("educator_embeddings")
+}
+
+// ─── AI Assistant (M1) ────────────────────────────────────────────────────────
+
+enum AIConversationStatus {
+  ACTIVE
+  ENDED
+  ARCHIVED
+}
+
+enum AIChannel {
+  WEB
+  WHATSAPP
+  EMAIL
+}
+
+enum AIMessageSender {
+  USER
+  ASSISTANT
+  SYSTEM
+  TOOL
+}
+
+enum AIToolCallStatus {
+  PROPOSED
+  AWAITING_APPROVAL
+  APPROVED
+  EXECUTED
+  REJECTED
+  FAILED
+}
+
+enum AIActionLevel {
+  L1_ANSWER
+  L2_DRAFT
+  L3_EXECUTE
+}
+
+model AIConversation {
+  id             String               @id @default(uuid())
+  userId         String
+  organizationId String?
+  role           UserRole
+  channel        AIChannel            @default(WEB)
+  status         AIConversationStatus @default(ACTIVE)
+  locale         String               @default("fr")
+  startedAt      DateTime             @default(now())
+  endedAt        DateTime?
+
+  user      User         @relation("UserAIConversations", fields: [userId], references: [id], onDelete: Cascade)
+  messages  AIMessage[]
+  toolCalls AIToolCall[]
+
+  @@index([userId, startedAt(sort: Desc)])
+  @@map("ai_conversations")
+}
+
+model AIMessage {
+  id               String          @id @default(uuid())
+  conversationId   String
+  sender           AIMessageSender
+  content          String          @db.Text
+  structuredIntent Json?
+  createdAt        DateTime        @default(now())
+
+  conversation AIConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  toolCalls    AIToolCall[]
+
+  @@index([conversationId, createdAt])
+  @@map("ai_messages")
+}
+
+model AIToolCall {
+  id               String           @id @default(uuid())
+  conversationId   String
+  messageId        String?
+  toolName         String
+  level            AIActionLevel
+  inputJson        Json
+  outputJson       Json?
+  status           AIToolCallStatus @default(PROPOSED)
+  approvalRequired Boolean          @default(false)
+  approvedById     String?
+  executedAt       DateTime?
+  errorMessage     String?          @db.Text
+  createdAt        DateTime         @default(now())
+
+  conversation AIConversation   @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  message      AIMessage?       @relation(fields: [messageId], references: [id])
+  approvals    AIActionApproval[]
+
+  @@index([conversationId, createdAt])
+  @@index([status])
+  @@map("ai_tool_calls")
+}
+
+model AIActionApproval {
+  id              String   @id @default(uuid())
+  toolCallId      String
+  status          String   @default("pending")
+  approvedBy      String?
+  approvalContext Json?
+  createdAt       DateTime @default(now())
+
+  toolCall AIToolCall @relation(fields: [toolCallId], references: [id], onDelete: Cascade)
+
+  @@map("ai_action_approvals")
+}
+
+model AIContextMemory {
+  id             String    @id @default(uuid())
+  userId         String
+  organizationId String?
+  memoryType     String
+  key            String
+  valueJson      Json
+  expiresAt      DateTime?
+  createdAt      DateTime  @default(now())
+
+  @@unique([userId, memoryType, key])
+  @@map("ai_context_memory")
 }

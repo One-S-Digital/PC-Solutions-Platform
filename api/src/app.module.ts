@@ -65,6 +65,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { MailingModule } from './mailing/mailing.module';
 import { AiModule } from './ai/ai.module';
 import { StaffingModule } from './staffing/staffing.module';
+import { AssistantModule } from './assistant/assistant.module';
 
 import {
   AUTH_REQUESTS_LIMIT,
@@ -160,6 +161,7 @@ import {
     MailingModule,
     AiModule,
     StaffingModule,
+    AssistantModule,
   ],
   controllers: [AppController],
   providers: [

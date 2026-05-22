@@ -1,0 +1,13 @@
+{
+  "input": {
+    "userMessage": "Trouve moi une EDE à Genève à 60%",
+    "conversationHistory": "",
+    "availableTools": "search_internal_candidates, search_help_docs",
+    "locale": "fr"
+  },
+  "expectedFields": {
+    "toolCall": {
+      "name": "search_internal_candidates"
+    }
+  }
+}

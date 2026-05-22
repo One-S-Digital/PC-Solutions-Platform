@@ -73,6 +73,7 @@ import ServiceProviderSettingsPage from './pages/ServiceProviderSettingsPage';
 
 // Foundation Pages (some may reuse existing top-level pages)
 import FoundationReplacementsPage from './pages/foundation/FoundationReplacementsPage';
+import FoundationStaffingRequestsPage from './pages/foundation/StaffingRequestsPage';
 import { AssistantContainer } from './components/assistant';
 import FoundationInternPoolPage from './pages/foundation/FoundationInternPoolPage';
 import FoundationDashboardPage from './pages/foundation/FoundationDashboardPage';
@@ -550,6 +551,9 @@ const ProtectedLayout: React.FC = () => {
         } />
         <Route path="/foundation/replacements" element={
           <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}><FoundationReplacementsPage /></SubscriptionGatedRoute>
+        } />
+        <Route path="/foundation/staffing-requests" element={
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}><FoundationStaffingRequestsPage /></SubscriptionGatedRoute>
         } />
         <Route path="/foundation/intern-pool" element={
           <SubscriptionGatedRoute roles={[UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN]}><FoundationInternPoolPage /></SubscriptionGatedRoute>

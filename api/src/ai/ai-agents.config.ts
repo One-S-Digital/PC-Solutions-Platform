@@ -3,7 +3,8 @@ import { UserRole } from '@prisma/client';
 export type AgentName =
   | 'echo-validate'
   | 'staffing-request-parser'
-  | 'match-explanation';
+  | 'match-explanation'
+  | 'assistant-orchestrator';
 
 export type ScopeRule = 'self' | 'organization' | 'admin-only' | 'any';
 
@@ -46,5 +47,14 @@ export const AI_AGENTS: Record<AgentName, AgentConfig> = {
     scopeRule: 'organization',
     cacheTtlSeconds: 3600,
     dailyTokenBudget: 100000,
+  },
+
+  'assistant-orchestrator': {
+    name: 'assistant-orchestrator',
+    models: ['anthropic/claude-sonnet-4-6', 'google/gemini-2.5-pro'],
+    maxOutputTokens: 1000,
+    allowedRoles: [UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN],
+    scopeRule: 'organization',
+    dailyTokenBudget: 500000,
   },
 };
