@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import Sidebar from './Sidebar'
 import Header from './Header'
 import { markVisited } from '../utils/notificationState'
+import { AssistantContainer } from './assistant'
 
 type Props = { children?: React.ReactNode };
 
@@ -41,6 +42,7 @@ export const AdminLayout: React.FC<Props> = ({ children }) => {
         <Header setSidebarOpen={setSidebarOpen} />
         <main className="min-w-0 flex-1 bg-page-bg p-4 overflow-x-hidden">{children ?? <Outlet />}</main>
       </div>
+      <AssistantContainer />
     </div>
   );
 };
