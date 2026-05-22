@@ -4,9 +4,10 @@ import { AssistantService } from './assistant.service';
 import { OrchestratorService } from './orchestrator.service';
 import { AiModule } from '../ai/ai.module';
 import { StaffingModule } from '../staffing/staffing.module';
+import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
-  imports: [AiModule, StaffingModule],
+  imports: [PrismaModule, AiModule, StaffingModule],
   controllers: [AssistantController],
   providers: [AssistantService, OrchestratorService],
   exports: [AssistantService],
