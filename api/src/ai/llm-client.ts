@@ -72,10 +72,12 @@ export class LlmClient {
     if (!config) throw new Error(`Unknown agent: ${agentName}`);
 
     // Feature flag check
-    const flag = await this.prisma.featureFlag.findFirst({
-      where: { key: 'ai_foundation_enabled', isActive: true },
-    });
-    if (!flag) throw new ServiceUnavailableException('AI Foundation is not yet enabled.');
+    if (process.env.AI_ASSISTANT_ENABLED !== 'true') {
+      const flag = await this.prisma.featureFlag.findFirst({
+        where: { key: 'ai_foundation_enabled', isActive: true },
+      });
+      if (!flag) throw new ServiceUnavailableException('AI Foundation is not yet enabled.');
+    }
 
     // Permission check
     if (!config.allowedRoles.includes(principal.role)) {
