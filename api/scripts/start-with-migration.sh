@@ -37,6 +37,14 @@ if [ $attempt -gt $max_attempts ]; then
     exit 1
 fi
 
+# Enable required extensions before migrations
+echo "🔌 Enabling required PostgreSQL extensions (vector, cube, earthdistance)..."
+npx prisma db execute --schema "$PRISMA_SCHEMA_PATH" --stdin <<'SQL' || echo "⚠️  Extension setup had issues — continuing..."
+CREATE EXTENSION IF NOT EXISTS vector;
+CREATE EXTENSION IF NOT EXISTS cube;
+CREATE EXTENSION IF NOT EXISTS earthdistance;
+SQL
+
 # Run database migrations
 echo "🔄 Running database migrations..."
 if npx prisma migrate deploy --schema "$PRISMA_SCHEMA_PATH"; then

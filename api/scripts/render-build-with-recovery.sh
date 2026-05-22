@@ -31,6 +31,13 @@ echo "  PHASE 1: Database Setup & Recovery"
 echo "=========================================="
 echo ""
 
+echo "🔌 Enabling required PostgreSQL extensions (vector, cube, earthdistance)..."
+$PRISMA_CMD db execute --schema prisma/schema.prisma --stdin <<'SQL' || echo "⚠️  Extension setup had issues (may not be supported on this DB) — continuing..."
+CREATE EXTENSION IF NOT EXISTS vector;
+CREATE EXTENSION IF NOT EXISTS cube;
+CREATE EXTENSION IF NOT EXISTS earthdistance;
+SQL
+
 echo "🧹 Running pre-build database setup (resolving failed migrations, ensuring columns exist)..."
 node ./scripts/prebuild-db-setup.mjs || {
   echo "⚠️  Pre-build database setup had issues, continuing anyway..."

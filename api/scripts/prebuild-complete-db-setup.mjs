@@ -101,6 +101,72 @@ const runPrisma = (args, options = {}) => {
 };
 
 /**
+ * Verify Postgres major version is at least minVersion.
+ * Logs a warning (does not abort) if the check cannot be performed.
+ */
+const verifyPostgresVersion = (minVersion = 14) => {
+  log(`Verifying PostgreSQL version ≥ ${minVersion}...`);
+
+  const result = runPrisma(
+    ['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'],
+    { silent: true, input: 'SELECT current_setting(\'server_version_num\')::int AS ver;' },
+  );
+
+  if (!result.success) {
+    warn('Could not read PostgreSQL version — skipping version check');
+    return;
+  }
+
+  const match = result.stdout && result.stdout.match(/\b(\d{5,6})\b/);
+  if (!match) {
+    warn('Could not parse PostgreSQL version number from output');
+    return;
+  }
+
+  // version_num encodes as XXYYZZ (e.g. 140009 → major 14)
+  const versionNum = parseInt(match[1], 10);
+  const major = Math.floor(versionNum / 10000);
+
+  if (major < minVersion) {
+    error(`PostgreSQL ${major} detected — platform requires ≥ ${minVersion}. Upgrade the database.`);
+    process.exit(1);
+  }
+
+  success(`PostgreSQL ${major} confirmed (≥ ${minVersion})`);
+};
+
+/**
+ * Enable required Postgres extensions before migrations run.
+ * Idempotent — safe to call on every deploy.
+ */
+const enablePgExtensions = () => {
+  log('Enabling required PostgreSQL extensions (vector, cube, earthdistance)...');
+
+  const sql = `
+CREATE EXTENSION IF NOT EXISTS vector;
+CREATE EXTENSION IF NOT EXISTS cube;
+CREATE EXTENSION IF NOT EXISTS earthdistance;
+`;
+
+  const result = runPrisma(
+    ['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'],
+    { silent: true, input: sql },
+  );
+
+  if (!result.success) {
+    // Non-fatal: the extension may not be available (e.g. local dev without pgvector).
+    // The dedicated migration will catch the failure at deploy time on production.
+    warn('Could not enable one or more PostgreSQL extensions — ensure the database supports vector, cube, and earthdistance');
+    if (result.stderr) {
+      warn(result.stderr.trim());
+    }
+    return;
+  }
+
+  success('PostgreSQL extensions enabled (vector, cube, earthdistance)');
+};
+
+/**
  * Test database connection
  */
 const testDatabaseConnection = async () => {
@@ -448,23 +514,29 @@ const main = async () => {
   try {
     // Step 1: Test connection
     await testDatabaseConnection();
-    
-    // Step 2: Generate Prisma client
+
+    // Step 2: Verify Postgres version (must be ≥ 14 for required extensions)
+    verifyPostgresVersion(14);
+
+    // Step 3: Enable required extensions before any migration that may use them
+    enablePgExtensions();
+
+    // Step 4: Generate Prisma client
     generatePrismaClient();
-    
-    // Step 3: Run migration recovery
+
+    // Step 5: Run migration recovery
     await runMigrationRecovery();
-    
-    // Step 4: Deploy migrations
+
+    // Step 6: Deploy migrations
     deployMigrations();
     
-    // Step 5: Verify tables
+    // Step 7: Verify tables
     verifyCriticalTables();
-    
-    // Step 6: Verify new availability column
+
+    // Step 8: Verify new availability column
     verifyEducatorAvailabilityColumn();
 
-    // Step 7: Verify parent lead ownership column
+    // Step 9: Verify parent lead ownership column
     verifyParentLeadOwnershipColumn();
 
     
