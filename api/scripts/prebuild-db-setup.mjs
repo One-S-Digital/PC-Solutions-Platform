@@ -1447,54 +1447,100 @@ const main = async () => {
   // ai_agent_configs, ai_result_cache, knowledge_documents
   try {
     log('🔧 Preparing for add_ai_foundation migration...');
-    let cleared = await resolveMigration('rolled-back', '20260520100000_add_ai_foundation');
-    if (!cleared) {
-      log('⚠️  Standard resolve failed, force-marking as rolled-back...');
-      cleared = forceMarkMigrationRolledBack('20260520100000_add_ai_foundation');
+
+    const aiFoundationCheckSql = `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'candidate_consents';`;
+    const aiFoundationExists = runPrisma(['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'], { silent: true, input: aiFoundationCheckSql }).includes('candidate_consents');
+
+    if (aiFoundationExists) {
+      const applied = await resolveMigration('applied', '20260520100000_add_ai_foundation');
+      if (applied) {
+        log('✅ AI Foundation tables exist — migration marked as applied.');
+      } else {
+        log('ℹ️  AI Foundation already applied or not found.');
+      }
+    } else {
+      let cleared = await resolveMigration('rolled-back', '20260520100000_add_ai_foundation');
+      if (!cleared) {
+        log('⚠️  Standard resolve failed, force-marking as rolled-back...');
+        cleared = forceMarkMigrationRolledBack('20260520100000_add_ai_foundation');
+      }
+      if (cleared) {
+        ensureAiFoundation();
+        log('✅ AI Foundation migration cleared — Prisma will create tables.');
+      }
     }
-    if (cleared) log('✅ Migration cleared from failed state. Prisma will re-run it.');
-    ensureAiFoundation();
-    log('✅ AI Foundation schema prepared.');
-    log('📋 Prisma migrate deploy will now run this migration and mark it complete.');
   } catch (e) {
     warn(`⚠️  add_ai_foundation preparation failed: ${e.message}`);
-    try {
-      forceMarkMigrationRolledBack('20260520100000_add_ai_foundation');
-      ensureAiFoundation();
-    } catch (e2) {
-      error(`❌ Could not prepare for add_ai_foundation: ${e2.message}`);
+  }
+
+  // AI Staffing Phase 1 — staffing_requests, match_results, educator_embeddings,
+  // staffing_request_embeddings
+  try {
+    log('🔧 Preparing for add_staffing_phase1 migration...');
+
+    const staffingCheckSql = `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'staffing_requests';`;
+    const staffingExists = runPrisma(['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'], { silent: true, input: staffingCheckSql }).includes('staffing_requests');
+
+    if (staffingExists) {
+      const applied = await resolveMigration('applied', '20260521000000_add_staffing_phase1');
+      if (applied) {
+        log('✅ Staffing Phase 1 tables exist — migration marked as applied.');
+      } else {
+        log('ℹ️  Staffing Phase 1 already applied or not found.');
+      }
+    } else {
+      let cleared = await resolveMigration('rolled-back', '20260521000000_add_staffing_phase1');
+      if (!cleared) cleared = forceMarkMigrationRolledBack('20260521000000_add_staffing_phase1');
+      if (cleared) log('✅ Staffing Phase 1 migration cleared — Prisma will create tables.');
     }
+  } catch (e) {
+    warn(`⚠️  add_staffing_phase1 preparation failed: ${e.message}`);
+  }
+
+  // Enable PG Extensions — applied manually to production; mark as applied to clear drift
+  try {
+    log('🔧 Preparing for enable_pg_extensions migration...');
+    const applied = await resolveMigration('applied', '20260522000000_enable_pg_extensions');
+    if (applied) {
+      log('✅ enable_pg_extensions marked as applied.');
+    } else {
+      log('ℹ️  enable_pg_extensions already applied or not found.');
+    }
+  } catch (e) {
+    warn(`⚠️  enable_pg_extensions preparation failed: ${e.message}`);
   }
 
   // AI Assistant Core — enums + ai_conversations, ai_messages, ai_tool_calls,
   // ai_action_approvals, ai_context_memory
   try {
     log('🔧 Preparing for add_assistant_core migration...');
-    let cleared = await resolveMigration('rolled-back', '20260601000000_add_assistant_core');
-    if (!cleared) {
-      log('⚠️  Standard resolve failed, force-marking as rolled-back...');
-      cleared = forceMarkMigrationRolledBack('20260601000000_add_assistant_core');
+
+    const assistantCoreCheckSql = `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'ai_conversations';`;
+    const assistantCoreExists = runPrisma(['db', 'execute', '--schema', SCHEMA_PATH, '--stdin'], { silent: true, input: assistantCoreCheckSql }).includes('ai_conversations');
+
+    if (assistantCoreExists) {
+      const applied = await resolveMigration('applied', '20260601000000_add_assistant_core');
+      if (applied) {
+        log('✅ AI Assistant Core tables exist — migration marked as applied.');
+      } else {
+        log('ℹ️  AI Assistant Core already applied or not found.');
+      }
+    } else {
+      let cleared = await resolveMigration('rolled-back', '20260601000000_add_assistant_core');
+      if (!cleared) {
+        log('⚠️  Standard resolve failed, force-marking as rolled-back...');
+        cleared = forceMarkMigrationRolledBack('20260601000000_add_assistant_core');
+      }
+      if (cleared) {
+        ensureAssistantCore();
+        log('✅ AI Assistant Core migration cleared — Prisma will create tables.');
+      }
     }
-    if (cleared) log('✅ Migration cleared from failed state. Prisma will re-run it.');
-    ensureAssistantCore();
-    log('✅ AI Assistant Core schema prepared.');
-    log('📋 Prisma migrate deploy will now run this migration and mark it complete.');
   } catch (e) {
     warn(`⚠️  add_assistant_core preparation failed: ${e.message}`);
-    try {
-      forceMarkMigrationRolledBack('20260601000000_add_assistant_core');
-      ensureAssistantCore();
-    } catch (e2) {
-      error(`❌ Could not prepare for add_assistant_core: ${e2.message}`);
-    }
   }
 
   // mailing_templates FK — stuck in failed state since 2026-05-20
-  // Strategy:
-  //   1. Mark migration rolled-back so Prisma will re-run it
-  //   2. Ensure mailing_templates table + created_by_id column exist
-  //   3. Delete orphaned rows (created_by_id not in users) to satisfy ON DELETE RESTRICT
-  //   4. Drop the constraint if it was partially applied so Prisma can add it cleanly
   try {
     log('🔧 Preparing for mailing_templates_fk migration...');
     let cleared = await resolveMigration('rolled-back', '20260520020000_mailing_templates_fk');

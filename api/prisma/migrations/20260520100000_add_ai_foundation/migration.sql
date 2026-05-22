@@ -1,7 +1,8 @@
 -- AI Foundation (Phase 0): new tables for audit logging, caching, agent config,
 -- knowledge documents, and candidate consent.
+-- All statements are idempotent (IF NOT EXISTS / exception guards).
 
-CREATE TABLE "candidate_consents" (
+CREATE TABLE IF NOT EXISTS "candidate_consents" (
     "id"        TEXT         NOT NULL,
     "userId"    TEXT         NOT NULL,
     "version"   INTEGER      NOT NULL DEFAULT 1,
@@ -12,7 +13,7 @@ CREATE TABLE "candidate_consents" (
     CONSTRAINT "candidate_consents_pkey" PRIMARY KEY ("id")
 );
 
-CREATE TABLE "ai_agent_runs" (
+CREATE TABLE IF NOT EXISTS "ai_agent_runs" (
     "id"             TEXT         NOT NULL,
     "orchestration"  TEXT         NOT NULL,
     "principalId"    TEXT,
@@ -25,7 +26,7 @@ CREATE TABLE "ai_agent_runs" (
     CONSTRAINT "ai_agent_runs_pkey" PRIMARY KEY ("id")
 );
 
-CREATE TABLE "ai_audit_logs" (
+CREATE TABLE IF NOT EXISTS "ai_audit_logs" (
     "id"              TEXT           NOT NULL,
     "agentName"       TEXT           NOT NULL,
     "promptVersion"   TEXT           NOT NULL,
@@ -47,7 +48,7 @@ CREATE TABLE "ai_audit_logs" (
     CONSTRAINT "ai_audit_logs_pkey" PRIMARY KEY ("id")
 );
 
-CREATE TABLE "ai_agent_configs" (
+CREATE TABLE IF NOT EXISTS "ai_agent_configs" (
     "id"            TEXT         NOT NULL,
     "agentName"     TEXT         NOT NULL,
     "promptVersion" TEXT         NOT NULL,
@@ -60,7 +61,7 @@ CREATE TABLE "ai_agent_configs" (
     CONSTRAINT "ai_agent_configs_pkey" PRIMARY KEY ("id")
 );
 
-CREATE TABLE "ai_result_cache" (
+CREATE TABLE IF NOT EXISTS "ai_result_cache" (
     "id"        TEXT         NOT NULL,
     "cacheKey"  TEXT         NOT NULL,
     "agentName" TEXT         NOT NULL,
@@ -72,7 +73,7 @@ CREATE TABLE "ai_result_cache" (
     CONSTRAINT "ai_result_cache_pkey" PRIMARY KEY ("id")
 );
 
-CREATE TABLE "knowledge_documents" (
+CREATE TABLE IF NOT EXISTS "knowledge_documents" (
     "id"          TEXT         NOT NULL,
     "source"      TEXT         NOT NULL,
     "cantonScope" TEXT,
@@ -88,27 +89,31 @@ CREATE TABLE "knowledge_documents" (
 );
 
 -- Unique constraints
-CREATE UNIQUE INDEX "ai_agent_configs_agentName_environment_foundationId_key"
+CREATE UNIQUE INDEX IF NOT EXISTS "ai_agent_configs_agentName_environment_foundationId_key"
     ON "ai_agent_configs"("agentName", "environment", "foundationId");
 
-CREATE UNIQUE INDEX "ai_result_cache_cacheKey_key"
+CREATE UNIQUE INDEX IF NOT EXISTS "ai_result_cache_cacheKey_key"
     ON "ai_result_cache"("cacheKey");
 
 -- Indexes
-CREATE INDEX "candidate_consents_userId_isActive_idx"   ON "candidate_consents"("userId", "isActive");
-CREATE INDEX "ai_agent_runs_principalId_startedAt_idx"  ON "ai_agent_runs"("principalId", "startedAt");
-CREATE INDEX "ai_audit_logs_agentName_createdAt_idx"    ON "ai_audit_logs"("agentName", "createdAt");
-CREATE INDEX "ai_audit_logs_principalId_createdAt_idx"  ON "ai_audit_logs"("principalId", "createdAt");
-CREATE INDEX "ai_audit_logs_agentRunId_idx"             ON "ai_audit_logs"("agentRunId");
-CREATE INDEX "ai_result_cache_agentName_idx"            ON "ai_result_cache"("agentName");
-CREATE INDEX "ai_result_cache_expiresAt_idx"            ON "ai_result_cache"("expiresAt");
-CREATE INDEX "knowledge_documents_source_locale_idx"    ON "knowledge_documents"("source", "locale");
+CREATE INDEX IF NOT EXISTS "candidate_consents_userId_isActive_idx"   ON "candidate_consents"("userId", "isActive");
+CREATE INDEX IF NOT EXISTS "ai_agent_runs_principalId_startedAt_idx"  ON "ai_agent_runs"("principalId", "startedAt");
+CREATE INDEX IF NOT EXISTS "ai_audit_logs_agentName_createdAt_idx"    ON "ai_audit_logs"("agentName", "createdAt");
+CREATE INDEX IF NOT EXISTS "ai_audit_logs_principalId_createdAt_idx"  ON "ai_audit_logs"("principalId", "createdAt");
+CREATE INDEX IF NOT EXISTS "ai_audit_logs_agentRunId_idx"             ON "ai_audit_logs"("agentRunId");
+CREATE INDEX IF NOT EXISTS "ai_result_cache_agentName_idx"            ON "ai_result_cache"("agentName");
+CREATE INDEX IF NOT EXISTS "ai_result_cache_expiresAt_idx"            ON "ai_result_cache"("expiresAt");
+CREATE INDEX IF NOT EXISTS "knowledge_documents_source_locale_idx"    ON "knowledge_documents"("source", "locale");
 
--- Foreign keys
-ALTER TABLE "candidate_consents"
+-- Foreign keys (guarded against duplicate constraint errors)
+DO $$ BEGIN
+  ALTER TABLE "candidate_consents"
     ADD CONSTRAINT "candidate_consents_userId_fkey"
     FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
-ALTER TABLE "ai_audit_logs"
+DO $$ BEGIN
+  ALTER TABLE "ai_audit_logs"
     ADD CONSTRAINT "ai_audit_logs_agentRunId_fkey"
     FOREIGN KEY ("agentRunId") REFERENCES "ai_agent_runs"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
