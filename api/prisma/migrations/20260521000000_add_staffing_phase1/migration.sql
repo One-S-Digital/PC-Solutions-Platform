@@ -93,9 +93,11 @@ CREATE TABLE IF NOT EXISTS "staffing_requests" (
 
 CREATE INDEX IF NOT EXISTS "staffing_requests_foundationId_idx" ON "staffing_requests"("foundationId");
 
-ALTER TABLE "job_listings"
-  ADD CONSTRAINT IF NOT EXISTS "job_listings_staffingRequestId_fkey"
+DO $$ BEGIN
+  ALTER TABLE "job_listings"
+    ADD CONSTRAINT "job_listings_staffingRequestId_fkey"
     FOREIGN KEY ("staffingRequestId") REFERENCES "staffing_requests"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- ─── staffing_request_embeddings ─────────────────────────────────────────────
 
