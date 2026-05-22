@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Prisma } from '@prisma/client';
+import { Prisma, UserRole } from '@prisma/client';
 
 interface ScoreWeights {
   role: number;
@@ -46,7 +46,7 @@ export class HybridMatcherService {
 
     // ── Hard filters ─────────────────────────────────────────────────────────
     const whereClause: Prisma.UserWhereInput = {
-      role: 'EDUCATOR',
+      role: UserRole.EDUCATOR,
       candidatePoolVisible: true,
       approvalStatus: 'APPROVED',
       isActive: true,

@@ -14,7 +14,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '@prisma/client';
 
-type RequestContext = { context?: { appUserId: string; role: UserRole; organizationId?: string } };
+type RequestContext = { context?: { profileUserId: string; role: UserRole; organizationId?: string } };
 
 @Controller('staffing')
 @UseGuards(ClerkAuthGuard, RolesGuard)
@@ -28,7 +28,7 @@ export class StaffingController {
     @Request() req: RequestContext,
   ) {
     return this.staffingService.createRequest(dto, {
-      userId: req.context!.appUserId,
+      userId: req.context!.profileUserId,
       role: req.context!.role,
       organizationId: req.context?.organizationId,
     });
@@ -41,7 +41,7 @@ export class StaffingController {
     @Request() req: RequestContext,
   ) {
     return this.staffingService.getRequest(id, {
-      userId: req.context!.appUserId,
+      userId: req.context!.profileUserId,
       role: req.context!.role,
       organizationId: req.context?.organizationId,
     });
@@ -54,7 +54,7 @@ export class StaffingController {
     @Request() req: RequestContext,
   ) {
     return this.staffingService.getMatches(id, {
-      userId: req.context!.appUserId,
+      userId: req.context!.profileUserId,
       role: req.context!.role,
       organizationId: req.context?.organizationId,
     });
