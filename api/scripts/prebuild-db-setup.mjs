@@ -1468,6 +1468,73 @@ const main = async () => {
     }
   }
 
+  // mailing_templates FK — stuck in failed state since 2026-05-20
+  // Strategy:
+  //   1. Mark migration rolled-back so Prisma will re-run it
+  //   2. Ensure mailing_templates table + created_by_id column exist
+  //   3. Delete orphaned rows (created_by_id not in users) to satisfy ON DELETE RESTRICT
+  //   4. Drop the constraint if it was partially applied so Prisma can add it cleanly
+  try {
+    log('🔧 Preparing for mailing_templates_fk migration...');
+
+    let cleared = await resolveMigration('rolled-back', '20260520020000_mailing_templates_fk');
+    if (!cleared) {
+      log('⚠️  Standard resolve failed, force-marking as rolled-back...');
+      cleared = forceMarkMigrationRolledBack('20260520020000_mailing_templates_fk');
+    }
+    if (cleared) {
+      log('✅ Migration cleared from failed state. Prisma will re-run it.');
+    }
+
+    // Ensure the table and column exist (in case 20260520010000 also had trouble)
+    runSql(`
+CREATE TABLE IF NOT EXISTS "mailing_templates" (
+  "id"           TEXT NOT NULL,
+  "name"         TEXT NOT NULL,
+  "description"  TEXT,
+  "subject"      TEXT NOT NULL,
+  "body_html"    TEXT NOT NULL,
+  "body_text"    TEXT,
+  "created_by_id" TEXT NOT NULL,
+  "created_at"   TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updated_at"   TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "mailing_templates_pkey" PRIMARY KEY ("id")
+);
+CREATE INDEX IF NOT EXISTS "mailing_templates_created_by_id_idx"
+  ON "mailing_templates"("created_by_id");
+`);
+
+    // Remove orphaned rows that would violate ON DELETE RESTRICT
+    runSql(`
+DELETE FROM "mailing_templates"
+WHERE "created_by_id" NOT IN (SELECT "id" FROM "users");
+`);
+
+    // Drop the constraint if it was partially created — Prisma needs to add it itself
+    runSql(`
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'mailing_templates_created_by_id_fkey'
+  ) THEN
+    ALTER TABLE "mailing_templates"
+      DROP CONSTRAINT "mailing_templates_created_by_id_fkey";
+  END IF;
+END $$;
+`);
+
+    log('✅ mailing_templates FK migration prepared.');
+    log('📋 Prisma migrate deploy will now run this migration and mark it complete.');
+  } catch (e) {
+    warn(`⚠️  mailing_templates_fk preparation failed: ${e.message}`);
+    try {
+      forceMarkMigrationRolledBack('20260520020000_mailing_templates_fk');
+    } catch (e2) {
+      error(`❌ Could not clear mailing_templates_fk failed state: ${e2.message}`);
+    }
+  }
+
   // Add contactEmail to organizations + drop organization_contact_infos
   try {
     log('🔧 Preparing for add_contact_email_to_organization migration...');
