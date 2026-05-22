@@ -92,10 +92,9 @@ const resolveMigration = async (status, migrationName) => {
     log(`✅ Marked migration ${migrationName} as ${status}.`);
     return true;
   } catch (e) {
-    // Check if it's already in the desired state (P3008 for applied, P3012 for rolled-back not needed)
     const alreadyInState = e.message.includes('P3008') || e.message.includes('already recorded as applied');
     const cannotRollback = e.message.includes('P3012') || e.message.includes('cannot be rolled back');
-    
+
     if (alreadyInState && status === 'applied') {
       log(`ℹ️  Migration ${migrationName} already marked as ${status}.`);
       return true;
@@ -121,7 +120,7 @@ SET finished_at = NOW(),
 WHERE migration_name = '${migrationName}' 
 AND finished_at IS NULL;
 `;
-  
+
   try {
     log(`🔨 Force-marking migration ${migrationName} as rolled-back...`);
     runSql(sql);
@@ -134,7 +133,6 @@ AND finished_at IS NULL;
 };
 
 const ensureAssetMetadataColumn = () => {
-  // Matches prisma migration `20251104140358_add_asset_metadata_field`, but safe to re-run.
   const sql = `
 DO $$
 BEGIN
@@ -157,9 +155,6 @@ $$;
 };
 
 const ensureAssetUrlConstraintFixed = () => {
-  // Legacy hotfix: some production DBs may still have a NOT NULL "url" column that Prisma
-  // no longer writes to. Make it nullable and sync data between url/publicUrl if needed.
-  // Safe to re-run.
   const sql = `
 DO $$
 BEGIN
@@ -170,17 +165,14 @@ BEGIN
         AND column_name = 'url'
         AND table_schema = 'public'
     ) THEN
-        -- Sync data to publicUrl if publicUrl is empty or null, but url has data
         UPDATE "assets"
         SET "publicUrl" = "url"
         WHERE ("publicUrl" IS NULL OR "publicUrl" = '') AND "url" IS NOT NULL AND "url" != '';
 
-        -- Sync data from publicUrl to url if url is empty (keeps legacy readers consistent)
         UPDATE "assets"
         SET "url" = "publicUrl"
         WHERE ("url" IS NULL OR "url" = '') AND "publicUrl" IS NOT NULL AND "publicUrl" != '';
 
-        -- Make url nullable to prevent insert errors from Prisma (which doesn't know about 'url')
         ALTER TABLE "assets" ALTER COLUMN "url" DROP NOT NULL;
     END IF;
 END $$;
@@ -192,14 +184,11 @@ END $$;
 };
 
 const ensureCategoriesColumns = () => {
-  // Matches prisma migration `20251119100000_add_categories_array_fields`, but guarded.
   const sql = `
--- Add array columns if missing
 ALTER TABLE "products" ADD COLUMN IF NOT EXISTS "categories" TEXT[] DEFAULT ARRAY[]::TEXT[];
 ALTER TABLE "services" ADD COLUMN IF NOT EXISTS "categories" TEXT[] DEFAULT ARRAY[]::TEXT[];
 ALTER TABLE "organizations" ADD COLUMN IF NOT EXISTS "productCategories" TEXT[] DEFAULT ARRAY[]::TEXT[];
 
--- Backfill from legacy single-category columns only if they exist
 DO $$
 BEGIN
   IF EXISTS (
@@ -237,14 +226,8 @@ $$;
   log('✅ Categories columns verified.');
 };
 
-/**
- * Ensure message file columns exist in messages table.
- * Matches migration `20251221000000_add_message_file_columns`.
- * CRITICAL: Fixes messaging "The column messages.fileUrl does not exist" error.
- */
 const ensureMessageFileColumns = () => {
   const sql = `
--- Add fileUrl column if missing
 DO $$
 BEGIN
     IF NOT EXISTS (
@@ -257,7 +240,6 @@ BEGIN
     END IF;
 END $$;
 
--- Add fileName column if missing
 DO $$
 BEGIN
     IF NOT EXISTS (
@@ -270,7 +252,6 @@ BEGIN
     END IF;
 END $$;
 
--- Add fileSize column if missing
 DO $$
 BEGIN
     IF NOT EXISTS (
@@ -283,7 +264,6 @@ BEGIN
     END IF;
 END $$;
 
--- Add mimeType column if missing
 DO $$
 BEGIN
     IF NOT EXISTS (
@@ -302,14 +282,8 @@ END $$;
   log('✅ Messages file columns verified.');
 };
 
-/**
- * Ensure educator availability settings column exists in users table.
- * Matches migration `20251217100000_add_educator_availability_settings`.
- * This enables the Calendly-style scheduling feature for educators.
- */
 const ensureEducatorAvailabilitySettings = () => {
   const sql = `
--- Add availabilitySettings JSONB column if missing
 DO $$
 BEGIN
     IF NOT EXISTS (
@@ -319,13 +293,10 @@ BEGIN
         AND column_name = 'availabilitySettings'
     ) THEN
         ALTER TABLE "public"."users" ADD COLUMN "availabilitySettings" JSONB;
-        
-        -- Add a comment to document the field
         COMMENT ON COLUMN "public"."users"."availabilitySettings" IS 'Structured availability settings for educators (Calendly-style scheduling). Contains employmentType, weeklySchedule, dateOverrides, timezone, and notes.';
     END IF;
 END $$;
 
--- Create index for querying by employment type (commonly used in searches)
 CREATE INDEX IF NOT EXISTS "users_availability_employment_type_idx" 
 ON "public"."users" ((("availabilitySettings"->>'employmentType')));
 `;
@@ -335,17 +306,8 @@ ON "public"."users" ((("availabilitySettings"->>'employmentType')));
   log('✅ Educator availability settings column verified.');
 };
 
-/**
- * Ensure subscription management system schema exists.
- * Matches migration `20251218000000_subscription_management_system`.
- * Adds new subscription statuses, audit logging, scheduling, and enhanced fields.
- * 
- * CRITICAL: This ensures base tables exist (from init migration) before adding enhancements.
- * If base tables are missing, they will be created. This is proper recovery, not masking errors.
- */
 const ensureSubscriptionManagementSystem = () => {
   const sql = `
--- Ensure base enums exist (required for subscriptions table)
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'SubscriptionStatus') THEN
@@ -360,7 +322,6 @@ BEGIN
     END IF;
 END $$;
 
--- Ensure base subscriptions table exists (from init migration)
 CREATE TABLE IF NOT EXISTS "subscriptions" (
     "id" TEXT NOT NULL,
     "userId" TEXT,
@@ -379,13 +340,10 @@ CREATE TABLE IF NOT EXISTS "subscriptions" (
     CONSTRAINT "subscriptions_pkey" PRIMARY KEY ("id")
 );
 
--- Ensure base indexes exist for subscriptions
 CREATE INDEX IF NOT EXISTS "subscriptions_userId_idx" ON "subscriptions"("userId");
 CREATE INDEX IF NOT EXISTS "subscriptions_organizationId_idx" ON "subscriptions"("organizationId");
 CREATE UNIQUE INDEX IF NOT EXISTS "subscriptions_stripeSubscriptionId_key" ON "subscriptions"("stripeSubscriptionId");
 
--- Ensure base subscription_plans table exists (from init migration)
--- Use snake_case column names to match Prisma schema @map directives
 CREATE TABLE IF NOT EXISTS "subscription_plans" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
@@ -403,7 +361,6 @@ CREATE TABLE IF NOT EXISTS "subscription_plans" (
     CONSTRAINT "subscription_plans_pkey" PRIMARY KEY ("id")
 );
 
--- Fix column names from camelCase to snake_case for existing databases
 DO $$
 BEGIN
     IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'subscription_plans' AND column_name = 'billingPeriod') THEN
@@ -432,7 +389,6 @@ BEGIN
     END IF;
 END$$;
 
--- Add new enum values to SubscriptionStatus
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumlabel = 'PAUSED' AND enumtypid = (SELECT oid FROM pg_type WHERE typname = 'SubscriptionStatus')) THEN
@@ -468,7 +424,6 @@ BEGIN
     END IF;
 END$$;
 
--- Add new columns to subscriptions table
 ALTER TABLE "subscriptions" 
     ADD COLUMN IF NOT EXISTS "trial_start" TIMESTAMP(3),
     ADD COLUMN IF NOT EXISTS "trial_end" TIMESTAMP(3),
@@ -482,7 +437,6 @@ ALTER TABLE "subscriptions"
     ADD COLUMN IF NOT EXISTS "notes" TEXT,
     ADD COLUMN IF NOT EXISTS "metadata" JSONB;
 
--- Add new columns to subscription_plans table
 ALTER TABLE "subscription_plans" 
     ADD COLUMN IF NOT EXISTS "code" TEXT,
     ADD COLUMN IF NOT EXISTS "allowed_roles" TEXT[] DEFAULT ARRAY[]::TEXT[],
@@ -490,10 +444,8 @@ ALTER TABLE "subscription_plans"
     ADD COLUMN IF NOT EXISTS "display_order" INTEGER NOT NULL DEFAULT 0,
     ADD COLUMN IF NOT EXISTS "stripe_product_id" TEXT;
 
--- Create unique index on subscription_plans code (only for non-null values)
 CREATE UNIQUE INDEX IF NOT EXISTS "subscription_plans_code_key" ON "subscription_plans"("code") WHERE "code" IS NOT NULL;
 
--- Create SubscriptionAction table for audit logging
 CREATE TABLE IF NOT EXISTS "subscription_actions" (
     "id" TEXT NOT NULL,
     "subscription_id" TEXT NOT NULL,
@@ -505,11 +457,9 @@ CREATE TABLE IF NOT EXISTS "subscription_actions" (
     "performed_by" TEXT NOT NULL,
     "performed_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "metadata" JSONB,
-    
     CONSTRAINT "subscription_actions_pkey" PRIMARY KEY ("id")
 );
 
--- Create SubscriptionSchedule table for scheduled actions
 CREATE TABLE IF NOT EXISTS "subscription_schedules" (
     "id" TEXT NOT NULL,
     "subscription_id" TEXT NOT NULL,
@@ -520,11 +470,9 @@ CREATE TABLE IF NOT EXISTS "subscription_schedules" (
     "processed_at" TIMESTAMP(3),
     "created_by" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    
     CONSTRAINT "subscription_schedules_pkey" PRIMARY KEY ("id")
 );
 
--- Create SubscriptionNote table for admin notes
 CREATE TABLE IF NOT EXISTS "subscription_notes" (
     "id" TEXT NOT NULL,
     "subscription_id" TEXT NOT NULL,
@@ -532,11 +480,9 @@ CREATE TABLE IF NOT EXISTS "subscription_notes" (
     "is_internal" BOOLEAN NOT NULL DEFAULT true,
     "created_by" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    
     CONSTRAINT "subscription_notes_pkey" PRIMARY KEY ("id")
 );
 
--- Add foreign key constraints (safely)
 DO $$
 BEGIN
     IF NOT EXISTS (
@@ -576,13 +522,10 @@ BEGIN
     END IF;
 END$$;
 
--- Create indexes for performance
 CREATE INDEX IF NOT EXISTS "subscription_actions_subscription_id_idx" ON "subscription_actions"("subscription_id");
 CREATE INDEX IF NOT EXISTS "subscription_actions_performed_at_idx" ON "subscription_actions"("performed_at");
 CREATE INDEX IF NOT EXISTS "subscription_schedules_scheduled_date_is_processed_idx" ON "subscription_schedules"("scheduled_date", "is_processed");
 CREATE INDEX IF NOT EXISTS "subscription_notes_subscription_id_idx" ON "subscription_notes"("subscription_id");
-
--- Add indexes to subscriptions table for new queries
 CREATE INDEX IF NOT EXISTS "subscriptions_status_idx" ON "subscriptions"("status");
 CREATE INDEX IF NOT EXISTS "subscriptions_currentPeriodEnd_idx" ON "subscriptions"("currentPeriodEnd");
 CREATE INDEX IF NOT EXISTS "subscriptions_is_manual_idx" ON "subscriptions"("is_manual");
@@ -593,13 +536,8 @@ CREATE INDEX IF NOT EXISTS "subscriptions_is_manual_idx" ON "subscriptions"("is_
   log('✅ Subscription management system schema verified.');
 };
 
-/**
- * Ensure foundation subscription tier schema exists (PricingTier scoping).
- * Matches migration `20251221000002_foundation_subscription_tiers`.
- */
 const ensureFoundationSubscriptionTiers = () => {
   const sql = `
--- Ensure pricing_tiers table exists (from init migration)
 CREATE TABLE IF NOT EXISTS "pricing_tiers" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
@@ -613,23 +551,16 @@ CREATE TABLE IF NOT EXISTS "pricing_tiers" (
     CONSTRAINT "pricing_tiers_pkey" PRIMARY KEY ("id")
 );
 
--- Ensure base enum exists (defensive for early bootstrap)
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'UserRole') THEN
         CREATE TYPE "UserRole" AS ENUM (
-          'SUPER_ADMIN',
-          'ADMIN',
-          'FOUNDATION',
-          'PRODUCT_SUPPLIER',
-          'SERVICE_PROVIDER',
-          'EDUCATOR',
-          'PARENT'
+          'SUPER_ADMIN', 'ADMIN', 'FOUNDATION', 'PRODUCT_SUPPLIER',
+          'SERVICE_PROVIDER', 'EDUCATOR', 'PARENT'
         );
     END IF;
 END $$;
 
--- Ensure columns for scoping exist
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'pricing_tiers' AND column_name = 'role') THEN
@@ -651,17 +582,14 @@ BEGIN
     END IF;
 END $$;
 
--- Ensure indexes
 CREATE INDEX IF NOT EXISTS "pricing_tiers_role_idx" ON "public"."pricing_tiers" ("role");
 CREATE INDEX IF NOT EXISTS "pricing_tiers_subscription_tier_idx" ON "public"."pricing_tiers" ("subscription_tier");
 CREATE INDEX IF NOT EXISTS "pricing_tiers_role_subscription_tier_idx" ON "public"."pricing_tiers" ("role", "subscription_tier");
 
--- Ensure uniqueness constraint
 DO $$
 BEGIN
   IF NOT EXISTS (
-    SELECT 1
-    FROM pg_constraint
+    SELECT 1 FROM pg_constraint
     WHERE conname = 'pricing_tiers_role_subscription_tier_billing_period_key'
   ) THEN
     ALTER TABLE "public"."pricing_tiers"
@@ -670,34 +598,17 @@ BEGIN
   END IF;
 END $$;
 
--- Seed default Foundation tiers if missing
 INSERT INTO "public"."pricing_tiers" (
-  "id",
-  "role",
-  "subscription_tier",
-  "name",
-  "basePrice",
-  "currency",
-  "billingPeriod",
-  "discounts",
-  "isActive",
-  "display_order",
-  "createdAt",
-  "updatedAt"
+  "id", "role", "subscription_tier", "name", "basePrice", "currency",
+  "billingPeriod", "discounts", "isActive", "display_order", "createdAt", "updatedAt"
 )
 SELECT
   v.id,
   'FOUNDATION'::"public"."UserRole",
   v.subscription_tier::"public"."SubscriptionTier",
-  v.name,
-  v.base_price,
-  'CHF',
-  'monthly',
+  v.name, v.base_price, 'CHF', 'monthly',
   jsonb_build_object('yearlyDiscount', 0, 'volumeDiscounts', '[]'::jsonb),
-  TRUE,
-  v.display_order,
-  NOW(),
-  NOW()
+  TRUE, v.display_order, NOW(), NOW()
 FROM (
   VALUES
     ('2c31bb25-8b79-4d2a-8cda-0ab2d2621158', 'BASIC', 'Foundation - Basic', 0.0, 10),
@@ -706,8 +617,7 @@ FROM (
     ('d9c81d07-9774-4b8b-93a4-7c78b02b0b3e', 'ENTERPRISE', 'Foundation - Enterprise', 0.0, 40)
 ) AS v(id, subscription_tier, name, base_price, display_order)
 WHERE NOT EXISTS (
-  SELECT 1
-  FROM "public"."pricing_tiers" pt
+  SELECT 1 FROM "public"."pricing_tiers" pt
   WHERE pt."role" = 'FOUNDATION'::"public"."UserRole"
     AND pt."subscription_tier" = v.subscription_tier::"public"."SubscriptionTier"
     AND pt."billingPeriod" = 'monthly'
@@ -719,25 +629,17 @@ WHERE NOT EXISTS (
   log('✅ Foundation subscription tiers schema verified.');
 };
 
-/**
- * Ensure job contract type enum has new values.
- * Matches migration `20251219000000_add_job_contract_types`.
- * Adds REPLACEMENT, TEMPORARY, FREELANCE to JobContractType enum.
- */
 const ensureJobContractTypes = () => {
   const sql = `
--- Add new enum values to JobContractType
 DO $$
 BEGIN
     IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'JobContractType') THEN
         IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumlabel = 'REPLACEMENT' AND enumtypid = (SELECT oid FROM pg_type WHERE typname = 'JobContractType')) THEN
             ALTER TYPE "JobContractType" ADD VALUE 'REPLACEMENT';
         END IF;
-        
         IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumlabel = 'TEMPORARY' AND enumtypid = (SELECT oid FROM pg_type WHERE typname = 'JobContractType')) THEN
             ALTER TYPE "JobContractType" ADD VALUE 'TEMPORARY';
         END IF;
-        
         IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumlabel = 'FREELANCE' AND enumtypid = (SELECT oid FROM pg_type WHERE typname = 'JobContractType')) THEN
             ALTER TYPE "JobContractType" ADD VALUE 'FREELANCE';
         END IF;
@@ -750,18 +652,8 @@ END$$;
   log('✅ Job contract types verified.');
 };
 
-/**
- * Ensure email grace period setting exists in system_settings.
- * Matches migration `20251221000002_add_email_grace_period_setting`.
- *
- * Strategy:
- * - Ensure the base table exists (defensive for drifted prod DBs)
- * - Insert the setting only if missing
- * - Uses an extension-free TEXT id generator (md5) to avoid pgcrypto dependency
- */
 const ensureEmailGracePeriodSetting = () => {
   const sql = `
--- Ensure system_settings table exists (from init migration)
 DO $$
 BEGIN
   IF NOT EXISTS (
@@ -784,28 +676,15 @@ BEGIN
   END IF;
 END $$;
 
--- Seed email grace period setting if missing
 INSERT INTO "public"."system_settings" (
-  "id",
-  "key",
-  "value",
-  "description",
-  "category",
-  "isEncrypted",
-  "isPublic",
-  "createdAt",
-  "updatedAt"
+  "id", "key", "value", "description", "category", "isEncrypted", "isPublic", "createdAt", "updatedAt"
 )
 SELECT
   md5(random()::text || clock_timestamp()::text),
   'email.grace_period_days',
   to_jsonb(7),
-  'Number of days to keep old email addresses before automatic deletion after an email change. This grace period allows users to recover access if needed.',
-  'email',
-  false,
-  false,
-  NOW(),
-  NOW()
+  'Number of days to keep old email addresses before automatic deletion after an email change.',
+  'email', false, false, NOW(), NOW()
 WHERE NOT EXISTS (
   SELECT 1 FROM "public"."system_settings" WHERE "key" = 'email.grace_period_days'
 );
@@ -816,30 +695,19 @@ WHERE NOT EXISTS (
   log('✅ Email grace period setting verified.');
 };
 
-/**
- * Ensure parent lead to user account linking schema exists.
- * Matches migration `20260211090000_link_parent_leads_to_users`.
- */
 const ensureParentLeadAccountLink = () => {
   const sql = `
 DO $$
 BEGIN
   IF EXISTS (
-    SELECT 1
-    FROM information_schema.tables
-    WHERE table_schema = 'public'
-      AND table_name = 'parent_leads'
+    SELECT 1 FROM information_schema.tables
+    WHERE table_schema = 'public' AND table_name = 'parent_leads'
   ) THEN
-    -- Add ownership column if missing
-    ALTER TABLE "public"."parent_leads"
-      ADD COLUMN IF NOT EXISTS "parentUserId" TEXT;
+    ALTER TABLE "public"."parent_leads" ADD COLUMN IF NOT EXISTS "parentUserId" TEXT;
 
-    -- Backfill by matching lead email to users.email (case-insensitive)
     IF EXISTS (
-      SELECT 1
-      FROM information_schema.tables
-      WHERE table_schema = 'public'
-        AND table_name = 'users'
+      SELECT 1 FROM information_schema.tables
+      WHERE table_schema = 'public' AND table_name = 'users'
     ) THEN
       UPDATE "public"."parent_leads" AS pl
       SET "parentUserId" = u."id"
@@ -849,29 +717,21 @@ BEGIN
         AND LOWER(TRIM(pl."parentEmail")) = LOWER(TRIM(u."email"))
         AND u."role" = 'PARENT';
 
-      -- Add FK only once
       IF NOT EXISTS (
-        SELECT 1
-        FROM pg_constraint
-        WHERE conname = 'parent_leads_parentUserId_fkey'
+        SELECT 1 FROM pg_constraint WHERE conname = 'parent_leads_parentUserId_fkey'
       ) THEN
         ALTER TABLE "public"."parent_leads"
           ADD CONSTRAINT "parent_leads_parentUserId_fkey"
           FOREIGN KEY ("parentUserId") REFERENCES "public"."users"("id")
-          ON DELETE SET NULL
-          ON UPDATE CASCADE;
+          ON DELETE SET NULL ON UPDATE CASCADE;
       END IF;
     END IF;
 
-    -- Add index only once
     IF NOT EXISTS (
-      SELECT 1
-      FROM pg_indexes
-      WHERE schemaname = 'public'
-        AND indexname = 'parent_leads_parentUserId_idx'
+      SELECT 1 FROM pg_indexes
+      WHERE schemaname = 'public' AND indexname = 'parent_leads_parentUserId_idx'
     ) THEN
-      CREATE INDEX "parent_leads_parentUserId_idx"
-      ON "public"."parent_leads"("parentUserId");
+      CREATE INDEX "parent_leads_parentUserId_idx" ON "public"."parent_leads"("parentUserId");
     END IF;
   END IF;
 END $$;
@@ -882,14 +742,8 @@ END $$;
   log('✅ Parent lead account-link schema verified.');
 };
 
-/**
- * Ensure all translation infrastructure tables exist.
- * Matches migration `20251114140526_add_i18n_translation_tables`.
- * CRITICAL: Fixes admin translation page 500 error when static_translations table is missing.
- */
 const ensureTranslationInfrastructure = () => {
   const sql = `
--- Ensure TranslationStatus enum exists
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'TranslationStatus') THEN
@@ -897,7 +751,6 @@ BEGIN
     END IF;
 END $$;
 
--- Create entity_translations table
 DO $$
 BEGIN
     IF NOT EXISTS (
@@ -905,28 +758,17 @@ BEGIN
         WHERE table_schema = 'public' AND table_name = 'entity_translations'
     ) THEN
         CREATE TABLE "entity_translations" (
-            "entityType" TEXT NOT NULL,
-            "entityId" TEXT NOT NULL,
-            "lang" TEXT NOT NULL,
-            "field" TEXT NOT NULL,
-            "text" TEXT NOT NULL,
-            "origin" TEXT NOT NULL DEFAULT 'machine',
-            "verified" BOOLEAN NOT NULL DEFAULT false,
-            "sourceHash" TEXT NOT NULL,
-            "updatedAt" TIMESTAMP(3) NOT NULL,
-            "approvedAt" TIMESTAMP(3),
-            "approvedBy" TEXT,
-            "mtProvider" TEXT,
-            "reviewedAt" TIMESTAMP(3),
-            "reviewedBy" TEXT,
-            "status" "TranslationStatus" NOT NULL DEFAULT 'PENDING',
-            "translatedAt" TIMESTAMP(3),
+            "entityType" TEXT NOT NULL, "entityId" TEXT NOT NULL, "lang" TEXT NOT NULL,
+            "field" TEXT NOT NULL, "text" TEXT NOT NULL, "origin" TEXT NOT NULL DEFAULT 'machine',
+            "verified" BOOLEAN NOT NULL DEFAULT false, "sourceHash" TEXT NOT NULL,
+            "updatedAt" TIMESTAMP(3) NOT NULL, "approvedAt" TIMESTAMP(3), "approvedBy" TEXT,
+            "mtProvider" TEXT, "reviewedAt" TIMESTAMP(3), "reviewedBy" TEXT,
+            "status" "TranslationStatus" NOT NULL DEFAULT 'PENDING', "translatedAt" TIMESTAMP(3),
             CONSTRAINT "entity_translations_pkey" PRIMARY KEY ("entityType","entityId","lang","field")
         );
     END IF;
 END $$;
 
--- Add columns if missing (for existing tables)
 ALTER TABLE "entity_translations"
     ADD COLUMN IF NOT EXISTS "approvedAt" TIMESTAMP(3),
     ADD COLUMN IF NOT EXISTS "approvedBy" TEXT,
@@ -935,61 +777,36 @@ ALTER TABLE "entity_translations"
     ADD COLUMN IF NOT EXISTS "reviewedBy" TEXT,
     ADD COLUMN IF NOT EXISTS "translatedAt" TIMESTAMP(3);
 
--- Create entity_sources table
 DO $$
 BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.tables
-        WHERE table_schema = 'public' AND table_name = 'entity_sources'
-    ) THEN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'entity_sources') THEN
         CREATE TABLE "entity_sources" (
-            "entityType" TEXT NOT NULL,
-            "entityId" TEXT NOT NULL,
-            "sourceLang" TEXT NOT NULL,
-            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            "updatedAt" TIMESTAMP(3) NOT NULL,
+            "entityType" TEXT NOT NULL, "entityId" TEXT NOT NULL, "sourceLang" TEXT NOT NULL,
+            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL,
             CONSTRAINT "entity_sources_pkey" PRIMARY KEY ("entityType","entityId")
         );
     END IF;
 END $$;
 
--- Create static_translations table (CRITICAL for admin translation page)
 DO $$
 BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.tables
-        WHERE table_schema = 'public' AND table_name = 'static_translations'
-    ) THEN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'static_translations') THEN
         CREATE TABLE "static_translations" (
-            "namespace" TEXT NOT NULL,
-            "key" TEXT NOT NULL,
-            "lang" TEXT NOT NULL,
-            "value" TEXT NOT NULL,
-            "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            "updatedBy" TEXT,
-            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            "needsReview" BOOLEAN NOT NULL DEFAULT false,
-            "reviewedBy" TEXT,
-            "reviewedAt" TIMESTAMP(3),
+            "namespace" TEXT NOT NULL, "key" TEXT NOT NULL, "lang" TEXT NOT NULL,
+            "value" TEXT NOT NULL, "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            "updatedBy" TEXT, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            "needsReview" BOOLEAN NOT NULL DEFAULT false, "reviewedBy" TEXT, "reviewedAt" TIMESTAMP(3),
             CONSTRAINT "static_translations_pkey" PRIMARY KEY ("namespace","key","lang")
         );
     END IF;
 END $$;
 
--- Create translation_memory table
 DO $$
 BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.tables
-        WHERE table_schema = 'public' AND table_name = 'translation_memory'
-    ) THEN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'translation_memory') THEN
         CREATE TABLE "translation_memory" (
-            "id" TEXT NOT NULL,
-            "sourceTextHash" TEXT NOT NULL,
-            "sourceLang" TEXT NOT NULL,
-            "targetLang" TEXT NOT NULL,
-            "translatedText" TEXT NOT NULL,
-            "mtProvider" TEXT NOT NULL,
+            "id" TEXT NOT NULL, "sourceTextHash" TEXT NOT NULL, "sourceLang" TEXT NOT NULL,
+            "targetLang" TEXT NOT NULL, "translatedText" TEXT NOT NULL, "mtProvider" TEXT NOT NULL,
             "usageCount" INTEGER NOT NULL DEFAULT 1,
             "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
             "lastUsedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -998,18 +815,11 @@ BEGIN
     END IF;
 END $$;
 
--- Create translation_releases table
 DO $$
 BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.tables
-        WHERE table_schema = 'public' AND table_name = 'translation_releases'
-    ) THEN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'translation_releases') THEN
         CREATE TABLE "translation_releases" (
-            "id" TEXT NOT NULL,
-            "version" TEXT NOT NULL,
-            "description" TEXT,
-            "createdBy" TEXT,
+            "id" TEXT NOT NULL, "version" TEXT NOT NULL, "description" TEXT, "createdBy" TEXT,
             "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
             "isActive" BOOLEAN NOT NULL DEFAULT false,
             CONSTRAINT "translation_releases_pkey" PRIMARY KEY ("id")
@@ -1017,54 +827,32 @@ BEGIN
     END IF;
 END $$;
 
--- Create translation_audit_logs table
 DO $$
 BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.tables
-        WHERE table_schema = 'public' AND table_name = 'translation_audit_logs'
-    ) THEN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'translation_audit_logs') THEN
         CREATE TABLE "translation_audit_logs" (
-            "id" TEXT NOT NULL,
-            "type" TEXT NOT NULL,
-            "namespace" TEXT,
-            "entityType" TEXT,
-            "entityId" TEXT,
-            "key" TEXT,
-            "field" TEXT,
-            "lang" TEXT NOT NULL,
-            "action" TEXT NOT NULL,
-            "oldValue" TEXT,
-            "newValue" TEXT,
-            "userId" TEXT NOT NULL,
-            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            "id" TEXT NOT NULL, "type" TEXT NOT NULL, "namespace" TEXT, "entityType" TEXT,
+            "entityId" TEXT, "key" TEXT, "field" TEXT, "lang" TEXT NOT NULL,
+            "action" TEXT NOT NULL, "oldValue" TEXT, "newValue" TEXT,
+            "userId" TEXT NOT NULL, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
             CONSTRAINT "translation_audit_logs_pkey" PRIMARY KEY ("id")
         );
     END IF;
 END $$;
 
--- Create mt_cost_tracking table
 DO $$
 BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.tables
-        WHERE table_schema = 'public' AND table_name = 'mt_cost_tracking'
-    ) THEN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'mt_cost_tracking') THEN
         CREATE TABLE "mt_cost_tracking" (
-            "id" TEXT NOT NULL,
-            "date" DATE NOT NULL,
-            "provider" TEXT NOT NULL,
-            "sourceLang" TEXT NOT NULL,
-            "targetLang" TEXT NOT NULL,
-            "characters" INTEGER NOT NULL,
-            "cost" DECIMAL(10,4) NOT NULL,
+            "id" TEXT NOT NULL, "date" DATE NOT NULL, "provider" TEXT NOT NULL,
+            "sourceLang" TEXT NOT NULL, "targetLang" TEXT NOT NULL,
+            "characters" INTEGER NOT NULL, "cost" DECIMAL(10,4) NOT NULL,
             "jobCount" INTEGER NOT NULL DEFAULT 0,
             CONSTRAINT "mt_cost_tracking_pkey" PRIMARY KEY ("id")
         );
     END IF;
 END $$;
 
--- Create all indexes (outside IF blocks so they're created even if table already existed)
 CREATE INDEX IF NOT EXISTS "entity_translations_entityType_lang_idx" ON "entity_translations"("entityType", "lang");
 CREATE INDEX IF NOT EXISTS "entity_translations_status_updatedAt_idx" ON "entity_translations"("status", "updatedAt");
 CREATE INDEX IF NOT EXISTS "static_translations_namespace_lang_idx" ON "static_translations"("namespace", "lang");
@@ -1084,82 +872,35 @@ CREATE UNIQUE INDEX IF NOT EXISTS "mt_cost_tracking_date_provider_sourceLang_tar
   log('✅ Translation infrastructure verified.');
 };
 
-/**
- * Ensure urgency and compensationType enum types exist and columns are converted.
- * Matches migration `20260507020000_enum_urgency_compensation`.
- * Idempotent: skips steps whose state is already correct.
- */
 const ensureEnumUrgencyCompensation = () => {
   const sql = `
--- Create UrgencyLevel enum if it doesn't exist in the public schema
 DO $$ BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_type t
-    JOIN pg_namespace n ON n.oid = t.typnamespace
-    WHERE t.typname = 'UrgencyLevel' AND n.nspname = 'public'
-  ) THEN
+  IF NOT EXISTS (SELECT 1 FROM pg_type t JOIN pg_namespace n ON n.oid = t.typnamespace WHERE t.typname = 'UrgencyLevel' AND n.nspname = 'public') THEN
     CREATE TYPE "UrgencyLevel" AS ENUM ('NORMAL', 'URGENT');
   END IF;
 END $$;
 
--- Create CompensationType enum if it doesn't exist in the public schema
 DO $$ BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_type t
-    JOIN pg_namespace n ON n.oid = t.typnamespace
-    WHERE t.typname = 'CompensationType' AND n.nspname = 'public'
-  ) THEN
+  IF NOT EXISTS (SELECT 1 FROM pg_type t JOIN pg_namespace n ON n.oid = t.typnamespace WHERE t.typname = 'CompensationType' AND n.nspname = 'public') THEN
     CREATE TYPE "CompensationType" AS ENUM ('PAID', 'UNPAID', 'STIPEND');
   END IF;
 END $$;
 
--- Convert replacement_requests.urgency TEXT → UrgencyLevel (only if still TEXT)
--- Must drop default first; Postgres cannot auto-cast a TEXT default to an enum.
 DO $$ BEGIN
-  IF EXISTS (
-    SELECT 1 FROM information_schema.columns
-    WHERE table_schema = 'public'
-      AND table_name = 'replacement_requests'
-      AND column_name = 'urgency'
-      AND data_type = 'text'
-  ) THEN
-    UPDATE "replacement_requests"
-      SET "urgency" = 'NORMAL'
-      WHERE "urgency" NOT IN ('NORMAL', 'URGENT');
-
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'replacement_requests' AND column_name = 'urgency' AND data_type = 'text') THEN
+    UPDATE "replacement_requests" SET "urgency" = 'NORMAL' WHERE "urgency" NOT IN ('NORMAL', 'URGENT');
     ALTER TABLE "replacement_requests" ALTER COLUMN "urgency" DROP DEFAULT;
-
-    ALTER TABLE "replacement_requests"
-      ALTER COLUMN "urgency" TYPE "UrgencyLevel"
-      USING "urgency"::"UrgencyLevel";
-
-    ALTER TABLE "replacement_requests"
-      ALTER COLUMN "urgency" SET DEFAULT 'NORMAL'::"UrgencyLevel";
+    ALTER TABLE "replacement_requests" ALTER COLUMN "urgency" TYPE "UrgencyLevel" USING "urgency"::"UrgencyLevel";
+    ALTER TABLE "replacement_requests" ALTER COLUMN "urgency" SET DEFAULT 'NORMAL'::"UrgencyLevel";
   END IF;
 END $$;
 
--- Convert intern_pool_requests.compensationType TEXT → CompensationType (only if still TEXT)
--- Must drop default first for the same reason.
 DO $$ BEGIN
-  IF EXISTS (
-    SELECT 1 FROM information_schema.columns
-    WHERE table_schema = 'public'
-      AND table_name = 'intern_pool_requests'
-      AND column_name = 'compensationType'
-      AND data_type = 'text'
-  ) THEN
-    UPDATE "intern_pool_requests"
-      SET "compensationType" = 'UNPAID'
-      WHERE "compensationType" NOT IN ('PAID', 'UNPAID', 'STIPEND');
-
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'intern_pool_requests' AND column_name = 'compensationType' AND data_type = 'text') THEN
+    UPDATE "intern_pool_requests" SET "compensationType" = 'UNPAID' WHERE "compensationType" NOT IN ('PAID', 'UNPAID', 'STIPEND');
     ALTER TABLE "intern_pool_requests" ALTER COLUMN "compensationType" DROP DEFAULT;
-
-    ALTER TABLE "intern_pool_requests"
-      ALTER COLUMN "compensationType" TYPE "CompensationType"
-      USING "compensationType"::"CompensationType";
-
-    ALTER TABLE "intern_pool_requests"
-      ALTER COLUMN "compensationType" SET DEFAULT 'UNPAID'::"CompensationType";
+    ALTER TABLE "intern_pool_requests" ALTER COLUMN "compensationType" TYPE "CompensationType" USING "compensationType"::"CompensationType";
+    ALTER TABLE "intern_pool_requests" ALTER COLUMN "compensationType" SET DEFAULT 'UNPAID'::"CompensationType";
   END IF;
 END $$;
 `;
@@ -1169,46 +910,28 @@ END $$;
   log('✅ Enum urgency/compensation schema verified.');
 };
 
-/**
- * Ensure EducatorApprovalStatus enum and approval columns exist on the users table.
- * Matches migration `20260509000000_add_educator_approval_status`.
- * Idempotent: each step is guarded so it is safe to re-run.
- */
 const ensureEducatorApprovalStatus = () => {
   const sql = `
 DO $$ BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_type t
-    JOIN pg_namespace n ON n.oid = t.typnamespace
-    WHERE t.typname = 'EducatorApprovalStatus' AND n.nspname = 'public'
-  ) THEN
+  IF NOT EXISTS (SELECT 1 FROM pg_type t JOIN pg_namespace n ON n.oid = t.typnamespace WHERE t.typname = 'EducatorApprovalStatus' AND n.nspname = 'public') THEN
     CREATE TYPE "EducatorApprovalStatus" AS ENUM ('PENDING_REVIEW', 'APPROVED', 'REJECTED');
   END IF;
 END $$;
 
 DO $$ BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.columns
-    WHERE table_schema = 'public' AND table_name = 'users' AND column_name = 'approvalStatus'
-  ) THEN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'users' AND column_name = 'approvalStatus') THEN
     ALTER TABLE "users" ADD COLUMN "approvalStatus" "EducatorApprovalStatus";
   END IF;
 END $$;
 
 DO $$ BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.columns
-    WHERE table_schema = 'public' AND table_name = 'users' AND column_name = 'approvalNotes'
-  ) THEN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'users' AND column_name = 'approvalNotes') THEN
     ALTER TABLE "users" ADD COLUMN "approvalNotes" TEXT;
   END IF;
 END $$;
 
 DO $$ BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.columns
-    WHERE table_schema = 'public' AND table_name = 'users' AND column_name = 'approvedAt'
-  ) THEN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'users' AND column_name = 'approvedAt') THEN
     ALTER TABLE "users" ADD COLUMN "approvedAt" TIMESTAMP(3);
   END IF;
 END $$;
@@ -1219,16 +942,10 @@ END $$;
   log('✅ EducatorApprovalStatus schema verified.');
 };
 
-/**
- * Ensure organizations.contactEmail exists and organization_contact_infos is dropped.
- * Matches migration `20260511000000_add_contact_email_to_organization`.
- */
 const ensureOrganizationContactEmail = () => {
   const sql = `
--- Add contactEmail to organizations if missing
 ALTER TABLE "organizations" ADD COLUMN IF NOT EXISTS "contactEmail" TEXT;
 
--- Migrate data and drop source table only if it still exists
 DO $$
 BEGIN
   IF EXISTS (
@@ -1251,12 +968,295 @@ END $$;
   log('✅ Organization contactEmail schema verified.');
 };
 
+/**
+ * Ensure AI Foundation (Phase 0) tables exist.
+ * Matches migration `20260520100000_add_ai_foundation`.
+ * Idempotent — safe to re-run on every deploy.
+ */
+const ensureAiFoundation = () => {
+  const sql = `
+-- candidate_consents
+CREATE TABLE IF NOT EXISTS "candidate_consents" (
+  "id"        TEXT         NOT NULL,
+  "userId"    TEXT         NOT NULL,
+  "version"   INTEGER      NOT NULL DEFAULT 1,
+  "grantedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "revokedAt" TIMESTAMP(3),
+  "isActive"  BOOLEAN      NOT NULL DEFAULT true,
+  CONSTRAINT "candidate_consents_pkey" PRIMARY KEY ("id")
+);
+CREATE INDEX IF NOT EXISTS "candidate_consents_userId_isActive_idx"
+  ON "candidate_consents"("userId", "isActive");
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'users')
+  AND NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'candidate_consents_userId_fkey') THEN
+    ALTER TABLE "candidate_consents"
+      ADD CONSTRAINT "candidate_consents_userId_fkey"
+      FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+  END IF;
+END $$;
+
+-- ai_agent_runs
+CREATE TABLE IF NOT EXISTS "ai_agent_runs" (
+  "id"             TEXT         NOT NULL,
+  "orchestration"  TEXT         NOT NULL,
+  "principalId"    TEXT,
+  "organizationId" TEXT,
+  "entityRef"      TEXT,
+  "status"         TEXT         NOT NULL DEFAULT 'running',
+  "startedAt"      TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "completedAt"    TIMESTAMP(3),
+  CONSTRAINT "ai_agent_runs_pkey" PRIMARY KEY ("id")
+);
+CREATE INDEX IF NOT EXISTS "ai_agent_runs_principalId_startedAt_idx"
+  ON "ai_agent_runs"("principalId", "startedAt");
+
+-- ai_audit_logs
+CREATE TABLE IF NOT EXISTS "ai_audit_logs" (
+  "id"              TEXT           NOT NULL,
+  "agentName"       TEXT           NOT NULL,
+  "promptVersion"   TEXT           NOT NULL,
+  "model"           TEXT           NOT NULL,
+  "fallbackUsed"    BOOLEAN        NOT NULL DEFAULT false,
+  "inputHash"       TEXT           NOT NULL,
+  "outputHash"      TEXT,
+  "tokenUsage"      JSONB          NOT NULL,
+  "costUsd"         DECIMAL(10, 8) NOT NULL DEFAULT 0,
+  "latencyMs"       INTEGER        NOT NULL,
+  "cacheHit"        BOOLEAN        NOT NULL DEFAULT false,
+  "principalId"     TEXT,
+  "organizationId"  TEXT,
+  "entityRef"       TEXT,
+  "retrievedDocIds" TEXT[]         NOT NULL DEFAULT ARRAY[]::TEXT[],
+  "agentRunId"      TEXT,
+  "createdAt"       TIMESTAMP(3)   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "ai_audit_logs_pkey" PRIMARY KEY ("id")
+);
+CREATE INDEX IF NOT EXISTS "ai_audit_logs_agentName_createdAt_idx"
+  ON "ai_audit_logs"("agentName", "createdAt");
+CREATE INDEX IF NOT EXISTS "ai_audit_logs_principalId_createdAt_idx"
+  ON "ai_audit_logs"("principalId", "createdAt");
+CREATE INDEX IF NOT EXISTS "ai_audit_logs_agentRunId_idx"
+  ON "ai_audit_logs"("agentRunId");
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_audit_logs_agentRunId_fkey') THEN
+    ALTER TABLE "ai_audit_logs"
+      ADD CONSTRAINT "ai_audit_logs_agentRunId_fkey"
+      FOREIGN KEY ("agentRunId") REFERENCES "ai_agent_runs"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+  END IF;
+END $$;
+
+-- ai_agent_configs
+CREATE TABLE IF NOT EXISTS "ai_agent_configs" (
+  "id"            TEXT         NOT NULL,
+  "agentName"     TEXT         NOT NULL,
+  "promptVersion" TEXT         NOT NULL,
+  "environment"   TEXT         NOT NULL DEFAULT 'production',
+  "foundationId"  TEXT,
+  "isActive"      BOOLEAN      NOT NULL DEFAULT true,
+  "createdAt"     TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt"     TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "ai_agent_configs_pkey" PRIMARY KEY ("id")
+);
+CREATE UNIQUE INDEX IF NOT EXISTS "ai_agent_configs_agentName_environment_foundationId_key"
+  ON "ai_agent_configs"("agentName", "environment", "foundationId");
+
+-- ai_result_cache
+CREATE TABLE IF NOT EXISTS "ai_result_cache" (
+  "id"        TEXT         NOT NULL,
+  "cacheKey"  TEXT         NOT NULL,
+  "agentName" TEXT         NOT NULL,
+  "payload"   JSONB        NOT NULL,
+  "modelUsed" TEXT         NOT NULL,
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "expiresAt" TIMESTAMP(3),
+  CONSTRAINT "ai_result_cache_pkey" PRIMARY KEY ("id")
+);
+CREATE UNIQUE INDEX IF NOT EXISTS "ai_result_cache_cacheKey_key"
+  ON "ai_result_cache"("cacheKey");
+CREATE INDEX IF NOT EXISTS "ai_result_cache_agentName_idx"
+  ON "ai_result_cache"("agentName");
+CREATE INDEX IF NOT EXISTS "ai_result_cache_expiresAt_idx"
+  ON "ai_result_cache"("expiresAt");
+
+-- knowledge_documents
+CREATE TABLE IF NOT EXISTS "knowledge_documents" (
+  "id"          TEXT         NOT NULL,
+  "source"      TEXT         NOT NULL,
+  "cantonScope" TEXT,
+  "locale"      TEXT         NOT NULL DEFAULT 'fr',
+  "audience"    TEXT,
+  "version"     INTEGER      NOT NULL DEFAULT 1,
+  "title"       TEXT         NOT NULL,
+  "content"     TEXT         NOT NULL,
+  "createdAt"   TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt"   TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "knowledge_documents_pkey" PRIMARY KEY ("id")
+);
+CREATE INDEX IF NOT EXISTS "knowledge_documents_source_locale_idx"
+  ON "knowledge_documents"("source", "locale");
+`;
+
+  log('Ensuring AI Foundation (Phase 0) tables exist...');
+  runSql(sql);
+  log('✅ AI Foundation schema verified.');
+};
+
+/**
+ * Ensure AI Assistant Core tables exist.
+ * Matches migration `20260601000000_add_assistant_core`.
+ * Idempotent — safe to re-run on every deploy.
+ */
+const ensureAssistantCore = () => {
+  const sql = `
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'AIConversationStatus') THEN
+    CREATE TYPE "AIConversationStatus" AS ENUM ('ACTIVE', 'ENDED', 'ARCHIVED');
+  END IF;
+END $$;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'AIChannel') THEN
+    CREATE TYPE "AIChannel" AS ENUM ('WEB', 'WHATSAPP', 'EMAIL');
+  END IF;
+END $$;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'AIMessageSender') THEN
+    CREATE TYPE "AIMessageSender" AS ENUM ('USER', 'ASSISTANT', 'SYSTEM', 'TOOL');
+  END IF;
+END $$;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'AIToolCallStatus') THEN
+    CREATE TYPE "AIToolCallStatus" AS ENUM ('PROPOSED', 'AWAITING_APPROVAL', 'APPROVED', 'EXECUTED', 'REJECTED', 'FAILED');
+  END IF;
+END $$;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'AIActionLevel') THEN
+    CREATE TYPE "AIActionLevel" AS ENUM ('L1_ANSWER', 'L2_DRAFT', 'L3_EXECUTE');
+  END IF;
+END $$;
+
+-- ai_conversations
+CREATE TABLE IF NOT EXISTS "ai_conversations" (
+  "id"             TEXT                   NOT NULL DEFAULT gen_random_uuid()::text,
+  "userId"         TEXT                   NOT NULL,
+  "organizationId" TEXT,
+  "role"           "UserRole"             NOT NULL,
+  "channel"        "AIChannel"            NOT NULL DEFAULT 'WEB',
+  "status"         "AIConversationStatus" NOT NULL DEFAULT 'ACTIVE',
+  "locale"         TEXT                   NOT NULL DEFAULT 'fr',
+  "startedAt"      TIMESTAMP(3)           NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "endedAt"        TIMESTAMP(3),
+  CONSTRAINT "ai_conversations_pkey" PRIMARY KEY ("id")
+);
+CREATE INDEX IF NOT EXISTS "ai_conversations_userId_startedAt_idx"
+  ON "ai_conversations"("userId", "startedAt" DESC);
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_conversations_userId_fkey') THEN
+    ALTER TABLE "ai_conversations"
+      ADD CONSTRAINT "ai_conversations_userId_fkey"
+      FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE;
+  END IF;
+END $$;
+
+-- ai_messages
+CREATE TABLE IF NOT EXISTS "ai_messages" (
+  "id"               TEXT              NOT NULL DEFAULT gen_random_uuid()::text,
+  "conversationId"   TEXT              NOT NULL,
+  "sender"           "AIMessageSender" NOT NULL,
+  "content"          TEXT              NOT NULL,
+  "structuredIntent" JSONB,
+  "createdAt"        TIMESTAMP(3)      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "ai_messages_pkey" PRIMARY KEY ("id")
+);
+CREATE INDEX IF NOT EXISTS "ai_messages_conversationId_createdAt_idx"
+  ON "ai_messages"("conversationId", "createdAt");
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_messages_conversationId_fkey') THEN
+    ALTER TABLE "ai_messages"
+      ADD CONSTRAINT "ai_messages_conversationId_fkey"
+      FOREIGN KEY ("conversationId") REFERENCES "ai_conversations"("id") ON DELETE CASCADE;
+  END IF;
+END $$;
+
+-- ai_tool_calls
+CREATE TABLE IF NOT EXISTS "ai_tool_calls" (
+  "id"               TEXT               NOT NULL DEFAULT gen_random_uuid()::text,
+  "conversationId"   TEXT               NOT NULL,
+  "messageId"        TEXT,
+  "toolName"         TEXT               NOT NULL,
+  "level"            "AIActionLevel"    NOT NULL,
+  "inputJson"        JSONB              NOT NULL,
+  "outputJson"       JSONB,
+  "status"           "AIToolCallStatus" NOT NULL DEFAULT 'PROPOSED',
+  "approvalRequired" BOOLEAN            NOT NULL DEFAULT false,
+  "approvedById"     TEXT,
+  "executedAt"       TIMESTAMP(3),
+  "errorMessage"     TEXT,
+  "createdAt"        TIMESTAMP(3)       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "ai_tool_calls_pkey" PRIMARY KEY ("id")
+);
+CREATE INDEX IF NOT EXISTS "ai_tool_calls_conversationId_createdAt_idx"
+  ON "ai_tool_calls"("conversationId", "createdAt");
+CREATE INDEX IF NOT EXISTS "ai_tool_calls_status_idx"
+  ON "ai_tool_calls"("status");
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_tool_calls_conversationId_fkey') THEN
+    ALTER TABLE "ai_tool_calls"
+      ADD CONSTRAINT "ai_tool_calls_conversationId_fkey"
+      FOREIGN KEY ("conversationId") REFERENCES "ai_conversations"("id") ON DELETE CASCADE;
+  END IF;
+END $$;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_tool_calls_messageId_fkey') THEN
+    ALTER TABLE "ai_tool_calls"
+      ADD CONSTRAINT "ai_tool_calls_messageId_fkey"
+      FOREIGN KEY ("messageId") REFERENCES "ai_messages"("id");
+  END IF;
+END $$;
+
+-- ai_action_approvals
+CREATE TABLE IF NOT EXISTS "ai_action_approvals" (
+  "id"              TEXT         NOT NULL DEFAULT gen_random_uuid()::text,
+  "toolCallId"      TEXT         NOT NULL,
+  "status"          TEXT         NOT NULL DEFAULT 'pending',
+  "approvedBy"      TEXT,
+  "approvalContext" JSONB,
+  "createdAt"       TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "ai_action_approvals_pkey" PRIMARY KEY ("id")
+);
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_action_approvals_toolCallId_fkey') THEN
+    ALTER TABLE "ai_action_approvals"
+      ADD CONSTRAINT "ai_action_approvals_toolCallId_fkey"
+      FOREIGN KEY ("toolCallId") REFERENCES "ai_tool_calls"("id") ON DELETE CASCADE;
+  END IF;
+END $$;
+
+-- ai_context_memory
+CREATE TABLE IF NOT EXISTS "ai_context_memory" (
+  "id"             TEXT         NOT NULL DEFAULT gen_random_uuid()::text,
+  "userId"         TEXT         NOT NULL,
+  "organizationId" TEXT,
+  "memoryType"     TEXT         NOT NULL,
+  "key"            TEXT         NOT NULL,
+  "valueJson"      JSONB        NOT NULL,
+  "expiresAt"      TIMESTAMP(3),
+  "createdAt"      TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "ai_context_memory_pkey" PRIMARY KEY ("id")
+);
+CREATE UNIQUE INDEX IF NOT EXISTS "ai_context_memory_userId_memoryType_key_key"
+  ON "ai_context_memory"("userId", "memoryType", "key");
+`;
+
+  log('Ensuring AI Assistant Core tables exist (ai_conversations, ai_messages, ai_tool_calls)...');
+  runSql(sql);
+  log('✅ AI Assistant Core schema verified.');
+};
+
 const main = async () => {
   log(`Using schema: ${SCHEMA_PATH}`);
   log(`Using Prisma CLI: ${PRISMA_BIN ? PRISMA_BIN : 'npx prisma (fallback)'}`);
 
-  // Known migration handlers (documented in api/scripts/README-MIGRATION-RECOVERY.md)
-  // For already-applied migrations, just ensure schema exists (idempotent safety net)
   try {
     ensureAssetUrlConstraintFixed();
     ensureAssetMetadataColumn();
@@ -1288,35 +1288,19 @@ const main = async () => {
     warn(`⚠️  educator availability settings verification failed: ${e.message}`);
   }
 
-  // Subscription management system (enhanced subscription features)
-  // Strategy: 
-  // 1. Clear failed state (mark as rolled-back)
-  // 2. Ensure schema exists (so migration won't fail when Prisma runs it)
-  // 3. Let `prisma migrate deploy` run the migration normally and mark it applied
   try {
     log('🔧 Preparing for subscription management system migration...');
-    
-    // Step 1: Clear failed state - try standard command first
     let cleared = await resolveMigration('rolled-back', '20251218000000_subscription_management_system');
-    
-    // If standard command doesn't work, force-update the tracking table
     if (!cleared) {
       log('⚠️  Standard resolve failed, force-marking as rolled-back...');
       cleared = forceMarkMigrationRolledBack('20251218000000_subscription_management_system');
     }
-    
-    if (cleared) {
-      log('✅ Migration cleared from failed state. Prisma will re-run it.');
-    }
-    
-    // Step 2: Ensure schema exists so migration will succeed when Prisma runs it
+    if (cleared) log('✅ Migration cleared from failed state. Prisma will re-run it.');
     ensureSubscriptionManagementSystem();
     log('✅ Database schema prepared for migration.');
     log('📋 Prisma migrate deploy will now run this migration and mark it complete.');
-    
   } catch (e) {
     warn(`⚠️  Subscription management system preparation failed: ${e.message}`);
-    // Try force rollback anyway
     try {
       forceMarkMigrationRolledBack('20251218000000_subscription_management_system');
       ensureSubscriptionManagementSystem();
@@ -1325,7 +1309,6 @@ const main = async () => {
     }
   }
 
-  // Foundation subscription tiers (PricingTier scoping + seed)
   try {
     log('🔧 Preparing for foundation subscription tiers migration...');
     let cleared = await resolveMigration('rolled-back', '20251221000002_foundation_subscription_tiers');
@@ -1333,9 +1316,7 @@ const main = async () => {
       log('⚠️  Standard resolve failed, force-marking as rolled-back...');
       cleared = forceMarkMigrationRolledBack('20251221000002_foundation_subscription_tiers');
     }
-    if (cleared) {
-      log('✅ Migration cleared from failed state. Prisma will re-run it.');
-    }
+    if (cleared) log('✅ Migration cleared from failed state. Prisma will re-run it.');
     ensureFoundationSubscriptionTiers();
     log('✅ Database schema prepared for migration.');
     log('📋 Prisma migrate deploy will now run this migration and mark it complete.');
@@ -1349,7 +1330,6 @@ const main = async () => {
     }
   }
 
-  // Job contract types (adds REPLACEMENT, TEMPORARY, FREELANCE enum values)
   try {
     log('🔧 Preparing for job contract types migration...');
     ensureJobContractTypes();
@@ -1358,22 +1338,14 @@ const main = async () => {
     warn(`⚠️  job contract types preparation failed: ${e.message}`);
   }
 
-  // Email grace period setting (admin-configurable email change grace window)
-  // Strategy:
-  // 1. Clear failed migration state (mark as rolled-back) so Prisma can re-run it
-  // 2. Ensure the table + setting exist so the migration will not fail
   try {
     log('🔧 Preparing for email grace period setting migration...');
-
     let cleared = await resolveMigration('rolled-back', '20251221000002_add_email_grace_period_setting');
     if (!cleared) {
       log('⚠️  Standard resolve failed, force-marking as rolled-back...');
       cleared = forceMarkMigrationRolledBack('20251221000002_add_email_grace_period_setting');
     }
-    if (cleared) {
-      log('✅ Migration cleared from failed state. Prisma will re-run it.');
-    }
-
+    if (cleared) log('✅ Migration cleared from failed state. Prisma will re-run it.');
     ensureEmailGracePeriodSetting();
     log('✅ Email grace period schema prepared.');
     log('📋 Prisma migrate deploy will now run this migration and mark it complete.');
@@ -1387,22 +1359,14 @@ const main = async () => {
     }
   }
 
-  // Parent lead account linking (lead ownership to parent profile)
-  // Strategy:
-  // 1. Clear failed migration state (mark as rolled-back) so Prisma can re-run it
-  // 2. Ensure schema exists so migration apply remains resilient
   try {
     log('🔧 Preparing for parent lead account-link migration...');
-
     let cleared = await resolveMigration('rolled-back', '20260211090000_link_parent_leads_to_users');
     if (!cleared) {
       log('⚠️  Standard resolve failed, force-marking as rolled-back...');
       cleared = forceMarkMigrationRolledBack('20260211090000_link_parent_leads_to_users');
     }
-    if (cleared) {
-      log('✅ Migration cleared from failed state. Prisma will re-run it.');
-    }
-
+    if (cleared) log('✅ Migration cleared from failed state. Prisma will re-run it.');
     ensureParentLeadAccountLink();
     log('✅ Parent lead account-link schema prepared.');
     log('📋 Prisma migrate deploy will now run this migration and mark it complete.');
@@ -1416,19 +1380,14 @@ const main = async () => {
     }
   }
 
-  // Enum urgency + compensationType conversion (TEXT → proper DB enums)
   try {
     log('🔧 Preparing for enum_urgency_compensation migration...');
-
     let cleared = await resolveMigration('rolled-back', '20260507020000_enum_urgency_compensation');
     if (!cleared) {
       log('⚠️  Standard resolve failed, force-marking as rolled-back...');
       cleared = forceMarkMigrationRolledBack('20260507020000_enum_urgency_compensation');
     }
-    if (cleared) {
-      log('✅ Migration cleared from failed state. Prisma will re-run it.');
-    }
-
+    if (cleared) log('✅ Migration cleared from failed state. Prisma will re-run it.');
     ensureEnumUrgencyCompensation();
     log('✅ Enum urgency/compensation schema prepared.');
     log('📋 Prisma migrate deploy will now run this migration and mark it complete.');
@@ -1442,19 +1401,14 @@ const main = async () => {
     }
   }
 
-  // EducatorApprovalStatus enum + approval columns on users table
   try {
     log('🔧 Preparing for add_educator_approval_status migration...');
-
     let cleared = await resolveMigration('rolled-back', '20260509000000_add_educator_approval_status');
     if (!cleared) {
       log('⚠️  Standard resolve failed, force-marking as rolled-back...');
       cleared = forceMarkMigrationRolledBack('20260509000000_add_educator_approval_status');
     }
-    if (cleared) {
-      log('✅ Migration cleared from failed state. Prisma will re-run it.');
-    }
-
+    if (cleared) log('✅ Migration cleared from failed state. Prisma will re-run it.');
     ensureEducatorApprovalStatus();
     log('✅ EducatorApprovalStatus schema prepared.');
     log('📋 Prisma migrate deploy will now run this migration and mark it complete.');
@@ -1468,19 +1422,14 @@ const main = async () => {
     }
   }
 
-  // Add contactEmail to organizations + drop organization_contact_infos
   try {
     log('🔧 Preparing for add_contact_email_to_organization migration...');
-
     let cleared = await resolveMigration('rolled-back', '20260511000000_add_contact_email_to_organization');
     if (!cleared) {
       log('⚠️  Standard resolve failed, force-marking as rolled-back...');
       cleared = forceMarkMigrationRolledBack('20260511000000_add_contact_email_to_organization');
     }
-    if (cleared) {
-      log('✅ Migration cleared from failed state. Prisma will re-run it.');
-    }
-
+    if (cleared) log('✅ Migration cleared from failed state. Prisma will re-run it.');
     ensureOrganizationContactEmail();
     log('✅ Organization contactEmail schema prepared.');
     log('📋 Prisma migrate deploy will now run this migration and mark it complete.');
@@ -1494,6 +1443,109 @@ const main = async () => {
     }
   }
 
+  // AI Foundation (Phase 0) — candidate_consents, ai_agent_runs, ai_audit_logs,
+  // ai_agent_configs, ai_result_cache, knowledge_documents
+  try {
+    log('🔧 Preparing for add_ai_foundation migration...');
+    let cleared = await resolveMigration('rolled-back', '20260520100000_add_ai_foundation');
+    if (!cleared) {
+      log('⚠️  Standard resolve failed, force-marking as rolled-back...');
+      cleared = forceMarkMigrationRolledBack('20260520100000_add_ai_foundation');
+    }
+    if (cleared) log('✅ Migration cleared from failed state. Prisma will re-run it.');
+    ensureAiFoundation();
+    log('✅ AI Foundation schema prepared.');
+    log('📋 Prisma migrate deploy will now run this migration and mark it complete.');
+  } catch (e) {
+    warn(`⚠️  add_ai_foundation preparation failed: ${e.message}`);
+    try {
+      forceMarkMigrationRolledBack('20260520100000_add_ai_foundation');
+      ensureAiFoundation();
+    } catch (e2) {
+      error(`❌ Could not prepare for add_ai_foundation: ${e2.message}`);
+    }
+  }
+
+  // AI Assistant Core — enums + ai_conversations, ai_messages, ai_tool_calls,
+  // ai_action_approvals, ai_context_memory
+  try {
+    log('🔧 Preparing for add_assistant_core migration...');
+    let cleared = await resolveMigration('rolled-back', '20260601000000_add_assistant_core');
+    if (!cleared) {
+      log('⚠️  Standard resolve failed, force-marking as rolled-back...');
+      cleared = forceMarkMigrationRolledBack('20260601000000_add_assistant_core');
+    }
+    if (cleared) log('✅ Migration cleared from failed state. Prisma will re-run it.');
+    ensureAssistantCore();
+    log('✅ AI Assistant Core schema prepared.');
+    log('📋 Prisma migrate deploy will now run this migration and mark it complete.');
+  } catch (e) {
+    warn(`⚠️  add_assistant_core preparation failed: ${e.message}`);
+    try {
+      forceMarkMigrationRolledBack('20260601000000_add_assistant_core');
+      ensureAssistantCore();
+    } catch (e2) {
+      error(`❌ Could not prepare for add_assistant_core: ${e2.message}`);
+    }
+  }
+
+  // mailing_templates FK — stuck in failed state since 2026-05-20
+  // Strategy:
+  //   1. Mark migration rolled-back so Prisma will re-run it
+  //   2. Ensure mailing_templates table + created_by_id column exist
+  //   3. Delete orphaned rows (created_by_id not in users) to satisfy ON DELETE RESTRICT
+  //   4. Drop the constraint if it was partially applied so Prisma can add it cleanly
+  try {
+    log('🔧 Preparing for mailing_templates_fk migration...');
+    let cleared = await resolveMigration('rolled-back', '20260520020000_mailing_templates_fk');
+    if (!cleared) {
+      log('⚠️  Standard resolve failed, force-marking as rolled-back...');
+      cleared = forceMarkMigrationRolledBack('20260520020000_mailing_templates_fk');
+    }
+    if (cleared) log('✅ Migration cleared from failed state. Prisma will re-run it.');
+
+    runSql(`
+CREATE TABLE IF NOT EXISTS "mailing_templates" (
+  "id"           TEXT NOT NULL,
+  "name"         TEXT NOT NULL,
+  "description"  TEXT,
+  "subject"      TEXT NOT NULL,
+  "body_html"    TEXT NOT NULL,
+  "body_text"    TEXT,
+  "created_by_id" TEXT NOT NULL,
+  "created_at"   TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updated_at"   TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "mailing_templates_pkey" PRIMARY KEY ("id")
+);
+CREATE INDEX IF NOT EXISTS "mailing_templates_created_by_id_idx"
+  ON "mailing_templates"("created_by_id");
+`);
+
+    runSql(`
+DELETE FROM "mailing_templates"
+WHERE "created_by_id" NOT IN (SELECT "id" FROM "users");
+`);
+
+    runSql(`
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'mailing_templates_created_by_id_fkey') THEN
+    ALTER TABLE "mailing_templates" DROP CONSTRAINT "mailing_templates_created_by_id_fkey";
+  END IF;
+END $$;
+`);
+
+    log('✅ mailing_templates FK migration prepared.');
+    log('📋 Prisma migrate deploy will now run this migration and mark it complete.');
+  } catch (e) {
+    warn(`⚠️  mailing_templates_fk preparation failed: ${e.message}`);
+    try {
+      forceMarkMigrationRolledBack('20260520020000_mailing_templates_fk');
+    } catch (e2) {
+      error(`❌ Could not clear mailing_templates_fk failed state: ${e2.message}`);
+    }
+  }
+
   log('Done.');
 };
 
@@ -1501,4 +1553,3 @@ main().catch((e) => {
   error(e?.stack || e?.message || String(e));
   process.exit(1);
 });
-
