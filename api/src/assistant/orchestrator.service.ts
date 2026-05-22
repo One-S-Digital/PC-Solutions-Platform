@@ -67,7 +67,7 @@ export class OrchestratorService {
         conversationId,
         sender: AIMessageSender.ASSISTANT,
         content: output.message,
-        structuredIntent: output.toolCall ? { toolCall: output.toolCall } : undefined,
+        structuredIntent: output.toolCall ? ({ toolCall: output.toolCall } as unknown as import('@prisma/client').Prisma.InputJsonValue) : undefined,
       },
     });
 

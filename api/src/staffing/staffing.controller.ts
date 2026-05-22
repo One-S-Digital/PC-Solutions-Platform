@@ -9,13 +9,15 @@ import {
 } from '@nestjs/common';
 import { StaffingService } from './staffing.service';
 import { CreateStaffingRequestDto } from './dto/create-staffing-request.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { Roles } from '../auth/roles.decorator';
-import { RolesGuard } from '../auth/roles.guard';
+import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '@prisma/client';
 
+type RequestContext = { context?: { appUserId: string; role: UserRole; organizationId?: string } };
+
 @Controller('staffing')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(ClerkAuthGuard, RolesGuard)
 export class StaffingController {
   constructor(private readonly staffingService: StaffingService) {}
 
@@ -23,26 +25,38 @@ export class StaffingController {
   @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   createRequest(
     @Body() dto: CreateStaffingRequestDto,
-    @Request() req: { user: { userId: string; role: UserRole; organizationId?: string } },
+    @Request() req: RequestContext,
   ) {
-    return this.staffingService.createRequest(dto, req.user);
+    return this.staffingService.createRequest(dto, {
+      userId: req.context!.appUserId,
+      role: req.context!.role,
+      organizationId: req.context?.organizationId,
+    });
   }
 
   @Get('requests/:id')
   @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   getRequest(
     @Param('id') id: string,
-    @Request() req: { user: { userId: string; role: UserRole; organizationId?: string } },
+    @Request() req: RequestContext,
   ) {
-    return this.staffingService.getRequest(id, req.user);
+    return this.staffingService.getRequest(id, {
+      userId: req.context!.appUserId,
+      role: req.context!.role,
+      organizationId: req.context?.organizationId,
+    });
   }
 
   @Get('requests/:id/matches')
   @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   getMatches(
     @Param('id') id: string,
-    @Request() req: { user: { userId: string; role: UserRole; organizationId?: string } },
+    @Request() req: RequestContext,
   ) {
-    return this.staffingService.getMatches(id, req.user);
+    return this.staffingService.getMatches(id, {
+      userId: req.context!.appUserId,
+      role: req.context!.role,
+      organizationId: req.context?.organizationId,
+    });
   }
 }

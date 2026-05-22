@@ -9,23 +9,23 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { Roles } from '../auth/roles.decorator';
-import { RolesGuard } from '../auth/roles.guard';
+import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '@prisma/client';
 import { AssistantService } from './assistant.service';
 import { AssistantPrincipalContext } from './orchestrator.service';
 
 function extractPrincipal(req: any): AssistantPrincipalContext {
   return {
-    userId: req.user.userId,
-    role: req.user.role as UserRole,
-    organizationId: req.user.organizationId,
+    userId: req.context?.appUserId ?? req.user?.appUserId,
+    role: (req.context?.role ?? req.user?.role) as UserRole,
+    organizationId: req.context?.organizationId ?? req.user?.organizationId,
   };
 }
 
 @Controller('assistant')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(ClerkAuthGuard, RolesGuard)
 export class AssistantController {
   constructor(private readonly assistantService: AssistantService) {}
 

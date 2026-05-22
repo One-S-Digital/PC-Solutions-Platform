@@ -132,7 +132,7 @@ export class StaffingService {
             certifications: true,
             skills: true,
             shortBio: true,
-            avatarAsset: { select: { url: true } },
+            avatarAsset: { select: { publicUrl: true } },
           },
         },
       },
