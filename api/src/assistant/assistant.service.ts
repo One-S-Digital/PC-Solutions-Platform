@@ -90,6 +90,7 @@ export class AssistantService {
   }
 
   private async assertAssistantEnabled() {
+    if (process.env.AI_ASSISTANT_ENABLED === 'true') return;
     const flag = await this.prisma.featureFlag.findFirst({
       where: { key: 'ai_assistant_enabled', isActive: true },
     });
