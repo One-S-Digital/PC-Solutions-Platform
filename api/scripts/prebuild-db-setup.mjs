@@ -1251,6 +1251,296 @@ END $$;
   log('✅ Organization contactEmail schema verified.');
 };
 
+/**
+ * Ensure AI Foundation (Phase 0) tables exist.
+ * Matches migration `20260520100000_add_ai_foundation`.
+ * Idempotent — safe to re-run on every deploy.
+ */
+const ensureAiFoundation = () => {
+  const sql = `
+-- candidate_consents
+CREATE TABLE IF NOT EXISTS "candidate_consents" (
+  "id"        TEXT         NOT NULL,
+  "userId"    TEXT         NOT NULL,
+  "version"   INTEGER      NOT NULL DEFAULT 1,
+  "grantedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "revokedAt" TIMESTAMP(3),
+  "isActive"  BOOLEAN      NOT NULL DEFAULT true,
+  CONSTRAINT "candidate_consents_pkey" PRIMARY KEY ("id")
+);
+CREATE INDEX IF NOT EXISTS "candidate_consents_userId_isActive_idx"
+  ON "candidate_consents"("userId", "isActive");
+DO $$ BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.tables
+    WHERE table_schema = 'public' AND table_name = 'users'
+  ) AND NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'candidate_consents_userId_fkey'
+  ) THEN
+    ALTER TABLE "candidate_consents"
+      ADD CONSTRAINT "candidate_consents_userId_fkey"
+      FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+  END IF;
+END $$;
+
+-- ai_agent_runs
+CREATE TABLE IF NOT EXISTS "ai_agent_runs" (
+  "id"             TEXT         NOT NULL,
+  "orchestration"  TEXT         NOT NULL,
+  "principalId"    TEXT,
+  "organizationId" TEXT,
+  "entityRef"      TEXT,
+  "status"         TEXT         NOT NULL DEFAULT 'running',
+  "startedAt"      TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "completedAt"    TIMESTAMP(3),
+  CONSTRAINT "ai_agent_runs_pkey" PRIMARY KEY ("id")
+);
+CREATE INDEX IF NOT EXISTS "ai_agent_runs_principalId_startedAt_idx"
+  ON "ai_agent_runs"("principalId", "startedAt");
+
+-- ai_audit_logs
+CREATE TABLE IF NOT EXISTS "ai_audit_logs" (
+  "id"              TEXT           NOT NULL,
+  "agentName"       TEXT           NOT NULL,
+  "promptVersion"   TEXT           NOT NULL,
+  "model"           TEXT           NOT NULL,
+  "fallbackUsed"    BOOLEAN        NOT NULL DEFAULT false,
+  "inputHash"       TEXT           NOT NULL,
+  "outputHash"      TEXT,
+  "tokenUsage"      JSONB          NOT NULL,
+  "costUsd"         DECIMAL(10, 8) NOT NULL DEFAULT 0,
+  "latencyMs"       INTEGER        NOT NULL,
+  "cacheHit"        BOOLEAN        NOT NULL DEFAULT false,
+  "principalId"     TEXT,
+  "organizationId"  TEXT,
+  "entityRef"       TEXT,
+  "retrievedDocIds" TEXT[]         NOT NULL DEFAULT ARRAY[]::TEXT[],
+  "agentRunId"      TEXT,
+  "createdAt"       TIMESTAMP(3)   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "ai_audit_logs_pkey" PRIMARY KEY ("id")
+);
+CREATE INDEX IF NOT EXISTS "ai_audit_logs_agentName_createdAt_idx"
+  ON "ai_audit_logs"("agentName", "createdAt");
+CREATE INDEX IF NOT EXISTS "ai_audit_logs_principalId_createdAt_idx"
+  ON "ai_audit_logs"("principalId", "createdAt");
+CREATE INDEX IF NOT EXISTS "ai_audit_logs_agentRunId_idx"
+  ON "ai_audit_logs"("agentRunId");
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_audit_logs_agentRunId_fkey') THEN
+    ALTER TABLE "ai_audit_logs"
+      ADD CONSTRAINT "ai_audit_logs_agentRunId_fkey"
+      FOREIGN KEY ("agentRunId") REFERENCES "ai_agent_runs"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+  END IF;
+END $$;
+
+-- ai_agent_configs
+CREATE TABLE IF NOT EXISTS "ai_agent_configs" (
+  "id"            TEXT         NOT NULL,
+  "agentName"     TEXT         NOT NULL,
+  "promptVersion" TEXT         NOT NULL,
+  "environment"   TEXT         NOT NULL DEFAULT 'production',
+  "foundationId"  TEXT,
+  "isActive"      BOOLEAN      NOT NULL DEFAULT true,
+  "createdAt"     TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt"     TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "ai_agent_configs_pkey" PRIMARY KEY ("id")
+);
+CREATE UNIQUE INDEX IF NOT EXISTS "ai_agent_configs_agentName_environment_foundationId_key"
+  ON "ai_agent_configs"("agentName", "environment", "foundationId");
+
+-- ai_result_cache
+CREATE TABLE IF NOT EXISTS "ai_result_cache" (
+  "id"        TEXT         NOT NULL,
+  "cacheKey"  TEXT         NOT NULL,
+  "agentName" TEXT         NOT NULL,
+  "payload"   JSONB        NOT NULL,
+  "modelUsed" TEXT         NOT NULL,
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "expiresAt" TIMESTAMP(3),
+  CONSTRAINT "ai_result_cache_pkey" PRIMARY KEY ("id")
+);
+CREATE UNIQUE INDEX IF NOT EXISTS "ai_result_cache_cacheKey_key"
+  ON "ai_result_cache"("cacheKey");
+CREATE INDEX IF NOT EXISTS "ai_result_cache_agentName_idx"
+  ON "ai_result_cache"("agentName");
+CREATE INDEX IF NOT EXISTS "ai_result_cache_expiresAt_idx"
+  ON "ai_result_cache"("expiresAt");
+
+-- knowledge_documents
+CREATE TABLE IF NOT EXISTS "knowledge_documents" (
+  "id"          TEXT         NOT NULL,
+  "source"      TEXT         NOT NULL,
+  "cantonScope" TEXT,
+  "locale"      TEXT         NOT NULL DEFAULT 'fr',
+  "audience"    TEXT,
+  "version"     INTEGER      NOT NULL DEFAULT 1,
+  "title"       TEXT         NOT NULL,
+  "content"     TEXT         NOT NULL,
+  "createdAt"   TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt"   TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "knowledge_documents_pkey" PRIMARY KEY ("id")
+);
+CREATE INDEX IF NOT EXISTS "knowledge_documents_source_locale_idx"
+  ON "knowledge_documents"("source", "locale");
+`;
+
+  log('Ensuring AI Foundation (Phase 0) tables exist...');
+  runSql(sql);
+  log('✅ AI Foundation schema verified.');
+};
+
+/**
+ * Ensure AI Assistant Core tables exist.
+ * Matches migration `20260601000000_add_assistant_core`.
+ * Idempotent — safe to re-run on every deploy.
+ */
+const ensureAssistantCore = () => {
+  const sql = `
+-- Enums (guard each with DO block)
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'AIConversationStatus') THEN
+    CREATE TYPE "AIConversationStatus" AS ENUM ('ACTIVE', 'ENDED', 'ARCHIVED');
+  END IF;
+END $$;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'AIChannel') THEN
+    CREATE TYPE "AIChannel" AS ENUM ('WEB', 'WHATSAPP', 'EMAIL');
+  END IF;
+END $$;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'AIMessageSender') THEN
+    CREATE TYPE "AIMessageSender" AS ENUM ('USER', 'ASSISTANT', 'SYSTEM', 'TOOL');
+  END IF;
+END $$;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'AIToolCallStatus') THEN
+    CREATE TYPE "AIToolCallStatus" AS ENUM ('PROPOSED', 'AWAITING_APPROVAL', 'APPROVED', 'EXECUTED', 'REJECTED', 'FAILED');
+  END IF;
+END $$;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'AIActionLevel') THEN
+    CREATE TYPE "AIActionLevel" AS ENUM ('L1_ANSWER', 'L2_DRAFT', 'L3_EXECUTE');
+  END IF;
+END $$;
+
+-- ai_conversations
+CREATE TABLE IF NOT EXISTS "ai_conversations" (
+  "id"             TEXT                    NOT NULL DEFAULT gen_random_uuid()::text,
+  "userId"         TEXT                    NOT NULL,
+  "organizationId" TEXT,
+  "role"           "UserRole"              NOT NULL,
+  "channel"        "AIChannel"             NOT NULL DEFAULT 'WEB',
+  "status"         "AIConversationStatus"  NOT NULL DEFAULT 'ACTIVE',
+  "locale"         TEXT                    NOT NULL DEFAULT 'fr',
+  "startedAt"      TIMESTAMP(3)            NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "endedAt"        TIMESTAMP(3),
+  CONSTRAINT "ai_conversations_pkey" PRIMARY KEY ("id")
+);
+CREATE INDEX IF NOT EXISTS "ai_conversations_userId_startedAt_idx"
+  ON "ai_conversations"("userId", "startedAt" DESC);
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_conversations_userId_fkey') THEN
+    ALTER TABLE "ai_conversations"
+      ADD CONSTRAINT "ai_conversations_userId_fkey"
+      FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE;
+  END IF;
+END $$;
+
+-- ai_messages
+CREATE TABLE IF NOT EXISTS "ai_messages" (
+  "id"               TEXT              NOT NULL DEFAULT gen_random_uuid()::text,
+  "conversationId"   TEXT              NOT NULL,
+  "sender"           "AIMessageSender" NOT NULL,
+  "content"          TEXT              NOT NULL,
+  "structuredIntent" JSONB,
+  "createdAt"        TIMESTAMP(3)      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "ai_messages_pkey" PRIMARY KEY ("id")
+);
+CREATE INDEX IF NOT EXISTS "ai_messages_conversationId_createdAt_idx"
+  ON "ai_messages"("conversationId", "createdAt");
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_messages_conversationId_fkey') THEN
+    ALTER TABLE "ai_messages"
+      ADD CONSTRAINT "ai_messages_conversationId_fkey"
+      FOREIGN KEY ("conversationId") REFERENCES "ai_conversations"("id") ON DELETE CASCADE;
+  END IF;
+END $$;
+
+-- ai_tool_calls
+CREATE TABLE IF NOT EXISTS "ai_tool_calls" (
+  "id"               TEXT               NOT NULL DEFAULT gen_random_uuid()::text,
+  "conversationId"   TEXT               NOT NULL,
+  "messageId"        TEXT,
+  "toolName"         TEXT               NOT NULL,
+  "level"            "AIActionLevel"    NOT NULL,
+  "inputJson"        JSONB              NOT NULL,
+  "outputJson"       JSONB,
+  "status"           "AIToolCallStatus" NOT NULL DEFAULT 'PROPOSED',
+  "approvalRequired" BOOLEAN            NOT NULL DEFAULT false,
+  "approvedById"     TEXT,
+  "executedAt"       TIMESTAMP(3),
+  "errorMessage"     TEXT,
+  "createdAt"        TIMESTAMP(3)       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "ai_tool_calls_pkey" PRIMARY KEY ("id")
+);
+CREATE INDEX IF NOT EXISTS "ai_tool_calls_conversationId_createdAt_idx"
+  ON "ai_tool_calls"("conversationId", "createdAt");
+CREATE INDEX IF NOT EXISTS "ai_tool_calls_status_idx"
+  ON "ai_tool_calls"("status");
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_tool_calls_conversationId_fkey') THEN
+    ALTER TABLE "ai_tool_calls"
+      ADD CONSTRAINT "ai_tool_calls_conversationId_fkey"
+      FOREIGN KEY ("conversationId") REFERENCES "ai_conversations"("id") ON DELETE CASCADE;
+  END IF;
+END $$;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_tool_calls_messageId_fkey') THEN
+    ALTER TABLE "ai_tool_calls"
+      ADD CONSTRAINT "ai_tool_calls_messageId_fkey"
+      FOREIGN KEY ("messageId") REFERENCES "ai_messages"("id");
+  END IF;
+END $$;
+
+-- ai_action_approvals
+CREATE TABLE IF NOT EXISTS "ai_action_approvals" (
+  "id"              TEXT         NOT NULL DEFAULT gen_random_uuid()::text,
+  "toolCallId"      TEXT         NOT NULL,
+  "status"          TEXT         NOT NULL DEFAULT 'pending',
+  "approvedBy"      TEXT,
+  "approvalContext" JSONB,
+  "createdAt"       TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "ai_action_approvals_pkey" PRIMARY KEY ("id")
+);
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_action_approvals_toolCallId_fkey') THEN
+    ALTER TABLE "ai_action_approvals"
+      ADD CONSTRAINT "ai_action_approvals_toolCallId_fkey"
+      FOREIGN KEY ("toolCallId") REFERENCES "ai_tool_calls"("id") ON DELETE CASCADE;
+  END IF;
+END $$;
+
+-- ai_context_memory
+CREATE TABLE IF NOT EXISTS "ai_context_memory" (
+  "id"             TEXT         NOT NULL DEFAULT gen_random_uuid()::text,
+  "userId"         TEXT         NOT NULL,
+  "organizationId" TEXT,
+  "memoryType"     TEXT         NOT NULL,
+  "key"            TEXT         NOT NULL,
+  "valueJson"      JSONB        NOT NULL,
+  "expiresAt"      TIMESTAMP(3),
+  "createdAt"      TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "ai_context_memory_pkey" PRIMARY KEY ("id")
+);
+CREATE UNIQUE INDEX IF NOT EXISTS "ai_context_memory_userId_memoryType_key_key"
+  ON "ai_context_memory"("userId", "memoryType", "key");
+`;
+
+  log('Ensuring AI Assistant Core tables exist (ai_conversations, ai_messages, ai_tool_calls)...');
+  runSql(sql);
+  log('✅ AI Assistant Core schema verified.');
+};
+
 const main = async () => {
   log(`Using schema: ${SCHEMA_PATH}`);
   log(`Using Prisma CLI: ${PRISMA_BIN ? PRISMA_BIN : 'npx prisma (fallback)'}`);
@@ -1465,6 +1755,60 @@ const main = async () => {
       ensureEducatorApprovalStatus();
     } catch (e2) {
       error(`❌ Could not prepare for migration: ${e2.message}`);
+    }
+  }
+
+  // AI Foundation (Phase 0) — candidate_consents, ai_agent_runs, ai_audit_logs,
+  // ai_agent_configs, ai_result_cache, knowledge_documents
+  try {
+    log('🔧 Preparing for add_ai_foundation migration...');
+
+    let cleared = await resolveMigration('rolled-back', '20260520100000_add_ai_foundation');
+    if (!cleared) {
+      log('⚠️  Standard resolve failed, force-marking as rolled-back...');
+      cleared = forceMarkMigrationRolledBack('20260520100000_add_ai_foundation');
+    }
+    if (cleared) {
+      log('✅ Migration cleared from failed state. Prisma will re-run it.');
+    }
+
+    ensureAiFoundation();
+    log('✅ AI Foundation schema prepared.');
+    log('📋 Prisma migrate deploy will now run this migration and mark it complete.');
+  } catch (e) {
+    warn(`⚠️  add_ai_foundation preparation failed: ${e.message}`);
+    try {
+      forceMarkMigrationRolledBack('20260520100000_add_ai_foundation');
+      ensureAiFoundation();
+    } catch (e2) {
+      error(`❌ Could not prepare for add_ai_foundation: ${e2.message}`);
+    }
+  }
+
+  // AI Assistant Core — enums + ai_conversations, ai_messages, ai_tool_calls,
+  // ai_action_approvals, ai_context_memory
+  try {
+    log('🔧 Preparing for add_assistant_core migration...');
+
+    let cleared = await resolveMigration('rolled-back', '20260601000000_add_assistant_core');
+    if (!cleared) {
+      log('⚠️  Standard resolve failed, force-marking as rolled-back...');
+      cleared = forceMarkMigrationRolledBack('20260601000000_add_assistant_core');
+    }
+    if (cleared) {
+      log('✅ Migration cleared from failed state. Prisma will re-run it.');
+    }
+
+    ensureAssistantCore();
+    log('✅ AI Assistant Core schema prepared.');
+    log('📋 Prisma migrate deploy will now run this migration and mark it complete.');
+  } catch (e) {
+    warn(`⚠️  add_assistant_core preparation failed: ${e.message}`);
+    try {
+      forceMarkMigrationRolledBack('20260601000000_add_assistant_core');
+      ensureAssistantCore();
+    } catch (e2) {
+      error(`❌ Could not prepare for add_assistant_core: ${e2.message}`);
     }
   }
 
