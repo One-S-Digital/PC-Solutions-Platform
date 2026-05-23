@@ -12,7 +12,8 @@ Welcome, Foundation users! This guide covers everything you need to manage your 
 | Edit my organization profile | [Organization Profile](#organization-profile) |
 | Respond to parent inquiries | [Parent Leads Management](#parent-leads-inquiries) |
 | Browse products/services | [Marketplace Access](#marketplace-access) |
-| Post a job | [Recruitment Module](#recruitment-module) |
+| Post a job | [Staffing Module](#staffing-module) |
+| Find urgent cover staff | [Replacement Staffing](#replacement-staffing) |
 | Access training | [E-Learning Module](#e-learning-module) |
 | View my analytics | [Analytics Dashboard](#analytics-dashboard) |
 | Manage my subscription | [Settings & Subscription](#settings) |
@@ -26,14 +27,15 @@ Welcome, Foundation users! This guide covers everything you need to manage your 
 3. [Parent Leads (Inquiries)](#parent-leads-inquiries)
 4. [Marketplace Access](#marketplace-access)
 5. [Orders & Appointments](#orders--appointments)
-6. [Recruitment Module](#recruitment-module)
-7. [HR Procedures & Documents](#hr-procedures--documents)
-8. [E-Learning Module](#e-learning-module)
-9. [State Policies Hub](#state-policies-hub)
-10. [Analytics Dashboard](#analytics-dashboard)
-11. [Messaging](#messaging)
-12. [Settings](#settings)
-13. [Support & Help](#support--help)
+6. [Staffing Module](#staffing-module)
+7. [Replacement Staffing](#replacement-staffing)
+8. [HR Procedures & Documents](#hr-procedures--documents)
+9. [E-Learning Module](#e-learning-module)
+10. [State Policies Hub](#state-policies-hub)
+11. [Analytics Dashboard](#analytics-dashboard)
+12. [Messaging](#messaging)
+13. [Settings](#settings)
+14. [Support & Help](#support--help)
 
 ---
 
@@ -331,19 +333,32 @@ The Appointments tab shows scheduled services:
 
 ---
 
-## Recruitment Module
+## Staffing Module
 
 Post jobs and find qualified educators for your daycare.
 
 > 📋 **Requires:** Professional plan or higher
 
-### Accessing Recruitment
+### Navigation
 
-Click **Recruitment** in the sidebar.
+The Staffing group is accessible from the sidebar. Click **Staffing** to expand the group and reveal the following sub-items:
+
+| Sidebar Item | Path | What it does |
+|---|---|---|
+| **Post a Job** | `/staffing/jobs` | Create and manage job listings |
+| **Find Candidates** | `/recruitment/candidate-pool` | Browse the full educator pool |
+| **Review Applications** | `/staffing/applications` | Manage the application pipeline |
+| **Replacements** | `/foundation/replacements` | Post urgent replacement requests |
+| **Intern Pool** | `/foundation/intern-pool` | Browse intern-level candidates |
+
+Additional collapsible groups in the sidebar:
+
+- **HR & Compliance** → HR Procedures, State Policies
+- **Suppliers & Services** → Products, Services
 
 ### Creating a Job Listing
 
-1. Go to **Recruitment** → **Job Listings**
+1. Go to the **Staffing** group → **Post a Job**
 2. Click **"Create Job Listing"**
 3. Fill in job details:
 
@@ -402,30 +417,123 @@ Each application shows:
 
 ### Managing Applications
 
-Update application status:
+Applications move through a multi-stage pipeline. Update the application status using the **Status** dropdown:
 
 | Status | When to use |
 |--------|-------------|
 | **Pending** | Just received, not yet reviewed |
 | **Reviewed** | You've looked at it |
-| **Accepted** | Moving forward/offering position |
-| **Rejected** | Not selected |
+| **Shortlisted** | Candidate added to your shortlist |
+| **Interview** | Interview scheduled |
+| **Offer** | Job offer sent to candidate |
+| **Hired** | Candidate accepted and hired |
+| **Accepted** | Moving forward (legacy / general accepted state) |
+| **Rejected** | Not selected — can be set at any stage |
 
 To update:
 1. Open the application
-2. Click **"Update Status"**
-3. Select new status
-4. Add internal notes (optional)
-5. Save
+2. Use the **Status** dropdown to select the new stage
+3. Add internal notes (optional)
+4. Save
+
+### Application Pipeline
+
+The **Review Applications** screen (`/staffing/applications`) uses a two-pane layout:
+
+- **Left pane** — list of all applications with stage filter tabs (Pending, Shortlisted, Interview, Offer, Hired, Rejected)
+- **Right pane** — candidate details: CV, cover letter, skills, contact information
+
+**How to advance a candidate through the pipeline:**
+
+1. In the sidebar, click **Staffing** → **Review Applications**
+2. Use the stage filter tabs to focus on a specific stage (e.g. **Shortlisted**)
+3. Click a candidate in the left pane to load their details on the right
+4. Review their CV and cover letter
+5. Use the **Status** dropdown to move them to the next stage (e.g. SHORTLISTED → INTERVIEW)
+6. Use **Messages** to contact candidates at any stage
+
+> 💡 **Tip:** REJECTED can be applied at any stage without following the sequence.
 
 ### Candidate Pool
 
 Browse all available educators:
-1. Go to **Recruitment** → **Candidate Pool**
+1. Go to **Staffing** → **Find Candidates**
 2. Browse educator profiles
 3. Filter by skills, location, availability
 4. View full profiles
 5. Contact candidates via messaging
+
+---
+
+## Replacement Staffing
+
+Post urgent replacement requests when you need short-notice cover for your daycare.
+
+> 📋 **Requires:** Professional plan or higher
+
+### Accessing Replacements
+
+Click **Staffing** in the sidebar → **Replacements** (or navigate directly to `/foundation/replacements`).
+
+### Posting a Replacement Request
+
+1. Click **"New Replacement Request"**
+2. Fill in the form:
+
+| Field | Description |
+|-------|-------------|
+| **Role** | Select from: Direction, EDE, ASE, Auxiliaire, Cleaning |
+| **Start Date** | When cover is needed from |
+| **End Date** | When cover is needed until |
+| **Urgency** | LOW / MEDIUM / HIGH / CRITICAL |
+| **Cities** | Which city/cities the position covers |
+| **Region** | Canton or region |
+| **Notes** | Any additional context (optional) |
+
+3. Click **Submit** — the system will automatically score and suggest matching educators based on role, city overlap, skills, and availability.
+
+### Viewing and Managing Requests
+
+Replacement requests are listed with tabs:
+
+| Tab | What it shows |
+|-----|---------------|
+| **Open** | Requests posted, awaiting matched candidates |
+| **Matched** | At least one candidate has been offered |
+| **Confirmed** | A candidate has accepted and been confirmed |
+| **Fulfilled** | Replacement shift completed |
+
+### Working with Matched Candidates
+
+1. Open a replacement request from the list
+2. View matched candidates ranked by match score
+3. Click **Offer** to send the shift offer to a candidate
+4. The candidate receives a notification and can accept or decline
+
+### Replacement Match Statuses
+
+| Status | Meaning |
+|--------|---------|
+| **PROPOSED** | Candidate has been suggested (not yet formally offered) |
+| **OFFERED** | You have sent the shift offer to the candidate |
+| **ACCEPTED** | Candidate has accepted the offer |
+| **DECLINED** | Candidate declined the offer |
+
+### Confirming a Replacement
+
+Once a candidate accepts:
+1. Click **Confirm** on their match record to finalise the replacement
+2. Both you and the educator receive a confirmation notification/email
+3. The replacement request status moves to **CONFIRMED**
+
+### Replacement Request Statuses
+
+| Status | Meaning |
+|--------|---------|
+| **OPEN** | Request posted, awaiting a match |
+| **MATCHED** | At least one candidate has been offered the shift |
+| **CONFIRMED** | A candidate has accepted and been confirmed |
+| **FULFILLED** | The replacement shift has been completed |
 
 ---
 
@@ -437,7 +545,7 @@ Access templates and compliance documents for your daycare.
 
 ### Accessing HR Documents
 
-Click **HR Procedures** in the sidebar.
+Click **HR & Compliance** in the sidebar → **HR Procedures**.
 
 ### Document Categories
 
@@ -508,7 +616,7 @@ Access canton-specific regulations and policies.
 
 ### Accessing Policies
 
-Click **State Policies** in the sidebar.
+Click **HR & Compliance** in the sidebar → **State Policies**.
 
 ### Browsing Policies
 
@@ -680,4 +788,4 @@ See [Settings Guide](../reference/settings-guide.md) for detailed instructions.
 
 ## Last Updated
 
-January 2026
+May 2026
