@@ -179,7 +179,10 @@ export class LlmClient {
     let rawContent = result.content;
     try {
       const jsonStart = rawContent.indexOf('{');
-      if (jsonStart > 0) rawContent = rawContent.slice(jsonStart);
+      const jsonEnd = rawContent.lastIndexOf('}');
+      if (jsonStart >= 0 && jsonEnd > jsonStart) {
+        rawContent = rawContent.slice(jsonStart, jsonEnd + 1);
+      }
       parsed = schema.parse(JSON.parse(rawContent)) as TOut;
     } catch (parseErr) {
       this.logger.error(`Agent "${agentName}" output validation failed`, parseErr);
