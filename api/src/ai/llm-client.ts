@@ -162,7 +162,7 @@ export class LlmClient {
         models: config.models,
         messages: [{ role: 'user', content: promptTemplate }],
         maxOutputTokens: config.maxOutputTokens,
-        jsonSchema: schema._def as any,
+        jsonMode: true,
       });
       modelUsed = result.modelUsed;
       this.circuitBreaker.recordSuccess();

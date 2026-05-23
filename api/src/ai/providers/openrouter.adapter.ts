@@ -11,7 +11,7 @@ export interface OpenRouterRunOptions {
   models: string[];
   messages: ChatMessage[];
   maxOutputTokens: number;
-  jsonSchema?: object;
+  jsonMode?: boolean;
   cacheControlSystem?: boolean;
 }
 
@@ -47,7 +47,7 @@ export class OpenRouterAdapter {
   }
 
   async run(options: OpenRouterRunOptions): Promise<OpenRouterResult> {
-    const { models, messages, maxOutputTokens, jsonSchema } = options;
+    const { models, messages, maxOutputTokens, jsonMode } = options;
 
     const body: any = {
       model: models[0],
@@ -60,11 +60,8 @@ export class OpenRouterAdapter {
       body.models = models;
     }
 
-    if (jsonSchema) {
-      body.response_format = {
-        type: 'json_schema',
-        json_schema: { name: 'output', schema: jsonSchema, strict: true },
-      };
+    if (jsonMode) {
+      body.response_format = { type: 'json_object' };
     }
 
     const response = await this.client.chat.completions.create(body) as OpenAI.ChatCompletion;
