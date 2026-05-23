@@ -58,31 +58,36 @@ export class OrchestratorService {
       principal,
     });
 
-    // Stream the assistant message text
-    sendEvent('token', { text: output.message });
+    // No tool call → stream the message and persist
+    if (!output.toolCall) {
+      sendEvent('token', { text: output.message });
+      await this.prisma.aIMessage.create({
+        data: { conversationId, sender: AIMessageSender.ASSISTANT, content: output.message },
+      });
+      return;
+    }
 
-    // Persist assistant message
-    const assistantMsg = await this.prisma.aIMessage.create({
-      data: {
-        conversationId,
-        sender: AIMessageSender.ASSISTANT,
-        content: output.message,
-        structuredIntent: output.toolCall ? ({ toolCall: output.toolCall } as unknown as import('@prisma/client').Prisma.InputJsonValue) : undefined,
-      },
-    });
+    const { name: toolName, args } = output.toolCall;
+    const toolDef = getToolsForRole(principal.role).find((t) => t.name === toolName);
+    if (!toolDef) {
+      sendEvent('error', { message: `Unknown tool: ${toolName}` });
+      return;
+    }
 
-    // Handle tool call if present
-    if (output.toolCall) {
-      const { name: toolName, args } = output.toolCall;
-      const toolDef = getToolsForRole(principal.role).find((t) => t.name === toolName);
-      if (!toolDef) {
-        sendEvent('error', { message: `Unknown tool: ${toolName}` });
-        return;
-      }
+    const level = toolDef.level as AIActionLevel;
+    const approvalRequired = level === 'L3_EXECUTE';
 
-      const level = toolDef.level as AIActionLevel;
-      const approvalRequired = level === 'L3_EXECUTE';
-
+    // L3 tools need user approval — show the card and stop here
+    if (approvalRequired) {
+      sendEvent('token', { text: output.message });
+      const assistantMsg = await this.prisma.aIMessage.create({
+        data: {
+          conversationId,
+          sender: AIMessageSender.ASSISTANT,
+          content: output.message,
+          structuredIntent: { toolCall: output.toolCall } as unknown as import('@prisma/client').Prisma.InputJsonValue,
+        },
+      });
       const toolCall = await this.prisma.aIToolCall.create({
         data: {
           conversationId,
@@ -90,42 +95,66 @@ export class OrchestratorService {
           toolName,
           level,
           inputJson: args as any,
-          approvalRequired,
-          status: approvalRequired ? AIToolCallStatus.AWAITING_APPROVAL : AIToolCallStatus.PROPOSED,
+          approvalRequired: true,
+          status: AIToolCallStatus.AWAITING_APPROVAL,
         },
       });
-
       sendEvent('tool_call', {
         toolCallId: toolCall.id,
         toolName,
         level,
-        approvalRequired,
+        approvalRequired: true,
         args,
         modal: toolDef.modal,
       });
-
-      // For L1/L2 tools, execute immediately after proposing
-      if (!approvalRequired) {
-        try {
-          const result = await this.executeTool(toolName, args, principal, locale);
-          await this.prisma.aIToolCall.update({
-            where: { id: toolCall.id },
-            data: {
-              status: AIToolCallStatus.EXECUTED,
-              outputJson: result as any,
-              executedAt: new Date(),
-            },
-          });
-          sendEvent('tool_result', { toolCallId: toolCall.id, toolName, result });
-        } catch (err: any) {
-          await this.prisma.aIToolCall.update({
-            where: { id: toolCall.id },
-            data: { status: AIToolCallStatus.FAILED, errorMessage: err?.message },
-          });
-          sendEvent('tool_result', { toolCallId: toolCall.id, toolName, error: err?.message });
-        }
-      }
+      return;
     }
+
+    // L1/L2 tools execute silently — no tool_call event shown to the user
+    let toolResult: unknown;
+    let toolError: string | undefined;
+    const toolCallRecord = await this.prisma.aIToolCall.create({
+      data: {
+        conversationId,
+        toolName,
+        level,
+        inputJson: args as any,
+        approvalRequired: false,
+        status: AIToolCallStatus.PROPOSED,
+      },
+    });
+
+    try {
+      toolResult = await this.executeTool(toolName, args, principal, locale);
+      await this.prisma.aIToolCall.update({
+        where: { id: toolCallRecord.id },
+        data: { status: AIToolCallStatus.EXECUTED, outputJson: toolResult as any, executedAt: new Date() },
+      });
+    } catch (err: any) {
+      toolError = err?.message ?? 'Tool execution failed';
+      await this.prisma.aIToolCall.update({
+        where: { id: toolCallRecord.id },
+        data: { status: AIToolCallStatus.FAILED, errorMessage: toolError },
+      });
+    }
+
+    // Second LLM call: synthesize tool result into a real answer
+    const toolContext = toolError
+      ? `Tool "${toolName}" failed: ${toolError}`
+      : JSON.stringify(toolResult);
+
+    const { output: finalOutput } = await this.llm.run({
+      agent: 'assistant-orchestrator',
+      input: { userMessage, conversationHistory, availableTools: '', locale, toolResult: toolContext },
+      schema: AssistantOrchestratorSchema,
+      locale,
+      principal,
+    });
+
+    sendEvent('token', { text: finalOutput.message });
+    await this.prisma.aIMessage.create({
+      data: { conversationId, sender: AIMessageSender.ASSISTANT, content: finalOutput.message },
+    });
   }
 
   private async executeTool(
@@ -135,8 +164,37 @@ export class OrchestratorService {
     _locale: 'fr' | 'de' | 'en',
   ) {
     switch (toolName) {
-      case 'search_help_docs':
-        return { answer: 'Please refer to the platform documentation.', links: [] };
+      case 'search_help_docs': {
+        const query = ((args.query as string) || '').toLowerCase();
+        if (query.includes('staff request') || query.includes('staffing') || query.includes('replacement') || query.includes('remplacement')) {
+          return {
+            answer: 'To create a staffing request: go to Recruitment → Replacements in the sidebar, click "New Request", then fill in the role, start/end dates, required languages, qualifications, and canton. The system will automatically match candidates from the pool and notify you.',
+            links: ['/staffing/requests/new'],
+          };
+        }
+        if (query.includes('job post') || query.includes('listing') || query.includes('offre')) {
+          return {
+            answer: 'To post a job: go to Recruitment → Job Listings, click "Create Listing", specify the role, work percentage, location, and requirements. Published listings are visible to educators in the candidate pool.',
+            links: ['/recruitment/listings/new'],
+          };
+        }
+        if (query.includes('educator') || query.includes('candidate') || query.includes('éducateur')) {
+          return {
+            answer: 'To find educators: use Recruitment → Candidate Pool to browse profiles, or create a staffing request to let the matching engine automatically suggest the best candidates.',
+            links: ['/recruitment/candidates'],
+          };
+        }
+        if (query.includes('invitation') || query.includes('invite') || query.includes('user')) {
+          return {
+            answer: 'To invite a user: go to Users in the sidebar, click "Invite User", enter their email and role. They will receive an invitation email with a link to complete their registration.',
+            links: ['/users/invite'],
+          };
+        }
+        return {
+          answer: 'You can navigate the platform using the sidebar. Recruitment features are under the Recruitment section, user management is under Users, and platform settings are under Platform Ops.',
+          links: [],
+        };
+      }
 
       case 'open_modal':
         return { modal: args.modal, prefill: args.prefill };

@@ -4,10 +4,31 @@ export default function prompt(
     conversationHistory: string;
     availableTools: string;
     locale: string;
+    toolResult?: string;
   },
   locale: 'fr' | 'de' | 'en' = 'fr',
 ): string {
   const lang = locale === 'de' ? 'German' : locale === 'en' ? 'English' : 'French';
+
+  if (input.toolResult) {
+    return `You are the ProCrèche Virtual Assistant — an intelligent assistant for Swiss childcare foundations.
+
+LANGUAGE: Always respond in ${lang}.
+
+A tool has already been executed for the user. Use the result below to give a clear, direct, helpful answer.
+Do NOT call another tool. Set toolCall to null.
+
+CONVERSATION SO FAR:
+${input.conversationHistory}
+
+USER MESSAGE: ${input.userMessage}
+
+TOOL RESULT:
+${input.toolResult}
+
+Respond with JSON: {"message": "...", "toolCall": null}`;
+  }
+
   return `You are the ProCrèche Virtual Assistant — an intelligent assistant for Swiss childcare foundations and administrators.
 
 LANGUAGE: Always respond in ${lang}.
