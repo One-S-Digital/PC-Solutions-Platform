@@ -11,12 +11,17 @@ This guide is for platform administrators managing ProCrèche Solutions.
 3. [Foundation Management](#foundation-management)
 4. [Vendor Management](#vendor-management)
 5. [Content Management Dashboard](#content-management-dashboard)
-6. [Recruitment Oversight](#recruitment-oversight)
-7. [Marketplace Oversight](#marketplace-oversight)
-8. [Discount & Terminations](#discount--terminations)
-9. [Support Ticket Management](#support-ticket-management)
-10. [System Monitoring](#system-monitoring)
-11. [Platform Settings](#platform-settings)
+6. [Staffing Oversight](#staffing-oversight)
+7. [Educator Approvals](#educator-approvals)
+8. [Intern Pool](#intern-pool)
+9. [Replacements Management](#replacements-management)
+10. [Analytics](#analytics)
+11. [Marketplace Oversight](#marketplace-oversight)
+12. [Discount & Terminations](#discount--terminations)
+13. [Support Ticket Management](#support-ticket-management)
+14. [System Monitoring](#system-monitoring)
+15. [Platform Settings](#platform-settings)
+16. [AI Operations (Coming Soon)](#ai-operations-coming-soon)
 
 ---
 
@@ -28,7 +33,22 @@ Navigate to `/admin` or click **Admin Dashboard** in the navigation.
 
 ### Dashboard Overview
 
-The admin dashboard provides:
+The admin dashboard is organized around staffing signals and quick-action tools.
+
+**Top section — Staffing KPI cards:**
+
+| Card | What it shows |
+|------|---------------|
+| 🔴 **Urgent Replacement Requests** | Open replacement requests with HIGH or CRITICAL urgency |
+| ⏳ **Applications Awaiting Review >48h** | Applications stuck in PENDING state for more than 48 hours |
+| 📍 **Low-Pool Regions** | Regions with fewer available candidates than demand warrants |
+| 🚫 **Zero-Match Jobs >24h** | Published jobs that have received no candidate matches in over 24 hours |
+
+**Middle section — User quick actions:**
+
+Quick links to create/invite users, approve educators, and manage pending tasks.
+
+**Lower section — Platform count cards:**
 
 | Widget | Information |
 |--------|-------------|
@@ -45,6 +65,22 @@ The admin dashboard provides:
 | **Active Foundations** | Daycares with active subscriptions |
 | **Active Vendors** | Suppliers and Service Providers |
 | **Pending Tickets** | Support tickets awaiting response |
+
+### Admin Sidebar Navigation
+
+The admin sidebar uses collapsible **NavGroups**. The structure is:
+
+| Item / Group | Sub-items |
+|---|---|
+| **Dashboard** | — |
+| **Analytics** | — |
+| **Users** | — |
+| **Recruitment** *(group)* | Educator Approvals, Job Listings, Candidate Pool, Replacements, Intern Pool |
+| **E-Learning** | — |
+| **HR & Compliance** *(group)* | Content, Policy Crawler |
+| **Parent Leads** | — |
+| **Suppliers & Services** *(group)* | Foundations, Partners, Products, Services, Orders |
+| **Platform Ops** *(group)* | Messages, Subscriptions, Mailing, Support, Discount Terminations, Settings |
 
 ---
 
@@ -254,11 +290,11 @@ Review content before publishing:
 
 ---
 
-## Recruitment Oversight
+## Staffing Oversight
 
 ### Viewing All Job Listings
 
-1. Go to **Recruitment Oversight**
+1. Go to **Recruitment** → **Job Listings** in the sidebar
 2. View all job listings platform-wide
 3. Filter by foundation, status, date
 
@@ -276,10 +312,99 @@ Review job listings for:
 
 ### Candidate Pool Management
 
-View all registered educators:
-- Profile completeness
-- Application history
-- Activity status
+1. Go to **Recruitment** → **Candidate Pool** in the sidebar
+2. View all registered educators:
+   - Profile completeness
+   - Application history
+   - Activity status
+
+### Applications — Cross-Foundation Pipeline View
+
+1. Go to **Recruitment** → **Job Listings**, then open any job to see its applications
+2. View the full pipeline (PENDING → SHORTLISTED → INTERVIEW → OFFER → HIRED) across all foundations
+3. Filter by stage, foundation, or date
+
+### Replacements Cross-Foundation View
+
+See [Replacements Management](#replacements-management) section below.
+
+---
+
+## Educator Approvals
+
+Admins review and approve or reject educator registrations before they can access the platform's job-matching features.
+
+### Accessing Educator Approvals
+
+1. In the sidebar, click **Recruitment** → **Educator Approvals** (or navigate to `/educator-approvals`)
+
+### Reviewing an Educator Registration
+
+1. View the list of pending educators
+2. Click an educator to open their profile
+3. Review submitted information: name, qualifications, certifications, CV
+4. Click **Approve** or **Reject**
+5. Approved educators become visible in the Candidate Pool; rejected applicants are notified
+
+---
+
+## Intern Pool
+
+Admins can view all intern-level candidates available to foundations.
+
+### Accessing the Intern Pool
+
+1. In the sidebar, click **Recruitment** → **Intern Pool** (or navigate to `/intern-pool`)
+
+### Managing Intern Candidates
+
+- Browse intern profiles
+- Filter by region, availability, skills
+- View profile details and CV
+
+---
+
+## Replacements Management
+
+Platform-wide view of all replacement requests across all foundations.
+
+### Accessing Replacements
+
+1. In the sidebar, click **Recruitment** → **Replacements** (or navigate to `/replacements`)
+
+### Cross-Foundation Replacements View
+
+| Filter | Options |
+|--------|---------|
+| **Urgency** | LOW, MEDIUM, HIGH, CRITICAL |
+| **Status** | OPEN, MATCHED, CONFIRMED, FULFILLED, CANCELLED, EXPIRED |
+| **Foundation** | Filter by specific foundation |
+| **SLA** | Filter by time since creation |
+
+### Actions
+
+- **View** — open a replacement request and see matched candidates
+- **Mark Fulfilled** — mark a request as fulfilled; an **audit reason** is required
+- **Export CSV** — download the current filtered view as a CSV for reporting
+
+---
+
+## Analytics
+
+Platform-wide analytics dashboard providing high-level performance metrics.
+
+### Accessing Analytics
+
+1. In the sidebar, click **Analytics** (or navigate to `/analytics`)
+
+### Available Metrics
+
+- User registration trends
+- Foundation activity
+- Application volumes and pipeline conversion rates
+- Replacement request volumes and resolution rates
+- Marketplace order activity
+- Support ticket trends
 
 ---
 
@@ -500,6 +625,31 @@ Always document:
 
 ---
 
+## AI Operations (Coming Soon)
+
+> ⚠️ **Note:** The AI Operations page is available once the **AI Foundation** feature flag is enabled. It is currently in an unmerged PR (`claude/analyze-ai-layer-1-8rj9s`) and will be added to the admin sidebar as **"AI Operations"** when merged.
+
+The AI Operations admin page provides a 7-tab interface for managing and monitoring the platform's AI infrastructure:
+
+| Tab | What it provides |
+|-----|-----------------|
+| **Overview** | Real-time LLM statistics: active agents, request volume, latency, and error rates |
+| **Agents** | Per-agent metrics and configuration — view, enable/disable, and tune individual AI agents |
+| **Audit Log** | Full audit trail of all AI actions taken on behalf of users (`AiAuditLog` table) |
+| **Cost Analytics** | Token usage and cost breakdowns by agent, model, and time period (`AiAgentRun` table) |
+| **Knowledge Docs** | Manage documents in the AI knowledge base (`AiKnowledgeDoc` table) — upload, delete, refresh |
+| **Safety** | Candidate consent tracking (`CandidateConsent` table) and safety policy configuration |
+| **Environment** | Health checks for LLM provider connections (OpenRouter, Voyage), model availability, and API key status |
+
+### Underlying Infrastructure (when enabled)
+
+- **LlmClient** — unified LLM abstraction layer
+- **OpenRouterAdapter** — routes LLM requests to the appropriate model
+- **VoyageAdapter** — embedding model for semantic search and candidate matching
+- **New DB tables:** `CandidateConsent`, `AiAuditLog`, `AiAgentRun`, `AiAgentConfig`, `AiResultCache`, `AiKnowledgeDoc`
+
+---
+
 ## Need Help?
 
 For admin-specific questions or issues:
@@ -513,4 +663,4 @@ For admin-specific questions or issues:
 
 ## Last Updated
 
-January 2026
+May 2026

@@ -15,6 +15,9 @@ A platform administrator with elevated permissions to manage users, content, and
 ### Application
 A formal submission by an educator to express interest in a job listing. Contains cover letter, CV, and other relevant information.
 
+### Application Pipeline
+The multi-stage hiring process for job applications: PENDING → REVIEWED → SHORTLISTED → INTERVIEW → OFFER → HIRED (or REJECTED at any stage). Replaces the old two-step ACCEPTED/REJECTED flow.
+
 ---
 
 ## B
@@ -36,7 +39,7 @@ A Swiss administrative region or state. Switzerland has 26 cantons.
 An educator who is seeking employment at daycares. Also referred to as "Educator" on the platform.
 
 ### Candidate Pool
-A feature that allows Foundations to browse profiles of all available educators, not just those who have applied to their jobs.
+A feature that allows Foundations to browse profiles of all available educators, not just those who have applied to their jobs. Candidates are ranked by role match, city overlap, skills, availability, and recency.
 
 ### CDI (Contrat à Durée Indéterminée)
 A permanent employment contract with no fixed end date.
@@ -119,6 +122,9 @@ Human Resources documents and templates available to subscribed Foundations.
 ### Inactive (Status)
 A status indicating that an item is not currently visible or available.
 
+### Intern Pool
+A pool of intern-level candidates available to Foundations for placement and visible to administrators via the Admin Intern Pool page (`/intern-pool`).
+
 ### Supplier Inquiry
 A question or request for information sent to a supplier or service provider before placing an order.
 
@@ -157,7 +163,7 @@ A communication sent between users through the platform's messaging system.
 ## N
 
 ### Notification
-An alert about important activity, such as new messages, orders, or applications.
+A persistent alert stored in the `Notification` table about important activity, such as new messages, orders, or applications. Each notification has a type, title, body, optional link, and a `readAt` timestamp to track whether it has been seen. Notifications persist across sessions (unlike transient UI alerts).
 
 ---
 
@@ -211,10 +217,16 @@ A status indicating that an item is live and visible to other users.
 ## R
 
 ### Recruitment Module
-A feature allowing Foundations to post jobs and manage applications from educators.
+A feature allowing Foundations to post jobs and manage applications from educators. Now called **Staffing** in the Foundation navigation.
 
 ### Region
 A geographic area, often used to describe service areas (see also "Canton").
+
+### Replacement Match
+A scored candidate suggested for a Replacement Request. The match progresses through statuses: PROPOSED → OFFERED → ACCEPTED (or DECLINED). A Foundation sends an offer to a proposed candidate; the candidate accepts or declines; and the Foundation then confirms to finalise the placement.
+
+### Replacement Request
+An urgent staffing request posted by a Foundation when they need short-notice cover. Contains the role, date range, urgency level (LOW/MEDIUM/HIGH/CRITICAL), cities, and region. Status progresses: OPEN → MATCHED → CONFIRMED → FULFILLED.
 
 ### Request
 A submission asking for a service from a Service Provider.
@@ -228,6 +240,9 @@ Your user type on the platform (Foundation, Supplier, Service Provider, Educator
 
 ### Service
 An offering listed by a Service Provider (training, consulting, etc.).
+
+### Staffing Module
+The renamed and expanded recruitment section, now accessible via the **Staffing** collapsible group in the Foundation sidebar. Includes job posting (Post a Job), candidate browsing (Find Candidates), full application pipeline (Review Applications), replacement staffing (Replacements), and intern candidate browsing (Intern Pool).
 
 ### Service Provider
 A vendor that offers services (training, consulting, cleaning, etc.) to daycares.
@@ -301,6 +316,15 @@ A technical mechanism for automatic data synchronization (used behind the scenes
 | **Declined/Rejected** | Not approved |
 | **Draft** | Saved but not published |
 | **Expired** | Past validity date |
+| **Shortlisted** | Application added to candidate shortlist |
+| **Interview** | Interview stage of the application pipeline |
+| **Offer** | Job offer has been sent to the candidate |
+| **Hired** | Candidate has been hired |
+| **Open** | Replacement request posted, awaiting a match |
+| **Matched** | At least one candidate has been offered the replacement shift |
+| **Confirmed** | A candidate has accepted and the replacement is confirmed |
+| **Proposed** | Candidate has been suggested for a replacement (not yet formally offered) |
+| **Offered** | Foundation has formally offered the replacement shift to a candidate |
 
 ---
 
@@ -321,4 +345,4 @@ A technical mechanism for automatic data synchronization (used behind the scenes
 
 ## Last Updated
 
-January 2026
+May 2026

@@ -299,20 +299,28 @@ After signing in, you'll see a sidebar on the left with your main navigation opt
 
 ### Foundation (Daycare) Menu:
 
-| Menu Item | What it does |
-|-----------|--------------|
-| 📊 **Dashboard** | Your home page with quick stats and activities |
-| 🛒 **Marketplace** | Browse and order products and services |
-| 📋 **Orders & Appointments** | View your orders and scheduled services |
-| 👥 **Leads** | Manage parent enquiries |
-| 📈 **Analytics** | View performance reports |
-| 💼 **Recruitment** | Post jobs and manage applications |
-| 📚 **E-Learning** | Access training courses |
-| 📄 **HR Procedures** | Access HR documents and templates |
-| 📜 **State Policies** | View canton regulations |
-| 💬 **Messages** | Communicate with others |
-| ⚙️ **Settings** | Manage your account |
-| 🆘 **Support** | Get help |
+The Foundation sidebar uses collapsible groups. Click a group name to expand it and reveal sub-items.
+
+| Menu Item / Group | Sub-items | What it does |
+|---|---|---|
+| 📊 **Dashboard** | — | Your home page with quick stats and activities |
+| 🛒 **Marketplace** | — | Browse and order products and services |
+| 📋 **Orders & Appointments** | — | View your orders and scheduled services |
+| 👥 **Leads** | — | Manage parent enquiries |
+| 📈 **Analytics** | — | View performance reports |
+| 💼 **Staffing** *(group)* | **Post a Job** (`/staffing/jobs`) | Create and manage job listings |
+| | **Find Candidates** (`/recruitment/candidate-pool`) | Browse the full educator pool |
+| | **Review Applications** (`/staffing/applications`) | Manage the full application pipeline |
+| | **Replacements** (`/foundation/replacements`) | Post urgent replacement requests |
+| | **Intern Pool** (`/foundation/intern-pool`) | Browse intern-level candidates |
+| 📚 **E-Learning** | — | Access training courses |
+| 🗂️ **HR & Compliance** *(group)* | **HR Procedures** | Access HR documents and templates |
+| | **State Policies** | View canton regulations |
+| 🛍️ **Suppliers & Services** *(group)* | **Products** | Browse products in the marketplace |
+| | **Services** | Browse services in the marketplace |
+| 💬 **Messages** | — | Communicate with others |
+| ⚙️ **Settings** | — | Manage your account |
+| 🆘 **Support** | — | Get help |
 
 ### Supplier/Service Provider Menu:
 

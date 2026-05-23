@@ -79,6 +79,10 @@ Quick view of:
 
 Jobs that match your profile and preferences.
 
+### Replacement Opportunities
+
+If you have opted in to replacement shifts (see [Replacement Availability](#replacement-availability) below), a **Replacement Opportunities** panel on your dashboard shows open replacement requests from foundations that match your profile, location, and availability.
+
 ---
 
 ## Profile Management
@@ -233,6 +237,16 @@ Select the cantons/regions where you're willing to work:
 
 > 💡 **Tip:** The more regions you select, the more job matches you'll see.
 
+### Replacement Availability
+
+Toggle **"Available for replacement shifts"** to enable `availableForReplacement` on your profile. When this is active:
+
+- Foundations posting urgent short-notice cover requests can find and match you
+- You can optionally set a **date range** (start/end dates) for when you are available for replacements
+- You can set a **radius (km)** to limit offers to shifts within a certain distance
+
+Enabling this setting makes your profile visible in the replacement matching pool. You will receive offers via the platform — see [Replacement Offers](#replacement-offers) for how to respond.
+
 ---
 
 ## Job Board
@@ -368,7 +382,11 @@ Click **Applications** in the sidebar.
 |--------|---------|------------|
 | ⏳ **Pending** | Submitted, not yet reviewed | Wait for response |
 | 👀 **Reviewed** | Employer has seen it | Be patient |
-| ✅ **Accepted** | Moving forward! | Check messages |
+| ⭐ **Shortlisted** | You've been shortlisted — await next steps | Watch for messages |
+| 🗓️ **Interview** | Interview scheduled — check messages | Confirm the details |
+| 📋 **Offer** | Job offer received — check messages | Review and respond |
+| 🎉 **Hired** | You've been hired — congratulations! | Celebrate! |
+| ✅ **Accepted** | Moving forward (legacy / general accepted state) | Check messages |
 | ❌ **Rejected** | Not selected | Keep applying |
 
 ### Application Details
@@ -390,6 +408,38 @@ Changed your mind?
 3. Confirm
 
 > ⚠️ **Note:** Once withdrawn, you may not be able to reapply.
+
+---
+
+## Replacement Offers
+
+When foundations post urgent replacement requests and your profile matches, you may receive replacement shift offers. These appear in the **Replacement Offers** tab of your Applications page.
+
+### Accessing Replacement Offers
+
+1. Click **Applications** in the sidebar
+2. Select the **Replacement Offers** tab
+
+### Replacement Match Statuses
+
+| Status | Meaning |
+|--------|---------|
+| 🔍 **Proposed** | You've been suggested for a shift (not yet formally offered) |
+| 📬 **Offered** | The foundation has sent you a shift offer |
+| ✅ **Accepted** | You've accepted the shift |
+| ❌ **Declined** | You declined the offer |
+
+### How to Accept or Decline an Offer
+
+1. Open the offer from the **Replacement Offers** tab
+2. Review the shift details: role, dates, location, and the foundation
+3. Click **Accept** to confirm the shift, or **Decline** to pass
+4. Once you accept, the foundation is notified and will confirm the placement
+5. Both parties receive a confirmation notification/email when the foundation confirms
+
+### Getting Found for Replacement Shifts
+
+Enable **"Available for replacement shifts"** in **Profile → Availability** (see [Replacement Availability](#replacement-availability)) so foundations can match you to urgent requests.
 
 ---
 
@@ -547,4 +597,4 @@ A: You'll see it in **My Applications** with a "Pending" status.
 
 ## Last Updated
 
-January 2026
+May 2026

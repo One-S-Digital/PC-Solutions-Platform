@@ -154,7 +154,25 @@ export const HELP_ARTICLES: HelpArticle[] = [
     contentKey: 'help:articles.recruitmentJobs.content',
     category: 'foundation',
     roles: [UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN],
-    keywords: ['recruitment', 'job', 'posting', 'hire', 'staff', 'candidates'],
+    keywords: ['recruitment', 'job', 'posting', 'hire', 'staff', 'candidates', 'shortlisted', 'interview', 'hired', 'pipeline', 'stages'],
+  },
+  {
+    id: 'replacement-staffing',
+    titleKey: 'help:articles.replacementStaffing.title',
+    descriptionKey: 'help:articles.replacementStaffing.description',
+    contentKey: 'help:articles.replacementStaffing.content',
+    category: 'foundation',
+    roles: [UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN],
+    keywords: ['replacement', 'urgent', 'cover', 'short-notice', 'substitute', 'staff'],
+  },
+  {
+    id: 'application-pipeline',
+    titleKey: 'help:articles.applicationPipeline.title',
+    descriptionKey: 'help:articles.applicationPipeline.description',
+    contentKey: 'help:articles.applicationPipeline.content',
+    category: 'foundation',
+    roles: [UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN],
+    keywords: ['application', 'pipeline', 'shortlisted', 'interview', 'offer', 'hired', 'stages', 'status'],
   },
 
   // Supplier
@@ -259,7 +277,16 @@ export const HELP_ARTICLES: HelpArticle[] = [
     contentKey: 'help:articles.availabilitySettings.content',
     category: 'educator',
     roles: [UserRole.EDUCATOR, UserRole.ADMIN, UserRole.SUPER_ADMIN],
-    keywords: ['availability', 'schedule', 'hours', 'days', 'when'],
+    keywords: ['availability', 'schedule', 'hours', 'days', 'when', 'replacement', 'cover', 'substitute'],
+  },
+  {
+    id: 'replacement-offers',
+    titleKey: 'help:articles.replacementOffers.title',
+    descriptionKey: 'help:articles.replacementOffers.description',
+    contentKey: 'help:articles.replacementOffers.content',
+    category: 'educator',
+    roles: [UserRole.EDUCATOR, UserRole.ADMIN, UserRole.SUPER_ADMIN],
+    keywords: ['replacement', 'offer', 'cover', 'short-notice', 'substitute', 'availability'],
   },
 
   // Parent
