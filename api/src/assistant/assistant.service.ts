@@ -4,6 +4,8 @@ import { OrchestratorService, AssistantPrincipalContext } from './orchestrator.s
 import { UserRole, AIMessageSender } from '@prisma/client';
 import { Response } from 'express';
 
+const ADMIN_ROLES: UserRole[] = [UserRole.ADMIN, UserRole.SUPER_ADMIN];
+
 @Injectable()
 export class AssistantService {
   private readonly logger = new Logger(AssistantService.name);
@@ -31,10 +33,7 @@ export class AssistantService {
       include: { messages: { orderBy: { createdAt: 'asc' } } },
     });
     if (!conv) throw new NotFoundException('Conversation not found');
-    if (
-      conv.userId !== principal.userId &&
-      !([UserRole.ADMIN, UserRole.SUPER_ADMIN] as UserRole[]).includes(principal.role)
-    ) {
+    if (conv.userId !== principal.userId && !ADMIN_ROLES.includes(principal.role)) {
       throw new ForbiddenException();
     }
     return conv;
@@ -50,19 +49,14 @@ export class AssistantService {
 
     const conv = await this.prisma.aIConversation.findUnique({ where: { id: conversationId } });
     if (!conv) throw new NotFoundException('Conversation not found');
-    if (
-      conv.userId !== principal.userId &&
-      !([UserRole.ADMIN, UserRole.SUPER_ADMIN] as UserRole[]).includes(principal.role)
-    ) {
+    if (conv.userId !== principal.userId && !ADMIN_ROLES.includes(principal.role)) {
       throw new ForbiddenException();
     }
 
-    // Persist user message
     await this.prisma.aIMessage.create({
       data: { conversationId, sender: AIMessageSender.USER, content: userMessage },
     });
 
-    // Set SSE headers
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');

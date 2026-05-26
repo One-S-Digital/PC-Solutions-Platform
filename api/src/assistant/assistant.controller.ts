@@ -16,6 +16,16 @@ import { UserRole } from '@prisma/client';
 import { AssistantService } from './assistant.service';
 import { AssistantPrincipalContext } from './orchestrator.service';
 
+const ALL_ROLES = [
+  UserRole.FOUNDATION,
+  UserRole.EDUCATOR,
+  UserRole.PARENT,
+  UserRole.PRODUCT_SUPPLIER,
+  UserRole.SERVICE_PROVIDER,
+  UserRole.ADMIN,
+  UserRole.SUPER_ADMIN,
+];
+
 function extractPrincipal(req: any): AssistantPrincipalContext {
   return {
     userId: req.context?.profileUserId ?? req.user?.id,
@@ -30,7 +40,7 @@ export class AssistantController {
   constructor(private readonly assistantService: AssistantService) {}
 
   @Post('conversations')
-  @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Roles(...ALL_ROLES)
   createConversation(@Request() req: any) {
     const principal = extractPrincipal(req);
     return this.assistantService.createConversation({
@@ -40,13 +50,13 @@ export class AssistantController {
   }
 
   @Get('conversations/:id')
-  @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Roles(...ALL_ROLES)
   getConversation(@Param('id') id: string, @Request() req: any) {
     return this.assistantService.getConversation(id, extractPrincipal(req));
   }
 
   @Post('conversations/:id/messages')
-  @Roles(UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Roles(...ALL_ROLES)
   async sendMessage(
     @Param('id') conversationId: string,
     @Body() body: { message: string },
