@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { LlmClient } from '../ai/llm-client';
 import { StaffingService } from '../staffing/staffing.service';
 import { KnowledgeService } from '../ai/knowledge/knowledge.service';
+import { KnowledgeEmbeddingService } from '../ai/knowledge/knowledge-embedding.service';
 import { UserContextService } from '../ai/knowledge/user-context.service';
 import { ROLE_CAPABILITIES } from '../ai/knowledge/role-capabilities';
 import { AssistantOrchestratorSchema } from '../ai/agents/assistant-orchestrator/schema';
@@ -34,6 +35,7 @@ export class OrchestratorService {
     private readonly llm: LlmClient,
     private readonly staffing: StaffingService,
     private readonly knowledge: KnowledgeService,
+    private readonly knowledgeEmbedding: KnowledgeEmbeddingService,
     private readonly userContext: UserContextService,
   ) {}
 
@@ -194,10 +196,12 @@ export class OrchestratorService {
     switch (toolName) {
       // ── Universal ────────────────────────────────────────────────────────
       case 'search_help_docs': {
-        const articles = this.knowledge.search(
-          (args.query as string) || '',
-          principal.role,
-        );
+        const query = (args.query as string) || '';
+        // Semantic search first (Phase 4); keyword fallback when embeddings not ready
+        let articles = await this.knowledgeEmbedding.searchSemantic(query, principal.role);
+        if (articles.length === 0) {
+          articles = this.knowledge.search(query, principal.role);
+        }
         return { docs: this.knowledge.formatForPrompt(articles) };
       }
 

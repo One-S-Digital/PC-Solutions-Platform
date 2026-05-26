@@ -5,6 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { LlmClient } from '../ai/llm-client';
 import { StaffingService } from '../staffing/staffing.service';
 import { KnowledgeService } from '../ai/knowledge/knowledge.service';
+import { KnowledgeEmbeddingService } from '../ai/knowledge/knowledge-embedding.service';
 import { UserContextService } from '../ai/knowledge/user-context.service';
 
 const FOUNDATION_PRINCIPAL = { userId: 'user-1', role: UserRole.FOUNDATION, organizationId: 'org-1' };
@@ -76,6 +77,8 @@ describe('OrchestratorService', () => {
   let prisma: ReturnType<typeof mockPrisma>;
   let llm: jest.Mocked<Pick<LlmClient, 'run'>>;
   let staffing: jest.Mocked<Pick<StaffingService, 'createRequest'>>;
+  let embeddingMock: { isReady: boolean; searchSemantic: jest.Mock };
+  let knowledgeMock: { search: jest.Mock; formatForPrompt: jest.Mock };
   let sendEvent: jest.Mock;
 
   function mockLlmSequence(...outputs: { message: string; toolCall?: any }[]) {
@@ -93,10 +96,8 @@ describe('OrchestratorService', () => {
         { provide: PrismaService, useValue: prismaOverride ?? prisma },
         { provide: LlmClient, useValue: { run: jest.fn() } },
         { provide: StaffingService, useValue: { createRequest: jest.fn().mockResolvedValue({ id: 'sr-1', status: 'PENDING' }) } },
-        { provide: KnowledgeService, useValue: {
-          search: jest.fn().mockReturnValue([]),
-          formatForPrompt: jest.fn().mockReturnValue('No docs found.'),
-        }},
+        { provide: KnowledgeService, useValue: knowledgeMock },
+        { provide: KnowledgeEmbeddingService, useValue: embeddingMock },
         { provide: UserContextService, useValue: {
           build: jest.fn().mockResolvedValue({ profile: 'Alice Martin | Role: FOUNDATION', state: 'New parent leads: 3' }),
         }},
@@ -112,6 +113,8 @@ describe('OrchestratorService', () => {
   beforeEach(async () => {
     sendEvent = jest.fn();
     prisma = mockPrisma() as any;
+    embeddingMock = { isReady: false, searchSemantic: jest.fn().mockResolvedValue([]) };
+    knowledgeMock = { search: jest.fn().mockReturnValue([]), formatForPrompt: jest.fn().mockReturnValue('No docs found.') };
     await makeService();
   });
 
@@ -329,6 +332,42 @@ describe('OrchestratorService', () => {
       mockLlmSequence({ message: 'Using tool.', toolCall: { name: 'non_existent_tool', args: {} } });
       await service.run({ conversationId: CONVERSATION_ID, userMessage: 'Do something', principal: FOUNDATION_PRINCIPAL, locale: 'fr', sendEvent });
       expect(sendEvent).toHaveBeenCalledWith('error', expect.objectContaining({ message: expect.stringContaining('non_existent_tool') }));
+    });
+  });
+
+  // ── Phase 4: semantic search with keyword fallback ─────────────────────────
+
+  describe('search_help_docs — semantic vs keyword fallback', () => {
+    it('uses semantic results and skips keyword search when embedding returns matches', async () => {
+      const semanticArticle = { id: 'job-board', title: 'Job Board', content: 'Go to Job Board...', category: 'educator', keywords: ['job'] };
+      // Make embedding ready and return a result
+      embeddingMock.isReady = true;
+      embeddingMock.searchSemantic.mockResolvedValue([semanticArticle]);
+
+      mockLlmSequence(
+        { message: 'Searching docs.', toolCall: { name: 'search_help_docs', args: { query: 'find a job' } } },
+        { message: 'You can find jobs on the Job Board.', toolCall: null },
+      );
+
+      await service.run({ conversationId: CONVERSATION_ID, userMessage: 'find a job', principal: EDUCATOR_PRINCIPAL, locale: 'en', sendEvent });
+
+      expect(embeddingMock.searchSemantic).toHaveBeenCalledWith('find a job', UserRole.EDUCATOR);
+      // Keyword search not called because semantic returned results
+      expect(knowledgeMock.search).not.toHaveBeenCalled();
+    });
+
+    it('falls back to keyword search when semantic is not ready', async () => {
+      // embeddingMock.isReady stays false → searchSemantic returns []
+      mockLlmSequence(
+        { message: 'Searching docs.', toolCall: { name: 'search_help_docs', args: { query: 'how to apply' } } },
+        { message: 'Apply via the job board.', toolCall: null },
+      );
+
+      await service.run({ conversationId: CONVERSATION_ID, userMessage: 'how to apply', principal: EDUCATOR_PRINCIPAL, locale: 'en', sendEvent });
+
+      expect(embeddingMock.searchSemantic).toHaveBeenCalled();
+      // Keyword fallback was called because semantic returned []
+      expect(knowledgeMock.search).toHaveBeenCalledWith('how to apply', UserRole.EDUCATOR);
     });
   });
 });
