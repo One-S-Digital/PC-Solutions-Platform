@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { XMarkIcon, PaperAirplaneIcon, SparklesIcon, CheckIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@clerk/clerk-react';
+import ReactMarkdown from 'react-markdown';
 import {
   createConversation,
   streamMessage,
@@ -368,7 +369,26 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
                         : 'bg-gray-100 text-swiss-charcoal'
                     }`}
                   >
-                    {msg.text}
+                    {msg.sender === 'assistant' ? (
+                      <ReactMarkdown
+                        components={{
+                          p: ({ children }) => <p className="mb-1 last:mb-0">{children}</p>,
+                          strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+                          ul: ({ children }) => <ul className="ml-4 mt-1 list-disc space-y-0.5">{children}</ul>,
+                          ol: ({ children }) => <ol className="ml-4 mt-1 list-decimal space-y-0.5">{children}</ol>,
+                          li: ({ children }) => <li>{children}</li>,
+                          a: ({ href, children }) => (
+                            <a href={href} className="underline hover:opacity-80" target="_blank" rel="noreferrer">
+                              {children}
+                            </a>
+                          ),
+                        }}
+                      >
+                        {msg.text}
+                      </ReactMarkdown>
+                    ) : (
+                      msg.text
+                    )}
                   </div>
                 </div>
               );
@@ -378,7 +398,24 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
             {isStreaming && (
               <div className="mb-3 flex justify-start">
                 <div className="max-w-[85%] rounded-xl bg-gray-100 px-4 py-2 text-sm leading-relaxed text-swiss-charcoal">
-                  {pendingAssistantText || (
+                  {pendingAssistantText ? (
+                    <ReactMarkdown
+                      components={{
+                        p: ({ children }) => <p className="mb-1 last:mb-0">{children}</p>,
+                        strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+                        ul: ({ children }) => <ul className="ml-4 mt-1 list-disc space-y-0.5">{children}</ul>,
+                        ol: ({ children }) => <ol className="ml-4 mt-1 list-decimal space-y-0.5">{children}</ol>,
+                        li: ({ children }) => <li>{children}</li>,
+                        a: ({ href, children }) => (
+                          <a href={href} className="underline hover:opacity-80" target="_blank" rel="noreferrer">
+                            {children}
+                          </a>
+                        ),
+                      }}
+                    >
+                      {pendingAssistantText}
+                    </ReactMarkdown>
+                  ) : (
                     <span className="text-gray-400">{t('panel.thinking', 'Thinking…')}</span>
                   )}
                   <span className="ml-0.5 inline-block h-3.5 w-0.5 animate-pulse bg-swiss-teal align-middle" />
