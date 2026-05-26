@@ -53,9 +53,7 @@ export class OrchestratorService {
       .join('\n');
 
     // Fetch role capabilities and live user context (Phase 1)
-    const [ctx] = await Promise.all([
-      this.userContext.build(principal.userId, principal.role, principal.organizationId),
-    ]);
+    const ctx = await this.userContext.build(principal.userId, principal.role, principal.organizationId);
 
     const platformContext = ROLE_CAPABILITIES[principal.role] ?? '';
     const availableTools = getToolsForRole(principal.role)
@@ -179,10 +177,16 @@ export class OrchestratorService {
       accumulatedToolResults.push(resultText);
     }
 
-    // Reached MAX_TOOL_STEPS without a clean answer — this shouldn't happen because
-    // the last iteration forces availableTools:'' which results in toolCall:null,
-    // but guard anyway.
+    // Should not reach here — the last iteration forces availableTools:'' so the LLM
+    // should return toolCall:null and exit early above. Guard against a non-compliant model.
     this.logger.warn(`Orchestrator reached MAX_TOOL_STEPS (${MAX_TOOL_STEPS}) for conversation ${conversationId}`);
+    const fallback = accumulatedToolResults.length > 0
+      ? `Based on what I found: ${accumulatedToolResults.join(' ')}`
+      : "I wasn't able to complete your request. Please try again.";
+    sendEvent('token', { text: fallback });
+    await this.prisma.aIMessage.create({
+      data: { conversationId, sender: AIMessageSender.ASSISTANT, content: fallback },
+    });
   }
 
   private async executeTool(
@@ -248,7 +252,12 @@ export class OrchestratorService {
       }
 
       case 'get_my_orders': {
-        const where: any = { organizationId: principal.organizationId };
+        // Foundations query by their own organizationId (buyer).
+        // Product suppliers query orders that contain their products (seller view).
+        const where: any =
+          principal.role === UserRole.PRODUCT_SUPPLIER
+            ? { items: { some: { product: { supplierId: principal.organizationId } } } }
+            : { organizationId: principal.organizationId };
         if (args.status) where.status = args.status;
         const orders = await this.prisma.order.findMany({
           where,

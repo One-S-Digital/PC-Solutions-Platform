@@ -308,6 +308,24 @@ describe('OrchestratorService', () => {
         expect.objectContaining({ where: expect.objectContaining({ supplierId: SUPPLIER_PRINCIPAL.organizationId }) }),
       );
     });
+
+    it('get_my_orders: queries by product supplierId, not organizationId (seller view)', async () => {
+      mockLlmSequence(
+        { message: 'Fetching orders.', toolCall: { name: 'get_my_orders', args: { limit: 5 } } },
+        { message: 'You have 1 pending order.', toolCall: null },
+      );
+      await service.run({ conversationId: CONVERSATION_ID, userMessage: 'Show my orders', principal: SUPPLIER_PRINCIPAL, locale: 'fr', sendEvent });
+      expect(prisma.order.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            items: { some: { product: { supplierId: SUPPLIER_PRINCIPAL.organizationId } } },
+          }),
+        }),
+      );
+      // Must NOT query by organizationId (which is the buyer field)
+      const callWhere = prisma.order.findMany.mock.calls[0][0].where;
+      expect(callWhere).not.toHaveProperty('organizationId');
+    });
   });
 
   // ── Per-role eval: Service Provider ──────────────────────────────────────
@@ -332,6 +350,28 @@ describe('OrchestratorService', () => {
       mockLlmSequence({ message: 'Using tool.', toolCall: { name: 'non_existent_tool', args: {} } });
       await service.run({ conversationId: CONVERSATION_ID, userMessage: 'Do something', principal: FOUNDATION_PRINCIPAL, locale: 'fr', sendEvent });
       expect(sendEvent).toHaveBeenCalledWith('error', expect.objectContaining({ message: expect.stringContaining('non_existent_tool') }));
+    });
+  });
+
+  // ── MAX_TOOL_STEPS safety net ─────────────────────────────────────────────
+
+  describe('MAX_TOOL_STEPS fallback', () => {
+    it('sends a fallback token event if the LLM never returns toolCall:null', async () => {
+      // All 3 loop iterations return a tool call — LLM non-compliance scenario
+      mockLlmSequence(
+        { message: 'Step 1', toolCall: { name: 'search_help_docs', args: { query: 'test' } } },
+        { message: 'Step 2', toolCall: { name: 'search_help_docs', args: { query: 'test' } } },
+        { message: 'Step 3', toolCall: { name: 'search_help_docs', args: { query: 'test' } } },
+      );
+
+      await service.run({ conversationId: CONVERSATION_ID, userMessage: 'Tell me everything', principal: FOUNDATION_PRINCIPAL, locale: 'fr', sendEvent });
+
+      // A token event must be sent so the client is not left hanging
+      expect(sendEvent).toHaveBeenCalledWith('token', expect.objectContaining({ text: expect.any(String) }));
+      // The fallback message must be persisted
+      expect(prisma.aIMessage.create).toHaveBeenCalledWith(
+        expect.objectContaining({ data: expect.objectContaining({ sender: AIMessageSender.ASSISTANT }) }),
+      );
     });
   });
 
