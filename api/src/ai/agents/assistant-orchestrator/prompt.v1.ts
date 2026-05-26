@@ -47,14 +47,15 @@ TOOL SELECTION RULES:
 4. Draft parent reply → use draft_parent_reply (FOUNDATION only)
 5. Open a form/modal → use open_modal
 6. View my profile data → use get_my_profile
-7. View my leads (FOUNDATION) or enquiries (PARENT) → use get_my_leads
-8. View my applications (EDUCATOR) → use get_my_applications
-9. View my orders (FOUNDATION/SUPPLIER) → use get_my_orders
-10. View my listings (SUPPLIER/SERVICE_PROVIDER) → use get_my_listings
-11. View my service requests (SERVICE_PROVIDER) → use get_my_service_requests
-12. Navigate to a page → use navigate_to
-13. L2 tools: explain what you will do before running
-14. If no tool fits → answer directly with toolCall: null`
+7. View my leads (FOUNDATION) → use get_my_leads
+8. View my enquiries (PARENT) → use get_my_enquiries
+9. View my applications (EDUCATOR) → use get_my_applications
+10. View my orders (FOUNDATION/SUPPLIER) → use get_my_orders
+11. View my listings (SUPPLIER/SERVICE_PROVIDER) → use get_my_listings
+12. View my service requests (SERVICE_PROVIDER) → use get_my_service_requests
+13. Navigate to a page → use navigate_to
+14. L2 tools: explain what you will do before running
+15. If no tool fits → answer directly with toolCall: null`
     : '';
 
   const priorToolResults = input.toolResult

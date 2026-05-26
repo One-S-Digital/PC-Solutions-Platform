@@ -9,6 +9,7 @@ export interface ToolDefinition {
   allowedRoles: UserRole[];
   modal?: string;
   inputSchema: Record<string, unknown>;
+  featureFlag?: string;
 }
 
 const ALL_ROLES: UserRole[] = [
@@ -88,6 +89,7 @@ export const TOOL_REGISTRY: ToolDefinition[] = [
     description: 'Parse a staffing request and search the internal educator pool for matching candidates.',
     level: 'L2_DRAFT',
     allowedRoles: FOUNDATION_ADMIN,
+    featureFlag: 'v2_staffing_ia',
     modal: 'candidate_shortlist_modal',
     inputSchema: { rawText: { type: 'string', description: 'Free-text staffing request describing role, canton, dates, qualifications' } },
   },
@@ -96,6 +98,7 @@ export const TOOL_REGISTRY: ToolDefinition[] = [
     description: 'Generate a human-readable explanation for why a candidate matches a staffing request.',
     level: 'L1_ANSWER',
     allowedRoles: FOUNDATION_ADMIN,
+    featureFlag: 'v2_staffing_ia',
     inputSchema: {
       matchResultId: { type: 'string', description: 'The MatchResult ID to explain' },
     },
@@ -105,6 +108,7 @@ export const TOOL_REGISTRY: ToolDefinition[] = [
     description: 'Draft a job post pre-filled with details from the conversation.',
     level: 'L2_DRAFT',
     allowedRoles: FOUNDATION_ADMIN,
+    featureFlag: 'v2_staffing_ia',
     modal: 'job_post_modal',
     inputSchema: {
       role: { type: 'string', description: 'Job role (e.g. EDE, ASSC)' },
@@ -118,6 +122,7 @@ export const TOOL_REGISTRY: ToolDefinition[] = [
     description: 'Draft a reply to a parent lead message.',
     level: 'L2_DRAFT',
     allowedRoles: FOUNDATION_ADMIN,
+    featureFlag: 'v2_staffing_ia',
     modal: 'parent_reply_modal',
     inputSchema: {
       leadId: { type: 'string', description: 'Parent lead ID' },
@@ -172,6 +177,8 @@ export const TOOL_REGISTRY: ToolDefinition[] = [
   },
 ];
 
-export function getToolsForRole(role: UserRole): ToolDefinition[] {
-  return TOOL_REGISTRY.filter((t) => t.allowedRoles.includes(role));
+export function getToolsForRole(role: UserRole, activeFlags: Set<string> = new Set()): ToolDefinition[] {
+  return TOOL_REGISTRY.filter(
+    (t) => t.allowedRoles.includes(role) && (!t.featureFlag || activeFlags.has(t.featureFlag)),
+  );
 }

@@ -9,16 +9,18 @@ export interface KnowledgeSearchResult {
 
 @Injectable()
 export class KnowledgeService {
-  search(query: string, role: UserRole, maxResults = 3): KnowledgeArticle[] {
+  search(query: string, role: UserRole, maxResults = 3, activeFlags: Set<string> = new Set()): KnowledgeArticle[] {
     const terms = query
       .toLowerCase()
       .split(/[\s,?!.]+/)
-      .filter((t) => t.length > 2);
+      .filter((t) => t.length >= 2);
 
     if (terms.length === 0) return [];
 
     const accessible = PLATFORM_ARTICLES.filter(
-      (a) => !a.roles || a.roles.includes(role),
+      (a) =>
+        (!a.roles || a.roles.includes(role)) &&
+        (!a.featureFlag || activeFlags.has(a.featureFlag)),
     );
 
     const scored: KnowledgeSearchResult[] = accessible.map((article) => {

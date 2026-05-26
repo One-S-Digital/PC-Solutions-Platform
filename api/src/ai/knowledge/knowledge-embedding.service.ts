@@ -32,7 +32,7 @@ export class KnowledgeEmbeddingService implements OnModuleInit {
     });
   }
 
-  async searchSemantic(query: string, role: UserRole, limit = 3): Promise<KnowledgeArticle[]> {
+  async searchSemantic(query: string, role: UserRole, limit = 3, activeFlags: Set<string> = new Set()): Promise<KnowledgeArticle[]> {
     if (!this._ready) return [];
 
     const { embedding } = await this.llm.embed(query);
@@ -45,18 +45,23 @@ export class KnowledgeEmbeddingService implements OnModuleInit {
        ORDER  BY "embedding" <=> $1::vector
        LIMIT  $2`,
       JSON.stringify(embedding),
-      limit * 3, // over-fetch, then filter by role and threshold
+      limit * 3, // over-fetch, then filter by role, flags, and threshold
     );
 
     const accessibleIds = new Set(
-      PLATFORM_ARTICLES.filter((a) => !a.roles || a.roles.includes(role)).map((a) => a.id),
+      PLATFORM_ARTICLES.filter(
+        (a) =>
+          (!a.roles || a.roles.includes(role)) &&
+          (!a.featureFlag || activeFlags.has(a.featureFlag)),
+      ).map((a) => a.id),
     );
 
+    // Map to articles first, then slice — avoids under-delivering when stale IDs exist in top rows
     return rows
       .filter((r) => r.similarity >= SIMILARITY_THRESHOLD && accessibleIds.has(r.article_id))
-      .slice(0, limit)
-      .map((r) => PLATFORM_ARTICLES.find((a) => a.id === r.article_id)!)
-      .filter(Boolean);
+      .map((r) => PLATFORM_ARTICLES.find((a) => a.id === r.article_id))
+      .filter((a): a is KnowledgeArticle => Boolean(a))
+      .slice(0, limit);
   }
 
   private async embedAll(): Promise<void> {

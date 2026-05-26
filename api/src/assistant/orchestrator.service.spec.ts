@@ -69,6 +69,11 @@ function mockPrisma() {
       count: jest.fn().mockResolvedValue(2),
       findMany: jest.fn().mockResolvedValue([]),
     },
+    featureFlag: {
+      findMany: jest.fn().mockResolvedValue([
+        { key: 'v2_staffing_ia' },
+      ]),
+    },
   };
 }
 
@@ -391,7 +396,7 @@ describe('OrchestratorService', () => {
 
       await service.run({ conversationId: CONVERSATION_ID, userMessage: 'find a job', principal: EDUCATOR_PRINCIPAL, locale: 'en', sendEvent });
 
-      expect(embeddingMock.searchSemantic).toHaveBeenCalledWith('find a job', UserRole.EDUCATOR);
+      expect(embeddingMock.searchSemantic).toHaveBeenCalledWith('find a job', UserRole.EDUCATOR, 3, expect.any(Set));
       // Keyword search not called because semantic returned results
       expect(knowledgeMock.search).not.toHaveBeenCalled();
     });
@@ -407,7 +412,7 @@ describe('OrchestratorService', () => {
 
       expect(embeddingMock.searchSemantic).toHaveBeenCalled();
       // Keyword fallback was called because semantic returned []
-      expect(knowledgeMock.search).toHaveBeenCalledWith('how to apply', UserRole.EDUCATOR);
+      expect(knowledgeMock.search).toHaveBeenCalledWith('how to apply', UserRole.EDUCATOR, 3, expect.any(Set));
     });
   });
 });

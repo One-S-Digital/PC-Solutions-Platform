@@ -1,13 +1,8 @@
 import { UserRole } from '@prisma/client';
 
-export const ROLE_CAPABILITIES: Record<UserRole, string> = {
-  [UserRole.FOUNDATION]: `You manage a Swiss childcare foundation. What you can do:
+const FOUNDATION_BASE = `You manage a Swiss childcare foundation. What you can do:
 - Dashboard: KPIs for staff, leads, orders, intern pool → /foundation/dashboard
 - Parent Leads: view and respond to parent childcare enquiries → /foundation/leads
-- Recruitment: post jobs, browse and shortlist candidates → /recruitment/job-listings, /recruitment/candidate-pool
-- Staffing Replacements: create replacement requests (matched automatically) → /foundation/replacements
-- Staffing Requests: manage general staffing needs → /foundation/staffing-requests
-- Intern Pool: manage interns → /foundation/intern-pool
 - Marketplace Products: order products from suppliers → /marketplace/products
 - Marketplace Services: book services from providers → /marketplace/services
 - Orders & Appointments: track fulfillment and bookings → /foundation/orders-appointments
@@ -16,7 +11,16 @@ export const ROLE_CAPABILITIES: Record<UserRole, string> = {
 - Messaging: communicate with educators, suppliers, providers → /messages
 - Content: e-learning courses, HR procedures, state policies
 - Settings: account, notifications, billing, language → /settings
-- Support: submit help tickets → /foundation/support`,
+- Support: submit help tickets → /foundation/support`;
+
+const FOUNDATION_STAFFING_LINES = `
+- Recruitment: post jobs, browse and shortlist candidates → /recruitment/job-listings, /recruitment/candidate-pool
+- Staffing Replacements: create replacement requests (matched automatically) → /foundation/replacements
+- Staffing Requests: manage general staffing needs → /foundation/staffing-requests
+- Intern Pool: manage interns → /foundation/intern-pool`;
+
+const ROLE_CAPABILITIES_BASE: Record<UserRole, string> = {
+  [UserRole.FOUNDATION]: FOUNDATION_BASE,
 
   [UserRole.EDUCATOR]: `You are a childcare educator looking for work. What you can do:
 - Dashboard: profile completion summary and job matches → /educator/dashboard
@@ -71,3 +75,11 @@ IMPORTANT: Profile must be approved by an admin before you can access the job bo
 - Content Management, System Monitoring, User Management, Discount Management
 - Platform-wide configuration and oversight across all roles`,
 };
+
+export function getRoleCapabilities(role: UserRole, activeFlags: Set<string>): string {
+  const base = ROLE_CAPABILITIES_BASE[role] ?? '';
+  if (role === UserRole.FOUNDATION && activeFlags.has('v2_staffing_ia')) {
+    return base + FOUNDATION_STAFFING_LINES;
+  }
+  return base;
+}

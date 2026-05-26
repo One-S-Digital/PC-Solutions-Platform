@@ -8,6 +8,7 @@ export interface KnowledgeArticle {
   title: string;
   content: string;
   route?: string;
+  featureFlag?: string;
 }
 
 export const PLATFORM_ARTICLES: KnowledgeArticle[] = [
@@ -120,6 +121,7 @@ export const PLATFORM_ARTICLES: KnowledgeArticle[] = [
     id: 'recruitment-jobs',
     category: 'foundation',
     roles: [UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN],
+    featureFlag: 'v2_staffing_ia',
     keywords: ['recruitment', 'job', 'posting', 'hire', 'staff', 'candidates', 'listing', 'publish', 'recrutement', 'offre'],
     title: 'Recruitment & Job Postings',
     content:
@@ -130,6 +132,7 @@ export const PLATFORM_ARTICLES: KnowledgeArticle[] = [
     id: 'staffing-replacements',
     category: 'foundation',
     roles: [UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN],
+    featureFlag: 'v2_staffing_ia',
     keywords: ['staffing', 'replacement', 'request', 'absence', 'cover', 'temporary', 'remplacement', 'suppléance'],
     title: 'Staffing Replacements',
     content:

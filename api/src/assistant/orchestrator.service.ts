@@ -5,7 +5,7 @@ import { StaffingService } from '../staffing/staffing.service';
 import { KnowledgeService } from '../ai/knowledge/knowledge.service';
 import { KnowledgeEmbeddingService } from '../ai/knowledge/knowledge-embedding.service';
 import { UserContextService } from '../ai/knowledge/user-context.service';
-import { ROLE_CAPABILITIES } from '../ai/knowledge/role-capabilities';
+import { getRoleCapabilities } from '../ai/knowledge/role-capabilities';
 import { AssistantOrchestratorSchema } from '../ai/agents/assistant-orchestrator/schema';
 import { getToolsForRole } from './tools/tool-registry';
 import { UserRole, AIMessageSender, AIToolCallStatus, AIActionLevel } from '@prisma/client';
@@ -52,11 +52,14 @@ export class OrchestratorService {
       .map((m) => `${m.sender === 'USER' ? 'User' : 'Assistant'}: ${m.content}`)
       .join('\n');
 
-    // Fetch role capabilities and live user context (Phase 1)
-    const ctx = await this.userContext.build(principal.userId, principal.role, principal.organizationId);
+    // Fetch user context and active feature flags in parallel
+    const [ctx, activeFlags] = await Promise.all([
+      this.userContext.build(principal.userId, principal.role, principal.organizationId),
+      this.fetchActiveFlags(),
+    ]);
 
-    const platformContext = ROLE_CAPABILITIES[principal.role] ?? '';
-    const availableTools = getToolsForRole(principal.role)
+    const platformContext = getRoleCapabilities(principal.role, activeFlags);
+    const availableTools = getToolsForRole(principal.role, activeFlags)
       .map((t) => `${t.name}: ${t.description}`)
       .join(', ');
 
@@ -100,7 +103,7 @@ export class OrchestratorService {
       }
 
       const { name: toolName, args } = output.toolCall;
-      const toolDef = getToolsForRole(principal.role).find((t) => t.name === toolName);
+      const toolDef = getToolsForRole(principal.role, activeFlags).find((t) => t.name === toolName);
       if (!toolDef) {
         sendEvent('error', { message: `Unknown tool: ${toolName}` });
         return;
@@ -157,7 +160,7 @@ export class OrchestratorService {
       let toolError: string | undefined;
 
       try {
-        toolResult = await this.executeTool(toolName, args, principal, locale);
+        toolResult = await this.executeTool(toolName, args, principal, locale, activeFlags);
         await this.prisma.aIToolCall.update({
           where: { id: toolCallRecord.id },
           data: { status: AIToolCallStatus.EXECUTED, outputJson: toolResult as any, executedAt: new Date() },
@@ -189,11 +192,17 @@ export class OrchestratorService {
     });
   }
 
+  private async fetchActiveFlags(): Promise<Set<string>> {
+    const flags = await this.prisma.featureFlag.findMany({ where: { isActive: true }, select: { key: true } });
+    return new Set(flags.map((f) => f.key));
+  }
+
   private async executeTool(
     toolName: string,
     args: Record<string, unknown>,
     principal: AssistantPrincipalContext,
     _locale: 'fr' | 'de' | 'en',
+    activeFlags: Set<string> = new Set(),
   ): Promise<unknown> {
     const limit = Math.min(Number(args.limit) || 5, 10);
 
@@ -202,9 +211,9 @@ export class OrchestratorService {
       case 'search_help_docs': {
         const query = (args.query as string) || '';
         // Semantic search first (Phase 4); keyword fallback when embeddings not ready
-        let articles = await this.knowledgeEmbedding.searchSemantic(query, principal.role);
+        let articles = await this.knowledgeEmbedding.searchSemantic(query, principal.role, 3, activeFlags);
         if (articles.length === 0) {
-          articles = this.knowledge.search(query, principal.role);
+          articles = this.knowledge.search(query, principal.role, 3, activeFlags);
         }
         return { docs: this.knowledge.formatForPrompt(articles) };
       }
@@ -233,6 +242,7 @@ export class OrchestratorService {
 
       // ── Foundation ────────────────────────────────────────────────────────
       case 'get_my_leads': {
+        if (!principal.organizationId) return { leads: [], total: 0, error: 'No organization context' };
         const where: any = { foundationId: principal.organizationId };
         if (args.status) where.status = args.status;
         const leads = await this.prisma.parentLead.findMany({
@@ -252,6 +262,7 @@ export class OrchestratorService {
       }
 
       case 'get_my_orders': {
+        if (!principal.organizationId) return { orders: [], total: 0, error: 'No organization context' };
         // Foundations query by their own organizationId (buyer).
         // Product suppliers query orders that contain their products (seller view).
         const where: any =
@@ -338,6 +349,7 @@ export class OrchestratorService {
 
       // ── Supplier ───────────────────────────────────────────────────────────
       case 'get_my_listings': {
+        if (!principal.organizationId) return { listings: [], total: 0, error: 'No organization context' };
         if (principal.role === UserRole.PRODUCT_SUPPLIER || principal.role === UserRole.ADMIN || principal.role === UserRole.SUPER_ADMIN) {
           const products = await this.prisma.product.findMany({
             where: { supplierId: principal.organizationId },
@@ -364,6 +376,7 @@ export class OrchestratorService {
 
       // ── Service Provider ───────────────────────────────────────────────────
       case 'get_my_service_requests': {
+        if (!principal.organizationId) return { requests: [], total: 0, error: 'No organization context' };
         const sp = await this.prisma.serviceProvider.findFirst({
           where: { organizationId: principal.organizationId },
           select: { id: true },
