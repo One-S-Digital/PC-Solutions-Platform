@@ -76,9 +76,9 @@ IMPORTANT: Profile must be approved by an admin before you can access the job bo
 - Platform-wide configuration and oversight across all roles`,
 };
 
-export function getRoleCapabilities(role: UserRole, activeFlags: Set<string>): string {
+export function getRoleCapabilities(role: UserRole, disabledFlags: Set<string>): string {
   const base = ROLE_CAPABILITIES_BASE[role] ?? '';
-  if (role === UserRole.FOUNDATION && activeFlags.has('v2_staffing_ia')) {
+  if (role === UserRole.FOUNDATION && !disabledFlags.has('v2_staffing_ia')) {
     return base + FOUNDATION_STAFFING_LINES;
   }
   return base;

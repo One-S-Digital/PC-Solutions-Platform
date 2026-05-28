@@ -70,9 +70,8 @@ function mockPrisma() {
       findMany: jest.fn().mockResolvedValue([]),
     },
     featureFlag: {
-      findMany: jest.fn().mockResolvedValue([
-        { key: 'v2_staffing_ia' },
-      ]),
+      // No flags are explicitly disabled → all tools/articles available by default
+      findMany: jest.fn().mockResolvedValue([]),
     },
   };
 }

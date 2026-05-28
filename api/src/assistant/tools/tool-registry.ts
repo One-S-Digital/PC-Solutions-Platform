@@ -177,8 +177,8 @@ export const TOOL_REGISTRY: ToolDefinition[] = [
   },
 ];
 
-export function getToolsForRole(role: UserRole, activeFlags: Set<string> = new Set()): ToolDefinition[] {
+export function getToolsForRole(role: UserRole, disabledFlags: Set<string> = new Set()): ToolDefinition[] {
   return TOOL_REGISTRY.filter(
-    (t) => t.allowedRoles.includes(role) && (!t.featureFlag || activeFlags.has(t.featureFlag)),
+    (t) => t.allowedRoles.includes(role) && (!t.featureFlag || !disabledFlags.has(t.featureFlag)),
   );
 }
