@@ -3221,6 +3221,16 @@ model AIActionApproval {
   @@map("ai_action_approvals")
 }
 
+model KnowledgeArticleEmbedding {
+  id          String   @id @default(uuid())
+  articleId   String   @unique
+  contentHash String
+  embedding   Unsupported("vector(512)")?
+  updatedAt   DateTime @updatedAt
+
+  @@map("knowledge_article_embeddings")
+}
+
 model AIContextMemory {
   id             String    @id @default(uuid())
   userId         String

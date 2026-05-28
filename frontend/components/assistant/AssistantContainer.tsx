@@ -4,7 +4,15 @@ import { UserRole } from '../../types';
 import { AssistantButton } from './AssistantButton';
 import { AssistantPanel } from './AssistantPanel';
 
-const ALLOWED_ROLES: UserRole[] = [UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN];
+const ALLOWED_ROLES: UserRole[] = [
+  UserRole.FOUNDATION,
+  UserRole.EDUCATOR,
+  UserRole.PARENT,
+  UserRole.PRODUCT_SUPPLIER,
+  UserRole.SERVICE_PROVIDER,
+  UserRole.ADMIN,
+  UserRole.SUPER_ADMIN,
+];
 
 export const AssistantContainer: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
