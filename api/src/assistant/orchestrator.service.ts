@@ -242,8 +242,14 @@ export class OrchestratorService {
 
       // ── Foundation ────────────────────────────────────────────────────────
       case 'get_my_leads': {
-        if (!principal.organizationId) return { leads: [], total: 0, error: 'No organization context' };
-        const where: any = { foundationId: principal.organizationId };
+        const isAdminRole = principal.role === UserRole.ADMIN || principal.role === UserRole.SUPER_ADMIN;
+        // Admins without an org get a platform-wide view of recent leads
+        const where: any = (!principal.organizationId && isAdminRole)
+          ? {}
+          : principal.organizationId
+            ? { foundationId: principal.organizationId }
+            : null;
+        if (!where) return { leads: [], total: 0, error: 'No organization context' };
         if (args.status) where.status = args.status;
         const leads = await this.prisma.parentLead.findMany({
           where,
@@ -258,17 +264,20 @@ export class OrchestratorService {
             createdAt: true,
           },
         });
-        return { leads, total: leads.length };
+        return { leads, total: leads.length, scope: !principal.organizationId ? 'platform-wide' : 'organization' };
       }
 
       case 'get_my_orders': {
-        if (!principal.organizationId) return { orders: [], total: 0, error: 'No organization context' };
-        // Foundations query by their own organizationId (buyer).
-        // Product suppliers query orders that contain their products (seller view).
-        const where: any =
-          principal.role === UserRole.PRODUCT_SUPPLIER
-            ? { items: { some: { product: { supplierId: principal.organizationId } } } }
-            : { organizationId: principal.organizationId };
+        const isAdminRole = principal.role === UserRole.ADMIN || principal.role === UserRole.SUPER_ADMIN;
+        const where: any = {};
+        if (principal.role === UserRole.PRODUCT_SUPPLIER && principal.organizationId) {
+          where.items = { some: { product: { supplierId: principal.organizationId } } };
+        } else if (principal.organizationId) {
+          where.organizationId = principal.organizationId;
+        } else if (!isAdminRole) {
+          return { orders: [], total: 0, error: 'No organization context' };
+        }
+        // Admins with no org: no where filter → platform-wide
         if (args.status) where.status = args.status;
         const orders = await this.prisma.order.findMany({
           where,
@@ -281,7 +290,7 @@ export class OrchestratorService {
             createdAt: true,
           },
         });
-        return { orders, total: orders.length };
+        return { orders, total: orders.length, scope: !principal.organizationId ? 'platform-wide' : 'organization' };
       }
 
       case 'search_internal_candidates': {
@@ -349,8 +358,9 @@ export class OrchestratorService {
 
       // ── Supplier ───────────────────────────────────────────────────────────
       case 'get_my_listings': {
-        if (!principal.organizationId) return { listings: [], total: 0, error: 'No organization context' };
-        if (principal.role === UserRole.PRODUCT_SUPPLIER || principal.role === UserRole.ADMIN || principal.role === UserRole.SUPER_ADMIN) {
+        const isAdminRole = principal.role === UserRole.ADMIN || principal.role === UserRole.SUPER_ADMIN;
+        if (principal.role === UserRole.PRODUCT_SUPPLIER) {
+          if (!principal.organizationId) return { listings: [], total: 0, error: 'No organization context' };
           const products = await this.prisma.product.findMany({
             where: { supplierId: principal.organizationId },
             take: limit,
@@ -359,6 +369,7 @@ export class OrchestratorService {
           return { listings: products, type: 'products', total: products.length };
         }
         if (principal.role === UserRole.SERVICE_PROVIDER) {
+          if (!principal.organizationId) return { listings: [], total: 0, error: 'No organization context' };
           const sp = await this.prisma.serviceProvider.findFirst({
             where: { organizationId: principal.organizationId },
             select: { id: true },
@@ -371,11 +382,47 @@ export class OrchestratorService {
           });
           return { listings: services, type: 'services', total: services.length };
         }
+        if (isAdminRole) {
+          // Platform-wide view: most recent active products and services
+          const [products, services] = await Promise.all([
+            this.prisma.product.findMany({
+              take: Math.ceil(limit / 2),
+              orderBy: { createdAt: 'desc' },
+              select: { id: true, title: true, price: true, status: true, isActive: true },
+            }),
+            this.prisma.service.findMany({
+              take: Math.floor(limit / 2),
+              orderBy: { createdAt: 'desc' },
+              select: { id: true, title: true, price: true, isActive: true, category: true },
+            }),
+          ]);
+          return { listings: [...products, ...services], type: 'all', total: products.length + services.length, scope: 'platform-wide' };
+        }
         return { listings: [], total: 0 };
       }
 
       // ── Service Provider ───────────────────────────────────────────────────
       case 'get_my_service_requests': {
+        const isAdminRole = principal.role === UserRole.ADMIN || principal.role === UserRole.SUPER_ADMIN;
+        if (isAdminRole && !principal.organizationId) {
+          // Platform-wide view of all recent service requests
+          const where: any = {};
+          if (args.status) where.status = args.status;
+          const requests = await this.prisma.serviceRequest.findMany({
+            where,
+            orderBy: { createdAt: 'desc' },
+            take: limit,
+            select: {
+              id: true,
+              status: true,
+              description: true,
+              scheduledAt: true,
+              requestedAt: true,
+              service: { select: { title: true } },
+            },
+          });
+          return { requests, total: requests.length, scope: 'platform-wide' };
+        }
         if (!principal.organizationId) return { requests: [], total: 0, error: 'No organization context' };
         const sp = await this.prisma.serviceProvider.findFirst({
           where: { organizationId: principal.organizationId },
