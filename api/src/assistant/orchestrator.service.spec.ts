@@ -73,6 +73,10 @@ function mockPrisma() {
       // No flags are explicitly disabled → all tools/articles available by default
       findMany: jest.fn().mockResolvedValue([]),
     },
+    systemSettings: {
+      // No FEATURE_FLAGS settings disabled by default
+      findMany: jest.fn().mockResolvedValue([]),
+    },
   };
 }
 
@@ -354,6 +358,28 @@ describe('OrchestratorService', () => {
       mockLlmSequence({ message: 'Using tool.', toolCall: { name: 'non_existent_tool', args: {} } });
       await service.run({ conversationId: CONVERSATION_ID, userMessage: 'Do something', principal: FOUNDATION_PRINCIPAL, locale: 'fr', sendEvent });
       expect(sendEvent).toHaveBeenCalledWith('error', expect.objectContaining({ message: expect.stringContaining('non_existent_tool') }));
+    });
+  });
+
+  // ── Feature flags — systemSettings source ────────────────────────────────
+
+  describe('fetchDisabledFlags — systemSettings integration', () => {
+    it('treats v2_staffing_ia=false in systemSettings as disabled, hiding staffing tools from the LLM prompt', async () => {
+      // Simulate the seeded default: v2_staffing_ia stored in system_settings with value 'false'
+      prisma.systemSettings.findMany.mockResolvedValue([
+        { key: 'v2_staffing_ia', value: 'false' },
+      ]);
+
+      // LLM responds without calling any tool
+      mockLlmSequence({ message: 'Staffing info here.', toolCall: null });
+
+      await service.run({ conversationId: CONVERSATION_ID, userMessage: 'find candidates', principal: FOUNDATION_PRINCIPAL, locale: 'fr', sendEvent });
+
+      // The availableTools string passed to the LLM must not list staffing-only tools
+      const firstRunCall = (llm as any).run.mock.calls[0];
+      const availableTools: string = firstRunCall[0].input.availableTools;
+      expect(availableTools).not.toContain('search_internal_candidates');
+      expect(availableTools).not.toContain('draft_job_post');
     });
   });
 

@@ -192,11 +192,23 @@ export class OrchestratorService {
     });
   }
 
-  // Returns the set of flag keys that are explicitly disabled (isActive: false).
-  // Convention: absent flag → enabled (consistent with the rest of this codebase).
+  // Returns the set of flag keys that are explicitly disabled.
+  // Checks both sources: featureFlag rows (isActive:false) and systemSettings rows
+  // with category='FEATURE_FLAGS' and value='false' (v2 rollout flags live there).
+  // Convention: absent flag → enabled.
   private async fetchDisabledFlags(): Promise<Set<string>> {
-    const flags = await this.prisma.featureFlag.findMany({ where: { isActive: false }, select: { key: true } });
-    return new Set(flags.map((f) => f.key));
+    const [flagRows, settingRows] = await Promise.all([
+      this.prisma.featureFlag.findMany({ where: { isActive: false }, select: { key: true } }),
+      this.prisma.systemSettings.findMany({ where: { category: 'FEATURE_FLAGS' }, select: { key: true, value: true } }),
+    ]);
+
+    const disabled = new Set<string>(flagRows.map((f) => f.key));
+    for (const row of settingRows) {
+      if (row.value === false || row.value === 'false') {
+        disabled.add(row.key);
+      }
+    }
+    return disabled;
   }
 
   private async executeTool(
