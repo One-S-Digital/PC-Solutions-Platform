@@ -32,24 +32,40 @@ export class VoyageAdapter {
       return { embedding: new Array(512).fill(0), model: useModel, totalTokens: 0 };
     }
 
-    const response = await fetch(`${this.baseUrl}/embeddings`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.apiKey}`,
-      },
-      body: JSON.stringify({ input: [text], model: useModel }),
-    });
+    const maxAttempts = 4;
+    let delayMs = 2_000;
 
-    if (!response.ok) {
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      const response = await fetch(`${this.baseUrl}/embeddings`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.apiKey}`,
+        },
+        body: JSON.stringify({ input: [text], model: useModel }),
+      });
+
+      if (response.ok) {
+        const data = (await response.json()) as any;
+        return {
+          embedding: data.data[0].embedding,
+          model: useModel,
+          totalTokens: data.usage?.total_tokens || 0,
+        };
+      }
+
+      if (response.status === 429 && attempt < maxAttempts) {
+        const retryAfter = response.headers.get('Retry-After');
+        const waitMs = retryAfter ? parseInt(retryAfter, 10) * 1000 : delayMs;
+        this.logger.warn(`Voyage AI rate-limited — retrying in ${waitMs}ms (attempt ${attempt}/${maxAttempts})`);
+        await new Promise((resolve) => setTimeout(resolve, waitMs));
+        delayMs *= 2;
+        continue;
+      }
+
       throw new Error(`Voyage AI error: ${response.status} ${response.statusText}`);
     }
 
-    const data = (await response.json()) as any;
-    return {
-      embedding: data.data[0].embedding,
-      model: useModel,
-      totalTokens: data.usage?.total_tokens || 0,
-    };
+    throw new Error('Voyage AI error: max retries exceeded');
   }
 }
