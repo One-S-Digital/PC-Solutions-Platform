@@ -7,6 +7,25 @@ export interface EmbeddingResult {
   totalTokens: number;
 }
 
+/**
+ * Parses a Retry-After header value which may be either delta-seconds ("30")
+ * or an HTTP-date ("Wed, 28 May 2026 09:00:00 GMT"). Returns the wait in ms,
+ * falling back to `defaultMs` if the value is absent or unparseable.
+ */
+function parseRetryAfter(header: string | null, defaultMs: number): number {
+  if (!header) return defaultMs;
+  // Delta-seconds: a string containing only digits (possibly with leading spaces)
+  const seconds = parseInt(header, 10);
+  if (!isNaN(seconds) && seconds >= 0) return seconds * 1000;
+  // HTTP-date
+  const date = new Date(header);
+  if (!isNaN(date.getTime())) {
+    const wait = date.getTime() - Date.now();
+    return wait > 0 ? wait : defaultMs;
+  }
+  return defaultMs;
+}
+
 @Injectable()
 export class VoyageAdapter {
   private readonly logger = new Logger(VoyageAdapter.name);
@@ -56,7 +75,7 @@ export class VoyageAdapter {
 
       if (response.status === 429 && attempt < maxAttempts) {
         const retryAfter = response.headers.get('Retry-After');
-        const waitMs = retryAfter ? parseInt(retryAfter, 10) * 1000 : delayMs;
+        const waitMs = parseRetryAfter(retryAfter, delayMs);
         this.logger.warn(`Voyage AI rate-limited — retrying in ${waitMs}ms (attempt ${attempt}/${maxAttempts})`);
         await new Promise((resolve) => setTimeout(resolve, waitMs));
         delayMs *= 2;
