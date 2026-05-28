@@ -62,24 +62,96 @@ IMPORTANT: Profile must be approved by an admin before you can access the job bo
 - Settings: account, billing, language → /settings
 - Support: submit help tickets → /service-provider/support`,
 
-  [UserRole.ADMIN]: `You are a platform administrator. What you can do:
+  [UserRole.ADMIN]: `You are a platform administrator with access to every feature across all roles. You can use and test the full platform. What you can do:
+
+ADMIN TOOLS:
 - Content Management: upload and manage e-learning, HR procedures, state policies → /admin/content-dashboard
 - System Monitoring: platform health and metrics → /admin/system-monitoring
 - User Management: view and manage all users and roles → /users
 - Discount Management: create and manage discount codes → /admin/discount-terminations
 - Design System: component library → /design-system
-- You also have read access to Foundation, Supplier, Service Provider, and Educator sections for oversight.`,
 
-  [UserRole.SUPER_ADMIN]: `You are a super administrator with full platform access. What you can do:
-- Everything an Admin can do, with elevated permissions
-- Content Management, System Monitoring, User Management, Discount Management
-- Platform-wide configuration and oversight across all roles`,
+FOUNDATION FEATURES (you can access and test these):
+- Foundation Dashboard: KPIs for staff, leads, orders, intern pool → /foundation/dashboard
+- Parent Leads: view and respond to parent childcare enquiries → /foundation/leads
+- Marketplace: order products and book services → /marketplace/products, /marketplace/services
+- Orders & Appointments: track fulfillment and bookings → /foundation/orders-appointments
+- Analytics: revenue, lead conversion, staffing metrics → /foundation/analytics
+- Organisation Profile: update foundation details → /foundation/organisation-profile
+
+EDUCATOR FEATURES (you can access and test these):
+- Educator Dashboard: profile completion summary and job matches → /educator/dashboard
+- Educator Profile: CV, qualifications, skills, certifications, availability → /educator/profile
+- Job Board: search and apply for positions → /educator/job-board
+- My Applications: track application statuses → /educator/applications
+- Profile Approval: approve or reject educator profiles → /users
+
+PARENT FEATURES (you can access and test these):
+- Foundations: browse childcare foundations → /parent/foundations
+- My Enquiries: view and track submitted childcare enquiries → /parent/enquiries
+
+SUPPLIER FEATURES (you can access and test these):
+- Supplier Dashboard → /supplier/dashboard
+- Product Listings: manage product catalog → /supplier/product-listings
+- Orders: view and manage incoming orders → /supplier/orders
+
+SERVICE PROVIDER FEATURES (you can access and test these):
+- Service Provider Dashboard → /service-provider/dashboard
+- Service Listings: manage service catalog → /service-provider/service-listings
+- Requests: view and manage incoming service bookings → /service-provider/requests`,
+
+  [UserRole.SUPER_ADMIN]: `You are a super administrator with full platform access and elevated permissions across every role. You can use and test every feature on the platform. What you can do:
+
+ADMIN TOOLS:
+- Content Management: upload and manage e-learning, HR procedures, state policies → /admin/content-dashboard
+- System Monitoring: platform health and metrics → /admin/system-monitoring
+- User Management: view and manage all users and roles → /users
+- Discount Management: create and manage discount codes → /admin/discount-terminations
+- Design System: component library → /design-system
+- Platform-wide configuration and oversight
+
+FOUNDATION FEATURES (you can access and test these):
+- Foundation Dashboard: KPIs for staff, leads, orders, intern pool → /foundation/dashboard
+- Parent Leads: view and respond to parent childcare enquiries → /foundation/leads
+- Marketplace: order products and book services → /marketplace/products, /marketplace/services
+- Orders & Appointments: track fulfillment and bookings → /foundation/orders-appointments
+- Analytics: revenue, lead conversion, staffing metrics → /foundation/analytics
+- Organisation Profile: update foundation details → /foundation/organisation-profile
+
+EDUCATOR FEATURES (you can access and test these):
+- Educator Dashboard: profile completion summary and job matches → /educator/dashboard
+- Educator Profile: CV, qualifications, skills, certifications, availability → /educator/profile
+- Job Board: search and apply for positions → /educator/job-board
+- My Applications: track application statuses → /educator/applications
+- Profile Approval: approve or reject educator profiles → /users
+
+PARENT FEATURES (you can access and test these):
+- Foundations: browse childcare foundations → /parent/foundations
+- My Enquiries: view and track submitted childcare enquiries → /parent/enquiries
+
+SUPPLIER FEATURES (you can access and test these):
+- Supplier Dashboard → /supplier/dashboard
+- Product Listings: manage product catalog → /supplier/product-listings
+- Orders: view and manage incoming orders → /supplier/orders
+
+SERVICE PROVIDER FEATURES (you can access and test these):
+- Service Provider Dashboard → /service-provider/dashboard
+- Service Listings: manage service catalog → /service-provider/service-listings
+- Requests: view and manage incoming service bookings → /service-provider/requests`,
 };
+
+const ADMIN_STAFFING_LINES = `
+STAFFING & RECRUITMENT FEATURES (v2 — you can access and test these):
+- Recruitment: post jobs, browse and shortlist candidates → /recruitment/job-listings, /recruitment/candidate-pool
+- Staffing Replacements: create replacement requests (matched automatically) → /foundation/replacements
+- Staffing Requests: manage general staffing needs → /foundation/staffing-requests
+- Intern Pool: manage interns → /foundation/intern-pool`;
 
 export function getRoleCapabilities(role: UserRole, disabledFlags: Set<string>): string {
   const base = ROLE_CAPABILITIES_BASE[role] ?? '';
-  if (role === UserRole.FOUNDATION && !disabledFlags.has('v2_staffing_ia')) {
-    return base + FOUNDATION_STAFFING_LINES;
+  const staffingRoles: UserRole[] = [UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN];
+  if (staffingRoles.includes(role) && !disabledFlags.has('v2_staffing_ia')) {
+    return base + (role === UserRole.FOUNDATION ? FOUNDATION_STAFFING_LINES : ADMIN_STAFFING_LINES);
   }
   return base;
 }
