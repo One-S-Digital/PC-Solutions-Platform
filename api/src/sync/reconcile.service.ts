@@ -32,6 +32,7 @@ export class ReconcileService {
       const users = await this.prisma.appUser.findMany({
         take: batchSize,
         skip: processed,
+        where: { clerkId: { not: { startsWith: 'system-' } } },
         orderBy: { createdAt: 'asc' },
       });
       
