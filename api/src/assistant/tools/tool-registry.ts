@@ -24,6 +24,8 @@ const ALL_ROLES: UserRole[] = [
 
 const FOUNDATION_ADMIN: UserRole[] = [UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN];
 
+const ADMIN_ONLY: UserRole[] = [UserRole.ADMIN, UserRole.SUPER_ADMIN];
+
 export const TOOL_REGISTRY: ToolDefinition[] = [
   // ── Universal tools (all roles) ────────────────────────────────────────────
   {
@@ -60,6 +62,17 @@ export const TOOL_REGISTRY: ToolDefinition[] = [
     inputSchema: {
       modal: { type: 'string', description: 'Modal identifier, e.g. staffing_request_modal, job_post_modal' },
       prefill: { type: 'object', description: 'Key-value pairs to pre-fill in the modal' },
+    },
+  },
+
+  // ── Admin-only tools ───────────────────────────────────────────────────────
+  {
+    name: 'find_foundation',
+    description: 'Look up foundation organisations by name. Use this before acting on behalf of a foundation when only a name was provided — returns the foundationId needed by other tools.',
+    level: 'L1_ANSWER',
+    allowedRoles: ADMIN_ONLY,
+    inputSchema: {
+      query: { type: 'string', description: 'Organisation name or partial name to search for (e.g. "Kinderwelt", "Les Bout\'choux")' },
     },
   },
 
@@ -118,6 +131,7 @@ export const TOOL_REGISTRY: ToolDefinition[] = [
       canton: { type: 'string', description: 'Swiss canton (e.g. VD, GE)' },
       percentage: { type: 'number', description: 'Work percentage (e.g. 80)' },
       notes: { type: 'string', description: 'Additional notes for the posting' },
+      foundationId: { type: 'string', description: 'Optional: UUID of the foundation to post on behalf of (admin only). Resolve with find_foundation first if only a name is known.' },
     },
   },
   {

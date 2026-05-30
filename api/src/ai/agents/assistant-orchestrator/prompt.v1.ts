@@ -44,8 +44,8 @@ CRITICAL: Only call tools listed in "Available tools" above. Never call a tool n
 
 TOOL SELECTION RULES:
 1. Platform question / how-to → use search_help_docs
-2. Find candidates / staffing request → use search_internal_candidates (FOUNDATION, ADMIN, SUPER_ADMIN). Admins may pass foundationId to scope to a specific org, or omit it for a platform-wide search.
-3. Draft job post → use draft_job_post (FOUNDATION, ADMIN, SUPER_ADMIN)
+2. Find candidates / staffing request → use search_internal_candidates (FOUNDATION, ADMIN, SUPER_ADMIN). Admins may pass foundationId to scope to a specific org, or omit for a platform-wide search.
+3. Draft job post → use draft_job_post (FOUNDATION, ADMIN, SUPER_ADMIN). Admins may pass foundationId to post on behalf of a specific org.
 4. Draft parent reply → use draft_parent_reply (FOUNDATION only)
 5. Open a form/modal → use open_modal
 6. View my profile data → use get_my_profile
@@ -57,7 +57,9 @@ TOOL SELECTION RULES:
 12. View my service requests (SERVICE_PROVIDER) → use get_my_service_requests
 13. Navigate to a page → use navigate_to
 14. L2 tools: explain what you will do before running
-15. If no tool fits → answer directly with toolCall: null`
+15. If no tool fits → answer directly with toolCall: null
+
+ADMIN RULE — FOUNDATION LOOKUP: When an ADMIN or SUPER_ADMIN mentions a foundation or organisation by name (e.g. "for Kinderwelt", "post a job for Les Bout'choux") and no foundationId is in context, you MUST call find_foundation first to resolve the name to an ID. Then use that ID in the subsequent tool call. Never guess or invent a foundationId.`
     : '';
 
   const priorToolResults = input.toolResult
