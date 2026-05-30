@@ -59,7 +59,9 @@ export class StaffingService {
     dto: CreateStaffingRequestDto,
     principal: StaffingPrincipal,
   ) {
-    if (!principal.organizationId) {
+    const isAdmin =
+      principal.role === UserRole.ADMIN || principal.role === UserRole.SUPER_ADMIN;
+    if (!principal.organizationId && !isAdmin) {
       throw new ForbiddenException('No organisation linked to this account');
     }
 
@@ -68,7 +70,7 @@ export class StaffingService {
 
     const request = await this.prisma.staffingRequest.create({
       data: {
-        foundationId: principal.organizationId,
+        foundationId: principal.organizationId ?? null,
         createdById: principal.userId,
         rawText: dto.rawText,
         locale,
@@ -149,7 +151,7 @@ export class StaffingService {
     const resolvedPrincipal: StaffingPrincipal = principal ?? {
       userId: req.createdById,
       role: UserRole.FOUNDATION,
-      organizationId: req.foundationId,
+      organizationId: req.foundationId ?? undefined,
     };
 
     const { output } = await this.llm.run({
@@ -245,7 +247,7 @@ export class StaffingService {
     };
   }
 
-  private assertAccess(foundationId: string, principal: StaffingPrincipal) {
+  private assertAccess(foundationId: string | null, principal: StaffingPrincipal) {
     if (
       principal.role === UserRole.ADMIN ||
       principal.role === UserRole.SUPER_ADMIN
