@@ -98,8 +98,9 @@ const ComposeEmailModal: React.FC<Props> = ({ isOpen, onClose, onSend, loading, 
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {(() => {
               const parsedExtras = parseExtraEmails(extraEmailsRaw)
-              const validExtras = parsedExtras.filter((e) => EMAIL_REGEX.test(e))
-              const invalidExtras = parsedExtras.filter((e) => !EMAIL_REGEX.test(e))
+              const uniqueExtras = [...new Set(parsedExtras)]
+              const validExtras = uniqueExtras.filter((e) => EMAIL_REGEX.test(e))
+              const invalidExtras = uniqueExtras.filter((e) => !EMAIL_REGEX.test(e))
               const totalCount = recipientCount + validExtras.length
               return (
                 <div className="bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-700">
@@ -261,7 +262,7 @@ const ComposeEmailModal: React.FC<Props> = ({ isOpen, onClose, onSend, loading, 
             </button>
             <button
               onClick={() => {
-                const validExtras = parseExtraEmails(extraEmailsRaw).filter((e) => EMAIL_REGEX.test(e))
+                const validExtras = [...new Set(parseExtraEmails(extraEmailsRaw))].filter((e) => EMAIL_REGEX.test(e))
                 onSend(subject, bodyHtml, validExtras)
               }}
               disabled={!subject.trim() || !bodyHtml.trim() || loading}

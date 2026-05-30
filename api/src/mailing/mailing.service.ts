@@ -731,30 +731,38 @@ export class MailingService {
       const segment = await this.prisma.mailingSegment.findUnique({ where: { id: campaign.segmentId } });
       filters = segment?.filtersJson as unknown as MailingFiltersDto | null;
     }
-    if (!filters) {
+
+    const extraEmails = (campaign.extraEmailsJson as string[] | null) || [];
+
+    // Allow extra-email-only campaigns (filtersJson is null)
+    if (!filters && extraEmails.length === 0) {
       throw new BadRequestException('Campaign has no filter configuration');
     }
 
-    const where = this.buildRecipientWhere(filters);
+    let recipients: Awaited<ReturnType<typeof this.prisma.user.findMany>> = [];
 
-    // Build cursor-based query — fetch next batch of users after the cursor
-    const cursorClause: Prisma.UserWhereInput = campaign.cursor
-      ? { id: { gt: campaign.cursor } }
-      : {};
+    if (filters) {
+      const where = this.buildRecipientWhere(filters);
 
-    const recipients = await this.prisma.user.findMany({
-      where: { AND: [where, cursorClause] },
-      orderBy: { id: 'asc' },
-      take: batchSize,
-      include: {
-        organizations: {
-          take: 1,
-          include: {
-            organization: { select: { name: true, canton: true } },
+      // Build cursor-based query — fetch next batch of users after the cursor
+      const cursorClause: Prisma.UserWhereInput = campaign.cursor
+        ? { id: { gt: campaign.cursor } }
+        : {};
+
+      recipients = await this.prisma.user.findMany({
+        where: { AND: [where, cursorClause] },
+        orderBy: { id: 'asc' },
+        take: batchSize,
+        include: {
+          organizations: {
+            take: 1,
+            include: {
+              organization: { select: { name: true, canton: true } },
+            },
           },
         },
-      },
-    });
+      });
+    }
 
     // SEC: optimistic concurrency — prevent duplicate batch sends from parallel requests
     // Only one request should transition DRAFT -> SENDING; others will see SENDING and proceed safely
@@ -872,15 +880,13 @@ export class MailingService {
     }
 
     // Process extra (out-of-DB) emails once the DB recipient batch is exhausted
-    const dbDone = recipients.length < batchSize;
-    const extraEmails = (campaign.extraEmailsJson as string[] | null) || [];
+    const dbDone = !filters || recipients.length < batchSize;
 
     if (dbDone && !campaign.extraEmailsSent && extraEmails.length > 0) {
       for (const extraEmail of extraEmails) {
-        const unsubToken = crypto
-          .createHmac('sha256', UNSUBSCRIBE_SECRET)
-          .update(`${extraEmail}:${campaignId}`)
-          .digest('hex');
+        // Reuse signUnsubscribeToken with the email address as the identifier so the token
+        // is in the same base64url(payload).hmac format that verifyUnsubscribeToken expects.
+        const unsubToken = this.signUnsubscribeToken(extraEmail, campaignId);
         const unsubscribeUrl = `${unsubscribeBaseUrl}/unsubscribe?token=${unsubToken}`;
 
         const personalised = this.personalise(campaign.bodyHtml, {
