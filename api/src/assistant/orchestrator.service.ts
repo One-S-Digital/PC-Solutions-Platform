@@ -52,14 +52,14 @@ export class OrchestratorService {
       .map((m) => `${m.sender === 'USER' ? 'User' : 'Assistant'}: ${m.content}`)
       .join('\n');
 
-    // Fetch user context and active feature flags in parallel
-    const [ctx, activeFlags] = await Promise.all([
+    // Fetch user context and disabled feature flags in parallel
+    const [ctx, disabledFlags] = await Promise.all([
       this.userContext.build(principal.userId, principal.role, principal.organizationId),
-      this.fetchActiveFlags(),
+      this.fetchDisabledFlags(),
     ]);
 
-    const platformContext = getRoleCapabilities(principal.role, activeFlags);
-    const availableTools = getToolsForRole(principal.role, activeFlags)
+    const platformContext = getRoleCapabilities(principal.role, disabledFlags);
+    const availableTools = getToolsForRole(principal.role, disabledFlags)
       .map((t) => `${t.name}: ${t.description}`)
       .join(', ');
 
@@ -103,7 +103,7 @@ export class OrchestratorService {
       }
 
       const { name: toolName, args } = output.toolCall;
-      const toolDef = getToolsForRole(principal.role, activeFlags).find((t) => t.name === toolName);
+      const toolDef = getToolsForRole(principal.role, disabledFlags).find((t) => t.name === toolName);
       if (!toolDef) {
         sendEvent('error', { message: `Unknown tool: ${toolName}` });
         return;
@@ -160,7 +160,7 @@ export class OrchestratorService {
       let toolError: string | undefined;
 
       try {
-        toolResult = await this.executeTool(toolName, args, principal, locale, activeFlags);
+        toolResult = await this.executeTool(toolName, args, principal, locale, disabledFlags);
         await this.prisma.aIToolCall.update({
           where: { id: toolCallRecord.id },
           data: { status: AIToolCallStatus.EXECUTED, outputJson: toolResult as any, executedAt: new Date() },
@@ -192,9 +192,23 @@ export class OrchestratorService {
     });
   }
 
-  private async fetchActiveFlags(): Promise<Set<string>> {
-    const flags = await this.prisma.featureFlag.findMany({ where: { isActive: true }, select: { key: true } });
-    return new Set(flags.map((f) => f.key));
+  // Returns the set of flag keys that are explicitly disabled.
+  // Checks both sources: featureFlag rows (isActive:false) and systemSettings rows
+  // with category='FEATURE_FLAGS' and value='false' (v2 rollout flags live there).
+  // Convention: absent flag → enabled.
+  private async fetchDisabledFlags(): Promise<Set<string>> {
+    const [flagRows, settingRows] = await Promise.all([
+      this.prisma.featureFlag.findMany({ where: { isActive: false }, select: { key: true } }),
+      this.prisma.systemSettings.findMany({ where: { category: 'FEATURE_FLAGS' }, select: { key: true, value: true } }),
+    ]);
+
+    const disabled = new Set<string>(flagRows.map((f) => f.key));
+    for (const row of settingRows) {
+      if (row.value === false || row.value === 'false') {
+        disabled.add(row.key);
+      }
+    }
+    return disabled;
   }
 
   private async executeTool(
@@ -202,7 +216,7 @@ export class OrchestratorService {
     args: Record<string, unknown>,
     principal: AssistantPrincipalContext,
     _locale: 'fr' | 'de' | 'en',
-    activeFlags: Set<string> = new Set(),
+    disabledFlags: Set<string> = new Set(),
   ): Promise<unknown> {
     const limit = Math.min(Number(args.limit) || 5, 10);
 
@@ -211,9 +225,9 @@ export class OrchestratorService {
       case 'search_help_docs': {
         const query = (args.query as string) || '';
         // Semantic search first (Phase 4); keyword fallback when embeddings not ready
-        let articles = await this.knowledgeEmbedding.searchSemantic(query, principal.role, 3, activeFlags);
+        let articles = await this.knowledgeEmbedding.searchSemantic(query, principal.role, 3, disabledFlags);
         if (articles.length === 0) {
-          articles = this.knowledge.search(query, principal.role, 3, activeFlags);
+          articles = this.knowledge.search(query, principal.role, 3, disabledFlags);
         }
         return { docs: this.knowledge.formatForPrompt(articles) };
       }

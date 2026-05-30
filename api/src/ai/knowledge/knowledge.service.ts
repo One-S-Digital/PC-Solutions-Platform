@@ -9,7 +9,7 @@ export interface KnowledgeSearchResult {
 
 @Injectable()
 export class KnowledgeService {
-  search(query: string, role: UserRole, maxResults = 3, activeFlags: Set<string> = new Set()): KnowledgeArticle[] {
+  search(query: string, role: UserRole, maxResults = 3, disabledFlags: Set<string> = new Set()): KnowledgeArticle[] {
     const terms = query
       .toLowerCase()
       .split(/[\s,?!.]+/)
@@ -20,7 +20,7 @@ export class KnowledgeService {
     const accessible = PLATFORM_ARTICLES.filter(
       (a) =>
         (!a.roles || a.roles.includes(role)) &&
-        (!a.featureFlag || activeFlags.has(a.featureFlag)),
+        (!a.featureFlag || !disabledFlags.has(a.featureFlag)),
     );
 
     const scored: KnowledgeSearchResult[] = accessible.map((article) => {

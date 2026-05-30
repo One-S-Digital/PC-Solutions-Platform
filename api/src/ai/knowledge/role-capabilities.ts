@@ -147,10 +147,10 @@ STAFFING & RECRUITMENT FEATURES (v2 — you can access and test these):
 - Staffing Requests: manage general staffing needs → /foundation/staffing-requests
 - Intern Pool: manage interns → /foundation/intern-pool`;
 
-export function getRoleCapabilities(role: UserRole, activeFlags: Set<string>): string {
+export function getRoleCapabilities(role: UserRole, disabledFlags: Set<string>): string {
   const base = ROLE_CAPABILITIES_BASE[role] ?? '';
   const staffingRoles: UserRole[] = [UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN];
-  if (staffingRoles.includes(role) && activeFlags.has('v2_staffing_ia')) {
+  if (staffingRoles.includes(role) && !disabledFlags.has('v2_staffing_ia')) {
     return base + (role === UserRole.FOUNDATION ? FOUNDATION_STAFFING_LINES : ADMIN_STAFFING_LINES);
   }
   return base;

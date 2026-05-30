@@ -32,7 +32,7 @@ export class KnowledgeEmbeddingService implements OnModuleInit {
     });
   }
 
-  async searchSemantic(query: string, role: UserRole, limit = 3, activeFlags: Set<string> = new Set()): Promise<KnowledgeArticle[]> {
+  async searchSemantic(query: string, role: UserRole, limit = 3, disabledFlags: Set<string> = new Set()): Promise<KnowledgeArticle[]> {
     if (!this._ready) return [];
 
     const { embedding } = await this.llm.embed(query);
@@ -52,7 +52,7 @@ export class KnowledgeEmbeddingService implements OnModuleInit {
       PLATFORM_ARTICLES.filter(
         (a) =>
           (!a.roles || a.roles.includes(role)) &&
-          (!a.featureFlag || activeFlags.has(a.featureFlag)),
+          (!a.featureFlag || !disabledFlags.has(a.featureFlag)),
       ).map((a) => a.id),
     );
 

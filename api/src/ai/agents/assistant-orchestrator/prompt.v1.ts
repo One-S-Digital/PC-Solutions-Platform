@@ -40,6 +40,8 @@ Respond with JSON: {"message": "...", "toolCall": null}`;
     ? `TOOLS: Use tools for actions. Never describe an action without using the appropriate tool.
 Available tools: ${input.availableTools}
 
+CRITICAL: Only call tools listed in "Available tools" above. Never call a tool not in that list.
+
 TOOL SELECTION RULES:
 1. Platform question / how-to → use search_help_docs
 2. Find candidates / staffing request → use search_internal_candidates (FOUNDATION only)
