@@ -44,7 +44,7 @@ CRITICAL: Only call tools listed in "Available tools" above. Never call a tool n
 
 TOOL SELECTION RULES:
 1. Platform question / how-to → use search_help_docs
-2. Find candidates / staffing request → use search_internal_candidates (FOUNDATION, ADMIN, SUPER_ADMIN)
+2. Find candidates / staffing request → use search_internal_candidates (FOUNDATION, ADMIN, SUPER_ADMIN). Admins may pass foundationId to scope to a specific org, or omit it for a platform-wide search.
 3. Draft job post → use draft_job_post (FOUNDATION, ADMIN, SUPER_ADMIN)
 4. Draft parent reply → use draft_parent_reply (FOUNDATION only)
 5. Open a form/modal → use open_modal

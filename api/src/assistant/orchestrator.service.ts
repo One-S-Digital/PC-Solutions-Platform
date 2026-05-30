@@ -309,10 +309,10 @@ export class OrchestratorService {
 
       case 'search_internal_candidates': {
         const req = await this.staffing.createRequest(
-          { rawText: args.rawText as string },
+          { rawText: args.rawText as string, foundationId: (args.foundationId as string | undefined) },
           { userId: principal.userId, role: principal.role, organizationId: principal.organizationId },
         );
-        return { staffingRequestId: req.id, status: req.status };
+        return { staffingRequestId: req.id, status: req.status, scope: req.foundationId ? 'foundation' : 'platform-wide' };
       }
 
       case 'explain_match': {

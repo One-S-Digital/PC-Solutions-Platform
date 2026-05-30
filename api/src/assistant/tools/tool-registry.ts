@@ -91,7 +91,10 @@ export const TOOL_REGISTRY: ToolDefinition[] = [
     allowedRoles: FOUNDATION_ADMIN,
     featureFlag: 'v2_staffing_ia',
     modal: 'candidate_shortlist_modal',
-    inputSchema: { rawText: { type: 'string', description: 'Free-text staffing request describing role, canton, dates, qualifications' } },
+    inputSchema: {
+      rawText: { type: 'string', description: 'Free-text staffing request describing role, canton, dates, qualifications' },
+      foundationId: { type: 'string', description: 'Optional: UUID of a specific foundation org to scope the search. Omit for a platform-wide search (admin only).' },
+    },
   },
   {
     name: 'explain_match',

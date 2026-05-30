@@ -65,12 +65,16 @@ export class StaffingService {
       throw new ForbiddenException('No organisation linked to this account');
     }
 
+    // Admins may pass an explicit foundationId to act on behalf of a specific org,
+    // or leave it null for a platform-wide search.
+    const resolvedFoundationId = dto.foundationId ?? principal.organizationId ?? null;
+
     const locale = dto.locale ?? 'fr';
     const isShort = dto.rawText.length <= SYNC_THRESHOLD_CHARS;
 
     const request = await this.prisma.staffingRequest.create({
       data: {
-        foundationId: principal.organizationId ?? null,
+        foundationId: resolvedFoundationId,
         createdById: principal.userId,
         rawText: dto.rawText,
         locale,

@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, MinLength, MaxLength, IsOptional, IsIn } from 'class-validator';
+import { IsString, IsNotEmpty, IsUUID, MinLength, MaxLength, IsOptional, IsIn } from 'class-validator';
 
 export class CreateStaffingRequestDto {
   @IsString()
@@ -10,4 +10,9 @@ export class CreateStaffingRequestDto {
   @IsOptional()
   @IsIn(['fr', 'de', 'en'])
   locale?: 'fr' | 'de' | 'en';
+
+  /** Admin/Super-admin only: scope the request to a specific foundation org. */
+  @IsOptional()
+  @IsUUID()
+  foundationId?: string;
 }
