@@ -249,10 +249,13 @@ export class MailingController {
     // If targeting a custom list, resolve the member user IDs and inject them into filters
     if (body.customListId) {
       const memberIds = await this.mailingService.getAllCustomListMemberIds(body.customListId);
-      if (memberIds.length === 0) {
+      // Allow campaign even if list is empty, as long as extraEmails are provided
+      if (memberIds.length === 0 && (!body.extraEmails || body.extraEmails.length === 0)) {
         throw new BadRequestException('Custom list has no members');
       }
-      filters = { ...filters, userIds: memberIds };
+      if (memberIds.length > 0) {
+        filters = { ...filters, userIds: memberIds };
+      }
     }
 
     return this.mailingService.createCampaign(
@@ -262,6 +265,7 @@ export class MailingController {
       adminId,
       filters,
       body.customListId ? undefined : body.segmentId,
+      body.extraEmails,
     );
   }
 

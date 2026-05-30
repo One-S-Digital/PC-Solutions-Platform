@@ -251,13 +251,14 @@ const MailingListPage: React.FC = () => {
     }
   }, [apiClient, filters, preview?.count])
 
-  const handleCreateCampaign = useCallback(async (subject: string, bodyHtml: string) => {
+  const handleCreateCampaign = useCallback(async (subject: string, bodyHtml: string, extraEmails: string[]) => {
     setActionLoading(true)
     try {
       const res = await apiService.mailingCreateCampaign(apiClient, {
         subject,
         bodyHtml,
         filters,
+        ...(extraEmails.length > 0 ? { extraEmails } : {}),
       })
       const campaignId = res.data?.campaignId
       toast.success('Campaign created')
@@ -288,7 +289,7 @@ const MailingListPage: React.FC = () => {
     setActiveTab('build')
   }, [])
 
-  const handleCreateListCampaign = useCallback(async (subject: string, bodyHtml: string) => {
+  const handleCreateListCampaign = useCallback(async (subject: string, bodyHtml: string, extraEmails: string[]) => {
     if (!activeList) return
     setActionLoading(true)
     try {
@@ -296,6 +297,7 @@ const MailingListPage: React.FC = () => {
         subject,
         bodyHtml,
         customListId: activeList.id,
+        ...(extraEmails.length > 0 ? { extraEmails } : {}),
       })
       const campaignId = res.data?.campaignId
       toast.success('Campaign created')

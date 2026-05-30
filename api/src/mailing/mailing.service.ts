@@ -567,6 +567,7 @@ export class MailingService {
     createdById: string,
     filters?: MailingFiltersDto,
     segmentId?: string,
+    extraEmails?: string[],
   ) {
     let resolvedFilters = filters;
 
@@ -576,12 +577,22 @@ export class MailingService {
       resolvedFilters = segment.filtersJson as unknown as MailingFiltersDto;
     }
 
-    if (!resolvedFilters) {
-      throw new BadRequestException('Either filters or segmentId is required');
+    // Deduplicate and normalise extra emails
+    const normalizedExtras = extraEmails
+      ? [...new Set(extraEmails.map((e) => e.trim().toLowerCase()).filter(Boolean))]
+      : [];
+
+    if (!resolvedFilters && normalizedExtras.length === 0) {
+      throw new BadRequestException('Either filters/segmentId or extraEmails is required');
     }
 
-    const where = this.buildRecipientWhere(resolvedFilters);
-    const totalEstimated = await this.prisma.user.count({ where });
+    let dbCount = 0;
+    if (resolvedFilters) {
+      const where = this.buildRecipientWhere(resolvedFilters);
+      dbCount = await this.prisma.user.count({ where });
+    }
+
+    const totalEstimated = dbCount + normalizedExtras.length;
 
     if (totalEstimated === 0) {
       throw new BadRequestException('No recipients match the given filters');
@@ -605,7 +616,8 @@ export class MailingService {
         bodyHtml: sanitisedHtml,
         bodyText: plainText,
         segmentId: segmentId || null,
-        filtersJson: resolvedFilters as any,
+        filtersJson: resolvedFilters ? (resolvedFilters as any) : null,
+        extraEmailsJson: normalizedExtras.length > 0 ? normalizedExtras : null,
         totalEstimated,
         createdById,
         status: MailingCampaignStatus.DRAFT,
@@ -620,7 +632,7 @@ export class MailingService {
           entityId: campaign.id,
           action: 'create',
           actorId: createdById,
-          metadata: { subject, segmentId, totalEstimated },
+          metadata: { subject, segmentId, totalEstimated, extraEmailCount: normalizedExtras.length },
         },
       });
     } catch (auditErr: any) {
@@ -859,8 +871,80 @@ export class MailingService {
       }
     }
 
-    // Update campaign progress
-    const done = recipients.length < batchSize;
+    // Process extra (out-of-DB) emails once the DB recipient batch is exhausted
+    const dbDone = recipients.length < batchSize;
+    const extraEmails = (campaign.extraEmailsJson as string[] | null) || [];
+
+    if (dbDone && !campaign.extraEmailsSent && extraEmails.length > 0) {
+      for (const extraEmail of extraEmails) {
+        const unsubToken = crypto
+          .createHmac('sha256', UNSUBSCRIBE_SECRET)
+          .update(`${extraEmail}:${campaignId}`)
+          .digest('hex');
+        const unsubscribeUrl = `${unsubscribeBaseUrl}/unsubscribe?token=${unsubToken}`;
+
+        const personalised = this.personalise(campaign.bodyHtml, {
+          firstName: '',
+          lastName: '',
+          email: extraEmail,
+          role: '',
+          orgName: '',
+          canton: '',
+          logoUrl: platformLogoUrl,
+          iconUrl: platformIconUrl,
+          unsubscribeUrl,
+        });
+        const personalisedText = this.personalise(campaign.bodyText || '', {
+          firstName: '',
+          lastName: '',
+          email: extraEmail,
+          role: '',
+          orgName: '',
+          canton: '',
+          logoUrl: platformLogoUrl,
+          iconUrl: platformIconUrl,
+          unsubscribeUrl,
+        });
+        const htmlWithFooter = this.appendFooter(personalised, unsubscribeUrl);
+
+        const result = await this.transport.sendEmail({
+          to: extraEmail,
+          subject: campaign.subject,
+          html: htmlWithFooter,
+          text: personalisedText,
+          tags: ['campaign', campaignId],
+          metadata: { campaignId, extraEmail },
+        });
+
+        try {
+          await this.prisma.emailLog.create({
+            data: {
+              event: `campaign:${campaignId}`,
+              recipient: extraEmail,
+              status: result.success ? 'sent' : 'failed',
+              messageId: result.messageId || null,
+              error: result.error || null,
+              payload: { campaignId, provider: result.provider, isExtraEmail: true },
+            },
+          });
+        } catch {
+          // Don't fail the batch if logging fails
+        }
+
+        if (result.success) {
+          sentThisBatch++;
+        } else {
+          failedThisBatch++;
+        }
+
+        if (INTER_EMAIL_DELAY_MS > 0) {
+          await sleep(INTER_EMAIL_DELAY_MS);
+        }
+      }
+    }
+
+    // Campaign is fully done when: DB batch exhausted AND extra emails sent (or none to send)
+    const done = dbDone;
     const newSentCount = campaign.sentCount + sentThisBatch;
     const newFailedCount = campaign.failedCount + failedThisBatch;
 
@@ -870,6 +954,7 @@ export class MailingService {
         sentCount: newSentCount,
         failedCount: newFailedCount,
         cursor: lastUserId,
+        ...(dbDone && extraEmails.length > 0 ? { extraEmailsSent: true } : {}),
         ...(done
           ? {
               status: MailingCampaignStatus.SENT,
