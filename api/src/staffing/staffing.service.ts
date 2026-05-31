@@ -65,9 +65,11 @@ export class StaffingService {
       throw new ForbiddenException('No organisation linked to this account');
     }
 
-    // Admins may pass an explicit foundationId to act on behalf of a specific org,
-    // or leave it null for a platform-wide search.
-    const resolvedFoundationId = dto.foundationId ?? principal.organizationId ?? null;
+    // Only admins may override the organisation via the DTO; foundation users are
+    // always scoped to their own org regardless of what the body contains.
+    const resolvedFoundationId = isAdmin
+      ? (dto.foundationId ?? principal.organizationId ?? null)
+      : principal.organizationId ?? null;
 
     const locale = dto.locale ?? 'fr';
     const isShort = dto.rawText.length <= SYNC_THRESHOLD_CHARS;
