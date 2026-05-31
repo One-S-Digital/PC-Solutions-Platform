@@ -739,7 +739,14 @@ export class MailingService {
       throw new BadRequestException('Campaign has no filter configuration');
     }
 
-    let recipients: Awaited<ReturnType<typeof this.prisma.user.findMany>> = [];
+    let recipients: Array<Prisma.UserGetPayload<{
+      include: {
+        organizations: {
+          take: 1;
+          include: { organization: { select: { name: true; canton: true } } };
+        };
+      };
+    }>> = [];
 
     if (filters) {
       const where = this.buildRecipientWhere(filters);
