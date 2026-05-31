@@ -20,10 +20,24 @@ export interface AgentConfig {
   dailyTokenBudget?: number;
 }
 
+// ── Model priority lists ──────────────────────────────────────────────────────
+// Free tier first (zero cost), paid value models as fallback.
+// The OpenRouter adapter tries each in order on failure.
+
+const FREE_THEN_VALUE = [
+  'deepseek/deepseek-chat-v4-flash:free',   // DeepSeek V4 Flash — free tier
+  'google/gemma-4-31b-it:free',             // Gemma 4 31B — free tier
+  'deepseek/deepseek-chat-v4-flash',        // DeepSeek V4 Flash — paid ($0.10/$0.20 per 1M)
+  'google/gemini-3-flash',                  // Gemini 3 Flash — paid ($0.50/$3.00 per 1M)
+  'x-ai/grok-4.1-fast',                    // Grok 4.1 Fast — paid ($1.25/$2.50 per 1M)
+];
+
+const ORCHESTRATOR_MODELS = FREE_THEN_VALUE;
+
 export const AI_AGENTS: Record<AgentName, AgentConfig> = {
   'echo-validate': {
     name: 'echo-validate',
-    models: ['google/gemini-2.5-flash', 'deepseek/deepseek-chat', 'anthropic/claude-haiku-4-5-20251001'],
+    models: FREE_THEN_VALUE,
     maxOutputTokens: 200,
     allowedRoles: [UserRole.SUPER_ADMIN, UserRole.ADMIN],
     scopeRule: 'admin-only',
@@ -31,7 +45,7 @@ export const AI_AGENTS: Record<AgentName, AgentConfig> = {
 
   'staffing-request-parser': {
     name: 'staffing-request-parser',
-    models: ['google/gemini-2.5-flash', 'deepseek/deepseek-chat'],
+    models: FREE_THEN_VALUE,
     maxOutputTokens: 120,
     allowedRoles: [UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN],
     scopeRule: 'organization',
@@ -41,7 +55,7 @@ export const AI_AGENTS: Record<AgentName, AgentConfig> = {
 
   'match-explanation': {
     name: 'match-explanation',
-    models: ['google/gemini-2.5-flash', 'deepseek/deepseek-chat'],
+    models: FREE_THEN_VALUE,
     maxOutputTokens: 100,
     allowedRoles: [UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN],
     scopeRule: 'organization',
@@ -51,7 +65,7 @@ export const AI_AGENTS: Record<AgentName, AgentConfig> = {
 
   'assistant-orchestrator': {
     name: 'assistant-orchestrator',
-    models: ['anthropic/claude-sonnet-4-6', 'google/gemini-2.5-pro'],
+    models: ORCHESTRATOR_MODELS,
     maxOutputTokens: 2000,
     allowedRoles: [UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN],
     scopeRule: 'organization',
