@@ -24,6 +24,8 @@ const ALL_ROLES: UserRole[] = [
 
 const FOUNDATION_ADMIN: UserRole[] = [UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN];
 
+const ADMIN_ONLY: UserRole[] = [UserRole.ADMIN, UserRole.SUPER_ADMIN];
+
 export const TOOL_REGISTRY: ToolDefinition[] = [
   // ── Universal tools (all roles) ────────────────────────────────────────────
   {
@@ -63,6 +65,17 @@ export const TOOL_REGISTRY: ToolDefinition[] = [
     },
   },
 
+  // ── Admin-only tools ───────────────────────────────────────────────────────
+  {
+    name: 'find_foundation',
+    description: 'Look up foundation organisations by name. Use this before acting on behalf of a foundation when only a name was provided — returns the foundationId needed by other tools.',
+    level: 'L1_ANSWER',
+    allowedRoles: ADMIN_ONLY,
+    inputSchema: {
+      query: { type: 'string', description: 'Organisation name or partial name to search for (e.g. "Kinderwelt", "Les Bout\'choux")' },
+    },
+  },
+
   // ── Foundation tools ───────────────────────────────────────────────────────
   {
     name: 'get_my_leads',
@@ -91,7 +104,10 @@ export const TOOL_REGISTRY: ToolDefinition[] = [
     allowedRoles: FOUNDATION_ADMIN,
     featureFlag: 'v2_staffing_ia',
     modal: 'candidate_shortlist_modal',
-    inputSchema: { rawText: { type: 'string', description: 'Free-text staffing request describing role, canton, dates, qualifications' } },
+    inputSchema: {
+      rawText: { type: 'string', description: 'Free-text staffing request describing role, canton, dates, qualifications' },
+      foundationId: { type: 'string', description: 'Optional: UUID of a specific foundation org to scope the search. Omit for a platform-wide search (admin only).' },
+    },
   },
   {
     name: 'explain_match',
@@ -115,6 +131,7 @@ export const TOOL_REGISTRY: ToolDefinition[] = [
       canton: { type: 'string', description: 'Swiss canton (e.g. VD, GE)' },
       percentage: { type: 'number', description: 'Work percentage (e.g. 80)' },
       notes: { type: 'string', description: 'Additional notes for the posting' },
+      foundationId: { type: 'string', description: 'Optional: UUID of the foundation to post on behalf of (admin only). Resolve with find_foundation first if only a name is known.' },
     },
   },
   {

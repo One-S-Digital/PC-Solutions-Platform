@@ -254,6 +254,21 @@ export class OrchestratorService {
       case 'open_modal':
         return { modal: args.modal, prefill: args.prefill };
 
+      // ── Admin-only ────────────────────────────────────────────────────────
+      case 'find_foundation': {
+        const query = ((args.query as string) || '').trim();
+        const foundations = await this.prisma.organization.findMany({
+          where: {
+            type: 'FOUNDATION',
+            name: { contains: query, mode: 'insensitive' },
+          },
+          select: { id: true, name: true, city: true, canton: true },
+          orderBy: { name: 'asc' },
+          take: 5,
+        });
+        return { foundations, total: foundations.length };
+      }
+
       // ── Foundation ────────────────────────────────────────────────────────
       case 'get_my_leads': {
         const isAdminRole = principal.role === UserRole.ADMIN || principal.role === UserRole.SUPER_ADMIN;
@@ -309,10 +324,10 @@ export class OrchestratorService {
 
       case 'search_internal_candidates': {
         const req = await this.staffing.createRequest(
-          { rawText: args.rawText as string },
+          { rawText: args.rawText as string, foundationId: (args.foundationId as string | undefined) },
           { userId: principal.userId, role: principal.role, organizationId: principal.organizationId },
         );
-        return { staffingRequestId: req.id, status: req.status };
+        return { staffingRequestId: req.id, status: req.status, scope: req.foundationId ? 'foundation' : 'platform-wide' };
       }
 
       case 'explain_match': {
@@ -326,7 +341,13 @@ export class OrchestratorService {
       case 'draft_job_post':
         return {
           modal: 'job_post_modal',
-          prefill: { role: args.role, canton: args.canton, workPercentage: args.percentage, notes: args.notes },
+          prefill: {
+            role: args.role,
+            canton: args.canton,
+            workPercentage: args.percentage,
+            notes: args.notes,
+            ...(args.foundationId ? { foundationId: args.foundationId } : {}),
+          },
         };
 
       case 'draft_parent_reply':

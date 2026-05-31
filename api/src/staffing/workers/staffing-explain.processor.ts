@@ -93,7 +93,7 @@ export class StaffingExplainProcessor {
         principal: {
           userId: req.createdById,
           role: UserRole.FOUNDATION,
-          organizationId: req.foundationId,
+          organizationId: req.foundationId ?? undefined,
         },
         entityRef: matchResultId,
       });
