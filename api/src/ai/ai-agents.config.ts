@@ -27,15 +27,12 @@ export interface AgentConfig {
 const FREE_THEN_VALUE = [
   'deepseek/deepseek-chat-v4-flash:free',   // DeepSeek V4 Flash — free tier
   'google/gemma-4-31b-it:free',             // Gemma 4 31B — free tier
-  'openrouter/auto:free',                   // OpenRouter free router (any available free model)
   'deepseek/deepseek-chat-v4-flash',        // DeepSeek V4 Flash — paid ($0.10/$0.20 per 1M)
   'google/gemini-3-flash',                  // Gemini 3 Flash — paid ($0.50/$3.00 per 1M)
   'x-ai/grok-4.1-fast',                    // Grok 4.1 Fast — paid ($1.25/$2.50 per 1M)
 ];
 
-// Orchestrator needs reliable JSON-mode output — skip the free router which may
-// assign a model that doesn't honour JSON mode, but keep the other five.
-const ORCHESTRATOR_MODELS = FREE_THEN_VALUE.filter((m) => m !== 'openrouter/auto:free');
+const ORCHESTRATOR_MODELS = FREE_THEN_VALUE;
 
 export const AI_AGENTS: Record<AgentName, AgentConfig> = {
   'echo-validate': {
