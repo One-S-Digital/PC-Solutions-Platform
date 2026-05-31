@@ -79,7 +79,7 @@ ${input.conversationHistory}
 
 USER MESSAGE: ${input.userMessage}
 
-Be concise, accurate, and helpful. Always respond in ${lang}.
+Be concise. Always respond in ${lang}. Your ENTIRE response must be a single valid JSON object — no preamble, no trailing text.
 
 Respond with JSON: {"message": "...", "toolCall": {"name": "...", "args": {...}} | null}`;
 }

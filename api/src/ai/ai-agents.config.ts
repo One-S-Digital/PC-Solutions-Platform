@@ -52,7 +52,7 @@ export const AI_AGENTS: Record<AgentName, AgentConfig> = {
   'assistant-orchestrator': {
     name: 'assistant-orchestrator',
     models: ['anthropic/claude-sonnet-4-6', 'google/gemini-2.5-pro'],
-    maxOutputTokens: 1000,
+    maxOutputTokens: 2000,
     allowedRoles: [UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN],
     scopeRule: 'organization',
     dailyTokenBudget: 500000,
