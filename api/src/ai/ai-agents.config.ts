@@ -25,11 +25,11 @@ export interface AgentConfig {
 // The OpenRouter adapter tries each in order on failure.
 
 const FREE_THEN_VALUE = [
-  'deepseek/deepseek-chat-v4-flash:free',   // DeepSeek V4 Flash — free tier
-  'google/gemma-4-31b-it:free',             // Gemma 4 31B — free tier
-  'deepseek/deepseek-chat-v4-flash',        // DeepSeek V4 Flash — paid ($0.10/$0.20 per 1M)
-  'google/gemini-3-flash',                  // Gemini 3 Flash — paid ($0.50/$3.00 per 1M)
-  'x-ai/grok-4.1-fast',                    // Grok 4.1 Fast — paid ($1.25/$2.50 per 1M)
+  'deepseek/deepseek-v4-flash:free',        // DeepSeek V4 Flash — free tier
+  'google/gemma-3-27b-it:free',             // Gemma 3 27B — largest available free Gemma
+  'deepseek/deepseek-v4-flash',             // DeepSeek V4 Flash — paid ($0.10/$0.20 per 1M)
+  'google/gemini-2.5-flash',               // Gemini 2.5 Flash — stable paid ($0.50/$3.00 per 1M)
+  'x-ai/grok-4-fast',                      // Grok 4 Fast — paid ($1.25/$2.50 per 1M)
 ];
 
 const ORCHESTRATOR_MODELS = FREE_THEN_VALUE;
