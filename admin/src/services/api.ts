@@ -1179,6 +1179,7 @@ export const apiService = {
     filters?: any;
     segmentId?: string;
     customListId?: string;
+    extraEmails?: string[];
   }) => apiClient.post('/admin/mailing/campaigns', data),
 
   mailingListCampaigns: (apiClient: AxiosInstance, params?: { page?: number; pageSize?: number }) =>

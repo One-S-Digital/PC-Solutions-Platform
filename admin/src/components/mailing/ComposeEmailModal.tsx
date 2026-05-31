@@ -12,7 +12,7 @@ import EmailPreview from './EmailPreview'
 interface Props {
   isOpen: boolean
   onClose: () => void
-  onSend: (subject: string, bodyHtml: string) => Promise<void>
+  onSend: (subject: string, bodyHtml: string, extraEmails: string[]) => Promise<void>
   loading: boolean
   recipientCount: number
 }
@@ -21,6 +21,15 @@ const TOKENS = [
   '{{firstName}}', '{{lastName}}', '{{email}}', '{{role}}', '{{orgName}}', '{{canton}}',
   '{{logoUrl}}', '{{iconUrl}}',
 ]
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+function parseExtraEmails(raw: string): string[] {
+  return raw
+    .split(/[\n,;]+/)
+    .map((e) => e.trim().toLowerCase())
+    .filter((e) => e.length > 0)
+}
 
 const ComposeEmailModal: React.FC<Props> = ({ isOpen, onClose, onSend, loading, recipientCount }) => {
   const { t } = useTranslation(['admin'])
@@ -32,6 +41,8 @@ const ComposeEmailModal: React.FC<Props> = ({ isOpen, onClose, onSend, loading, 
   const [saveAsName, setSaveAsName] = useState('')
   const [showSaveAs, setShowSaveAs] = useState(false)
   const [savingTemplate, setSavingTemplate] = useState(false)
+  const [extraEmailsRaw, setExtraEmailsRaw] = useState('')
+  const [showExtraEmails, setShowExtraEmails] = useState(false)
 
   if (!isOpen) return null
 
@@ -85,9 +96,28 @@ const ComposeEmailModal: React.FC<Props> = ({ isOpen, onClose, onSend, loading, 
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            <div className="bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-700">
-              {t('admin:mailing.compose.recipientInfo', { count: recipientCount.toLocaleString() })}
-            </div>
+            {(() => {
+              const parsedExtras = parseExtraEmails(extraEmailsRaw)
+              const uniqueExtras = [...new Set(parsedExtras)]
+              const validExtras = uniqueExtras.filter((e) => EMAIL_REGEX.test(e))
+              const invalidExtras = uniqueExtras.filter((e) => !EMAIL_REGEX.test(e))
+              const totalCount = recipientCount + validExtras.length
+              return (
+                <div className="bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-700">
+                  {t('admin:mailing.compose.recipientInfo', { count: totalCount.toLocaleString() })}
+                  {validExtras.length > 0 && (
+                    <span className="ml-1 text-blue-600">
+                      ({recipientCount.toLocaleString()} filtered + {validExtras.length} extra)
+                    </span>
+                  )}
+                  {invalidExtras.length > 0 && (
+                    <div className="mt-1 text-red-600 text-xs">
+                      Invalid emails will be skipped: {invalidExtras.join(', ')}
+                    </div>
+                  )}
+                </div>
+              )
+            })()}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -130,6 +160,43 @@ const ComposeEmailModal: React.FC<Props> = ({ isOpen, onClose, onSend, loading, 
                   rows={10}
                   className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm font-mono focus:ring-blue-500 focus:border-blue-500"
                 />
+              )}
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-sm font-medium text-gray-700">
+                  {t('admin:mailing.compose.extraEmails', 'Extra recipients')}
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setShowExtraEmails((v) => !v)}
+                  className="text-xs text-blue-600 hover:text-blue-800"
+                >
+                  {showExtraEmails
+                    ? t('admin:mailing.compose.hideExtraEmails', 'Hide')
+                    : t('admin:mailing.compose.addExtraEmails', '+ Add emails not in DB')}
+                </button>
+              </div>
+              {showExtraEmails && (
+                <div className="space-y-1">
+                  <textarea
+                    value={extraEmailsRaw}
+                    onChange={(e) => setExtraEmailsRaw(e.target.value)}
+                    placeholder={t(
+                      'admin:mailing.compose.extraEmailsPlaceholder',
+                      'Enter email addresses separated by commas, semicolons, or new lines',
+                    )}
+                    rows={3}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
+                  />
+                  <p className="text-xs text-gray-400">
+                    {t(
+                      'admin:mailing.compose.extraEmailsHint',
+                      'These addresses are sent the email regardless of DB filters. Max 500.',
+                    )}
+                  </p>
+                </div>
               )}
             </div>
 
@@ -194,7 +261,10 @@ const ComposeEmailModal: React.FC<Props> = ({ isOpen, onClose, onSend, loading, 
               {t('admin:mailing.campaign.detail.cancel')}
             </button>
             <button
-              onClick={() => onSend(subject, bodyHtml)}
+              onClick={() => {
+                const validExtras = [...new Set(parseExtraEmails(extraEmailsRaw))].filter((e) => EMAIL_REGEX.test(e))
+                onSend(subject, bodyHtml, validExtras)
+              }}
               disabled={!subject.trim() || !bodyHtml.trim() || loading}
               className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"
             >
