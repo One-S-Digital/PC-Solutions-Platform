@@ -57,7 +57,7 @@ export class OpenRouterAdapter {
     };
 
     if (models.length > 1) {
-      body.models = models;
+      body.models = models.slice(0, 3);
     }
 
     if (jsonMode) {
