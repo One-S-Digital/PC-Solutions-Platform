@@ -164,9 +164,9 @@ When `total === 0`, `parsedRole` and `parsedCanton` (extracted by the parser) ar
 | `search_candidates_ai` | **L2 NEW** | AI-parsed request → sync match → ranked candidates with scores | `StaffingService` (parse + match + fetch) |
 | `view_match_results` | **L1 NEW** | Fetch results for an existing staffing request by ID | `StaffingService.getMatches()` |
 | `explain_match` | L1 | Human-readable explanation for a specific match result | `PrismaService` |
-| `shortlist_candidate` | **L3 NEW** | Add a candidate to the foundation shortlist | `RecruitmentService.addToShortlist()` |
+| `shortlist_candidate` | **L3 NEW** | Add a candidate to the foundation shortlist | `RecruitmentService.saveCandidate()` |
 | `post_job` | **L3 NEW** | Create and publish a job listing | `RecruitmentService.createJobListing()` |
-| `update_application_status` | **L3 NEW** | Move application to SHORTLISTED / INTERVIEW / OFFER / HIRED / REJECTED | `RecruitmentService.updateApplication()` |
+| `update_application_status` | **L3 NEW** | Move application to SHORTLISTED / INTERVIEW / OFFER / HIRED / REJECTED | `RecruitmentService.updateJobApplication()` |
 | `create_replacement_request` | **L3 NEW** | Create a replacement request | `ReplacementsService.createRequest()` |
 | `get_my_leads` | L1 | Fetch parent leads for the foundation | `PrismaService` |
 | `respond_to_lead` | **L3 NEW** | Send a foundation response to a parent lead | `LeadsService.respondToLead()` |
@@ -174,7 +174,7 @@ When `total === 0`, `parsedRole` and `parsedCanton` (extracted by the parser) ar
 | `search_services` | **L1 NEW** | Search services by name/category/canton | `MarketplaceService.findAllServices()` |
 | `place_order` | **L3 NEW** | Place a product order | `MarketplaceService.createOrder()` |
 | `request_service` | **L3 NEW** | Request a service from a provider | `MarketplaceService.createServiceRequest()` |
-| `send_supplier_inquiry` | **L3 NEW** | Send a formal inquiry to a supplier | `MarketplaceService.createInquiry()` |
+| `send_supplier_inquiry` | **L3 NEW** | Send a formal inquiry to a supplier | `InquiryService.createInquiry()` (`api/src/marketplace/inquiry.service.ts`) |
 | `get_my_orders` | L1 | Fetch orders for the foundation | `PrismaService` |
 | `draft_parent_reply` | L2 | Pre-fill parent reply modal | Modal event |
 
