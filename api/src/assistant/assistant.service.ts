@@ -83,6 +83,39 @@ export class AssistantService {
     }
   }
 
+  /** Execute a confirmed L3 tool call and return its structured result. */
+  async confirmToolCall(
+    conversationId: string,
+    toolCallId: string,
+    principal: AssistantPrincipalContext,
+  ) {
+    await this.assertAssistantEnabled();
+    const conv = await this.prisma.aIConversation.findUnique({ where: { id: conversationId } });
+    if (!conv) throw new NotFoundException('Conversation not found');
+    if (conv.userId !== principal.userId && !ADMIN_ROLES.includes(principal.role)) {
+      throw new ForbiddenException();
+    }
+    return this.orchestrator.confirmToolCall(
+      toolCallId,
+      principal,
+      (conv.locale as 'fr' | 'de' | 'en') ?? 'fr',
+    );
+  }
+
+  /** Mark a pending L3 tool call as rejected. */
+  async rejectToolCall(
+    conversationId: string,
+    toolCallId: string,
+    principal: AssistantPrincipalContext,
+  ) {
+    const conv = await this.prisma.aIConversation.findUnique({ where: { id: conversationId } });
+    if (!conv) throw new NotFoundException('Conversation not found');
+    if (conv.userId !== principal.userId && !ADMIN_ROLES.includes(principal.role)) {
+      throw new ForbiddenException();
+    }
+    return this.orchestrator.rejectToolCall(toolCallId, principal);
+  }
+
   private async assertAssistantEnabled() {
     if (process.env.AI_ASSISTANT_ENABLED === 'true') return;
     const flag = await this.prisma.featureFlag.findFirst({

@@ -30,6 +30,18 @@
     "draftJobPost": "Rédaction de l'offre…",
     "draftParentReply": "Rédaction de la réponse…"
   },
+  "toolCard": {
+    "confirm": "Confirmer",
+    "cancel": "Annuler",
+    "success": "Terminé",
+    "cancelled": "Annulé",
+    "autoExecuting": "Exécution en cours…"
+  },
+  "results": {
+    "searching": "Recherche en cours…",
+    "none": "Aucun résultat trouvé",
+    "suggestionsHeading": "Suggestions :"
+  },
   "modal": {
     "prefilled": "Pré-rempli depuis votre demande — vérifiez avant de soumettre."
   },

@@ -30,6 +30,18 @@
     "draftJobPost": "Drafting job post…",
     "draftParentReply": "Drafting reply…"
   },
+  "toolCard": {
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "success": "Done",
+    "cancelled": "Cancelled",
+    "autoExecuting": "Executing…"
+  },
+  "results": {
+    "searching": "Searching…",
+    "none": "No results found",
+    "suggestionsHeading": "Suggestions:"
+  },
   "modal": {
     "prefilled": "Pre-filled from your request — review before submitting."
   },

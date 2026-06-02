@@ -70,4 +70,24 @@ export class AssistantController {
       res,
     );
   }
+
+  @Post('conversations/:id/tool-calls/:toolCallId/confirm')
+  @Roles(...ALL_ROLES)
+  confirmToolCall(
+    @Param('id') conversationId: string,
+    @Param('toolCallId') toolCallId: string,
+    @Request() req: any,
+  ) {
+    return this.assistantService.confirmToolCall(conversationId, toolCallId, extractPrincipal(req));
+  }
+
+  @Post('conversations/:id/tool-calls/:toolCallId/reject')
+  @Roles(...ALL_ROLES)
+  rejectToolCall(
+    @Param('id') conversationId: string,
+    @Param('toolCallId') toolCallId: string,
+    @Request() req: any,
+  ) {
+    return this.assistantService.rejectToolCall(conversationId, toolCallId, extractPrincipal(req));
+  }
 }
