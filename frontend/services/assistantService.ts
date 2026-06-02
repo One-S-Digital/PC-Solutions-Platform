@@ -83,6 +83,36 @@ export async function createConversation(
 }
 
 /**
+ * Confirms a pending L3 tool call (e.g. contact_admin) so the backend executes
+ * it. Returns the structured tool result (or an error).
+ */
+export async function confirmToolCall(
+  getToken: () => Promise<string | null>,
+  conversationId: string,
+  toolCallId: string
+): Promise<{ toolCallId: string; toolName: string; result?: Record<string, unknown>; error?: string }> {
+  const headers = await getAuthHeaders(getToken);
+  const url = `${apiService.apiBaseUrl}/assistant/conversations/${conversationId}/tool-calls/${toolCallId}/confirm`;
+  const response = await fetch(url, { method: 'POST', headers, cache: 'no-store' });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error((errorData as any)?.message || `HTTP ${response.status}`);
+  }
+  return response.json();
+}
+
+/** Marks a pending L3 tool call as rejected (user cancelled). */
+export async function rejectToolCall(
+  getToken: () => Promise<string | null>,
+  conversationId: string,
+  toolCallId: string
+): Promise<void> {
+  const headers = await getAuthHeaders(getToken);
+  const url = `${apiService.apiBaseUrl}/assistant/conversations/${conversationId}/tool-calls/${toolCallId}/reject`;
+  await fetch(url, { method: 'POST', headers, cache: 'no-store' }).catch(() => undefined);
+}
+
+/**
  * Sends a message to the assistant over a streaming SSE connection.
  * The backend sends: `event: <type>\ndata: <json>\n\n`
  */

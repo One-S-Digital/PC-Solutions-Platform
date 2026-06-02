@@ -3,10 +3,16 @@ import { UserRole, AIMessageSender } from '@prisma/client';
 import { OrchestratorService } from './orchestrator.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { LlmClient } from '../ai/llm-client';
-import { StaffingService } from '../staffing/staffing.service';
-import { KnowledgeService } from '../ai/knowledge/knowledge.service';
-import { KnowledgeEmbeddingService } from '../ai/knowledge/knowledge-embedding.service';
 import { UserContextService } from '../ai/knowledge/user-context.service';
+import { ToolHandlerRegistry } from './tools/tool-handler.registry';
+import { ProfileHandler } from './tools/handlers/profile.handler';
+import { LeadsHandler } from './tools/handlers/leads.handler';
+import { RecruitmentReadHandler } from './tools/handlers/recruitment.handler';
+import { MarketplaceReadHandler } from './tools/handlers/marketplace.handler';
+import { StaffingHandler } from './tools/handlers/staffing.handler';
+import { SupportHandler } from './tools/handlers/support.handler';
+import { SearchHandler } from './tools/handlers/search.handler';
+import { DraftsHandler } from './tools/handlers/drafts.handler';
 
 const FOUNDATION_PRINCIPAL = { userId: 'user-1', role: UserRole.FOUNDATION, organizationId: 'org-1' };
 const EDUCATOR_PRINCIPAL = { userId: 'user-2', role: UserRole.EDUCATOR, organizationId: undefined };
@@ -24,6 +30,10 @@ function mockPrisma() {
     aIToolCall: {
       create: jest.fn().mockResolvedValue({ id: 'tc-1' }),
       update: jest.fn().mockResolvedValue({}),
+      findUnique: jest.fn().mockResolvedValue(null),
+    },
+    aIConversation: {
+      findUnique: jest.fn().mockResolvedValue({ userId: 'user-1', locale: 'fr' }),
     },
     matchResult: {
       findUnique: jest.fn().mockResolvedValue({ explanation: 'Good fit', totalScore: 88 }),
@@ -69,6 +79,9 @@ function mockPrisma() {
       count: jest.fn().mockResolvedValue(2),
       findMany: jest.fn().mockResolvedValue([]),
     },
+    organization: {
+      findMany: jest.fn().mockResolvedValue([]),
+    },
     featureFlag: {
       // No flags are explicitly disabled → all tools/articles available by default
       findMany: jest.fn().mockResolvedValue([]),
@@ -84,7 +97,15 @@ describe('OrchestratorService', () => {
   let service: OrchestratorService;
   let prisma: ReturnType<typeof mockPrisma>;
   let llm: jest.Mocked<Pick<LlmClient, 'run'>>;
-  let staffing: jest.Mocked<Pick<StaffingService, 'createRequest'>>;
+  let staffingMock: {
+    createRequest: jest.Mock;
+    runMatching: jest.Mock;
+    getMatches: jest.Mock;
+    getRequest: jest.Mock;
+  };
+  let recruitmentMock: { findAllCandidates: jest.Mock; findAllJobListings: jest.Mock };
+  let marketplaceMock: { findAllProducts: jest.Mock; findAllServices: jest.Mock };
+  let supportMock: { createTicket: jest.Mock };
   let embeddingMock: { isReady: boolean; searchSemantic: jest.Mock };
   let knowledgeMock: { search: jest.Mock; formatForPrompt: jest.Mock };
   let sendEvent: jest.Mock;
@@ -97,24 +118,42 @@ describe('OrchestratorService', () => {
     });
   }
 
+  function buildRegistry(prismaImpl: any): ToolHandlerRegistry {
+    return new ToolHandlerRegistry(
+      new ProfileHandler(prismaImpl),
+      new LeadsHandler(prismaImpl),
+      new RecruitmentReadHandler(prismaImpl),
+      new MarketplaceReadHandler(prismaImpl),
+      new StaffingHandler(prismaImpl),
+      new SupportHandler(supportMock as any),
+      new SearchHandler(
+        prismaImpl,
+        knowledgeMock as any,
+        embeddingMock as any,
+        recruitmentMock as any,
+        marketplaceMock as any,
+        staffingMock as any,
+      ),
+      new DraftsHandler(),
+    );
+  }
+
   async function makeService(prismaOverride?: any) {
+    const prismaImpl = prismaOverride ?? prisma;
     const module = await Test.createTestingModule({
       providers: [
         OrchestratorService,
-        { provide: PrismaService, useValue: prismaOverride ?? prisma },
+        { provide: PrismaService, useValue: prismaImpl },
         { provide: LlmClient, useValue: { run: jest.fn() } },
-        { provide: StaffingService, useValue: { createRequest: jest.fn().mockResolvedValue({ id: 'sr-1', status: 'PENDING' }) } },
-        { provide: KnowledgeService, useValue: knowledgeMock },
-        { provide: KnowledgeEmbeddingService, useValue: embeddingMock },
         { provide: UserContextService, useValue: {
           build: jest.fn().mockResolvedValue({ profile: 'Alice Martin | Role: FOUNDATION', state: 'New parent leads: 3' }),
         }},
+        { provide: ToolHandlerRegistry, useValue: buildRegistry(prismaImpl) },
       ],
     }).compile();
 
     service = module.get(OrchestratorService);
     llm = module.get(LlmClient) as any;
-    staffing = module.get(StaffingService) as any;
     return module;
   }
 
@@ -123,6 +162,21 @@ describe('OrchestratorService', () => {
     prisma = mockPrisma() as any;
     embeddingMock = { isReady: false, searchSemantic: jest.fn().mockResolvedValue([]) };
     knowledgeMock = { search: jest.fn().mockReturnValue([]), formatForPrompt: jest.fn().mockReturnValue('No docs found.') };
+    staffingMock = {
+      createRequest: jest.fn().mockResolvedValue({ id: 'sr-1', status: 'PARSED' }),
+      runMatching: jest.fn().mockResolvedValue(0),
+      getMatches: jest.fn().mockResolvedValue([]),
+      getRequest: jest.fn().mockResolvedValue({ roleRequired: 'EDE', canton: 'GE' }),
+    };
+    recruitmentMock = {
+      findAllCandidates: jest.fn().mockResolvedValue([]),
+      findAllJobListings: jest.fn().mockResolvedValue([]),
+    };
+    marketplaceMock = {
+      findAllProducts: jest.fn().mockResolvedValue([]),
+      findAllServices: jest.fn().mockResolvedValue([]),
+    };
+    supportMock = { createTicket: jest.fn().mockResolvedValue({ id: 'ticket-1', status: 'OPEN' }) };
     await makeService();
   });
 
@@ -225,11 +279,12 @@ describe('OrchestratorService', () => {
     });
 
     it('caps the loop at MAX_TOOL_STEPS by forcing synthesis on the last iteration', async () => {
-      // All 4 calls return a tool call — the 4th (forced synthesis) must get empty availableTools
+      // All loop iterations return a tool call — the forced synthesis must get empty availableTools
       mockLlmSequence(
         { message: 'Step 1', toolCall: { name: 'search_help_docs', args: { query: 'test' } } },
         { message: 'Step 2', toolCall: { name: 'search_help_docs', args: { query: 'test' } } },
         { message: 'Step 3', toolCall: { name: 'search_help_docs', args: { query: 'test' } } },
+        { message: 'Step 4', toolCall: { name: 'search_help_docs', args: { query: 'test' } } },
         { message: 'Final answer after forced synthesis.', toolCall: null },
       );
 
@@ -242,24 +297,76 @@ describe('OrchestratorService', () => {
     });
   });
 
-  // ── L2 tool: search_internal_candidates ───────────────────────────────────
+  // ── L1 search tool: search_candidates_ai (replaces search_internal_candidates) ─
 
-  describe('L2 tool call: search_internal_candidates', () => {
+  describe('L1 tool call: search_candidates_ai', () => {
     beforeEach(() => {
       mockLlmSequence(
-        { message: 'Searching candidates.', toolCall: { name: 'search_internal_candidates', args: { rawText: 'EDE Geneva 80%' } } },
-        { message: 'Une demande a été créée.', toolCall: null },
+        { message: 'Searching candidates.', toolCall: { name: 'search_candidates_ai', args: { rawText: 'EDE Geneva 80%' } } },
+        { message: 'Voici les candidats trouvés.', toolCall: null },
       );
     });
 
-    it('calls StaffingService.createRequest', async () => {
+    it('runs synchronous parse + match via StaffingService', async () => {
       await service.run({ conversationId: CONVERSATION_ID, userMessage: 'Find me an EDE', principal: FOUNDATION_PRINCIPAL, locale: 'fr', sendEvent });
-      expect(staffing.createRequest).toHaveBeenCalled();
+      expect(staffingMock.createRequest).toHaveBeenCalled();
+      expect(staffingMock.runMatching).toHaveBeenCalledWith('sr-1');
+      expect(staffingMock.getMatches).toHaveBeenCalled();
+    });
+
+    it('emits tool_call and tool_result card events', async () => {
+      await service.run({ conversationId: CONVERSATION_ID, userMessage: 'Find me an EDE', principal: FOUNDATION_PRINCIPAL, locale: 'fr', sendEvent });
+      expect(sendEvent).toHaveBeenCalledWith('tool_call', expect.objectContaining({ toolName: 'search_candidates_ai' }));
+      expect(sendEvent).toHaveBeenCalledWith('tool_result', expect.objectContaining({ toolName: 'search_candidates_ai' }));
     });
 
     it('streams a synthesized final answer', async () => {
       await service.run({ conversationId: CONVERSATION_ID, userMessage: 'Find me an EDE', principal: FOUNDATION_PRINCIPAL, locale: 'fr', sendEvent });
-      expect(sendEvent).toHaveBeenCalledWith('token', { text: 'Une demande a été créée.' });
+      expect(sendEvent).toHaveBeenCalledWith('token', { text: 'Voici les candidats trouvés.' });
+    });
+  });
+
+  // ── L3 escalation tool: contact_admin ─────────────────────────────────────
+
+  describe('L3 tool call: contact_admin', () => {
+    it('stops and emits an approval card instead of executing immediately', async () => {
+      mockLlmSequence({
+        message: "I'll file a support ticket for you.",
+        toolCall: { name: 'contact_admin', args: { subject: 'Need help', message: 'Cannot find an educator' } },
+      });
+      await service.run({ conversationId: CONVERSATION_ID, userMessage: 'I need to speak to someone', principal: FOUNDATION_PRINCIPAL, locale: 'fr', sendEvent });
+
+      expect(sendEvent).toHaveBeenCalledWith('tool_call', expect.objectContaining({
+        toolName: 'contact_admin',
+        approvalRequired: true,
+        level: 'L3_EXECUTE',
+      }));
+      // The ticket must NOT be created until the user confirms
+      expect(supportMock.createTicket).not.toHaveBeenCalled();
+    });
+  });
+
+  // ── confirmToolCall — L3 execution after approval ─────────────────────────
+
+  describe('confirmToolCall', () => {
+    it('executes the stored contact_admin tool and marks it EXECUTED', async () => {
+      prisma.aIConversation = { findUnique: jest.fn().mockResolvedValue({ userId: 'user-1' }) } as any;
+      (prisma.aIToolCall as any).findUnique = jest.fn().mockResolvedValue({
+        id: 'tc-1',
+        conversationId: CONVERSATION_ID,
+        toolName: 'contact_admin',
+        status: 'AWAITING_APPROVAL',
+        inputJson: { subject: 'Need help', message: 'Cannot find an educator' },
+      });
+      await makeService(prisma);
+
+      const result = await service.confirmToolCall('tc-1', FOUNDATION_PRINCIPAL, 'fr');
+
+      expect(supportMock.createTicket).toHaveBeenCalledWith('user-1', expect.objectContaining({ subject: 'Need help' }));
+      expect(result.result).toBeDefined();
+      expect(prisma.aIToolCall.update).toHaveBeenCalledWith(
+        expect.objectContaining({ data: expect.objectContaining({ status: 'EXECUTED' }) }),
+      );
     });
   });
 
@@ -278,13 +385,19 @@ describe('OrchestratorService', () => {
       expect(sendEvent).toHaveBeenCalledWith('token', { text: 'You have 1 pending application.' });
     });
 
-    it('search_help_docs works for educator role', async () => {
+    it('search_jobs: queries published job listings', async () => {
+      recruitmentMock.findAllJobListings.mockResolvedValue([
+        { id: 'job-1', title: 'EDE 80%', foundation: { name: 'Les Petits Pas' }, location: 'Genève', contractType: 'CDI' },
+      ]);
       mockLlmSequence(
-        { message: 'Looking up.', toolCall: { name: 'search_help_docs', args: { query: 'how to apply for a job' } } },
-        { message: 'Go to Job Board to apply.', toolCall: null },
+        { message: 'Searching jobs.', toolCall: { name: 'search_jobs', args: { location: 'Genève' } } },
+        { message: 'Found 1 job.', toolCall: null },
       );
-      await service.run({ conversationId: CONVERSATION_ID, userMessage: 'How do I apply?', principal: EDUCATOR_PRINCIPAL, locale: 'en', sendEvent });
-      expect(sendEvent).toHaveBeenCalledWith('token', expect.objectContaining({ text: expect.any(String) }));
+      await service.run({ conversationId: CONVERSATION_ID, userMessage: 'Find me a job in Geneva', principal: EDUCATOR_PRINCIPAL, locale: 'fr', sendEvent });
+      expect(recruitmentMock.findAllJobListings).toHaveBeenCalledWith(
+        expect.objectContaining({ publishedOnly: true }),
+      );
+      expect(sendEvent).toHaveBeenCalledWith('tool_result', expect.objectContaining({ toolName: 'search_jobs' }));
     });
   });
 
@@ -299,6 +412,17 @@ describe('OrchestratorService', () => {
       await service.run({ conversationId: CONVERSATION_ID, userMessage: 'Show my enquiries', principal: PARENT_PRINCIPAL, locale: 'fr', sendEvent });
       expect(prisma.parentLead.findMany).toHaveBeenCalledWith(
         expect.objectContaining({ where: expect.objectContaining({ parentUserId: PARENT_PRINCIPAL.userId }) }),
+      );
+    });
+
+    it('search_foundations: queries FOUNDATION organizations', async () => {
+      mockLlmSequence(
+        { message: 'Searching foundations.', toolCall: { name: 'search_foundations', args: { canton: 'GE' } } },
+        { message: 'Found foundations.', toolCall: null },
+      );
+      await service.run({ conversationId: CONVERSATION_ID, userMessage: 'Find a crèche in Geneva', principal: PARENT_PRINCIPAL, locale: 'fr', sendEvent });
+      expect(prisma.organization.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: expect.objectContaining({ type: 'FOUNDATION' }) }),
       );
     });
   });
@@ -375,10 +499,10 @@ describe('OrchestratorService', () => {
 
       await service.run({ conversationId: CONVERSATION_ID, userMessage: 'find candidates', principal: FOUNDATION_PRINCIPAL, locale: 'fr', sendEvent });
 
-      // The availableTools string passed to the LLM must not list staffing-only tools
+      // The availableTools string passed to the LLM must not list staffing-gated tools
       const firstRunCall = (llm as any).run.mock.calls[0];
       const availableTools: string = firstRunCall[0].input.availableTools;
-      expect(availableTools).not.toContain('search_internal_candidates');
+      expect(availableTools).not.toContain('search_candidates');
       expect(availableTools).not.toContain('draft_job_post');
     });
   });
@@ -387,11 +511,9 @@ describe('OrchestratorService', () => {
 
   describe('MAX_TOOL_STEPS fallback', () => {
     it('sends a fallback token event if the LLM never returns toolCall:null', async () => {
-      // All 3 loop iterations return a tool call — LLM non-compliance scenario
+      // Every loop iteration returns a tool call — LLM non-compliance scenario
       mockLlmSequence(
-        { message: 'Step 1', toolCall: { name: 'search_help_docs', args: { query: 'test' } } },
-        { message: 'Step 2', toolCall: { name: 'search_help_docs', args: { query: 'test' } } },
-        { message: 'Step 3', toolCall: { name: 'search_help_docs', args: { query: 'test' } } },
+        { message: 'Step', toolCall: { name: 'search_help_docs', args: { query: 'test' } } },
       );
 
       await service.run({ conversationId: CONVERSATION_ID, userMessage: 'Tell me everything', principal: FOUNDATION_PRINCIPAL, locale: 'fr', sendEvent });

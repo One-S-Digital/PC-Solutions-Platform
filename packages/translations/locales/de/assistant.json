@@ -30,6 +30,18 @@
     "draftJobPost": "Stellenanzeige wird erstellt…",
     "draftParentReply": "Antwort wird verfasst…"
   },
+  "toolCard": {
+    "confirm": "Bestätigen",
+    "cancel": "Abbrechen",
+    "success": "Erledigt",
+    "cancelled": "Abgebrochen",
+    "autoExecuting": "Wird ausgeführt…"
+  },
+  "results": {
+    "searching": "Wird gesucht…",
+    "none": "Keine Ergebnisse gefunden",
+    "suggestionsHeading": "Vorschläge:"
+  },
   "modal": {
     "prefilled": "Aus Ihrer Anfrage vorausgefüllt — bitte vor dem Absenden prüfen."
   },

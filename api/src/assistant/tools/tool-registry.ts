@@ -24,6 +24,10 @@ const ALL_ROLES: UserRole[] = [
 
 const FOUNDATION_ADMIN: UserRole[] = [UserRole.FOUNDATION, UserRole.ADMIN, UserRole.SUPER_ADMIN];
 
+const EDUCATOR_ADMIN: UserRole[] = [UserRole.EDUCATOR, UserRole.ADMIN, UserRole.SUPER_ADMIN];
+
+const PARENT_ADMIN: UserRole[] = [UserRole.PARENT, UserRole.ADMIN, UserRole.SUPER_ADMIN];
+
 const ADMIN_ONLY: UserRole[] = [UserRole.ADMIN, UserRole.SUPER_ADMIN];
 
 export const TOOL_REGISTRY: ToolDefinition[] = [
@@ -64,6 +68,19 @@ export const TOOL_REGISTRY: ToolDefinition[] = [
       prefill: { type: 'object', description: 'Key-value pairs to pre-fill in the modal' },
     },
   },
+  {
+    name: 'contact_admin',
+    description:
+      'File a support ticket to the admin team describing what the user needs. Use as the final fallback when a search finds nothing, a capability is missing, or the user is frustrated or wants to reach a human. Always available.',
+    level: 'L3_EXECUTE',
+    allowedRoles: ALL_ROLES,
+    inputSchema: {
+      subject: { type: 'string', description: 'Short ticket subject summarising the request' },
+      message: { type: 'string', description: 'Full description of what the user needs. Pre-fill from the conversation so the user does not repeat themselves.' },
+      category: { type: 'string', description: 'Optional: GENERAL, TECHNICAL, BILLING, FEATURE_REQUEST (default GENERAL)' },
+      priority: { type: 'string', description: 'Optional: LOW, MEDIUM, HIGH, URGENT (default MEDIUM)' },
+    },
+  },
 
   // ── Admin-only tools ───────────────────────────────────────────────────────
   {
@@ -98,15 +115,49 @@ export const TOOL_REGISTRY: ToolDefinition[] = [
     },
   },
   {
-    name: 'search_internal_candidates',
-    description: 'Parse a staffing request and search the internal educator pool for matching candidates.',
-    level: 'L2_DRAFT',
+    name: 'search_candidates',
+    description:
+      'Search the internal educator pool directly and instantly by role, canton/location, skills, or free text. Returns ranked candidates immediately. Use this for fast, structured lookups.',
+    level: 'L1_ANSWER',
     allowedRoles: FOUNDATION_ADMIN,
     featureFlag: 'v2_staffing_ia',
-    modal: 'candidate_shortlist_modal',
+    inputSchema: {
+      role: { type: 'string', description: 'Candidate job role (e.g. EDE, ASE, ASSC)' },
+      location: { type: 'string', description: 'Canton or city (e.g. GE, Genève)' },
+      skills: { type: 'array', description: 'Optional list of required skills' },
+      search: { type: 'string', description: 'Optional free-text query across name, role, location, skills' },
+    },
+  },
+  {
+    name: 'search_candidates_ai',
+    description:
+      'Parse a free-text staffing request, run AI matching synchronously, and return ranked candidates with match scores in the same turn. Use when the user describes their need in natural language (dates, hours, qualifications).',
+    level: 'L1_ANSWER',
+    allowedRoles: FOUNDATION_ADMIN,
+    featureFlag: 'v2_staffing_ia',
     inputSchema: {
       rawText: { type: 'string', description: 'Free-text staffing request describing role, canton, dates, qualifications' },
       foundationId: { type: 'string', description: 'Optional: UUID of a specific foundation org to scope the search. Omit for a platform-wide search (admin only).' },
+    },
+  },
+  {
+    name: 'search_products',
+    description: 'Search marketplace products by name/category. Returns matching products with price and supplier.',
+    level: 'L1_ANSWER',
+    allowedRoles: FOUNDATION_ADMIN,
+    inputSchema: {
+      category: { type: 'string', description: 'Optional product category' },
+      search: { type: 'string', description: 'Free-text query (product name or keywords)' },
+    },
+  },
+  {
+    name: 'search_services',
+    description: 'Search marketplace services by name/category/canton. Returns matching services with price and provider.',
+    level: 'L1_ANSWER',
+    allowedRoles: FOUNDATION_ADMIN,
+    inputSchema: {
+      category: { type: 'string', description: 'Optional service category' },
+      search: { type: 'string', description: 'Free-text query (service name or keywords)' },
     },
   },
   {
@@ -149,6 +200,17 @@ export const TOOL_REGISTRY: ToolDefinition[] = [
 
   // ── Educator tools ─────────────────────────────────────────────────────────
   {
+    name: 'search_jobs',
+    description: 'Search available job listings by role/location. Returns published jobs the educator can apply to.',
+    level: 'L1_ANSWER',
+    allowedRoles: EDUCATOR_ADMIN,
+    inputSchema: {
+      location: { type: 'string', description: 'Canton or city to search in' },
+      search: { type: 'string', description: 'Free-text query (job title or keywords)' },
+      contractType: { type: 'string', description: 'Optional: FULL_TIME, PART_TIME, REPLACEMENT' },
+    },
+  },
+  {
     name: 'get_my_applications',
     description: 'Fetch the current educator\'s job applications and their statuses.',
     level: 'L1_ANSWER',
@@ -160,6 +222,17 @@ export const TOOL_REGISTRY: ToolDefinition[] = [
   },
 
   // ── Parent tools ───────────────────────────────────────────────────────────
+  {
+    name: 'search_foundations',
+    description: 'Search childcare foundations by location/type. Returns foundations a parent can enquire with.',
+    level: 'L1_ANSWER',
+    allowedRoles: PARENT_ADMIN,
+    inputSchema: {
+      canton: { type: 'string', description: 'Swiss canton (e.g. VD, GE)' },
+      city: { type: 'string', description: 'City or town name' },
+      query: { type: 'string', description: 'Optional free-text foundation name' },
+    },
+  },
   {
     name: 'get_my_enquiries',
     description: "Fetch the current parent's submitted childcare enquiries.",

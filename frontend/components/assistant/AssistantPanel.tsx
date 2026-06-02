@@ -6,12 +6,15 @@ import ReactMarkdown from 'react-markdown';
 import {
   createConversation,
   streamMessage,
+  confirmToolCall,
+  rejectToolCall,
   ToolCallEvent,
   ToolResultEvent,
   ModalActionEvent,
 } from '../../services/assistantService';
 import { useAppContext } from '../../contexts/AppContext';
 import { AssistantModalHandler } from './AssistantModalHandler';
+import { SearchResultCards, isResultCardTool } from './ResultCards';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -21,6 +24,7 @@ interface Message {
   text: string;
   toolCall?: ToolCallEvent;
   toolResult?: ToolResultEvent;
+  cancelled?: boolean;
 }
 
 interface AssistantPanelProps {
@@ -45,11 +49,12 @@ const SUGGESTION_KEYS = [
 interface ToolCallCardProps {
   toolCall: ToolCallEvent;
   result?: ToolResultEvent;
+  cancelled?: boolean;
   onConfirm?: (toolCall: ToolCallEvent) => void;
   onCancel?: (toolCallId: string) => void;
 }
 
-const ToolCallCard: React.FC<ToolCallCardProps> = ({ toolCall, result, onConfirm, onCancel }) => {
+const ToolCallCard: React.FC<ToolCallCardProps> = ({ toolCall, result, cancelled, onConfirm, onCancel }) => {
   const { t } = useTranslation('assistant');
 
   const argsPreview = Object.entries(toolCall.args || {})
@@ -83,8 +88,13 @@ const ToolCallCard: React.FC<ToolCallCardProps> = ({ toolCall, result, onConfirm
         </div>
       )}
 
-      {/* L2 approval buttons — only shown when not yet resolved */}
-      {toolCall.approvalRequired && !hasResult && (
+      {/* Cancelled indicator */}
+      {cancelled && !hasResult && (
+        <p className="text-xs text-gray-400">{t('toolCard.cancelled', 'Cancelled')}</p>
+      )}
+
+      {/* Approval buttons — only shown when not yet resolved or cancelled */}
+      {toolCall.approvalRequired && !hasResult && !cancelled && (
         <div className="flex gap-2">
           <button
             onClick={() => onConfirm?.(toolCall)}
@@ -102,7 +112,7 @@ const ToolCallCard: React.FC<ToolCallCardProps> = ({ toolCall, result, onConfirm
       )}
 
       {/* L1/auto-execute indicator */}
-      {!toolCall.approvalRequired && !hasResult && (
+      {!toolCall.approvalRequired && !hasResult && !cancelled && (
         <p className="text-xs text-gray-400">{t('toolCard.autoExecuting', 'Executing…')}</p>
       )}
     </div>
@@ -273,15 +283,56 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
   );
 
   const handleToolConfirm = useCallback(
-    (toolCall: ToolCallEvent) => {
+    async (toolCall: ToolCallEvent) => {
+      // Tools with a modal open a pre-filled form for the user to submit.
       if (toolCall.modal) {
         setPendingModal({
           modal: toolCall.modal,
           prefill: toolCall.args as Record<string, unknown>,
         });
+        return;
+      }
+      // Modal-less L3 tools (e.g. contact_admin) execute server-side on confirm.
+      if (!conversationId) return;
+      try {
+        const res = await confirmToolCall(getToken, conversationId, toolCall.toolCallId);
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === toolCall.toolCallId
+              ? {
+                  ...m,
+                  toolResult: {
+                    toolCallId: toolCall.toolCallId,
+                    toolName: toolCall.toolName,
+                    result: res.result,
+                    error: res.error,
+                  },
+                }
+              : m
+          )
+        );
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : 'Action failed';
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === toolCall.toolCallId
+              ? { ...m, toolResult: { toolCallId: toolCall.toolCallId, toolName: toolCall.toolName, error: msg } }
+              : m
+          )
+        );
       }
     },
-    []
+    [conversationId, getToken]
+  );
+
+  const handleToolCancel = useCallback(
+    (toolCallId: string) => {
+      setMessages((prev) => prev.map((m) => (m.id === toolCallId ? { ...m, cancelled: true } : m)));
+      if (conversationId) {
+        void rejectToolCall(getToken, conversationId, toolCallId);
+      }
+    },
+    [conversationId, getToken]
   );
 
   // ─── Render ────────────────────────────────────────────────────────────────
@@ -344,13 +395,24 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
             {/* Chat bubbles */}
             {messages.map((msg) => {
               if (msg.toolCall) {
+                // Search tools render rich result cards instead of the generic card.
+                if (isResultCardTool(msg.toolCall.toolName)) {
+                  return (
+                    <SearchResultCards
+                      key={msg.id}
+                      toolName={msg.toolCall.toolName}
+                      result={msg.toolResult}
+                    />
+                  );
+                }
                 return (
                   <ToolCallCard
                     key={msg.id}
                     toolCall={msg.toolCall}
                     result={msg.toolResult}
+                    cancelled={msg.cancelled}
                     onConfirm={handleToolConfirm}
-                    onCancel={() => {/* no-op cancel */}}
+                    onCancel={handleToolCancel}
                   />
                 );
               }
