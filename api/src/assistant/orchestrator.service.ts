@@ -35,7 +35,21 @@ const RESULT_CARD_TOOLS = new Set<string>([
   'search_jobs',
   'search_foundations',
   'find_foundation',
+  'view_match_results',
 ]);
+
+// Human-readable status shown while an L1 result-card tool is running, so the UI
+// can display "Searching candidates…" instead of a bare spinner (Phase 4).
+const TOOL_STATUS_LABELS: Record<string, string> = {
+  search_candidates: 'Searching candidates…',
+  search_candidates_ai: 'Matching candidates…',
+  search_products: 'Searching products…',
+  search_services: 'Searching services…',
+  search_jobs: 'Searching jobs…',
+  search_foundations: 'Searching foundations…',
+  find_foundation: 'Looking up the foundation…',
+  view_match_results: 'Fetching match results…',
+};
 
 @Injectable()
 export class OrchestratorService {
@@ -174,6 +188,14 @@ export class OrchestratorService {
           level,
           approvalRequired: false,
           args,
+        });
+        // Streaming execution status so the UI shows a meaningful label while the
+        // tool runs (Phase 4 reliability).
+        sendEvent('tool_status', {
+          toolCallId: toolCallRecord.id,
+          toolName,
+          status: 'running',
+          label: TOOL_STATUS_LABELS[toolName] ?? 'Working…',
         });
       }
 

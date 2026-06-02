@@ -15,6 +15,80 @@
       "staffing": "Find me an educator for next week",
       "jobPost": "Draft a job post",
       "help": "How do I publish a job listing?"
+    },
+    "suggestion1": "What can you help me with?",
+    "suggestion2": "How do I use this platform?",
+    "foundation": {
+      "findCandidate": "Find me an EDE in Geneva at 80%",
+      "postJob": "Post a job for an educator",
+      "respondLead": "Show my parent leads"
+    },
+    "educator": {
+      "findJob": "Find childcare jobs near me",
+      "myApplications": "Show my applications",
+      "help": "How do I apply to a job?"
+    },
+    "parent": {
+      "findFoundation": "Find a crèche in my canton",
+      "submitEnquiry": "Submit a childcare enquiry",
+      "myEnquiries": "Show my enquiries"
+    },
+    "supplier": {
+      "myListings": "Show my product listings",
+      "myOrders": "Show my incoming orders",
+      "help": "How do I add a product?"
+    },
+    "serviceProvider": {
+      "myListings": "Show my service listings",
+      "myRequests": "Show my service requests",
+      "help": "How do I add a service?"
+    },
+    "admin": {
+      "stats": "Show platform stats",
+      "findUser": "Find a user by name",
+      "findCandidate": "Find candidates for a foundation"
+    }
+  },
+  "preview": {
+    "postJob": "Publish job listing",
+    "sendMessage": "Send message",
+    "contactAdmin": "File support ticket",
+    "placeOrder": "Place order",
+    "requestService": "Request service",
+    "supplierInquiry": "Send supplier inquiry",
+    "applyToJob": "Apply to job",
+    "shortlist": "Shortlist candidate",
+    "updateStatus": "Update application status",
+    "respondToLead": "Respond to parent lead",
+    "replacement": "Create replacement request",
+    "submitEnquiry": "Submit childcare enquiry",
+    "noDetails": "Confirm to proceed.",
+    "field": {
+      "title": "Title",
+      "role": "Role",
+      "percentage": "Percentage",
+      "location": "Location",
+      "contract": "Contract",
+      "startDate": "Start date",
+      "endDate": "End date",
+      "description": "Description",
+      "recipient": "Recipient",
+      "message": "Message",
+      "subject": "Subject",
+      "priority": "Priority",
+      "product": "Product",
+      "quantity": "Quantity",
+      "notes": "Notes",
+      "service": "Service",
+      "scheduledAt": "Scheduled",
+      "job": "Job",
+      "coverLetter": "Cover letter",
+      "candidate": "Candidate",
+      "application": "Application",
+      "status": "Status",
+      "urgency": "Urgency",
+      "childName": "Child",
+      "childAge": "Age"
     }
   },
   "tool": {

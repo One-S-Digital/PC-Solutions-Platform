@@ -194,6 +194,7 @@ const RESULT_CARD_TOOLS = new Set([
   'search_jobs',
   'search_foundations',
   'find_foundation',
+  'view_match_results',
 ]);
 
 export function isResultCardTool(toolName: string): boolean {
@@ -203,18 +204,22 @@ export function isResultCardTool(toolName: string): boolean {
 interface SearchResultCardsProps {
   toolName: string;
   result?: ToolResultEvent;
+  /** Live status label streamed while the tool runs (e.g. "Searching candidates…"). */
+  statusLabel?: string;
 }
 
 /**
  * Renders the appropriate result cards (or a NoResultsCard) for a search tool's
  * structured result. Falls back to nothing while the result is still pending.
  */
-export const SearchResultCards: React.FC<SearchResultCardsProps> = ({ toolName, result }) => {
+export const SearchResultCards: React.FC<SearchResultCardsProps> = ({ toolName, result, statusLabel }) => {
   const { t } = useTranslation('assistant');
 
   if (!result) {
     return (
-      <p className="my-2 text-xs text-gray-400">{t('results.searching', 'Searching…')}</p>
+      <p className="my-2 text-xs text-gray-400">
+        {statusLabel ?? t('results.searching', 'Searching…')}
+      </p>
     );
   }
   if (result.error) {
@@ -236,7 +241,8 @@ export const SearchResultCards: React.FC<SearchResultCardsProps> = ({ toolName, 
 
   switch (toolName) {
     case 'search_candidates':
-    case 'search_candidates_ai': {
+    case 'search_candidates_ai':
+    case 'view_match_results': {
       const items = (data.candidates as CandidateItem[]) ?? [];
       return <>{items.filter(Boolean).map((c) => <CandidateResultCard key={c.id} c={c} />)}</>;
     }

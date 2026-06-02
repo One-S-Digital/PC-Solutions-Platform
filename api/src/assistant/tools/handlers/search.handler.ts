@@ -34,6 +34,7 @@ export class SearchHandler implements ToolHandler {
     'search_services',
     'search_jobs',
     'search_foundations',
+    'view_match_results',
   ];
 
   constructor(
@@ -69,6 +70,8 @@ export class SearchHandler implements ToolHandler {
         return this.searchJobs(args, locale);
       case 'search_foundations':
         return this.searchFoundations(args);
+      case 'view_match_results':
+        return this.viewMatchResults(args, principal);
       default:
         throw new Error(`SearchHandler cannot handle tool "${toolName}"`);
     }
@@ -327,6 +330,43 @@ export class SearchHandler implements ToolHandler {
         foundations.length === 0
           ? [
               { label: 'Broaden the canton or city', actionType: 'broaden_search' },
+              CONTACT_ADMIN,
+            ]
+          : undefined,
+    };
+  }
+
+  // ── view_match_results (fetch ranked matches for an existing request) ─────
+  private async viewMatchResults(
+    args: Record<string, unknown>,
+    principal: AssistantPrincipal,
+  ): Promise<ToolResult> {
+    const staffingRequestId = (args.staffingRequestId as string) || (args.requestId as string);
+    if (!staffingRequestId) {
+      return {
+        data: { candidates: [] },
+        total: 0,
+        suggestions: [CONTACT_ADMIN],
+      };
+    }
+    const matches = await this.staffing.getMatches(staffingRequestId, {
+      userId: principal.userId,
+      role: principal.role,
+      organizationId: principal.organizationId,
+    });
+    const candidates = matches.slice(0, 10).map((m: any) => ({
+      ...this.toCandidateCard(m.candidate),
+      matchResultId: m.id,
+      score: m.totalScore != null ? Math.round(m.totalScore) : undefined,
+    }));
+    return {
+      data: { candidates, staffingRequestId },
+      total: matches.length,
+      hasMore: matches.length > 10,
+      suggestions:
+        matches.length === 0
+          ? [
+              { label: 'Run a fresh AI search instead', actionType: 'broaden_search', payload: { tool: 'search_candidates_ai' } },
               CONTACT_ADMIN,
             ]
           : undefined,

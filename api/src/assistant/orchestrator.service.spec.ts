@@ -13,6 +13,12 @@ import { StaffingHandler } from './tools/handlers/staffing.handler';
 import { SupportHandler } from './tools/handlers/support.handler';
 import { SearchHandler } from './tools/handlers/search.handler';
 import { DraftsHandler } from './tools/handlers/drafts.handler';
+import { RecruitmentWriteHandler } from './tools/handlers/recruitment-write.handler';
+import { LeadsWriteHandler } from './tools/handlers/leads-write.handler';
+import { MarketplaceWriteHandler } from './tools/handlers/marketplace-write.handler';
+import { MessagingHandler } from './tools/handlers/messaging.handler';
+import { ReplacementsHandler } from './tools/handlers/replacements.handler';
+import { AdminHandler } from './tools/handlers/admin.handler';
 
 const FOUNDATION_PRINCIPAL = { userId: 'user-1', role: UserRole.FOUNDATION, organizationId: 'org-1' };
 const EDUCATOR_PRINCIPAL = { userId: 'user-2', role: UserRole.EDUCATOR, organizationId: undefined };
@@ -39,7 +45,8 @@ function mockPrisma() {
       findUnique: jest.fn().mockResolvedValue({ explanation: 'Good fit', totalScore: 88 }),
     },
     user: {
-      findUnique: jest.fn().mockResolvedValue({ firstName: 'Alice', lastName: 'Martin', approvalStatus: null }),
+      findUnique: jest.fn().mockResolvedValue({ firstName: 'Alice', lastName: 'Martin', approvalStatus: null, email: 'alice@x.ch' }),
+      count: jest.fn().mockResolvedValue(42),
     },
     parentLead: {
       count: jest.fn().mockResolvedValue(3),
@@ -103,8 +110,25 @@ describe('OrchestratorService', () => {
     getMatches: jest.Mock;
     getRequest: jest.Mock;
   };
-  let recruitmentMock: { findAllCandidates: jest.Mock; findAllJobListings: jest.Mock };
-  let marketplaceMock: { findAllProducts: jest.Mock; findAllServices: jest.Mock };
+  let recruitmentMock: {
+    findAllCandidates: jest.Mock;
+    findAllJobListings: jest.Mock;
+    createJobListing: jest.Mock;
+    createJobApplication: jest.Mock;
+    saveCandidate: jest.Mock;
+    updateJobApplication: jest.Mock;
+  };
+  let marketplaceMock: {
+    findAllProducts: jest.Mock;
+    findAllServices: jest.Mock;
+    createOrder: jest.Mock;
+    createServiceRequest: jest.Mock;
+  };
+  let inquiryMock: { createInquiry: jest.Mock };
+  let leadsMock: { respondToLead: jest.Mock; createParentLead: jest.Mock };
+  let messagingMock: { createDirectMessage: jest.Mock };
+  let replacementsMock: { createRequest: jest.Mock };
+  let usersMock: { findAll: jest.Mock };
   let supportMock: { createTicket: jest.Mock };
   let embeddingMock: { isReady: boolean; searchSemantic: jest.Mock };
   let knowledgeMock: { search: jest.Mock; formatForPrompt: jest.Mock };
@@ -135,6 +159,12 @@ describe('OrchestratorService', () => {
         staffingMock as any,
       ),
       new DraftsHandler(),
+      new RecruitmentWriteHandler(recruitmentMock as any),
+      new LeadsWriteHandler(leadsMock as any, prismaImpl),
+      new MarketplaceWriteHandler(marketplaceMock as any, inquiryMock as any),
+      new MessagingHandler(messagingMock as any),
+      new ReplacementsHandler(replacementsMock as any),
+      new AdminHandler(usersMock as any, prismaImpl),
     );
   }
 
@@ -171,11 +201,25 @@ describe('OrchestratorService', () => {
     recruitmentMock = {
       findAllCandidates: jest.fn().mockResolvedValue([]),
       findAllJobListings: jest.fn().mockResolvedValue([]),
+      createJobListing: jest.fn().mockResolvedValue({ id: 'job-1', title: 'EDE 80%', status: 'PUBLISHED', location: 'Genève' }),
+      createJobApplication: jest.fn().mockResolvedValue({ id: 'app-1', status: 'PENDING' }),
+      saveCandidate: jest.fn().mockResolvedValue({ id: 'saved-1' }),
+      updateJobApplication: jest.fn().mockResolvedValue({ id: 'app-1', status: 'SHORTLISTED' }),
     };
     marketplaceMock = {
       findAllProducts: jest.fn().mockResolvedValue([]),
       findAllServices: jest.fn().mockResolvedValue([]),
+      createOrder: jest.fn().mockResolvedValue({ id: 'order-1', totalAmount: 120, status: 'PENDING' }),
+      createServiceRequest: jest.fn().mockResolvedValue({ id: 'sreq-1', status: 'PENDING' }),
     };
+    inquiryMock = { createInquiry: jest.fn().mockResolvedValue({ id: 'inq-1' }) };
+    leadsMock = {
+      respondToLead: jest.fn().mockResolvedValue({ id: 'resp-1' }),
+      createParentLead: jest.fn().mockResolvedValue({ id: 'lead-1', status: 'NEW', foundationId: 'org-9' }),
+    };
+    messagingMock = { createDirectMessage: jest.fn().mockResolvedValue({ id: 'dm-1' }) };
+    replacementsMock = { createRequest: jest.fn().mockResolvedValue({ id: 'rr-1', status: 'OPEN' }) };
+    usersMock = { findAll: jest.fn().mockResolvedValue({ data: [{ id: 'u-1', profileId: 'p-1', name: 'Bob', email: 'b@x.ch', role: 'EDUCATOR', orgName: null }] }) };
     supportMock = { createTicket: jest.fn().mockResolvedValue({ id: 'ticket-1', status: 'OPEN' }) };
     await makeService();
   });
@@ -366,6 +410,111 @@ describe('OrchestratorService', () => {
       expect(result.result).toBeDefined();
       expect(prisma.aIToolCall.update).toHaveBeenCalledWith(
         expect.objectContaining({ data: expect.objectContaining({ status: 'EXECUTED' }) }),
+      );
+    });
+  });
+
+  // ── Phase 2: L3 write actions ─────────────────────────────────────────────
+
+  describe('L3 write actions', () => {
+    it('post_job stops and emits an approval card without executing', async () => {
+      mockLlmSequence({
+        message: "I'll publish this job posting.",
+        toolCall: { name: 'post_job', args: { role: 'EDE', percentage: 80, location: 'Genève' } },
+      });
+      await service.run({ conversationId: CONVERSATION_ID, userMessage: 'Post an EDE 80% job in Geneva', principal: FOUNDATION_PRINCIPAL, locale: 'fr', sendEvent });
+
+      expect(sendEvent).toHaveBeenCalledWith('tool_call', expect.objectContaining({
+        toolName: 'post_job',
+        approvalRequired: true,
+        level: 'L3_EXECUTE',
+      }));
+      expect(recruitmentMock.createJobListing).not.toHaveBeenCalled();
+    });
+
+    it('confirmToolCall executes post_job with the foundation org and marks EXECUTED', async () => {
+      prisma.aIConversation = { findUnique: jest.fn().mockResolvedValue({ userId: 'user-1' }) } as any;
+      (prisma.aIToolCall as any).findUnique = jest.fn().mockResolvedValue({
+        id: 'tc-9',
+        conversationId: CONVERSATION_ID,
+        toolName: 'post_job',
+        status: 'AWAITING_APPROVAL',
+        inputJson: { role: 'EDE', percentage: 80, location: 'Genève' },
+      });
+      await makeService(prisma);
+
+      const result = await service.confirmToolCall('tc-9', FOUNDATION_PRINCIPAL, 'fr');
+
+      expect(recruitmentMock.createJobListing).toHaveBeenCalledWith(
+        expect.objectContaining({ status: 'PUBLISHED' }),
+        FOUNDATION_PRINCIPAL.organizationId,
+      );
+      expect(result.result).toBeDefined();
+      expect(prisma.aIToolCall.update).toHaveBeenCalledWith(
+        expect.objectContaining({ data: expect.objectContaining({ status: 'EXECUTED' }) }),
+      );
+    });
+
+    it('send_message executes via MessagingService on confirm', async () => {
+      prisma.aIConversation = { findUnique: jest.fn().mockResolvedValue({ userId: 'user-1' }) } as any;
+      (prisma.aIToolCall as any).findUnique = jest.fn().mockResolvedValue({
+        id: 'tc-10',
+        conversationId: CONVERSATION_ID,
+        toolName: 'send_message',
+        status: 'AWAITING_APPROVAL',
+        inputJson: { recipientUserId: 'user-77', content: 'Hello there' },
+      });
+      await makeService(prisma);
+
+      await service.confirmToolCall('tc-10', FOUNDATION_PRINCIPAL, 'fr');
+
+      expect(messagingMock.createDirectMessage).toHaveBeenCalledWith('user-1', 'user-77', 'Hello there');
+    });
+
+    it('apply_to_job uses the educator userId as candidate on confirm', async () => {
+      prisma.aIConversation = { findUnique: jest.fn().mockResolvedValue({ userId: 'user-2' }) } as any;
+      (prisma.aIToolCall as any).findUnique = jest.fn().mockResolvedValue({
+        id: 'tc-11',
+        conversationId: CONVERSATION_ID,
+        toolName: 'apply_to_job',
+        status: 'AWAITING_APPROVAL',
+        inputJson: { jobListingId: 'job-55' },
+      });
+      await makeService(prisma);
+
+      await service.confirmToolCall('tc-11', EDUCATOR_PRINCIPAL, 'fr');
+
+      expect(recruitmentMock.createJobApplication).toHaveBeenCalledWith(
+        expect.objectContaining({ jobListingId: 'job-55' }),
+        EDUCATOR_PRINCIPAL.userId,
+      );
+    });
+  });
+
+  // ── Phase 3: admin completeness tools ─────────────────────────────────────
+
+  describe('admin tools', () => {
+    const ADMIN_PRINCIPAL = { userId: 'admin-1', role: UserRole.ADMIN, organizationId: undefined };
+
+    it('get_platform_stats aggregates counts', async () => {
+      mockLlmSequence(
+        { message: 'Fetching stats.', toolCall: { name: 'get_platform_stats', args: {} } },
+        { message: 'Here are the platform stats.', toolCall: null },
+      );
+      await service.run({ conversationId: CONVERSATION_ID, userMessage: 'platform stats', principal: ADMIN_PRINCIPAL, locale: 'en', sendEvent });
+      expect(prisma.user.count).toHaveBeenCalled();
+      expect(prisma.parentLead.count).toHaveBeenCalled();
+      expect(prisma.jobApplication.count).toHaveBeenCalled();
+    });
+
+    it('find_user queries UsersService.findAll', async () => {
+      mockLlmSequence(
+        { message: 'Searching users.', toolCall: { name: 'find_user', args: { search: 'bob' } } },
+        { message: 'Found 1 user.', toolCall: null },
+      );
+      await service.run({ conversationId: CONVERSATION_ID, userMessage: 'find user bob', principal: ADMIN_PRINCIPAL, locale: 'en', sendEvent });
+      expect(usersMock.findAll).toHaveBeenCalledWith(
+        expect.objectContaining({ search: 'bob', page: 1 }),
       );
     });
   });

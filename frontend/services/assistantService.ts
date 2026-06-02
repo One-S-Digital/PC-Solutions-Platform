@@ -24,11 +24,19 @@ export interface ModalActionEvent {
   prefill: Record<string, unknown>;
 }
 
+export interface ToolStatusEvent {
+  toolCallId: string;
+  toolName: string;
+  status: string;
+  label: string;
+}
+
 export interface StreamHandlers {
   onToken: (text: string) => void;
   onToolCall: (toolCall: ToolCallEvent) => void;
   onToolResult: (result: ToolResultEvent) => void;
   onModalAction: (action: ModalActionEvent) => void;
+  onToolStatus?: (status: ToolStatusEvent) => void;
   onDone: () => void;
   onError: (msg: string) => void;
 }
@@ -210,6 +218,9 @@ export async function streamMessage(
             break;
           case 'tool_result':
             handlers.onToolResult(parsed as unknown as ToolResultEvent);
+            break;
+          case 'tool_status':
+            handlers.onToolStatus?.(parsed as unknown as ToolStatusEvent);
             break;
           case 'modal_action':
             handlers.onModalAction(parsed as unknown as ModalActionEvent);
