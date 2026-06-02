@@ -161,7 +161,7 @@ When `total === 0`, `parsedRole` and `parsedCanton` (extracted by the parser) ar
 | Tool | Level | What it does | Backed by |
 |---|---|---|---|
 | `search_candidates` | **L1 NEW** | Direct pool search by role/canton/skills — instant, no AI parsing | `RecruitmentService.findAllCandidates()` |
-| `search_candidates_ai` | **L2 NEW** | AI-parsed request → sync match → ranked candidates with scores | `StaffingService` (parse + match + fetch) |
+| `search_candidates_ai` | **L1 NEW** | AI-parsed request → sync match → ranked candidates with scores | `StaffingService` (parse + match + fetch) |
 | `view_match_results` | **L1 NEW** | Fetch results for an existing staffing request by ID | `StaffingService.getMatches()` |
 | `explain_match` | L1 | Human-readable explanation for a specific match result | `PrismaService` |
 | `shortlist_candidate` | **L3 NEW** | Add a candidate to the foundation shortlist | `RecruitmentService.saveCandidate()` |
@@ -189,6 +189,8 @@ When `total === 0`, `parsedRole` and `parsedCanton` (extracted by the parser) ar
 | `get_my_applications` | L1 | Fetch own job applications and statuses | `PrismaService` |
 
 ### Parent
+
+> **Spelling note:** `enquiry` / `enquiries` is used throughout for parent childcare leads — matching `get_my_enquiries` in the existing `tool-registry.ts` and `orchestrator.service.ts`. `inquiry` / `inquiries` is used for the marketplace/supplier flow — matching `inquiry.service.ts` and the Prisma `@@map("inquiries")` table. Both spellings are intentional and mirror the underlying codebase conventions.
 
 | Tool | Level | What it does | Backed by |
 |---|---|---|---|
