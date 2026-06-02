@@ -1,27 +1,36 @@
 # ProCrèche AI Assistant — Master Plan
 
 **Status:** Active planning document — supersedes `AI_LAYER1_HANDOVER.md` for strategic direction
-**Last updated:** 2026-05-21
+**Last updated:** 2026-06-02
 **Owner:** AI integration workstream
+
+> ⚠️ **V2 redesign in effect.** Sections §2.2, §4, §5, and parts of §6 have been updated to reflect the v2 direction approved on 2026-06-02. The full v2 design rationale, complete tool catalog, phasing, and change log live in **`docs/AI_ASSISTANT_REDESIGN_V2.md`**. That document is the source of truth for what to build next.
 
 ---
 
 ## 0. TL;DR
 
-We are not building a chatbot. We are building the **ProCrèche Virtual Assistant** — a role-aware natural-language command layer that orchestrates every platform workflow (staffing, HR docs, parent leads, suppliers, e-learning, WhatsApp) through a single conversational surface backed by structured tool calls and pre-filled modals.
+We are not building a chatbot. We are building the **ProCrèche Virtual Assistant** — a role-aware natural-language command layer through which any user can accomplish anything they can do by hand on the platform, just by typing in the chat.
 
-**Architectural rule:** _The assistant understands and prepares. The platform validates and executes._
+**Architectural rule:** _The assistant understands and executes. Write actions require user confirmation. The platform enforces the result._
 
 ```
 Shared AI Foundation  (✅ Layer 1 — done)
         ↓
-AI Virtual Assistant / Orchestrator   ← THE NEW CORE
+AI Virtual Assistant / Orchestrator   ✅ MVP built, V2 redesign in progress
         ↓
-Connected modals + specialist modules
+Per-domain tool handler classes  ← V2 architecture
         ↓
-Staffing (Phase 1 done) · External Routing · HR Docs · Parent Leads
-Suppliers · E-learning · WhatsApp (later)
+Search · Recruitment · Staffing · Marketplace · Leads · Messaging · Support
+All 7 user roles · ~45 tools · L3 write actions with confirmation
 ```
+
+**V2 goals (see `docs/AI_ASSISTANT_REDESIGN_V2.md` for full detail):**
+- Every platform capability has a corresponding assistant tool
+- All 7 roles have access to a role-appropriate tool set (not FOUNDATION + ADMIN only)
+- Search returns real results immediately, with no-results suggestions on empty
+- Write actions execute after user confirmation (L3) — the assistant doesn't just open modals
+- `contact_admin` is always available as the final escalation path
 
 ---
 
@@ -102,13 +111,17 @@ Branch `claude/review-handover-plan-UHBvr` (this branch) — just shipped in com
 
 ### 2.2 The three action levels (safety classification)
 
+> **V2 change:** L3 now means "any write action requiring user confirmation", not "admin approval for bulk/external sends". Admin approval for bulk or external-posting actions is a separate post-MVP concern handled by a future approval-inbox feature (see P1 in §6).
+
 | Level | Description | Approval | Examples |
 |---|---|---|---|
-| **L1 — Answer** | Information only | None | "How do I upload a CV?" · "What's my staffing demand this month?" |
-| **L2 — Draft** | Prepares an action; user reviews | User confirms in modal | "Draft a job post" · "Find me candidates" · "Reply to this parent" |
-| **L3 — Execute** | Multi-party / high-impact | Admin approval logged | "Send to 40 candidates" · "Post externally to JobUp" · "Send WhatsApp blast" |
+| **L1 — Answer** | Read data, fetch info, answer questions | None — immediate | `search_candidates`, `get_my_leads`, `search_help_docs` |
+| **L2 — Draft** | Compose content for user review | User reviews preview card | `draft_job_post`, `draft_parent_reply` |
+| **L3 — Execute** | Mutate platform state | User confirms via confirmation card | `post_job`, `send_message`, `place_order`, `apply_to_job`, `contact_admin` |
 
-Every tool the assistant can call is tagged with its level. The orchestrator enforces approval flow per level.
+Tools requiring admin approval before execution (e.g. bulk sends, external posting campaigns) carry a separate `requiresAdminApproval: true` flag on the tool definition. This is distinct from the L1/L2/L3 classification and is not implemented until P1 (External Routing).
+
+Every tool the assistant can call is tagged with its level. The orchestrator enforces the approval flow per level.
 
 ### 2.3 The modal protocol (UI contract)
 
@@ -235,190 +248,157 @@ The handover claimed AI translations were added but only the **sidebar label** w
 
 ---
 
-## 4. MVP definition
+## 4. Build state and goals
 
-**Goal:** Ship the smallest end-to-end slice that proves the assistant model + delivers production value to foundations.
+> **V2 redesign replaces the original MVP milestone definition.** The MVP (M0–M2) has been shipped. V2 phases are defined in `docs/AI_ASSISTANT_REDESIGN_V2.md §9`. The summary below reflects the current state and revised goals.
 
-### 4.1 In scope for MVP
+### 4.1 What is built (MVP complete ✅)
 
-- ✅ Layer 1 (already done)
-- ✅ Staffing Phase 1 backend (already done — sync parse, hybrid matching, async explanations)
-- ❌ **Foundation UI** — staffing request box + shortlist table (no assistant yet, plain modal)
-- ❌ **AI Assistant Orchestrator v1** — single conversational entry point for FOUNDATION + ADMIN roles
-- ❌ **Tool registry v1** with these tools:
-  - `search_help_docs` (L1)
-  - `open_modal` (L1) — opens any pre-filled modal
-  - `parse_staffing_request` (L2) — wraps the existing staffing-request-parser agent
-  - `search_internal_candidates` (L2) — wraps HybridMatcher
-  - `explain_match` (L1) — wraps match-explanation
-  - `draft_job_post` (L2)
-  - `draft_parent_reply` (L2)
-- ❌ **Frontend assistant client** — chat panel + modal protocol handler + streaming responses
-- ❌ **AIConversation / AIMessage / AIToolCall** Prisma models
-- ❌ **i18n backfill** — AI Operations page + new `assistant.json` / `staffing.json` namespaces
-- ❌ **`ai_assistant_enabled` feature flag** (master toggle for the assistant)
+- ✅ Layer 1: Shared AI Foundation (`api/src/ai/`)
+- ✅ Layer 2 / Phase 1: Internal Matching backend (`api/src/staffing/`)
+- ✅ M0: Foundation staffing UI + i18n backfill
+- ✅ M1: Conversation infrastructure (`api/src/assistant/`)
+- ✅ M2: Frontend assistant panel (`admin/src/components/assistant/`)
+- ✅ Feature flags: `ai_foundation_enabled`, `ai_staffing_matching`, `ai_assistant_enabled`
 
-### 4.2 Explicitly out of scope for MVP
+See `docs/AI_MVP_HANDOVER.md` for the complete inventory and known gaps.
 
-- WhatsApp channel (Phase 5)
-- Voice input
-- L3 execute-level tools (sending to many recipients, posting externally) — drafts only
-- External routing (JobUp, Job-Room) — manual workflow continues
-- HR document RAG retrieval
-- Memory/context store (every conversation starts fresh in MVP)
-- Educator-facing or parent-facing assistant — FOUNDATION + ADMIN only in MVP
-- Reactivation campaigns
-- E-learning assignment via assistant
-- Embedding-based candidate similarity (the workers are built, but vector ranking deferred until profiles backfill embeddings)
-- Geocoding worker — Phase 2
+### 4.2 Known bugs fixed in v2
 
-### 4.3 MVP success criteria
+| Bug | Root cause | Fix |
+|---|---|---|
+| Every assistant message returns 400 error | `FREE_THEN_VALUE` model list has 5 items; OpenRouter caps `models[]` at 3 | `models.slice(0, 3)` in `openrouter.adapter.ts` — PR #659 |
+| "Candidate search tool encountered an error" response | `search_internal_candidates` calls `staffing-request-parser` (also uses 5-model list); parse fails silently; tool returns `PENDING_PARSE` with no candidates | PR #659 fixes the nested LLM call; `search_candidates_ai` (v2) returns real results synchronously |
 
-- A foundation user can type "Find me an EDE in Geneva at 60% starting next month" in the assistant panel and within 5 seconds see a shortlist of internal candidates with explanations, in their selected locale (FR/DE/EN)
-- A foundation user can type "Draft a job post for an auxiliaire" and the assistant opens the job-post modal pre-filled
-- A foundation user can type "How do I publish a job listing?" and get a useful answer with a "Take me there" button
-- An admin user can see every assistant action in `AiAuditLog` and `AIToolCall` tables with PII redacted
-- All assistant UI text passes `pnpm i18n:check` in all three locales
-- `ai_assistant_enabled` and `ai_staffing_matching` flags toggle features cleanly
+### 4.3 V2 goals (replacing original MVP success criteria)
+
+- **All roles:** Any user (FOUNDATION, EDUCATOR, PARENT, SUPPLIER, SERVICE_PROVIDER, ADMIN) can chat with the assistant and get things done
+- **Search:** "Find me an EDE in Geneva" returns a ranked list of candidates with scores within 5 seconds
+- **No results:** On empty search, the assistant presents concrete next steps — never a vague apology
+- **Write actions:** "Post a job for an auxiliaire at 80% in Vaud" → assistant drafts the posting → user confirms → job is live
+- **Escalation:** Any user can say "I need to speak to someone" → assistant files a pre-drafted support ticket on their behalf
+- **All locale support:** FR/DE/EN throughout
+- **Audit:** Every L3 action logged in `AIToolCall` table; `AiAuditLog` tracks all LLM calls
+
+### 4.4 What remains out of scope (unchanged from MVP)
+
+- WhatsApp channel — P13
+- Voice input — P15
+- External routing (JobUp, Job-Room) — P1
+- HR document RAG retrieval — P2
+- Memory / context store (conversations start fresh) — P4
+- Reactivation campaigns — P8
+- E-learning assignment via assistant — P6
+- Embedding-based vector ranking — P9
+- Geocoding worker — P10
 
 ---
 
-## 5. MVP build plan — milestones
+## 5. V2 build phases
 
-### M0 — Foundation UI for Phase 1 staffing + i18n backfill  (1 week)
+> **M0–M2 are complete.** The phases below are the v2 build plan. Full detail in `docs/AI_ASSISTANT_REDESIGN_V2.md §9`.
 
-The staffing backend exists but has no UI. Build it as a standalone foundation page first so the assistant has something to "open" later.
+### Phase 0 — Foundation refactor (prerequisite for all v2 work)
 
-**Deliverables:**
-1. `packages/translations/locales/{en,fr,de}/staffing.json` with ~50 keys
-2. `packages/translations/locales/{en,fr,de}/aiOperations.json` (~80 keys) — backfill
-3. Rewire `admin/src/pages/AiOperationsPage.tsx` to use `useTranslation(['aiOperations'])`
-4. New page `frontend/pages/foundation/StaffingRequestsPage.tsx` (route `/foundation/staffing`)
-   - Free-text textarea
-   - "Find candidates" button
-   - Calls `POST /staffing/requests`
-   - Polls / SSE for matches → shows shortlist with explanation
-   - Tab/section on `FoundationDashboardPage.tsx` linking to it
-5. Run `pnpm translate` to auto-fill FR/DE via DeepL
-6. CI green: `pnpm i18n:check`
+1. Introduce `ToolHandlerRegistry` + per-domain handler classes under `api/src/assistant/tools/handlers/`
+2. Standardise all existing tools to return `{ data, total, suggestions? }` envelope
+3. Add `contact_admin` tool → `SupportService.createTicket()`
+4. Update orchestrator prompt: no-results rule, escalation rule, remove hardcoded `search_internal_candidates` reference
+5. Raise `MAX_TOOL_STEPS` from 3 → 5
+6. Remove `search_internal_candidates` from registry (replaced in Phase 1)
 
-**Exit:** Foundation user can use staffing matching end-to-end (no assistant yet).
+**Exit:** All existing tools still work; `contact_admin` available to all users.
 
 ---
 
-### M1 — Conversation infrastructure + assistant orchestrator skeleton  (1–2 weeks)
+### Phase 1 — Search done right (highest user-facing impact)
 
-**Deliverables:**
+1. `search_candidates_ai` — sync parse + match + return ranked candidates (fixes the core broken flow)
+2. `search_candidates` — direct pool search, no AI parsing (fast path)
+3. `search_products`, `search_services` — marketplace search
+4. `search_jobs` (educator), `search_foundations` (parent)
+5. `suggestions[]` populated on `total: 0` for every search tool
+6. Open assistant to EDUCATOR and PARENT roles with restricted tool sets
+7. Frontend: `CandidateResultCard`, `JobListingCard`, `ProductCard`, `ServiceCard`, `NoResultsCard`
+8. Add `assistant.json` / `aiTools.json` keys for all new UI strings
 
-1. **Prisma additions** (one migration):
-   - `AIConversation` (id, userId, organizationId, role, channel='web', status, startedAt, endedAt)
-   - `AIMessage` (id, conversationId, sender enum {USER, ASSISTANT, SYSTEM}, content, structuredIntent JSON, createdAt)
-   - `AIToolCall` (id, conversationId, messageId, toolName, inputJson, outputJson, status, level, approvalRequired, approvedById, executedAt, errorMessage)
-   - `AIActionApproval` (id, toolCallId, status, approvedBy, approvalContext, createdAt)
-   - `AIContextMemory` (id, userId, organizationId, memoryType, key, valueJson, expiresAt) — schema only, hydration in M3
-
-2. **`api/src/assistant/` module:**
-   - `assistant.controller.ts` — `POST /assistant/messages` (SSE streaming response), `POST /assistant/conversations`, `GET /assistant/conversations/:id`
-   - `assistant.service.ts` — conversation/message persistence, orchestration entry point
-   - `orchestrator.service.ts` — calls `LlmClient.run()` with a new agent `assistant-orchestrator`, handles tool-call loop, enforces approval gates
-   - `tools/tool-registry.ts` — central registry with role filtering
-   - `tools/<tool-name>.ts` — one file per tool (see MVP scope list)
-   - `assistant.module.ts` — wires up, imports StaffingModule, AiModule
-
-3. **New agent: `assistant-orchestrator`** registered in `ai-agents.config.ts`
-   - Model chain: `anthropic/claude-sonnet-4-6` (primary), `google/gemini-2.5-pro` (fallback)
-   - Uses OpenRouter tool-calling JSON schema (multi-step)
-   - System prompt instructs: respond in user's locale, propose tools not actions, never execute without confirmation
-   - Roles: FOUNDATION, ADMIN, SUPER_ADMIN (MVP)
-
-4. **Streaming protocol:**
-   - Server-Sent Events on `POST /assistant/messages`
-   - Event types: `token` (partial text), `tool_call` (proposed tool), `tool_result` (executed), `modal_action` (open modal), `done` (final)
-   - Reuse existing SSE pattern — investigate first; if absent, add minimal helper
-
-5. **i18n namespace `assistant.json`** with chat UI strings (~60 keys)
-
-**Exit:** API works end-to-end via curl; no UI yet. `POST /assistant/messages` returns SSE stream with a tool call.
+**Exit:** "Find me an EDE in Geneva" returns real candidates or presents concrete next steps. Never a vague apology.
 
 ---
 
-### M2 — Frontend assistant client + modal protocol  (1–2 weeks)
+### Phase 2 — L3 write actions (makes assistant fully autonomous)
 
-**Deliverables:**
+1. Recruitment: `post_job`, `apply_to_job`, `shortlist_candidate`, `update_application_status`
+2. Leads: `respond_to_lead`
+3. Messaging: `send_message`
+4. Marketplace: `place_order`, `request_service`, `send_supplier_inquiry`
+5. Staffing: `create_replacement_request`
+6. Parent: `submit_enquiry`
+7. Enhanced `ToolCallCard` — rich preview per action type (see `AI_ASSISTANT_REDESIGN_V2.md §7.2`)
 
-1. **Floating assistant button** in foundation/admin layouts — bottom-right, opens slide-over panel
-2. **`AssistantPanel` component:**
-   - Chat thread (reuse messaging UI primitives)
-   - Composer with auto-focus on `/` or `Cmd+K`
-   - Streaming token rendering
-   - Tool-call cards showing what the assistant is proposing
-3. **Modal protocol handler:**
-   - Frontend interprets `modal_action` events
-   - Maps `modal: "staffing_request_modal"` to actual component
-   - Pre-fills via React Hook Form `defaultValues`
-   - On user confirm, calls the relevant backend endpoint (already exists for staffing)
-4. **Inline context buttons** — "Ask the assistant about this" buttons in:
-   - Foundation dashboard (top-right)
-   - Staffing requests page
-   - Job listings page
-5. **State management:** Use existing React Query for conversation queries + a small Zustand store (or Context) for current conversation ID + open/close state
-6. **Role gating:** Assistant button only visible if user role ∈ {FOUNDATION, ADMIN, SUPER_ADMIN} AND `ai_assistant_enabled` flag is on
-
-**Exit:** A foundation user can chat with the assistant, see it propose actions, confirm them in modals, and see results inline. End-to-end MVP demo works.
+**Exit:** A user can type "Post a job for an auxiliaire 80% in Vaud" → review the draft → confirm → job is live.
 
 ---
 
-### M3 — Hardening, observability, beta release  (1 week)
+### Phase 3 — Completeness + hardening
 
-**Deliverables:**
+1. Admin tools: `find_user`, `get_platform_stats`
+2. `view_match_results` — fetch results for a specific staffing request ID
+3. Per-role welcome suggestion chips updated
+4. Rate limiting per user (30 req/min via ThrottlerModule)
+5. Daily per-user budget cap in `BudgetService`
+6. AI Operations dashboard: new "Assistant" tab (conversation counts, top tools, latency)
+7. Eval harness: `pnpm test:ai-eval` against fixtures per agent per locale
+8. Onboarding tour for new assistant users
 
-1. **AI Operations dashboard updates:**
-   - New tab "Assistant" — shows AIConversation/AIMessage/AIToolCall counts, top tools used, average latency
-   - Conversation drill-down — admin can replay any user conversation (PII-redacted per `safety.service.ts` rules)
-2. **Approval inbox for L3 tools** (future-proofing, even if no L3 tools in MVP) — admin UI to approve/reject pending `AIActionApproval` rows
-3. **Rate limiting per user** (e.g., 30 messages/min) — reuse existing ThrottlerModule
-4. **Cost guardrails** — daily per-user budget hard cap in `BudgetService` (not just per-agent)
-5. **Eval harness:** for each agent run the `fixtures/` golden cases as a unit test (`pnpm test:ai-eval`); regression catch
-6. **Production env-var checklist update** in `docs/AI_STAFFING_MANUAL_TASKS.md` (or a new `AI_ASSISTANT_DEPLOY.md`)
-7. **Onboarding tour** — first time a foundation user opens the assistant, show 3-step intro
-8. **Beta feature flag rollout:** enable `ai_assistant_enabled` for 1 internal foundation, then 5 design partners
-
-**Exit:** Beta release to design partners. Monitoring in place. Documentation complete.
+**Exit:** Beta release to design partners with full monitoring in place.
 
 ---
 
-## 6. Post-MVP roadmap
+### Phase 4 — Reliability upgrade (native function calling)
+
+1. Replace JSON-in-prompt with OpenAI function-calling format in `OpenRouterAdapter`
+2. Tool definitions become typed schemas passed as `tools[]` parameter
+3. Streaming execution status events ("Searching candidates…", "Matching in progress…")
+4. Conversation history persisted across refreshes (sessionStorage / `AIContextMemory` hydration)
+
+**Exit:** Tool-call accuracy improved; "LLM generates malformed JSON" failure class eliminated.
+
+---
+
+## 6. Post-v2 roadmap
+
+> **V2 update:** P5 (Supplier Marketplace), P11 (Educator assistant), and P12 (Parent assistant) are **pulled into v2 Phases 1–2** and are no longer post-MVP. The items below are the remaining post-v2 backlog.
 
 Numbered roughly in priority order; each phase is independently shippable.
 
 ### P1 — Specialist module: External Routing
 - New agent `job-ad-generator` — produces multi-channel job ads (JobUp, Job-Room, LinkedIn) from a `StaffingRequest`
-- New tool `recommend_external_channels` (L2) + `create_external_routing_campaign` (L3)
+- New tools `recommend_external_channels` (L2) + `create_external_routing_campaign` (L3 + `requiresAdminApproval: true`)
 - New tables: `ExternalRoutingCampaign`, `ExternalCandidateCapture`, `ShortLinkTracker`
 - Public capture landing page at `/apply/:shortLinkCode` for external candidates
-- Admin approval workflow for L3 routing campaigns
+- Admin approval inbox UI for campaigns that need admin sign-off
 
 ### P2 — Specialist module: HR/Document Assistant (RAG)
 - Implement deferred `LlmClient.retrieve()` — pgvector cosine search on `KnowledgeDocument.embedding`
 - New agent `hr-doc-search` with `retrieval` config
-- Seed knowledge base from HR template library + canton policy crawl (the existing `CrawlerModule`)
+- Seed knowledge base from HR template library + canton policy crawl (existing `CrawlerModule`)
 - New tool `search_hr_documents` (L1) — returns summarised + linked source docs
 
-### P3 — Specialist module: Parent Lead Assistant
+### P3 — Specialist module: Parent Lead Assistant (enhanced)
 - New agent `parent-lead-classifier` (urgency, intent) + `parent-reply-drafter`
-- New tools `summarize_parent_leads` (L1), `draft_parent_reply` (L2)
+- New tools `summarize_parent_leads` (L1) — admin view of lead pipeline
 - Inline assistant integration on the existing parent leads page
 - Per-canton language detection (FR vs DE leads)
+- *Note: basic parent tools (`submit_enquiry`, `search_foundations`) are already in v2 Phase 1*
 
 ### P4 — Memory & context store
 - Hydrate `AIContextMemory` — last 10 conversations summary, user preferences (preferred match thresholds), foundation profile
 - Inject into orchestrator prompt as compressed context (token budget capped)
 - Per-user memory TTL controls in user settings UI
 
-### P5 — Specialist module: Supplier / Service Marketplace
-- New agent `supplier-quote-drafter`
-- New tools `search_suppliers` (L1), `create_supplier_request` (L2)
-- Integrate with existing `marketplace` and `service-requests` modules
+### P5 — ~~Specialist module: Supplier / Service Marketplace~~ PULLED INTO V2 PHASE 1–2
+> *`search_products`, `search_services`, `place_order`, `request_service`, `send_supplier_inquiry` are in v2 Phase 1–2. P5 slot is now available for the next priority item.*
 
 ### P6 — Specialist module: E-learning Assistant
 - New agent `training-recommender`
@@ -431,10 +411,9 @@ Numbered roughly in priority order; each phase is independently shippable.
 - Materialised views for fast aggregate queries
 
 ### P8 — Reactivation Engine
-- Per the original AI_STAFFING_INTEGRATION_PLAN Phase 3
 - New agent `reactivation-message-drafter`
 - New tables `ReactivationCampaign`, `ReactivationMessage`
-- L3 tool requires admin approval
+- L3 tool + `requiresAdminApproval: true` (bulk send to many educators requires admin sign-off)
 
 ### P9 — Profile embeddings + vector ranking
 - Backfill `EducatorEmbedding` for all approved educators (BullMQ job)
@@ -443,29 +422,25 @@ Numbered roughly in priority order; each phase is independently shippable.
 
 ### P10 — Geocoding worker
 - Implement deferred `ai.geocode` processor
-- Uses `MAPBOX_API_KEY` for forward geocoding User/Organization addresses
+- Uses Swisstopo (primary) / Mapbox (fallback) for forward geocoding User/Organization addresses
 - Backfill job for existing rows
 - Switch `HybridMatcher` distance calc from in-memory haversine to `earthdistance` SQL (perf win on large pools)
 
-### P11 — Educator-facing assistant
-- Open assistant to EDUCATOR role with a restricted tool set
-- Tools: `complete_my_profile`, `find_jobs_near_me`, `improve_my_profile`, `check_missing_documents`
-- Tighter consent + scope rules per `safety.service.ts`
+### P11 — ~~Educator-facing assistant~~ PULLED INTO V2 PHASE 1
+> *`search_jobs`, `apply_to_job`, `get_my_applications` are in v2 Phase 1–2.*
 
-### P12 — Parent-facing assistant
-- Open to PARENT role with very restricted tools
-- Tools: `find_nearby_daycares`, `check_request_status`, `update_child_details`
+### P12 — ~~Parent-facing assistant~~ PULLED INTO V2 PHASE 1
+> *`search_foundations`, `submit_enquiry`, `get_my_enquiries` are in v2 Phase 1–2.*
 
 ### P13 — WhatsApp Agent Channel
 - Meta WhatsApp Business Platform integration
 - Webhook at `POST /assistant/whatsapp/webhook`
-- New `AIConversation.channel = 'whatsapp'`
+- New `AIConversation.channel = 'WHATSAPP'`
 - Identity verification: phone number → User lookup
-- Same orchestrator, restricted tool surface (no complex modals — link back to platform with secure short-link for L2+)
+- Same orchestrator, restricted tool surface (no complex modals — link back to platform via secure short-link for L2+)
 - New tools `send_whatsapp_message` (L3), `send_secure_platform_link` (L1)
 
 ### P14 — Multi-modal: CV parsing + profile enrichment
-- Per the original AI_STAFFING_INTEGRATION_PLAN Phase 2
 - New agent `cv-parser` (PDF/DOCX → structured `CandidateExperience` + `CandidateCertification`)
 - New tool `parse_cv_upload` (L2)
 - Triggered when educator uploads CV — assistant offers to autofill profile
@@ -614,12 +589,13 @@ Note: `AIUsageLog` is **not** added — we already have `AiAuditLog` from Layer 
 4. **Translation quality of LLM output** — DeepL is reliable for UI strings but LLM output in DE may be uneven. Mitigation: explicit examples in prompt per locale, eval fixtures per locale, fallback to FR
 5. **Modal sprawl** — every new tool tempts a new modal. Mitigation: reuse existing modals; new modals only with design review
 
-### 8.2 Open questions to resolve before M1
-1. **Streaming infrastructure** — does the platform already use SSE/WebSocket? Need to find before M1 (investigate `frontend/services/api.ts` and any existing `EventSource` usage)
-2. **Auth on SSE** — Clerk JWT in EventSource headers requires custom polyfill; alternative is signed token in query param
-3. **Mobile (PWA) chat UX** — does the existing app target PWA/mobile? If yes, the floating button placement and keyboard handling need design pass
-4. **Conversation retention** — how long to keep `AIMessage` rows? GDPR consideration — propose: 90 days default, user-deletable
-5. **OPUS-4-7 vs Sonnet-4-6 for orchestrator** — Sonnet is fast and capable for tool calling; only switch to Opus if Sonnet fails evals
+### 8.2 Open questions for v2
+
+1. **Native function calling rollout** — Phase 4 switches from JSON-in-prompt to OpenAI `tools[]` parameter. This changes how `OpenRouterAdapter` works and requires updating all agent prompts. Confirm OpenRouter supports `tools[]` for all models in `FREE_THEN_VALUE` before committing to a timeline.
+2. **Conversation retention** — how long to keep `AIMessage` rows? GDPR consideration — propose: 90 days default, user-deletable via settings.
+3. **Mobile UX** — `AssistantPanel` is a fixed sidebar; on mobile screens it needs a bottom-sheet treatment. Confirm before Phase 1 ships to all roles.
+4. **Consent for read tools on educator profiles** — `search_candidates` and `search_candidates_ai` read educator data. `safety.service.ts` has `assertCandidateConsent()` — confirm this is called before any profile data is returned to the assistant.
+5. **`contact_admin` ticket routing** — does `SupportService.createTicket()` notify admins in real time? If not, foundation/educator/parent users may file tickets that sit unseen. Confirm notification flow before shipping.
 
 ### 8.3 Manual / ops tasks (not code)
 - Confirm pgvector extension live in production (`api/scripts/enable-pg-extensions.sql`)
@@ -648,18 +624,26 @@ Note: `AIUsageLog` is **not** added — we already have `AiAuditLog` from Layer 
 ## 10. Key files to read before starting any AI work
 
 ```
-docs/AI_ASSISTANT_MASTER_PLAN.md     — this file
-docs/AI_LAYER1_HANDOVER.md           — Layer 1 detail (now historical reference)
-docs/I18N_SYSTEM.md                  — translation system
+docs/AI_ASSISTANT_MASTER_PLAN.md          — this file (strategic overview)
+docs/AI_ASSISTANT_REDESIGN_V2.md          — v2 tool catalog, phasing, architecture changes
+docs/AI_MVP_HANDOVER.md                   — complete inventory of what was built in MVP
+docs/AI_LAYER1_HANDOVER.md                — Layer 1 detail (historical reference)
+docs/I18N_SYSTEM.md                       — translation system
 docs/TRANSLATION_WORKFLOW_FOR_DEVELOPERS.md
-api/src/ai/llm-client.ts             — the gateway contract
-api/src/ai/ai-agents.config.ts       — agent registry
-api/src/staffing/staffing.service.ts — Phase 1 staffing service (pattern for specialist modules)
-api/src/staffing/hybrid-matcher.service.ts — scoring logic
-api/prisma/schema.prisma             — current DB schema
-CLAUDE.md                            — project conventions
-frontend/i18n.ts                     — frontend i18n bootstrap
-packages/translations/locales/en/    — source-of-truth translation files
+api/src/ai/llm-client.ts                  — the gateway contract (do not bypass)
+api/src/ai/ai-agents.config.ts            — agent registry (add all new agents here)
+api/src/ai/providers/openrouter.adapter.ts— models.slice(0,3) fix — do not revert
+api/src/assistant/tools/tool-registry.ts  — current tool definitions
+api/src/assistant/orchestrator.service.ts — conversation orchestration
+api/src/staffing/staffing.service.ts      — pattern for specialist modules
+api/src/staffing/hybrid-matcher.service.ts— scoring logic for candidate matching
+api/src/marketplace/marketplace.service.ts— product/service search
+api/src/support/support.service.ts        — contact_admin backend
+api/src/messaging/messaging.service.ts    — send_message backend
+api/prisma/schema.prisma                  — current DB schema
+CLAUDE.md                                 — project conventions
+frontend/i18n.ts                          — frontend i18n bootstrap
+packages/translations/locales/en/         — source-of-truth translation files
 ```
 
 ---
