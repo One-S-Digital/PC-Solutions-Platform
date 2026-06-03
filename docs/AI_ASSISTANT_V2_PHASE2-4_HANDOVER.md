@@ -2,7 +2,8 @@
 
 **Branch:** `claude/jolly-maxwell-gYKT1`
 **Status:** Phases 2 + 3 complete; Phase 4 partially complete (streaming tool-status done, native
-function-calling deliberately deferred — see §5). Type-checked, tested (61 assistant tests passing), pushed.
+function-calling deliberately deferred — see §5). Type-checked, tested (64 assistant tests passing), pushed.
+Post-review fixes applied — see §8.
 **Plan of record:** `docs/AI_ASSISTANT_REDESIGN_V2.md`
 **Prior handover:** `docs/AI_ASSISTANT_V2_PHASE0-1_HANDOVER.md` (read first — defines the architecture this builds on)
 
@@ -124,15 +125,38 @@ exactly the failure class it's meant to remove. It belongs in its own PR with li
 
 ## 6. Known issues / follow-ups
 
-1. **`update_application_status` is not org-scoped in the handler** — it calls
-   `RecruitmentService.updateJobApplication(id, …)` directly. Role is re-checked on confirm, but a
-   foundation could target an application outside its own listings if the service layer doesn't enforce
-   ownership. Verify `updateJobApplication`'s authorization, or pass + check `foundationId` in the handler.
-2. **`send_message` recipient is a raw `recipientUserId`.** Non-admins can't `find_user`, so cross-role
+> A `feature-dev` code review (3 reviewers) ran against this build. Verified findings were **fixed**
+> in this branch (see §8); the items below are what remains.
+
+1. **`send_message` recipient is a raw `recipientUserId`.** Non-admins can't `find_user`, so cross-role
    messaging from educator/parent currently relies on an ID surfaced by a prior tool (e.g. a foundation
    card). A future `find_message_recipient` scoped lookup would close this.
-3. **`RESULT_CARD_TOOLS` still duplicated** backend + frontend (prior handover §6.2 — unchanged).
-4. **Native function calling** — §5.
+2. **`RESULT_CARD_TOOLS` is duplicated** backend + frontend (now also `TOOL_STATUS_LABELS`). Mitigated with
+   cross-reference "KEEP IN SYNC" comments; a shared `packages/` constant would remove the drift entirely.
+3. **Native function calling** — §5.
+
+---
+
+## 8. Post-review fixes (this branch)
+
+Applied after the `feature-dev` quality review:
+
+- **Security — `update_application_status` cross-tenant write (CRITICAL).** The handler now loads the
+  application's `jobListing.foundationId` and rejects (`ForbiddenException`) unless it matches the caller's
+  org (admins exempt). The service updates by ID with no scoping, so the guard lives in the handler.
+  Covered by two new tests (own-org succeeds, other-org rejected).
+- **Data integrity — `submit_enquiry` blank email (CRITICAL).** This path bypasses the DTO's `@IsEmail`;
+  the handler now validates the resolved `parentEmail` and rejects an invalid/blank one (new test).
+- **Robustness — enum validation.** `update_application_status` validates against `ApplicationStatus` and
+  `create_replacement_request` validates `urgency` against `UrgencyLevel`, returning a clear message
+  instead of an opaque Prisma error.
+- **DRY.** Extracted `CONTACT_ADMIN_SUGGESTION` and `resolveOnBehalfOrgId()` into `tool-handler.interface.ts`
+  (were duplicated, with inconsistent copy, across handlers).
+- **Drift guards.** Added "KEEP IN SYNC" comments tying the backend/frontend result-card lists together.
+
+A separate reviewer reported 5 "feature-flag mismatch" criticals; all were **false positives** (verified
+against `tool-registry.ts`) and the `respond_to_lead` "missing ownership check" was already enforced inside
+`LeadsService.respondToLead`. No changes made for those.
 
 ---
 
@@ -141,7 +165,7 @@ exactly the failure class it's meant to remove. It belongs in its own PR with li
 ```bash
 pnpm install
 cd api && npx tsc --noEmit -p tsconfig.json 2>&1 | grep '^src/' | grep 'error TS'   # → empty
-cd api && npx jest assistant                                                          # → 61 passing
+cd api && npx jest assistant                                                          # → 64 passing
 cd frontend && npx tsc --noEmit -p tsconfig.json 2>&1 | grep -E 'assistant|ResultCards|ActionPreview'  # → empty
 # Locale parity (en/fr/de → 96 each):
 node -e "const fs=require('fs');const k=o=>Object.entries(o).flatMap(([a,v])=>v&&typeof v=='object'?k(v).map(b=>a+'.'+b):[a]);console.log(['en','fr','de'].map(l=>k(JSON.parse(fs.readFileSync('packages/translations/locales/'+l+'/assistant.json'))).length))"

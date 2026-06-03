@@ -68,6 +68,8 @@ function mockPrisma() {
       findMany: jest.fn().mockResolvedValue([
         { id: 'app-1', status: 'PENDING', createdAt: new Date(), jobListing: { title: 'EDE 80%', location: 'Lausanne', contractType: 'CDI' } },
       ]),
+      // Default: the application belongs to the foundation principal's org (org-1).
+      findUnique: jest.fn().mockResolvedValue({ jobListing: { foundationId: 'org-1' } }),
     },
     product: {
       count: jest.fn().mockResolvedValue(5),
@@ -159,7 +161,7 @@ describe('OrchestratorService', () => {
         staffingMock as any,
       ),
       new DraftsHandler(),
-      new RecruitmentWriteHandler(recruitmentMock as any),
+      new RecruitmentWriteHandler(recruitmentMock as any, prismaImpl),
       new LeadsWriteHandler(leadsMock as any, prismaImpl),
       new MarketplaceWriteHandler(marketplaceMock as any, inquiryMock as any),
       new MessagingHandler(messagingMock as any),
@@ -455,6 +457,25 @@ describe('OrchestratorService', () => {
       );
     });
 
+    it('submit_enquiry is rejected when no valid parent email is available', async () => {
+      prisma.aIConversation = { findUnique: jest.fn().mockResolvedValue({ userId: 'user-3' }) } as any;
+      (prisma.aIToolCall as any).findUnique = jest.fn().mockResolvedValue({
+        id: 'tc-14',
+        conversationId: CONVERSATION_ID,
+        toolName: 'submit_enquiry',
+        status: 'AWAITING_APPROVAL',
+        inputJson: { childName: 'Léa', childAge: 2 },
+      });
+      // Parent profile has no email, and none supplied in args.
+      (prisma.user as any).findUnique = jest.fn().mockResolvedValue({ firstName: 'Pat', lastName: 'Doe', email: null });
+      await makeService(prisma);
+
+      const result = await service.confirmToolCall('tc-14', PARENT_PRINCIPAL, 'fr');
+
+      expect(result.error).toBeDefined();
+      expect(leadsMock.createParentLead).not.toHaveBeenCalled();
+    });
+
     it('send_message executes via MessagingService on confirm', async () => {
       prisma.aIConversation = { findUnique: jest.fn().mockResolvedValue({ userId: 'user-1' }) } as any;
       (prisma.aIToolCall as any).findUnique = jest.fn().mockResolvedValue({
@@ -469,6 +490,42 @@ describe('OrchestratorService', () => {
       await service.confirmToolCall('tc-10', FOUNDATION_PRINCIPAL, 'fr');
 
       expect(messagingMock.createDirectMessage).toHaveBeenCalledWith('user-1', 'user-77', 'Hello there');
+    });
+
+    it('update_application_status executes when the application belongs to the foundation', async () => {
+      prisma.aIConversation = { findUnique: jest.fn().mockResolvedValue({ userId: 'user-1' }) } as any;
+      (prisma.aIToolCall as any).findUnique = jest.fn().mockResolvedValue({
+        id: 'tc-12',
+        conversationId: CONVERSATION_ID,
+        toolName: 'update_application_status',
+        status: 'AWAITING_APPROVAL',
+        inputJson: { applicationId: 'app-1', status: 'shortlisted' },
+      });
+      (prisma.jobApplication as any).findUnique = jest.fn().mockResolvedValue({ jobListing: { foundationId: 'org-1' } });
+      await makeService(prisma);
+
+      const result = await service.confirmToolCall('tc-12', FOUNDATION_PRINCIPAL, 'fr');
+
+      expect(recruitmentMock.updateJobApplication).toHaveBeenCalledWith('app-1', { status: 'SHORTLISTED' });
+      expect(result.error).toBeUndefined();
+    });
+
+    it('update_application_status is rejected when the application belongs to another foundation', async () => {
+      prisma.aIConversation = { findUnique: jest.fn().mockResolvedValue({ userId: 'user-1' }) } as any;
+      (prisma.aIToolCall as any).findUnique = jest.fn().mockResolvedValue({
+        id: 'tc-13',
+        conversationId: CONVERSATION_ID,
+        toolName: 'update_application_status',
+        status: 'AWAITING_APPROVAL',
+        inputJson: { applicationId: 'app-9', status: 'HIRED' },
+      });
+      (prisma.jobApplication as any).findUnique = jest.fn().mockResolvedValue({ jobListing: { foundationId: 'org-OTHER' } });
+      await makeService(prisma);
+
+      const result = await service.confirmToolCall('tc-13', FOUNDATION_PRINCIPAL, 'fr');
+
+      expect(result.error).toBeDefined();
+      expect(recruitmentMock.updateJobApplication).not.toHaveBeenCalled();
     });
 
     it('apply_to_job uses the educator userId as candidate on confirm', async () => {

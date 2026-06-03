@@ -7,16 +7,11 @@ import { MarketplaceService } from '../../../marketplace/marketplace.service';
 import { StaffingService } from '../../../staffing/staffing.service';
 import {
   AssistantPrincipal,
+  CONTACT_ADMIN_SUGGESTION as CONTACT_ADMIN,
   isAdminRole,
   ToolHandler,
   ToolResult,
-  ToolSuggestion,
 } from '../tool-handler.interface';
-
-const CONTACT_ADMIN: ToolSuggestion = {
-  label: 'Contact the admin team for help',
-  actionType: 'contact_admin',
-};
 
 /**
  * All search / lookup tools. Every search returns the standard envelope and,

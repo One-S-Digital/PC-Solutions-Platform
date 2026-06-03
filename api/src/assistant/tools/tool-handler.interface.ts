@@ -66,3 +66,29 @@ export function resolveLimit(raw: unknown, def = 5, max = 10): number {
   if (!Number.isFinite(n) || n <= 0) return def;
   return Math.min(Math.floor(n), max);
 }
+
+/**
+ * Shared "contact the admin team" suggestion — the universal final fallback so a
+ * search never dead-ends. Imported by every search/lookup handler rather than
+ * re-declared, so the copy stays consistent.
+ */
+export const CONTACT_ADMIN_SUGGESTION: ToolSuggestion = {
+  label: 'Contact the admin team for help',
+  actionType: 'contact_admin',
+};
+
+/**
+ * Resolve the organisation a write action runs against, honouring the
+ * admin-on-behalf-of pattern: an explicit `foundationId`/`organizationId` arg
+ * wins (admins resolve it via find_foundation); otherwise a non-admin acts for
+ * their own org, and an admin without an explicit target gets `undefined` (the
+ * handler then rejects, forcing the admin to name the org).
+ */
+export function resolveOnBehalfOrgId(
+  args: Record<string, unknown>,
+  principal: AssistantPrincipal,
+): string | undefined {
+  const explicit = (args.foundationId as string) || (args.organizationId as string);
+  if (explicit) return explicit;
+  return isAdminRole(principal.role) ? undefined : principal.organizationId;
+}

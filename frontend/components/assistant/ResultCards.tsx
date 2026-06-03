@@ -186,6 +186,9 @@ const NoResultsCard: React.FC<{ message: string; suggestions?: ToolEnvelope['sug
 
 // ─── Dispatcher ──────────────────────────────────────────────────────────────
 
+// KEEP IN SYNC with RESULT_CARD_TOOLS (and TOOL_STATUS_LABELS) in
+// api/src/assistant/orchestrator.service.ts — the backend decides which tools
+// emit card events; this set decides which ones render cards.
 const RESULT_CARD_TOOLS = new Set([
   'search_candidates',
   'search_candidates_ai',

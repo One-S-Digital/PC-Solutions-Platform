@@ -4,16 +4,11 @@ import { PrismaService } from '../../../prisma/prisma.service';
 import { UsersService } from '../../../users/users.service';
 import {
   AssistantPrincipal,
+  CONTACT_ADMIN_SUGGESTION as CONTACT_ADMIN,
   resolveLimit,
   ToolHandler,
   ToolResult,
-  ToolSuggestion,
 } from '../tool-handler.interface';
-
-const CONTACT_ADMIN: ToolSuggestion = {
-  label: 'File a support ticket for manual help',
-  actionType: 'contact_admin',
-};
 
 /**
  * Admin-only read tools: user lookup and platform-wide stats. Used to answer

@@ -14,6 +14,11 @@ const RESPONSE_STATUSES: LeadResponseStatus[] = [
   'ENROLLED',
 ];
 
+/** Minimal email sanity check (the DTO's @IsEmail is bypassed on this path). */
+function isValidEmail(value: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
 /**
  * L3 lead write actions: a foundation responding to a parent lead, and a parent
  * submitting a new childcare enquiry. Both execute only after user confirmation.
@@ -79,7 +84,13 @@ export class LeadsWriteHandler implements ToolHandler {
       (args.parentName as string) ||
       `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim() ||
       'Parent';
-    const parentEmail = (args.parentEmail as string) || user?.email || '';
+    // The handler bypasses the controller's ValidationPipe (@IsEmail on the DTO),
+    // and parentEmail is a NOT-NULL column — so validate here to avoid persisting
+    // an enquiry with a blank/garbage, unreachable email.
+    const parentEmail = ((args.parentEmail as string) || user?.email || '').trim();
+    if (!isValidEmail(parentEmail)) {
+      throw new Error('A valid parent email is required to submit an enquiry.');
+    }
 
     const childAge = args.childAge != null ? Number(args.childAge) : 0;
 

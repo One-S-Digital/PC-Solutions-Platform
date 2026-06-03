@@ -1,8 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ForbiddenException } from '@nestjs/common';
+import { ApplicationStatus } from '@prisma/client';
 import { RecruitmentService } from '../../../recruitment/recruitment.service';
+import { PrismaService } from '../../../prisma/prisma.service';
 import {
   AssistantPrincipal,
   isAdminRole,
+  resolveOnBehalfOrgId,
   ToolHandler,
   ToolResult,
 } from '../tool-handler.interface';
@@ -21,7 +24,10 @@ export class RecruitmentWriteHandler implements ToolHandler {
     'update_application_status',
   ];
 
-  constructor(private readonly recruitment: RecruitmentService) {}
+  constructor(
+    private readonly recruitment: RecruitmentService,
+    private readonly prisma: PrismaService,
+  ) {}
 
   async execute(
     toolName: string,
@@ -36,7 +42,7 @@ export class RecruitmentWriteHandler implements ToolHandler {
       case 'shortlist_candidate':
         return this.shortlistCandidate(args, principal);
       case 'update_application_status':
-        return this.updateApplicationStatus(args);
+        return this.updateApplicationStatus(args, principal);
       default:
         throw new Error(`RecruitmentWriteHandler cannot handle tool "${toolName}"`);
     }
@@ -49,9 +55,7 @@ export class RecruitmentWriteHandler implements ToolHandler {
   ): Promise<ToolResult> {
     // Admins may post on behalf of a foundation (resolve the ID with
     // find_foundation first); foundations post for their own org.
-    const foundationId =
-      (args.foundationId as string) ||
-      (!isAdminRole(principal.role) ? principal.organizationId : undefined);
+    const foundationId = resolveOnBehalfOrgId(args, principal);
     if (!foundationId) {
       throw new Error('A foundationId is required to post a job. Resolve it with find_foundation first.');
     }
@@ -127,12 +131,37 @@ export class RecruitmentWriteHandler implements ToolHandler {
   }
 
   // ── update_application_status (foundation) ────────────────────────────────
-  private async updateApplicationStatus(args: Record<string, unknown>): Promise<ToolResult> {
+  private async updateApplicationStatus(
+    args: Record<string, unknown>,
+    principal: AssistantPrincipal,
+  ): Promise<ToolResult> {
     const id = (args.applicationId as string) || (args.id as string);
-    const status = (args.status as string) || undefined;
+    const rawStatus = ((args.status as string) || '').toUpperCase();
     if (!id) throw new Error('An applicationId is required.');
-    if (!status) throw new Error('A target status is required.');
-    const updated = await this.recruitment.updateJobApplication(id, { status: status as any });
+    if (!rawStatus) throw new Error('A target status is required.');
+
+    const valid = Object.values(ApplicationStatus) as string[];
+    if (!valid.includes(rawStatus)) {
+      throw new Error(`Invalid application status "${rawStatus}". Must be one of: ${valid.join(', ')}.`);
+    }
+    const status = rawStatus as ApplicationStatus;
+
+    // Authorization: the service updates by ID with no scoping, so the handler
+    // must confirm the application belongs to the caller's foundation (admins
+    // may act on any). Without this a foundation could mutate another org's
+    // applications.
+    if (!isAdminRole(principal.role)) {
+      const application = await this.prisma.jobApplication.findUnique({
+        where: { id },
+        select: { jobListing: { select: { foundationId: true } } },
+      });
+      if (!application) throw new Error('Application not found.');
+      if (application.jobListing?.foundationId !== principal.organizationId) {
+        throw new ForbiddenException('You can only update applications for your own job listings.');
+      }
+    }
+
+    const updated = await this.recruitment.updateJobApplication(id, { status });
     return { data: { id, status: updated.status }, total: 1 };
   }
 }

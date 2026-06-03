@@ -75,6 +75,7 @@ const SUGGESTIONS_BY_ROLE: Record<string, { key: string; fallback: string }[]> =
     { key: 'welcome.admin.findCandidate', fallback: 'Find candidates for a foundation' },
   ],
 };
+// SUPER_ADMIN shares the ADMIN suggestion set (same operator capabilities here).
 SUGGESTIONS_BY_ROLE[UserRole.SUPER_ADMIN] = SUGGESTIONS_BY_ROLE[UserRole.ADMIN];
 
 const DEFAULT_SUGGESTIONS = [

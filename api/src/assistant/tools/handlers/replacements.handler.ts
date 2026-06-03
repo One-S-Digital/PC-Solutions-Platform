@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { UrgencyLevel } from '@prisma/client';
 import { ReplacementsService } from '../../../replacements/replacements.service';
 import {
   AssistantPrincipal,
-  isAdminRole,
+  resolveOnBehalfOrgId,
   ToolHandler,
   ToolResult,
 } from '../tool-handler.interface';
@@ -22,9 +23,7 @@ export class ReplacementsHandler implements ToolHandler {
     args: Record<string, unknown>,
     principal: AssistantPrincipal,
   ): Promise<ToolResult> {
-    const foundationId =
-      (args.foundationId as string) ||
-      (!isAdminRole(principal.role) ? principal.organizationId : undefined);
+    const foundationId = resolveOnBehalfOrgId(args, principal);
     if (!foundationId) {
       throw new Error('A foundationId is required to create a replacement request.');
     }
@@ -33,6 +32,18 @@ export class ReplacementsHandler implements ToolHandler {
     const role = (args.role as string) || undefined;
     if (!startDate) throw new Error('A start date is required.');
     if (!role) throw new Error('A role is required.');
+
+    // Validate the optional urgency against the enum so a bad LLM value yields a
+    // clear message instead of an opaque Prisma error.
+    let urgency: UrgencyLevel | undefined;
+    if (args.urgency != null && String(args.urgency).trim() !== '') {
+      const raw = String(args.urgency).toUpperCase();
+      const valid = Object.values(UrgencyLevel) as string[];
+      if (!valid.includes(raw)) {
+        throw new Error(`Invalid urgency "${raw}". Must be one of: ${valid.join(', ')}.`);
+      }
+      urgency = raw as UrgencyLevel;
+    }
 
     const request = await this.replacements.createRequest(
       {
@@ -43,7 +54,7 @@ export class ReplacementsHandler implements ToolHandler {
         shiftEnd: (args.shiftEnd as string) || undefined,
         description: (args.description as string) || undefined,
         location: (args.location as string) || undefined,
-        urgency: (args.urgency as any) || undefined,
+        urgency,
       },
       foundationId,
       principal.userId,

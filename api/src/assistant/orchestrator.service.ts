@@ -27,6 +27,8 @@ const MAX_TOOL_STEPS = 5;
 // Tools whose structured results the frontend renders as rich cards. For these
 // we emit tool_call + tool_result SSE events (in addition to feeding the result
 // back to the LLM so it can narrate a summary).
+// KEEP IN SYNC with RESULT_CARD_TOOLS in frontend/components/assistant/ResultCards.tsx
+// (which decides rendering) and TOOL_STATUS_LABELS below (running-status copy).
 const RESULT_CARD_TOOLS = new Set<string>([
   'search_candidates',
   'search_candidates_ai',
