@@ -177,8 +177,10 @@ against `tool-registry.ts`).
   `view_match_results` test (the handler calls `getMatches`, not `getRequest` — CodeRabbit's "assert
   getRequest too" was a false positive); fixed handover section numbering and doc-path consistency.
 
-> **Open (asked, not yet decided):** whether `update_application_status` and `apply_to_job` should be gated
-> behind `v2_staffing_ia` like the adjacent staffing tools. They are currently ungated by design.
+> **Decided (PR #663):** `update_application_status` and `apply_to_job` stay **ungated**. `apply_to_job` is
+> core educator recruitment that predates v2, and `update_application_status` also drives the legacy statuses
+> (`REJECTED`/`REVIEWED`/`ACCEPTED`) which must keep working when `v2_staffing_ia` is off. CodeRabbit's
+> "gate these too" suggestion was reviewed and intentionally not applied.
 
 ---
 
