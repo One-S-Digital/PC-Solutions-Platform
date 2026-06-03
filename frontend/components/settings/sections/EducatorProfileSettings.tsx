@@ -323,10 +323,13 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
       const response = await upload('/upload/file', croppedFile, { assetKind: 'AVATAR' });
       
       if (response.success && response.asset) {
-        // Only save the avatarAssetId, not the URL
-        // The URL will be computed from the asset relation on the backend
         if (response.asset.id) {
           handleFieldChange('avatarAssetId', response.asset.id);
+          // Also update avatarUrl so the preview updates immediately without waiting for save+reload
+          const uploadedUrl = response.asset.publicUrl || response.asset.url;
+          if (uploadedUrl) {
+            onChange('avatarUrl', uploadedUrl);
+          }
         }
       } else {
         throw new Error(response.message || 'Upload failed');
