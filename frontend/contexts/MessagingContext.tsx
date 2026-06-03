@@ -235,8 +235,15 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
   
   const getUnreadCountForConversation = (conversationId: string): number => {
     if (!currentUser) return 0;
-    const convMessages = messagesByConversation[conversationId] || [];
-    return convMessages.filter(msg => msg.senderId !== currentUser.id && !msg.isRead).length;
+    const convMessages = messagesByConversation[conversationId];
+    // When messages have been loaded for this conversation derive the count from them
+    // (reflects any mark-as-read calls made during this session).
+    if (convMessages !== undefined) {
+      return convMessages.filter(msg => msg.senderId !== currentUser.id && !msg.isRead).length;
+    }
+    // Conversations not yet opened: use the count the API computed at load time.
+    const conv = conversations.find(c => c.id === conversationId);
+    return conv?.unreadCount ?? 0;
   };
 
   const markConversationAsRead = async (conversationId: string) => {
@@ -249,13 +256,17 @@ export const MessagingProvider: React.FC<{ children: ReactNode }> = ({ children 
         return;
       }
       await messagingService.markConversationAsRead(conversationId, token);
-      // Update state for UI
+      // Mark all messages as read in memory
       setMessagesByConversation(prev => ({
         ...prev,
-        [conversationId]: (prev[conversationId] || []).map(msg => 
+        [conversationId]: (prev[conversationId] || []).map(msg =>
           msg.senderId !== currentUser.id ? { ...msg, isRead: true } : msg
         )
       }));
+      // Reset the backend-supplied count so the badge clears immediately
+      setConversations(prev =>
+        prev.map(c => c.id === conversationId ? { ...c, unreadCount: 0 } : c)
+      );
     } catch (error) {
       console.error('Failed to mark conversation as read');
     }

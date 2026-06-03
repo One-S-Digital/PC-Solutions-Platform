@@ -805,6 +805,7 @@ export interface Conversation {
     lastMessageSnippet?: string;
     lastMessageTimestamp?: string;
     lastMessageSenderId?: string;
+    unreadCount?: number;
 }
 
 export interface Message {

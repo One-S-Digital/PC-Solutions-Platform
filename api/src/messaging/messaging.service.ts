@@ -664,9 +664,27 @@ export class MessagingService {
         conversationCount: conversations.length,
       });
 
+      // Compute unread counts per conversation in a single query
+      const conversationIds = conversations.map(c => c.id);
+      const unreadGroups = conversationIds.length
+        ? await this.prisma.message.groupBy({
+            by: ['conversationId'],
+            where: {
+              conversationId: { in: conversationIds },
+              senderId: { not: finalUserId },
+              isRead: false,
+            },
+            _count: { id: true },
+          })
+        : [];
+      const unreadByConversation = new Map(
+        unreadGroups.map(g => [g.conversationId, g._count.id]),
+      );
+
       // Transform messages in conversations to use secure download URLs
       return conversations.map(conv => ({
         ...conv,
+        unreadCount: unreadByConversation.get(conv.id) ?? 0,
         messages: this.transformMessagesForResponse(conv.messages || []),
       }));
     } catch (error: unknown) {

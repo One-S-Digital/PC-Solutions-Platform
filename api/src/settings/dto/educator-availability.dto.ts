@@ -119,18 +119,21 @@ export class EducatorAvailabilitySettingsDto {
   @IsEnum(['FULL_TIME', 'PART_TIME', 'CUSTOM_SCHEDULE'], { each: true })
   employmentTypes?: EmploymentType[];
 
+  @IsOptional()
   @IsObject()
   @ValidateNested()
   @Type(() => WeeklyScheduleDto)
-  weeklySchedule: WeeklyScheduleDto;
+  weeklySchedule?: WeeklyScheduleDto;
 
+  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => DateOverrideDto)
-  dateOverrides: DateOverrideDto[];
+  dateOverrides?: DateOverrideDto[];
 
+  @IsOptional()
   @IsString()
-  timezone: string;
+  timezone?: string;
 
   @IsOptional()
   @IsString()

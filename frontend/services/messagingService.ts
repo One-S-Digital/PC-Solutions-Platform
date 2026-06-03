@@ -339,6 +339,7 @@ class MessagingService {
       lastMessageSnippet: conv.lastMessage?.content,
       lastMessageTimestamp: conv.lastMessageAt,
       lastMessageSenderId: conv.lastMessage?.senderId,
+      unreadCount: conv.unreadCount ?? 0,
     };
   }
 
