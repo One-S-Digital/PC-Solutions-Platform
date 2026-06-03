@@ -137,7 +137,7 @@ exactly the failure class it's meant to remove. It belongs in its own PR with li
 
 ---
 
-## 8. Post-review fixes (this branch)
+## 7. Post-review fixes (this branch)
 
 Applied after the `feature-dev` quality review:
 
@@ -155,12 +155,34 @@ Applied after the `feature-dev` quality review:
 - **Drift guards.** Added "KEEP IN SYNC" comments tying the backend/frontend result-card lists together.
 
 A separate reviewer reported 5 "feature-flag mismatch" criticals; all were **false positives** (verified
-against `tool-registry.ts`) and the `respond_to_lead` "missing ownership check" was already enforced inside
-`LeadsService.respondToLead`. No changes made for those.
+against `tool-registry.ts`).
+
+### 7.1 CodeRabbit round (PR #663)
+
+- **Security — cross-tenant writes via `args.foundationId` (CRITICAL).** `resolveOnBehalfOrgId()` now
+  honours an explicit `foundationId`/`organizationId` override **only for admins**; a non-admin is pinned to
+  `principal.organizationId` and a mismatching override throws `ForbiddenException`. Routed the two handlers
+  that still inlined the unsafe `(args.foundationId) || principal.organizationId` pattern
+  (`shortlist_candidate`, `respond_to_lead`) and the three marketplace writes (`place_order`,
+  `request_service`, `send_supplier_inquiry`) through the hardened helper. (The earlier note claiming
+  `respond_to_lead` was "already safe inside `LeadsService`" was wrong — the service trusts its `foundationId`
+  argument, so the guard had to move up to the handler.) Covered by new cross-tenant rejection tests.
+- **Security — admin handler defense in depth.** `AdminHandler.execute()` now rejects non-admin principals
+  even though `find_user`/`get_platform_stats` are already gated to `ADMIN_ONLY` in the registry, so a future
+  gating regression can't become a backend privilege escalation. New tests.
+- **Localization — `tool_status` labels.** The progress labels were emitted in English and rendered verbatim,
+  so FR/DE users saw English. The frontend now translates by tool name via `toolStatus.<tool>` keys
+  (added to en/fr/de, 8 each; server label is the fallback).
+- **Tests/docs.** Tightened the welcome-suggestions check to the `SUGGESTIONS_BY_ROLE` literal; corrected the
+  `view_match_results` test (the handler calls `getMatches`, not `getRequest` — CodeRabbit's "assert
+  getRequest too" was a false positive); fixed handover section numbering and doc-path consistency.
+
+> **Open (asked, not yet decided):** whether `update_application_status` and `apply_to_job` should be gated
+> behind `v2_staffing_ia` like the adjacent staffing tools. They are currently ungated by design.
 
 ---
 
-## 7. How to verify
+## 8. How to verify
 
 ```bash
 pnpm install

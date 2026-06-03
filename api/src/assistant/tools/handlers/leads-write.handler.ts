@@ -3,6 +3,7 @@ import { LeadsService, LeadResponseStatus } from '../../../leads/leads.service';
 import { PrismaService } from '../../../prisma/prisma.service';
 import {
   AssistantPrincipal,
+  resolveOnBehalfOrgId,
   ToolHandler,
   ToolResult,
 } from '../tool-handler.interface';
@@ -48,7 +49,10 @@ export class LeadsWriteHandler implements ToolHandler {
     args: Record<string, unknown>,
     principal: AssistantPrincipal,
   ): Promise<ToolResult> {
-    const foundationId = (args.foundationId as string) || principal.organizationId;
+    // Pin to the caller's own org (admins may target another via find_foundation).
+    // The service authorises the lead against this foundationId, so it must not
+    // be spoofable from another tenant.
+    const foundationId = resolveOnBehalfOrgId(args, principal);
     if (!foundationId) {
       throw new Error('A foundationId is required to respond to a lead.');
     }

@@ -7,8 +7,8 @@ three planning documents against the code on this branch.
 **Reference documents:**
 - **Original plan** — `docs/AI_ASSISTANT_MASTER_PLAN.md` (strategic, layers, phases, post-v2 roadmap P1–P15)
 - **V2 plan** — `docs/AI_ASSISTANT_REDESIGN_V2.md` (tool catalog, no-results, L3 writes, phasing §9)
-- **Build handovers** — `AI_LAYER1_HANDOVER.md`, `AI_MVP_HANDOVER.md`,
-  `AI_ASSISTANT_V2_PHASE0-1_HANDOVER.md`, `AI_ASSISTANT_V2_PHASE2-4_HANDOVER.md`
+- **Build handovers** — `docs/AI_LAYER1_HANDOVER.md`, `docs/AI_MVP_HANDOVER.md`,
+  `docs/AI_ASSISTANT_V2_PHASE0-1_HANDOVER.md`, `docs/AI_ASSISTANT_V2_PHASE2-4_HANDOVER.md`
 
 **Legend:** ✅ built & tested · 🟡 partial / built-but-unhardened · ❌ not built
 

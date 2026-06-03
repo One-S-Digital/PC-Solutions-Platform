@@ -1,3 +1,4 @@
+import { ForbiddenException } from '@nestjs/common';
 import { UserRole } from '@prisma/client';
 
 /**
@@ -79,16 +80,28 @@ export const CONTACT_ADMIN_SUGGESTION: ToolSuggestion = {
 
 /**
  * Resolve the organisation a write action runs against, honouring the
- * admin-on-behalf-of pattern: an explicit `foundationId`/`organizationId` arg
- * wins (admins resolve it via find_foundation); otherwise a non-admin acts for
- * their own org, and an admin without an explicit target gets `undefined` (the
- * handler then rejects, forcing the admin to name the org).
+ * admin-on-behalf-of pattern — but ONLY admins may target another org.
+ *
+ * - **Admins:** an explicit `foundationId`/`organizationId` arg wins (resolved
+ *   via find_foundation); without one they get `undefined`, so the handler
+ *   rejects and forces the admin to name the org.
+ * - **Non-admins:** always pinned to their own `principal.organizationId`. An
+ *   explicit override is allowed only if it matches their own org; a mismatch is
+ *   a cross-tenant attempt and is rejected. This closes the hole where a
+ *   foundation user could pass another foundation's ID to act on its behalf.
  */
 export function resolveOnBehalfOrgId(
   args: Record<string, unknown>,
   principal: AssistantPrincipal,
 ): string | undefined {
   const explicit = (args.foundationId as string) || (args.organizationId as string);
-  if (explicit) return explicit;
-  return isAdminRole(principal.role) ? undefined : principal.organizationId;
+  if (isAdminRole(principal.role)) {
+    return explicit || undefined;
+  }
+  if (explicit && explicit !== principal.organizationId) {
+    throw new ForbiddenException(
+      'You can only perform this action for your own organization.',
+    );
+  }
+  return principal.organizationId;
 }

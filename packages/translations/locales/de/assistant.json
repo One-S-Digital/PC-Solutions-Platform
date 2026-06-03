@@ -104,6 +104,16 @@
     "draftJobPost": "Stellenanzeige wird erstellt…",
     "draftParentReply": "Antwort wird verfasst…"
   },
+  "toolStatus": {
+    "search_candidates": "Kandidaten werden gesucht…",
+    "search_candidates_ai": "Kandidaten werden abgeglichen…",
+    "search_products": "Produkte werden gesucht…",
+    "search_services": "Dienstleistungen werden gesucht…",
+    "search_jobs": "Stellenangebote werden gesucht…",
+    "search_foundations": "Stiftungen werden gesucht…",
+    "find_foundation": "Stiftung wird gesucht…",
+    "view_match_results": "Übereinstimmungen werden geladen…"
+  },
   "toolCard": {
     "confirm": "Bestätigen",
     "cancel": "Abbrechen",

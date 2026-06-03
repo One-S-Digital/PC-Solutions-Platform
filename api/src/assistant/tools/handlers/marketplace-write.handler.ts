@@ -3,6 +3,7 @@ import { MarketplaceService } from '../../../marketplace/marketplace.service';
 import { InquiryService } from '../../../marketplace/inquiry.service';
 import {
   AssistantPrincipal,
+  resolveOnBehalfOrgId,
   ToolHandler,
   ToolResult,
 } from '../tool-handler.interface';
@@ -42,7 +43,7 @@ export class MarketplaceWriteHandler implements ToolHandler {
     args: Record<string, unknown>,
     principal: AssistantPrincipal,
   ): Promise<ToolResult> {
-    const organizationId = (args.organizationId as string) || principal.organizationId;
+    const organizationId = resolveOnBehalfOrgId(args, principal);
     if (!organizationId) {
       throw new Error('An organization is required to place an order.');
     }
@@ -77,7 +78,7 @@ export class MarketplaceWriteHandler implements ToolHandler {
     args: Record<string, unknown>,
     principal: AssistantPrincipal,
   ): Promise<ToolResult> {
-    const organizationId = (args.organizationId as string) || principal.organizationId;
+    const organizationId = resolveOnBehalfOrgId(args, principal);
     if (!organizationId) {
       throw new Error('An organization is required to request a service.');
     }
@@ -99,7 +100,7 @@ export class MarketplaceWriteHandler implements ToolHandler {
     args: Record<string, unknown>,
     principal: AssistantPrincipal,
   ): Promise<ToolResult> {
-    const buyerOrgId = (args.organizationId as string) || principal.organizationId;
+    const buyerOrgId = resolveOnBehalfOrgId(args, principal);
     if (!buyerOrgId) {
       throw new Error('An organization is required to send a supplier inquiry.');
     }

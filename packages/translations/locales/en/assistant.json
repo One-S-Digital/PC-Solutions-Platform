@@ -104,6 +104,16 @@
     "draftJobPost": "Drafting job post…",
     "draftParentReply": "Drafting reply…"
   },
+  "toolStatus": {
+    "search_candidates": "Searching candidates…",
+    "search_candidates_ai": "Matching candidates…",
+    "search_products": "Searching products…",
+    "search_services": "Searching services…",
+    "search_jobs": "Searching jobs…",
+    "search_foundations": "Searching foundations…",
+    "find_foundation": "Looking up the foundation…",
+    "view_match_results": "Fetching match results…"
+  },
   "toolCard": {
     "confirm": "Confirm",
     "cancel": "Cancel",

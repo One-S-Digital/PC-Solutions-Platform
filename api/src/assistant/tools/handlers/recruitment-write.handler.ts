@@ -9,6 +9,8 @@ import {
   ToolHandler,
   ToolResult,
 } from '../tool-handler.interface';
+// resolveOnBehalfOrgId pins non-admins to their own org and rejects cross-org
+// overrides, so foundationId can never be spoofed from another tenant.
 
 /**
  * L3 recruitment write actions: posting jobs, applying, shortlisting, and moving
@@ -118,7 +120,7 @@ export class RecruitmentWriteHandler implements ToolHandler {
     args: Record<string, unknown>,
     principal: AssistantPrincipal,
   ): Promise<ToolResult> {
-    const foundationId = (args.foundationId as string) || principal.organizationId;
+    const foundationId = resolveOnBehalfOrgId(args, principal);
     if (!foundationId) {
       throw new Error('A foundationId is required to shortlist a candidate.');
     }

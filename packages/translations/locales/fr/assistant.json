@@ -104,6 +104,16 @@
     "draftJobPost": "Rédaction de l'offre…",
     "draftParentReply": "Rédaction de la réponse…"
   },
+  "toolStatus": {
+    "search_candidates": "Recherche de candidats…",
+    "search_candidates_ai": "Mise en correspondance des candidats…",
+    "search_products": "Recherche de produits…",
+    "search_services": "Recherche de services…",
+    "search_jobs": "Recherche d’offres d’emploi…",
+    "search_foundations": "Recherche de fondations…",
+    "find_foundation": "Recherche de la fondation…",
+    "view_match_results": "Récupération des correspondances…"
+  },
   "toolCard": {
     "confirm": "Confirmer",
     "cancel": "Annuler",

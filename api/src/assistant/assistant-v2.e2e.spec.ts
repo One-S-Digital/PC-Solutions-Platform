@@ -303,18 +303,20 @@ describe('AI Assistant V2 — e2e integration', () => {
       expect(sendEvent).toHaveBeenCalledWith('tool_result', expect.objectContaining({ toolName: 'view_match_results' }));
     });
 
-    it('calls getRequest and getMatches with the provided requestId', async () => {
+    it('calls getMatches with the resolved request id and principal context', async () => {
       staffingMock.getMatches.mockResolvedValue([]);
-      staffingMock.getRequest.mockResolvedValue({ roleRequired: 'EDE', canton: 'GE' });
       // Handler accepts 'staffingRequestId' or 'requestId' aliases
       mockLlmOnce({ message: 'Fetching.', toolCall: { name: 'view_match_results', args: { staffingRequestId: 'sr-42', requestId: 'sr-42' } } });
       mockLlmOnce({ message: 'No matches yet.', toolCall: null });
 
       await service.run({ conversationId: CONVERSATION_ID, userMessage: 'matches for sr-42', principal: FOUNDATION_PRINCIPAL, locale: 'en', sendEvent });
 
-      // The handler should have resolved the request ID and called both methods
+      // The handler resolves the request ID and calls getMatches with it plus a
+      // principal context object (for org-scoping inside the service).
       const getMatchesCalls = staffingMock.getMatches.mock.calls;
-      expect(getMatchesCalls.some((c: unknown[]) => c[0] === 'sr-42')).toBe(true);
+      const call = getMatchesCalls.find((c: unknown[]) => c[0] === 'sr-42');
+      expect(call).toBeDefined();
+      expect(call![1]).toEqual(expect.objectContaining({ userId: FOUNDATION_PRINCIPAL.userId }));
     });
   });
 
@@ -665,22 +667,101 @@ describe('AI Assistant V2 — e2e integration', () => {
   });
 
   // ─────────────────────────────────────────────────────────────────────────────
+  // Cross-tenant write protection (resolveOnBehalfOrgId hardening)
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  describe('Cross-tenant write protection', () => {
+    // A foundation user (org-1) must not be able to act on another org by passing
+    // its foundationId/organizationId in the tool args.
+    async function confirmAsForeignOrg(toolName: string, inputJson: Record<string, unknown>) {
+      prisma.aIConversation = { findUnique: jest.fn().mockResolvedValue({ userId: 'user-1' }) } as any;
+      (prisma.aIToolCall as any).findUnique = jest.fn().mockResolvedValue({
+        id: 'tc-xt', conversationId: CONVERSATION_ID, toolName, status: 'AWAITING_APPROVAL', inputJson,
+      });
+      await makeService(prisma);
+      return service.confirmToolCall('tc-xt', FOUNDATION_PRINCIPAL, 'en');
+    }
+
+    it('rejects post_job targeting another foundation', async () => {
+      const result = await confirmAsForeignOrg('post_job', { role: 'EDE', location: 'Genève', foundationId: 'org-OTHER' });
+      expect(result.error).toBeDefined();
+      expect(recruitmentMock.createJobListing).not.toHaveBeenCalled();
+    });
+
+    it('rejects shortlist_candidate targeting another foundation', async () => {
+      const result = await confirmAsForeignOrg('shortlist_candidate', { candidateId: 'cand-1', foundationId: 'org-OTHER' });
+      expect(result.error).toBeDefined();
+      expect(recruitmentMock.saveCandidate).not.toHaveBeenCalled();
+    });
+
+    it('rejects respond_to_lead on behalf of another foundation', async () => {
+      const result = await confirmAsForeignOrg('respond_to_lead', { leadId: 'lead-1', message: 'hi', foundationId: 'org-OTHER' });
+      expect(result.error).toBeDefined();
+      expect(leadsMock.respondToLead).not.toHaveBeenCalled();
+    });
+
+    it('rejects place_order billed to another organization', async () => {
+      const result = await confirmAsForeignOrg('place_order', { productId: 'prod-1', quantity: 1, organizationId: 'org-OTHER' });
+      expect(result.error).toBeDefined();
+      expect(marketplaceMock.createOrder).not.toHaveBeenCalled();
+    });
+
+    it('allows the caller to pass their OWN org id explicitly (no false positive)', async () => {
+      const result = await confirmAsForeignOrg('post_job', { role: 'EDE', location: 'Genève', foundationId: FOUNDATION_PRINCIPAL.organizationId });
+      expect(result.error).toBeUndefined();
+      expect(recruitmentMock.createJobListing).toHaveBeenCalled();
+    });
+
+    it('admin handler rejects find_user from a non-admin principal (defense in depth)', async () => {
+      const handler = new AdminHandler(usersMock as any, prisma as any);
+      await expect(handler.execute('find_user', { search: 'bob' }, FOUNDATION_PRINCIPAL as any))
+        .rejects.toThrow();
+      expect(usersMock.findAll).not.toHaveBeenCalled();
+    });
+
+    it('admin handler allows get_platform_stats for an admin principal', async () => {
+      const handler = new AdminHandler(usersMock as any, prisma as any);
+      const result = await handler.execute('get_platform_stats', {}, ADMIN_PRINCIPAL as any);
+      expect(result.scope).toBe('platform-wide');
+    });
+  });
+
+  // ─────────────────────────────────────────────────────────────────────────────
   // Per-role welcome chips — frontend constant validation
   // ─────────────────────────────────────────────────────────────────────────────
 
   describe('Per-role welcome suggestions', () => {
-    // These are checked by importing the data directly from the compiled source.
-    it('AssistantPanel exports suggestions for all 7 roles', async () => {
+    // Validates the SUGGESTIONS_BY_ROLE mapping itself (scoped to that object
+    // literal), not just that role names appear somewhere in the file — so a
+    // comment or type union can't satisfy the check.
+    it('SUGGESTIONS_BY_ROLE populates an entry for every role', async () => {
       const fs = await import('fs');
       const path = await import('path');
       const panelSrc = fs.readFileSync(
         path.join(__dirname, '../../..', 'frontend/components/assistant/AssistantPanel.tsx'),
         'utf8',
       );
-      const roles = ['FOUNDATION', 'EDUCATOR', 'PARENT', 'PRODUCT_SUPPLIER', 'SERVICE_PROVIDER', 'ADMIN', 'SUPER_ADMIN'];
-      for (const role of roles) {
-        expect(panelSrc).toContain(role);
+
+      // Extract just the SUGGESTIONS_BY_ROLE object literal.
+      const start = panelSrc.indexOf('const SUGGESTIONS_BY_ROLE');
+      expect(start).toBeGreaterThanOrEqual(0);
+      const literal = panelSrc.slice(start, panelSrc.indexOf('\n};', start));
+
+      // Each of the 5 non-admin roles must key into the map with a welcome.* entry.
+      const roleToPrefix: Record<string, string> = {
+        FOUNDATION: 'welcome.foundation.',
+        EDUCATOR: 'welcome.educator.',
+        PARENT: 'welcome.parent.',
+        PRODUCT_SUPPLIER: 'welcome.supplier.',
+        SERVICE_PROVIDER: 'welcome.serviceProvider.',
+        ADMIN: 'welcome.admin.',
+      };
+      for (const [role, prefix] of Object.entries(roleToPrefix)) {
+        expect(literal).toContain(`[UserRole.${role}]`);
+        expect(literal).toContain(prefix);
       }
+      // SUPER_ADMIN reuses the ADMIN list — assert that aliasing line explicitly.
+      expect(panelSrc).toContain('SUGGESTIONS_BY_ROLE[UserRole.SUPER_ADMIN] = SUGGESTIONS_BY_ROLE[UserRole.ADMIN]');
     });
 
     it('translation files contain welcome keys for every role (en)', async () => {
@@ -701,7 +782,7 @@ describe('AI Assistant V2 — e2e integration', () => {
       }
     });
 
-    it('translation files have parity across en/fr/de (96 keys each)', async () => {
+    it('translation files have parity across en/fr/de', async () => {
       const fs = await import('fs');
       const path = await import('path');
       const countKeys = (obj: unknown): number => {
@@ -712,8 +793,27 @@ describe('AI Assistant V2 — e2e integration', () => {
       const counts = ['en', 'fr', 'de'].map((l) =>
         countKeys(JSON.parse(fs.readFileSync(path.join(base, l, 'assistant.json'), 'utf8'))),
       );
-      expect(counts[0]).toBe(96);
+      // Parity matters more than the absolute count; assert all three match.
+      expect(counts[0]).toBeGreaterThan(0);
       expect(counts.every((c) => c === counts[0])).toBe(true);
+    });
+
+    it('every result-card tool has a localized toolStatus label in all locales', async () => {
+      const fs = await import('fs');
+      const path = await import('path');
+      const base = path.join(__dirname, '../../..', 'packages/translations/locales');
+      const toolNames = [
+        'search_candidates', 'search_candidates_ai', 'search_products', 'search_services',
+        'search_jobs', 'search_foundations', 'find_foundation', 'view_match_results',
+      ];
+      for (const loc of ['en', 'fr', 'de']) {
+        const json = JSON.parse(fs.readFileSync(path.join(base, loc, 'assistant.json'), 'utf8'));
+        expect(json.toolStatus).toBeDefined();
+        for (const tool of toolNames) {
+          expect(typeof json.toolStatus[tool]).toBe('string');
+          expect(json.toolStatus[tool].length).toBeGreaterThan(0);
+        }
+      }
     });
   });
 

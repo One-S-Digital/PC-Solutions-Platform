@@ -299,9 +299,12 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
           );
         },
         onToolStatus: (status) => {
+          // The backend label is English; translate by tool name into the user's
+          // locale, falling back to the server label if a key is missing.
+          const label = t(`toolStatus.${status.toolName}`, status.label);
           setMessages((prev) =>
             prev.map((m) =>
-              m.id === status.toolCallId ? { ...m, toolStatus: status.label } : m
+              m.id === status.toolCallId ? { ...m, toolStatus: label } : m
             )
           );
         },

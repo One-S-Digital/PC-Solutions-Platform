@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { UserRole } from '@prisma/client';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { UsersService } from '../../../users/users.service';
 import {
   AssistantPrincipal,
   CONTACT_ADMIN_SUGGESTION as CONTACT_ADMIN,
+  isAdminRole,
   resolveLimit,
   ToolHandler,
   ToolResult,
@@ -26,8 +27,14 @@ export class AdminHandler implements ToolHandler {
   async execute(
     toolName: string,
     args: Record<string, unknown>,
-    _principal: AssistantPrincipal,
+    principal: AssistantPrincipal,
   ): Promise<ToolResult> {
+    // Defense in depth: these tools are gated to ADMIN_ONLY in the tool registry,
+    // but enforce it here too so a future gating regression can't turn into a
+    // backend privilege escalation (platform-wide user search / stats).
+    if (!isAdminRole(principal.role)) {
+      throw new ForbiddenException('This action is restricted to administrators.');
+    }
     if (toolName === 'find_user') {
       return this.findUser(args);
     }
