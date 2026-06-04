@@ -43,22 +43,31 @@ function genId(): string {
 }
 
 /**
- * Returns a contextual label shown in the thinking bubble while the backend
- * processes a request. Inferred from keywords in the user's message so the
- * spinner feels more responsive even before the first token arrives.
+ * Returns a translation key + English fallback for the contextual thinking
+ * label inferred from the user's message. The caller is responsible for
+ * calling t(key, fallback) so the label is always rendered in the user's locale.
  */
-function getThinkingLabel(userMessage: string): string {
+function getThinkingLabelKey(userMessage: string): { key: string; fallback: string } {
   const m = userMessage.toLowerCase();
-  if (/find|search|look.*(for|up)|candidate|staff|educator|ede/.test(m)) return 'Searching available staff…';
-  if (/post.*job|create.*job|publish.*job|job.*post|new.*position/.test(m)) return 'Preparing job posting…';
-  if (/replace|replacement|cover/.test(m)) return 'Checking replacement options…';
-  if (/apply|application|my.*applic/.test(m)) return 'Reviewing applications…';
-  if (/product|food|supply|supplier|order/.test(m)) return 'Searching marketplace…';
-  if (/service|provider/.test(m)) return 'Searching services…';
-  if (/message|send.*to|write.*to/.test(m)) return 'Composing message…';
-  if (/admin|support|ticket|report/.test(m)) return 'Preparing your request…';
-  if (/foundation|crèche|creche|childcare/.test(m)) return 'Searching foundations…';
-  return 'Processing your request…';
+  if (/find|search|look.*(for|up)|candidate|staff|educator|ede/.test(m))
+    return { key: 'thinking.searchStaff', fallback: 'Searching available staff…' };
+  if (/post.*job|create.*job|publish.*job|job.*post|new.*position/.test(m))
+    return { key: 'thinking.prepareJob', fallback: 'Preparing job posting…' };
+  if (/replace|replacement|cover/.test(m))
+    return { key: 'thinking.replacement', fallback: 'Checking replacement options…' };
+  if (/apply|application|my.*applic/.test(m))
+    return { key: 'thinking.applications', fallback: 'Reviewing applications…' };
+  if (/product|food|supply|supplier|order/.test(m))
+    return { key: 'thinking.marketplace', fallback: 'Searching marketplace…' };
+  if (/service|provider/.test(m))
+    return { key: 'thinking.services', fallback: 'Searching services…' };
+  if (/message|send.*to|write.*to/.test(m))
+    return { key: 'thinking.message', fallback: 'Composing message…' };
+  if (/admin|support|ticket|report/.test(m))
+    return { key: 'thinking.admin', fallback: 'Preparing your request…' };
+  if (/foundation|crèche|creche|childcare/.test(m))
+    return { key: 'thinking.foundations', fallback: 'Searching foundations…' };
+  return { key: 'thinking.default', fallback: 'Processing your request…' };
 }
 
 // Per-role welcome suggestion chips.
@@ -285,7 +294,7 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
   const [inputText, setInputText] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
   const [pendingAssistantText, setPendingAssistantText] = useState('');
-  const [thinkingLabel, setThinkingLabel] = useState('Thinking…');
+  const [thinkingLabel, setThinkingLabel] = useState(() => t('panel.thinking', 'Thinking…'));
   const [initError, setInitError] = useState<string | null>(null);
   const [pendingModal, setPendingModal] = useState<{ modal: string; prefill: Record<string, unknown> } | null>(null);
 
@@ -354,7 +363,8 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
       setMessages((prev) => [...prev, { id: genId(), sender: 'user', text: msg }]);
       setIsStreaming(true);
       setPendingAssistantText('');
-      setThinkingLabel(getThinkingLabel(msg));
+      const labelKey = getThinkingLabelKey(msg);
+      setThinkingLabel(t(labelKey.key, labelKey.fallback));
 
       await streamMessage(getToken, conversationId, msg, {
         onToken: (chunk) => {
@@ -382,7 +392,7 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
           );
         },
         onNextSteps: (event) => {
-          pendingNextStepsRef.current = event.nextSteps;
+          pendingNextStepsRef.current = [...pendingNextStepsRef.current, ...event.nextSteps];
         },
         onModalAction: (action) => {
           setPendingModal(action);
