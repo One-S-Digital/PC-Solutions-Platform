@@ -203,21 +203,17 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
   const hasSubscription = currentUser && [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER].includes(currentUser.role);
 
   const renderLogo = (imageClassName: string, placeholderClassName: string) => {
-    if (sidebarLogoUrl) {
-      return (
-        <img
-          src={sidebarLogoUrl}
-          alt={settings?.siteName || t('appName')}
-          className={imageClassName}
-        />
-      );
-    }
-
-    if (loading) {
+    if (loading && !sidebarLogoUrl) {
       return <span className={placeholderClassName} aria-hidden="true" />;
     }
 
-    return <SquaresPlusIcon className={placeholderClassName} />;
+    return (
+      <img
+        src={sidebarLogoUrl || '/logo.svg'}
+        alt={settings?.siteName || t('appName')}
+        className={imageClassName}
+      />
+    );
   };
 
 
