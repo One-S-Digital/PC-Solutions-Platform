@@ -6,6 +6,7 @@ export const AssistantOrchestratorSchema = z.object({
     .object({ name: z.string(), args: z.record(z.string(), z.unknown()) })
     .nullable()
     .optional(),
+  nextSteps: z.array(z.string()).optional(),
 });
 
 export type AssistantOrchestratorOutput = z.infer<typeof AssistantOrchestratorSchema>;

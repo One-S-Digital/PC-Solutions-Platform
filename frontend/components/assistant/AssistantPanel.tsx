@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { XMarkIcon, PaperAirplaneIcon, SparklesIcon, CheckIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, PaperAirplaneIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@clerk/clerk-react';
 import ReactMarkdown from 'react-markdown';
@@ -28,6 +28,7 @@ interface Message {
   toolResult?: ToolResultEvent;
   toolStatus?: string;
   cancelled?: boolean;
+  nextSteps?: string[];
 }
 
 interface AssistantPanelProps {
@@ -35,14 +36,32 @@ interface AssistantPanelProps {
   onClose: () => void;
 }
 
-// ─── Helper ──────────────────────────────────────────────────────────────────
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function genId(): string {
   return Math.random().toString(36).slice(2, 10);
 }
 
-// Per-role welcome suggestion chips. Each entry is a translation key + fallback;
-// the set shown reflects what the assistant can actually do for that role.
+/**
+ * Returns a contextual label shown in the thinking bubble while the backend
+ * processes a request. Inferred from keywords in the user's message so the
+ * spinner feels more responsive even before the first token arrives.
+ */
+function getThinkingLabel(userMessage: string): string {
+  const m = userMessage.toLowerCase();
+  if (/find|search|look.*(for|up)|candidate|staff|educator|ede/.test(m)) return 'Searching available staff…';
+  if (/post.*job|create.*job|publish.*job|job.*post|new.*position/.test(m)) return 'Preparing job posting…';
+  if (/replace|replacement|cover/.test(m)) return 'Checking replacement options…';
+  if (/apply|application|my.*applic/.test(m)) return 'Reviewing applications…';
+  if (/product|food|supply|supplier|order/.test(m)) return 'Searching marketplace…';
+  if (/service|provider/.test(m)) return 'Searching services…';
+  if (/message|send.*to|write.*to/.test(m)) return 'Composing message…';
+  if (/admin|support|ticket|report/.test(m)) return 'Preparing your request…';
+  if (/foundation|crèche|creche|childcare/.test(m)) return 'Searching foundations…';
+  return 'Processing your request…';
+}
+
+// Per-role welcome suggestion chips.
 const SUGGESTIONS_BY_ROLE: Record<string, { key: string; fallback: string }[]> = {
   [UserRole.FOUNDATION]: [
     { key: 'welcome.foundation.findCandidate', fallback: 'Find me an EDE in Geneva at 80%' },
@@ -75,7 +94,6 @@ const SUGGESTIONS_BY_ROLE: Record<string, { key: string; fallback: string }[]> =
     { key: 'welcome.admin.findCandidate', fallback: 'Find candidates for a foundation' },
   ],
 };
-// SUPER_ADMIN shares the ADMIN suggestion set (same operator capabilities here).
 SUGGESTIONS_BY_ROLE[UserRole.SUPER_ADMIN] = SUGGESTIONS_BY_ROLE[UserRole.ADMIN];
 
 const DEFAULT_SUGGESTIONS = [
@@ -111,7 +129,6 @@ const ToolCallCard: React.FC<ToolCallCardProps> = ({ toolCall, result, cancelled
 
   return (
     <div className="my-2 max-w-xs rounded-lg border border-swiss-teal/30 bg-white p-3 text-sm shadow-sm">
-      {/* Tool name header */}
       <div className="mb-1 flex items-center gap-2">
         <SparklesIcon className="h-3.5 w-3.5 flex-shrink-0 text-swiss-teal" aria-hidden="true" />
         <span className="font-medium text-swiss-charcoal">{toolCall.toolName}</span>
@@ -120,26 +137,22 @@ const ToolCallCard: React.FC<ToolCallCardProps> = ({ toolCall, result, cancelled
         </span>
       </div>
 
-      {/* Preview: rich per-action card when available, else a compact args line */}
       {showRichPreview ? (
         <ActionPreviewCard toolName={toolCall.toolName} args={toolCall.args || {}} />
       ) : (
         argsPreview && <p className="mb-2 truncate text-xs text-gray-500">{argsPreview}</p>
       )}
 
-      {/* Result / error */}
       {hasResult && (
         <div className={`mb-2 rounded px-2 py-1 text-xs ${hasError ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-700'}`}>
           {hasError ? result!.error : t('toolCard.success', 'Done')}
         </div>
       )}
 
-      {/* Cancelled indicator */}
       {cancelled && !hasResult && (
         <p className="text-xs text-gray-400">{t('toolCard.cancelled', 'Cancelled')}</p>
       )}
 
-      {/* Approval buttons — only shown when not yet resolved or cancelled */}
       {toolCall.approvalRequired && !hasResult && !cancelled && (
         <div className="flex gap-2">
           <button
@@ -157,13 +170,33 @@ const ToolCallCard: React.FC<ToolCallCardProps> = ({ toolCall, result, cancelled
         </div>
       )}
 
-      {/* L1/auto-execute indicator */}
       {!toolCall.approvalRequired && !hasResult && !cancelled && (
         <p className="text-xs text-gray-400">{t('toolCard.autoExecuting', 'Executing…')}</p>
       )}
     </div>
   );
 };
+
+// ─── NextStepChips ────────────────────────────────────────────────────────────
+
+interface NextStepChipsProps {
+  steps: string[];
+  onSelect: (step: string) => void;
+}
+
+const NextStepChips: React.FC<NextStepChipsProps> = ({ steps, onSelect }) => (
+  <div className="mb-3 flex flex-wrap gap-2 pl-1">
+    {steps.map((step) => (
+      <button
+        key={step}
+        onClick={() => onSelect(step)}
+        className="rounded-full border border-swiss-teal/50 bg-swiss-teal/5 px-3 py-1 text-xs font-medium text-swiss-teal transition-colors hover:bg-swiss-teal/15 focus:outline-none focus:ring-2 focus:ring-swiss-teal/40"
+      >
+        {step}
+      </button>
+    ))}
+  </div>
+);
 
 // ─── WelcomeScreen ────────────────────────────────────────────────────────────
 
@@ -205,6 +238,41 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSuggestion, role }) => 
   );
 };
 
+// ─── ThinkingBubble ───────────────────────────────────────────────────────────
+
+interface ThinkingBubbleProps {
+  text: string;
+  label: string;
+}
+
+const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({ text, label }) => (
+  <div className="mb-3 flex justify-start">
+    <div className="max-w-[85%] rounded-xl bg-gray-100 px-4 py-2 text-sm leading-relaxed text-swiss-charcoal">
+      {text ? (
+        <ReactMarkdown
+          components={{
+            p: ({ children }) => <p className="mb-1 last:mb-0">{children}</p>,
+            strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+            ul: ({ children }) => <ul className="ml-4 mt-1 list-disc space-y-0.5">{children}</ul>,
+            ol: ({ children }) => <ol className="ml-4 mt-1 list-decimal space-y-0.5">{children}</ol>,
+            li: ({ children }) => <li>{children}</li>,
+            a: ({ href, children }) => (
+              <a href={href} className="underline hover:opacity-80" target="_blank" rel="noreferrer">
+                {children}
+              </a>
+            ),
+          }}
+        >
+          {text}
+        </ReactMarkdown>
+      ) : (
+        <span className="text-gray-400">{label}</span>
+      )}
+      <span className="ml-0.5 inline-block h-3.5 w-0.5 animate-pulse bg-swiss-teal align-middle" />
+    </div>
+  </div>
+);
+
 // ─── AssistantPanel ───────────────────────────────────────────────────────────
 
 export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose }) => {
@@ -217,27 +285,26 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
   const [inputText, setInputText] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
   const [pendingAssistantText, setPendingAssistantText] = useState('');
+  const [thinkingLabel, setThinkingLabel] = useState('Thinking…');
   const [initError, setInitError] = useState<string | null>(null);
   const [pendingModal, setPendingModal] = useState<{ modal: string; prefill: Record<string, unknown> } | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  // Track whether onDone has already been called for the current stream to avoid double-flush
   const doneFiredRef = useRef(false);
+  // Accumulates nextSteps from SSE until flush time
+  const pendingNextStepsRef = useRef<string[]>([]);
 
-  // Scroll to bottom whenever messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, pendingAssistantText]);
 
-  // Focus textarea when panel opens
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => textareaRef.current?.focus(), 150);
     }
   }, [isOpen]);
 
-  // Initialise conversation on first open
   useEffect(() => {
     if (!isOpen || conversationId) return;
 
@@ -254,11 +321,18 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
   // ─── Flush pending streaming text into messages ───────────────────────────
 
   const flushPending = useCallback(() => {
+    const steps = pendingNextStepsRef.current;
+    pendingNextStepsRef.current = [];
     setPendingAssistantText((prev) => {
       if (prev.trim()) {
         setMessages((msgs) => [
           ...msgs,
-          { id: genId(), sender: 'assistant', text: prev },
+          {
+            id: genId(),
+            sender: 'assistant',
+            text: prev,
+            nextSteps: steps.length > 0 ? steps : undefined,
+          },
         ]);
       }
       return '';
@@ -275,11 +349,12 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
 
       setInputText('');
       doneFiredRef.current = false;
+      pendingNextStepsRef.current = [];
 
-      // Append user message
       setMessages((prev) => [...prev, { id: genId(), sender: 'user', text: msg }]);
       setIsStreaming(true);
       setPendingAssistantText('');
+      setThinkingLabel(getThinkingLabel(msg));
 
       await streamMessage(getToken, conversationId, msg, {
         onToken: (chunk) => {
@@ -299,14 +374,15 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
           );
         },
         onToolStatus: (status) => {
-          // The backend label is English; translate by tool name into the user's
-          // locale, falling back to the server label if a key is missing.
           const label = t(`toolStatus.${status.toolName}`, status.label);
           setMessages((prev) =>
             prev.map((m) =>
               m.id === status.toolCallId ? { ...m, toolStatus: label } : m
             )
           );
+        },
+        onNextSteps: (event) => {
+          pendingNextStepsRef.current = event.nextSteps;
         },
         onModalAction: (action) => {
           setPendingModal(action);
@@ -324,10 +400,11 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
           ]);
           setIsStreaming(false);
           setPendingAssistantText('');
+          pendingNextStepsRef.current = [];
         },
       });
     },
-    [inputText, isStreaming, conversationId, getToken, flushPending]
+    [inputText, isStreaming, conversationId, getToken, flushPending, t]
   );
 
   const handleKeyDown = useCallback(
@@ -342,7 +419,6 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
 
   const handleToolConfirm = useCallback(
     async (toolCall: ToolCallEvent) => {
-      // Tools with a modal open a pre-filled form for the user to submit.
       if (toolCall.modal) {
         setPendingModal({
           modal: toolCall.modal,
@@ -350,7 +426,6 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
         });
         return;
       }
-      // Modal-less L3 tools (e.g. contact_admin) execute server-side on confirm.
       if (!conversationId) return;
       try {
         const res = await confirmToolCall(getToken, conversationId, toolCall.toolCallId);
@@ -399,20 +474,17 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
 
   return (
     <>
-      {/* Modal handler */}
       <AssistantModalHandler
         pendingModal={pendingModal}
         onHandled={() => setPendingModal(null)}
       />
 
-      {/* Backdrop (mobile) */}
       <div
         className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm md:hidden"
         onClick={onClose}
         aria-hidden="true"
       />
 
-      {/* Panel */}
       <div
         role="dialog"
         aria-modal="true"
@@ -436,24 +508,19 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
 
         {/* Body */}
         <div className="flex flex-1 flex-col overflow-hidden">
-          {/* Error banner */}
           {initError && (
             <div className="border-b border-red-100 bg-red-50 px-4 py-2 text-sm text-red-600">
               {initError}
             </div>
           )}
 
-          {/* Messages area */}
           <div className="flex flex-1 flex-col overflow-y-auto px-4 py-4">
-            {/* Welcome screen */}
             {messages.length === 0 && !isStreaming && (
               <WelcomeScreen onSuggestion={(text) => handleSend(text)} role={currentUser?.role} />
             )}
 
-            {/* Chat bubbles */}
             {messages.map((msg) => {
               if (msg.toolCall) {
-                // Search tools render rich result cards instead of the generic card.
                 if (isResultCardTool(msg.toolCall.toolName)) {
                   return (
                     <SearchResultCards
@@ -479,69 +546,48 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
               if (!msg.text) return null;
 
               return (
-                <div
-                  key={msg.id}
-                  className={`mb-3 flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-[85%] rounded-xl px-4 py-2 text-sm leading-relaxed ${
-                      msg.sender === 'user'
-                        ? 'bg-swiss-teal text-white'
-                        : 'bg-gray-100 text-swiss-charcoal'
-                    }`}
-                  >
-                    {msg.sender === 'assistant' ? (
-                      <ReactMarkdown
-                        components={{
-                          p: ({ children }) => <p className="mb-1 last:mb-0">{children}</p>,
-                          strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
-                          ul: ({ children }) => <ul className="ml-4 mt-1 list-disc space-y-0.5">{children}</ul>,
-                          ol: ({ children }) => <ol className="ml-4 mt-1 list-decimal space-y-0.5">{children}</ol>,
-                          li: ({ children }) => <li>{children}</li>,
-                          a: ({ href, children }) => (
-                            <a href={href} className="underline hover:opacity-80" target="_blank" rel="noreferrer">
-                              {children}
-                            </a>
-                          ),
-                        }}
-                      >
-                        {msg.text}
-                      </ReactMarkdown>
-                    ) : (
-                      msg.text
-                    )}
+                <React.Fragment key={msg.id}>
+                  <div className={`mb-2 flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div
+                      className={`max-w-[85%] rounded-xl px-4 py-2 text-sm leading-relaxed ${
+                        msg.sender === 'user'
+                          ? 'bg-swiss-teal text-white'
+                          : 'bg-gray-100 text-swiss-charcoal'
+                      }`}
+                    >
+                      {msg.sender === 'assistant' ? (
+                        <ReactMarkdown
+                          components={{
+                            p: ({ children }) => <p className="mb-1 last:mb-0">{children}</p>,
+                            strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+                            ul: ({ children }) => <ul className="ml-4 mt-1 list-disc space-y-0.5">{children}</ul>,
+                            ol: ({ children }) => <ol className="ml-4 mt-1 list-decimal space-y-0.5">{children}</ol>,
+                            li: ({ children }) => <li>{children}</li>,
+                            a: ({ href, children }) => (
+                              <a href={href} className="underline hover:opacity-80" target="_blank" rel="noreferrer">
+                                {children}
+                              </a>
+                            ),
+                          }}
+                        >
+                          {msg.text}
+                        </ReactMarkdown>
+                      ) : (
+                        msg.text
+                      )}
+                    </div>
                   </div>
-                </div>
+                  {/* Clickable next-step chips below the assistant message */}
+                  {msg.sender === 'assistant' && msg.nextSteps && msg.nextSteps.length > 0 && (
+                    <NextStepChips steps={msg.nextSteps} onSelect={(step) => handleSend(step)} />
+                  )}
+                </React.Fragment>
               );
             })}
 
-            {/* Streaming bubble with blinking cursor */}
+            {/* Streaming bubble with contextual thinking label */}
             {isStreaming && (
-              <div className="mb-3 flex justify-start">
-                <div className="max-w-[85%] rounded-xl bg-gray-100 px-4 py-2 text-sm leading-relaxed text-swiss-charcoal">
-                  {pendingAssistantText ? (
-                    <ReactMarkdown
-                      components={{
-                        p: ({ children }) => <p className="mb-1 last:mb-0">{children}</p>,
-                        strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
-                        ul: ({ children }) => <ul className="ml-4 mt-1 list-disc space-y-0.5">{children}</ul>,
-                        ol: ({ children }) => <ol className="ml-4 mt-1 list-decimal space-y-0.5">{children}</ol>,
-                        li: ({ children }) => <li>{children}</li>,
-                        a: ({ href, children }) => (
-                          <a href={href} className="underline hover:opacity-80" target="_blank" rel="noreferrer">
-                            {children}
-                          </a>
-                        ),
-                      }}
-                    >
-                      {pendingAssistantText}
-                    </ReactMarkdown>
-                  ) : (
-                    <span className="text-gray-400">{t('panel.thinking', 'Thinking…')}</span>
-                  )}
-                  <span className="ml-0.5 inline-block h-3.5 w-0.5 animate-pulse bg-swiss-teal align-middle" />
-                </div>
-              </div>
+              <ThinkingBubble text={pendingAssistantText} label={thinkingLabel} />
             )}
 
             <div ref={messagesEndRef} />

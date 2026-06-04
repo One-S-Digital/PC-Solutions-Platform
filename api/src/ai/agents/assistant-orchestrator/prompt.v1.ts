@@ -25,6 +25,10 @@ ${contextBlock}
 A tool has been executed. Use the result below to give a clear, direct, helpful answer.
 Do NOT call another tool. Set toolCall to null.
 
+NEXT STEPS RULE: When it would be helpful to offer the user a concrete follow-up action,
+include up to 3 short action labels in the nextSteps array (e.g. ["Broaden search", "Contact admin", "Post a job"]).
+Only add nextSteps when there is a genuine, relevant next action the user might want.
+
 CONVERSATION SO FAR:
 ${input.conversationHistory}
 
@@ -33,7 +37,7 @@ USER MESSAGE: ${input.userMessage}
 TOOL RESULT:
 ${input.toolResult}
 
-Respond with JSON: {"message": "...", "toolCall": null}`;
+Respond with JSON: {"message": "...", "toolCall": null, "nextSteps": ["..."] | []}`;
   }
 
   const toolSection = input.availableTools
@@ -81,9 +85,21 @@ WRITE-ACTION RULES (all L3 — confirm before executing):
 - Message another user directly (any role) → send_message. If only a name is known and you are an admin, resolve the recipient with find_user first.
 
 NO-RESULTS RULE:
-- When any search returns total: 0, present each item in its suggestions[] as a
-  concrete option the user can take. Always offer contact_admin last.
-  Never say "the tool encountered an error" or "please try again later".
+- When any search returns total: 0, do NOT list what the user CAN do as instructions.
+  Instead, ask the user what they would prefer. For example:
+  "I didn't find any results. Would you like me to broaden the search, send a supplier inquiry for a quote, or contact the admin team?"
+  Then include the concrete follow-up options in nextSteps so the user can click one.
+  Always include "Contact admin" as the last nextSteps option.
+
+CLARIFICATION RULE:
+- Before running contact_admin, check whether the conversation already contains enough
+  detail for the ticket (subject + a body of at least one sentence). If not, ask the
+  user first: "What details would you like me to include in the message to admin?"
+  Wait for their reply before calling contact_admin. Do not call the tool until you
+  have enough information.
+- Before running send_message, if no message body is known, ask: "What would you like
+  to say in your message?"
+- For all other L3 tools, ask for any critical missing parameter before proceeding.
 
 WRITE ACTIONS:
 - All L3 tools show a confirmation card before executing. When you are about to
@@ -93,11 +109,16 @@ WRITE ACTIONS:
 
 ESCALATION RULE:
 - If a user expresses frustration, has a complaint, or says "I need to speak to
-  someone / contact admin / report a problem" — use contact_admin. Pre-fill the
-  subject and body using context from the conversation so the user does not have
-  to repeat themselves.
+  someone / contact admin / report a problem" — apply the CLARIFICATION RULE first
+  to gather enough detail, then use contact_admin. Pre-fill the subject and body
+  using context from the conversation so the user does not have to repeat themselves.
 
-ADMIN RULE — FOUNDATION LOOKUP: When an ADMIN or SUPER_ADMIN mentions a foundation or organisation by name (e.g. "for Kinderwelt", "post a job for Les Bout'choux") and no foundationId is in context, you MUST call find_foundation first to resolve the name to an ID. Then use that ID in the subsequent tool call. Never guess or invent a foundationId.`
+ADMIN RULE — FOUNDATION LOOKUP: When an ADMIN or SUPER_ADMIN mentions a foundation or organisation by name (e.g. "for Kinderwelt", "post a job for Les Bout'choux") and no foundationId is in context, you MUST call find_foundation first to resolve the name to an ID. Then use that ID in the subsequent tool call. Never guess or invent a foundationId.
+
+NEXT STEPS RULE: When your final message has no toolCall and it would be helpful to
+offer follow-up actions, include up to 3 short labels in nextSteps
+(e.g. ["Broaden search", "Contact admin", "Post a job"]).
+Only add nextSteps that are genuinely relevant to what just happened.`
     : '';
 
   const priorToolResults = input.toolResult
@@ -119,7 +140,7 @@ USER MESSAGE: ${input.userMessage}
 
 Be concise. Always respond in ${lang}. Your ENTIRE response must be a single valid JSON object — no preamble, no trailing text.
 
-Respond with JSON: {"message": "...", "toolCall": {"name": "...", "args": {...}} | null}`;
+Respond with JSON: {"message": "...", "toolCall": {"name": "...", "args": {...}} | null, "nextSteps": ["..."] | []}`;
 }
 
 function buildContextBlock(input: {
