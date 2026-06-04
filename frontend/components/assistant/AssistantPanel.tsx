@@ -46,27 +46,31 @@ function genId(): string {
  * Returns a translation key + English fallback for the contextual thinking
  * label inferred from the user's message. The caller is responsible for
  * calling t(key, fallback) so the label is always rendered in the user's locale.
+ *
+ * More-specific patterns are checked first so that generic words like
+ * "find" / "search" / "looking for" don't shadow the actual subject.
  */
 function getThinkingLabelKey(userMessage: string): { key: string; fallback: string } {
   const m = userMessage.toLowerCase();
-  if (/find|search|look.*(for|up)|candidate|staff|educator|ede/.test(m))
-    return { key: 'thinking.searchStaff', fallback: 'Searching available staff…' };
+  // Specific subjects first — order matters
+  if (/product|supplier|supply|food|milk|toy|material|equipment|order/.test(m))
+    return { key: 'thinking.marketplace', fallback: 'Searching marketplace…' };
+  if (/service|provider|cleaning|catering|training/.test(m))
+    return { key: 'thinking.services', fallback: 'Searching services…' };
   if (/post.*job|create.*job|publish.*job|job.*post|new.*position/.test(m))
     return { key: 'thinking.prepareJob', fallback: 'Preparing job posting…' };
   if (/replace|replacement|cover/.test(m))
     return { key: 'thinking.replacement', fallback: 'Checking replacement options…' };
   if (/apply|application|my.*applic/.test(m))
     return { key: 'thinking.applications', fallback: 'Reviewing applications…' };
-  if (/product|food|supply|supplier|order/.test(m))
-    return { key: 'thinking.marketplace', fallback: 'Searching marketplace…' };
-  if (/service|provider/.test(m))
-    return { key: 'thinking.services', fallback: 'Searching services…' };
+  if (/candidate|staff|educator|ede|personnel/.test(m))
+    return { key: 'thinking.searchStaff', fallback: 'Searching available staff…' };
+  if (/foundation|crèche|creche|childcare|facility/.test(m))
+    return { key: 'thinking.foundations', fallback: 'Searching foundations…' };
   if (/message|send.*to|write.*to/.test(m))
     return { key: 'thinking.message', fallback: 'Composing message…' };
   if (/admin|support|ticket|report/.test(m))
     return { key: 'thinking.admin', fallback: 'Preparing your request…' };
-  if (/foundation|crèche|creche|childcare/.test(m))
-    return { key: 'thinking.foundations', fallback: 'Searching foundations…' };
   return { key: 'thinking.default', fallback: 'Processing your request…' };
 }
 
