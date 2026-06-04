@@ -14,6 +14,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { formatServiceCategory, formatServiceDeliveryType } from '../utils/serviceFormatting';
 import { marketplaceService } from '../services/marketplaceService';
+import { getAvatarFallback } from '../utils/avatar';
 
 // Loading skeleton component
 const CardSkeleton: React.FC = () => (
@@ -56,7 +57,7 @@ const ServiceProviderCard: React.FC<{
     <Card className="flex flex-col group" hoverEffect>
       <div className="relative p-4 border-b border-gray-200 bg-gray-50/50">
         <img 
-          src={provider.logoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(provider.name)}&background=D1FAE5&color=059669&size=128`} 
+          src={provider.logoUrl || getAvatarFallback(provider.name, 'D1FAE5', '059669')} 
           alt={`${provider.name} logo`} 
           className="w-20 h-20 rounded-full mx-auto object-contain border-2 border-white shadow-md bg-white"
         />

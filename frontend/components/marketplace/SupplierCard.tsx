@@ -5,6 +5,7 @@ import Button from '../ui/Button';
 import RatingStars from '../ui/RatingStars';
 import { BuildingStorefrontIcon, EyeIcon, TagIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
+import { getAvatarFallback } from '../../utils/avatar';
 
 interface SupplierCardProps {
   supplier: Organization;

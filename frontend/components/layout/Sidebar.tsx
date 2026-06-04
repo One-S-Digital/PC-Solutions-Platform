@@ -9,6 +9,7 @@ import { UserRole } from '../../types';
 import { useTranslation } from 'react-i18next'; // Import useTranslation
 import { TFunction } from 'i18next'; // Import TFunction for typing
 import { getHomePath } from '../../utils/navigation';
+import { getAvatarFallback } from '../../utils/avatar';
 
 interface NavItem {
   path: string;

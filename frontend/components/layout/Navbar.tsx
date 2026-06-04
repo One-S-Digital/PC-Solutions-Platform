@@ -12,6 +12,7 @@ import { useNotifications } from '../../contexts/NotificationContext';
 import { useInAppNotifications } from '../../contexts/InAppNotificationContext';
 import LanguageSwitcher from '../../components/ui/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
+import { getAvatarFallback } from '../../utils/avatar';
 
 interface NavbarProps {
   onMobileMenuToggle: () => void;

@@ -12,6 +12,7 @@ import {
   MapPinIcon,
   AcademicCapIcon,
 } from '@heroicons/react/24/outline';
+import { getAvatarFallback } from '../../../utils/avatar';
 
 // Intentionally hardcoded labels (do not translate)
 const SUPPORTED_LANGUAGES_OPTIONS: { label: string; value: SupportedLanguage }[] = [
@@ -45,7 +46,7 @@ const FoundationProfileForm: React.FC<FoundationProfileFormProps> = ({ formData,
   const translatedLanguageOptions = SUPPORTED_LANGUAGES_OPTIONS;
 
   const logoUrl = formData.logoUrl || currentUser?.orgLogoUrl || 
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.companyName || 'Organization')}&background=2DD4BF&color=ffffff&size=128&rounded=true`;
+    getAvatarFallback(formData.companyName || 'Organization', '2DD4BF', 'ffffff');
   
   const coverImageUrl = formData.coverImageUrl || currentUser?.orgCoverImageUrl || 
     'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&q=80';

@@ -28,6 +28,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useOrganizationMessaging } from '../../hooks/useOrganizationMessaging';
 import ActiveClientToggle from '../../components/shared/ActiveClientToggle';
+import { getAvatarFallback } from '../../utils/avatar';
 import OrganizationDocumentsList from '../../components/profile/OrganizationDocumentsList';
 import PromoCodesDisplaySection from '../../components/profile/PromoCodesDisplaySection';
 import { formatServiceCategoryForService, formatServiceDeliveryType, formatCategory } from '../../utils/serviceFormatting';
@@ -310,7 +311,7 @@ const PartnerDetailPage: React.FC = () => {
       : t('common:userRoles.Foundation');
 
   const coverImageUrl = partner.coverImageUrl || `https://picsum.photos/seed/${partner.id}Cover/1200/300`;
-  const logoUrl = partner.logoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(partner.name)}&background=E0E7FF&color=4F46E5&size=128`;
+  const logoUrl = partner.logoUrl || getAvatarFallback(partner.name, 'E0E7FF', '4F46E5');
 
   return (
     <div className="space-y-6">

@@ -16,6 +16,7 @@ import { useNotifications } from '../../contexts/NotificationContext';
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
 import FileUploadZone from '../../components/ui/FileUploadZone';
 import { WorkExperienceItem, EducationItem, CertificationItem, DocumentItem } from '../../types';
+import { getAvatarFallback } from '../../utils/avatar';
 
 const MAX_DOCUMENTS = 5;
 
@@ -416,7 +417,7 @@ const EducatorProfilePage: React.FC = () => {
   const hasStructuredEducation = educationItems.length > 0;
 
   const fullName = `${profile.firstName} ${profile.lastName}`.trim() || t('educatorProfilePage.unnamed', 'Unnamed Educator');
-  const avatarUrl = profile.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=48CFAE&color=fff&size=128`;
+  const avatarUrl = profile.avatarUrl || getAvatarFallback(fullName);
   const roleDisplay = profile.jobRole
     ? profile.jobRole
     : t('educatorProfilePage.roleNotProvided', 'Role not provided');

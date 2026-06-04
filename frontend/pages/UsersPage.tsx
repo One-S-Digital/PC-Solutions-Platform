@@ -9,6 +9,7 @@ import { MagnifyingGlassIcon, FunnelIcon, PencilIcon, PlusIcon, TrashIcon, Check
 import { useAppContext } from '../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
 import { useAuthenticatedApi } from '../hooks/useAuthenticatedApi';
+import { getAvatarFallback } from '../utils/avatar';
 
 // Maximum users fetched per request. Referenced in the truncation warning message.
 const PAGE_LIMIT = 100;
@@ -84,7 +85,7 @@ const UserRow: React.FC<UserRowProps> = ({ user, onUserSelect, onDeleteUser, isS
   };
 
   const displayName = user.name || user.email || 'Unknown';
-  const fallbackAvatarUrl = `https://ui-avatars.com/api/?${new URLSearchParams({ name: displayName, background: '48CFAE', color: 'fff' }).toString()}`;
+  const fallbackAvatarUrl = getAvatarFallback(displayName);
 
   return (
     <tr className="hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => onUserSelect(user)}>
@@ -165,7 +166,7 @@ const UserDetailDrawer: React.FC<UserDetailDrawerProps> = ({ user, onClose, onUp
   };
 
   const displayName = user.name || user.email || 'Unknown';
-  const fallbackAvatarUrl = `https://ui-avatars.com/api/?${new URLSearchParams({ name: displayName, background: '48CFAE', color: 'fff' }).toString()}`;
+  const fallbackAvatarUrl = getAvatarFallback(displayName);
 
   return (
     <div

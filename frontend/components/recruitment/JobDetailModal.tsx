@@ -6,6 +6,7 @@ import { XMarkIcon, BriefcaseIcon, MapPinIcon, CalendarDaysIcon, ListBulletIcon,
 import { useTranslation } from 'react-i18next';
 import Card from '../ui/Card';
 import JobApplicationModal from './JobApplicationModal';
+import { getAvatarFallback } from '../../utils/avatar';
 
 interface JobDetailModalProps {
   isOpen: boolean;

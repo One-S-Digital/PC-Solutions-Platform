@@ -26,6 +26,7 @@ import ProfileDocumentsSettings from '../../components/settings/sections/Profile
 import PromoCodesDisplaySection from '../../components/profile/PromoCodesDisplaySection';
 import { UserRole } from '../../types';
 import { openExternalUrl, toExternalUrl } from '../../utils/url';
+import { getAvatarFallback } from '../../utils/avatar';
 
 interface SupplierSettingsData {
   companyName?: string;
@@ -297,7 +298,7 @@ const SupplierOrganisationProfilePage: React.FC = () => {
   const websiteHref = toExternalUrl(websiteUrl);
 
   const logoUrl = supplierSettings?.logoUrl || organizationDetails?.logoUrl || currentUser?.orgLogoUrl ||
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(organizationName)}&background=2DD4BF&color=ffffff&size=128&rounded=true`;
+    getAvatarFallback(organizationName, '2DD4BF', 'ffffff');
   
   const coverImageUrl = supplierSettings?.coverImageUrl || organizationDetails?.coverImageUrl || currentUser?.orgCoverImageUrl ||
     'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&q=80';

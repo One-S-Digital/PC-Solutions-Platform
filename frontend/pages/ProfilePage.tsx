@@ -14,6 +14,7 @@ import { UserRole } from '../types';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import OrganizationPublicProfile from '../components/profile/OrganizationPublicProfile';
+import { getAvatarFallback } from '../utils/avatar';
 
 const ProfilePage: React.FC = () => {
   const { currentUser } = useAppContext();
@@ -95,7 +96,7 @@ const ProfilePage: React.FC = () => {
 
   const avatarUrl =
     currentUser.avatarUrl ||
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name || currentUser.email)}&background=48CFAE&color=ffffff&size=128&rounded=true`;
+    getAvatarFallback(currentUser.name || currentUser.email);
 
   return (
     <div className="p-8 space-y-6 bg-page-bg min-h-full">
