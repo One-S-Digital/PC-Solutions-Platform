@@ -307,7 +307,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
       <div className="p-3 lg:p-5 border-t border-gray-200/80 mt-auto">
         {currentUser && (
            <div className="flex items-center mb-3 lg:mb-4">
-            <img src={currentUser.avatarUrl || `https://ui-avatars.com/api/?name=${currentUser.name.replace(' ', '+')}&background=48CFAE&color=fff&rounded=true&size=128`} alt={currentUser.name} className="w-9 lg:w-11 h-9 lg:h-11 rounded-full mr-2 lg:mr-3 border-2 border-swiss-mint/30" />
+            <img src={currentUser.avatarUrl || getAvatarFallback(currentUser.name)} alt={currentUser.name} className="w-9 lg:w-11 h-9 lg:h-11 rounded-full mr-2 lg:mr-3 border-2 border-swiss-mint/30" />
             <div className="min-w-0 flex-1">
               <p className="text-sm lg:text-base font-semibold text-swiss-charcoal truncate">{currentUser.name}</p>
               <p className="text-xs text-gray-500 truncate">{translateUserRole(currentUser.role, t)}</p>

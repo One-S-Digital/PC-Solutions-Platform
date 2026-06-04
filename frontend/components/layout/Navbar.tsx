@@ -202,7 +202,7 @@ const Navbar: React.FC<NavbarProps> = ({ onMobileMenuToggle }) => {
               >
                 <img 
                   className="h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-full border-2 border-transparent hover:border-swiss-mint/30" 
-                  src={currentUser.avatarUrl || `https://ui-avatars.com/api/?name=${currentUser.name.replace(' ', '+')}&background=48CFAE&color=fff&rounded=true&size=128`}
+                  src={currentUser.avatarUrl || getAvatarFallback(currentUser.name)}
                   alt={currentUser.name} 
                 />
                 <span className="ml-2 lg:ml-2.5 hidden lg:block text-swiss-charcoal font-medium text-sm">{currentUser.name}</span>
