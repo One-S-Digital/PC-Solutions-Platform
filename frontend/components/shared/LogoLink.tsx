@@ -39,7 +39,7 @@ const LogoLink: React.FC<LogoLinkProps> = ({
   if (showFallback) {
     return (
       <Link to={to} aria-label={ariaLabel} className={className}>
-        {fallback ?? <img src="/logo.svg" alt={altText} className={imageClassName} />}
+        {fallback ?? <img src="/logo.png" alt={altText} className={imageClassName} />}
       </Link>
     );
   }

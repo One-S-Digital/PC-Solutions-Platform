@@ -209,7 +209,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
 
     return (
       <img
-        src={sidebarLogoUrl || '/logo.svg'}
+        src={sidebarLogoUrl || '/logo-sidebar.png'}
         alt={settings?.siteName || t('appName')}
         className={imageClassName}
       />
