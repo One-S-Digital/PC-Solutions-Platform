@@ -221,7 +221,7 @@ export const TOOL_REGISTRY: ToolDefinition[] = [
       role: { type: 'string', description: 'Job role (e.g. EDE, ASE, ASSC)' },
       percentage: { type: 'number', description: 'Work percentage (e.g. 80)' },
       location: { type: 'string', description: 'Canton or city for the position' },
-      contractType: { type: 'string', description: 'Optional: CDI, CDD, FULL_TIME, PART_TIME, REPLACEMENT' },
+      contractType: { type: 'string', description: 'Optional enum — must be exactly one of: FULL_TIME, PART_TIME, CDI, CDD, INTERNSHIP, REPLACEMENT, TEMPORARY, FREELANCE' },
       startDate: { type: 'string', description: 'Optional ISO start date' },
       description: { type: 'string', description: 'Job description / details' },
       foundationId: { type: 'string', description: 'Optional: foundation org ID (admin only)' },
