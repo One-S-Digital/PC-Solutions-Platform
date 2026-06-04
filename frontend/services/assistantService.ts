@@ -31,12 +31,17 @@ export interface ToolStatusEvent {
   label: string;
 }
 
+export interface NextStepsEvent {
+  nextSteps: string[];
+}
+
 export interface StreamHandlers {
   onToken: (text: string) => void;
   onToolCall: (toolCall: ToolCallEvent) => void;
   onToolResult: (result: ToolResultEvent) => void;
   onModalAction: (action: ModalActionEvent) => void;
   onToolStatus?: (status: ToolStatusEvent) => void;
+  onNextSteps?: (event: NextStepsEvent) => void;
   onDone: () => void;
   onError: (msg: string) => void;
 }
@@ -221,6 +226,9 @@ export async function streamMessage(
             break;
           case 'tool_status':
             handlers.onToolStatus?.(parsed as unknown as ToolStatusEvent);
+            break;
+          case 'next_steps':
+            handlers.onNextSteps?.(parsed as unknown as NextStepsEvent);
             break;
           case 'modal_action':
             handlers.onModalAction(parsed as unknown as ModalActionEvent);

@@ -121,6 +121,9 @@ export class OrchestratorService {
       // No tool call → stream the answer and persist
       if (!output.toolCall) {
         sendEvent('token', { text: output.message });
+        if (output.nextSteps?.length) {
+          sendEvent('next_steps', { nextSteps: output.nextSteps });
+        }
         await this.prisma.aIMessage.create({
           data: { conversationId, sender: AIMessageSender.ASSISTANT, content: output.message },
         });

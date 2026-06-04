@@ -83,11 +83,6 @@ export class RecruitmentService {
       },
       include: {
         foundation: true,
-        applications: {
-          include: {
-            candidate: true,
-          },
-        },
       },
     });
 
