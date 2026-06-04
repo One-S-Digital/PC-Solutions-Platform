@@ -15,6 +15,8 @@ import {
 import { useAppContext } from '../../contexts/AppContext';
 import { AssistantModalHandler } from './AssistantModalHandler';
 import { SearchResultCards, isResultCardTool } from './ResultCards';
+import { ActionPreviewCard, hasActionPreview } from './ActionPreviewCard';
+import { UserRole } from '../../types';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -24,6 +26,7 @@ interface Message {
   text: string;
   toolCall?: ToolCallEvent;
   toolResult?: ToolResultEvent;
+  toolStatus?: string;
   cancelled?: boolean;
 }
 
@@ -38,11 +41,51 @@ function genId(): string {
   return Math.random().toString(36).slice(2, 10);
 }
 
-const SUGGESTION_KEYS = [
-  { key: 'welcome.suggestion1', fallback: 'Find me an educator' },
-  { key: 'welcome.suggestion2', fallback: 'Draft a job post' },
-  { key: 'welcome.suggestion3', fallback: 'How do I add a staff request?' },
+// Per-role welcome suggestion chips. Each entry is a translation key + fallback;
+// the set shown reflects what the assistant can actually do for that role.
+const SUGGESTIONS_BY_ROLE: Record<string, { key: string; fallback: string }[]> = {
+  [UserRole.FOUNDATION]: [
+    { key: 'welcome.foundation.findCandidate', fallback: 'Find me an EDE in Geneva at 80%' },
+    { key: 'welcome.foundation.postJob', fallback: 'Post a job for an educator' },
+    { key: 'welcome.foundation.respondLead', fallback: 'Show my parent leads' },
+  ],
+  [UserRole.EDUCATOR]: [
+    { key: 'welcome.educator.findJob', fallback: 'Find childcare jobs near me' },
+    { key: 'welcome.educator.myApplications', fallback: 'Show my applications' },
+    { key: 'welcome.educator.help', fallback: 'How do I apply to a job?' },
+  ],
+  [UserRole.PARENT]: [
+    { key: 'welcome.parent.findFoundation', fallback: 'Find a crèche in my canton' },
+    { key: 'welcome.parent.submitEnquiry', fallback: 'Submit a childcare enquiry' },
+    { key: 'welcome.parent.myEnquiries', fallback: 'Show my enquiries' },
+  ],
+  [UserRole.PRODUCT_SUPPLIER]: [
+    { key: 'welcome.supplier.myListings', fallback: 'Show my product listings' },
+    { key: 'welcome.supplier.myOrders', fallback: 'Show my incoming orders' },
+    { key: 'welcome.supplier.help', fallback: 'How do I add a product?' },
+  ],
+  [UserRole.SERVICE_PROVIDER]: [
+    { key: 'welcome.serviceProvider.myListings', fallback: 'Show my service listings' },
+    { key: 'welcome.serviceProvider.myRequests', fallback: 'Show my service requests' },
+    { key: 'welcome.serviceProvider.help', fallback: 'How do I add a service?' },
+  ],
+  [UserRole.ADMIN]: [
+    { key: 'welcome.admin.stats', fallback: 'Show platform stats' },
+    { key: 'welcome.admin.findUser', fallback: 'Find a user by name' },
+    { key: 'welcome.admin.findCandidate', fallback: 'Find candidates for a foundation' },
+  ],
+};
+// SUPER_ADMIN shares the ADMIN suggestion set (same operator capabilities here).
+SUGGESTIONS_BY_ROLE[UserRole.SUPER_ADMIN] = SUGGESTIONS_BY_ROLE[UserRole.ADMIN];
+
+const DEFAULT_SUGGESTIONS = [
+  { key: 'welcome.suggestion1', fallback: 'What can you help me with?' },
+  { key: 'welcome.suggestion2', fallback: 'How do I use this platform?' },
 ];
+
+function getSuggestionsForRole(role?: UserRole | string | null) {
+  return (role && SUGGESTIONS_BY_ROLE[role as string]) || DEFAULT_SUGGESTIONS;
+}
 
 // ─── ToolCallCard ─────────────────────────────────────────────────────────────
 
@@ -57,6 +100,7 @@ interface ToolCallCardProps {
 const ToolCallCard: React.FC<ToolCallCardProps> = ({ toolCall, result, cancelled, onConfirm, onCancel }) => {
   const { t } = useTranslation('assistant');
 
+  const showRichPreview = hasActionPreview(toolCall.toolName);
   const argsPreview = Object.entries(toolCall.args || {})
     .slice(0, 3)
     .map(([k, v]) => `${k}: ${typeof v === 'string' ? v : JSON.stringify(v)}`)
@@ -76,9 +120,11 @@ const ToolCallCard: React.FC<ToolCallCardProps> = ({ toolCall, result, cancelled
         </span>
       </div>
 
-      {/* Args preview */}
-      {argsPreview && (
-        <p className="mb-2 truncate text-xs text-gray-500">{argsPreview}</p>
+      {/* Preview: rich per-action card when available, else a compact args line */}
+      {showRichPreview ? (
+        <ActionPreviewCard toolName={toolCall.toolName} args={toolCall.args || {}} />
+      ) : (
+        argsPreview && <p className="mb-2 truncate text-xs text-gray-500">{argsPreview}</p>
       )}
 
       {/* Result / error */}
@@ -123,10 +169,12 @@ const ToolCallCard: React.FC<ToolCallCardProps> = ({ toolCall, result, cancelled
 
 interface WelcomeScreenProps {
   onSuggestion: (text: string) => void;
+  role?: UserRole | string | null;
 }
 
-const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSuggestion }) => {
+const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSuggestion, role }) => {
   const { t } = useTranslation('assistant');
+  const suggestions = getSuggestionsForRole(role);
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center px-6 py-8 text-center">
@@ -143,7 +191,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSuggestion }) => {
         )}
       </p>
       <div className="flex flex-wrap justify-center gap-2">
-        {SUGGESTION_KEYS.map(({ key, fallback }) => (
+        {suggestions.map(({ key, fallback }) => (
           <button
             key={key}
             onClick={() => onSuggestion(t(key, fallback))}
@@ -162,7 +210,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSuggestion }) => {
 export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose }) => {
   const { t } = useTranslation('assistant');
   const { getToken } = useAuth();
-  const { language } = useAppContext();
+  const { language, currentUser } = useAppContext();
 
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -247,6 +295,16 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
           setMessages((prev) =>
             prev.map((m) =>
               m.id === result.toolCallId ? { ...m, toolResult: result } : m
+            )
+          );
+        },
+        onToolStatus: (status) => {
+          // The backend label is English; translate by tool name into the user's
+          // locale, falling back to the server label if a key is missing.
+          const label = t(`toolStatus.${status.toolName}`, status.label);
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === status.toolCallId ? { ...m, toolStatus: label } : m
             )
           );
         },
@@ -389,7 +447,7 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
           <div className="flex flex-1 flex-col overflow-y-auto px-4 py-4">
             {/* Welcome screen */}
             {messages.length === 0 && !isStreaming && (
-              <WelcomeScreen onSuggestion={(text) => handleSend(text)} />
+              <WelcomeScreen onSuggestion={(text) => handleSend(text)} role={currentUser?.role} />
             )}
 
             {/* Chat bubbles */}
@@ -402,6 +460,7 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
                       key={msg.id}
                       toolName={msg.toolCall.toolName}
                       result={msg.toolResult}
+                      statusLabel={msg.toolStatus}
                     />
                   );
                 }

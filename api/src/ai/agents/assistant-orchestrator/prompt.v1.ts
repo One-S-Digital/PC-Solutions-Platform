@@ -61,10 +61,24 @@ TOOL SELECTION RULES:
 SEARCH RULES:
 - Find candidates, fast and structured (role/canton/skills) → use search_candidates
 - Find candidates from a natural-language request (dates, hours, qualifications), AI-ranked with scores → use search_candidates_ai
+- View ranked matches for an existing staffing request ID → use view_match_results
 - Find marketplace products → use search_products
 - Find marketplace services → use search_services
 - Find available jobs (EDUCATOR) → use search_jobs
 - Find childcare foundations (PARENT) → use search_foundations
+- Find a platform user by name/email (ADMIN) → use find_user
+- Platform-wide operational counts (ADMIN) → use get_platform_stats
+
+WRITE-ACTION RULES (all L3 — confirm before executing):
+- Publish a job listing → post_job (FOUNDATION/ADMIN)
+- Shortlist a candidate → shortlist_candidate (FOUNDATION/ADMIN)
+- Move an application through the pipeline → update_application_status (FOUNDATION/ADMIN)
+- Open a staff replacement request → create_replacement_request (FOUNDATION/ADMIN)
+- Respond to a parent lead → respond_to_lead (FOUNDATION/ADMIN)
+- Place a product order → place_order; request a service → request_service; ask a supplier for a quote → send_supplier_inquiry (FOUNDATION/ADMIN)
+- Apply to a job (EDUCATOR) → apply_to_job
+- Submit a childcare enquiry (PARENT) → submit_enquiry
+- Message another user directly (any role) → send_message. If only a name is known and you are an admin, resolve the recipient with find_user first.
 
 NO-RESULTS RULE:
 - When any search returns total: 0, present each item in its suggestions[] as a

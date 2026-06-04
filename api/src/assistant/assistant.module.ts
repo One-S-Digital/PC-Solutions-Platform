@@ -10,6 +10,10 @@ import { StaffingModule } from '../staffing/staffing.module';
 import { RecruitmentModule } from '../recruitment/recruitment.module';
 import { MarketplaceModule } from '../marketplace/marketplace.module';
 import { SupportModule } from '../support/support.module';
+import { LeadsModule } from '../leads/leads.module';
+import { MessagingModule } from '../messaging/messaging.module';
+import { ReplacementsModule } from '../replacements/replacements.module';
+import { UsersModule } from '../users/users.module';
 import { PrismaModule } from '../prisma/prisma.module';
 import { ToolHandlerRegistry } from './tools/tool-handler.registry';
 import { ProfileHandler } from './tools/handlers/profile.handler';
@@ -20,6 +24,12 @@ import { StaffingHandler } from './tools/handlers/staffing.handler';
 import { SupportHandler } from './tools/handlers/support.handler';
 import { SearchHandler } from './tools/handlers/search.handler';
 import { DraftsHandler } from './tools/handlers/drafts.handler';
+import { RecruitmentWriteHandler } from './tools/handlers/recruitment-write.handler';
+import { LeadsWriteHandler } from './tools/handlers/leads-write.handler';
+import { MarketplaceWriteHandler } from './tools/handlers/marketplace-write.handler';
+import { MessagingHandler } from './tools/handlers/messaging.handler';
+import { ReplacementsHandler } from './tools/handlers/replacements.handler';
+import { AdminHandler } from './tools/handlers/admin.handler';
 
 @Module({
   imports: [
@@ -29,6 +39,10 @@ import { DraftsHandler } from './tools/handlers/drafts.handler';
     RecruitmentModule,
     MarketplaceModule,
     SupportModule,
+    LeadsModule,
+    MessagingModule,
+    ReplacementsModule,
+    UsersModule,
   ],
   controllers: [AssistantController],
   providers: [
@@ -47,6 +61,12 @@ import { DraftsHandler } from './tools/handlers/drafts.handler';
     SupportHandler,
     SearchHandler,
     DraftsHandler,
+    RecruitmentWriteHandler,
+    LeadsWriteHandler,
+    MarketplaceWriteHandler,
+    MessagingHandler,
+    ReplacementsHandler,
+    AdminHandler,
   ],
   exports: [AssistantService],
 })

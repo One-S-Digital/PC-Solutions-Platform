@@ -15,6 +15,80 @@
       "staffing": "Erzieher für nächste Woche suchen",
       "jobPost": "Stellenanzeige erstellen",
       "help": "Wie veröffentliche ich eine Stellenanzeige?"
+    },
+    "suggestion1": "Wobei können Sie mir helfen?",
+    "suggestion2": "Wie nutze ich diese Plattform?",
+    "foundation": {
+      "findCandidate": "EDE in Genf zu 80% suchen",
+      "postJob": "Stelle für einen Erzieher ausschreiben",
+      "respondLead": "Meine Eltern-Anfragen anzeigen"
+    },
+    "educator": {
+      "findJob": "Stellen in meiner Nähe finden",
+      "myApplications": "Meine Bewerbungen anzeigen",
+      "help": "Wie bewerbe ich mich auf eine Stelle?"
+    },
+    "parent": {
+      "findFoundation": "Eine Kita in meinem Kanton finden",
+      "submitEnquiry": "Betreuungsanfrage einreichen",
+      "myEnquiries": "Meine Anfragen anzeigen"
+    },
+    "supplier": {
+      "myListings": "Meine Produktangebote anzeigen",
+      "myOrders": "Meine eingehenden Bestellungen anzeigen",
+      "help": "Wie füge ich ein Produkt hinzu?"
+    },
+    "serviceProvider": {
+      "myListings": "Meine Dienstleistungen anzeigen",
+      "myRequests": "Meine Serviceanfragen anzeigen",
+      "help": "Wie füge ich eine Dienstleistung hinzu?"
+    },
+    "admin": {
+      "stats": "Plattformstatistiken anzeigen",
+      "findUser": "Benutzer nach Namen suchen",
+      "findCandidate": "Kandidaten für eine Stiftung suchen"
+    }
+  },
+  "preview": {
+    "postJob": "Stellenanzeige veröffentlichen",
+    "sendMessage": "Nachricht senden",
+    "contactAdmin": "Support-Ticket erstellen",
+    "placeOrder": "Bestellung aufgeben",
+    "requestService": "Dienstleistung anfragen",
+    "supplierInquiry": "Lieferantenanfrage senden",
+    "applyToJob": "Auf Stelle bewerben",
+    "shortlist": "Kandidat vormerken",
+    "updateStatus": "Bewerbungsstatus ändern",
+    "respondToLead": "Auf Eltern-Anfrage antworten",
+    "replacement": "Vertretungsanfrage erstellen",
+    "submitEnquiry": "Betreuungsanfrage einreichen",
+    "noDetails": "Zum Fortfahren bestätigen.",
+    "field": {
+      "title": "Titel",
+      "role": "Rolle",
+      "percentage": "Prozentsatz",
+      "location": "Ort",
+      "contract": "Vertrag",
+      "startDate": "Startdatum",
+      "endDate": "Enddatum",
+      "description": "Beschreibung",
+      "recipient": "Empfänger",
+      "message": "Nachricht",
+      "subject": "Betreff",
+      "priority": "Priorität",
+      "product": "Produkt",
+      "quantity": "Menge",
+      "notes": "Notizen",
+      "service": "Dienstleistung",
+      "scheduledAt": "Geplant",
+      "job": "Stelle",
+      "coverLetter": "Anschreiben",
+      "candidate": "Kandidat",
+      "application": "Bewerbung",
+      "status": "Status",
+      "urgency": "Dringlichkeit",
+      "childName": "Kind",
+      "childAge": "Alter"
     }
   },
   "tool": {
@@ -29,6 +103,16 @@
     "explainMatch": "Erklärung wird generiert…",
     "draftJobPost": "Stellenanzeige wird erstellt…",
     "draftParentReply": "Antwort wird verfasst…"
+  },
+  "toolStatus": {
+    "search_candidates": "Kandidaten werden gesucht…",
+    "search_candidates_ai": "Kandidaten werden abgeglichen…",
+    "search_products": "Produkte werden gesucht…",
+    "search_services": "Dienstleistungen werden gesucht…",
+    "search_jobs": "Stellenangebote werden gesucht…",
+    "search_foundations": "Stiftungen werden gesucht…",
+    "find_foundation": "Stiftung wird gesucht…",
+    "view_match_results": "Übereinstimmungen werden geladen…"
   },
   "toolCard": {
     "confirm": "Bestätigen",

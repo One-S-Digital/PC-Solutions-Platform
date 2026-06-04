@@ -15,6 +15,80 @@
       "staffing": "Trouver un éducateur pour la semaine prochaine",
       "jobPost": "Rédiger une offre d'emploi",
       "help": "Comment publier une offre d'emploi ?"
+    },
+    "suggestion1": "Comment pouvez-vous m'aider ?",
+    "suggestion2": "Comment utiliser cette plateforme ?",
+    "foundation": {
+      "findCandidate": "Trouver une EDE à Genève à 80%",
+      "postJob": "Publier une offre pour un éducateur",
+      "respondLead": "Afficher mes demandes de parents"
+    },
+    "educator": {
+      "findJob": "Trouver des emplois près de chez moi",
+      "myApplications": "Afficher mes candidatures",
+      "help": "Comment postuler à une offre ?"
+    },
+    "parent": {
+      "findFoundation": "Trouver une crèche dans mon canton",
+      "submitEnquiry": "Soumettre une demande de garde",
+      "myEnquiries": "Afficher mes demandes"
+    },
+    "supplier": {
+      "myListings": "Afficher mes produits",
+      "myOrders": "Afficher mes commandes entrantes",
+      "help": "Comment ajouter un produit ?"
+    },
+    "serviceProvider": {
+      "myListings": "Afficher mes services",
+      "myRequests": "Afficher mes demandes de service",
+      "help": "Comment ajouter un service ?"
+    },
+    "admin": {
+      "stats": "Afficher les statistiques de la plateforme",
+      "findUser": "Trouver un utilisateur par nom",
+      "findCandidate": "Trouver des candidats pour une fondation"
+    }
+  },
+  "preview": {
+    "postJob": "Publier l'offre d'emploi",
+    "sendMessage": "Envoyer le message",
+    "contactAdmin": "Créer un ticket de support",
+    "placeOrder": "Passer la commande",
+    "requestService": "Demander le service",
+    "supplierInquiry": "Envoyer une demande au fournisseur",
+    "applyToJob": "Postuler à l'offre",
+    "shortlist": "Présélectionner le candidat",
+    "updateStatus": "Mettre à jour le statut de la candidature",
+    "respondToLead": "Répondre à la demande du parent",
+    "replacement": "Créer une demande de remplacement",
+    "submitEnquiry": "Soumettre une demande de garde",
+    "noDetails": "Confirmez pour continuer.",
+    "field": {
+      "title": "Titre",
+      "role": "Rôle",
+      "percentage": "Pourcentage",
+      "location": "Lieu",
+      "contract": "Contrat",
+      "startDate": "Date de début",
+      "endDate": "Date de fin",
+      "description": "Description",
+      "recipient": "Destinataire",
+      "message": "Message",
+      "subject": "Objet",
+      "priority": "Priorité",
+      "product": "Produit",
+      "quantity": "Quantité",
+      "notes": "Notes",
+      "service": "Service",
+      "scheduledAt": "Planifié",
+      "job": "Offre",
+      "coverLetter": "Lettre de motivation",
+      "candidate": "Candidat",
+      "application": "Candidature",
+      "status": "Statut",
+      "urgency": "Urgence",
+      "childName": "Enfant",
+      "childAge": "Âge"
     }
   },
   "tool": {
@@ -29,6 +103,16 @@
     "explainMatch": "Génération de l'explication…",
     "draftJobPost": "Rédaction de l'offre…",
     "draftParentReply": "Rédaction de la réponse…"
+  },
+  "toolStatus": {
+    "search_candidates": "Recherche de candidats…",
+    "search_candidates_ai": "Mise en correspondance des candidats…",
+    "search_products": "Recherche de produits…",
+    "search_services": "Recherche de services…",
+    "search_jobs": "Recherche d’offres d’emploi…",
+    "search_foundations": "Recherche de fondations…",
+    "find_foundation": "Recherche de la fondation…",
+    "view_match_results": "Récupération des correspondances…"
   },
   "toolCard": {
     "confirm": "Confirmer",

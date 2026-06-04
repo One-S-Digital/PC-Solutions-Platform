@@ -82,6 +82,18 @@ export const TOOL_REGISTRY: ToolDefinition[] = [
     },
   },
 
+  {
+    name: 'send_message',
+    description:
+      'Send a direct message to another platform user. Use when the user wants to contact a foundation, candidate, supplier, or admin directly. Resolve the recipient first with find_user (admin) if only a name is known.',
+    level: 'L3_EXECUTE',
+    allowedRoles: ALL_ROLES,
+    inputSchema: {
+      recipientUserId: { type: 'string', description: 'The User ID of the message recipient' },
+      content: { type: 'string', description: 'The message body to send' },
+    },
+  },
+
   // ── Admin-only tools ───────────────────────────────────────────────────────
   {
     name: 'find_foundation',
@@ -91,6 +103,24 @@ export const TOOL_REGISTRY: ToolDefinition[] = [
     inputSchema: {
       query: { type: 'string', description: 'Organisation name or partial name to search for (e.g. "Kinderwelt", "Les Bout\'choux")' },
     },
+  },
+  {
+    name: 'find_user',
+    description: 'Search platform users by name or email. Returns matching users with their IDs — use before send_message to resolve a recipient.',
+    level: 'L1_ANSWER',
+    allowedRoles: ADMIN_ONLY,
+    inputSchema: {
+      search: { type: 'string', description: 'Name or email fragment to search for' },
+      role: { type: 'string', description: 'Optional role filter (e.g. EDUCATOR, FOUNDATION)' },
+      limit: { type: 'number', description: 'Max number of users to return (default 5)' },
+    },
+  },
+  {
+    name: 'get_platform_stats',
+    description: 'Get platform-wide operational counts: active users, open parent leads, and pending job applications.',
+    level: 'L1_ANSWER',
+    allowedRoles: ADMIN_ONLY,
+    inputSchema: {},
   },
 
   // ── Foundation tools ───────────────────────────────────────────────────────
@@ -171,6 +201,120 @@ export const TOOL_REGISTRY: ToolDefinition[] = [
     },
   },
   {
+    name: 'view_match_results',
+    description: 'Fetch the ranked candidate matches for an existing staffing request by its ID.',
+    level: 'L1_ANSWER',
+    allowedRoles: FOUNDATION_ADMIN,
+    featureFlag: 'v2_staffing_ia',
+    inputSchema: {
+      staffingRequestId: { type: 'string', description: 'The staffing request ID to fetch matches for' },
+    },
+  },
+  {
+    name: 'post_job',
+    description: 'Create and publish a job listing. Foundations post for their own org; admins may pass foundationId (resolve with find_foundation first).',
+    level: 'L3_EXECUTE',
+    allowedRoles: FOUNDATION_ADMIN,
+    featureFlag: 'v2_staffing_ia',
+    inputSchema: {
+      title: { type: 'string', description: 'Job title. If omitted, derived from role + percentage.' },
+      role: { type: 'string', description: 'Job role (e.g. EDE, ASE, ASSC)' },
+      percentage: { type: 'number', description: 'Work percentage (e.g. 80)' },
+      location: { type: 'string', description: 'Canton or city for the position' },
+      contractType: { type: 'string', description: 'Optional: CDI, CDD, FULL_TIME, PART_TIME, REPLACEMENT' },
+      startDate: { type: 'string', description: 'Optional ISO start date' },
+      description: { type: 'string', description: 'Job description / details' },
+      foundationId: { type: 'string', description: 'Optional: foundation org ID (admin only)' },
+    },
+  },
+  {
+    name: 'shortlist_candidate',
+    description: 'Add a candidate to the foundation shortlist (saved candidates).',
+    level: 'L3_EXECUTE',
+    allowedRoles: FOUNDATION_ADMIN,
+    featureFlag: 'v2_staffing_ia',
+    inputSchema: {
+      candidateId: { type: 'string', description: 'The candidate (User) ID to shortlist' },
+      foundationId: { type: 'string', description: 'Optional: foundation org ID (admin only)' },
+    },
+  },
+  {
+    name: 'update_application_status',
+    description: 'Move a job application to a new status: SHORTLISTED, INTERVIEW, OFFER, HIRED, REJECTED, REVIEWED, ACCEPTED.',
+    level: 'L3_EXECUTE',
+    allowedRoles: FOUNDATION_ADMIN,
+    inputSchema: {
+      applicationId: { type: 'string', description: 'The job application ID' },
+      status: { type: 'string', description: 'Target status (SHORTLISTED, INTERVIEW, OFFER, HIRED, REJECTED)' },
+    },
+  },
+  {
+    name: 'create_replacement_request',
+    description: 'Create a staff replacement request for a date range and role.',
+    level: 'L3_EXECUTE',
+    allowedRoles: FOUNDATION_ADMIN,
+    featureFlag: 'v2_replacement_module',
+    inputSchema: {
+      startDate: { type: 'string', description: 'Start date (ISO or YYYY-MM-DD)' },
+      endDate: { type: 'string', description: 'End date (defaults to startDate)' },
+      role: { type: 'string', description: 'Role needed (e.g. Educator, EDE, Assistant)' },
+      shiftStart: { type: 'string', description: 'Optional shift start time, e.g. 08:00' },
+      shiftEnd: { type: 'string', description: 'Optional shift end time, e.g. 17:00' },
+      description: { type: 'string', description: 'Optional details' },
+      location: { type: 'string', description: 'Optional location' },
+      urgency: { type: 'string', description: 'Optional: LOW, NORMAL, HIGH' },
+      foundationId: { type: 'string', description: 'Optional: foundation org ID (admin only)' },
+    },
+  },
+  {
+    name: 'respond_to_lead',
+    description: 'Send a foundation response to a parent lead (INTERESTED, NOT_INTERESTED, NEEDS_MORE_INFO, ENROLLED) with an optional message.',
+    level: 'L3_EXECUTE',
+    allowedRoles: FOUNDATION_ADMIN,
+    inputSchema: {
+      leadId: { type: 'string', description: 'The parent lead ID' },
+      status: { type: 'string', description: 'Response status: INTERESTED, NOT_INTERESTED, NEEDS_MORE_INFO, ENROLLED' },
+      message: { type: 'string', description: 'Optional message to the parent' },
+      foundationId: { type: 'string', description: 'Optional: foundation org ID (admin only)' },
+    },
+  },
+  {
+    name: 'place_order',
+    description: 'Place a product order with a supplier. All items must be from the same supplier.',
+    level: 'L3_EXECUTE',
+    allowedRoles: FOUNDATION_ADMIN,
+    inputSchema: {
+      productId: { type: 'string', description: 'Product ID to order (single-item shorthand)' },
+      quantity: { type: 'number', description: 'Quantity for the single product (default 1)' },
+      items: { type: 'array', description: 'Optional: array of { productId, quantity } for multi-item orders' },
+      notes: { type: 'string', description: 'Optional order notes' },
+    },
+  },
+  {
+    name: 'request_service',
+    description: 'Request a service from a provider, optionally with a description and scheduled date.',
+    level: 'L3_EXECUTE',
+    allowedRoles: FOUNDATION_ADMIN,
+    inputSchema: {
+      serviceId: { type: 'string', description: 'The service ID to request' },
+      description: { type: 'string', description: 'Optional description of the request' },
+      scheduledAt: { type: 'string', description: 'Optional ISO date/time to schedule the service' },
+    },
+  },
+  {
+    name: 'send_supplier_inquiry',
+    description: 'Send a formal inquiry to a supplier requesting a quote or information.',
+    level: 'L3_EXECUTE',
+    allowedRoles: FOUNDATION_ADMIN,
+    inputSchema: {
+      supplierId: { type: 'string', description: 'The supplier organisation ID' },
+      message: { type: 'string', description: 'The inquiry message' },
+      subject: { type: 'string', description: 'Optional subject line' },
+      productInterest: { type: 'string', description: 'Optional product of interest' },
+      quantity: { type: 'number', description: 'Optional quantity' },
+    },
+  },
+  {
     name: 'draft_job_post',
     description: 'Draft a job post pre-filled with details from the conversation.',
     level: 'L2_DRAFT',
@@ -211,6 +355,16 @@ export const TOOL_REGISTRY: ToolDefinition[] = [
     },
   },
   {
+    name: 'apply_to_job',
+    description: 'Submit an application to a job listing on behalf of the current educator, with an optional cover letter.',
+    level: 'L3_EXECUTE',
+    allowedRoles: EDUCATOR_ADMIN,
+    inputSchema: {
+      jobListingId: { type: 'string', description: 'The job listing ID to apply to' },
+      coverLetter: { type: 'string', description: 'Optional cover letter text' },
+    },
+  },
+  {
     name: 'get_my_applications',
     description: 'Fetch the current educator\'s job applications and their statuses.',
     level: 'L1_ANSWER',
@@ -231,6 +385,19 @@ export const TOOL_REGISTRY: ToolDefinition[] = [
       canton: { type: 'string', description: 'Swiss canton (e.g. VD, GE)' },
       city: { type: 'string', description: 'City or town name' },
       query: { type: 'string', description: 'Optional free-text foundation name' },
+    },
+  },
+  {
+    name: 'submit_enquiry',
+    description: 'Submit a childcare enquiry to a foundation on behalf of the current parent. Identity fields default to the parent\'s profile.',
+    level: 'L3_EXECUTE',
+    allowedRoles: PARENT_ADMIN,
+    inputSchema: {
+      foundationId: { type: 'string', description: 'Optional: the foundation to enquire with (resolve with search_foundations first)' },
+      childName: { type: 'string', description: "The child's name" },
+      childAge: { type: 'number', description: "The child's age in years" },
+      preferredLocation: { type: 'string', description: 'Preferred location / canton' },
+      message: { type: 'string', description: 'Message describing the childcare need' },
     },
   },
   {
