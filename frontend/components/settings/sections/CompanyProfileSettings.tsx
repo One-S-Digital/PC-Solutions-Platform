@@ -24,6 +24,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../../contexts/AppContext';
 import { toggleMultiSelectWithAll } from '../../../utils/regionSelection';
+import { getAvatarFallback } from '../../../utils/avatar';
 
 interface CompanyProfileSettingsProps {
   settings: SettingsFormData;
@@ -109,7 +110,7 @@ const CompanyProfileSettings: React.FC<CompanyProfileSettingsProps> = ({ setting
   const isServiceProvider = userRole === UserRole.SERVICE_PROVIDER;
 
   const logoUrl = settings.logoUrl || currentUser?.orgLogoUrl || 
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(settings.companyName || 'Organization')}&background=2DD4BF&color=ffffff&size=128&rounded=true`;
+    getAvatarFallback(settings.companyName || 'Organization', '2DD4BF', 'ffffff');
   
   const coverImageUrl = settings.coverImageUrl || currentUser?.orgCoverImageUrl || 
     'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&q=80';

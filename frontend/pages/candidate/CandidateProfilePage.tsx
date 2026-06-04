@@ -21,6 +21,7 @@ import { useAppContext } from '../../contexts/AppContext';
 import { useMessaging } from '../../contexts/MessagingContext';
 import { useRecruitmentApi } from '../../hooks/useRecruitmentApi';
 import { useTranslation } from 'react-i18next';
+import { getAvatarFallback } from '../../utils/avatar';
 
 const SectionCard: React.FC<{ title: string; icon: React.ElementType; children: React.ReactNode }> = ({
   title,
@@ -159,7 +160,7 @@ const CandidateProfilePage: React.FC = () => {
       <Card className="p-6">
         <div className="flex flex-col sm:flex-row items-center sm:items-start">
           <img
-            src={avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=48CFAE&color=fff&size=128`}
+            src={avatarUrl || getAvatarFallback(name)}
             alt={name}
             className="w-32 h-32 rounded-full border-4 border-white shadow-lg mb-4 sm:mb-0 sm:mr-6 flex-shrink-0 bg-gray-200"
           />

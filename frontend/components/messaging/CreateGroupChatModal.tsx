@@ -8,6 +8,7 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@clerk/clerk-react';
 import { messagingService } from '../../services/messagingService';
+import { getAvatarFallback } from '../../utils/avatar';
 
 interface CreateGroupChatModalProps {
   isOpen: boolean;
@@ -207,7 +208,7 @@ const CreateGroupChatModal: React.FC<CreateGroupChatModalProps> = ({ isOpen, onC
                       onChange={() => handleUserToggle(user)}
                       className="h-4 w-4 text-swiss-mint border-gray-300 rounded focus:ring-swiss-mint"
                     />
-                    <img src={user.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=48CFAE&color=ffffff`} alt={user.name} className="w-6 h-6 rounded-full mx-2" />
+                    <img src={user.avatarUrl || getAvatarFallback(user.name)} alt={user.name} className="w-6 h-6 rounded-full mx-2" />
                     <span className="text-sm text-gray-700">{user.name}</span>
                     {user.orgName && (
                       <span className="text-xs text-gray-500 ml-2">({user.orgName})</span>

@@ -11,6 +11,7 @@ import { useUser, useAuth, ClerkProvider, useClerk } from '@clerk/clerk-react';
 import { Organization, User, UserRole } from '../types';
 import { API_ENDPOINTS } from '../services/api-endpoints';
 import { apiService, ApiError } from '../services/api';
+import { getAvatarFallback } from '../utils/avatar';
 
 const BACKEND_SYNC_ERROR_KEY = 'common:loginPage.backendSyncError';
 const BACKEND_USER_CREATION_ERROR_KEY = 'common:loginPage.backendUserCreationError';
@@ -123,7 +124,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         user.avatarAsset?.publicUrl ??
         user.avatarUrl ??
         primaryOrganization?.logoUrl ??
-        `https://ui-avatars.com/api/?name=${encodeURIComponent(derivedName)}&background=48CFAE&color=ffffff&size=128&rounded=true`;
+        getAvatarFallback(derivedName);
 
       return {
         ...user,

@@ -6,6 +6,7 @@ import { XMarkIcon, BriefcaseIcon, MapPinIcon, CalendarDaysIcon, ListBulletIcon,
 import { useTranslation } from 'react-i18next';
 import Card from '../ui/Card';
 import JobApplicationModal from './JobApplicationModal';
+import { getAvatarFallback } from '../../utils/avatar';
 
 interface JobDetailModalProps {
   isOpen: boolean;
@@ -79,7 +80,7 @@ const JobDetailModal: React.FC<JobDetailModalProps> = ({ isOpen, onClose, job, o
         <div className="flex justify-between items-start px-6 py-4 border-b border-gray-200 bg-white flex-shrink-0">
           <div className="flex items-center">
               <img
-                src={`https://ui-avatars.com/api/?name=${encodeURIComponent(job.foundationName || job.title)}`}
+                src={getAvatarFallback(job.foundationName || job.title)}
                 alt={`${job.foundationName} logo`}
                 className="w-20 h-20 rounded-lg mr-4 border bg-white"
               />

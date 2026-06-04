@@ -5,6 +5,7 @@ import Button from '../ui/Button';
 import RatingStars from '../ui/RatingStars';
 import { BuildingStorefrontIcon, EyeIcon, TagIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
+import { getAvatarFallback } from '../../utils/avatar';
 
 interface SupplierCardProps {
   supplier: Organization;
@@ -55,7 +56,7 @@ const SupplierCard: React.FC<SupplierCardProps> = ({ supplier, onViewProfile }) 
     <Card className="flex flex-col group" hoverEffect>
       <div className="relative p-4 border-b border-gray-200 bg-gray-50/50">
         <img 
-          src={supplier.logoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(supplier.name)}&background=E0E7FF&color=4F46E5&size=128`} 
+          src={supplier.logoUrl || getAvatarFallback(supplier.name, 'E0E7FF', '4F46E5')}
           alt={`${supplier.name} logo`} 
           className="w-20 h-20 rounded-full mx-auto object-contain border-2 border-white shadow-md bg-white"
         />

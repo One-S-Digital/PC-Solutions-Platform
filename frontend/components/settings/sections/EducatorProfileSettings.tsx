@@ -25,6 +25,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../../contexts/AppContext';
 import { useAuthenticatedApi } from '../../../hooks/useAuthenticatedApi';
+import { getAvatarFallback } from '../../../utils/avatar';
 import {
   certificationItemsFromNames,
   createTempId,
@@ -400,7 +401,7 @@ const EducatorProfileSettings: React.FC<EducatorProfileSettingsProps> = ({ setti
 
   // Use avatarUrl from settings (computed from asset relation on backend)
   const avatarUrl = settings.avatarUrl || currentUser?.avatarUrl || 
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.firstName + ' ' + profileData.lastName)}&background=48CFAE&color=fff&size=128&rounded=true`;
+    getAvatarFallback(profileData.firstName + ' ' + profileData.lastName);
 
   return (
     <SettingsSectionWrapper title={t('settings:page.educatorProfile', 'Profile Information')} icon={UserCircleIcon}>

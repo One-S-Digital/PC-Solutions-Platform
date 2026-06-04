@@ -3,6 +3,7 @@ import { CameraIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { useAuthenticatedApi } from '../../../../hooks/useAuthenticatedApi';
 import ImageCropperModal, { ImageCropPreset, IMAGE_CROP_PRESETS } from '../../../shared/ImageCropperModal';
+import { getAvatarFallback } from '../../../../utils/avatar';
 
 interface AvatarSectionProps {
   avatarUrl: string | null;
@@ -113,7 +114,7 @@ const AvatarSection: React.FC<AvatarSectionProps> = ({
   };
 
   const displayUrl = previewUrl || avatarUrl || 
-    'https://ui-avatars.com/api/?name=Profile&background=2DD4BF&color=ffffff&size=128&rounded=true';
+    getAvatarFallback('Profile', '2DD4BF', 'ffffff');
 
   const isCircular = variant === 'avatar' || cropPreset === 'AVATAR';
 

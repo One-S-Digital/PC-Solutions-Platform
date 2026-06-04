@@ -10,6 +10,7 @@ import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
 import { Organization, UserRole } from '../../types';
 import { useAppContext } from '../../contexts/AppContext';
 import { useOrganizationMessaging } from '../../hooks/useOrganizationMessaging';
+import { getAvatarFallback } from '../../utils/avatar';
 
 const OrganizationProfileViewPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -185,7 +186,7 @@ const OrganizationProfileViewPage: React.FC = () => {
           <div className="absolute bottom-0 left-6 transform translate-y-1/2">
             <div className="relative">
               <img
-                src={organization.logoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(organization.name)}&background=2DD4BF&color=ffffff&size=160&rounded=true`}
+                src={organization.logoUrl || getAvatarFallback(organization.name, '2DD4BF', 'ffffff')}
                 alt={`${organization.name} logo`}
                 className="w-32 h-32 rounded-full border-4 border-white shadow-xl bg-white object-cover"
               />

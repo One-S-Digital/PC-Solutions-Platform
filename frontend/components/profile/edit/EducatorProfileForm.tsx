@@ -20,6 +20,7 @@ import {
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import Button from '../../ui/Button';
+import { getAvatarFallback } from '../../../utils/avatar';
 
 const MAX_DOCUMENTS = 5;
 
@@ -206,7 +207,7 @@ const EducatorProfileForm: React.FC<EducatorProfileFormProps> = ({ formData, onC
   };
 
   const avatarUrl = formData.avatarUrl || currentUser?.avatarUrl || 
-    `https://ui-avatars.com/api/?name=${encodeURIComponent((formData.firstName || '') + ' ' + (formData.lastName || ''))}&background=48CFAE&color=fff&size=128&rounded=true`;
+    getAvatarFallback((formData.firstName || '') + ' ' + (formData.lastName || ''));
 
   const coverImageUrl = formData.coverImageUrl || currentUser?.orgCoverImageUrl || 
     'https://images.unsplash.com/photo-1503676260728-4c8c0c7832a6?auto=format&fit=crop&w=1600&q=80';

@@ -12,6 +12,7 @@ import {
   MapPinIcon,
   BriefcaseIcon,
 } from '@heroicons/react/24/outline';
+import { getAvatarFallback } from '../../../utils/avatar';
 
 // Intentionally hardcoded labels (do not translate)
 const SUPPORTED_LANGUAGES_OPTIONS: { label: string; value: SupportedLanguage }[] = [
@@ -93,7 +94,7 @@ const ServiceProviderProfileForm: React.FC<ServiceProviderProfileFormProps> = ({
   };
 
   const logoUrl = formData.logoUrl || currentUser?.orgLogoUrl || 
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.companyName || 'Service Provider')}&background=2DD4BF&color=ffffff&size=128&rounded=true`;
+    getAvatarFallback(formData.companyName || 'Service Provider', '2DD4BF', 'ffffff');
   
   const coverImageUrl = formData.coverImageUrl || currentUser?.orgCoverImageUrl || 
     'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&q=80';

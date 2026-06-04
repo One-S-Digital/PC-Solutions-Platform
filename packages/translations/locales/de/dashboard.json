@@ -142,6 +142,18 @@
     "title": "Stellenangebote",
     "unknownFoundation": "Unbekannte Stiftung"
   },
+  "educatorPendingApprovalPage": {
+    "title": "Profil wird überprüft",
+    "description": "Vielen Dank für Ihre Registrierung als Erzieher/in! Ihr Profil wird derzeit von unserem Team geprüft. Sie erhalten eine E-Mail, sobald Ihre Bewerbung bearbeitet wurde.",
+    "whatHappensNext": "Was passiert als Nächstes?",
+    "step1": "Unser Team prüft Ihr eingereichtes Profil",
+    "step2": "Sie erhalten eine Genehmigungs- oder Feedback-E-Mail",
+    "step3": "Nach der Genehmigung erhalten Sie vollen Zugang zur Plattform",
+    "completeProfile": "Vervollständigen Sie Ihr Profil",
+    "completeProfileDesc": "Stellen Sie während der Wartezeit auf die Genehmigung sicher, dass Ihr Profil vollständig und aktuell ist. Ein vollständiges Profil erhöht Ihre Chancen, mit den richtigen Möglichkeiten zusammengeführt zu werden.",
+    "contactSupport": "Support kontaktieren",
+    "signOut": "Abmelden"
+  },
   "educatorProfilePage": {
     "availability": {
       "ageGroups": "Altersgruppen",

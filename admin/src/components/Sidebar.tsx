@@ -225,15 +225,11 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
   const SidebarContent = () => (
     <div className="w-full bg-white border-r border-gray-200/80 flex flex-col shadow-sm h-full">
       <div className="h-20 flex items-center justify-center px-6 border-b border-gray-200/80">
-        {adminLogoUrl ? (
-          <img
-            src={adminLogoUrl}
-            alt={t('admin:sidebar.adminLogo', 'Admin Logo')}
-            className="h-[69px] w-auto"
-          />
-        ) : (
-          <Shield className="h-[69px] w-[69px] text-swiss-mint" />
-        )}
+        <img
+          src={adminLogoUrl || '/logo.svg'}
+          alt={t('admin:sidebar.adminLogo', 'Admin Logo')}
+          className="h-[69px] w-auto"
+        />
       </div>
 
       <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto">
