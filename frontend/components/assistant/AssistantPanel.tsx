@@ -53,13 +53,13 @@ function genId(): string {
 function getThinkingLabelKey(userMessage: string): { key: string; fallback: string } {
   const m = userMessage.toLowerCase();
   // Specific subjects first — order matters
-  if (/product|supplier|supply|food|milk|toy|material|equipment|order/.test(m))
+  if (/product|supplier|supply|food|milk|toy|material|equipment|place.*order|order.*product|purchase/.test(m))
     return { key: 'thinking.marketplace', fallback: 'Searching marketplace…' };
   if (/service|provider|cleaning|catering|training/.test(m))
     return { key: 'thinking.services', fallback: 'Searching services…' };
   if (/post.*job|create.*job|publish.*job|job.*post|new.*position/.test(m))
     return { key: 'thinking.prepareJob', fallback: 'Preparing job posting…' };
-  if (/replace|replacement|cover/.test(m))
+  if (/replace|replacement/.test(m))
     return { key: 'thinking.replacement', fallback: 'Checking replacement options…' };
   if (/apply|application|my.*applic/.test(m))
     return { key: 'thinking.applications', fallback: 'Reviewing applications…' };

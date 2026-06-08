@@ -1,23 +1,20 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
-const SENSITIVE_FIELDS = new Set([
-  'age', 'birthDate', 'dateOfBirth', 'nationality', 'race', 'ethnicity',
-  'religion', 'health', 'disability', 'familyStatus', 'maritalStatus',
-  'pregnancyStatus', 'photoUrl', 'profilePhoto', 'photo', 'avatar',
-  'ssn', 'nationalId', 'passportNumber',
-  // Contact PII — never passed to the LLM
+// Contact PII stripped from tool results before they reach the LLM.
+// Single source of truth — SENSITIVE_FIELDS spreads these in below.
+const CONTACT_PII_KEYS = new Set([
   'email', 'contactEmail', 'parentEmail', 'emailAddress',
   'phoneNumber', 'phone', 'parentPhone', 'mobilePhone', 'telephone',
   'address', 'streetAddress', 'postalAddress', 'fullAddress',
 ]);
 
-// Fields to strip from any object/array before serialising it into an LLM prompt.
-// Separate from SENSITIVE_FIELDS so the scrubber can be called without throwing.
-const CONTACT_PII_KEYS = new Set([
-  'email', 'contactEmail', 'parentEmail', 'emailAddress',
-  'phoneNumber', 'phone', 'parentPhone', 'mobilePhone', 'telephone',
-  'address', 'streetAddress', 'postalAddress', 'fullAddress',
+const SENSITIVE_FIELDS = new Set([
+  'age', 'birthDate', 'dateOfBirth', 'nationality', 'race', 'ethnicity',
+  'religion', 'health', 'disability', 'familyStatus', 'maritalStatus',
+  'pregnancyStatus', 'photoUrl', 'profilePhoto', 'photo', 'avatar',
+  'ssn', 'nationalId', 'passportNumber',
+  ...CONTACT_PII_KEYS,
 ]);
 
 @Injectable()
