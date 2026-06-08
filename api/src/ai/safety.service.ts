@@ -6,6 +6,18 @@ const SENSITIVE_FIELDS = new Set([
   'religion', 'health', 'disability', 'familyStatus', 'maritalStatus',
   'pregnancyStatus', 'photoUrl', 'profilePhoto', 'photo', 'avatar',
   'ssn', 'nationalId', 'passportNumber',
+  // Contact PII — never passed to the LLM
+  'email', 'contactEmail', 'parentEmail', 'emailAddress',
+  'phoneNumber', 'phone', 'parentPhone', 'mobilePhone', 'telephone',
+  'address', 'streetAddress', 'postalAddress', 'fullAddress',
+]);
+
+// Fields to strip from any object/array before serialising it into an LLM prompt.
+// Separate from SENSITIVE_FIELDS so the scrubber can be called without throwing.
+const CONTACT_PII_KEYS = new Set([
+  'email', 'contactEmail', 'parentEmail', 'emailAddress',
+  'phoneNumber', 'phone', 'parentPhone', 'mobilePhone', 'telephone',
+  'address', 'streetAddress', 'postalAddress', 'fullAddress',
 ]);
 
 @Injectable()
@@ -29,6 +41,26 @@ export class SafetyService {
         `Agent "${agentName}" input contains sensitive fields: ${found.join(', ')}`,
       );
     }
+  }
+
+  /**
+   * Recursively remove contact PII (email, phone, address) from any tool-result
+   * object before it is serialised into an LLM prompt. Operates on plain
+   * objects and arrays; leaves primitives and null untouched.
+   */
+  scrubForLlm(data: unknown): unknown {
+    if (Array.isArray(data)) {
+      return data.map((item) => this.scrubForLlm(item));
+    }
+    if (data !== null && typeof data === 'object') {
+      const out: Record<string, unknown> = {};
+      for (const [key, value] of Object.entries(data as Record<string, unknown>)) {
+        if (CONTACT_PII_KEYS.has(key)) continue;
+        out[key] = this.scrubForLlm(value);
+      }
+      return out;
+    }
+    return data;
   }
 
   async assertCandidateConsent(userId: string): Promise<void> {

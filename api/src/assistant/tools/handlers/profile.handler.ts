@@ -25,7 +25,6 @@ export class ProfileHandler implements ToolHandler {
           select: {
             firstName: true,
             lastName: true,
-            email: true,
             role: true,
             approvalStatus: true,
             isActive: true,
