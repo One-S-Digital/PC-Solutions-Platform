@@ -1,5 +1,5 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
-import { ApplicationStatus } from '@prisma/client';
+import { ApplicationStatus, JobContractType } from '@prisma/client';
 import { RecruitmentService } from '../../../recruitment/recruitment.service';
 import { PrismaService } from '../../../prisma/prisma.service';
 import {
@@ -11,6 +11,25 @@ import {
 } from '../tool-handler.interface';
 // resolveOnBehalfOrgId pins non-admins to their own org and rejects cross-org
 // overrides, so foundationId can never be spoofed from another tenant.
+
+// Normalize free-text contract type (e.g. "part-time 60%", "CDI") to enum.
+// Returns undefined when no recognisable pattern is found so the DB default is used.
+function normalizeContractType(raw: string | undefined): JobContractType | undefined {
+  if (!raw) return undefined;
+  const s = raw.toLowerCase().replace(/[^a-z_]/g, ' ').trim();
+  if (JobContractType[raw.toUpperCase() as keyof typeof JobContractType]) {
+    return raw.toUpperCase() as JobContractType;
+  }
+  if (/part.?time|partiel|teilzeit/.test(s)) return JobContractType.PART_TIME;
+  if (/full.?time|plein.?temps|vollzeit/.test(s)) return JobContractType.FULL_TIME;
+  if (/\bcdi\b/.test(s)) return JobContractType.CDI;
+  if (/\bcdd\b/.test(s)) return JobContractType.CDD;
+  if (/intern|stage/.test(s)) return JobContractType.INTERNSHIP;
+  if (/replac|remplac|vertret/.test(s)) return JobContractType.REPLACEMENT;
+  if (/temp(orar)?|befrist/.test(s)) return JobContractType.TEMPORARY;
+  if (/freelanc|independ|selbst/.test(s)) return JobContractType.FREELANCE;
+  return undefined;
+}
 
 /**
  * L3 recruitment write actions: posting jobs, applying, shortlisting, and moving
@@ -74,7 +93,7 @@ export class RecruitmentWriteHandler implements ToolHandler {
         title,
         description: (args.description as string) || undefined,
         location: (args.location as string) || (args.canton as string) || undefined,
-        contractType: (args.contractType as any) || undefined,
+        contractType: normalizeContractType(args.contractType as string | undefined),
         startDate: (args.startDate as string) || undefined,
         // Publish immediately so the posting is live once the user confirms.
         status: 'PUBLISHED' as any,

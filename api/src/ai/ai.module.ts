@@ -27,6 +27,6 @@ import { AiAdminService } from './admin/ai-admin.service';
     CircuitBreakerService,
     AiAdminService,
   ],
-  exports: [LlmClient, AuditLogService],
+  exports: [LlmClient, AuditLogService, SafetyService],
 })
 export class AiModule {}

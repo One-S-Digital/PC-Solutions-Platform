@@ -1,6 +1,7 @@
 import { Injectable, Logger, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { LlmClient } from '../ai/llm-client';
+import { SafetyService } from '../ai/safety.service';
 import { UserContextService } from '../ai/knowledge/user-context.service';
 import { getRoleCapabilities } from '../ai/knowledge/role-capabilities';
 import { AssistantOrchestratorSchema } from '../ai/agents/assistant-orchestrator/schema';
@@ -60,6 +61,7 @@ export class OrchestratorService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly llm: LlmClient,
+    private readonly safety: SafetyService,
     private readonly userContext: UserContextService,
     private readonly registry: ToolHandlerRegistry,
   ) {}
@@ -230,9 +232,13 @@ export class OrchestratorService {
         });
       }
 
+      // Strip contact PII (email, phone, address) before the result is fed back
+      // into the LLM prompt. The raw result is already emitted to the frontend
+      // via the tool_result SSE event above, so UI rendering is unaffected.
+      const llmSafeResult = toolResult != null ? this.safety.scrubForLlm(toolResult as unknown) : toolResult;
       const resultText = toolError
         ? `Tool "${toolName}" failed: ${toolError}`
-        : `Tool "${toolName}" result: ${JSON.stringify(toolResult)}`;
+        : `Tool "${toolName}" result: ${JSON.stringify(llmSafeResult)}`;
 
       accumulatedToolResults.push(resultText);
     }

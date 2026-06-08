@@ -52,7 +52,6 @@ export class AdminHandler implements ToolHandler {
       // profileId is the User.id used by messaging; expose it for send_message.
       id: u.profileId ?? u.id,
       name: u.name,
-      email: u.email,
       role: u.role,
       orgName: u.orgName ?? null,
     }));
