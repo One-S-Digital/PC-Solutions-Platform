@@ -195,9 +195,10 @@ const ToolCallCard: React.FC<ToolCallCardProps> = ({ toolCall, result, cancelled
 interface NextStepChipsProps {
   steps: string[];
   onSelect: (step: string) => void;
+  onOther?: () => void;
 }
 
-const NextStepChips: React.FC<NextStepChipsProps> = ({ steps, onSelect }) => (
+const NextStepChips: React.FC<NextStepChipsProps> = ({ steps, onSelect, onOther }) => (
   <div className="mb-3 flex flex-wrap gap-2 pl-1">
     {steps.map((step) => (
       <button
@@ -208,6 +209,14 @@ const NextStepChips: React.FC<NextStepChipsProps> = ({ steps, onSelect }) => (
         {step}
       </button>
     ))}
+    {onOther && (
+      <button
+        onClick={onOther}
+        className="rounded-full border border-dashed border-gray-300 bg-transparent px-3 py-1 text-xs font-medium text-gray-400 transition-colors hover:border-swiss-teal/50 hover:text-swiss-teal focus:outline-none focus:ring-2 focus:ring-swiss-teal/40"
+      >
+        Other…
+      </button>
+    )}
   </div>
 );
 
@@ -215,10 +224,11 @@ const NextStepChips: React.FC<NextStepChipsProps> = ({ steps, onSelect }) => (
 
 interface WelcomeScreenProps {
   onSuggestion: (text: string) => void;
+  onOther?: () => void;
   role?: UserRole | string | null;
 }
 
-const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSuggestion, role }) => {
+const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSuggestion, onOther, role }) => {
   const { t } = useTranslation('assistant');
   const suggestions = getSuggestionsForRole(role);
 
@@ -246,6 +256,14 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSuggestion, role }) => 
             {t(key, fallback)}
           </button>
         ))}
+        {onOther && (
+          <button
+            onClick={onOther}
+            className="rounded-full border border-dashed border-gray-300 bg-transparent px-3 py-1.5 text-sm text-gray-400 transition-colors hover:border-swiss-teal/50 hover:text-swiss-teal focus:outline-none focus:ring-2 focus:ring-swiss-teal/40"
+          >
+            Other…
+          </button>
+        )}
       </div>
     </div>
   );
@@ -530,7 +548,7 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
 
           <div className="flex flex-1 flex-col overflow-y-auto px-4 py-4">
             {messages.length === 0 && !isStreaming && (
-              <WelcomeScreen onSuggestion={(text) => handleSend(text)} role={currentUser?.role} />
+              <WelcomeScreen onSuggestion={(text) => handleSend(text)} onOther={() => textareaRef.current?.focus()} role={currentUser?.role} />
             )}
 
             {messages.map((msg) => {
@@ -593,7 +611,7 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
                   </div>
                   {/* Clickable next-step chips below the assistant message */}
                   {msg.sender === 'assistant' && msg.nextSteps && msg.nextSteps.length > 0 && (
-                    <NextStepChips steps={msg.nextSteps} onSelect={(step) => handleSend(step)} />
+                    <NextStepChips steps={msg.nextSteps} onSelect={(step) => handleSend(step)} onOther={() => textareaRef.current?.focus()} />
                   )}
                 </React.Fragment>
               );
