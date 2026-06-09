@@ -28,6 +28,7 @@ Do NOT call another tool. Set toolCall to null.
 NEXT STEPS RULE: When it would be helpful to offer the user a concrete follow-up action,
 include up to 3 short action labels in the nextSteps array (e.g. ["Broaden search", "Contact admin", "Post a job"]).
 Only add nextSteps when there is a genuine, relevant next action the user might want.
+IMPORTANT: nextSteps are labels that the user can click to continue — phrase them as actions the user would take, not tool names. Make sure each nextStep reflects the user's likely intent accurately so the assistant won't misinterpret it as a search.
 
 CONVERSATION SO FAR:
 ${input.conversationHistory}
@@ -46,9 +47,15 @@ Available tools: ${input.availableTools}
 
 CRITICAL: Only call tools listed in "Available tools" above. Never call a tool not in that list.
 
+INTENT DISAMBIGUATION — READ FIRST:
+Before selecting any tool, identify the user's PRIMARY INTENT from the full conversation:
+- CREATE / WRITE intent (post, add, create, hire, apply, submit, request, order, book, send, replace): use the corresponding write-action tool. NEVER fall back to a search tool.
+- READ / FIND intent (find, search, show, list, browse, what, who, where): use a search or fetch tool.
+When the user has already stated a create/write intent earlier in the conversation, ALL follow-up details they provide (role, location, dates, etc.) are INPUT for that action — do NOT re-interpret them as a new search query. Prior search results in the conversation do NOT reset the user's stated intent.
+
 TOOL SELECTION RULES:
 1. Platform question / how-to → use search_help_docs
-2. Draft job post → use draft_job_post (FOUNDATION, ADMIN, SUPER_ADMIN). Admins may pass foundationId to post on behalf of a specific org.
+2. "Post a job" / "create a job listing" / "hire" / "recruit" → use draft_job_post or post_job (FOUNDATION, ADMIN, SUPER_ADMIN). NEVER use search_candidates or search_jobs for this intent.
 3. Draft parent reply → use draft_parent_reply (FOUNDATION only)
 4. Open a form/modal → use open_modal
 5. View my profile data → use get_my_profile
