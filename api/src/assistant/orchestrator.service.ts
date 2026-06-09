@@ -232,6 +232,12 @@ export class OrchestratorService {
         });
       }
 
+      // Modal-action tools (e.g. navigate_to, open_modal): emit a modal_action
+      // event so the frontend can navigate or open a form without user approval.
+      if (toolDef.modal && !toolError) {
+        sendEvent('modal_action', { modal: toolDef.modal, prefill: args });
+      }
+
       // Strip contact PII (email, phone, address) before the result is fed back
       // into the LLM prompt. The raw result is already emitted to the frontend
       // via the tool_result SSE event above, so UI rendering is unaffected.

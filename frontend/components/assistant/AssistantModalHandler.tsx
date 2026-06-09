@@ -40,8 +40,38 @@ export const AssistantModalHandler: React.FC<AssistantModalHandlerProps> = ({
         break;
       }
 
+      case 'navigate': {
+        const route = prefill?.route;
+        if (route && typeof route === 'string') {
+          navigate(route);
+        }
+        break;
+      }
+
+      case 'dynamic': {
+        // open_modal tool: args contain { modal, prefill } — re-dispatch via the
+        // same handler by recursing through the switch on the inner modal name.
+        const innerModal = prefill?.modal;
+        const innerPrefill = (prefill?.prefill ?? {}) as Record<string, unknown>;
+        if (innerModal && typeof innerModal === 'string') {
+          const prefillParam = encodeURIComponent(JSON.stringify(innerPrefill));
+          switch (innerModal) {
+            case 'staffing_request_modal':
+              navigate(`/foundation/staffing-requests?prefill=${prefillParam}`);
+              break;
+            case 'job_post_modal':
+              navigate('/recruitment/job-listings');
+              break;
+            default:
+              if (import.meta.env.DEV) {
+                console.warn('[AssistantModalHandler] Unknown dynamic modal:', innerModal, innerPrefill);
+              }
+          }
+        }
+        break;
+      }
+
       default:
-        // Unknown modal — log in dev, silently ignore in prod
         if (import.meta.env.DEV) {
           console.warn('[AssistantModalHandler] Unknown modal:', modal, prefill);
         }
