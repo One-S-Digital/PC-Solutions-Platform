@@ -346,7 +346,7 @@ Each phase is independently shippable. No phase rewrites the previous one.
 ### Phase 5 — Foundation dashboard homepage
 
 > **Reconciled with `ASSISTANT_DASHBOARD_REDESIGN_PLAN.md`.**
-> The Foundation default landing is now the AI assistant workspace (`/foundation/assistant`, gated by `v2_assistant_dashboard` flag). The staffing-led KPI layout below is still fully built — it becomes the **"Dashboard" view** accessible via the `Assistant | Dashboard` toggle in the header. Nothing from §5.1 is dropped; it now renders when the user clicks the Dashboard tab rather than as the standalone default.
+> When `v2_assistant_dashboard` is active, Foundation users land on `/foundation/assistant` (the AI chat workspace). The header toggle's **Dashboard** tab navigates to `/foundation/dashboard` — the existing Foundation dashboard, updated by this phase. The **Assistant** tab returns to `/foundation/assistant`. The two views are independent: this phase updates the dashboard page as planned; the assistant plan builds the chat workspace. The toggle is purely a navigation switch between the two routes.
 
 **What to build (unchanged from §5.1):**
 - `FoundationDashboardPage` — three KPI cards (Open positions, Applications awaiting review, Open replacement requests), Primary actions row (Post a job, Find replacement staff, Find candidates, Review applications), below-the-fold panels (recent activity, calendar, parent enquiries, HR alerts, supplier offers). Folds in FOUNDATION_PAGES_REBUILD_PLAN Phase 1 mock-data removal.
@@ -354,8 +354,8 @@ Each phase is independently shippable. No phase rewrites the previous one.
 
 **Route / flag interaction:**
 - Flag `v2_assistant_dashboard` **OFF** → `RoleBasedDashboardRedirect` sends Foundation to `/foundation/dashboard` as today (no change).
-- Flag `v2_assistant_dashboard` **ON** → redirect sends Foundation to `/foundation/assistant`; the header toggle's "Dashboard" button navigates to `/foundation/dashboard` (renders the §5.1 staffing-led layout); "Assistant" returns to `/foundation/assistant`.
-- Both routes are always registered; the flag only controls the default landing.
+- Flag `v2_assistant_dashboard` **ON** → redirect sends Foundation to `/foundation/assistant`; Dashboard toggle tab → `/foundation/dashboard`; Assistant toggle tab → `/foundation/assistant`.
+- Both routes always registered; the flag only controls the default landing.
 
 **Educator + Parent + Supplier + Provider dashboards:** no structural change; explicit smoke test that staffing labels do not appear on non-core role routes.
 

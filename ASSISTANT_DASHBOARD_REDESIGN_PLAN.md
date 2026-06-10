@@ -116,7 +116,7 @@ Implementation note: extend the existing `ResultCards`/`ActionPreviewCard` compo
 ## 4. Routing, flags, rollout
 
 - **Flag:** `v2_assistant_dashboard` (FeatureFlag table, ORGANIZATION scope for pilot orgs → GLOBAL). Frontend needs a small `useFeatureFlag(key)` hook + `GET /feature-flags/me` endpoint (also unblocks the other v2_* flags, which currently have no frontend read).
-- **Routes:** flag ON → `RoleBasedDashboardRedirect` (`frontend/App.tsx:162-187`) sends FOUNDATION to `/foundation/assistant`; classic page stays at `/foundation/dashboard`, reachable via the header toggle. Flag OFF → nothing changes.
+- **Routes:** flag ON → `RoleBasedDashboardRedirect` (`frontend/App.tsx:162-187`) sends FOUNDATION to `/foundation/assistant`; the header toggle's **Dashboard** tab navigates to `/foundation/dashboard` (the existing Foundation dashboard, unchanged); **Assistant** tab returns to `/foundation/assistant`. Flag OFF → nothing changes, Foundation lands on `/foundation/dashboard` as today.
 - **Floating widget:** suppress `AssistantContainer` on `/foundation/assistant` (it would duplicate the page); keep it everywhere else so the assistant follows the user onto classic pages.
 - **i18n:** every new string in en/fr/de under the existing `assistant` namespace; run `pnpm i18n:check`.
 - **Mobile:** sidebar collapses to a drawer (existing MainLayout pattern); briefing card stacks; chips scroll horizontally.
