@@ -14,7 +14,7 @@ export class InviteUserDto {
    * If not provided, Clerk will use its default behavior.
    */
   @IsOptional()
-  @IsUrl({ require_tld: false })
+  @IsUrl({ require_tld: true, protocols: ['https', 'http'] })
   @MaxLength(2048)
   redirectUrl?: string;
 

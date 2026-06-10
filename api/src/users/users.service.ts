@@ -1251,21 +1251,14 @@ export class UsersService {
   }
 
   async updateByClerkId(clerkId: string, updateUserDto: UpdateUserDto) {
-    console.log('🔄 [BACKEND UPDATE] Starting updateByClerkId');
-    console.log('📝 UpdateUserDto received:', updateUserDto);
-    console.log('🔍 ClerkId:', clerkId);
-    
     // Check if AppUser exists (required for auth)
     const appUser = await this.prisma.appUser.findUnique({
       where: { clerkId },
     });
 
     if (!appUser) {
-      console.log('❌ AppUser not found for clerkId:', clerkId);
       throw new NotFoundException('User not found');
     }
-    
-    console.log('✅ AppUser found:', appUser.id);
 
     try {
       // Try to find or create User profile
@@ -1274,8 +1267,6 @@ export class UsersService {
       });
 
       if (!user) {
-        // Create User profile if it doesn't exist
-        console.log('Creating User profile for clerkId:', clerkId);
         user = await this.prisma.user.create({
           data: {
             clerkId,

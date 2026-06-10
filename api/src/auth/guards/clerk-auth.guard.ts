@@ -110,9 +110,8 @@ export class ClerkAuthGuard implements CanActivate {
         options.jwtKey = this.jwtKey;
       }
 
-      if (this.authDebug) {
+      if (this.authDebug && process.env.NODE_ENV !== 'production') {
         const req = context.switchToHttp().getRequest();
-         
         console.log('🔐 Auth Debug:', {
           path: req.url,
           method: req.method,
@@ -120,10 +119,7 @@ export class ClerkAuthGuard implements CanActivate {
           hasJwtKey: !!this.jwtKey,
           configuredIssuer: this.issuer,
           tokenIssuer: decodedPayload?.iss,
-          tokenAzp: decodedPayload?.azp,
-          tokenAud: decodedPayload?.aud,
-          tokenKid: decodedHeader?.kid,
-          authorizedParties: this.authorizedParties,
+          // Token claims omitted — do not log in production
         });
       }
 

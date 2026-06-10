@@ -29,6 +29,7 @@ import { UserRole } from '@prisma/client';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Public } from '../auth/decorators/public.decorator';
 import { AllowPending } from '../auth/decorators/allow-pending.decorator';
+import { AuthThrottle } from '../common/decorators/throttle.decorator';
 import { ConfigService } from '@nestjs/config';
 import { createClerkClient } from '@clerk/clerk-sdk-node';
 import { EmailNotificationService } from '../email-notification/email-notification.service';
@@ -72,7 +73,8 @@ export class UsersController {
   }
 
   @Post('complete-profile')
-  @AllowPending()  // Allow pending users (those whose webhook hasn't processed yet) to complete profile
+  @AllowPending()
+  @AuthThrottle()
   async completeProfile(@Request() request, @Body() completeProfileDto: CompleteProfileDto) {
     const clerkId = request.user.clerkId;
     // Get email from DTO (preferred) or fall back to request.user.email
@@ -103,6 +105,7 @@ export class UsersController {
    */
   @Post('invite')
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
+  @AuthThrottle()
   async inviteUser(@Body() dto: InviteUserDto, @Request() request) {
     const callerRole = (request.context?.role || request.user?.role) as UserRole | undefined;
 
@@ -293,6 +296,7 @@ export class UsersController {
    */
   @Post('invite/bulk')
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
+  @AuthThrottle()
   async bulkInviteUsers(@Body() dto: BulkInviteDto, @Request() request) {
     if (!this.clerk) {
       throw new BadRequestException('Clerk is not configured on the API');
