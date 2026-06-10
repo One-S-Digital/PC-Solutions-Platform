@@ -6,10 +6,15 @@ import {
   streamMessage,
   confirmToolCall,
   rejectToolCall,
+  getConversationHistory,
   ToolCallEvent,
   ToolResultEvent,
+  ConversationDetail,
 } from '../../services/assistantService';
 import { useAppContext } from '../../contexts/AppContext';
+
+/** Fired whenever a turn completes or a conversation changes, so the sidebar list can refresh. */
+export const CONVERSATIONS_UPDATED_EVENT = 'assistant:conversations-updated';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -67,6 +72,61 @@ function getThinkingLabelKey(userMessage: string): { key: string; fallback: stri
   return { key: 'thinking.default', fallback: 'Processing your request…' };
 }
 
+/** Maps a persisted conversation (messages + tool calls) into thread messages, ordered chronologically. */
+function mapConversationHistory(detail: ConversationDetail): ChatMessage[] {
+  const items: Array<{ at: number; msg: ChatMessage }> = [];
+
+  for (const m of detail.messages ?? []) {
+    if ((m.sender !== 'USER' && m.sender !== 'ASSISTANT') || !m.content) continue;
+    items.push({
+      at: Date.parse(m.createdAt),
+      msg: {
+        id: m.id,
+        sender: m.sender === 'USER' ? 'user' : 'assistant',
+        text: m.content,
+      },
+    });
+  }
+
+  for (const tc of detail.toolCalls ?? []) {
+    const hasOutcome =
+      tc.status === 'EXECUTED' || tc.status === 'FAILED' || Boolean(tc.outputJson) || Boolean(tc.errorMessage);
+    items.push({
+      // +1ms so a tool card sorts after the assistant narration persisted in the same instant
+      at: Date.parse(tc.createdAt) + 1,
+      msg: {
+        id: tc.id,
+        sender: 'assistant',
+        text: '',
+        toolCall: {
+          toolCallId: tc.id,
+          toolName: tc.toolName,
+          level: tc.level,
+          approvalRequired: tc.approvalRequired,
+          args: (tc.inputJson ?? {}) as Record<string, unknown>,
+        },
+        toolResult: hasOutcome
+          ? {
+              toolCallId: tc.id,
+              toolName: tc.toolName,
+              result: (tc.outputJson ?? undefined) as Record<string, unknown> | undefined,
+              error: tc.errorMessage ?? undefined,
+            }
+          : undefined,
+        cancelled: tc.status === 'REJECTED',
+      },
+    });
+  }
+
+  return items.sort((a, b) => a.at - b.at).map((i) => i.msg);
+}
+
+function notifyConversationsUpdated(): void {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent(CONVERSATIONS_UPDATED_EVENT));
+  }
+}
+
 // ─── useAssistantChat ─────────────────────────────────────────────────────────
 
 /**
@@ -78,8 +138,12 @@ function getThinkingLabelKey(userMessage: string): { key: string; fallback: stri
  *
  * @param active  When false, conversation creation is deferred (the floating
  *                panel passes its `isOpen` state; the workspace passes `true`).
+ * @param requestedConversationId  When set, that conversation is loaded with
+ *                its persisted history instead of creating a fresh one; when
+ *                it changes the thread switches; when it goes back to null
+ *                after having been set, a fresh conversation starts ("+ New").
  */
-export function useAssistantChat(active: boolean) {
+export function useAssistantChat(active: boolean, requestedConversationId?: string | null) {
   const { t } = useTranslation('assistant');
   const { getToken } = useAuth();
   const { language } = useAppContext();
@@ -87,6 +151,7 @@ export function useAssistantChat(active: boolean) {
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [pendingAssistantText, setPendingAssistantText] = useState('');
   const [thinkingLabel, setThinkingLabel] = useState(() => t('panel.thinking', 'Thinking…'));
   const [initError, setInitError] = useState<string | null>(null);
@@ -95,9 +160,43 @@ export function useAssistantChat(active: boolean) {
   const doneFiredRef = useRef(false);
   // Accumulates nextSteps from SSE until flush time
   const pendingNextStepsRef = useRef<string[]>([]);
+  // Tracks the previous requested id so "param removed" (+ New) is distinguishable
+  // from "never had a param" (floating panel).
+  const lastRequestedRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!active || conversationId) return;
+    if (!active) return;
+
+    const requested = requestedConversationId ?? null;
+    const previousRequested = lastRequestedRef.current;
+    lastRequestedRef.current = requested;
+
+    if (requested) {
+      if (requested === conversationId) return;
+      // Switch to the requested conversation and load its history
+      setInitError(null);
+      setConversationId(requested);
+      setMessages([]);
+      setIsLoadingHistory(true);
+      getConversationHistory(getToken, requested)
+        .then((detail) => setMessages(mapConversationHistory(detail)))
+        .catch((err: unknown) => {
+          const msg = err instanceof Error ? err.message : 'Failed to load conversation';
+          setInitError(msg);
+        })
+        .finally(() => setIsLoadingHistory(false));
+      return;
+    }
+
+    // Requested id was cleared (e.g. "+ New") → drop the old thread and start fresh
+    if (conversationId && previousRequested) {
+      setMessages([]);
+      setInitError(null);
+      setConversationId(null);
+      return; // the next effect run creates the new conversation
+    }
+
+    if (conversationId) return;
 
     const locale = (language as string)?.toLowerCase() ?? 'en';
 
@@ -107,7 +206,7 @@ export function useAssistantChat(active: boolean) {
         const msg = err instanceof Error ? err.message : 'Failed to start conversation';
         setInitError(msg);
       });
-  }, [active, conversationId, getToken, language]);
+  }, [active, requestedConversationId, conversationId, getToken, language]);
 
   // ─── Flush pending streaming text into messages ───────────────────────────
 
@@ -129,6 +228,8 @@ export function useAssistantChat(active: boolean) {
       return '';
     });
     setIsStreaming(false);
+    // A completed turn may have created/auto-titled the conversation
+    notifyConversationsUpdated();
   }, []);
 
   // ─── Send a message ────────────────────────────────────────────────────────
@@ -257,6 +358,7 @@ export function useAssistantChat(active: boolean) {
     conversationId,
     messages,
     isStreaming,
+    isLoadingHistory,
     pendingAssistantText,
     thinkingLabel,
     initError,

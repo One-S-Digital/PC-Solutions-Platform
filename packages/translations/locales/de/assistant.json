@@ -163,6 +163,18 @@
       "cantonDirective": "Fasse die neuesten Änderungen der kantonalen Richtlinien für meine Kita zusammen.",
       "newsletter": "Verfasse einen Newsletter für unsere Eltern mit den Neuigkeiten und Erinnerungen des Monats.",
       "orderSupplies": "Hilf mir, Material für die Kita zu bestellen."
+    },
+    "conversations": {
+      "title": "Unterhaltungen",
+      "new": "Neu",
+      "today": "Heute",
+      "yesterday": "Gestern",
+      "lastWeek": "Letzte Woche",
+      "older": "Älter",
+      "untitled": "Neue Unterhaltung",
+      "empty": "Noch keine Unterhaltungen",
+      "rename": "Unterhaltung umbenennen",
+      "archive": "Unterhaltung archivieren"
     }
   }
 }

@@ -2,6 +2,7 @@ import {
   Controller,
   Post,
   Get,
+  Patch,
   Param,
   Body,
   UseGuards,
@@ -49,10 +50,26 @@ export class AssistantController {
     });
   }
 
+  @Get('conversations')
+  @Roles(...ALL_ROLES)
+  listConversations(@Request() req: any) {
+    return this.assistantService.listConversations(extractPrincipal(req));
+  }
+
   @Get('conversations/:id')
   @Roles(...ALL_ROLES)
   getConversation(@Param('id') id: string, @Request() req: any) {
     return this.assistantService.getConversation(id, extractPrincipal(req));
+  }
+
+  @Patch('conversations/:id')
+  @Roles(...ALL_ROLES)
+  updateConversation(
+    @Param('id') id: string,
+    @Body() body: { title?: string; archived?: boolean },
+    @Request() req: any,
+  ) {
+    return this.assistantService.updateConversation(id, extractPrincipal(req), body ?? {});
   }
 
   @Post('conversations/:id/messages')

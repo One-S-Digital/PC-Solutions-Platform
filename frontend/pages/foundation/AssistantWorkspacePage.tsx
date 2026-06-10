@@ -1,5 +1,6 @@
-import React from 'react';
-import { SparklesIcon } from '@heroicons/react/24/outline';
+import React, { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { SparklesIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { AssistantModalHandler, ChatMessageList, useAssistantChat } from '../../components/assistant';
 import {
@@ -37,10 +38,15 @@ const WorkspaceEmptyState: React.FC = () => {
  * is suppressed on this route (see AssistantContainer).
  */
 const AssistantWorkspacePage: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  // ?c=<id> selects a conversation from the sidebar; absent → fresh thread
+  const requestedConversationId = searchParams.get('c');
+
   const {
     conversationId,
     messages,
     isStreaming,
+    isLoadingHistory,
     pendingAssistantText,
     thinkingLabel,
     initError,
@@ -49,9 +55,16 @@ const AssistantWorkspacePage: React.FC = () => {
     sendMessage,
     confirmTool,
     cancelTool,
-  } = useAssistantChat(true);
+  } = useAssistantChat(true, requestedConversationId);
 
-  const composerDisabled = isStreaming || !!initError || !conversationId;
+  // Once a fresh thread has content, reflect it in the URL so a reload resumes it
+  useEffect(() => {
+    if (conversationId && messages.length > 0 && requestedConversationId !== conversationId) {
+      setSearchParams({ c: conversationId }, { replace: true });
+    }
+  }, [conversationId, messages.length, requestedConversationId, setSearchParams]);
+
+  const composerDisabled = isStreaming || isLoadingHistory || !!initError || !conversationId;
 
   return (
     <div className="flex h-full flex-col">
@@ -68,6 +81,11 @@ const AssistantWorkspacePage: React.FC = () => {
       {/* Thread */}
       <div className="flex-1 overflow-y-auto">
         <div className="mx-auto flex min-h-full w-full max-w-3xl flex-col justify-end py-2">
+          {isLoadingHistory && (
+            <div className="flex flex-1 items-center justify-center py-16">
+              <ArrowPathIcon className="h-6 w-6 animate-spin text-swiss-teal" aria-hidden="true" />
+            </div>
+          )}
           <ChatMessageList
             messages={messages}
             isStreaming={isStreaming}
@@ -76,7 +94,7 @@ const AssistantWorkspacePage: React.FC = () => {
             onSend={sendMessage}
             onConfirmTool={confirmTool}
             onCancelTool={cancelTool}
-            emptyState={<WorkspaceEmptyState />}
+            emptyState={isLoadingHistory ? undefined : <WorkspaceEmptyState />}
             userBubbleClassName="bg-swiss-deep-teal text-white"
           />
         </div>

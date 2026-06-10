@@ -57,6 +57,8 @@ describe('AssistantService', () => {
             aIConversation: {
               create: jest.fn().mockResolvedValue(makeConversation()),
               findUnique: jest.fn().mockResolvedValue(makeConversation()),
+              findMany: jest.fn().mockResolvedValue([]),
+              update: jest.fn().mockResolvedValue(makeConversation()),
             },
             aIMessage: {
               create: jest.fn().mockResolvedValue({ id: 'msg-1' }),
@@ -217,6 +219,85 @@ describe('AssistantService', () => {
       );
       await service.streamMessage('conv-1', 'Hello', principal, res);
       expect(orchestrator.run).toHaveBeenCalled();
+    });
+
+    it('auto-titles an untitled conversation from the first message and bumps activity', async () => {
+      prisma.aIConversation.findUnique.mockResolvedValue(makeConversation({ title: null }));
+      await service.streamMessage('conv-1', 'Find me an EDE in Geneva at 80%', FOUNDATION, res);
+      expect(prisma.aIConversation.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: 'conv-1' },
+          data: expect.objectContaining({
+            title: 'Find me an EDE in Geneva at 80%',
+            lastActivityAt: expect.any(Date),
+          }),
+        }),
+      );
+    });
+
+    it('does not overwrite an existing title', async () => {
+      prisma.aIConversation.findUnique.mockResolvedValue(makeConversation({ title: 'My title' }));
+      await service.streamMessage('conv-1', 'Another message', FOUNDATION, res);
+      const updateArg = prisma.aIConversation.update.mock.calls[0][0];
+      expect(updateArg.data.title).toBeUndefined();
+      expect(updateArg.data.lastActivityAt).toEqual(expect.any(Date));
+    });
+  });
+
+  // ── listConversations ─────────────────────────────────────────────────────
+
+  describe('listConversations()', () => {
+    it('lists only the caller\'s non-archived conversations with messages', async () => {
+      await service.listConversations(FOUNDATION);
+      expect(prisma.aIConversation.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            userId: FOUNDATION.userId,
+            archivedAt: null,
+            messages: { some: {} },
+          }),
+          orderBy: { lastActivityAt: 'desc' },
+        }),
+      );
+    });
+  });
+
+  // ── updateConversation ────────────────────────────────────────────────────
+
+  describe('updateConversation()', () => {
+    it('renames a conversation for its owner', async () => {
+      await service.updateConversation('conv-1', FOUNDATION, { title: '  Berger family reply  ' });
+      expect(prisma.aIConversation.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: 'conv-1' },
+          data: { title: 'Berger family reply' },
+        }),
+      );
+    });
+
+    it('archives and unarchives', async () => {
+      await service.updateConversation('conv-1', FOUNDATION, { archived: true });
+      expect(prisma.aIConversation.update).toHaveBeenCalledWith(
+        expect.objectContaining({ data: { archivedAt: expect.any(Date) } }),
+      );
+
+      await service.updateConversation('conv-1', FOUNDATION, { archived: false });
+      expect(prisma.aIConversation.update).toHaveBeenCalledWith(
+        expect.objectContaining({ data: { archivedAt: null } }),
+      );
+    });
+
+    it('throws ForbiddenException for non-owners', async () => {
+      await expect(
+        service.updateConversation('conv-1', OTHER_USER, { title: 'Nope' }),
+      ).rejects.toThrow(ForbiddenException);
+    });
+
+    it('throws NotFoundException for missing conversations', async () => {
+      prisma.aIConversation.findUnique.mockResolvedValue(null);
+      await expect(
+        service.updateConversation('missing', FOUNDATION, { title: 'X' }),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 });

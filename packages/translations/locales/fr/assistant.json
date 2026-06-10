@@ -163,6 +163,18 @@
       "cantonDirective": "Résume les derniers changements de directives cantonales pertinents pour ma crèche.",
       "newsletter": "Rédige une newsletter pour nos parents avec les nouvelles et rappels du mois.",
       "orderSupplies": "Aide-moi à commander du matériel pour la crèche."
+    },
+    "conversations": {
+      "title": "Conversations",
+      "new": "Nouvelle",
+      "today": "Aujourd'hui",
+      "yesterday": "Hier",
+      "lastWeek": "La semaine dernière",
+      "older": "Plus ancien",
+      "untitled": "Nouvelle conversation",
+      "empty": "Aucune conversation pour l'instant",
+      "rename": "Renommer la conversation",
+      "archive": "Archiver la conversation"
     }
   }
 }

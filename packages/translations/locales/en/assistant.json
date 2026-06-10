@@ -163,6 +163,18 @@
       "cantonDirective": "Summarize the latest cantonal directive changes relevant to my crèche.",
       "newsletter": "Draft a newsletter to our parents with this month's news and reminders.",
       "orderSupplies": "Help me order supplies for the crèche."
+    },
+    "conversations": {
+      "title": "Conversations",
+      "new": "New",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "lastWeek": "Last week",
+      "older": "Older",
+      "untitled": "New conversation",
+      "empty": "No conversations yet",
+      "rename": "Rename conversation",
+      "archive": "Archive conversation"
     }
   }
 }

@@ -6,6 +6,17 @@ import { Response } from 'express';
 
 const ADMIN_ROLES: UserRole[] = [UserRole.ADMIN, UserRole.SUPER_ADMIN];
 
+const TITLE_MAX_LENGTH = 60;
+
+/** Derives a conversation title from the first user message (word-boundary truncation). */
+function deriveTitleFromMessage(message: string): string {
+  const firstLine = message.split('\n')[0].replace(/\s+/g, ' ').trim();
+  if (firstLine.length <= TITLE_MAX_LENGTH) return firstLine;
+  const cut = firstLine.slice(0, TITLE_MAX_LENGTH);
+  const lastSpace = cut.lastIndexOf(' ');
+  return `${cut.slice(0, lastSpace > TITLE_MAX_LENGTH / 2 ? lastSpace : TITLE_MAX_LENGTH).trimEnd()}…`;
+}
+
 @Injectable()
 export class AssistantService {
   private readonly logger = new Logger(AssistantService.name);
@@ -30,13 +41,78 @@ export class AssistantService {
   async getConversation(id: string, principal: AssistantPrincipalContext) {
     const conv = await this.prisma.aIConversation.findUnique({
       where: { id },
-      include: { messages: { orderBy: { createdAt: 'asc' } } },
+      include: {
+        messages: { orderBy: { createdAt: 'asc' } },
+        toolCalls: { orderBy: { createdAt: 'asc' } },
+      },
     });
     if (!conv) throw new NotFoundException('Conversation not found');
     if (conv.userId !== principal.userId && !ADMIN_ROLES.includes(principal.role)) {
       throw new ForbiddenException();
     }
     return conv;
+  }
+
+  /**
+   * Sidebar conversation list: the user's own, non-archived conversations that
+   * contain at least one message (the panel/workspace create a conversation
+   * eagerly on open, so empty shells are hidden rather than listed).
+   */
+  async listConversations(principal: AssistantPrincipalContext) {
+    return this.prisma.aIConversation.findMany({
+      where: {
+        userId: principal.userId,
+        archivedAt: null,
+        messages: { some: {} },
+      },
+      orderBy: { lastActivityAt: 'desc' },
+      take: 50,
+      select: {
+        id: true,
+        title: true,
+        kind: true,
+        statusLabel: true,
+        lastActivityAt: true,
+        startedAt: true,
+      },
+    });
+  }
+
+  /** Rename and/or (un)archive a conversation. Owner only (admins included for parity with getConversation). */
+  async updateConversation(
+    id: string,
+    principal: AssistantPrincipalContext,
+    patch: { title?: string; archived?: boolean },
+  ) {
+    const conv = await this.prisma.aIConversation.findUnique({ where: { id } });
+    if (!conv) throw new NotFoundException('Conversation not found');
+    if (conv.userId !== principal.userId && !ADMIN_ROLES.includes(principal.role)) {
+      throw new ForbiddenException();
+    }
+
+    const title =
+      typeof patch.title === 'string' && patch.title.trim()
+        ? patch.title.trim().slice(0, 120)
+        : undefined;
+    const archivedAt =
+      patch.archived === true ? new Date() : patch.archived === false ? null : undefined;
+
+    return this.prisma.aIConversation.update({
+      where: { id },
+      data: {
+        ...(title !== undefined ? { title } : {}),
+        ...(archivedAt !== undefined ? { archivedAt } : {}),
+      },
+      select: {
+        id: true,
+        title: true,
+        kind: true,
+        statusLabel: true,
+        archivedAt: true,
+        lastActivityAt: true,
+        startedAt: true,
+      },
+    });
   }
 
   async streamMessage(
@@ -55,6 +131,15 @@ export class AssistantService {
 
     await this.prisma.aIMessage.create({
       data: { conversationId, sender: AIMessageSender.USER, content: userMessage },
+    });
+
+    // Keep the sidebar list fresh: bump activity, auto-title on first message
+    await this.prisma.aIConversation.update({
+      where: { id: conversationId },
+      data: {
+        lastActivityAt: new Date(),
+        ...(conv.title ? {} : { title: deriveTitleFromMessage(userMessage) }),
+      },
     });
 
     res.setHeader('Content-Type', 'text/event-stream');

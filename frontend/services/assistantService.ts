@@ -35,6 +35,43 @@ export interface NextStepsEvent {
   nextSteps: string[];
 }
 
+// ─── Conversation history types ─────────────────────────────────────────────
+
+export type ConversationKind = 'CHAT' | 'DRAFT' | 'BRIEFING' | 'ORDER';
+
+export interface ConversationSummary {
+  id: string;
+  title: string | null;
+  kind: ConversationKind;
+  statusLabel: string | null;
+  lastActivityAt: string;
+  startedAt: string;
+}
+
+export interface ConversationHistoryMessage {
+  id: string;
+  sender: 'USER' | 'ASSISTANT' | 'SYSTEM' | 'TOOL';
+  content: string;
+  createdAt: string;
+}
+
+export interface ConversationHistoryToolCall {
+  id: string;
+  toolName: string;
+  level: 'L1_ANSWER' | 'L2_DRAFT' | 'L3_EXECUTE';
+  inputJson: Record<string, unknown> | null;
+  outputJson: Record<string, unknown> | null;
+  status: 'PROPOSED' | 'AWAITING_APPROVAL' | 'APPROVED' | 'EXECUTED' | 'REJECTED' | 'FAILED';
+  approvalRequired: boolean;
+  errorMessage: string | null;
+  createdAt: string;
+}
+
+export interface ConversationDetail extends ConversationSummary {
+  messages: ConversationHistoryMessage[];
+  toolCalls: ConversationHistoryToolCall[];
+}
+
 export interface StreamHandlers {
   onToken: (text: string) => void;
   onToolCall: (toolCall: ToolCallEvent) => void;
@@ -93,6 +130,59 @@ export async function createConversation(
   const data = await response.json();
   // Handle both { id } and { data: { id } } shapes
   return { id: data?.id ?? data?.data?.id };
+}
+
+/** Lists the user's conversations (non-archived, newest activity first). */
+export async function listConversations(
+  getToken: () => Promise<string | null>
+): Promise<ConversationSummary[]> {
+  const headers = await getAuthHeaders(getToken);
+  const url = `${apiService.apiBaseUrl}/assistant/conversations`;
+  const response = await fetch(url, { headers, cache: 'no-store' });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error((errorData as any)?.message || `HTTP ${response.status}`);
+  }
+  const data = await response.json();
+  return Array.isArray(data) ? data : (data?.data ?? []);
+}
+
+/** Fetches a conversation with its full message + tool-call history. */
+export async function getConversationHistory(
+  getToken: () => Promise<string | null>,
+  conversationId: string
+): Promise<ConversationDetail> {
+  const headers = await getAuthHeaders(getToken);
+  const url = `${apiService.apiBaseUrl}/assistant/conversations/${conversationId}`;
+  const response = await fetch(url, { headers, cache: 'no-store' });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error((errorData as any)?.message || `HTTP ${response.status}`);
+  }
+  const data = await response.json();
+  return (data?.data ?? data) as ConversationDetail;
+}
+
+/** Renames and/or (un)archives a conversation. */
+export async function updateConversation(
+  getToken: () => Promise<string | null>,
+  conversationId: string,
+  patch: { title?: string; archived?: boolean }
+): Promise<ConversationSummary> {
+  const headers = await getAuthHeaders(getToken);
+  const url = `${apiService.apiBaseUrl}/assistant/conversations/${conversationId}`;
+  const response = await fetch(url, {
+    method: 'PATCH',
+    headers,
+    body: JSON.stringify(patch),
+    cache: 'no-store',
+  });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error((errorData as any)?.message || `HTTP ${response.status}`);
+  }
+  const data = await response.json();
+  return (data?.data ?? data) as ConversationSummary;
 }
 
 /**

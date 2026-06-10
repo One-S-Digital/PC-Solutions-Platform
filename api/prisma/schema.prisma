@@ -3122,6 +3122,13 @@ enum AIConversationStatus {
   ARCHIVED
 }
 
+enum AIConversationKind {
+  CHAT
+  DRAFT
+  BRIEFING
+  ORDER
+}
+
 enum AIChannel {
   WEB
   WHATSAPP
@@ -3158,6 +3165,12 @@ model AIConversation {
   channel        AIChannel            @default(WEB)
   status         AIConversationStatus @default(ACTIVE)
   locale         String               @default("fr")
+  // Conversation-history fields (assistant workspace, Phase B)
+  title          String?
+  kind           AIConversationKind   @default(CHAT)
+  statusLabel    String? // free-text sidebar sublabel, e.g. "Draft approved · sent 09:14"
+  archivedAt     DateTime?
+  lastActivityAt DateTime             @default(now())
   startedAt      DateTime             @default(now())
   endedAt        DateTime?
 
@@ -3166,6 +3179,7 @@ model AIConversation {
   toolCalls AIToolCall[]
 
   @@index([userId, startedAt(sort: Desc)])
+  @@index([userId, lastActivityAt(sort: Desc)])
   @@map("ai_conversations")
 }
 
