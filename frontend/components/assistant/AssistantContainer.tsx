@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useAppContext } from '../../contexts/AppContext';
 import { UserRole } from '../../types';
 import { AssistantButton } from './AssistantButton';
@@ -17,9 +18,16 @@ const ALLOWED_ROLES: UserRole[] = [
 export const AssistantContainer: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { currentUser } = useAppContext();
+  const location = useLocation();
 
   // Only render for allowed roles
   if (!currentUser || !ALLOWED_ROLES.includes(currentUser.role)) {
+    return null;
+  }
+
+  // The full-page assistant workspace already hosts the chat — the floating
+  // widget would duplicate it there.
+  if (location.pathname.startsWith('/foundation/assistant')) {
     return null;
   }
 

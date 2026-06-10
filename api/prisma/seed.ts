@@ -35,6 +35,10 @@ async function main() {
   console.log('🤖 Setting up AI Assistant feature flag...');
   await seedAiAssistantFlag();
 
+  // 6d. Assistant workspace (v2 dashboard) feature flag
+  console.log('🤖 Setting up Assistant Dashboard feature flag...');
+  await seedAssistantDashboardFlag();
+
   // 7. Create Email Templates (for admin email template management)
   console.log('📧 Creating email templates...');
   await seedEmailTemplates();
@@ -1024,6 +1028,27 @@ async function seedAiAssistantFlag() {
       rolloutPercentage: 0,
       targetSegments: [],
       conditions: {},
+    },
+  });
+}
+
+async function seedAssistantDashboardFlag() {
+  // Default OFF: Foundation users keep landing on /foundation/dashboard.
+  // Activate (isActive: true, rolloutPercentage: 100) to make
+  // /foundation/assistant the default landing view; the userRoles condition
+  // keeps the flag Foundation-only even when fully rolled out.
+  await prisma.featureFlag.upsert({
+    where: { key: 'v2_assistant_dashboard' },
+    update: {},
+    create: {
+      name: 'Assistant Dashboard (v2)',
+      description:
+        'v2 remodel: assistant-first Foundation workspace — /foundation/assistant becomes the default landing view with an Assistant | Dashboard toggle',
+      key: 'v2_assistant_dashboard',
+      isActive: false,
+      rolloutPercentage: 0,
+      targetSegments: [],
+      conditions: { userRoles: ['FOUNDATION'] },
     },
   });
 }

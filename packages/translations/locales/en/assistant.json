@@ -138,5 +138,31 @@
     "user": "You",
     "assistant": "Assistant",
     "system": "System"
+  },
+  "workspace": {
+    "greetingMorning": "Good morning, {{name}} 👋",
+    "greetingAfternoon": "Good afternoon, {{name}} 👋",
+    "greetingEvening": "Good evening, {{name}} 👋",
+    "tabsLabel": "Workspace view",
+    "tabAssistant": "Assistant",
+    "tabDashboard": "Dashboard",
+    "activePill": "Assistant active",
+    "composerPlaceholder": "Ask me anything — I'll handle the rest…",
+    "send": "Send",
+    "emptyTitle": "How can I help you today?",
+    "emptySubtitle": "Ask about parent leads, staffing, orders or cantonal directives — or start with a quick action below.",
+    "trustFooter": "The assistant takes no external action without your approval · Responses are grounded in your data and verified cantonal directives",
+    "quickActions": {
+      "onboarding": "Prepare onboarding",
+      "cantonDirective": "Canton directive",
+      "newsletter": "Parent newsletter",
+      "orderSupplies": "Order supplies"
+    },
+    "quickPrompts": {
+      "onboarding": "Help me prepare an onboarding pack for a new family joining our crèche.",
+      "cantonDirective": "Summarize the latest cantonal directive changes relevant to my crèche.",
+      "newsletter": "Draft a newsletter to our parents with this month's news and reminders.",
+      "orderSupplies": "Help me order supplies for the crèche."
+    }
   }
 }

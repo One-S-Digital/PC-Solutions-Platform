@@ -138,5 +138,31 @@
     "user": "Sie",
     "assistant": "Assistent",
     "system": "System"
+  },
+  "workspace": {
+    "greetingMorning": "Guten Morgen, {{name}} 👋",
+    "greetingAfternoon": "Guten Tag, {{name}} 👋",
+    "greetingEvening": "Guten Abend, {{name}} 👋",
+    "tabsLabel": "Arbeitsbereich-Ansicht",
+    "tabAssistant": "Assistent",
+    "tabDashboard": "Dashboard",
+    "activePill": "Assistent aktiv",
+    "composerPlaceholder": "Fragen Sie mich alles — ich kümmere mich um den Rest…",
+    "send": "Senden",
+    "emptyTitle": "Wie kann ich Ihnen heute helfen?",
+    "emptySubtitle": "Fragen Sie zu Elternanfragen, Personal, Bestellungen oder kantonalen Richtlinien — oder starten Sie mit einer Schnellaktion unten.",
+    "trustFooter": "Der Assistent führt keine externen Aktionen ohne Ihre Genehmigung aus · Antworten basieren auf Ihren Daten und geprüften kantonalen Richtlinien",
+    "quickActions": {
+      "onboarding": "Aufnahme vorbereiten",
+      "cantonDirective": "Kantonale Richtlinie",
+      "newsletter": "Eltern-Newsletter",
+      "orderSupplies": "Material bestellen"
+    },
+    "quickPrompts": {
+      "onboarding": "Hilf mir, ein Aufnahmedossier für eine neue Familie in unserer Kita vorzubereiten.",
+      "cantonDirective": "Fasse die neuesten Änderungen der kantonalen Richtlinien für meine Kita zusammen.",
+      "newsletter": "Verfasse einen Newsletter für unsere Eltern mit den Neuigkeiten und Erinnerungen des Monats.",
+      "orderSupplies": "Hilf mir, Material für die Kita zu bestellen."
+    }
   }
 }

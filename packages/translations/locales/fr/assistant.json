@@ -138,5 +138,31 @@
     "user": "Vous",
     "assistant": "Assistant",
     "system": "Système"
+  },
+  "workspace": {
+    "greetingMorning": "Bonjour, {{name}} 👋",
+    "greetingAfternoon": "Bon après-midi, {{name}} 👋",
+    "greetingEvening": "Bonsoir, {{name}} 👋",
+    "tabsLabel": "Vue de l'espace de travail",
+    "tabAssistant": "Assistant",
+    "tabDashboard": "Tableau de bord",
+    "activePill": "Assistant actif",
+    "composerPlaceholder": "Demandez-moi n'importe quoi — je m'occupe du reste…",
+    "send": "Envoyer",
+    "emptyTitle": "Comment puis-je vous aider aujourd'hui ?",
+    "emptySubtitle": "Posez une question sur les demandes de parents, le personnel, les commandes ou les directives cantonales — ou commencez par une action rapide ci-dessous.",
+    "trustFooter": "L'assistant n'effectue aucune action externe sans votre approbation · Réponses fondées sur vos données et les directives cantonales vérifiées",
+    "quickActions": {
+      "onboarding": "Préparer l'accueil",
+      "cantonDirective": "Directive cantonale",
+      "newsletter": "Newsletter parents",
+      "orderSupplies": "Commander du matériel"
+    },
+    "quickPrompts": {
+      "onboarding": "Aide-moi à préparer un dossier d'accueil pour une nouvelle famille qui rejoint notre crèche.",
+      "cantonDirective": "Résume les derniers changements de directives cantonales pertinents pour ma crèche.",
+      "newsletter": "Rédige une newsletter pour nos parents avec les nouvelles et rappels du mois.",
+      "orderSupplies": "Aide-moi à commander du matériel pour la crèche."
+    }
   }
 }

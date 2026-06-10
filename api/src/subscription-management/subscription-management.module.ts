@@ -4,6 +4,7 @@ import {
   SubscriptionController,
   UserSubscriptionController,
 } from './subscription-management.controller';
+import { FeatureFlagsController } from './feature-flags.controller';
 import { SubscriptionManagementService } from './subscription-management.service';
 import { SubscriptionRequestService } from './subscription-request.service';
 import { SubscriptionCancellationRequestService } from './subscription-cancellation-request.service';
@@ -21,6 +22,7 @@ import { EmailNotificationModule } from '../email-notification/email-notificatio
     SubscriptionManagementController,
     SubscriptionController,
     UserSubscriptionController,
+    FeatureFlagsController,
   ],
   providers: [
     SubscriptionManagementService,
