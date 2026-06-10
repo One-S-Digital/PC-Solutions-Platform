@@ -62,6 +62,19 @@ New frontend module: `frontend/pages/foundation/assistant/` + `frontend/componen
 
 Styling: all from existing tokens; additions limited to `swiss-deep-teal` (hero card / user bubble background) and an `amber` badge style for PENDING APPROVAL (Tailwind amber, already available).
 
+### 2.1 Chat interaction patterns (from detailed mockups)
+
+Assistant turns are not plain text — they are a narrative sentence followed by zero or more **rich result cards**, all rendered inside the assistant's white message container:
+
+- **DraftApprovalCard, expanded state** — header row (icon + "Reply to Léa Dubois — daughter, 20 months, starting August" + PENDING APPROVAL badge), quoted draft preview (left mint border, light background, key facts bolded e.g. "**Thursday at 10am**"), action row: `Approve & send` (primary mint), `Edit` (outline), `Discard` (coral-tinted ghost).
+- **DraftApprovalCard, collapsed state** — when a turn produces multiple drafts, only the first renders expanded; subsequent ones show header + badge + `Approve & send` / `View draft` (expands in place). Keeps multi-draft turns scannable.
+- **CandidateShortlistCard** — narrative ("…received **7 applications**… shortlisted the 3 best matches against your criteria"), then one row per candidate: initials avatar (mint tint), name, meta line ("Certified · 4 yrs exp · Lausanne · avail. Aug 1"), match-score pill ("94%") — sourced directly from the remodel's scoring algorithm (§5.5 of STAFFING_REMODEL_PLAN, max 100 pts). Footer: bulk action `Invite all 3 to interview` (L3, one approval covers the batch) + `View all 7 applications` (deep-link to `/staffing/applications` filtered to the posting).
+- **Source attribution line** — every assistant turn ends with a muted timestamp + provenance: "08:42 · sources: Parent Leads, Calendar". Backend: orchestrator records which tool domains were consulted during the turn and emits them in the `done` SSE event; frontend renders the list. This is the "grounded in your data" claim made visible.
+- **Cross-domain awareness in drafts** — the lead-reply draft references calendar conflicts ("avoiding your 2pm appointment with Clara Richard") and capacity ("matches your 8 available spots"): `draft_lead_reply` must consult availability/appointments and org capacity, not just the lead record.
+- **Card → state round-trip** — approving a card updates it in place (PENDING APPROVAL → SENT with timestamp) via the draft-status SSE events (§3.4); the same status surfaces in the sidebar conversation sublabel.
+
+Implementation note: extend the existing `ResultCards`/`ActionPreviewCard` components rather than inventing a new card system — the renderer should switch on a `cardType` field in the `tool_call`/`tool_result` payloads (`draft_approval`, `candidate_shortlist`, …) so new card types are additive.
+
 ---
 
 ## 3. Backend work
@@ -90,7 +103,7 @@ Styling: all from existing tokens; additions limited to `swiss-deep-teal` (hero 
 | `draft_parent_newsletter` / `send_newsletter` | L2 / L3 | mailing (campaigns) module |
 | `prepare_onboarding_pack` | L2/L3 | HR procedures + document templates |
 | `draft_supply_order` / `submit_order` | L2 / L3 | marketplace/orders |
-| `shortlist_candidates`, `update_application_status` | L2/L3 | recruitment (uses new SHORTLISTED/INTERVIEW/OFFER/HIRED statuses) |
+| `shortlist_candidates` (returns scored matches for CandidateShortlistCard), `invite_to_interview` (batch, one approval), `update_application_status` | L2 / L3 | recruitment + remodel scoring algorithm (uses new SHORTLISTED/INTERVIEW/OFFER/HIRED statuses) |
 | existing `post_job` etc. | — | keep as-is |
 - "Handle everything with me" = one prompt that walks briefing items sequentially, emitting one approval card per action — no new orchestration primitive needed, the agent loop already supports multi-tool turns.
 - Keep the PII scrubber and JOB POSTING RULE behaviors intact for all new tools.
