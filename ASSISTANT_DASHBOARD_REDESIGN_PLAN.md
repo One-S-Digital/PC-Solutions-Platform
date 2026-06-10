@@ -34,8 +34,8 @@
 │ Sidebar    │ AssistantHeader (greeting · date/org · toggle ·  │
 │            │   "Assistant active" pill · bell · avatar)       │
 │ • Brand    ├──────────────────────────────────────────────────┤
-│ • NavCompact (5 items + badges)  MorningBriefingCard          │
-│ • ConversationsList              ChatThread                   │
+│ • Existing nav (unchanged)       MorningBriefingCard          │
+│ • ConversationsList (new)        ChatThread                   │
 │   (Today/Yesterday/Last week)      ├ MessageBubble (user)     │
 │ • UserFooter                       ├ AssistantMessage         │
 │            │                       └ DraftApprovalCard        │
@@ -50,7 +50,7 @@ New frontend module: `frontend/pages/foundation/assistant/` + `frontend/componen
 | Component | Notes |
 |---|---|
 | `AssistantWorkspacePage.tsx` | New default route for Foundation; owns layout + active conversation state |
-| `WorkspaceSidebar.tsx` | Compact nav (Dashboard, Parent Leads +badge, Recruitment, Marketplace, HR & Compliance +NEW tag) above a `ConversationsList`; wraps existing role-filter logic from `Sidebar.tsx` |
+| `WorkspaceSidebar.tsx` | **The existing Foundation sidebar nav is kept unchanged** (same items, order, and collapsible groups as `Sidebar.tsx` today — strategy-locked per STAFFING_REMODEL_PLAN §2). The only additions are AI sections rendered beneath the nav: a `CONVERSATIONS` header with "+ New" button and the grouped `ConversationsList`. Implemented by extending `Sidebar.tsx` (or composing it) rather than replacing it |
 | `ConversationsList.tsx` | Grouped by Today / Yesterday / Last week; icon per conversation kind (chat, draft, briefing, order); status sublabel ("Draft approved · sent 09:14"); "+ New" button |
 | `AssistantHeader.tsx` | Greeting ("Good morning, {firstName} 👋"), date + org name, center `Assistant | Dashboard` segmented toggle, "Assistant active" status pill, notification bell (Notification table count), Clerk avatar |
 | `MorningBriefingCard.tsx` | Deep-teal hero card: headline ("N things need your attention today"), summary sentence, CTA buttons that send pre-built prompts into the thread ("Handle everything with me", per-item CTAs) |
