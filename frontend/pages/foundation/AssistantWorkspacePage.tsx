@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { SparklesIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
@@ -6,8 +6,11 @@ import { AssistantModalHandler, ChatMessageList, useAssistantChat } from '../../
 import {
   AssistantHeader,
   Composer,
+  DraftApprovalCard,
+  MorningBriefingCard,
   QuickActionChips,
   TrustFooter,
+  useBriefing,
 } from '../../components/assistant-workspace';
 
 const WorkspaceEmptyState: React.FC = () => {
@@ -39,7 +42,6 @@ const WorkspaceEmptyState: React.FC = () => {
  */
 const AssistantWorkspacePage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  // ?c=<id> selects a conversation from the sidebar; absent → fresh thread
   const requestedConversationId = searchParams.get('c');
 
   const {
@@ -57,14 +59,38 @@ const AssistantWorkspacePage: React.FC = () => {
     cancelTool,
   } = useAssistantChat(true, requestedConversationId);
 
-  // Once a fresh thread has content, reflect it in the URL so a reload resumes it
+  const { briefing, isLoading: briefingLoading } = useBriefing();
+
+  // Reflect current conversation in URL so a reload resumes it
   useEffect(() => {
     if (conversationId && messages.length > 0 && requestedConversationId !== conversationId) {
       setSearchParams({ c: conversationId }, { replace: true });
     }
   }, [conversationId, messages.length, requestedConversationId, setSearchParams]);
 
+  // Separate draft_lead_reply messages from the normal thread so we can
+  // render DraftApprovalCard in place of the generic ToolCallCard.
+  const DRAFT_TOOL = 'draft_lead_reply';
+  const threadMessages = messages.filter((m) => m.toolCall?.toolName !== DRAFT_TOOL);
+  const pendingDraft = [...messages]
+    .reverse()
+    .find((m) => m.toolCall?.toolName === DRAFT_TOOL && !m.cancelled);
+
+  const handleDraftEdit = useCallback(
+    (editedText: string, toolCallId: string) => {
+      // Confirm the existing tool call with the edited draft text as an override,
+      // preserving the stored leadId/foundationId context in the backend.
+      const draft = messages.find((m) => m.id === toolCallId);
+      if (draft?.toolCall) {
+        void confirmTool(draft.toolCall, { draftText: editedText });
+      }
+    },
+    [messages, confirmTool],
+  );
+
   const composerDisabled = isStreaming || isLoadingHistory || !!initError || !conversationId;
+  const showBriefing =
+    messages.length === 0 && !isLoadingHistory && (briefing?.items.length ?? 0) > 0;
 
   return (
     <div className="flex h-full flex-col">
@@ -86,8 +112,18 @@ const AssistantWorkspacePage: React.FC = () => {
               <ArrowPathIcon className="h-6 w-6 animate-spin text-swiss-teal" aria-hidden="true" />
             </div>
           )}
+
+          {/* Morning briefing card — hidden once the user starts chatting */}
+          {showBriefing && (
+            <MorningBriefingCard
+              briefing={briefing}
+              isLoading={briefingLoading}
+              onAction={sendMessage}
+            />
+          )}
+
           <ChatMessageList
-            messages={messages}
+            messages={threadMessages}
             isStreaming={isStreaming}
             pendingAssistantText={pendingAssistantText}
             thinkingLabel={thinkingLabel}
@@ -97,6 +133,17 @@ const AssistantWorkspacePage: React.FC = () => {
             emptyState={isLoadingHistory ? undefined : <WorkspaceEmptyState />}
             userBubbleClassName="bg-swiss-deep-teal text-white"
           />
+
+          {/* Draft approval card for pending draft_lead_reply tool calls */}
+          {pendingDraft?.toolCall && (
+            <DraftApprovalCard
+              toolCall={pendingDraft.toolCall}
+              toolResult={pendingDraft.toolResult}
+              onApprove={confirmTool}
+              onDiscard={cancelTool}
+              onEdit={handleDraftEdit}
+            />
+          )}
         </div>
       </div>
 

@@ -173,6 +173,7 @@ export class AssistantService {
     conversationId: string,
     toolCallId: string,
     principal: AssistantPrincipalContext,
+    overrideArgs?: Record<string, unknown>,
   ) {
     await this.assertAssistantEnabled();
     const conv = await this.prisma.aIConversation.findUnique({ where: { id: conversationId } });
@@ -184,6 +185,7 @@ export class AssistantService {
       toolCallId,
       principal,
       (conv.locale as 'fr' | 'de' | 'en') ?? 'fr',
+      overrideArgs,
     );
   }
 

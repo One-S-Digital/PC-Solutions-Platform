@@ -175,6 +175,33 @@
       "empty": "Noch keine Unterhaltungen",
       "rename": "Unterhaltung umbenennen",
       "archive": "Unterhaltung archivieren"
+    },
+    "briefing": {
+      "headline_one": "{{count}} Punkt erfordert heute Ihre Aufmerksamkeit",
+      "headline_other": "{{count}} Punkte erfordern heute Ihre Aufmerksamkeit",
+      "handleAll": "Alles gemeinsam bearbeiten",
+      "parent_leads": "{{count}} neue Elternanfrage",
+      "parent_leads_plural": "{{count}} neue Elternanfragen",
+      "stale_applications": "{{count}} ausstehende Bewerbung",
+      "stale_applications_plural": "{{count}} ausstehende Bewerbungen",
+      "pending_replacements": "{{count}} ausstehende Vertretung",
+      "pending_replacements_plural": "{{count}} ausstehende Vertretungen",
+      "canton_updates": "{{count}} kantonale Richtlinie",
+      "canton_updates_plural": "{{count}} kantonale Richtlinien",
+      "unread_notifications": "{{count}} ungelesene Benachrichtigung",
+      "unread_notifications_plural": "{{count}} ungelesene Benachrichtigungen"
+    },
+    "draft": {
+      "heading": "Antwortentwurf — vor dem Senden prüfen",
+      "levelBadge": "wartet auf Genehmigung",
+      "approve": "Senden",
+      "edit": "Bearbeiten",
+      "sendEdited": "Bearbeitete Version senden",
+      "cancelEdit": "Abbrechen",
+      "discard": "Verwerfen",
+      "sent": "Antwort erfolgreich gesendet",
+      "sending": "Antwort wird gesendet…",
+      "noContent": "Kein Entwurfsinhalt"
     }
   }
 }

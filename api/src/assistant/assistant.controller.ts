@@ -104,9 +104,15 @@ export class AssistantController {
   confirmToolCall(
     @Param('id') conversationId: string,
     @Param('toolCallId') toolCallId: string,
+    @Body() body: { overrideArgs?: Record<string, unknown> },
     @Request() req: any,
   ) {
-    return this.assistantService.confirmToolCall(conversationId, toolCallId, extractPrincipal(req));
+    return this.assistantService.confirmToolCall(
+      conversationId,
+      toolCallId,
+      extractPrincipal(req),
+      body?.overrideArgs,
+    );
   }
 
   @Post('conversations/:id/tool-calls/:toolCallId/reject')

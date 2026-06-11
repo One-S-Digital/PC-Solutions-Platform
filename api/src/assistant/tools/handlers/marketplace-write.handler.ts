@@ -14,7 +14,7 @@ import {
  */
 @Injectable()
 export class MarketplaceWriteHandler implements ToolHandler {
-  readonly toolNames = ['place_order', 'request_service', 'send_supplier_inquiry'];
+  readonly toolNames = ['place_order', 'place_supply_order', 'request_service', 'send_supplier_inquiry'];
 
   constructor(
     private readonly marketplace: MarketplaceService,
@@ -28,6 +28,7 @@ export class MarketplaceWriteHandler implements ToolHandler {
   ): Promise<ToolResult> {
     switch (toolName) {
       case 'place_order':
+      case 'place_supply_order':
         return this.placeOrder(args, principal);
       case 'request_service':
         return this.requestService(args, principal);

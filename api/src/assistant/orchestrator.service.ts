@@ -264,6 +264,7 @@ export class OrchestratorService {
     toolCallId: string,
     principal: AssistantPrincipalContext,
     locale: 'fr' | 'de' | 'en',
+    overrideArgs?: Record<string, unknown>,
   ): Promise<{ toolCallId: string; toolName: string; result?: unknown; error?: string }> {
     const record = await this.prisma.aIToolCall.findUnique({ where: { id: toolCallId } });
     if (!record) throw new NotFoundException('Tool call not found');
@@ -281,7 +282,9 @@ export class OrchestratorService {
     const toolDef = getToolsForRole(principal.role, disabledFlags).find((t) => t.name === record.toolName);
     if (!toolDef) throw new ForbiddenException('Tool no longer available for this role');
 
-    const args = (record.inputJson as Record<string, unknown>) ?? {};
+    // overrideArgs (e.g. an edited draft text) take precedence over stored args
+    const storedArgs = (record.inputJson as Record<string, unknown>) ?? {};
+    const args = overrideArgs ? { ...storedArgs, ...overrideArgs } : storedArgs;
 
     try {
       const result = await this.registry.execute(record.toolName, args, principal, locale, disabledFlags);

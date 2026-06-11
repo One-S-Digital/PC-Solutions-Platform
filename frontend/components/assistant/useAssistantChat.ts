@@ -302,8 +302,8 @@ export function useAssistantChat(active: boolean, requestedConversationId?: stri
   // ─── L3 tool approval round-trip ───────────────────────────────────────────
 
   const confirmTool = useCallback(
-    async (toolCall: ToolCallEvent) => {
-      if (toolCall.modal) {
+    async (toolCall: ToolCallEvent, overrideArgs?: Record<string, unknown>) => {
+      if (toolCall.modal && !overrideArgs) {
         setPendingModal({
           modal: toolCall.modal,
           prefill: toolCall.args as Record<string, unknown>,
@@ -312,7 +312,7 @@ export function useAssistantChat(active: boolean, requestedConversationId?: stri
       }
       if (!conversationId) return;
       try {
-        const res = await confirmToolCall(getToken, conversationId, toolCall.toolCallId);
+        const res = await confirmToolCall(getToken, conversationId, toolCall.toolCallId, overrideArgs);
         setMessages((prev) =>
           prev.map((m) =>
             m.id === toolCall.toolCallId
