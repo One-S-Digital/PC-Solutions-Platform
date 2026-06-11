@@ -1,4 +1,5 @@
 import { Controller, Get, Request, UseGuards } from '@nestjs/common';
+import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '@workspace/types';
@@ -13,7 +14,7 @@ import { wrapResponse } from '../common/utils/response.util';
  * Admin CRUD for flags lives in SubscriptionManagementController.
  */
 @Controller('feature-flags')
-@UseGuards(RolesGuard)
+@UseGuards(ClerkAuthGuard, RolesGuard)
 export class FeatureFlagsController {
   constructor(private readonly featureFlagService: FeatureFlagService) {}
 

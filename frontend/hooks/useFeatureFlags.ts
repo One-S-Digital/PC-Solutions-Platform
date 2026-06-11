@@ -4,10 +4,10 @@ import { apiService } from '../services/api';
 
 type FlagMap = Record<string, boolean>;
 
-// Flags are evaluated per user on the backend and don't change mid-session,
-// so one fetch is shared across every consumer (redirects, pages, toggles).
-let cachedFlags: FlagMap | null = null;
-let inflight: Promise<FlagMap> | null = null;
+// Keyed by Clerk userId so different accounts in the same SPA session
+// never share flag state.
+const cachedFlags = new Map<string, FlagMap>();
+const inflight = new Map<string, Promise<FlagMap>>();
 
 async function fetchFlags(getToken: () => Promise<string | null>): Promise<FlagMap> {
   const token = await getToken();
@@ -34,35 +34,41 @@ async function fetchFlags(getToken: () => Promise<string | null>): Promise<FlagM
  * the safe default (users land on the classic experience).
  */
 export function useFeatureFlags(): { flags: FlagMap | null; isLoading: boolean } {
-  const { getToken } = useAuth();
-  const [flags, setFlags] = useState<FlagMap | null>(cachedFlags);
+  const { getToken, userId } = useAuth();
+  const [flags, setFlags] = useState<FlagMap | null>(
+    userId ? (cachedFlags.get(userId) ?? null) : null,
+  );
 
   useEffect(() => {
-    if (cachedFlags) {
-      setFlags(cachedFlags);
+    if (!userId) return;
+
+    const existing = cachedFlags.get(userId);
+    if (existing) {
+      setFlags(existing);
       return;
     }
 
     let cancelled = false;
-    if (!inflight) {
-      inflight = fetchFlags(getToken)
+    if (!inflight.has(userId)) {
+      const promise = fetchFlags(getToken)
         .catch(() => ({}) as FlagMap)
         .then((result) => {
-          cachedFlags = result;
-          inflight = null;
+          cachedFlags.set(userId, result);
+          inflight.delete(userId);
           return result;
         });
+      inflight.set(userId, promise);
     }
-    void inflight.then((result) => {
+    void inflight.get(userId)!.then((result) => {
       if (!cancelled) setFlags(result);
     });
 
     return () => {
       cancelled = true;
     };
-    // getToken is not referentially stable across renders (Clerk); the cache
-    // and inflight dedupe make re-runs harmless.
-  }, [getToken]);
+    // getToken is not referentially stable across renders (Clerk); the per-user
+    // cache and inflight dedup make re-runs harmless.
+  }, [getToken, userId]);
 
   return { flags, isLoading: flags === null };
 }
