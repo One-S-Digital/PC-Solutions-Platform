@@ -21,12 +21,13 @@ function isValidEmail(value: string): boolean {
 }
 
 /**
- * L3 lead write actions: a foundation responding to a parent lead, and a parent
- * submitting a new childcare enquiry. Both execute only after user confirmation.
+ * L3 lead write actions: a foundation responding to a parent lead, submitting a
+ * new childcare enquiry, and confirming a reviewed draft reply. All execute only
+ * after user confirmation.
  */
 @Injectable()
 export class LeadsWriteHandler implements ToolHandler {
-  readonly toolNames = ['respond_to_lead', 'submit_enquiry'];
+  readonly toolNames = ['respond_to_lead', 'submit_enquiry', 'draft_lead_reply'];
 
   constructor(
     private readonly leads: LeadsService,
@@ -38,10 +39,34 @@ export class LeadsWriteHandler implements ToolHandler {
     args: Record<string, unknown>,
     principal: AssistantPrincipal,
   ): Promise<ToolResult> {
-    if (toolName === 'respond_to_lead') {
-      return this.respondToLead(args, principal);
-    }
+    if (toolName === 'respond_to_lead') return this.respondToLead(args, principal);
+    if (toolName === 'draft_lead_reply') return this.sendDraftReply(args, principal);
     return this.submitEnquiry(args, principal);
+  }
+
+  // ── draft_lead_reply (L3 confirm: sends the approved draft to the parent) ──
+  private async sendDraftReply(
+    args: Record<string, unknown>,
+    principal: AssistantPrincipal,
+  ): Promise<ToolResult> {
+    const foundationId = resolveOnBehalfOrgId(args, principal);
+    if (!foundationId) {
+      throw new Error('A foundationId is required to send a reply.');
+    }
+    const leadId = (args.leadId as string) || (args.id as string);
+    if (!leadId) throw new Error('A leadId is required.');
+    const message = (args.draftText as string) || (args.message as string) || '';
+
+    const response = await this.leads.respondToLead(
+      leadId,
+      foundationId,
+      'INTERESTED',
+      message || undefined,
+    );
+    return {
+      data: { leadId, status: 'INTERESTED', responseId: (response as any)?.id ?? null, sent: true },
+      total: 1,
+    };
   }
 
   // ── respond_to_lead (foundation) ──────────────────────────────────────────

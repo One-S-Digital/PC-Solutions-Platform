@@ -9,6 +9,7 @@ import {
   AssistantPrincipal,
   CONTACT_ADMIN_SUGGESTION as CONTACT_ADMIN,
   isAdminRole,
+  resolveLimit,
   ToolHandler,
   ToolResult,
 } from '../tool-handler.interface';
@@ -30,6 +31,7 @@ export class SearchHandler implements ToolHandler {
     'search_jobs',
     'search_foundations',
     'view_match_results',
+    'summarise_canton_update',
   ];
 
   constructor(
@@ -67,6 +69,8 @@ export class SearchHandler implements ToolHandler {
         return this.searchFoundations(args);
       case 'view_match_results':
         return this.viewMatchResults(args, principal);
+      case 'summarise_canton_update':
+        return this.summariseCantonUpdate(args, principal);
       default:
         throw new Error(`SearchHandler cannot handle tool "${toolName}"`);
     }
@@ -380,6 +384,70 @@ export class SearchHandler implements ToolHandler {
       region,
       skills: Array.isArray(c.skills) ? c.skills.slice(0, 4) : [],
       avatarUrl: c.avatarAsset?.publicUrl ?? null,
+    };
+  }
+
+  // ── summarise_canton_update ───────────────────────────────────────────────
+  private async summariseCantonUpdate(
+    args: Record<string, unknown>,
+    principal: AssistantPrincipal,
+  ): Promise<ToolResult> {
+    const limit = resolveLimit(args.limit, 5, 10);
+
+    // Resolve canton: explicit arg wins, then org's canton, then no filter
+    let canton = (args.canton as string) || null;
+    if (!canton && principal.organizationId) {
+      const org = await this.prisma.organization.findUnique({
+        where: { id: principal.organizationId },
+        select: { canton: true },
+      });
+      canton = org?.canton ?? null;
+    }
+
+    const policies = await this.prisma.asset.findMany({
+      where: {
+        category: 'STATE_POLICY',
+        status: 'Published',
+        ...(canton ? { region: { in: [canton, 'All'] } } : {}),
+      },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        contentPreview: true,
+        region: true,
+        policyType: true,
+        effectiveDate: true,
+        externalLink: true,
+        createdAt: true,
+        isCritical: true,
+      },
+    });
+
+    const items = policies.map((p) => ({
+      id: p.id,
+      title: p.title ?? 'Untitled policy',
+      summary: p.contentPreview || p.description || null,
+      region: p.region ?? null,
+      policyType: p.policyType ?? null,
+      effectiveDate: p.effectiveDate?.toISOString() ?? null,
+      externalLink: p.externalLink ?? null,
+      critical: p.isCritical,
+      publishedAt: p.createdAt.toISOString(),
+    }));
+
+    return {
+      data: { canton: canton ?? 'all', items },
+      total: items.length,
+      suggestions:
+        items.length === 0
+          ? [
+              { label: 'Broaden canton filter', actionType: 'broaden_search', payload: { canton: null } },
+              CONTACT_ADMIN,
+            ]
+          : undefined,
     };
   }
 }

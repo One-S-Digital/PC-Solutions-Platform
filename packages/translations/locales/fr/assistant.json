@@ -175,6 +175,33 @@
       "empty": "Aucune conversation pour l'instant",
       "rename": "Renommer la conversation",
       "archive": "Archiver la conversation"
+    },
+    "briefing": {
+      "headline_one": "{{count}} élément demande votre attention aujourd'hui",
+      "headline_other": "{{count}} éléments demandent votre attention aujourd'hui",
+      "handleAll": "Tout gérer avec moi",
+      "parent_leads": "{{count}} nouvelle demande de parent",
+      "parent_leads_plural": "{{count}} nouvelles demandes de parents",
+      "stale_applications": "{{count}} candidature en attente",
+      "stale_applications_plural": "{{count}} candidatures en attente",
+      "pending_replacements": "{{count}} remplacement en attente",
+      "pending_replacements_plural": "{{count}} remplacements en attente",
+      "canton_updates": "{{count}} directive cantonale",
+      "canton_updates_plural": "{{count}} directives cantonales",
+      "unread_notifications": "{{count}} notification non lue",
+      "unread_notifications_plural": "{{count}} notifications non lues"
+    },
+    "draft": {
+      "heading": "Brouillon de réponse — vérifiez avant d'envoyer",
+      "levelBadge": "en attente d'approbation",
+      "approve": "Envoyer",
+      "edit": "Modifier",
+      "sendEdited": "Envoyer la version modifiée",
+      "cancelEdit": "Annuler",
+      "discard": "Supprimer",
+      "sent": "Réponse envoyée avec succès",
+      "sending": "Envoi en cours…",
+      "noContent": "Aucun contenu de brouillon"
     }
   }
 }

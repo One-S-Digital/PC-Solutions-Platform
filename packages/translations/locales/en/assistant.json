@@ -175,6 +175,33 @@
       "empty": "No conversations yet",
       "rename": "Rename conversation",
       "archive": "Archive conversation"
+    },
+    "briefing": {
+      "headline_one": "{{count}} thing needs your attention today",
+      "headline_other": "{{count}} things need your attention today",
+      "handleAll": "Handle everything with me",
+      "parent_leads": "{{count}} new parent lead",
+      "parent_leads_plural": "{{count}} new parent leads",
+      "stale_applications": "{{count}} application stale",
+      "stale_applications_plural": "{{count}} applications stale",
+      "pending_replacements": "{{count}} replacement pending",
+      "pending_replacements_plural": "{{count}} replacements pending",
+      "canton_updates": "{{count}} canton update",
+      "canton_updates_plural": "{{count}} canton updates",
+      "unread_notifications": "{{count}} unread notification",
+      "unread_notifications_plural": "{{count}} unread notifications"
+    },
+    "draft": {
+      "heading": "Draft reply — review before sending",
+      "levelBadge": "awaiting approval",
+      "approve": "Send",
+      "edit": "Edit",
+      "sendEdited": "Send edited",
+      "cancelEdit": "Cancel",
+      "discard": "Discard",
+      "sent": "Reply sent successfully",
+      "sending": "Sending reply…",
+      "noContent": "No draft content"
     }
   }
 }
