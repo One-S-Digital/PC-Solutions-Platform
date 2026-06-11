@@ -341,6 +341,65 @@ export const TOOL_REGISTRY: ToolDefinition[] = [
       context: { type: 'string', description: 'Context or key points to include in the reply' },
     },
   },
+  {
+    name: 'draft_lead_reply',
+    description:
+      'Draft a personalised email reply to a parent lead. Include the full draft text in draftText. The user will review and approve before the reply is sent.',
+    level: 'L3_EXECUTE',
+    allowedRoles: FOUNDATION_ADMIN,
+    inputSchema: {
+      leadId: { type: 'string', description: 'The parent lead ID to reply to' },
+      draftText: { type: 'string', description: 'The full drafted reply text to show the user for approval' },
+      foundationId: { type: 'string', description: 'Optional: foundation org ID (admin only)' },
+    },
+  },
+  {
+    name: 'draft_newsletter',
+    description: 'Draft a newsletter for parents. Opens a review form pre-filled with the draft so the user can edit before publishing.',
+    level: 'L2_DRAFT',
+    allowedRoles: FOUNDATION_ADMIN,
+    modal: 'newsletter_modal',
+    inputSchema: {
+      subject: { type: 'string', description: 'Newsletter subject line' },
+      body: { type: 'string', description: 'Draft newsletter body text' },
+      month: { type: 'string', description: 'Optional: month this newsletter covers (e.g. "June 2026")' },
+    },
+  },
+  {
+    name: 'draft_onboarding_pack',
+    description: 'Prepare a personalised onboarding document pack for a new family joining the crèche. Opens a review form pre-filled with the draft.',
+    level: 'L2_DRAFT',
+    allowedRoles: FOUNDATION_ADMIN,
+    modal: 'onboarding_pack_modal',
+    inputSchema: {
+      familyName: { type: 'string', description: "The new family's name" },
+      childName: { type: 'string', description: "The child's name" },
+      startDate: { type: 'string', description: 'Optional: admission start date (ISO)' },
+      notes: { type: 'string', description: 'Optional: additional notes to include' },
+    },
+  },
+  {
+    name: 'summarise_canton_update',
+    description: 'Fetch and summarise the latest cantonal policy updates (STATE_POLICY assets) relevant to the foundation\'s canton.',
+    level: 'L1_ANSWER',
+    allowedRoles: FOUNDATION_ADMIN,
+    inputSchema: {
+      canton: { type: 'string', description: 'Optional: Swiss canton abbreviation to filter by (e.g. VD, GE). Defaults to the foundation\'s own canton.' },
+      limit: { type: 'number', description: 'Max number of updates to return (default 5)' },
+    },
+  },
+  {
+    name: 'place_supply_order',
+    description: 'Place a supply order for consumables and equipment with a supplier. Use this when the user specifically mentions ordering supplies or consumables for the crèche.',
+    level: 'L3_EXECUTE',
+    allowedRoles: FOUNDATION_ADMIN,
+    inputSchema: {
+      productId: { type: 'string', description: 'Product ID to order (single-item shorthand)' },
+      quantity: { type: 'number', description: 'Quantity for the single product (default 1)' },
+      items: { type: 'array', description: 'Optional: array of { productId, quantity } for multi-item orders' },
+      notes: { type: 'string', description: 'Optional order notes' },
+    },
+  },
 
   // ── Educator tools ─────────────────────────────────────────────────────────
   {

@@ -181,6 +181,8 @@ model Notification {
 ## 5. Feature Design
 
 ### 5.1 Foundation: Staffing-led Overview (`/foundation/dashboard`)
+> This layout renders at `/foundation/dashboard` as the **Dashboard tab** of the `Assistant | Dashboard` toggle. It is no longer the default landing page when `v2_assistant_dashboard` is active — see Phase 5 note and `ASSISTANT_DASHBOARD_REDESIGN_PLAN.md`.
+
 Replace mock-heavy dashboard with:
 - **Top — three KPI cards**: Open positions, Applications awaiting review, Open replacement requests (clickable).
 - **Primary actions row**: Post a job → opens `JobPostModal`; Find replacement staff → `/staffing/replacements/new`; Find candidates → `/staffing/candidates`; Review applications → `/staffing/applications`.
@@ -342,9 +344,20 @@ Each phase is independently shippable. No phase rewrites the previous one.
 - Feature flags `v2_staffing_emails` + `v2_in_app_notifications` gate rollout.
 
 ### Phase 5 — Foundation dashboard homepage
-- `FoundationDashboardPage` — staffing-led layout per §5.1 (folds in FOUNDATION_PAGES_REBUILD_PLAN Phase 1 mock-data removal).
-- Educator + Parent + Supplier + Provider dashboards: **no structural change**; explicit smoke test that staffing labels do not appear on non-core role routes.
+
+> **Reconciled with `ASSISTANT_DASHBOARD_REDESIGN_PLAN.md`.**
+> When `v2_assistant_dashboard` is active, Foundation users land on `/foundation/assistant` (the AI chat workspace). The header toggle's **Dashboard** tab navigates to `/foundation/dashboard` — the existing Foundation dashboard, updated by this phase. The **Assistant** tab returns to `/foundation/assistant`. The two views are independent: this phase updates the dashboard page as planned; the assistant plan builds the chat workspace. The toggle is purely a navigation switch between the two routes.
+
+**What to build (unchanged from §5.1):**
+- `FoundationDashboardPage` — three KPI cards (Open positions, Applications awaiting review, Open replacement requests), Primary actions row (Post a job, Find replacement staff, Find candidates, Review applications), below-the-fold panels (recent activity, calendar, parent enquiries, HR alerts, supplier offers). Folds in FOUNDATION_PAGES_REBUILD_PLAN Phase 1 mock-data removal.
 - New `foundationStaffingOverviewService` combining existing `foundationDashboardService` with the new staffing counts.
+
+**Route / flag interaction:**
+- Flag `v2_assistant_dashboard` **OFF** → `RoleBasedDashboardRedirect` sends Foundation to `/foundation/dashboard` as today (no change).
+- Flag `v2_assistant_dashboard` **ON** → redirect sends Foundation to `/foundation/assistant`; Dashboard toggle tab → `/foundation/dashboard`; Assistant toggle tab → `/foundation/assistant`.
+- Both routes always registered; the flag only controls the default landing.
+
+**Educator + Parent + Supplier + Provider dashboards:** no structural change; explicit smoke test that staffing labels do not appear on non-core role routes.
 
 ### Phase 6 — Admin homepage + parity
 - `admin/src/pages/Dashboard.tsx` — staffing-signals layout per §5.6; existing count cards preserved below the fold.
@@ -451,6 +464,6 @@ Surface in admin `Staffing Signals` as a 4-tile rolling-30-day strip.
 - **Phase 2:** Unit tests for scoring; integration tests for application pipeline; email templates seeded; foundation can shortlist a candidate end-to-end.
 - **Phase 3:** Foundation user can post a replacement request → see scored matches → send offer → educator accepts → foundation confirms → both sides receive emails. Admin sees cross-foundation list.
 - **Phase 4:** All 7 templates fire in production with `EmailLog` evidence; in-app notification feed populates and persists; bell badge count is live.
-- **Phase 5:** FoundationDashboardPage renders staffing-led layout; mock data gone; non-core dashboards untouched (smoke test passes).
+- **Phase 5:** `FoundationDashboardPage` (`/foundation/dashboard`) renders the staffing-led KPI layout (§5.1); mock data gone; reachable via the `Assistant | Dashboard` toggle when `v2_assistant_dashboard` is on, or as the direct default when it is off; non-core dashboards untouched (smoke test passes).
 - **Phase 6:** Admin Dashboard renders staffing signals on top, count cards preserved below the fold; bell dropdown shows staffing alerts as the first category.
 - **Phase 7:** All 4 success metrics populated; legacy `/recruitment/*` routes 301-redirected; e2e smoke passes in fr/en/de.

@@ -138,5 +138,70 @@
     "user": "You",
     "assistant": "Assistant",
     "system": "System"
+  },
+  "workspace": {
+    "greetingMorning": "Good morning, {{name}} 👋",
+    "greetingAfternoon": "Good afternoon, {{name}} 👋",
+    "greetingEvening": "Good evening, {{name}} 👋",
+    "tabsLabel": "Workspace view",
+    "tabAssistant": "Assistant",
+    "tabDashboard": "Dashboard",
+    "activePill": "Assistant active",
+    "composerPlaceholder": "Ask me anything — I'll handle the rest…",
+    "send": "Send",
+    "emptyTitle": "How can I help you today?",
+    "emptySubtitle": "Ask about parent leads, staffing, orders or cantonal directives — or start with a quick action below.",
+    "trustFooter": "The assistant takes no external action without your approval · Responses are grounded in your data and verified cantonal directives",
+    "quickActions": {
+      "onboarding": "Prepare onboarding",
+      "cantonDirective": "Canton directive",
+      "newsletter": "Parent newsletter",
+      "orderSupplies": "Order supplies"
+    },
+    "quickPrompts": {
+      "onboarding": "Help me prepare an onboarding pack for a new family joining our crèche.",
+      "cantonDirective": "Summarize the latest cantonal directive changes relevant to my crèche.",
+      "newsletter": "Draft a newsletter to our parents with this month's news and reminders.",
+      "orderSupplies": "Help me order supplies for the crèche."
+    },
+    "conversations": {
+      "title": "Conversations",
+      "new": "New",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "lastWeek": "Last week",
+      "older": "Older",
+      "untitled": "New conversation",
+      "empty": "No conversations yet",
+      "rename": "Rename conversation",
+      "archive": "Archive conversation"
+    },
+    "briefing": {
+      "headline_one": "{{count}} thing needs your attention today",
+      "headline_other": "{{count}} things need your attention today",
+      "handleAll": "Handle everything with me",
+      "parent_leads": "{{count}} new parent lead",
+      "parent_leads_plural": "{{count}} new parent leads",
+      "stale_applications": "{{count}} stale application",
+      "stale_applications_plural": "{{count}} stale applications",
+      "pending_replacements": "{{count}} pending replacement",
+      "pending_replacements_plural": "{{count}} pending replacements",
+      "canton_updates": "{{count}} canton update",
+      "canton_updates_plural": "{{count}} canton updates",
+      "unread_notifications": "{{count}} unread notification",
+      "unread_notifications_plural": "{{count}} unread notifications"
+    },
+    "draft": {
+      "heading": "Draft reply — review before sending",
+      "levelBadge": "awaiting approval",
+      "approve": "Send",
+      "edit": "Edit",
+      "sendEdited": "Send edited",
+      "cancelEdit": "Cancel",
+      "discard": "Discard",
+      "sent": "Reply sent successfully",
+      "sending": "Sending reply…",
+      "noContent": "No draft content"
+    }
   }
 }

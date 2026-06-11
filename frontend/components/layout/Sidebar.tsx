@@ -9,6 +9,7 @@ import { UserRole } from '../../types';
 import { useTranslation } from 'react-i18next'; // Import useTranslation
 import { TFunction } from 'i18next'; // Import TFunction for typing
 import { getHomePath } from '../../utils/navigation';
+import { ConversationsList } from '../assistant-workspace/ConversationsList';
 
 interface NavItem {
   path: string;
@@ -297,11 +298,13 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
                   )}
                 </>
               ) : (
-                <NavLinkItem item={{...item, path: pathForTopLevel}} /> 
+                <NavLinkItem item={{...item, path: pathForTopLevel}} />
               )}
             </div>
           );
         })}
+        {/* AI conversations — additive section beneath the (strategy-locked) nav items */}
+        {isFoundationUser && <ConversationsList onNavigate={onLinkClick} />}
       </nav>
       <div className="p-3 lg:p-5 border-t border-gray-200/80 mt-auto">
         {currentUser && (

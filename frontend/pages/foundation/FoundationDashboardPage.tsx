@@ -23,6 +23,8 @@ import {
 } from '@heroicons/react/24/outline';
 import { replacementsService, StaffingSignals } from '../../services/replacementsService';
 import { useAppContext } from '../../contexts/AppContext';
+import { useFeatureFlag } from '../../hooks/useFeatureFlags';
+import { AssistantToggle } from '../../components/assistant-workspace';
 import { useTranslation } from 'react-i18next';
 import { useAuthenticatedApi } from '../../hooks/useAuthenticatedApi';
 import { 
@@ -80,6 +82,7 @@ const FoundationDashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const { currentUser } = useAppContext();
   const { request } = useAuthenticatedApi();
+  const { enabled: assistantWorkspaceEnabled } = useFeatureFlag('v2_assistant_dashboard');
 
   // State for API data
   const [quickStats, setQuickStats] = useState<FoundationQuickStats | null>(null);
@@ -247,11 +250,15 @@ const FoundationDashboardPage: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold text-swiss-charcoal">
-          {t('foundationDashboard.title')}
-        </h1>
-        <p className="text-gray-500 mt-1">{t('foundationDashboard.welcomeMessage', { name: currentUser?.name?.split(' ')[0] })}</p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-3xl font-bold text-swiss-charcoal">
+            {t('foundationDashboard.title')}
+          </h1>
+          <p className="text-gray-500 mt-1">{t('foundationDashboard.welcomeMessage', { name: currentUser?.name?.split(' ')[0] })}</p>
+        </div>
+        {/* Round-trip back to the assistant workspace when the flag is on */}
+        {assistantWorkspaceEnabled && <AssistantToggle active="dashboard" />}
       </div>
 
       {/* ── Staffing KPI Row ──────────────────────────────────────────── */}

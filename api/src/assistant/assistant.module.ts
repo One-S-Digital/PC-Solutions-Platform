@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AssistantController } from './assistant.controller';
 import { AssistantService } from './assistant.service';
+import { BriefingService } from './briefing.service';
 import { OrchestratorService } from './orchestrator.service';
 import { KnowledgeService } from '../ai/knowledge/knowledge.service';
 import { KnowledgeEmbeddingService } from '../ai/knowledge/knowledge-embedding.service';
@@ -47,6 +48,7 @@ import { AdminHandler } from './tools/handlers/admin.handler';
   controllers: [AssistantController],
   providers: [
     AssistantService,
+    BriefingService,
     OrchestratorService,
     KnowledgeService,
     KnowledgeEmbeddingService,

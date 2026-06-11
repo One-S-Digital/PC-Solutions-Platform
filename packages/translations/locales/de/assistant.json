@@ -138,5 +138,70 @@
     "user": "Sie",
     "assistant": "Assistent",
     "system": "System"
+  },
+  "workspace": {
+    "greetingMorning": "Guten Morgen, {{name}} 👋",
+    "greetingAfternoon": "Guten Tag, {{name}} 👋",
+    "greetingEvening": "Guten Abend, {{name}} 👋",
+    "tabsLabel": "Arbeitsbereich-Ansicht",
+    "tabAssistant": "Assistent",
+    "tabDashboard": "Dashboard",
+    "activePill": "Assistent aktiv",
+    "composerPlaceholder": "Fragen Sie mich alles — ich kümmere mich um den Rest…",
+    "send": "Senden",
+    "emptyTitle": "Wie kann ich Ihnen heute helfen?",
+    "emptySubtitle": "Fragen Sie zu Elternanfragen, Personal, Bestellungen oder kantonalen Richtlinien — oder starten Sie mit einer Schnellaktion unten.",
+    "trustFooter": "Der Assistent führt keine externen Aktionen ohne Ihre Genehmigung aus · Antworten basieren auf Ihren Daten und geprüften kantonalen Richtlinien",
+    "quickActions": {
+      "onboarding": "Aufnahme vorbereiten",
+      "cantonDirective": "Kantonale Richtlinie",
+      "newsletter": "Eltern-Newsletter",
+      "orderSupplies": "Material bestellen"
+    },
+    "quickPrompts": {
+      "onboarding": "Hilf mir, ein Aufnahmedossier für eine neue Familie in unserer Kita vorzubereiten.",
+      "cantonDirective": "Fasse die neuesten Änderungen der kantonalen Richtlinien für meine Kita zusammen.",
+      "newsletter": "Verfasse einen Newsletter für unsere Eltern mit den Neuigkeiten und Erinnerungen des Monats.",
+      "orderSupplies": "Hilf mir, Material für die Kita zu bestellen."
+    },
+    "conversations": {
+      "title": "Unterhaltungen",
+      "new": "Neu",
+      "today": "Heute",
+      "yesterday": "Gestern",
+      "lastWeek": "Letzte Woche",
+      "older": "Älter",
+      "untitled": "Neue Unterhaltung",
+      "empty": "Noch keine Unterhaltungen",
+      "rename": "Unterhaltung umbenennen",
+      "archive": "Unterhaltung archivieren"
+    },
+    "briefing": {
+      "headline_one": "{{count}} Punkt erfordert heute Ihre Aufmerksamkeit",
+      "headline_other": "{{count}} Punkte erfordern heute Ihre Aufmerksamkeit",
+      "handleAll": "Alles gemeinsam bearbeiten",
+      "parent_leads": "{{count}} neue Elternanfrage",
+      "parent_leads_plural": "{{count}} neue Elternanfragen",
+      "stale_applications": "{{count}} ausstehende Bewerbung",
+      "stale_applications_plural": "{{count}} ausstehende Bewerbungen",
+      "pending_replacements": "{{count}} ausstehende Vertretung",
+      "pending_replacements_plural": "{{count}} ausstehende Vertretungen",
+      "canton_updates": "{{count}} kantonale Richtlinie",
+      "canton_updates_plural": "{{count}} kantonale Richtlinien",
+      "unread_notifications": "{{count}} ungelesene Benachrichtigung",
+      "unread_notifications_plural": "{{count}} ungelesene Benachrichtigungen"
+    },
+    "draft": {
+      "heading": "Antwortentwurf — vor dem Senden prüfen",
+      "levelBadge": "wartet auf Genehmigung",
+      "approve": "Senden",
+      "edit": "Bearbeiten",
+      "sendEdited": "Bearbeitete Version senden",
+      "cancelEdit": "Abbrechen",
+      "discard": "Verwerfen",
+      "sent": "Antwort erfolgreich gesendet",
+      "sending": "Antwort wird gesendet…",
+      "noContent": "Kein Entwurfsinhalt"
+    }
   }
 }
