@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CheckIcon, PencilIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { ToolCallEvent, ToolResultEvent } from '../../services/assistantService';
 
-type DraftState = 'PENDING' | 'APPROVED' | 'SENT';
+type DraftState = 'PENDING' | 'SENT';
 
 interface DraftApprovalCardProps {
   toolCall: ToolCallEvent;
@@ -31,17 +31,20 @@ export const DraftApprovalCard: React.FC<DraftApprovalCardProps> = ({
   const draftText =
     (toolCall.args?.draftText as string) ||
     (toolCall.args?.message as string) ||
-    (toolCall.args?.context as string) ||
     '';
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedText, setEditedText] = useState(draftText);
 
-  // Derive visual state from external props so parent-managed message state drives the card.
-  let displayState: DraftState = 'PENDING';
-  if (toolResult) {
-    displayState = toolResult.error ? 'PENDING' : 'SENT';
-  }
+  // Keep textarea in sync if the parent toolCall args are updated
+  useEffect(() => {
+    setEditedText(
+      (toolCall.args?.draftText as string) || (toolCall.args?.message as string) || '',
+    );
+  }, [toolCall.args?.draftText, toolCall.args?.message]);
+
+  // Derive visual state from external props
+  const displayState: DraftState = toolResult && !toolResult.error ? 'SENT' : 'PENDING';
 
   if (displayState === 'SENT') {
     return (

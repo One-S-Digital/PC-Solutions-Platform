@@ -55,13 +55,14 @@ export class LeadsWriteHandler implements ToolHandler {
     }
     const leadId = (args.leadId as string) || (args.id as string);
     if (!leadId) throw new Error('A leadId is required.');
-    const message = (args.draftText as string) || (args.message as string) || '';
+    const message = ((args.draftText as string) || (args.message as string) || '').trim();
+    if (!message) throw new Error('A non-empty draft message is required to send a reply.');
 
     const response = await this.leads.respondToLead(
       leadId,
       foundationId,
       'INTERESTED',
-      message || undefined,
+      message,
     );
     return {
       data: { leadId, status: 'INTERESTED', responseId: (response as any)?.id ?? null, sent: true },

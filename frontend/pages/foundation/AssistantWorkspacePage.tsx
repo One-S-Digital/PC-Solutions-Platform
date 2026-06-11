@@ -78,11 +78,14 @@ const AssistantWorkspacePage: React.FC = () => {
 
   const handleDraftEdit = useCallback(
     (editedText: string, toolCallId: string) => {
-      // Cancel the pending draft call, then send the edited text as a new message
-      cancelTool(toolCallId);
-      void sendMessage(editedText);
+      // Confirm the existing tool call with the edited draft text as an override,
+      // preserving the stored leadId/foundationId context in the backend.
+      const draft = messages.find((m) => m.id === toolCallId);
+      if (draft?.toolCall) {
+        void confirmTool(draft.toolCall, { draftText: editedText });
+      }
     },
-    [cancelTool, sendMessage],
+    [messages, confirmTool],
   );
 
   const composerDisabled = isStreaming || isLoadingHistory || !!initError || !conversationId;

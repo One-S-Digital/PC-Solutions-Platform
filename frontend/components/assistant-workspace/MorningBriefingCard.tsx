@@ -44,7 +44,10 @@ export function useBriefing(): { briefing: Briefing | null; isLoading: boolean }
     setIsLoading(true);
     getBriefing(getToken, locale)
       .then(setBriefing)
-      .catch(() => setBriefing(null))
+      .catch((err: unknown) => {
+        console.error('[useBriefing] Failed to fetch morning briefing:', err);
+        setBriefing(null);
+      })
       .finally(() => setIsLoading(false));
   }, [getToken, language]);
 

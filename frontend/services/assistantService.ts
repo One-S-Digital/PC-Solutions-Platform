@@ -229,11 +229,13 @@ export async function updateConversation(
 export async function confirmToolCall(
   getToken: () => Promise<string | null>,
   conversationId: string,
-  toolCallId: string
+  toolCallId: string,
+  overrideArgs?: Record<string, unknown>,
 ): Promise<{ toolCallId: string; toolName: string; result?: Record<string, unknown>; error?: string }> {
   const headers = await getAuthHeaders(getToken);
   const url = `${apiService.apiBaseUrl}/assistant/conversations/${conversationId}/tool-calls/${toolCallId}/confirm`;
-  const response = await fetch(url, { method: 'POST', headers, cache: 'no-store' });
+  const body = overrideArgs ? JSON.stringify({ overrideArgs }) : undefined;
+  const response = await fetch(url, { method: 'POST', headers, body, cache: 'no-store' });
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     throw new Error((errorData as any)?.message || `HTTP ${response.status}`);
