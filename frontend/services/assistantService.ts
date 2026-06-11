@@ -72,6 +72,27 @@ export interface ConversationDetail extends ConversationSummary {
   toolCalls: ConversationHistoryToolCall[];
 }
 
+// ─── Morning briefing ────────────────────────────────────────────────────────
+
+export type BriefingItemType =
+  | 'parent_leads'
+  | 'stale_applications'
+  | 'pending_replacements'
+  | 'canton_updates'
+  | 'unread_notifications';
+
+export interface BriefingItem {
+  type: BriefingItemType;
+  count: number;
+  meta?: Record<string, unknown>;
+}
+
+export interface Briefing {
+  generatedAt: string;
+  items: BriefingItem[];
+  conversationId: string | null;
+}
+
 export interface StreamHandlers {
   onToken: (text: string) => void;
   onToolCall: (toolCall: ToolCallEvent) => void;
@@ -130,6 +151,22 @@ export async function createConversation(
   const data = await response.json();
   // Handle both { id } and { data: { id } } shapes
   return { id: data?.id ?? data?.data?.id };
+}
+
+/** Fetches the Morning Briefing (deterministic overnight items, cached server-side). */
+export async function getBriefing(
+  getToken: () => Promise<string | null>,
+  locale: string
+): Promise<Briefing> {
+  const headers = await getAuthHeaders(getToken);
+  const url = `${apiService.apiBaseUrl}/assistant/briefing?locale=${encodeURIComponent(locale)}`;
+  const response = await fetch(url, { headers, cache: 'no-store' });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error((errorData as any)?.message || `HTTP ${response.status}`);
+  }
+  const data = await response.json();
+  return (data?.data ?? data) as Briefing;
 }
 
 /** Lists the user's conversations (non-archived, newest activity first). */
