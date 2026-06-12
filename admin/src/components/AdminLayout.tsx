@@ -44,7 +44,8 @@ export const AdminLayout: React.FC<Props> = ({ children }) => {
           <Header setSidebarOpen={setSidebarOpen} />
           <main className="min-w-0 flex-1 bg-page-bg p-4 overflow-x-hidden">{children ?? <Outlet />}</main>
         </div>
-        <AssistantContainer />
+        {/* The full-page workspace renders its own chat — suppress the floating widget there */}
+        {!location.pathname.startsWith('/assistant') && <AssistantContainer />}
       </div>
     </AssistantProvider>
   );

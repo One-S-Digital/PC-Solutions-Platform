@@ -112,7 +112,8 @@
     "search_jobs": "Searching jobs…",
     "search_foundations": "Searching foundations…",
     "find_foundation": "Looking up the foundation…",
-    "view_match_results": "Fetching match results…"
+    "view_match_results": "Fetching match results…",
+    "get_pending_educator_approvals": "Fetching pending educator approvals…"
   },
   "toolCard": {
     "confirm": "Confirm",
@@ -203,5 +204,39 @@
       "sending": "Sending reply…",
       "noContent": "No draft content"
     }
+  },
+  "adminWorkspace": {
+    "subtitle": "Platform overview",
+    "emptySubtitle": "Ask about educator approvals, platform stats, users or support tickets — or start with a quick action below.",
+    "quickActions": {
+      "approvals": "Educator approvals",
+      "stats": "Platform stats",
+      "findUser": "Find a user",
+      "invite": "Draft an invite"
+    },
+    "quickPrompts": {
+      "approvals": "Review pending educator approvals with me.",
+      "stats": "Show me the platform stats and staffing signals this week.",
+      "findUser": "Help me find a user on the platform.",
+      "invite": "Draft an invitation for a new user joining the platform."
+    }
+  },
+  "adminBriefing": {
+    "headline_one": "{{count}} item needs review today",
+    "headline_other": "{{count}} items need review today",
+    "pending_educator_approvals": "{{count}} educator profile awaiting approval",
+    "pending_educator_approvals_plural": "{{count}} educator profiles awaiting approval",
+    "stale_applications_platform": "{{count}} application pending more than 5 days",
+    "stale_applications_platform_plural": "{{count}} applications pending more than 5 days",
+    "unassigned_parent_leads": "{{count}} new parent lead without a response",
+    "unassigned_parent_leads_plural": "{{count}} new parent leads without a response",
+    "replacements_without_matches": "{{count}} replacement request with no match",
+    "replacements_without_matches_plural": "{{count}} replacement requests with no match",
+    "open_support_tickets": "{{count}} open support ticket",
+    "open_support_tickets_plural": "{{count}} open support tickets",
+    "canton_policy_updates": "{{count}} new cantonal policy update",
+    "canton_policy_updates_plural": "{{count}} new cantonal policy updates",
+    "unread_notifications": "{{count}} unread notification",
+    "unread_notifications_plural": "{{count}} unread notifications"
   }
 }

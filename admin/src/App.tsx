@@ -37,6 +37,8 @@ import HrDocumentsPage from './pages/content/HrDocumentsPage';
 import StatePoliciesPage from './pages/content/StatePoliciesPage';
 import EducatorApprovalsPage from './pages/EducatorApprovals';
 import AiOperationsPage from './pages/AiOperationsPage';
+import AssistantWorkspacePage from './pages/AssistantWorkspacePage';
+import { useFeatureFlag } from './hooks/useFeatureFlags';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -74,6 +76,17 @@ const FrontendSettingsManager: React.FC = () => {
   return null;
 };
 
+/**
+ * Flag-aware landing redirect: with v2_admin_assistant ON, admins land on the
+ * assistant workspace; OFF (or while flags load — the safe default), on the
+ * classic dashboard. The header toggle switches between the two.
+ */
+const IndexRedirect: React.FC = () => {
+  const { enabled, isLoading } = useFeatureFlag('v2_admin_assistant');
+  if (isLoading) return null;
+  return <Navigate to={enabled ? '/assistant' : '/dashboard'} replace />;
+};
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -93,6 +106,7 @@ function App() {
           }
         >
           <Route path="dashboard" element={<Dashboard />} />
+          <Route path="assistant" element={<AssistantWorkspacePage />} />
           <Route path="users" element={<UsersPage />} />
           <Route path="users/:id/profile" element={<AdminUserProfileEdit />} />
           <Route path="organizations" element={<OrganizationsPage />} />
@@ -134,7 +148,7 @@ function App() {
 
           <Route path="ai" element={<AiOperationsPage />} />
 
-          <Route index element={<Navigate to="/dashboard" />} />
+          <Route index element={<IndexRedirect />} />
         </Route>
         
         {/* Catch-all route for SPA routing */}

@@ -36,6 +36,7 @@ import { MarketplaceWriteHandler } from './tools/handlers/marketplace-write.hand
 import { MessagingHandler } from './tools/handlers/messaging.handler';
 import { ReplacementsHandler } from './tools/handlers/replacements.handler';
 import { AdminHandler } from './tools/handlers/admin.handler';
+import { AdminOpsHandler } from './tools/handlers/admin-ops.handler';
 import { getToolsForRole } from './tools/tool-registry';
 
 const FOUNDATION_PRINCIPAL = { userId: 'user-1', role: UserRole.FOUNDATION, organizationId: 'org-1' };
@@ -154,6 +155,7 @@ describe('AI Assistant V2 — e2e integration', () => {
       new MessagingHandler(messagingMock as any),
       new ReplacementsHandler(replacementsMock as any),
       new AdminHandler(usersMock as any, prismaImpl),
+      new AdminOpsHandler(prismaImpl, usersMock as any, {} as any, {} as any),
     );
   }
 

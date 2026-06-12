@@ -18,6 +18,7 @@ import { MarketplaceWriteHandler } from './handlers/marketplace-write.handler';
 import { MessagingHandler } from './handlers/messaging.handler';
 import { ReplacementsHandler } from './handlers/replacements.handler';
 import { AdminHandler } from './handlers/admin.handler';
+import { AdminOpsHandler } from './handlers/admin-ops.handler';
 
 /**
  * Routes a tool name to its domain handler. Replaces the monolithic switch in
@@ -44,6 +45,7 @@ export class ToolHandlerRegistry {
     messaging: MessagingHandler,
     replacements: ReplacementsHandler,
     admin: AdminHandler,
+    adminOps: AdminOpsHandler,
   ) {
     for (const handler of [
       profile,
@@ -60,6 +62,7 @@ export class ToolHandlerRegistry {
       messaging,
       replacements,
       admin,
+      adminOps,
     ]) {
       this.register(handler);
     }

@@ -18,6 +18,16 @@ export const AssistantModalHandler: React.FC<AssistantModalHandlerProps> = ({
     const { modal, prefill } = pendingModal;
 
     switch (modal) {
+      case 'navigate': {
+        const route = typeof prefill?.route === 'string' ? prefill.route : null;
+        if (route && route.startsWith('/')) navigate(route);
+        break;
+      }
+
+      case 'invite_user_modal':
+        navigate('/users');
+        break;
+
       case 'job_post_modal':
         navigate('/job-listings');
         break;

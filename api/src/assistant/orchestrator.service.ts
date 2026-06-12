@@ -39,6 +39,7 @@ const RESULT_CARD_TOOLS = new Set<string>([
   'search_foundations',
   'find_foundation',
   'view_match_results',
+  'get_pending_educator_approvals',
 ]);
 
 // Human-readable status shown while an L1 result-card tool is running, so the UI
@@ -52,6 +53,7 @@ const TOOL_STATUS_LABELS: Record<string, string> = {
   search_foundations: 'Searching foundations…',
   find_foundation: 'Looking up the foundation…',
   view_match_results: 'Fetching match results…',
+  get_pending_educator_approvals: 'Fetching pending educator approvals…',
 };
 
 @Injectable()

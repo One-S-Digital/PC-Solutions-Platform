@@ -1,103 +1,20 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { XMarkIcon, PaperAirplaneIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '@clerk/clerk-react';
-import ReactMarkdown from 'react-markdown';
-import {
-  createConversation,
-  streamMessage,
-  ToolCallEvent,
-  ToolResultEvent,
-  ModalActionEvent,
-} from '../../services/assistantService';
 import { AssistantModalHandler } from './AssistantModalHandler';
-
-interface Message {
-  id: string;
-  sender: 'user' | 'assistant';
-  text: string;
-  toolCall?: ToolCallEvent;
-  toolResult?: ToolResultEvent;
-}
+import { ChatMessageList } from './ChatMessageList';
+import { useAssistantChat } from './useAssistantChat';
 
 interface AssistantPanelProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-function genId(): string {
-  return Math.random().toString(36).slice(2, 10);
-}
-
 const SUGGESTION_KEYS = [
-  { key: 'welcome.suggestion1', fallback: 'Find me an educator' },
-  { key: 'welcome.suggestion2', fallback: 'Draft a job post' },
-  { key: 'welcome.suggestion3', fallback: 'How do I add a staff request?' },
+  { key: 'welcome.admin.stats', fallback: 'Show platform stats' },
+  { key: 'welcome.admin.findUser', fallback: 'Find a user' },
+  { key: 'welcome.admin.findCandidate', fallback: 'Find me an educator' },
 ];
-
-// ─── ToolCallCard ─────────────────────────────────────────────────────────────
-
-interface ToolCallCardProps {
-  toolCall: ToolCallEvent;
-  result?: ToolResultEvent;
-  onConfirm?: (toolCall: ToolCallEvent) => void;
-  onCancel?: (toolCallId: string) => void;
-}
-
-const ToolCallCard: React.FC<ToolCallCardProps> = ({ toolCall, result, onConfirm, onCancel }) => {
-  const { t } = useTranslation('assistant');
-
-  const argsPreview = Object.entries(toolCall.args || {})
-    .slice(0, 3)
-    .map(([k, v]) => `${k}: ${typeof v === 'string' ? v : JSON.stringify(v)}`)
-    .join(', ');
-
-  const hasResult = Boolean(result);
-  const hasError = Boolean(result?.error);
-
-  return (
-    <div className="my-2 max-w-xs rounded-lg border border-swiss-teal/30 bg-white p-3 text-sm shadow-sm">
-      <div className="mb-1 flex items-center gap-2">
-        <SparklesIcon className="h-3.5 w-3.5 flex-shrink-0 text-swiss-teal" aria-hidden="true" />
-        <span className="font-medium text-swiss-charcoal">{toolCall.toolName}</span>
-        <span className="ml-auto rounded-full bg-swiss-teal/10 px-1.5 py-0.5 text-xs text-swiss-teal">
-          {toolCall.level}
-        </span>
-      </div>
-
-      {argsPreview && (
-        <p className="mb-2 truncate text-xs text-gray-500">{argsPreview}</p>
-      )}
-
-      {hasResult && (
-        <div className={`mb-2 rounded px-2 py-1 text-xs ${hasError ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-700'}`}>
-          {hasError ? result!.error : t('toolCard.success', 'Done')}
-        </div>
-      )}
-
-      {toolCall.approvalRequired && !hasResult && (
-        <div className="flex gap-2">
-          <button
-            onClick={() => onConfirm?.(toolCall)}
-            className="flex-1 rounded bg-swiss-teal px-2 py-1 text-xs font-medium text-white transition-colors hover:bg-opacity-90"
-          >
-            {t('toolCard.confirm', 'Confirm')}
-          </button>
-          <button
-            onClick={() => onCancel?.(toolCall.toolCallId)}
-            className="flex-1 rounded border border-gray-200 px-2 py-1 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-50"
-          >
-            {t('toolCard.cancel', 'Cancel')}
-          </button>
-        </div>
-      )}
-
-      {!toolCall.approvalRequired && !hasResult && (
-        <p className="text-xs text-gray-400">{t('toolCard.autoExecuting', 'Executing…')}</p>
-      )}
-    </div>
-  );
-};
 
 // ─── WelcomeScreen ────────────────────────────────────────────────────────────
 
@@ -136,25 +53,30 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSuggestion }) => {
 
 // ─── AssistantPanel ───────────────────────────────────────────────────────────
 
+/**
+ * Floating chat panel. Renders the same chat engine as the full-page
+ * assistant workspace (useAssistantChat + ChatMessageList), so streaming,
+ * tool cards, and the L3 approval round-trip never fork.
+ */
 export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose }) => {
-  const { t, i18n } = useTranslation('assistant');
-  const { getToken } = useAuth();
+  const { t } = useTranslation('assistant');
 
-  const [conversationId, setConversationId] = useState<string | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
-  const [isStreaming, setIsStreaming] = useState(false);
-  const [pendingAssistantText, setPendingAssistantText] = useState('');
-  const [initError, setInitError] = useState<string | null>(null);
-  const [pendingModal, setPendingModal] = useState<{ modal: string; prefill: Record<string, unknown> } | null>(null);
-
-  const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const doneFiredRef = useRef(false);
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, pendingAssistantText]);
+  const {
+    conversationId,
+    messages,
+    isStreaming,
+    pendingAssistantText,
+    thinkingLabel,
+    initError,
+    pendingModal,
+    clearPendingModal,
+    sendMessage,
+    confirmTool,
+    cancelTool,
+  } = useAssistantChat(isOpen);
 
   useEffect(() => {
     if (isOpen) {
@@ -162,74 +84,14 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
     }
   }, [isOpen]);
 
-  useEffect(() => {
-    if (!isOpen || conversationId) return;
-
-    const locale = i18n.language?.toLowerCase() ?? 'en';
-
-    createConversation(getToken, locale)
-      .then(({ id }) => setConversationId(id))
-      .catch((err: unknown) => {
-        const msg = err instanceof Error ? err.message : 'Failed to start conversation';
-        setInitError(msg);
-      });
-  }, [isOpen, conversationId, getToken, i18n.language]);
-
-  const flushPending = useCallback(() => {
-    setPendingAssistantText((prev) => {
-      if (prev.trim()) {
-        setMessages((msgs) => [
-          ...msgs,
-          { id: genId(), sender: 'assistant', text: prev },
-        ]);
-      }
-      return '';
-    });
-    setIsStreaming(false);
-  }, []);
-
   const handleSend = useCallback(
-    async (text?: string) => {
+    (text?: string) => {
       const msg = (text ?? inputText).trim();
       if (!msg || isStreaming || !conversationId) return;
-
       setInputText('');
-      doneFiredRef.current = false;
-      setMessages((prev) => [...prev, { id: genId(), sender: 'user', text: msg }]);
-      setIsStreaming(true);
-      setPendingAssistantText('');
-
-      await streamMessage(getToken, conversationId, msg, {
-        onToken: (chunk) => setPendingAssistantText((prev) => prev + chunk),
-        onToolCall: (toolCall) => {
-          setMessages((prev) => [
-            ...prev,
-            { id: toolCall.toolCallId, sender: 'assistant', text: '', toolCall },
-          ]);
-        },
-        onToolResult: (result) => {
-          setMessages((prev) =>
-            prev.map((m) => m.id === result.toolCallId ? { ...m, toolResult: result } : m)
-          );
-        },
-        onModalAction: (action) => setPendingModal(action),
-        onDone: () => {
-          if (!doneFiredRef.current) {
-            doneFiredRef.current = true;
-            flushPending();
-          }
-        },
-        onError: (errMsg) => {
-          setMessages((prev) => [
-            ...prev,
-            { id: genId(), sender: 'assistant', text: `⚠️ ${errMsg}` },
-          ]);
-          setIsStreaming(false);
-          setPendingAssistantText('');
-        },
-      });
+      void sendMessage(msg);
     },
-    [inputText, isStreaming, conversationId, getToken, flushPending]
+    [inputText, isStreaming, conversationId, sendMessage]
   );
 
   const handleKeyDown = useCallback(
@@ -242,17 +104,11 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
     [handleSend]
   );
 
-  const handleToolConfirm = useCallback((toolCall: ToolCallEvent) => {
-    if (toolCall.modal) {
-      setPendingModal({ modal: toolCall.modal, prefill: toolCall.args as Record<string, unknown> });
-    }
-  }, []);
-
   if (!isOpen) return null;
 
   return (
     <>
-      <AssistantModalHandler pendingModal={pendingModal} onHandled={() => setPendingModal(null)} />
+      <AssistantModalHandler pendingModal={pendingModal} onHandled={clearPendingModal} />
 
       <div
         className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm md:hidden"
@@ -288,91 +144,16 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
           )}
 
           <div className="flex flex-1 flex-col overflow-y-auto px-4 py-4">
-            {messages.length === 0 && !isStreaming && (
-              <WelcomeScreen onSuggestion={(text) => handleSend(text)} />
-            )}
-
-            {messages.map((msg) => {
-              if (msg.toolCall) {
-                return (
-                  <ToolCallCard
-                    key={msg.id}
-                    toolCall={msg.toolCall}
-                    result={msg.toolResult}
-                    onConfirm={handleToolConfirm}
-                    onCancel={() => {}}
-                  />
-                );
-              }
-
-              if (!msg.text) return null;
-
-              return (
-                <div
-                  key={msg.id}
-                  className={`mb-3 flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-[85%] rounded-xl px-4 py-2 text-sm leading-relaxed ${
-                      msg.sender === 'user'
-                        ? 'bg-swiss-teal text-white'
-                        : 'bg-gray-100 text-swiss-charcoal'
-                    }`}
-                  >
-                    {msg.sender === 'assistant' ? (
-                      <ReactMarkdown
-                        components={{
-                          p: ({ children }) => <p className="mb-1 last:mb-0">{children}</p>,
-                          strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
-                          ul: ({ children }) => <ul className="ml-4 mt-1 list-disc space-y-0.5">{children}</ul>,
-                          ol: ({ children }) => <ol className="ml-4 mt-1 list-decimal space-y-0.5">{children}</ol>,
-                          li: ({ children }) => <li>{children}</li>,
-                          a: ({ href, children }) => (
-                            <a href={href} className="underline hover:opacity-80" target="_blank" rel="noreferrer">
-                              {children}
-                            </a>
-                          ),
-                        }}
-                      >
-                        {msg.text}
-                      </ReactMarkdown>
-                    ) : (
-                      msg.text
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-
-            {isStreaming && (
-              <div className="mb-3 flex justify-start">
-                <div className="max-w-[85%] rounded-xl bg-gray-100 px-4 py-2 text-sm leading-relaxed text-swiss-charcoal">
-                  {pendingAssistantText ? (
-                    <ReactMarkdown
-                      components={{
-                        p: ({ children }) => <p className="mb-1 last:mb-0">{children}</p>,
-                        strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
-                        ul: ({ children }) => <ul className="ml-4 mt-1 list-disc space-y-0.5">{children}</ul>,
-                        ol: ({ children }) => <ol className="ml-4 mt-1 list-decimal space-y-0.5">{children}</ol>,
-                        li: ({ children }) => <li>{children}</li>,
-                        a: ({ href, children }) => (
-                          <a href={href} className="underline hover:opacity-80" target="_blank" rel="noreferrer">
-                            {children}
-                          </a>
-                        ),
-                      }}
-                    >
-                      {pendingAssistantText}
-                    </ReactMarkdown>
-                  ) : (
-                    <span className="text-gray-400">{t('panel.thinking', 'Thinking…')}</span>
-                  )}
-                  <span className="ml-0.5 inline-block h-3.5 w-0.5 animate-pulse bg-swiss-teal align-middle" />
-                </div>
-              </div>
-            )}
-
-            <div ref={messagesEndRef} />
+            <ChatMessageList
+              messages={messages}
+              isStreaming={isStreaming}
+              pendingAssistantText={pendingAssistantText}
+              thinkingLabel={thinkingLabel}
+              onSend={(text) => handleSend(text)}
+              onConfirmTool={confirmTool}
+              onCancelTool={cancelTool}
+              emptyState={<WelcomeScreen onSuggestion={(text) => handleSend(text)} />}
+            />
           </div>
 
           <div className="border-t border-gray-100 bg-white px-3 py-3">

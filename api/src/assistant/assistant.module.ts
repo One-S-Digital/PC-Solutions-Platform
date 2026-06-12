@@ -31,6 +31,8 @@ import { MarketplaceWriteHandler } from './tools/handlers/marketplace-write.hand
 import { MessagingHandler } from './tools/handlers/messaging.handler';
 import { ReplacementsHandler } from './tools/handlers/replacements.handler';
 import { AdminHandler } from './tools/handlers/admin.handler';
+import { AdminOpsHandler } from './tools/handlers/admin-ops.handler';
+import { AdminModule } from '../admin/admin.module';
 
 @Module({
   imports: [
@@ -44,6 +46,7 @@ import { AdminHandler } from './tools/handlers/admin.handler';
     MessagingModule,
     ReplacementsModule,
     UsersModule,
+    AdminModule,
   ],
   controllers: [AssistantController],
   providers: [
@@ -69,6 +72,7 @@ import { AdminHandler } from './tools/handlers/admin.handler';
     MessagingHandler,
     ReplacementsHandler,
     AdminHandler,
+    AdminOpsHandler,
   ],
   exports: [AssistantService],
 })
