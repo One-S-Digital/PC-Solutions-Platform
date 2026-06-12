@@ -15,5 +15,6 @@ import { EmailNotificationModule } from '../email-notification/email-notificatio
   imports: [PrismaModule, AuthModule, RoleManagementModule, MarketplaceModule, UploadModule, EmailNotificationModule],
   controllers: [AdminController, AdminProfilesController, AdminSubresourcesController, EducatorApprovalsController],
   providers: [EducatorApprovalsService],
+  exports: [EducatorApprovalsService],
 })
 export class AdminModule {}

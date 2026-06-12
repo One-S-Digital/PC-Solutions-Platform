@@ -50,19 +50,6 @@ export class UsersController {
     }
   }
 
-  private getRoleLabelFr(role: string): string {
-    const labels: Record<string, string> = {
-      PARENT: 'Parent',
-      EDUCATOR: 'Éducateur·trice',
-      FOUNDATION: 'Fondation',
-      PRODUCT_SUPPLIER: 'Fournisseur de produits',
-      SERVICE_PROVIDER: 'Prestataire de services',
-      ADMIN: 'Administrateur·trice',
-      SUPER_ADMIN: 'Super Administrateur·trice',
-    };
-    return labels[role] ?? role;
-  }
-
   /**
    * Extract the changedBy identifier from a request object.
    * Used for audit trail when modifying user roles.
@@ -106,77 +93,11 @@ export class UsersController {
   async inviteUser(@Body() dto: InviteUserDto, @Request() request) {
     const callerRole = (request.context?.role || request.user?.role) as UserRole | undefined;
 
-    if (callerRole === UserRole.ADMIN && dto.role === UserRole.SUPER_ADMIN) {
-      throw new ForbiddenException('Only SUPER_ADMIN can create SUPER_ADMIN users');
-    }
-
-    if (!this.clerk) {
-      throw new BadRequestException('Clerk is not configured on the API');
-    }
-
-    // Clerk SDK (v5) invitation API.
-    // We keep types loose here to avoid coupling to SDK internals.
-    const maskedEmail = dto.email ? `${dto.email.substring(0, 3)}***@${dto.email.split('@')[1] || '***'}` : '***';
-
-    // Default to the platform login page so invited users land on the app after accepting.
-    const appUrl =
-      this.configService.get<string>('APP_URL') ||
-      this.configService.get<string>('FRONTEND_URL') ||
-      '';
-    const inviteRedirectUrl = dto.redirectUrl || `${appUrl}/login`;
-
-    let invitation: any;
-    try {
-      invitation = await (this.clerk as any).invitations.createInvitation({
-        emailAddress: dto.email,
-        redirectUrl: inviteRedirectUrl,
-        publicMetadata: { role: dto.role },
-      });
-    } catch (error: any) {
-      const status = error?.status ?? error?.response?.status;
-      const code = error?.errors?.[0]?.code ?? error?.code;
-      const message = error?.message ?? error?.errors?.[0]?.message ?? 'Unknown Clerk error';
-
-      this.logger.error('Failed to create Clerk invitation', {
-        maskedEmail,
-        role: dto.role,
-        status,
-        code,
-        message,
-        errors: error?.errors,
-      });
-
-      // Common cases: already invited / duplicate, validation, rate limiting
-      if (status === 429 || code === 'rate_limited') {
-        throw new BadRequestException('Invitation rate limit exceeded. Please try again later.');
-      }
-
-      if (status === 422 || code === 'duplicate_record' || code === 'form_identifier_exists') {
-        throw new BadRequestException('An invitation has already been sent to this email');
-      }
-
-      if (status >= 400 && status < 500) {
-        throw new BadRequestException('Failed to send invitation. Please check the email and try again.');
-      }
-
-      throw new InternalServerErrorException('Failed to send invitation. Please try again later.');
-    }
-
-    // Send French invitation email from our platform (fire-and-forget).
-    // Prefer the Clerk invitation's redirect URL so the link matches the actual invitation flow.
-    const inviteEmailUrl = invitation?.redirectUrl || inviteRedirectUrl;
-    this.emailNotificationService.sendNotification({
-      event: 'invite_to_apply',
-      recipient: dto.email,
-      payload: {
-        firstName: '',
-        role: this.getRoleLabelFr(dto.role),
-        inviteUrl: inviteEmailUrl,
-      },
-      allowUnknownRecipient: true,
-      bypassPreferences: true,
-    }).catch((err: any) => {
-      this.logger.warn(`French invitation email failed for ${maskedEmail}: ${err?.message || err}`);
+    const invitation = await this.usersService.inviteUser({
+      email: dto.email,
+      role: dto.role,
+      callerRole,
+      redirectUrl: dto.redirectUrl,
     });
 
     return {

@@ -39,6 +39,7 @@ const RESULT_CARD_TOOLS = new Set<string>([
   'search_foundations',
   'find_foundation',
   'view_match_results',
+  'get_pending_educator_approvals',
 ]);
 
 // Human-readable status shown while an L1 result-card tool is running, so the UI
@@ -52,6 +53,7 @@ const TOOL_STATUS_LABELS: Record<string, string> = {
   search_foundations: 'Searching foundations…',
   find_foundation: 'Looking up the foundation…',
   view_match_results: 'Fetching match results…',
+  get_pending_educator_approvals: 'Fetching pending educator approvals…',
 };
 
 @Injectable()
@@ -230,6 +232,20 @@ export class OrchestratorService {
           result: toolError ? undefined : (toolResult as Record<string, unknown>),
           error: toolError,
         });
+      }
+
+      // L2 draft tools return { data: { modal, prefill } } (DraftsHandler /
+      // AdminOpsHandler contract). Surface it as a modal_action event so the
+      // client opens the pre-filled form — without this the draft only reaches
+      // the LLM and the user never sees it.
+      if (!toolError && level === 'L2_DRAFT') {
+        const draftData = (toolResult as { data?: { modal?: unknown; prefill?: unknown } })?.data;
+        if (draftData && typeof draftData.modal === 'string') {
+          sendEvent('modal_action', {
+            modal: draftData.modal,
+            prefill: (draftData.prefill as Record<string, unknown>) ?? {},
+          });
+        }
       }
 
       // Strip contact PII (email, phone, address) before the result is fed back

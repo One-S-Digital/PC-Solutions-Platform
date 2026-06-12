@@ -1,14 +1,27 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AssistantPrincipalContext } from './orchestrator.service';
-import { AIConversationKind, AIMessageSender } from '@prisma/client';
+import {
+  AIConversationKind,
+  AIMessageSender,
+  EducatorApprovalStatus,
+  UserRole,
+} from '@prisma/client';
+import { isAdminRole } from './tools/tool-handler.interface';
 
 export type BriefingItemType =
   | 'parent_leads'
   | 'stale_applications'
   | 'pending_replacements'
   | 'canton_updates'
-  | 'unread_notifications';
+  | 'unread_notifications'
+  // Admin (platform-wide) items
+  | 'pending_educator_approvals'
+  | 'stale_applications_platform'
+  | 'unassigned_parent_leads'
+  | 'replacements_without_matches'
+  | 'open_support_tickets'
+  | 'canton_policy_updates';
 
 export interface BriefingItem {
   type: BriefingItemType;
@@ -41,6 +54,12 @@ const SNAPSHOT_LABELS: Record<Locale, Record<BriefingItemType, (n: number) => st
     pending_replacements: (n) => `${n} replacement ${n === 1 ? 'match' : 'matches'} pending your review`,
     canton_updates: (n) => `${n} new cantonal policy ${n === 1 ? 'update' : 'updates'}`,
     unread_notifications: (n) => `${n} unread ${n === 1 ? 'notification' : 'notifications'}`,
+    pending_educator_approvals: (n) => `${n} educator ${n === 1 ? 'profile' : 'profiles'} awaiting approval`,
+    stale_applications_platform: (n) => `${n} ${n === 1 ? 'application' : 'applications'} pending more than ${STALE_APPLICATION_DAYS} days platform-wide`,
+    unassigned_parent_leads: (n) => `${n} new parent ${n === 1 ? 'lead' : 'leads'} without a response`,
+    replacements_without_matches: (n) => `${n} open replacement ${n === 1 ? 'request' : 'requests'} with no proposed match`,
+    open_support_tickets: (n) => `${n} open support ${n === 1 ? 'ticket' : 'tickets'}`,
+    canton_policy_updates: (n) => `${n} new cantonal policy ${n === 1 ? 'update' : 'updates'} across all cantons`,
   },
   fr: {
     title: (date) => `Briefing du matin — ${date}`,
@@ -50,6 +69,12 @@ const SNAPSHOT_LABELS: Record<Locale, Record<BriefingItemType, (n: number) => st
     pending_replacements: (n) => `${n} ${n === 1 ? 'proposition de remplacement' : 'propositions de remplacement'} à examiner`,
     canton_updates: (n) => `${n} ${n === 1 ? 'nouvelle directive cantonale' : 'nouvelles directives cantonales'}`,
     unread_notifications: (n) => `${n} ${n === 1 ? 'notification non lue' : 'notifications non lues'}`,
+    pending_educator_approvals: (n) => `${n} ${n === 1 ? 'profil d’éducateur en attente' : 'profils d’éducateurs en attente'} d’approbation`,
+    stale_applications_platform: (n) => `${n} ${n === 1 ? 'candidature en attente' : 'candidatures en attente'} depuis plus de ${STALE_APPLICATION_DAYS} jours sur la plateforme`,
+    unassigned_parent_leads: (n) => `${n} ${n === 1 ? 'nouvelle demande de parent' : 'nouvelles demandes de parents'} sans réponse`,
+    replacements_without_matches: (n) => `${n} ${n === 1 ? 'demande de remplacement ouverte' : 'demandes de remplacement ouvertes'} sans proposition`,
+    open_support_tickets: (n) => `${n} ${n === 1 ? 'ticket de support ouvert' : 'tickets de support ouverts'}`,
+    canton_policy_updates: (n) => `${n} ${n === 1 ? 'nouvelle directive cantonale' : 'nouvelles directives cantonales'} (tous cantons)`,
   },
   de: {
     title: (date) => `Morgenbriefing — ${date}`,
@@ -59,6 +84,12 @@ const SNAPSHOT_LABELS: Record<Locale, Record<BriefingItemType, (n: number) => st
     pending_replacements: (n) => `${n} ${n === 1 ? 'Vertretungsvorschlag' : 'Vertretungsvorschläge'} zur Prüfung`,
     canton_updates: (n) => `${n} neue kantonale ${n === 1 ? 'Richtlinie' : 'Richtlinien'}`,
     unread_notifications: (n) => `${n} ungelesene ${n === 1 ? 'Benachrichtigung' : 'Benachrichtigungen'}`,
+    pending_educator_approvals: (n) => `${n} ${n === 1 ? 'Erzieherprofil wartet' : 'Erzieherprofile warten'} auf Freigabe`,
+    stale_applications_platform: (n) => `${n} ${n === 1 ? 'Bewerbung wartet' : 'Bewerbungen warten'} plattformweit seit mehr als ${STALE_APPLICATION_DAYS} Tagen`,
+    unassigned_parent_leads: (n) => `${n} neue ${n === 1 ? 'Elternanfrage' : 'Elternanfragen'} ohne Antwort`,
+    replacements_without_matches: (n) => `${n} offene ${n === 1 ? 'Vertretungsanfrage' : 'Vertretungsanfragen'} ohne Vorschlag`,
+    open_support_tickets: (n) => `${n} ${n === 1 ? 'offenes Support-Ticket' : 'offene Support-Tickets'}`,
+    canton_policy_updates: (n) => `${n} neue kantonale ${n === 1 ? 'Richtlinie' : 'Richtlinien'} (alle Kantone)`,
   },
 };
 
@@ -103,7 +134,86 @@ export class BriefingService {
     return briefing;
   }
 
+  /**
+   * Platform-wide staffing/ops signals shared by the admin briefing and the
+   * `get_staffing_signals` assistant tool — one query layer, one truth
+   * (STAFFING_REMODEL_PLAN §5.6).
+   */
+  async computeAdminSignals(): Promise<{
+    pendingEducatorApprovals: number;
+    staleApplications: number;
+    unassignedParentLeads: number;
+    replacementsWithoutMatches: number;
+    openSupportTickets: number;
+    cantonPolicyUpdates: number;
+  }> {
+    const [
+      pendingEducatorApprovals,
+      staleApplications,
+      unassignedParentLeads,
+      replacementsWithoutMatches,
+      openSupportTickets,
+      cantonPolicyUpdates,
+    ] = await Promise.all([
+      this.prisma.user.count({
+        where: { role: UserRole.EDUCATOR, approvalStatus: EducatorApprovalStatus.PENDING_REVIEW },
+      }),
+      this.prisma.jobApplication.count({
+        where: { status: 'PENDING', createdAt: { lt: daysAgo(STALE_APPLICATION_DAYS) } },
+      }),
+      this.prisma.parentLead.count({
+        where: { status: 'NEW', createdAt: { gte: daysAgo(LEAD_WINDOW_DAYS) } },
+      }),
+      this.prisma.replacementRequest.count({
+        where: { status: 'OPEN', matches: { none: { status: 'PROPOSED' } } },
+      }),
+      this.prisma.supportTicket.count({
+        where: { status: { in: ['OPEN', 'IN_PROGRESS'] } },
+      }),
+      this.prisma.asset.count({
+        where: { category: 'STATE_POLICY', createdAt: { gte: daysAgo(CANTON_UPDATE_WINDOW_DAYS) } },
+      }),
+    ]);
+
+    return {
+      pendingEducatorApprovals,
+      staleApplications,
+      unassignedParentLeads,
+      replacementsWithoutMatches,
+      openSupportTickets,
+      cantonPolicyUpdates,
+    };
+  }
+
+  private async computeAdminItems(principal: AssistantPrincipalContext): Promise<BriefingItem[]> {
+    const [signals, unreadNotifications] = await Promise.all([
+      this.computeAdminSignals(),
+      this.prisma.notification.count({ where: { userId: principal.userId, read: false } }),
+    ]);
+
+    const items: BriefingItem[] = [];
+    if (signals.pendingEducatorApprovals > 0)
+      items.push({ type: 'pending_educator_approvals', count: signals.pendingEducatorApprovals });
+    if (signals.staleApplications > 0)
+      items.push({ type: 'stale_applications_platform', count: signals.staleApplications });
+    if (signals.unassignedParentLeads > 0)
+      items.push({ type: 'unassigned_parent_leads', count: signals.unassignedParentLeads });
+    if (signals.replacementsWithoutMatches > 0)
+      items.push({ type: 'replacements_without_matches', count: signals.replacementsWithoutMatches });
+    if (signals.openSupportTickets > 0)
+      items.push({ type: 'open_support_tickets', count: signals.openSupportTickets });
+    if (signals.cantonPolicyUpdates > 0)
+      items.push({ type: 'canton_policy_updates', count: signals.cantonPolicyUpdates });
+    if (unreadNotifications > 0)
+      items.push({ type: 'unread_notifications', count: unreadNotifications });
+    return items;
+  }
+
   private async computeItems(principal: AssistantPrincipalContext): Promise<BriefingItem[]> {
+    if (isAdminRole(principal.role)) {
+      return this.computeAdminItems(principal);
+    }
+
     const orgId = principal.organizationId;
 
     const [org, leadCount, staleApplications, pendingMatches, unreadNotifications] =

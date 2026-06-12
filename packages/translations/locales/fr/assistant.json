@@ -112,7 +112,8 @@
     "search_jobs": "Recherche d’offres d’emploi…",
     "search_foundations": "Recherche de fondations…",
     "find_foundation": "Recherche de la fondation…",
-    "view_match_results": "Récupération des correspondances…"
+    "view_match_results": "Récupération des correspondances…",
+    "get_pending_educator_approvals": "Récupération des approbations en attente…"
   },
   "toolCard": {
     "confirm": "Confirmer",
@@ -203,5 +204,39 @@
       "sending": "Envoi en cours…",
       "noContent": "Aucun contenu de brouillon"
     }
+  },
+  "adminWorkspace": {
+    "subtitle": "Vue d’ensemble de la plateforme",
+    "emptySubtitle": "Demandez-moi les approbations d’éducateurs, les statistiques de la plateforme, les utilisateurs ou les tickets de support — ou commencez par une action rapide ci-dessous.",
+    "quickActions": {
+      "approvals": "Approbations d’éducateurs",
+      "stats": "Statistiques",
+      "findUser": "Trouver un utilisateur",
+      "invite": "Rédiger une invitation"
+    },
+    "quickPrompts": {
+      "approvals": "Passons en revue les approbations d’éducateurs en attente.",
+      "stats": "Montre-moi les statistiques de la plateforme et les signaux de dotation cette semaine.",
+      "findUser": "Aide-moi à trouver un utilisateur sur la plateforme.",
+      "invite": "Rédige une invitation pour un nouvel utilisateur rejoignant la plateforme."
+    }
+  },
+  "adminBriefing": {
+    "headline_one": "{{count}} élément à examiner aujourd’hui",
+    "headline_other": "{{count}} éléments à examiner aujourd’hui",
+    "pending_educator_approvals": "{{count}} profil d’éducateur en attente d’approbation",
+    "pending_educator_approvals_plural": "{{count}} profils d’éducateurs en attente d’approbation",
+    "stale_applications_platform": "{{count}} candidature en attente depuis plus de 5 jours",
+    "stale_applications_platform_plural": "{{count}} candidatures en attente depuis plus de 5 jours",
+    "unassigned_parent_leads": "{{count}} nouvelle demande de parent sans réponse",
+    "unassigned_parent_leads_plural": "{{count}} nouvelles demandes de parents sans réponse",
+    "replacements_without_matches": "{{count}} demande de remplacement sans proposition",
+    "replacements_without_matches_plural": "{{count}} demandes de remplacement sans proposition",
+    "open_support_tickets": "{{count}} ticket de support ouvert",
+    "open_support_tickets_plural": "{{count}} tickets de support ouverts",
+    "canton_policy_updates": "{{count}} nouvelle directive cantonale",
+    "canton_policy_updates_plural": "{{count}} nouvelles directives cantonales",
+    "unread_notifications": "{{count}} notification non lue",
+    "unread_notifications_plural": "{{count}} notifications non lues"
   }
 }

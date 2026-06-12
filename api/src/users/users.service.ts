@@ -71,6 +71,106 @@ export class UsersService {
     }
   }
 
+  private static readonly ROLE_LABELS_FR: Record<string, string> = {
+    PARENT: 'Parent',
+    EDUCATOR: 'Éducateur·trice',
+    FOUNDATION: 'Fondation',
+    PRODUCT_SUPPLIER: 'Fournisseur de produits',
+    SERVICE_PROVIDER: 'Prestataire de services',
+    ADMIN: 'Administrateur·trice',
+    SUPER_ADMIN: 'Super Administrateur·trice',
+  };
+
+  /**
+   * Create a Clerk invitation for an email with a pre-assigned role, then send
+   * the platform's French invitation email. Shared by `POST /users/invite` and
+   * the admin assistant's `send_user_invite` tool.
+   *
+   * Permission rules (enforced here so every caller gets them):
+   * - SUPER_ADMIN can invite users with ANY role (including SUPER_ADMIN).
+   * - ADMIN can invite users with any role EXCEPT SUPER_ADMIN.
+   */
+  async inviteUser(params: {
+    email: string;
+    role: UserRole;
+    callerRole: UserRole | undefined;
+    redirectUrl?: string;
+  }): Promise<any> {
+    const { email, role, callerRole, redirectUrl } = params;
+
+    if (callerRole !== UserRole.SUPER_ADMIN && callerRole !== UserRole.ADMIN) {
+      throw new ForbiddenException('Only administrators can invite users');
+    }
+    if (callerRole === UserRole.ADMIN && role === UserRole.SUPER_ADMIN) {
+      throw new ForbiddenException('Only SUPER_ADMIN can create SUPER_ADMIN users');
+    }
+    if (!this.clerk) {
+      throw new BadRequestException('Clerk is not configured on the API');
+    }
+
+    const maskedEmail = email ? `${email.substring(0, 3)}***@${email.split('@')[1] || '***'}` : '***';
+
+    // Default to the platform login page so invited users land on the app after accepting.
+    const appUrl =
+      this.configService.get<string>('APP_URL') ||
+      this.configService.get<string>('FRONTEND_URL') ||
+      '';
+    const inviteRedirectUrl = redirectUrl || `${appUrl}/login`;
+
+    let invitation: any;
+    try {
+      invitation = await (this.clerk as any).invitations.createInvitation({
+        emailAddress: email,
+        redirectUrl: inviteRedirectUrl,
+        publicMetadata: { role },
+      });
+    } catch (error: any) {
+      const status = error?.status ?? error?.response?.status;
+      const code = error?.errors?.[0]?.code ?? error?.code;
+      const message = error?.message ?? error?.errors?.[0]?.message ?? 'Unknown Clerk error';
+
+      this.logger.error('Failed to create Clerk invitation', {
+        maskedEmail,
+        role,
+        status,
+        code,
+        message,
+        errors: error?.errors,
+      });
+
+      // Common cases: already invited / duplicate, validation, rate limiting
+      if (status === 429 || code === 'rate_limited') {
+        throw new BadRequestException('Invitation rate limit exceeded. Please try again later.');
+      }
+      if (status === 422 || code === 'duplicate_record' || code === 'form_identifier_exists') {
+        throw new BadRequestException('An invitation has already been sent to this email');
+      }
+      if (status >= 400 && status < 500) {
+        throw new BadRequestException('Failed to send invitation. Please check the email and try again.');
+      }
+      throw new InternalServerErrorException('Failed to send invitation. Please try again later.');
+    }
+
+    // Send French invitation email from our platform (fire-and-forget).
+    // Prefer the Clerk invitation's redirect URL so the link matches the actual invitation flow.
+    const inviteEmailUrl = invitation?.redirectUrl || inviteRedirectUrl;
+    this.emailNotificationService.sendNotification({
+      event: 'invite_to_apply',
+      recipient: email,
+      payload: {
+        firstName: '',
+        role: UsersService.ROLE_LABELS_FR[role] ?? role,
+        inviteUrl: inviteEmailUrl,
+      },
+      allowUnknownRecipient: true,
+      bypassPreferences: true,
+    }).catch((err: any) => {
+      this.logger.warn(`French invitation email failed for ${maskedEmail}: ${err?.message || err}`);
+    });
+
+    return invitation;
+  }
+
   /** Subscription statuses that represent an "in-use" subscription. */
   private static readonly LIVE_SUB_STATUSES = [
     SubscriptionStatus.ACTIVE,

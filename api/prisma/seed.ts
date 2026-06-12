@@ -39,6 +39,10 @@ async function main() {
   console.log('🤖 Setting up Assistant Dashboard feature flag...');
   await seedAssistantDashboardFlag();
 
+  // 6e. Admin assistant workspace feature flag
+  console.log('🤖 Setting up Admin Assistant feature flag...');
+  await seedAdminAssistantFlag();
+
   // 7. Create Email Templates (for admin email template management)
   console.log('📧 Creating email templates...');
   await seedEmailTemplates();
@@ -1049,6 +1053,28 @@ async function seedAssistantDashboardFlag() {
       rolloutPercentage: 0,
       targetSegments: [],
       conditions: { userRoles: ['FOUNDATION'] },
+    },
+  });
+}
+
+async function seedAdminAssistantFlag() {
+  // Default OFF: admins keep landing on /dashboard. Activate (isActive: true,
+  // rolloutPercentage: 100) to make /assistant the default admin landing view
+  // with an Assistant | Dashboard toggle. Independent of v2_assistant_dashboard
+  // so admin and foundation roll out separately. Also gates the admin-ops tools
+  // (educator approvals, support tickets, staffing signals, invites).
+  await prisma.featureFlag.upsert({
+    where: { key: 'v2_admin_assistant' },
+    update: {},
+    create: {
+      name: 'Admin Assistant Workspace (v2)',
+      description:
+        'v2 remodel: assistant-first admin workspace — /assistant becomes the default admin landing view with an Assistant | Dashboard toggle, platform-wide briefing, and admin-ops tools',
+      key: 'v2_admin_assistant',
+      isActive: false,
+      rolloutPercentage: 0,
+      targetSegments: [],
+      conditions: { userRoles: ['ADMIN', 'SUPER_ADMIN'] },
     },
   });
 }

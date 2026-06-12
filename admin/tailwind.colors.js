@@ -27,6 +27,7 @@ export default {
   'swiss-sand': '#F3D29E',
   'swiss-coral': '#FE6D73',
   'swiss-teal': '#227C9D',
+  'swiss-deep-teal': '#1A5F7A',
   'swiss-light-gray': '#F3F4F6',
   'swiss-charcoal': '#2B2B2B',
   'page-bg': '#F9FAFB'

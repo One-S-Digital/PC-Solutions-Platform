@@ -112,7 +112,8 @@
     "search_jobs": "Stellenangebote werden gesucht…",
     "search_foundations": "Stiftungen werden gesucht…",
     "find_foundation": "Stiftung wird gesucht…",
-    "view_match_results": "Übereinstimmungen werden geladen…"
+    "view_match_results": "Übereinstimmungen werden geladen…",
+    "get_pending_educator_approvals": "Ausstehende Freigaben werden geladen…"
   },
   "toolCard": {
     "confirm": "Bestätigen",
@@ -203,5 +204,39 @@
       "sending": "Antwort wird gesendet…",
       "noContent": "Kein Entwurfsinhalt"
     }
+  },
+  "adminWorkspace": {
+    "subtitle": "Plattformübersicht",
+    "emptySubtitle": "Fragen Sie nach Erzieher-Freigaben, Plattform-Statistiken, Benutzern oder Support-Tickets — oder starten Sie mit einer Schnellaktion unten.",
+    "quickActions": {
+      "approvals": "Erzieher-Freigaben",
+      "stats": "Plattform-Statistiken",
+      "findUser": "Benutzer finden",
+      "invite": "Einladung entwerfen"
+    },
+    "quickPrompts": {
+      "approvals": "Gehen wir die ausstehenden Erzieher-Freigaben gemeinsam durch.",
+      "stats": "Zeig mir die Plattform-Statistiken und Personalsignale dieser Woche.",
+      "findUser": "Hilf mir, einen Benutzer auf der Plattform zu finden.",
+      "invite": "Entwirf eine Einladung für einen neuen Benutzer der Plattform."
+    }
+  },
+  "adminBriefing": {
+    "headline_one": "{{count}} Punkt wartet heute auf Prüfung",
+    "headline_other": "{{count}} Punkte warten heute auf Prüfung",
+    "pending_educator_approvals": "{{count}} Erzieherprofil wartet auf Freigabe",
+    "pending_educator_approvals_plural": "{{count}} Erzieherprofile warten auf Freigabe",
+    "stale_applications_platform": "{{count}} Bewerbung wartet seit mehr als 5 Tagen",
+    "stale_applications_platform_plural": "{{count}} Bewerbungen warten seit mehr als 5 Tagen",
+    "unassigned_parent_leads": "{{count}} neue Elternanfrage ohne Antwort",
+    "unassigned_parent_leads_plural": "{{count}} neue Elternanfragen ohne Antwort",
+    "replacements_without_matches": "{{count}} Vertretungsanfrage ohne Vorschlag",
+    "replacements_without_matches_plural": "{{count}} Vertretungsanfragen ohne Vorschlag",
+    "open_support_tickets": "{{count}} offenes Support-Ticket",
+    "open_support_tickets_plural": "{{count}} offene Support-Tickets",
+    "canton_policy_updates": "{{count}} neue kantonale Richtlinie",
+    "canton_policy_updates_plural": "{{count}} neue kantonale Richtlinien",
+    "unread_notifications": "{{count}} ungelesene Benachrichtigung",
+    "unread_notifications_plural": "{{count}} ungelesene Benachrichtigungen"
   }
 }

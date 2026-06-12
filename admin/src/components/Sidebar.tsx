@@ -36,6 +36,7 @@ import { useNotificationData } from '../hooks/useNotificationData'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
 import { useApiClient, apiService } from '../services/api'
+import { ConversationsList } from './assistant-workspace'
 
 interface SidebarProps {
   sidebarOpen: boolean
@@ -246,6 +247,8 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
             <NavGroupSection key={entry.key} entry={entry} />
           )
         )}
+        {/* AI conversations (v2_admin_assistant flag only) — additive, the nav above is strategy-locked */}
+        <ConversationsList onNavigate={() => setSidebarOpen(false)} />
       </nav>
 
       <div className="p-4 border-t border-gray-200/80 text-center">

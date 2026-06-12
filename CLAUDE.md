@@ -100,6 +100,9 @@ Scheduled emails: cron runs every minute dispatching `ScheduledEmail` records pa
 
 ## Known Issues
 
+- Admin assistant chat UI (`admin/src/components/assistant/{useAssistantChat,ChatMessageList,ResultCards}` + workspace components) is a port of `frontend/components/assistant*` — the `packages/assistant-ui` extraction (ADMIN_ASSISTANT_WORKSPACE_PLAN §2.1) is still pending, so streaming/chat fixes must land in both SPAs
+- Admin assistant `draft_announcement` / `send_announcement` tools (plan §3.2) deferred — mailing-campaign bulk sends considered too risky for v1; the assistant deep-links to `/mailing` instead
+
 - Webhook idempotency uses in-memory `Set` — lost on restart (needs Redis)
 - Support ticket emails use separate `api/src/support/mailgun.service.ts` — not consolidated
 - `EmailLog.status` only tracks `sent`/`failed`, not delivery/open/click events

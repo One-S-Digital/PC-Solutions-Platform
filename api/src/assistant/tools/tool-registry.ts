@@ -123,6 +123,86 @@ export const TOOL_REGISTRY: ToolDefinition[] = [
     inputSchema: {},
   },
 
+  // ── Admin-ops tools (admin assistant workspace) ────────────────────────────
+  {
+    name: 'get_pending_educator_approvals',
+    description:
+      'List educator profiles awaiting admin approval (platform-wide). Returns candidate rows with IDs — use an ID with approve_educator or reject_educator.',
+    level: 'L1_ANSWER',
+    allowedRoles: ADMIN_ONLY,
+    featureFlag: 'v2_admin_assistant',
+    inputSchema: {
+      limit: { type: 'number', description: 'Max number of educators to return (default 5)' },
+    },
+  },
+  {
+    name: 'approve_educator',
+    description:
+      'Approve a pending educator profile so the educator can use the platform. The educator receives an approval email. Resolve the ID with get_pending_educator_approvals first.',
+    level: 'L3_EXECUTE',
+    allowedRoles: ADMIN_ONLY,
+    featureFlag: 'v2_admin_assistant',
+    inputSchema: {
+      educatorId: { type: 'string', description: 'The educator (User) ID to approve' },
+    },
+  },
+  {
+    name: 'reject_educator',
+    description:
+      'Reject a pending educator profile with a reason. The educator receives a rejection email including the notes. Always ask the admin for the reason before proposing this.',
+    level: 'L3_EXECUTE',
+    allowedRoles: ADMIN_ONLY,
+    featureFlag: 'v2_admin_assistant',
+    inputSchema: {
+      educatorId: { type: 'string', description: 'The educator (User) ID to reject' },
+      notes: { type: 'string', description: 'Reason for the rejection (sent to the educator)' },
+    },
+  },
+  {
+    name: 'get_open_support_tickets',
+    description: 'List unresolved support tickets (OPEN or IN_PROGRESS), newest first, platform-wide.',
+    level: 'L1_ANSWER',
+    allowedRoles: ADMIN_ONLY,
+    featureFlag: 'v2_admin_assistant',
+    inputSchema: {
+      limit: { type: 'number', description: 'Max number of tickets to return (default 5)' },
+    },
+  },
+  {
+    name: 'get_staffing_signals',
+    description:
+      'Get platform-wide staffing/ops signals: pending educator approvals, stale applications, unassigned parent leads, replacement requests without matches, open support tickets, and recent cantonal policy updates.',
+    level: 'L1_ANSWER',
+    allowedRoles: ADMIN_ONLY,
+    featureFlag: 'v2_admin_assistant',
+    inputSchema: {},
+  },
+  {
+    name: 'draft_user_invite',
+    description:
+      'Draft a platform invitation for a new user — opens the invite form pre-filled with email and role for the admin to review and send.',
+    level: 'L2_DRAFT',
+    allowedRoles: ADMIN_ONLY,
+    featureFlag: 'v2_admin_assistant',
+    modal: 'invite_user_modal',
+    inputSchema: {
+      email: { type: 'string', description: 'Email address to invite' },
+      role: { type: 'string', description: 'Role to pre-assign (PARENT, EDUCATOR, FOUNDATION, PRODUCT_SUPPLIER, SERVICE_PROVIDER, ADMIN)' },
+    },
+  },
+  {
+    name: 'send_user_invite',
+    description:
+      'Send a platform invitation email to a new user with a pre-assigned role. Use only when the admin has explicitly confirmed the email and role.',
+    level: 'L3_EXECUTE',
+    allowedRoles: ADMIN_ONLY,
+    featureFlag: 'v2_admin_assistant',
+    inputSchema: {
+      email: { type: 'string', description: 'Email address to invite' },
+      role: { type: 'string', description: 'Role to assign (PARENT, EDUCATOR, FOUNDATION, PRODUCT_SUPPLIER, SERVICE_PROVIDER, ADMIN)' },
+    },
+  },
+
   // ── Foundation tools ───────────────────────────────────────────────────────
   {
     name: 'get_my_leads',
