@@ -20,12 +20,15 @@ export const AssistantModalHandler: React.FC<AssistantModalHandlerProps> = ({
     switch (modal) {
       case 'navigate': {
         const route = typeof prefill?.route === 'string' ? prefill.route : null;
-        if (route && route.startsWith('/')) navigate(route);
+        if (route && route.startsWith('/')) {
+          navigate(route, { state: { assistantPrefill: prefill } });
+        }
         break;
       }
 
       case 'invite_user_modal':
-        navigate('/users');
+        // Forward the drafted email/role so the Users page can pre-fill its invite form
+        navigate('/users', { state: { assistantPrefill: prefill } });
         break;
 
       case 'job_post_modal':

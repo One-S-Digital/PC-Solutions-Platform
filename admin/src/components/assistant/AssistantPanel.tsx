@@ -20,9 +20,11 @@ const SUGGESTION_KEYS = [
 
 interface WelcomeScreenProps {
   onSuggestion: (text: string) => void;
+  /** True while the conversation is still being created — clicks would be dropped. */
+  disabled?: boolean;
 }
 
-const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSuggestion }) => {
+const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSuggestion, disabled }) => {
   const { t } = useTranslation('assistant');
 
   return (
@@ -41,7 +43,8 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSuggestion }) => {
           <button
             key={key}
             onClick={() => onSuggestion(t(key, fallback))}
-            className="rounded-full border border-swiss-teal/40 bg-swiss-teal/5 px-3 py-1.5 text-sm text-swiss-teal transition-colors hover:bg-swiss-teal/10"
+            disabled={disabled}
+            className="rounded-full border border-swiss-teal/40 bg-swiss-teal/5 px-3 py-1.5 text-sm text-swiss-teal transition-colors hover:bg-swiss-teal/10 disabled:opacity-50"
           >
             {t(key, fallback)}
           </button>
@@ -152,7 +155,12 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
               onSend={(text) => handleSend(text)}
               onConfirmTool={confirmTool}
               onCancelTool={cancelTool}
-              emptyState={<WelcomeScreen onSuggestion={(text) => handleSend(text)} />}
+              emptyState={
+                <WelcomeScreen
+                  onSuggestion={(text) => handleSend(text)}
+                  disabled={!conversationId || !!initError}
+                />
+              }
             />
           </div>
 

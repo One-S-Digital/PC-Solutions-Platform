@@ -42,11 +42,17 @@ export function useFeatureFlags(): { flags: FlagMap | null; isLoading: boolean }
   );
 
   useEffect(() => {
-    if (!userId) return;
+    if (!userId) {
+      // Logged out (or switching accounts): never serve the previous user's flags
+      setFlags(null);
+      return;
+    }
 
     const existing = cachedFlags.get(userId);
+    // Reset to this user's cache (or loading) so a userId switch can't briefly
+    // render the previous account's flag-gated UI
+    setFlags(existing ?? null);
     if (existing) {
-      setFlags(existing);
       return;
     }
 

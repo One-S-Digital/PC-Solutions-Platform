@@ -234,6 +234,20 @@ export class OrchestratorService {
         });
       }
 
+      // L2 draft tools return { data: { modal, prefill } } (DraftsHandler /
+      // AdminOpsHandler contract). Surface it as a modal_action event so the
+      // client opens the pre-filled form — without this the draft only reaches
+      // the LLM and the user never sees it.
+      if (!toolError && level === 'L2_DRAFT') {
+        const draftData = (toolResult as { data?: { modal?: unknown; prefill?: unknown } })?.data;
+        if (draftData && typeof draftData.modal === 'string') {
+          sendEvent('modal_action', {
+            modal: draftData.modal,
+            prefill: (draftData.prefill as Record<string, unknown>) ?? {},
+          });
+        }
+      }
+
       // Strip contact PII (email, phone, address) before the result is fed back
       // into the LLM prompt. The raw result is already emitted to the frontend
       // via the tool_result SSE event above, so UI rendering is unaffected.

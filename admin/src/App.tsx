@@ -87,6 +87,13 @@ const IndexRedirect: React.FC = () => {
   return <Navigate to={enabled ? '/assistant' : '/dashboard'} replace />;
 };
 
+/** The workspace route itself is behind the same flag — OFF means not reachable, even by URL. */
+const AssistantWorkspaceRoute: React.FC = () => {
+  const { enabled, isLoading } = useFeatureFlag('v2_admin_assistant');
+  if (isLoading) return null;
+  return enabled ? <AssistantWorkspacePage /> : <Navigate to="/dashboard" replace />;
+};
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -106,7 +113,7 @@ function App() {
           }
         >
           <Route path="dashboard" element={<Dashboard />} />
-          <Route path="assistant" element={<AssistantWorkspacePage />} />
+          <Route path="assistant" element={<AssistantWorkspaceRoute />} />
           <Route path="users" element={<UsersPage />} />
           <Route path="users/:id/profile" element={<AdminUserProfileEdit />} />
           <Route path="organizations" element={<OrganizationsPage />} />

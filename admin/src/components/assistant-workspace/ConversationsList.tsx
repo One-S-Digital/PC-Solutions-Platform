@@ -188,7 +188,7 @@ export const ConversationsList: React.FC<ConversationsListProps> = ({ onNavigate
                     )}
                   </button>
                 )}
-                <span className="hidden flex-shrink-0 items-center gap-0.5 group-hover:flex">
+                <span className="hidden flex-shrink-0 items-center gap-0.5 group-hover:flex group-focus-within:flex">
                   <button
                     onClick={() => {
                       setEditingId(conversation.id);

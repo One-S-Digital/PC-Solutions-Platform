@@ -207,7 +207,7 @@ export class AdminOpsHandler implements ToolHandler {
   ): Promise<ToolResult> {
     const email = (args.email as string)?.trim();
     const role = this.coerceInviteRole(args.role);
-    if (!email || !email.includes('@')) {
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       throw new BadRequestException('A valid email address is required');
     }
     if (!role) {
