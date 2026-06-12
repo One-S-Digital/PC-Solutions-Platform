@@ -16,7 +16,9 @@ import {
   Briefcase,
   RefreshCw,
   UserCheck,
+  ChevronRight,
 } from 'lucide-react'
+import { SparklesIcon } from '@heroicons/react/24/outline'
 import { publicApi, useApiClient, apiService } from '../services/api'
 import * as api from '../services/api'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
@@ -24,6 +26,7 @@ import Card from '../components/design-system/Card'
 import Button from '../components/design-system/Button'
 import ContentUploadModal from '../components/ContentUploadModal'
 import { useTranslation } from 'react-i18next'
+import { useAssistant } from '../contexts/AssistantContext'
 
 type ContentType = 'e-learning' | 'hr' | 'policy';
 
@@ -31,6 +34,8 @@ const Dashboard: React.FC = () => {
   const navigate = useNavigate()
   const apiClient = useApiClient()
   const { t } = useTranslation(['dashboard', 'common', 'admin'])
+
+  const { openAssistant } = useAssistant()
 
   // System health check
   const { data: healthData } = useQuery({
@@ -567,6 +572,25 @@ const Dashboard: React.FC = () => {
             <p className="text-sm text-gray-600">{t('admin:dashboard.quickActions.analytics.description', 'View platform metrics')}</p>
           </Card>
         </div>
+
+        {/* AI Assistant entry point */}
+        <button
+          onClick={openAssistant}
+          className="mt-4 w-full flex items-center gap-3 rounded-xl border border-swiss-teal/30 bg-gradient-to-r from-swiss-teal/5 to-swiss-mint/5 px-5 py-4 text-left transition-all hover:from-swiss-teal/10 hover:to-swiss-mint/10 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2"
+        >
+          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-swiss-teal text-white shadow-sm">
+            <SparklesIcon className="h-5 w-5" aria-hidden="true" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="font-semibold text-swiss-charcoal">
+              {t('admin:dashboard.assistant.title', 'AI Assistant')}
+            </p>
+            <p className="text-sm text-gray-500">
+              {t('admin:dashboard.assistant.description', 'Ask anything — find users, review approvals, get platform stats')}
+            </p>
+          </div>
+          <ChevronRight className="h-4 w-4 flex-shrink-0 text-swiss-teal" aria-hidden="true" />
+        </button>
       </Card>
 
       {/* Platform Summary */}
