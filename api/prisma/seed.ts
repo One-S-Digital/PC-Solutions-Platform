@@ -1061,16 +1061,19 @@ async function seedAdminAssistantFlag() {
   // with an Assistant | Dashboard toggle. Independent of v2_assistant_dashboard
   // so admin and foundation roll out separately. Also gates the admin-ops tools
   // (educator approvals, support tickets, staffing signals, invites).
+  // ON by default: admins land on /assistant (the v2 workspace).
+  // Targets ADMIN and SUPER_ADMIN roles only; independent of v2_assistant_dashboard.
+  // Also gates admin-ops tools (educator approvals, support tickets, staffing signals, invites).
   await prisma.featureFlag.upsert({
     where: { key: 'v2_admin_assistant' },
-    update: {},
+    update: { isActive: true, rolloutPercentage: 100 },
     create: {
       name: 'Admin Assistant Workspace (v2)',
       description:
         'v2 remodel: assistant-first admin workspace — /assistant becomes the default admin landing view with an Assistant | Dashboard toggle, platform-wide briefing, and admin-ops tools',
       key: 'v2_admin_assistant',
-      isActive: false,
-      rolloutPercentage: 0,
+      isActive: true,
+      rolloutPercentage: 100,
       targetSegments: [],
       conditions: { userRoles: ['ADMIN', 'SUPER_ADMIN'] },
     },
