@@ -80,10 +80,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
     { path: '/messages', nameKey: 'sidebar.messages', icon: ChatBubbleLeftEllipsisIcon, roles: [UserRole.SERVICE_PROVIDER]},
     { path: '/service-provider/organisation-profile', nameKey: 'sidebar.organisationProfile', icon: BuildingOfficeIcon, roles: [UserRole.SERVICE_PROVIDER] },
     { path: '/service-provider/support', nameKey: 'sidebar.support', icon: QuestionMarkCircleIcon, roles: [UserRole.SERVICE_PROVIDER] },
-    // Foundation — ChatGPT-style sidebar: compact nav at top, conversations below.
-    // Only the 5 primary nav items appear; settings accessible via gear icon in the footer.
+    // Foundation — nav items as original; conversation history renders below via ConversationsList
     { path: '/foundation/dashboard', nameKey: 'sidebar.dashboard', icon: HomeIcon, roles: [UserRole.FOUNDATION], exact: true },
-    { path: '/foundation/leads', nameKey: 'sidebar.parentLeads', icon: InboxArrowDownIcon, roles: [UserRole.FOUNDATION] },
     {
       path: '/recruitment', nameKey: 'sidebar.recruitment', icon: BriefcaseIcon, roles: [UserRole.FOUNDATION],
       subItems: [
@@ -94,13 +92,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
         { path: '/foundation/intern-pool',     nameKey: 'sidebar.internPool',         icon: AcademicCapIcon,           roles: [UserRole.FOUNDATION] },
       ],
     },
-    {
-      path: '/marketplace', nameKey: 'sidebar.suppliersServices', icon: ShoppingBagIcon, roles: [UserRole.FOUNDATION],
-      subItems: [
-        { path: '/marketplace/products', nameKey: 'sidebar.products', icon: PuzzlePieceIcon, roles: [UserRole.FOUNDATION] },
-        { path: '/marketplace/services', nameKey: 'sidebar.services', icon: BriefcaseIcon,   roles: [UserRole.FOUNDATION] },
-      ],
-    },
+    { path: '/e-learning', nameKey: 'sidebar.eLearning', icon: AcademicCapIcon, roles: [UserRole.FOUNDATION] },
     {
       path: '/hr-procedures', nameKey: 'sidebar.hrCompliance', icon: DocumentTextIcon, roles: [UserRole.FOUNDATION], badgeNew: true,
       subItems: [
@@ -108,6 +100,19 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
         { path: '/state-policies', nameKey: 'sidebar.statePolicies', icon: NewspaperIcon,    roles: [UserRole.FOUNDATION] },
       ],
     },
+    { path: '/foundation/leads',               nameKey: 'sidebar.parentLeads',        icon: InboxArrowDownIcon,        roles: [UserRole.FOUNDATION] },
+    {
+      path: '/marketplace', nameKey: 'sidebar.suppliersServices', icon: ShoppingBagIcon, roles: [UserRole.FOUNDATION],
+      subItems: [
+        { path: '/marketplace/products', nameKey: 'sidebar.products', icon: PuzzlePieceIcon, roles: [UserRole.FOUNDATION] },
+        { path: '/marketplace/services', nameKey: 'sidebar.services', icon: BriefcaseIcon,   roles: [UserRole.FOUNDATION] },
+      ],
+    },
+    { path: '/foundation/orders-appointments', nameKey: 'sidebar.ordersAppointments', icon: CalendarDaysIcon,          roles: [UserRole.FOUNDATION] },
+    { path: '/foundation/analytics',           nameKey: 'sidebar.analytics',          icon: PresentationChartLineIcon, roles: [UserRole.FOUNDATION] },
+    { path: '/messages',                       nameKey: 'sidebar.messages',           icon: ChatBubbleLeftEllipsisIcon, roles: [UserRole.FOUNDATION] },
+    { path: '/foundation/organisation-profile', nameKey: 'sidebar.organisationProfile', icon: BuildingOfficeIcon,      roles: [UserRole.FOUNDATION] },
+    { path: '/foundation/support',              nameKey: 'sidebar.support',             icon: QuestionMarkCircleIcon,  roles: [UserRole.FOUNDATION] },
     // Admin/SA still use /recruitment/* in the frontend sidebar (admin SPA handles their primary nav)
     {
       path: '/recruitment', nameKey: 'sidebar.recruitment', icon: BriefcaseIcon, roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN],
@@ -164,7 +169,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
     { path: '/partners', nameKey: 'sidebar.partners', icon: BuildingStorefrontIcon, roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
     { path: '/admin/support', nameKey: 'sidebar.support', icon: QuestionMarkCircleIcon, roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
     { path: '/design-system', nameKey: 'sidebar.designSystem', icon: SwatchIcon, roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
-    { path: '/settings', nameKey: 'sidebar.settings', icon: CogIcon, roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.PARENT, UserRole.EDUCATOR, UserRole.PRODUCT_SUPPLIER] },
+    { path: '/settings', nameKey: 'sidebar.settings', icon: CogIcon, roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.FOUNDATION, UserRole.PARENT, UserRole.EDUCATOR, UserRole.PRODUCT_SUPPLIER] },
     { path: '/settings/service-provider', nameKey: 'sidebar.settings', icon: CogIcon, roles: [UserRole.SERVICE_PROVIDER] },
   ];
 
