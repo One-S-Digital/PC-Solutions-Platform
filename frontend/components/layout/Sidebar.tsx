@@ -80,14 +80,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
     { path: '/messages', nameKey: 'sidebar.messages', icon: ChatBubbleLeftEllipsisIcon, roles: [UserRole.SERVICE_PROVIDER]},
     { path: '/service-provider/organisation-profile', nameKey: 'sidebar.organisationProfile', icon: BuildingOfficeIcon, roles: [UserRole.SERVICE_PROVIDER] },
     { path: '/service-provider/support', nameKey: 'sidebar.support', icon: QuestionMarkCircleIcon, roles: [UserRole.SERVICE_PROVIDER] },
-    // Foundation — v2 staffing-centric sidebar (STAFFING_REMODEL_PLAN.md §2)
-    // Top-level: primary workspace + classic dashboard
-    { path: '/foundation/assistant', nameKey: 'sidebar.assistant', icon: SparklesIcon, roles: [UserRole.FOUNDATION], exact: true },
-    { path: '/foundation/dashboard', nameKey: 'sidebar.dashboard', icon: HomeIcon,     roles: [UserRole.FOUNDATION], exact: true },
-    // OPERATIONS section
-    { path: '/foundation/leads', nameKey: 'sidebar.parentLeads', icon: InboxArrowDownIcon, roles: [UserRole.FOUNDATION], navGroup: 'operations' },
+    // Foundation — ChatGPT-style sidebar: compact nav at top, conversations below.
+    // Only the 5 primary nav items appear; settings accessible via gear icon in the footer.
+    { path: '/foundation/dashboard', nameKey: 'sidebar.dashboard', icon: HomeIcon, roles: [UserRole.FOUNDATION], exact: true },
+    { path: '/foundation/leads', nameKey: 'sidebar.parentLeads', icon: InboxArrowDownIcon, roles: [UserRole.FOUNDATION] },
     {
-      path: '/recruitment', nameKey: 'sidebar.recruitment', icon: BriefcaseIcon, roles: [UserRole.FOUNDATION], navGroup: 'operations',
+      path: '/recruitment', nameKey: 'sidebar.recruitment', icon: BriefcaseIcon, roles: [UserRole.FOUNDATION],
       subItems: [
         { path: '/staffing/jobs',              nameKey: 'sidebar.postJob',            icon: ListBulletIcon,            roles: [UserRole.FOUNDATION] },
         { path: '/recruitment/candidate-pool', nameKey: 'sidebar.findCandidates',     icon: UserGroupIcon,             roles: [UserRole.FOUNDATION] },
@@ -97,27 +95,19 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
       ],
     },
     {
-      path: '/marketplace', nameKey: 'sidebar.suppliersServices', icon: ShoppingBagIcon, roles: [UserRole.FOUNDATION], navGroup: 'operations',
+      path: '/marketplace', nameKey: 'sidebar.suppliersServices', icon: ShoppingBagIcon, roles: [UserRole.FOUNDATION],
       subItems: [
         { path: '/marketplace/products', nameKey: 'sidebar.products', icon: PuzzlePieceIcon, roles: [UserRole.FOUNDATION] },
         { path: '/marketplace/services', nameKey: 'sidebar.services', icon: BriefcaseIcon,   roles: [UserRole.FOUNDATION] },
       ],
     },
     {
-      path: '/hr-procedures', nameKey: 'sidebar.hrCompliance', icon: DocumentTextIcon, roles: [UserRole.FOUNDATION], navGroup: 'operations', badgeNew: true,
+      path: '/hr-procedures', nameKey: 'sidebar.hrCompliance', icon: DocumentTextIcon, roles: [UserRole.FOUNDATION], badgeNew: true,
       subItems: [
         { path: '/hr-procedures',  nameKey: 'sidebar.hrProcedures',  icon: DocumentTextIcon, roles: [UserRole.FOUNDATION] },
         { path: '/state-policies', nameKey: 'sidebar.statePolicies', icon: NewspaperIcon,    roles: [UserRole.FOUNDATION] },
       ],
     },
-    { path: '/e-learning',                     nameKey: 'sidebar.eLearning',          icon: AcademicCapIcon,           roles: [UserRole.FOUNDATION], navGroup: 'operations' },
-    { path: '/foundation/orders-appointments', nameKey: 'sidebar.ordersAppointments', icon: CalendarDaysIcon,          roles: [UserRole.FOUNDATION], navGroup: 'operations' },
-    { path: '/foundation/analytics',           nameKey: 'sidebar.analytics',          icon: PresentationChartLineIcon, roles: [UserRole.FOUNDATION], navGroup: 'operations' },
-    { path: '/messages',                       nameKey: 'sidebar.messages',           icon: ChatBubbleLeftEllipsisIcon, roles: [UserRole.FOUNDATION], navGroup: 'operations' },
-    // ACCOUNT section
-    { path: '/foundation/organisation-profile', nameKey: 'sidebar.organisationProfile', icon: BuildingOfficeIcon,     roles: [UserRole.FOUNDATION], navGroup: 'account' },
-    { path: '/settings',                        nameKey: 'sidebar.settings',            icon: CogIcon,               roles: [UserRole.FOUNDATION], navGroup: 'account' },
-    { path: '/foundation/support',              nameKey: 'sidebar.support',             icon: QuestionMarkCircleIcon, roles: [UserRole.FOUNDATION], navGroup: 'account' },
     // Admin/SA still use /recruitment/* in the frontend sidebar (admin SPA handles their primary nav)
     {
       path: '/recruitment', nameKey: 'sidebar.recruitment', icon: BriefcaseIcon, roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN],
@@ -336,12 +326,22 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
       </nav>
       <div className="p-3 lg:p-5 border-t border-gray-200/80 mt-auto">
         {currentUser && (
-           <div className="flex items-center mb-3 lg:mb-4">
+          <div className="flex items-center mb-3 lg:mb-4">
             <img src={currentUser.avatarUrl || `https://ui-avatars.com/api/?name=${currentUser.name.replace(' ', '+')}&background=48CFAE&color=fff&rounded=true&size=128`} alt={currentUser.name} className="w-9 lg:w-11 h-9 lg:h-11 rounded-full mr-2 lg:mr-3 border-2 border-swiss-mint/30" />
             <div className="min-w-0 flex-1">
               <p className="text-sm lg:text-base font-semibold text-swiss-charcoal truncate">{currentUser.name}</p>
               <p className="text-xs text-gray-500 truncate">{translateUserRole(currentUser.role, t)}</p>
             </div>
+            {isFoundationUser && (
+              <Link
+                to="/settings"
+                onClick={() => { if (onLinkClick) onLinkClick(); }}
+                aria-label={t('sidebar.settings', 'Settings')}
+                className="ml-2 flex-shrink-0 rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-swiss-charcoal transition-colors"
+              >
+                <CogIcon className="h-4 w-4 lg:h-5 lg:w-5" aria-hidden="true" />
+              </Link>
+            )}
           </div>
         )}
         {hasSubscription && (

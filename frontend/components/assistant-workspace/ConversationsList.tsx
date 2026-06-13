@@ -146,7 +146,7 @@ export const ConversationsList: React.FC<ConversationsListProps> = ({ onNavigate
 
       {groups.map((group) => (
         <div key={group.key} className="mb-1.5">
-          <p className="px-2 py-1 text-[11px] text-gray-400 md:px-3 lg:px-4">{groupLabels[group.key]}</p>
+          <p className="px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400 md:px-3 lg:px-4">{groupLabels[group.key]}</p>
           {group.items.map((conversation) => {
             const Icon = KIND_ICONS[conversation.kind] ?? ChatBubbleLeftRightIcon;
             const isActive = onAssistantPage && activeId === conversation.id;
