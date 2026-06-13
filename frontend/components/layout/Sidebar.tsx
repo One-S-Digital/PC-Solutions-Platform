@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { HomeIcon, ShoppingBagIcon, BriefcaseIcon, DocumentTextIcon, AcademicCapIcon, UsersIcon, CogIcon, BookOpenIcon, BuildingStorefrontIcon, UserGroupIcon, NewspaperIcon, PresentationChartLineIcon, BuildingOfficeIcon, TruckIcon, UserCircleIcon, ChevronDownIcon, ChevronUpIcon, PuzzlePieceIcon, InboxArrowDownIcon, ClipboardDocumentListIcon, SquaresPlusIcon, QuestionMarkCircleIcon, TagIcon, ListBulletIcon, ChatBubbleLeftEllipsisIcon, ChartBarIcon, WrenchScrewdriverIcon, IdentificationIcon, CalendarDaysIcon, XMarkIcon, PaperClipIcon, AdjustmentsHorizontalIcon, SwatchIcon, WalletIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
+import { HomeIcon, ShoppingBagIcon, BriefcaseIcon, DocumentTextIcon, AcademicCapIcon, UsersIcon, CogIcon, BookOpenIcon, BuildingStorefrontIcon, UserGroupIcon, NewspaperIcon, PresentationChartLineIcon, BuildingOfficeIcon, TruckIcon, UserCircleIcon, ChevronDownIcon, ChevronUpIcon, PuzzlePieceIcon, InboxArrowDownIcon, ClipboardDocumentListIcon, SquaresPlusIcon, QuestionMarkCircleIcon, TagIcon, ListBulletIcon, ChatBubbleLeftEllipsisIcon, ChartBarIcon, WrenchScrewdriverIcon, IdentificationIcon, CalendarDaysIcon, XMarkIcon, PaperClipIcon, AdjustmentsHorizontalIcon, SwatchIcon, WalletIcon, ArrowPathIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { useAppContext } from '../../contexts/AppContext';
 import { useFrontendSettings } from '../../hooks/useFrontendSettings';
 import { UserRole } from '../../types';
@@ -17,8 +17,9 @@ interface NavItem {
   icon: React.ElementType;
   roles?: UserRole[];
   subItems?: NavItem[];
-  isContentDashboardLink?: boolean; 
+  isContentDashboardLink?: boolean;
   exact?: boolean;
+  badgeNew?: boolean; // Renders a "NEW" pill badge next to the item label
 }
 
 interface SidebarProps {
@@ -78,27 +79,27 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
     { path: '/messages', nameKey: 'sidebar.messages', icon: ChatBubbleLeftEllipsisIcon, roles: [UserRole.SERVICE_PROVIDER]},
     { path: '/service-provider/organisation-profile', nameKey: 'sidebar.organisationProfile', icon: BuildingOfficeIcon, roles: [UserRole.SERVICE_PROVIDER] },
     { path: '/service-provider/support', nameKey: 'sidebar.support', icon: QuestionMarkCircleIcon, roles: [UserRole.SERVICE_PROVIDER] },
-    // Foundation — strategy-locked order per STAFFING_REMODEL_PLAN.md §2
+    // Foundation — nav items as original; conversation history renders below via ConversationsList
     { path: '/foundation/dashboard', nameKey: 'sidebar.dashboard', icon: HomeIcon, roles: [UserRole.FOUNDATION], exact: true },
     {
       path: '/recruitment', nameKey: 'sidebar.recruitment', icon: BriefcaseIcon, roles: [UserRole.FOUNDATION],
       subItems: [
-        { path: '/staffing/jobs',            nameKey: 'sidebar.postJob',            icon: ListBulletIcon,            roles: [UserRole.FOUNDATION] },
+        { path: '/staffing/jobs',              nameKey: 'sidebar.postJob',            icon: ListBulletIcon,            roles: [UserRole.FOUNDATION] },
         { path: '/recruitment/candidate-pool', nameKey: 'sidebar.findCandidates',     icon: UserGroupIcon,             roles: [UserRole.FOUNDATION] },
-        { path: '/staffing/applications',    nameKey: 'sidebar.reviewApplications', icon: ClipboardDocumentListIcon, roles: [UserRole.FOUNDATION] },
-        { path: '/foundation/replacements',  nameKey: 'sidebar.replacements',       icon: ArrowPathIcon,             roles: [UserRole.FOUNDATION] },
-        { path: '/foundation/intern-pool',   nameKey: 'sidebar.internPool',         icon: AcademicCapIcon,           roles: [UserRole.FOUNDATION] },
+        { path: '/staffing/applications',      nameKey: 'sidebar.reviewApplications', icon: ClipboardDocumentListIcon, roles: [UserRole.FOUNDATION] },
+        { path: '/foundation/replacements',    nameKey: 'sidebar.replacements',       icon: ArrowPathIcon,             roles: [UserRole.FOUNDATION] },
+        { path: '/foundation/intern-pool',     nameKey: 'sidebar.internPool',         icon: AcademicCapIcon,           roles: [UserRole.FOUNDATION] },
       ],
     },
     { path: '/e-learning', nameKey: 'sidebar.eLearning', icon: AcademicCapIcon, roles: [UserRole.FOUNDATION] },
     {
-      path: '/hr-procedures', nameKey: 'sidebar.hrCompliance', icon: DocumentTextIcon, roles: [UserRole.FOUNDATION],
+      path: '/hr-procedures', nameKey: 'sidebar.hrCompliance', icon: DocumentTextIcon, roles: [UserRole.FOUNDATION], badgeNew: true,
       subItems: [
         { path: '/hr-procedures',  nameKey: 'sidebar.hrProcedures',  icon: DocumentTextIcon, roles: [UserRole.FOUNDATION] },
         { path: '/state-policies', nameKey: 'sidebar.statePolicies', icon: NewspaperIcon,    roles: [UserRole.FOUNDATION] },
       ],
     },
-    { path: '/foundation/leads', nameKey: 'sidebar.parentLeads', icon: InboxArrowDownIcon, roles: [UserRole.FOUNDATION] },
+    { path: '/foundation/leads',               nameKey: 'sidebar.parentLeads',        icon: InboxArrowDownIcon,        roles: [UserRole.FOUNDATION] },
     {
       path: '/marketplace', nameKey: 'sidebar.suppliersServices', icon: ShoppingBagIcon, roles: [UserRole.FOUNDATION],
       subItems: [
@@ -106,11 +107,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
         { path: '/marketplace/services', nameKey: 'sidebar.services', icon: BriefcaseIcon,   roles: [UserRole.FOUNDATION] },
       ],
     },
-    { path: '/foundation/orders-appointments', nameKey: 'sidebar.ordersAppointments',  icon: CalendarDaysIcon,         roles: [UserRole.FOUNDATION] },
-    { path: '/foundation/analytics',           nameKey: 'sidebar.analytics',            icon: PresentationChartLineIcon, roles: [UserRole.FOUNDATION] },
-    { path: '/messages',                        nameKey: 'sidebar.messages',             icon: ChatBubbleLeftEllipsisIcon, roles: [UserRole.FOUNDATION] },
-    { path: '/foundation/organisation-profile', nameKey: 'sidebar.organisationProfile', icon: BuildingOfficeIcon,        roles: [UserRole.FOUNDATION] },
-    { path: '/foundation/support',              nameKey: 'sidebar.support',              icon: QuestionMarkCircleIcon,    roles: [UserRole.FOUNDATION] },
+    { path: '/foundation/orders-appointments', nameKey: 'sidebar.ordersAppointments', icon: CalendarDaysIcon,          roles: [UserRole.FOUNDATION] },
+    { path: '/foundation/analytics',           nameKey: 'sidebar.analytics',          icon: PresentationChartLineIcon, roles: [UserRole.FOUNDATION] },
+    { path: '/messages',                       nameKey: 'sidebar.messages',           icon: ChatBubbleLeftEllipsisIcon, roles: [UserRole.FOUNDATION] },
+    { path: '/foundation/organisation-profile', nameKey: 'sidebar.organisationProfile', icon: BuildingOfficeIcon,      roles: [UserRole.FOUNDATION] },
+    { path: '/foundation/support',              nameKey: 'sidebar.support',             icon: QuestionMarkCircleIcon,  roles: [UserRole.FOUNDATION] },
     // Admin/SA still use /recruitment/* in the frontend sidebar (admin SPA handles their primary nav)
     {
       path: '/recruitment', nameKey: 'sidebar.recruitment', icon: BriefcaseIcon, roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN],
@@ -179,22 +180,23 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
   }));
 
   const NavLinkItem: React.FC<{ item: NavItem, isSubItem?: boolean }> = ({ item, isSubItem = false }) => (
-     <NavLink
+    <NavLink
       to={item.path}
-      end={item.exact} 
-      onClick={() => {
-        if (onLinkClick) {
-          onLinkClick();
-        }
-      }}
+      end={item.exact}
+      onClick={() => { if (onLinkClick) onLinkClick(); }}
       className={({ isActive }) =>
         `flex items-center px-2 md:px-3 lg:px-4 py-2 lg:py-2.5 text-xs md:text-sm rounded-button transition-colors duration-150 ease-in-out group ${
-          isSubItem ? 'pl-7 md:pl-8 lg:pl-10' : 'pl-2 md:pl-3 lg:pl-4' 
+          isSubItem ? 'pl-7 md:pl-8 lg:pl-10' : 'pl-2 md:pl-3 lg:pl-4'
         } ${isActive ? 'bg-swiss-mint/10 text-swiss-mint font-medium' : 'text-gray-600 hover:bg-gray-100 hover:text-swiss-charcoal'}`
       }
     >
-      <item.icon className={`w-4 h-4 lg:w-5 lg:h-5 mr-2 lg:mr-3 flex-shrink-0 ${isSubItem ? 'group-hover:text-swiss-mint' : 'group-hover:text-swiss-mint'}`} />
-      <span className="truncate">{t(item.nameKey)}</span>
+      <item.icon className="w-4 h-4 lg:w-5 lg:h-5 mr-2 lg:mr-3 flex-shrink-0 group-hover:text-swiss-mint" />
+      <span className="truncate flex-1">{t(item.nameKey)}</span>
+      {item.badgeNew && (
+        <span className="ml-2 flex-shrink-0 rounded-full bg-swiss-teal/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-swiss-teal">
+          {t('sidebar.badgeNew', 'NEW')}
+        </span>
+      )}
     </NavLink>
   );
 
@@ -240,80 +242,95 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
             </Link>
         </div>
       )}
-      <nav className="flex-1 p-2 md:p-3 lg:p-4 space-y-1 lg:space-y-1.5 overflow-y-auto"> 
+      <nav className="flex-1 p-2 md:p-3 lg:p-4 space-y-1 lg:space-y-1.5 overflow-y-auto">
         {userSpecificNavItems.map((item) => {
-          // Hide "Organisation Profile" if user is Admin or Super Admin but not Foundation
-          if (item.path === '/foundation/organisation-profile' && (isAdminOrSuperAdmin && !isFoundationUser)) {
-            return null;
-          }
+            // Hide "Organisation Profile" if user is Admin or Super Admin but not Foundation
+            if (item.path === '/foundation/organisation-profile' && (isAdminOrSuperAdmin && !isFoundationUser)) {
+              return null;
+            }
 
-          const roleSpecificDashboardPaths = [
-            '/supplier/dashboard', 
-            '/service-provider/dashboard',
-            '/foundation/dashboard',
-            '/educator/dashboard',
-          ];
-          if (item.path === '/dashboard' && currentUser && roleSpecificDashboardPaths.some(p => p.startsWith(`/${currentUser.role.toLowerCase().replace(/[\s()]+/g, '-')}/dashboard`))) {
-             if (currentUser.role === UserRole.PRODUCT_SUPPLIER && item.path === '/dashboard') return null;
-             if (currentUser.role === UserRole.SERVICE_PROVIDER && item.path === '/dashboard') return null;
-             if (currentUser.role === UserRole.FOUNDATION && item.path === '/dashboard') return null;
-             if (currentUser.role === UserRole.EDUCATOR && item.path === '/dashboard') return null;
-          }
+            const roleSpecificDashboardPaths = [
+              '/supplier/dashboard',
+              '/service-provider/dashboard',
+              '/foundation/dashboard',
+              '/educator/dashboard',
+            ];
+            if (item.path === '/dashboard' && currentUser && roleSpecificDashboardPaths.some(p => p.startsWith(`/${currentUser.role.toLowerCase().replace(/[\s()]+/g, '-')}/dashboard`))) {
+              if (currentUser.role === UserRole.PRODUCT_SUPPLIER && item.path === '/dashboard') return null;
+              if (currentUser.role === UserRole.SERVICE_PROVIDER && item.path === '/dashboard') return null;
+              if (currentUser.role === UserRole.FOUNDATION && item.path === '/dashboard') return null;
+              if (currentUser.role === UserRole.EDUCATOR && item.path === '/dashboard') return null;
+            }
 
-          const isContentMenuForAdmin = item.isContentDashboardLink && isAdminOrSuperAdmin;
-          let pathForTopLevel = isContentMenuForAdmin ? '/admin/content-dashboard' : item.path;
+            const isContentMenuForAdmin = item.isContentDashboardLink && isAdminOrSuperAdmin;
+            let pathForTopLevel = isContentMenuForAdmin ? '/admin/content-dashboard' : item.path;
 
-          if (item.path === '/settings' && currentUser?.role === UserRole.SERVICE_PROVIDER) {
-            pathForTopLevel = '/settings/service-provider';
-          }
+            if (item.path === '/settings' && currentUser?.role === UserRole.SERVICE_PROVIDER) {
+              pathForTopLevel = '/settings/service-provider';
+            }
 
-          return (
-            <div key={item.nameKey + item.path}>
-              {item.subItems && item.subItems.length > 0 ? (
-                <>
-                  <button
-                    onClick={() => {
-                      if (isContentMenuForAdmin) {
-                        navigate(pathForTopLevel);
-                         if (onLinkClick) onLinkClick(); // Close mobile sidebar if it navigates
-                      }
-                      // Always toggle if it has subItems, regardless of navigation behavior above
-                      // This ensures the chevron works for items like "Content" that also navigate
-                      toggleMenu(item.nameKey);
-                    }}
-                    className="flex items-center justify-between w-full px-2 md:px-3 lg:px-4 py-2 lg:py-2.5 text-xs md:text-sm text-gray-600 hover:bg-gray-100 hover:text-swiss-charcoal rounded-button transition-colors duration-150 ease-in-out group"
-                  >
-                    <div className="flex items-center min-w-0 flex-1">
-                      <item.icon className="w-4 h-4 lg:w-5 lg:h-5 mr-2 lg:mr-3 text-gray-500 group-hover:text-swiss-mint flex-shrink-0" />
-                      <span className="font-medium truncate">{t(item.nameKey)}</span>
-                    </div>
-                    {openMenus[item.nameKey] ? <ChevronUpIcon className="w-3.5 h-3.5 lg:w-4 lg:h-4 flex-shrink-0 ml-1" /> : <ChevronDownIcon className="w-3.5 h-3.5 lg:w-4 lg:h-4 flex-shrink-0 ml-1" />}
-                  </button>
-                  {openMenus[item.nameKey] && (
-                    <div className="mt-0.5 lg:mt-1 ml-1 lg:ml-2 space-y-0.5 lg:space-y-1"> 
-                      {item.subItems.map((subItem) => (
-                        <NavLinkItem key={subItem.nameKey + subItem.path} item={subItem} isSubItem={true} />
-                      ))}
-                    </div>
-                  )}
-                </>
-              ) : (
-                <NavLinkItem item={{...item, path: pathForTopLevel}} />
-              )}
-            </div>
-          );
-        })}
+            return (
+              <div key={item.nameKey + item.path}>
+                {item.subItems && item.subItems.length > 0 ? (
+                  <>
+                    <button
+                      onClick={() => {
+                        if (isContentMenuForAdmin) {
+                          navigate(pathForTopLevel);
+                          if (onLinkClick) onLinkClick();
+                        }
+                        toggleMenu(item.nameKey);
+                      }}
+                      className="flex items-center justify-between w-full px-2 md:px-3 lg:px-4 py-2 lg:py-2.5 text-xs md:text-sm text-gray-600 hover:bg-gray-100 hover:text-swiss-charcoal rounded-button transition-colors duration-150 ease-in-out group"
+                    >
+                      <div className="flex items-center min-w-0 flex-1">
+                        <item.icon className="w-4 h-4 lg:w-5 lg:h-5 mr-2 lg:mr-3 text-gray-500 group-hover:text-swiss-mint flex-shrink-0" />
+                        <span className="font-medium truncate">{t(item.nameKey)}</span>
+                      </div>
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        {item.badgeNew && (
+                          <span className="rounded-full bg-swiss-teal/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-swiss-teal">
+                            {t('sidebar.badgeNew', 'NEW')}
+                          </span>
+                        )}
+                        {openMenus[item.nameKey] ? <ChevronUpIcon className="w-3.5 h-3.5 lg:w-4 lg:h-4" /> : <ChevronDownIcon className="w-3.5 h-3.5 lg:w-4 lg:h-4" />}
+                      </div>
+                    </button>
+                    {openMenus[item.nameKey] && (
+                      <div className="mt-0.5 lg:mt-1 ml-1 lg:ml-2 space-y-0.5 lg:space-y-1">
+                        {item.subItems.map((subItem) => (
+                          <NavLinkItem key={subItem.nameKey + subItem.path} item={subItem} isSubItem={true} />
+                        ))}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <NavLinkItem item={{...item, path: pathForTopLevel}} />
+                )}
+              </div>
+            );
+          })}
         {/* AI conversations — additive section beneath the (strategy-locked) nav items */}
         {isFoundationUser && <ConversationsList onNavigate={onLinkClick} />}
       </nav>
       <div className="p-3 lg:p-5 border-t border-gray-200/80 mt-auto">
         {currentUser && (
-           <div className="flex items-center mb-3 lg:mb-4">
+          <div className="flex items-center mb-3 lg:mb-4">
             <img src={currentUser.avatarUrl || `https://ui-avatars.com/api/?name=${currentUser.name.replace(' ', '+')}&background=48CFAE&color=fff&rounded=true&size=128`} alt={currentUser.name} className="w-9 lg:w-11 h-9 lg:h-11 rounded-full mr-2 lg:mr-3 border-2 border-swiss-mint/30" />
             <div className="min-w-0 flex-1">
               <p className="text-sm lg:text-base font-semibold text-swiss-charcoal truncate">{currentUser.name}</p>
               <p className="text-xs text-gray-500 truncate">{translateUserRole(currentUser.role, t)}</p>
             </div>
+            {isFoundationUser && (
+              <Link
+                to="/settings"
+                onClick={() => { if (onLinkClick) onLinkClick(); }}
+                aria-label={t('sidebar.settings', 'Settings')}
+                className="ml-2 flex-shrink-0 rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-swiss-charcoal transition-colors"
+              >
+                <CogIcon className="h-4 w-4 lg:h-5 lg:w-5" aria-hidden="true" />
+              </Link>
+            )}
           </div>
         )}
         {hasSubscription && (

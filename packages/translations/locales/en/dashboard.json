@@ -1450,6 +1450,12 @@
     "serviceMarketplace": "Service Marketplace",
     "serviceProviders": "Service Providers",
     "services": "Services",
+    "assistant": "Assistant",
+    "badgeNew": "NEW",
+    "group": {
+      "account": "Account",
+      "operations": "Operations"
+    },
     "settings": "Settings",
     "statePolicies": "State Policies",
     "support": "Support",

@@ -657,6 +657,12 @@
     "serviceMarketplace": "Marché des services",
     "serviceProviders": "Fournisseurs de services",
     "services": "Services",
+    "assistant": "Assistant",
+    "badgeNew": "NOUVEAU",
+    "group": {
+      "account": "Compte",
+      "operations": "Opérations"
+    },
     "settings": "Paramètres",
     "statePolicies": "Politiques nationales",
     "support": "Support",
