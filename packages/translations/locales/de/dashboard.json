@@ -658,6 +658,12 @@
     "serviceMarketplace": "Dienstleistungsmarktplatz",
     "serviceProviders": "Dienstleister",
     "services": "Dienste",
+    "assistant": "Assistent",
+    "badgeNew": "NEU",
+    "group": {
+      "account": "Konto",
+      "operations": "Operationen"
+    },
     "settings": "Einstellungen",
     "statePolicies": "Staatspolitik",
     "support": "Support",

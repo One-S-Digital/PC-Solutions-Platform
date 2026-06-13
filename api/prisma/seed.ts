@@ -1037,20 +1037,18 @@ async function seedAiAssistantFlag() {
 }
 
 async function seedAssistantDashboardFlag() {
-  // Default OFF: Foundation users keep landing on /foundation/dashboard.
-  // Activate (isActive: true, rolloutPercentage: 100) to make
-  // /foundation/assistant the default landing view; the userRoles condition
-  // keeps the flag Foundation-only even when fully rolled out.
+  // ON by default: Foundation users land on /foundation/assistant (the v2 workspace).
+  // The userRoles condition keeps this Foundation-only even at 100% rollout.
   await prisma.featureFlag.upsert({
     where: { key: 'v2_assistant_dashboard' },
-    update: {},
+    update: { isActive: true, rolloutPercentage: 100 },
     create: {
       name: 'Assistant Dashboard (v2)',
       description:
         'v2 remodel: assistant-first Foundation workspace — /foundation/assistant becomes the default landing view with an Assistant | Dashboard toggle',
       key: 'v2_assistant_dashboard',
-      isActive: false,
-      rolloutPercentage: 0,
+      isActive: true,
+      rolloutPercentage: 100,
       targetSegments: [],
       conditions: { userRoles: ['FOUNDATION'] },
     },
