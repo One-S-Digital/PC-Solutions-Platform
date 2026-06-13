@@ -19,7 +19,6 @@ interface NavItem {
   subItems?: NavItem[];
   isContentDashboardLink?: boolean;
   exact?: boolean;
-  navGroup?: string; // Groups items under a labelled section header in the sidebar
   badgeNew?: boolean; // Renders a "NEW" pill badge next to the item label
 }
 
@@ -244,11 +243,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
         </div>
       )}
       <nav className="flex-1 p-2 md:p-3 lg:p-4 space-y-1 lg:space-y-1.5 overflow-y-auto">
-        {(() => {
-          // Track the active navGroup across items to inject section headers on transitions
-          let trackedGroup: string | undefined;
-
-          return userSpecificNavItems.map((item) => {
+        {userSpecificNavItems.map((item) => {
             // Hide "Organisation Profile" if user is Admin or Super Admin but not Foundation
             if (item.path === '/foundation/organisation-profile' && (isAdminOrSuperAdmin && !isFoundationUser)) {
               return null;
@@ -274,18 +269,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
               pathForTopLevel = '/settings/service-provider';
             }
 
-            const showGroupHeader = !!item.navGroup && item.navGroup !== trackedGroup;
-            if (item.navGroup) trackedGroup = item.navGroup;
-
             return (
               <div key={item.nameKey + item.path}>
-                {showGroupHeader && (
-                  <div className="px-2 md:px-3 lg:px-4 pb-1 pt-4">
-                    <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">
-                      {t(`sidebar.group.${item.navGroup}`, item.navGroup)}
-                    </p>
-                  </div>
-                )}
                 {item.subItems && item.subItems.length > 0 ? (
                   <>
                     <button
@@ -324,8 +309,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isMobileView }) => {
                 )}
               </div>
             );
-          });
-        })()}
+          })}
         {/* AI conversations — additive section beneath the (strategy-locked) nav items */}
         {isFoundationUser && <ConversationsList onNavigate={onLinkClick} />}
       </nav>

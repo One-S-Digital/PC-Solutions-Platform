@@ -1023,13 +1023,13 @@ async function seedAiFoundationFlag() {
 async function seedAiAssistantFlag() {
   await prisma.featureFlag.upsert({
     where: { key: 'ai_assistant_enabled' },
-    update: {},
+    update: { isActive: true, rolloutPercentage: 100 },
     create: {
       name: 'AI Assistant',
       description: 'MVP M1 — ProCrèche Virtual Assistant (conversation, SSE streaming, tool orchestration)',
       key: 'ai_assistant_enabled',
-      isActive: false,
-      rolloutPercentage: 0,
+      isActive: true,
+      rolloutPercentage: 100,
       targetSegments: [],
       conditions: {},
     },
@@ -1041,7 +1041,7 @@ async function seedAssistantDashboardFlag() {
   // The userRoles condition keeps this Foundation-only even at 100% rollout.
   await prisma.featureFlag.upsert({
     where: { key: 'v2_assistant_dashboard' },
-    update: { isActive: true, rolloutPercentage: 100 },
+    update: { isActive: true, rolloutPercentage: 100, targetSegments: [], conditions: { userRoles: ['FOUNDATION'] } },
     create: {
       name: 'Assistant Dashboard (v2)',
       description:
@@ -1066,7 +1066,7 @@ async function seedAdminAssistantFlag() {
   // Also gates admin-ops tools (educator approvals, support tickets, staffing signals, invites).
   await prisma.featureFlag.upsert({
     where: { key: 'v2_admin_assistant' },
-    update: { isActive: true, rolloutPercentage: 100 },
+    update: { isActive: true, rolloutPercentage: 100, targetSegments: [], conditions: { userRoles: ['ADMIN', 'SUPER_ADMIN'] } },
     create: {
       name: 'Admin Assistant Workspace (v2)',
       description:
