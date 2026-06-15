@@ -12,6 +12,7 @@ import { useNotifications } from '../../contexts/NotificationContext';
 import { useInAppNotifications } from '../../contexts/InAppNotificationContext';
 import LanguageSwitcher from '../../components/ui/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
+import { useFeatureFlag } from '../../hooks/useFeatureFlags';
 import { AssistantToggle } from '../assistant-workspace';
 
 interface NavbarProps {
@@ -21,6 +22,7 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ onMobileMenuToggle }) => {
   const { t, i18n } = useTranslation(['dashboard', 'common', 'assistant']); // Initialize useTranslation
   const { currentUser, logout } = useAppContext();
+  const { enabled: assistantKillSwitch } = useFeatureFlag('ai_assistant_enabled');
   const { getCartItemCount } = useCart();
   const { conversations, getUnreadCountForConversation } = useMessaging();
   const { notifications, removeNotification } = useNotifications();
@@ -33,9 +35,9 @@ const Navbar: React.FC<NavbarProps> = ({ onMobileMenuToggle }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Hybrid bar: Foundation users get the Assistant|Dashboard toggle in the top
-  // bar at all times. The search field swaps for the greeting on the workspace.
-  const assistantEligible = currentUser?.role === UserRole.FOUNDATION;
+  // Hybrid bar: Foundation users see the toggle when the assistant is enabled.
+  // The search field swaps for the greeting on the workspace.
+  const assistantEligible = currentUser?.role === UserRole.FOUNDATION && assistantKillSwitch;
   const onAssistantPage = location.pathname.startsWith('/foundation/assistant');
   const greetingHour = new Date().getHours();
   const greetingKey =

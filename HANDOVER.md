@@ -12,14 +12,24 @@ Feature flags for the assistant were removed on 2026-06-15 and the assistant
 is now a permanent part of the product build.
 
 **Feature flags removed:**
-- `v2_assistant_dashboard` — no longer exists in frontend code (Foundation routing is unconditional)
-- `v2_admin_assistant` — no longer exists in admin code (admin routing is unconditional)
-- `ai_assistant_enabled` — still exists in the backend as a master kill switch but the frontend no longer checks it for routing/UI gating
+- `v2_assistant_dashboard` — removed; Foundation routing to `/foundation/assistant` is now controlled solely by `ai_assistant_enabled`
+- `v2_admin_assistant` — removed; admin routing to `/assistant` is now controlled solely by `ai_assistant_enabled`
 
-If you ever need to disable the assistant UI without a deploy, you can flip
-`ai_assistant_enabled` to `false` in the database; the API calls will fail
-gracefully and the workspace shows an error banner. But there is no longer
-a frontend feature flag to hide the UI.
+**`ai_assistant_enabled` is the single kill switch for the entire assistant UI.**
+When it is `false` in the database:
+- Foundation users land on `/foundation/dashboard` (classic dashboard)
+- Admin users land on `/dashboard` (classic admin dashboard)
+- The `Assistant | Dashboard` toggle is hidden in both SPAs
+- `ConversationsList` in sidebars is hidden
+- The admin Dashboard quick-action CTA falls back to the floating chat panel
+- Any direct visit to `/foundation/assistant` or `/assistant` redirects to the classic dashboard
+
+To disable the assistant without a deploy:
+```sql
+UPDATE "FeatureFlag" SET "isActive" = false, "rolloutPercentage" = 0
+WHERE key = 'ai_assistant_enabled';
+```
+The flag hook fails closed (empty map on any network error) so a backend outage also hides the UI.
 
 ---
 

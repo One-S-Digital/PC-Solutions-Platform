@@ -78,6 +78,7 @@ import { AssistantContainer } from './components/assistant';
 import FoundationInternPoolPage from './pages/foundation/FoundationInternPoolPage';
 import FoundationDashboardPage from './pages/foundation/FoundationDashboardPage';
 import AssistantWorkspacePage from './pages/foundation/AssistantWorkspacePage';
+import { useFeatureFlag } from './hooks/useFeatureFlags';
 import FoundationOrdersAppointmentsPage from './pages/foundation/FoundationOrdersAppointmentsPage';
 import FoundationAnalyticsPage from './pages/foundation/FoundationAnalyticsPage';
 import FoundationOrganisationProfilePage from './pages/foundation/FoundationOrganisationProfilePage';
@@ -162,6 +163,7 @@ const SubscriptionGatedRoute: React.FC<{
 
 const RoleBasedDashboardRedirect: React.FC = () => {
   const { currentUser } = useAppContext();
+  const { enabled: assistantEnabled, isLoading: flagLoading } = useFeatureFlag('ai_assistant_enabled');
   if (!currentUser) return <Navigate to="/login" replace />;
 
   switch (currentUser.role) {
@@ -170,7 +172,14 @@ const RoleBasedDashboardRedirect: React.FC = () => {
     case UserRole.SERVICE_PROVIDER:
       return <Navigate to="/service-provider/dashboard" replace />;
     case UserRole.FOUNDATION:
-      return <Navigate to="/foundation/assistant" replace />;
+      if (flagLoading) {
+        return (
+          <div className="flex items-center justify-center py-24">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-swiss-mint" />
+          </div>
+        );
+      }
+      return <Navigate to={assistantEnabled ? '/foundation/assistant' : '/foundation/dashboard'} replace />;
     case UserRole.EDUCATOR: {
       const approvalStatus = (currentUser as any).approvalStatus;
       if (approvalStatus === 'REJECTED') return <Navigate to="/educator/rejected" replace />;

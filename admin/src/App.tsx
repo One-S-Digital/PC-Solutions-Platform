@@ -38,6 +38,7 @@ import StatePoliciesPage from './pages/content/StatePoliciesPage';
 import EducatorApprovalsPage from './pages/EducatorApprovals';
 import AiOperationsPage from './pages/AiOperationsPage';
 import AssistantWorkspacePage from './pages/AssistantWorkspacePage';
+import { useFeatureFlag } from './hooks/useFeatureFlags';
 
 
 // Create a client
@@ -76,8 +77,17 @@ const FrontendSettingsManager: React.FC = () => {
   return null;
 };
 
-const IndexRedirect: React.FC = () => <Navigate to="/assistant" replace />;
-const AssistantWorkspaceRoute: React.FC = () => <AssistantWorkspacePage />;
+const IndexRedirect: React.FC = () => {
+  const { enabled, isLoading } = useFeatureFlag('ai_assistant_enabled');
+  if (isLoading) return null;
+  return <Navigate to={enabled ? '/assistant' : '/dashboard'} replace />;
+};
+
+const AssistantWorkspaceRoute: React.FC = () => {
+  const { enabled, isLoading } = useFeatureFlag('ai_assistant_enabled');
+  if (isLoading) return null;
+  return enabled ? <AssistantWorkspacePage /> : <Navigate to="/dashboard" replace />;
+};
 
 function App() {
   return (

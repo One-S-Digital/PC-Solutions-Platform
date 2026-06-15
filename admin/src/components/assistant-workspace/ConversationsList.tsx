@@ -18,6 +18,7 @@ import {
   ConversationKind,
 } from '../../services/assistantService';
 import { CONVERSATIONS_UPDATED_EVENT } from '../assistant/useAssistantChat';
+import { useFeatureFlag } from '../../hooks/useFeatureFlags';
 
 const KIND_ICONS: Record<ConversationKind, React.ElementType> = {
   CHAT: ChatBubbleLeftRightIcon,
@@ -55,6 +56,7 @@ export const ConversationsList: React.FC<ConversationsListProps> = ({ onNavigate
   const { getToken } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { enabled } = useFeatureFlag('ai_assistant_enabled');
 
   const [conversations, setConversations] = useState<ConversationSummary[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -72,10 +74,13 @@ export const ConversationsList: React.FC<ConversationsListProps> = ({ onNavigate
   }, [getToken]);
 
   useEffect(() => {
+    if (!enabled) return;
     refresh();
     window.addEventListener(CONVERSATIONS_UPDATED_EVENT, refresh);
     return () => window.removeEventListener(CONVERSATIONS_UPDATED_EVENT, refresh);
-  }, [refresh]);
+  }, [enabled, refresh]);
+
+  if (!enabled) return null;
 
   const goTo = (conversationId?: string) => {
     navigate(conversationId ? `/assistant?c=${conversationId}` : '/assistant');
