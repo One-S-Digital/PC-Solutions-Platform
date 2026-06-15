@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useAuth, useClerk, useUser } from '@clerk/clerk-react'
 import { Menu, Bell, User } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import LanguageSwitcher from './design-system/LanguageSwitcher'
 import { useTranslation } from 'react-i18next'
 import { useNotificationData } from '../hooks/useNotificationData'
 import { dismissNotification, markVisited } from '../utils/notificationState'
+import { useFeatureFlag } from '../hooks/useFeatureFlags'
+import { AssistantToggle } from './assistant-workspace/AssistantToggle'
 
 interface HeaderProps {
   setSidebarOpen: (open: boolean) => void
@@ -17,6 +19,8 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
   const { getToken } = useAuth()
   const { t } = useTranslation(['dashboard','common','admin'])
   const navigate = useNavigate()
+  const location = useLocation()
+  const { enabled: assistantEnabled } = useFeatureFlag('v2_admin_assistant')
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
   const notificationsRef = useRef<HTMLDivElement | null>(null)
   const notificationsButtonRef = useRef<HTMLButtonElement | null>(null)
@@ -240,6 +244,9 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
         </div>
 
         <div className="flex items-center space-x-4">
+          {assistantEnabled && (
+            <AssistantToggle active={location.pathname.startsWith('/assistant') ? 'assistant' : 'dashboard'} />
+          )}
           <LanguageSwitcher />
           <div className="relative">
             <button

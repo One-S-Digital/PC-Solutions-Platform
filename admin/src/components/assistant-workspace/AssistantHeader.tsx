@@ -1,7 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUser } from '@clerk/clerk-react';
-import { AssistantToggle } from './AssistantToggle';
 
 /**
  * Workspace header: time-of-day greeting + date/"Platform overview" line on
@@ -36,13 +35,10 @@ export const AssistantHeader: React.FC = () => {
           {dateLabel} · {t('adminWorkspace.subtitle', 'Platform overview')}
         </p>
       </div>
-      <div className="flex items-center gap-3">
-        <AssistantToggle active="assistant" />
-        <span className="hidden items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700 sm:inline-flex">
-          <span className="h-1.5 w-1.5 rounded-full bg-swiss-mint" aria-hidden="true" />
-          {t('workspace.activePill', 'Assistant active')}
-        </span>
-      </div>
+      <span className="hidden items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700 sm:inline-flex">
+        <span className="h-1.5 w-1.5 rounded-full bg-swiss-mint" aria-hidden="true" />
+        {t('workspace.activePill', 'Assistant active')}
+      </span>
     </div>
   );
 };
