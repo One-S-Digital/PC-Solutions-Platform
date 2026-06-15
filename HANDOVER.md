@@ -16,7 +16,16 @@ is now a permanent part of the product build.
 - `v2_admin_assistant` — removed; admin routing to `/assistant` is now controlled solely by `ai_assistant_enabled`
 
 **`ai_assistant_enabled` is the single kill switch for the entire assistant UI.**
-When it is `false` in the database:
+It is controlled by the `AI_ASSISTANT_ENABLED` environment variable in Render — no database
+query and no code deploy required. Set it in **Render → Your Service → Environment**.
+
+| Env var value | Effect |
+|---|---|
+| `true` or `1` | Assistant on for all users |
+| `false` or `0` | Assistant off — classic dashboard for everyone |
+| *(not set)* | Falls back to the DB record (currently `true` in production) |
+
+When the kill switch is off:
 - Foundation users land on `/foundation/dashboard` (classic dashboard)
 - Admin users land on `/dashboard` (classic admin dashboard)
 - The `Assistant | Dashboard` toggle is hidden in both SPAs
@@ -24,12 +33,12 @@ When it is `false` in the database:
 - The admin Dashboard quick-action CTA falls back to the floating chat panel
 - Any direct visit to `/foundation/assistant` or `/assistant` redirects to the classic dashboard
 
-To disable the assistant without a deploy:
-```sql
-UPDATE "FeatureFlag" SET "isActive" = false, "rolloutPercentage" = 0
-WHERE key = 'ai_assistant_enabled';
-```
-The flag hook fails closed (empty map on any network error) so a backend outage also hides the UI.
+The flag hook also fails closed (empty map on any network error), so a backend outage hides the assistant UI safely.
+
+**Database records:** The `ai_assistant_enabled`, `v2_assistant_dashboard`, and `v2_admin_assistant`
+records have been removed from all seed files. Existing records in the production DB are harmless
+(the env var takes priority for `ai_assistant_enabled`; the other two are no longer read by the frontend).
+You may delete them from the DB if desired — they have no effect.
 
 ---
 

@@ -31,18 +31,6 @@ async function main() {
   console.log('🤖 Setting up AI Foundation feature flag...');
   await seedAiFoundationFlag();
 
-  // 6c. AI Assistant feature flag
-  console.log('🤖 Setting up AI Assistant feature flag...');
-  await seedAiAssistantFlag();
-
-  // 6d. Assistant workspace (v2 dashboard) feature flag
-  console.log('🤖 Setting up Assistant Dashboard feature flag...');
-  await seedAssistantDashboardFlag();
-
-  // 6e. Admin assistant workspace feature flag
-  console.log('🤖 Setting up Admin Assistant feature flag...');
-  await seedAdminAssistantFlag();
-
   // 7. Create Email Templates (for admin email template management)
   console.log('📧 Creating email templates...');
   await seedEmailTemplates();
@@ -1016,66 +1004,6 @@ async function seedAiFoundationFlag() {
       rolloutPercentage: 0,
       targetSegments: [],
       conditions: {},
-    },
-  });
-}
-
-async function seedAiAssistantFlag() {
-  await prisma.featureFlag.upsert({
-    where: { key: 'ai_assistant_enabled' },
-    update: { isActive: true, rolloutPercentage: 100 },
-    create: {
-      name: 'AI Assistant',
-      description: 'MVP M1 — ProCrèche Virtual Assistant (conversation, SSE streaming, tool orchestration)',
-      key: 'ai_assistant_enabled',
-      isActive: true,
-      rolloutPercentage: 100,
-      targetSegments: [],
-      conditions: {},
-    },
-  });
-}
-
-async function seedAssistantDashboardFlag() {
-  // ON by default: Foundation users land on /foundation/assistant (the v2 workspace).
-  // The userRoles condition keeps this Foundation-only even at 100% rollout.
-  await prisma.featureFlag.upsert({
-    where: { key: 'v2_assistant_dashboard' },
-    update: { isActive: true, rolloutPercentage: 100, targetSegments: [], conditions: { userRoles: ['FOUNDATION'] } },
-    create: {
-      name: 'Assistant Dashboard (v2)',
-      description:
-        'v2 remodel: assistant-first Foundation workspace — /foundation/assistant becomes the default landing view with an Assistant | Dashboard toggle',
-      key: 'v2_assistant_dashboard',
-      isActive: true,
-      rolloutPercentage: 100,
-      targetSegments: [],
-      conditions: { userRoles: ['FOUNDATION'] },
-    },
-  });
-}
-
-async function seedAdminAssistantFlag() {
-  // Default OFF: admins keep landing on /dashboard. Activate (isActive: true,
-  // rolloutPercentage: 100) to make /assistant the default admin landing view
-  // with an Assistant | Dashboard toggle. Independent of v2_assistant_dashboard
-  // so admin and foundation roll out separately. Also gates the admin-ops tools
-  // (educator approvals, support tickets, staffing signals, invites).
-  // ON by default: admins land on /assistant (the v2 workspace).
-  // Targets ADMIN and SUPER_ADMIN roles only; independent of v2_assistant_dashboard.
-  // Also gates admin-ops tools (educator approvals, support tickets, staffing signals, invites).
-  await prisma.featureFlag.upsert({
-    where: { key: 'v2_admin_assistant' },
-    update: { isActive: true, rolloutPercentage: 100, targetSegments: [], conditions: { userRoles: ['ADMIN', 'SUPER_ADMIN'] } },
-    create: {
-      name: 'Admin Assistant Workspace (v2)',
-      description:
-        'v2 remodel: assistant-first admin workspace — /assistant becomes the default admin landing view with an Assistant | Dashboard toggle, platform-wide briefing, and admin-ops tools',
-      key: 'v2_admin_assistant',
-      isActive: true,
-      rolloutPercentage: 100,
-      targetSegments: [],
-      conditions: { userRoles: ['ADMIN', 'SUPER_ADMIN'] },
     },
   });
 }
