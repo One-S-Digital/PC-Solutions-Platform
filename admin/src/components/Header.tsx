@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useAuth, useClerk, useUser } from '@clerk/clerk-react'
 import { Menu, Bell, User } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import LanguageSwitcher from './design-system/LanguageSwitcher'
 import { useTranslation } from 'react-i18next'
 import { useNotificationData } from '../hooks/useNotificationData'
 import { dismissNotification, markVisited } from '../utils/notificationState'
+import { useFeatureFlag } from '../hooks/useFeatureFlags'
+import { AssistantToggle } from './assistant-workspace/AssistantToggle'
 
 interface HeaderProps {
   setSidebarOpen: (open: boolean) => void
@@ -15,8 +17,31 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
   const { user } = useUser()
   const { signOut } = useClerk()
   const { getToken } = useAuth()
-  const { t } = useTranslation(['dashboard','common','admin'])
+  const { t, i18n } = useTranslation(['dashboard','common','admin','assistant'])
   const navigate = useNavigate()
+  const location = useLocation()
+  const { enabled: assistantEnabled } = useFeatureFlag('ai_assistant_enabled')
+
+  const onAssistantPage = location.pathname.startsWith('/assistant')
+  const greetingHour = new Date().getHours()
+  const greetingKey =
+    greetingHour < 12
+      ? 'assistant:workspace.greetingMorning'
+      : greetingHour < 18
+        ? 'assistant:workspace.greetingAfternoon'
+        : 'assistant:workspace.greetingEvening'
+  const greetingFallback =
+    greetingHour < 12
+      ? 'Good morning, {{name}} 👋'
+      : greetingHour < 18
+        ? 'Good afternoon, {{name}} 👋'
+        : 'Good evening, {{name}} 👋'
+  const greetingName = user?.firstName || user?.fullName?.split(' ')[0] || ''
+  const greetingDate = new Intl.DateTimeFormat(i18n.language, {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  }).format(new Date())
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
   const notificationsRef = useRef<HTMLDivElement | null>(null)
   const notificationsButtonRef = useRef<HTMLButtonElement | null>(null)
@@ -233,13 +258,29 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
             <Menu className="h-6 w-6" />
           </button>
           <div className="ml-4 lg:ml-0">
-            <h1 className="text-lg font-semibold text-swiss-charcoal">
-              {t('sidebar.dashboard')}
-            </h1>
+            {assistantEnabled && onAssistantPage ? (
+              <>
+                <h1 className="text-base font-bold leading-tight text-swiss-charcoal sm:text-lg">
+                  {t(greetingKey, greetingFallback, { name: greetingName })}
+                </h1>
+                <p className="text-xs text-gray-500">{greetingDate}</p>
+              </>
+            ) : (
+              <h1 className="text-lg font-semibold text-swiss-charcoal">
+                {t('sidebar.dashboard')}
+              </h1>
+            )}
           </div>
         </div>
 
         <div className="flex items-center space-x-4">
+          {assistantEnabled && onAssistantPage && (
+            <span className="hidden items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 lg:inline-flex">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
+              {t('assistant:workspace.activePill', 'Assistant active')}
+            </span>
+          )}
+          {assistantEnabled && <AssistantToggle active={onAssistantPage ? 'assistant' : 'dashboard'} />}
           <LanguageSwitcher />
           <div className="relative">
             <button

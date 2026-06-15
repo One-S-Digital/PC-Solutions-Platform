@@ -83,11 +83,11 @@ export const AdminBriefingCard: React.FC<AdminBriefingCardProps> = ({
 
   if (isLoading) {
     return (
-      <div className="mb-6 animate-pulse rounded-2xl bg-swiss-deep-teal/20 p-6">
-        <div className="mb-4 h-5 w-2/3 rounded bg-swiss-deep-teal/30" />
+      <div className="mb-6 animate-pulse rounded-2xl bg-emerald-800/20 p-6">
+        <div className="mb-4 h-5 w-2/3 rounded bg-emerald-800/30" />
         <div className="space-y-2">
-          <div className="h-10 rounded-xl bg-swiss-deep-teal/20" />
-          <div className="h-10 rounded-xl bg-swiss-deep-teal/15" />
+          <div className="h-10 rounded-xl bg-emerald-800/20" />
+          <div className="h-10 rounded-xl bg-emerald-800/15" />
         </div>
       </div>
     );
@@ -102,7 +102,7 @@ export const AdminBriefingCard: React.FC<AdminBriefingCardProps> = ({
       : t('adminBriefing.headline_other', '{{count}} items need review today', { count });
 
   return (
-    <div className="mb-6 overflow-hidden rounded-2xl bg-swiss-deep-teal text-white shadow-lg">
+    <div className="mb-6 overflow-hidden rounded-2xl bg-emerald-800 text-white shadow-lg">
       {/* Header */}
       <div className="flex items-start gap-3 px-5 py-4">
         <div className="mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-white/15">
@@ -142,7 +142,7 @@ export const AdminBriefingCard: React.FC<AdminBriefingCardProps> = ({
       <div className="border-t border-white/15 px-5 py-3">
         <button
           onClick={() => onAction(HANDLE_ALL_PROMPT)}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-swiss-deep-teal transition-colors hover:bg-white/90 focus:outline-none focus:ring-2 focus:ring-white/40"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-emerald-800 transition-colors hover:bg-white/90 focus:outline-none focus:ring-2 focus:ring-white/40"
         >
           <SparklesIcon className="h-4 w-4" aria-hidden="true" />
           {t('workspace.briefing.handleAll', 'Handle everything with me')}

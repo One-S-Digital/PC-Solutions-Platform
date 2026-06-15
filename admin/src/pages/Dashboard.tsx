@@ -37,9 +37,7 @@ const Dashboard: React.FC = () => {
   const { t } = useTranslation(['dashboard', 'common', 'admin'])
 
   const { openAssistant } = useAssistant()
-  // With the workspace flag on, the CTA leads to the full-page assistant
-  // instead of the floating panel (ADMIN_ASSISTANT_WORKSPACE_PLAN §4).
-  const { enabled: assistantWorkspaceEnabled } = useFeatureFlag('v2_admin_assistant')
+  const { enabled: assistantEnabled } = useFeatureFlag('ai_assistant_enabled')
 
   // System health check
   const { data: healthData } = useQuery({
@@ -579,7 +577,7 @@ const Dashboard: React.FC = () => {
 
         {/* AI Assistant entry point */}
         <button
-          onClick={assistantWorkspaceEnabled ? () => navigate('/assistant') : openAssistant}
+          onClick={assistantEnabled ? () => navigate('/assistant') : openAssistant}
           className="mt-4 w-full flex items-center gap-3 rounded-xl border border-swiss-teal/30 bg-gradient-to-r from-swiss-teal/5 to-swiss-mint/5 px-5 py-4 text-left transition-all hover:from-swiss-teal/10 hover:to-swiss-mint/10 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-2"
         >
           <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-swiss-teal text-white shadow-sm">

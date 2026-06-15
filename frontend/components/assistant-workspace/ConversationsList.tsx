@@ -49,15 +49,14 @@ interface ConversationsListProps {
 
 /**
  * AI conversations section rendered beneath the existing sidebar nav
- * (additive only — the nav itself is strategy-locked). Foundation +
- * v2_assistant_dashboard flag only.
+ * (additive only — the nav itself is strategy-locked).
  */
 export const ConversationsList: React.FC<ConversationsListProps> = ({ onNavigate }) => {
   const { t } = useTranslation('assistant');
   const { getToken } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { enabled } = useFeatureFlag('v2_assistant_dashboard');
+  const { enabled } = useFeatureFlag('ai_assistant_enabled');
 
   const [conversations, setConversations] = useState<ConversationSummary[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);

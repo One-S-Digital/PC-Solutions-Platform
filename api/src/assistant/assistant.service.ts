@@ -204,7 +204,11 @@ export class AssistantService {
   }
 
   private async assertAssistantEnabled() {
-    if (process.env.AI_ASSISTANT_ENABLED === 'true') return;
+    const envOverride = process.env.AI_ASSISTANT_ENABLED;
+    if (envOverride !== undefined) {
+      if (envOverride === 'true' || envOverride === '1') return;
+      throw new ForbiddenException('AI Assistant is not enabled.');
+    }
     const flag = await this.prisma.featureFlag.findFirst({
       where: { key: 'ai_assistant_enabled', isActive: true },
     });

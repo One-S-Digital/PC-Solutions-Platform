@@ -1,13 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { SparklesIcon, HomeIcon } from '@heroicons/react/24/outline';
 
 interface AssistantToggleProps {
   active: 'assistant' | 'dashboard';
 }
 
 /**
- * Segmented `Assistant | Dashboard` switch. A pure navigation control:
+ * Segmented `Assistant | Dashboard` pill. A pure navigation control:
  * Assistant → /foundation/assistant (chat workspace),
  * Dashboard → /foundation/dashboard (the classic Foundation dashboard).
  */
@@ -16,7 +17,7 @@ export const AssistantToggle: React.FC<AssistantToggleProps> = ({ active }) => {
   const navigate = useNavigate();
 
   const tabClass = (isActive: boolean) =>
-    `rounded-lg px-4 py-1.5 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-swiss-teal/40 ${
+    `inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-400/40 ${
       isActive
         ? 'bg-white text-swiss-charcoal shadow-minimal'
         : 'text-gray-500 hover:text-swiss-charcoal'
@@ -26,7 +27,7 @@ export const AssistantToggle: React.FC<AssistantToggleProps> = ({ active }) => {
     <div
       role="tablist"
       aria-label={t('workspace.tabsLabel', 'Workspace view')}
-      className="inline-flex items-center gap-1 rounded-xl bg-gray-100 p-1"
+      className="inline-flex items-center gap-1 rounded-full bg-gray-100 p-1"
     >
       <button
         role="tab"
@@ -34,6 +35,7 @@ export const AssistantToggle: React.FC<AssistantToggleProps> = ({ active }) => {
         onClick={() => active !== 'assistant' && navigate('/foundation/assistant')}
         className={tabClass(active === 'assistant')}
       >
+        <SparklesIcon className="h-4 w-4" aria-hidden="true" />
         {t('workspace.tabAssistant', 'Assistant')}
       </button>
       <button
@@ -42,6 +44,7 @@ export const AssistantToggle: React.FC<AssistantToggleProps> = ({ active }) => {
         onClick={() => active !== 'dashboard' && navigate('/foundation/dashboard')}
         className={tabClass(active === 'dashboard')}
       >
+        <HomeIcon className="h-4 w-4" aria-hidden="true" />
         {t('workspace.tabDashboard', 'Dashboard')}
       </button>
     </div>

@@ -8,8 +8,12 @@ import { wrapResponse } from '../common/utils/response.util';
 
 /**
  * User-facing feature flag evaluation. The frontend calls GET /feature-flags/me
- * once per session to decide flag-gated experiences (e.g. v2_assistant_dashboard
- * routing Foundation users to the assistant workspace).
+ * once per session to decide flag-gated experiences.
+ *
+ * ai_assistant_enabled is driven by the AI_ASSISTANT_ENABLED environment variable
+ * (set in Render → Environment) rather than the database, so it can be toggled
+ * without a deploy. DB flags are still evaluated for everything else.
+ * If AI_ASSISTANT_ENABLED is not set the DB value is used as a fallback.
  *
  * Admin CRUD for flags lives in SubscriptionManagementController.
  */
@@ -42,6 +46,13 @@ export class FeatureFlagsController {
     const flags: Record<string, boolean> = {};
     for (const flag of userFlags) {
       flags[flag.key] = flag.hasAccess;
+    }
+
+    // AI_ASSISTANT_ENABLED env var overrides the DB for the master kill switch.
+    // Set to 'true' or 'false' in Render → Environment. If unset, DB value wins.
+    const envOverride = process.env.AI_ASSISTANT_ENABLED;
+    if (envOverride !== undefined) {
+      flags['ai_assistant_enabled'] = envOverride === 'true' || envOverride === '1';
     }
 
     return wrapResponse({ flags });

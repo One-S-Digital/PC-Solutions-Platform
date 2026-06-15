@@ -12,14 +12,17 @@ import { useNotifications } from '../../contexts/NotificationContext';
 import { useInAppNotifications } from '../../contexts/InAppNotificationContext';
 import LanguageSwitcher from '../../components/ui/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
+import { useFeatureFlag } from '../../hooks/useFeatureFlags';
+import { AssistantToggle } from '../assistant-workspace';
 
 interface NavbarProps {
   onMobileMenuToggle: () => void;
 }
 
 const Navbar: React.FC<NavbarProps> = ({ onMobileMenuToggle }) => {
-  const { t } = useTranslation(['dashboard', 'common']); // Initialize useTranslation
+  const { t, i18n } = useTranslation(['dashboard', 'common', 'assistant']); // Initialize useTranslation
   const { currentUser, logout } = useAppContext();
+  const { enabled: assistantKillSwitch } = useFeatureFlag('ai_assistant_enabled');
   const { getCartItemCount } = useCart();
   const { conversations, getUnreadCountForConversation } = useMessaging();
   const { notifications, removeNotification } = useNotifications();
@@ -31,6 +34,31 @@ const Navbar: React.FC<NavbarProps> = ({ onMobileMenuToggle }) => {
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Hybrid bar: Foundation users see the toggle when the assistant is enabled.
+  // The search field swaps for the greeting on the workspace.
+  const assistantEligible = currentUser?.role === UserRole.FOUNDATION && assistantKillSwitch;
+  const onAssistantPage = location.pathname.startsWith('/foundation/assistant');
+  const greetingHour = new Date().getHours();
+  const greetingKey =
+    greetingHour < 12
+      ? 'assistant:workspace.greetingMorning'
+      : greetingHour < 18
+        ? 'assistant:workspace.greetingAfternoon'
+        : 'assistant:workspace.greetingEvening';
+  const greetingFallback =
+    greetingHour < 12
+      ? 'Good morning, {{name}} 👋'
+      : greetingHour < 18
+        ? 'Good afternoon, {{name}} 👋'
+        : 'Good evening, {{name}} 👋';
+  const greetingName = currentUser?.firstName || currentUser?.name?.split(' ')[0] || '';
+  const greetingOrg = currentUser?.orgName || currentUser?.primaryOrganization?.name;
+  const greetingDate = new Intl.DateTimeFormat(i18n.language, {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  }).format(new Date());
 
   const helpArticleId = useMemo(() => {
     const params = new URLSearchParams(location.search);
@@ -95,19 +123,42 @@ const Navbar: React.FC<NavbarProps> = ({ onMobileMenuToggle }) => {
           >
             <ArrowLeftIcon className="h-5 w-5 sm:h-6 sm:w-6" />
           </button>
-          <div className="relative hidden md:block">
-            <div className="absolute inset-y-0 left-0 pl-3 lg:pl-3.5 flex items-center pointer-events-none">
-              <MagnifyingGlassIcon className="h-4 w-4 lg:h-5 lg:w-5 text-gray-400" />
+          {onAssistantPage && assistantEligible ? (
+            <div className="hidden md:block">
+              <h1 className="text-base lg:text-lg font-bold leading-tight text-swiss-charcoal">
+                {t(greetingKey, greetingFallback, { name: greetingName })}
+              </h1>
+              <p className="text-xs text-gray-500">
+                {greetingDate}
+                {greetingOrg ? ` · ${greetingOrg}` : ''}
+              </p>
             </div>
-            <input
-              type="text"
-              placeholder={t('navbar.searchPlaceholder')}
-              className={`${ICON_INPUT_FIELD} w-40 md:w-56 lg:w-80 leading-5 text-xs md:text-sm transition-colors`}
-              aria-label={t('navbar.searchPlaceholder')}
-            />
-          </div>
+          ) : (
+            <div className="relative hidden md:block">
+              <div className="absolute inset-y-0 left-0 pl-3 lg:pl-3.5 flex items-center pointer-events-none">
+                <MagnifyingGlassIcon className="h-4 w-4 lg:h-5 lg:w-5 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                placeholder={t('navbar.searchPlaceholder')}
+                className={`${ICON_INPUT_FIELD} w-40 md:w-56 lg:w-80 leading-5 text-xs md:text-sm transition-colors`}
+                aria-label={t('navbar.searchPlaceholder')}
+              />
+            </div>
+          )}
         </div>
         <div className="flex items-center space-x-1 sm:space-x-2 lg:space-x-3 xl:space-x-4">
+          {assistantEligible && onAssistantPage && (
+            <span className="hidden items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 xl:inline-flex">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
+              {t('assistant:workspace.activePill', 'Assistant active')}
+            </span>
+          )}
+          {assistantEligible && (
+            <div className="hidden sm:block">
+              <AssistantToggle active={onAssistantPage ? 'assistant' : 'dashboard'} />
+            </div>
+          )}
           <LanguageSwitcher />
 
           {/* Help Button */}

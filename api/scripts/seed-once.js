@@ -465,65 +465,11 @@ async function main() {
     }
 
     console.log('✅ Seed: completed');
-
-    // 5) Feature flags — always upsert (idempotent, must reflect current desired state)
-    await seedFeatureFlags(prisma);
-    console.log('✅ Feature flags: ensured');
   } catch (err) {
     console.error('❌ Seed failed:', err?.message || err);
     // Do not block build on seed failure
   } finally {
     await prisma.$disconnect();
-  }
-}
-
-async function seedFeatureFlags(prisma) {
-  const flags = [
-    {
-      key: 'ai_assistant_enabled',
-      name: 'AI Assistant',
-      description: 'MVP M1 — ProCrèche Virtual Assistant (conversation, SSE streaming, tool orchestration)',
-      isActive: true,
-      rolloutPercentage: 100,
-      targetSegments: [],
-      conditions: {},
-    },
-    {
-      key: 'v2_assistant_dashboard',
-      name: 'Assistant Dashboard (v2)',
-      description: 'v2 remodel: assistant-first Foundation workspace — /foundation/assistant becomes the default landing view',
-      isActive: true,
-      rolloutPercentage: 100,
-      targetSegments: [],
-      conditions: { userRoles: ['FOUNDATION'] },
-    },
-    {
-      key: 'v2_admin_assistant',
-      name: 'Admin Assistant Workspace (v2)',
-      description: 'v2 remodel: assistant-first admin workspace — /assistant becomes the default admin landing view',
-      isActive: true,
-      rolloutPercentage: 100,
-      targetSegments: [],
-      conditions: { userRoles: ['ADMIN', 'SUPER_ADMIN'] },
-    },
-  ];
-
-  for (const flag of flags) {
-    try {
-      await prisma.featureFlag.upsert({
-        where: { key: flag.key },
-        update: {
-          isActive: flag.isActive,
-          rolloutPercentage: flag.rolloutPercentage,
-          targetSegments: flag.targetSegments,
-          conditions: flag.conditions,
-        },
-        create: flag,
-      });
-      console.log(`🚩 Feature flag ensured: ${flag.key}`);
-    } catch (err) {
-      console.warn(`⚠️ Feature flag upsert failed for ${flag.key}:`, err.message);
-    }
   }
 }
 

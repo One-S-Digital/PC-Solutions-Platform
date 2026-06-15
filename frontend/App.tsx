@@ -161,12 +161,21 @@ const SubscriptionGatedRoute: React.FC<{
   );
 };
 
+const FoundationAssistantRoute: React.FC = () => {
+  const { enabled: assistantEnabled, isLoading } = useFeatureFlag('ai_assistant_enabled');
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-swiss-mint" />
+      </div>
+    );
+  }
+  return assistantEnabled ? <AssistantWorkspacePage /> : <Navigate to="/foundation/dashboard" replace />;
+};
+
 const RoleBasedDashboardRedirect: React.FC = () => {
   const { currentUser } = useAppContext();
-  // v2_assistant_dashboard ON → Foundation lands on the assistant workspace;
-  // OFF (or fetch failure) → classic dashboard, exactly as before.
-  const { enabled: assistantWorkspaceEnabled, isLoading: featureFlagsLoading } =
-    useFeatureFlag('v2_assistant_dashboard');
+  const { enabled: assistantEnabled, isLoading: flagLoading } = useFeatureFlag('ai_assistant_enabled');
   if (!currentUser) return <Navigate to="/login" replace />;
 
   switch (currentUser.role) {
@@ -175,19 +184,14 @@ const RoleBasedDashboardRedirect: React.FC = () => {
     case UserRole.SERVICE_PROVIDER:
       return <Navigate to="/service-provider/dashboard" replace />;
     case UserRole.FOUNDATION:
-      if (featureFlagsLoading) {
+      if (flagLoading) {
         return (
           <div className="flex items-center justify-center py-24">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-swiss-mint"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-swiss-mint" />
           </div>
         );
       }
-      return (
-        <Navigate
-          to={assistantWorkspaceEnabled ? '/foundation/assistant' : '/foundation/dashboard'}
-          replace
-        />
-      );
+      return <Navigate to={assistantEnabled ? '/foundation/assistant' : '/foundation/dashboard'} replace />;
     case UserRole.EDUCATOR: {
       const approvalStatus = (currentUser as any).approvalStatus;
       if (approvalStatus === 'REJECTED') return <Navigate to="/educator/rejected" replace />;
@@ -558,9 +562,8 @@ const ProtectedLayout: React.FC = () => {
         <Route path="/foundation/dashboard" element={
           <SubscriptionGatedRoute roles={[UserRole.FOUNDATION]}><FoundationDashboardPage /></SubscriptionGatedRoute>
         } />
-        {/* Assistant workspace — always registered; v2_assistant_dashboard only controls the default redirect */}
         <Route path="/foundation/assistant" element={
-          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION]}><AssistantWorkspacePage /></SubscriptionGatedRoute>
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION]}><FoundationAssistantRoute /></SubscriptionGatedRoute>
         } />
         <Route path="/foundation/orders-appointments" element={
           <SubscriptionGatedRoute roles={[UserRole.FOUNDATION]}><FoundationOrdersAppointmentsPage /></SubscriptionGatedRoute>
