@@ -34,10 +34,9 @@ const WorkspaceEmptyState: React.FC = () => {
 };
 
 /**
- * Full-page assistant workspace — the Foundation landing view when the
- * `v2_assistant_dashboard` flag is on. Shares the chat engine with the
- * floating widget via useAssistantChat/ChatMessageList; the widget itself
- * is suppressed on this route (see AssistantContainer).
+ * Full-page assistant workspace — the Foundation landing view.
+ * Shares the chat engine with the floating widget via useAssistantChat/
+ * ChatMessageList; the widget itself is suppressed on this route (see AssistantContainer).
  */
 const AssistantWorkspacePage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();

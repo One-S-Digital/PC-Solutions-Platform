@@ -6,7 +6,6 @@ import LanguageSwitcher from './design-system/LanguageSwitcher'
 import { useTranslation } from 'react-i18next'
 import { useNotificationData } from '../hooks/useNotificationData'
 import { dismissNotification, markVisited } from '../utils/notificationState'
-import { useFeatureFlag } from '../hooks/useFeatureFlags'
 import { AssistantToggle } from './assistant-workspace/AssistantToggle'
 
 interface HeaderProps {
@@ -20,7 +19,6 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
   const { t, i18n } = useTranslation(['dashboard','common','admin','assistant'])
   const navigate = useNavigate()
   const location = useLocation()
-  const { enabled: assistantEnabled } = useFeatureFlag('v2_admin_assistant')
 
   const onAssistantPage = location.pathname.startsWith('/assistant')
   const greetingHour = new Date().getHours()
@@ -274,15 +272,13 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
         </div>
 
         <div className="flex items-center space-x-4">
-          {assistantEnabled && onAssistantPage && (
+          {onAssistantPage && (
             <span className="hidden items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 lg:inline-flex">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
               {t('assistant:workspace.activePill', 'Assistant active')}
             </span>
           )}
-          {assistantEnabled && (
-            <AssistantToggle active={onAssistantPage ? 'assistant' : 'dashboard'} />
-          )}
+          <AssistantToggle active={onAssistantPage ? 'assistant' : 'dashboard'} />
           <LanguageSwitcher />
           <div className="relative">
             <button

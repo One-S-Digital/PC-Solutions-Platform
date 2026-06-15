@@ -247,7 +247,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
             <NavGroupSection key={entry.key} entry={entry} />
           )
         )}
-        {/* AI conversations (v2_admin_assistant flag only) — additive, the nav above is strategy-locked */}
+        {/* AI conversations — additive, the nav above is strategy-locked */}
         <ConversationsList onNavigate={() => setSidebarOpen(false)} />
       </nav>
 

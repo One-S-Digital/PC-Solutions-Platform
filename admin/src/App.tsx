@@ -38,7 +38,7 @@ import StatePoliciesPage from './pages/content/StatePoliciesPage';
 import EducatorApprovalsPage from './pages/EducatorApprovals';
 import AiOperationsPage from './pages/AiOperationsPage';
 import AssistantWorkspacePage from './pages/AssistantWorkspacePage';
-import { useFeatureFlag } from './hooks/useFeatureFlags';
+
 
 // Create a client
 const queryClient = new QueryClient({
@@ -76,23 +76,8 @@ const FrontendSettingsManager: React.FC = () => {
   return null;
 };
 
-/**
- * Flag-aware landing redirect: with v2_admin_assistant ON, admins land on the
- * assistant workspace; OFF (or while flags load — the safe default), on the
- * classic dashboard. The header toggle switches between the two.
- */
-const IndexRedirect: React.FC = () => {
-  const { enabled, isLoading } = useFeatureFlag('v2_admin_assistant');
-  if (isLoading) return null;
-  return <Navigate to={enabled ? '/assistant' : '/dashboard'} replace />;
-};
-
-/** The workspace route itself is behind the same flag — OFF means not reachable, even by URL. */
-const AssistantWorkspaceRoute: React.FC = () => {
-  const { enabled, isLoading } = useFeatureFlag('v2_admin_assistant');
-  if (isLoading) return null;
-  return enabled ? <AssistantWorkspacePage /> : <Navigate to="/dashboard" replace />;
-};
+const IndexRedirect: React.FC = () => <Navigate to="/assistant" replace />;
+const AssistantWorkspaceRoute: React.FC = () => <AssistantWorkspacePage />;
 
 function App() {
   return (

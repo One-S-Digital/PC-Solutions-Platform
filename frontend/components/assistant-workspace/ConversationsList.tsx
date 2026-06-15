@@ -18,7 +18,6 @@ import {
   ConversationKind,
 } from '../../services/assistantService';
 import { CONVERSATIONS_UPDATED_EVENT } from '../assistant/useAssistantChat';
-import { useFeatureFlag } from '../../hooks/useFeatureFlags';
 
 const KIND_ICONS: Record<ConversationKind, React.ElementType> = {
   CHAT: ChatBubbleLeftRightIcon,
@@ -49,15 +48,13 @@ interface ConversationsListProps {
 
 /**
  * AI conversations section rendered beneath the existing sidebar nav
- * (additive only — the nav itself is strategy-locked). Foundation +
- * v2_assistant_dashboard flag only.
+ * (additive only — the nav itself is strategy-locked).
  */
 export const ConversationsList: React.FC<ConversationsListProps> = ({ onNavigate }) => {
   const { t } = useTranslation('assistant');
   const { getToken } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { enabled } = useFeatureFlag('v2_assistant_dashboard');
 
   const [conversations, setConversations] = useState<ConversationSummary[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -75,13 +72,10 @@ export const ConversationsList: React.FC<ConversationsListProps> = ({ onNavigate
   }, [getToken]);
 
   useEffect(() => {
-    if (!enabled) return;
     refresh();
     window.addEventListener(CONVERSATIONS_UPDATED_EVENT, refresh);
     return () => window.removeEventListener(CONVERSATIONS_UPDATED_EVENT, refresh);
-  }, [enabled, refresh]);
-
-  if (!enabled) return null;
+  }, [refresh]);
 
   const goTo = (conversationId?: string) => {
     navigate(conversationId ? `/foundation/assistant?c=${conversationId}` : '/foundation/assistant');

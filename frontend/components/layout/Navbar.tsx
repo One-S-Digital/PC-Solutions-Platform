@@ -12,7 +12,6 @@ import { useNotifications } from '../../contexts/NotificationContext';
 import { useInAppNotifications } from '../../contexts/InAppNotificationContext';
 import LanguageSwitcher from '../../components/ui/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
-import { useFeatureFlag } from '../../hooks/useFeatureFlags';
 import { AssistantToggle } from '../assistant-workspace';
 
 interface NavbarProps {
@@ -22,7 +21,6 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ onMobileMenuToggle }) => {
   const { t, i18n } = useTranslation(['dashboard', 'common', 'assistant']); // Initialize useTranslation
   const { currentUser, logout } = useAppContext();
-  const { enabled: assistantWorkspaceEnabled } = useFeatureFlag('v2_assistant_dashboard');
   const { getCartItemCount } = useCart();
   const { conversations, getUnreadCountForConversation } = useMessaging();
   const { notifications, removeNotification } = useNotifications();
@@ -35,11 +33,9 @@ const Navbar: React.FC<NavbarProps> = ({ onMobileMenuToggle }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Hybrid bar: Foundation users with the assistant flag get the
-  // Assistant|Dashboard toggle in the top bar at all times, and the search
-  // field is swapped for the greeting while on the assistant workspace.
-  const assistantEligible =
-    currentUser?.role === UserRole.FOUNDATION && assistantWorkspaceEnabled;
+  // Hybrid bar: Foundation users get the Assistant|Dashboard toggle in the top
+  // bar at all times. The search field swaps for the greeting on the workspace.
+  const assistantEligible = currentUser?.role === UserRole.FOUNDATION;
   const onAssistantPage = location.pathname.startsWith('/foundation/assistant');
   const greetingHour = new Date().getHours();
   const greetingKey =

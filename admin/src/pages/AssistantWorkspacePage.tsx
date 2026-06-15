@@ -35,10 +35,9 @@ const WorkspaceEmptyState: React.FC = () => {
 };
 
 /**
- * Full-page admin assistant workspace — the admin landing view when the
- * `v2_admin_assistant` flag is on. Shares the chat engine with the floating
- * widget via useAssistantChat/ChatMessageList; the widget itself is
- * suppressed on this route (see AdminLayout).
+ * Full-page admin assistant workspace — the default admin landing view.
+ * Shares the chat engine with the floating widget via useAssistantChat/
+ * ChatMessageList; the widget itself is suppressed on this route (see AdminLayout).
  */
 const AssistantWorkspacePage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
