@@ -6,7 +6,6 @@ import { AssistantModalHandler } from '../components/assistant/AssistantModalHan
 import { ChatMessageList } from '../components/assistant/ChatMessageList';
 import { useAssistantChat } from '../components/assistant/useAssistantChat';
 import {
-  AssistantHeader,
   AdminBriefingCard,
   Composer,
   QuickActionChips,
@@ -19,8 +18,8 @@ const WorkspaceEmptyState: React.FC = () => {
 
   return (
     <div className="my-auto flex flex-col items-center justify-center px-6 py-16 text-center">
-      <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-swiss-teal/10">
-        <SparklesIcon className="h-7 w-7 text-swiss-teal" aria-hidden="true" />
+      <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100">
+        <SparklesIcon className="h-7 w-7 text-emerald-600" aria-hidden="true" />
       </div>
       <h2 className="mb-2 text-lg font-semibold text-swiss-charcoal">
         {t('workspace.emptyTitle', 'How can I help you today?')}
@@ -77,8 +76,6 @@ const AssistantWorkspacePage: React.FC = () => {
     <div className="flex h-full min-h-[calc(100dvh-8rem)] flex-col">
       <AssistantModalHandler pendingModal={pendingModal} onHandled={clearPendingModal} />
 
-      <AssistantHeader />
-
       {initError && (
         <div className="mb-3 rounded-card border border-red-100 bg-red-50 px-4 py-2 text-sm text-red-600">
           {initError}
@@ -90,7 +87,7 @@ const AssistantWorkspacePage: React.FC = () => {
         <div className="mx-auto flex min-h-full w-full max-w-3xl flex-col justify-end py-2">
           {isLoadingHistory && (
             <div className="flex flex-1 items-center justify-center py-16">
-              <ArrowPathIcon className="h-6 w-6 animate-spin text-swiss-teal" aria-hidden="true" />
+              <ArrowPathIcon className="h-6 w-6 animate-spin text-emerald-600" aria-hidden="true" />
             </div>
           )}
 
@@ -112,7 +109,7 @@ const AssistantWorkspacePage: React.FC = () => {
             onConfirmTool={confirmTool}
             onCancelTool={cancelTool}
             emptyState={isLoadingHistory ? undefined : <WorkspaceEmptyState />}
-            userBubbleClassName="bg-swiss-deep-teal text-white"
+            userBubbleClassName="bg-emerald-700 text-white"
           />
         </div>
       </div>

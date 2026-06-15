@@ -57,9 +57,9 @@ export const QuickActionChips: React.FC<QuickActionChipsProps> = ({ onAction, di
           key={labelKey}
           onClick={() => onAction(t(promptKey, promptFallback))}
           disabled={disabled}
-          className="inline-flex flex-shrink-0 items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-swiss-charcoal shadow-minimal transition-colors hover:border-swiss-teal/40 hover:bg-swiss-teal/5 focus:outline-none focus:ring-2 focus:ring-swiss-teal/40 disabled:opacity-50"
+          className="inline-flex flex-shrink-0 items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-swiss-charcoal shadow-minimal transition-colors hover:border-emerald-600/40 hover:bg-emerald-600/5 focus:outline-none focus:ring-2 focus:ring-emerald-600/40 disabled:opacity-50"
         >
-          <Icon className="h-3.5 w-3.5 text-swiss-teal" aria-hidden="true" />
+          <Icon className="h-3.5 w-3.5 text-emerald-600" aria-hidden="true" />
           {t(labelKey, labelFallback)}
         </button>
       ))}
