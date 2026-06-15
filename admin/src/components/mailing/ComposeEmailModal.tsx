@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { X, Send, Eye, FileText, Save } from 'lucide-react'
+import { X, Send, Eye, FileText, Save, Calendar } from 'lucide-react'
 
 const MAILING_TEMPLATES_ENABLED = import.meta.env.VITE_MAILING_TEMPLATES !== 'false'
 import { toast } from 'sonner'
@@ -12,7 +12,7 @@ import EmailPreview from './EmailPreview'
 interface Props {
   isOpen: boolean
   onClose: () => void
-  onSend: (subject: string, bodyHtml: string, extraEmails: string[]) => Promise<void>
+  onSend: (subject: string, bodyHtml: string, extraEmails: string[], scheduledAt?: string) => Promise<void>
   loading: boolean
   recipientCount: number
 }
@@ -43,6 +43,8 @@ const ComposeEmailModal: React.FC<Props> = ({ isOpen, onClose, onSend, loading, 
   const [savingTemplate, setSavingTemplate] = useState(false)
   const [extraEmailsRaw, setExtraEmailsRaw] = useState('')
   const [showExtraEmails, setShowExtraEmails] = useState(false)
+  const [scheduleEnabled, setScheduleEnabled] = useState(false)
+  const [scheduledAt, setScheduledAt] = useState('')
 
   if (!isOpen) return null
 
@@ -200,6 +202,37 @@ const ComposeEmailModal: React.FC<Props> = ({ isOpen, onClose, onSend, loading, 
               )}
             </div>
 
+            <div className="border border-gray-200 rounded-md p-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
+                  <Calendar className="w-4 h-4 text-gray-400" />
+                  {t('admin:mailing.compose.scheduleTitle', 'Schedule for later')}
+                </label>
+                <button
+                  type="button"
+                  onClick={() => { setScheduleEnabled((v) => !v); setScheduledAt('') }}
+                  className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${scheduleEnabled ? 'bg-blue-600' : 'bg-gray-200'}`}
+                  aria-pressed={scheduleEnabled}
+                >
+                  <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform ${scheduleEnabled ? 'translate-x-4' : 'translate-x-1'}`} />
+                </button>
+              </div>
+              {scheduleEnabled && (
+                <div className="space-y-1">
+                  <input
+                    type="datetime-local"
+                    value={scheduledAt}
+                    min={new Date(Date.now() + 60_000).toISOString().slice(0, 16)}
+                    onChange={(e) => setScheduledAt(e.target.value)}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
+                  />
+                  <p className="text-xs text-gray-400">
+                    {t('admin:mailing.compose.scheduleHint', 'The newsletter will be sent automatically at the selected time.')}
+                  </p>
+                </div>
+              )}
+            </div>
+
             <div>
               <label className="text-xs text-gray-500 block mb-1">{t('admin:mailing.compose.tokens')}</label>
               <div className="flex flex-wrap gap-1.5">
@@ -263,13 +296,18 @@ const ComposeEmailModal: React.FC<Props> = ({ isOpen, onClose, onSend, loading, 
             <button
               onClick={() => {
                 const validExtras = [...new Set(parseExtraEmails(extraEmailsRaw))].filter((e) => EMAIL_REGEX.test(e))
-                onSend(subject, bodyHtml, validExtras)
+                const isoScheduledAt = scheduleEnabled && scheduledAt ? new Date(scheduledAt).toISOString() : undefined
+                onSend(subject, bodyHtml, validExtras, isoScheduledAt)
               }}
-              disabled={!subject.trim() || !bodyHtml.trim() || loading}
+              disabled={!subject.trim() || !bodyHtml.trim() || loading || (scheduleEnabled && !scheduledAt)}
               className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"
             >
-              <Send className="w-4 h-4" />
-              {loading ? t('admin:mailing.compose.creating') : t('admin:mailing.compose.send')}
+              {scheduleEnabled ? <Calendar className="w-4 h-4" /> : <Send className="w-4 h-4" />}
+              {loading
+                ? t('admin:mailing.compose.creating')
+                : scheduleEnabled
+                ? t('admin:mailing.compose.schedule', 'Schedule')
+                : t('admin:mailing.compose.send')}
             </button>
           </div>
         </div>

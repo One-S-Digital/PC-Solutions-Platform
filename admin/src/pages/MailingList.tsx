@@ -40,6 +40,7 @@ const TAB_KEYS = MAILING_TEMPLATES_ENABLED
 const statusBadge = (status: string) => {
   const map: Record<string, string> = {
     DRAFT: 'bg-gray-100 text-gray-600',
+    SCHEDULED: 'bg-purple-100 text-purple-700',
     SENDING: 'bg-blue-100 text-blue-700',
     SENT: 'bg-green-100 text-green-700',
     FAILED: 'bg-red-100 text-red-700',
@@ -251,7 +252,7 @@ const MailingListPage: React.FC = () => {
     }
   }, [apiClient, filters, preview?.count])
 
-  const handleCreateCampaign = useCallback(async (subject: string, bodyHtml: string, extraEmails: string[]) => {
+  const handleCreateCampaign = useCallback(async (subject: string, bodyHtml: string, extraEmails: string[], scheduledAt?: string) => {
     setActionLoading(true)
     try {
       const res = await apiService.mailingCreateCampaign(apiClient, {
@@ -259,19 +260,26 @@ const MailingListPage: React.FC = () => {
         bodyHtml,
         filters,
         ...(extraEmails.length > 0 ? { extraEmails } : {}),
+        ...(scheduledAt ? { scheduledAt } : {}),
       })
       const campaignId = res.data?.campaignId
-      toast.success('Campaign created')
-      setComposeModalOpen(false)
-      if (campaignId) {
-        setSendingCampaignId(campaignId)
+      if (scheduledAt) {
+        toast.success(`Campaign scheduled for ${new Date(scheduledAt).toLocaleString()}`)
+        setComposeModalOpen(false)
+        queryClient.invalidateQueries({ queryKey: ['mailing-campaigns'] })
+      } else {
+        toast.success('Campaign created')
+        setComposeModalOpen(false)
+        if (campaignId) {
+          setSendingCampaignId(campaignId)
+        }
       }
     } catch (err: any) {
       toast.error(err?.response?.data?.message || 'Failed to create campaign')
     } finally {
       setActionLoading(false)
     }
-  }, [apiClient, filters])
+  }, [apiClient, filters, queryClient])
 
   const handleDeleteSegment = useCallback(async (id: string) => {
     if (!confirm(t('admin:mailing.segment.deleteConfirm'))) return
@@ -289,7 +297,7 @@ const MailingListPage: React.FC = () => {
     setActiveTab('build')
   }, [])
 
-  const handleCreateListCampaign = useCallback(async (subject: string, bodyHtml: string, extraEmails: string[]) => {
+  const handleCreateListCampaign = useCallback(async (subject: string, bodyHtml: string, extraEmails: string[], scheduledAt?: string) => {
     if (!activeList) return
     setActionLoading(true)
     try {
@@ -298,17 +306,24 @@ const MailingListPage: React.FC = () => {
         bodyHtml,
         customListId: activeList.id,
         ...(extraEmails.length > 0 ? { extraEmails } : {}),
+        ...(scheduledAt ? { scheduledAt } : {}),
       })
       const campaignId = res.data?.campaignId
-      toast.success('Campaign created')
-      setListComposeModalOpen(false)
-      if (campaignId) setSendingCampaignId(campaignId)
+      if (scheduledAt) {
+        toast.success(`Campaign scheduled for ${new Date(scheduledAt).toLocaleString()}`)
+        setListComposeModalOpen(false)
+        queryClient.invalidateQueries({ queryKey: ['mailing-campaigns'] })
+      } else {
+        toast.success('Campaign created')
+        setListComposeModalOpen(false)
+        if (campaignId) setSendingCampaignId(campaignId)
+      }
     } catch (err: any) {
       toast.error(err?.response?.data?.message || 'Failed to create campaign')
     } finally {
       setActionLoading(false)
     }
-  }, [apiClient, activeList])
+  }, [apiClient, activeList, queryClient])
 
   const handleExportList = useCallback(async (format: 'csv' | 'xlsx', columns: string[]) => {
     if (!activeList) return
@@ -641,7 +656,7 @@ const MailingListPage: React.FC = () => {
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Recipients</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Sent / Failed</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Segment</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Created</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Scheduled / Created</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -660,7 +675,11 @@ const MailingListPage: React.FC = () => {
                       <span className="text-red-600">{c.failedCount}</span>
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-500">{c.segmentName || 'Ad-hoc'}</td>
-                    <td className="px-4 py-3 text-sm text-gray-500">{new Date(c.createdAt).toLocaleDateString()}</td>
+                    <td className="px-4 py-3 text-sm text-gray-500">
+                      {c.scheduledAt
+                        ? <span className="text-purple-600 font-medium">{new Date(c.scheduledAt).toLocaleString()}</span>
+                        : new Date(c.createdAt).toLocaleDateString()}
+                    </td>
                   </tr>
                 ))}
               </tbody>

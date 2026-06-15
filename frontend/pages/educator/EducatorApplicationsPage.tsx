@@ -6,8 +6,23 @@ import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../contexts/AppContext';
 import { Application, ApplicationStatus } from '../../types';
 
+const getStatusInfo = (status: ApplicationStatus, t: (key: string, fallback?: string) => string) => {
+  switch (status) {
+    case ApplicationStatus.PENDING: return { className: 'bg-teal-100 text-teal-800', label: t('educatorApplicationsPage.status.submitted', 'Submitted') };
+    case ApplicationStatus.REVIEWED: return { className: 'bg-blue-100 text-blue-800', label: t('educatorApplicationsPage.status.reviewed') };
+    case ApplicationStatus.SHORTLISTED: return { className: 'bg-yellow-100 text-yellow-800', label: t('educatorApplicationsPage.status.shortlisted', 'Shortlisted') };
+    case ApplicationStatus.INTERVIEW: return { className: 'bg-purple-100 text-purple-800', label: t('educatorApplicationsPage.status.interview', 'Interview') };
+    case ApplicationStatus.OFFER: return { className: 'bg-orange-100 text-orange-800', label: t('educatorApplicationsPage.status.offer', 'Offer') };
+    case ApplicationStatus.HIRED: return { className: 'bg-green-100 text-green-800', label: t('educatorApplicationsPage.status.hired', 'Hired') };
+    case ApplicationStatus.ACCEPTED: return { className: 'bg-swiss-mint text-white', label: t('educatorApplicationsPage.status.accepted') };
+    case ApplicationStatus.REJECTED: return { className: 'bg-swiss-coral/20 text-swiss-coral', label: t('educatorApplicationsPage.status.rejected') };
+    default: return { className: 'bg-gray-100 text-gray-700', label: status };
+  }
+};
+
 const ApplicationDetailModal: React.FC<{ app: Application; onClose: () => void }> = ({ app, onClose }) => {
   const { t, i18n } = useTranslation(['dashboard', 'common']);
+  const statusInfo = getStatusInfo(app.status, t);
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
       <div
@@ -24,9 +39,11 @@ const ApplicationDetailModal: React.FC<{ app: Application; onClose: () => void }
           <p className="text-sm text-gray-500">{app.foundationName}</p>
         )}
         <div className="text-sm text-gray-600 space-y-1">
-          <p>
-            <span className="font-medium">{t('educatorApplicationsPage.table.status')}:</span>{' '}
-            {app.status}
+          <p className="flex items-center gap-2">
+            <span className="font-medium">{t('educatorApplicationsPage.table.status')}:</span>
+            <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${statusInfo.className}`}>
+              {statusInfo.label}
+            </span>
           </p>
           <p>
             <span className="font-medium">{t('educatorApplicationsPage.table.lastUpdated')}:</span>{' '}
@@ -56,20 +73,6 @@ const EducatorApplicationsPage: React.FC = () => {
   const { applications } = useAppContext();
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
 
-  const getStatusInfo = (status: ApplicationStatus) => {
-    switch (status) {
-      case ApplicationStatus.PENDING: return { className: 'bg-swiss-sand/30 text-amber-800', label: t('educatorApplicationsPage.status.pending') };
-      case ApplicationStatus.REVIEWED: return { className: 'bg-blue-100 text-blue-800', label: t('educatorApplicationsPage.status.reviewed') };
-      case ApplicationStatus.SHORTLISTED: return { className: 'bg-yellow-100 text-yellow-800', label: t('educatorApplicationsPage.status.shortlisted', 'Shortlisted') };
-      case ApplicationStatus.INTERVIEW: return { className: 'bg-purple-100 text-purple-800', label: t('educatorApplicationsPage.status.interview', 'Interview') };
-      case ApplicationStatus.OFFER: return { className: 'bg-orange-100 text-orange-800', label: t('educatorApplicationsPage.status.offer', 'Offer') };
-      case ApplicationStatus.HIRED: return { className: 'bg-green-100 text-green-800', label: t('educatorApplicationsPage.status.hired', 'Hired') };
-      case ApplicationStatus.ACCEPTED: return { className: 'bg-swiss-mint text-white', label: t('educatorApplicationsPage.status.accepted') };
-      case ApplicationStatus.REJECTED: return { className: 'bg-swiss-coral/20 text-swiss-coral', label: t('educatorApplicationsPage.status.rejected') };
-      default: return { className: 'bg-gray-100 text-gray-700', label: status };
-    }
-  };
-
   return (
     <div className="space-y-6">
       {selectedApp && (
@@ -93,7 +96,7 @@ const EducatorApplicationsPage: React.FC = () => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
                 {applications.map((app) => {
-                const statusInfo = getStatusInfo(app.status);
+                const statusInfo = getStatusInfo(app.status, t);
                 return (
                   <tr key={app.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap font-medium text-swiss-charcoal">{app.jobTitle}</td>
