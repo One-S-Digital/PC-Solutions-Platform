@@ -67,7 +67,7 @@ You may delete them from the DB if desired — they have no effect.
 | Thing | Where |
 |---|---|
 | Workspace page | `admin/src/pages/AssistantWorkspacePage.tsx` |
-| Route | `admin/src/App.tsx` — `/assistant`, always registered, no flag gate |
+| Route | `admin/src/App.tsx` — `/assistant`, always registered, guarded by `AssistantWorkspaceRoute` which checks `ai_assistant_enabled` |
 | Landing redirect | `admin/src/App.tsx:IndexRedirect` — always sends to `/assistant` |
 | Workspace components | `admin/src/components/assistant-workspace/` |
 | Sidebar conversation list | `admin/src/components/assistant-workspace/ConversationsList.tsx` |
@@ -95,7 +95,7 @@ You may delete them from the DB if desired — they have no effect.
 | Conversation CRUD | `api/src/assistant/assistant.controller.ts` — `GET/PATCH /assistant/conversations` |
 | Feature flag endpoint | `api/src/subscription-management/feature-flags.controller.ts` — `GET /feature-flags/me` |
 | Prisma schema | `api/prisma/schema.prisma` — `AIConversation`, `AIConversationKind` |
-| Render build seed | `api/scripts/seed-once.js` — upserts `ai_assistant_enabled`, `v2_assistant_dashboard`, `v2_admin_assistant` to active=true on every deploy |
+| Render build seed | `api/scripts/seed-once.js` — no assistant flag seeding; assistant enablement is controlled solely by `AI_ASSISTANT_ENABLED` env var |
 
 ---
 
@@ -114,4 +114,4 @@ You may delete them from the DB if desired — they have no effect.
 - `packages/assistant-ui` extraction (ADMIN_ASSISTANT_WORKSPACE_PLAN §2.1) is still pending — admin and frontend share the same component code but it is copy-pasted, not a shared package. Fixes to streaming/chat must be applied to both SPAs.
 - Admin `draft_announcement` / `send_announcement` tools (plan §3.2) are deferred — the assistant deep-links to `/mailing` instead.
 - The `useFeatureFlags` hook and the `GET /feature-flags/me` API endpoint remain in place for other feature flags used elsewhere in the product. They are not used for assistant routing anymore.
-- `api/scripts/seed-once.js` still upserts the three assistant flags to `active=true` on every Render deploy. This is harmless (idempotent) but the records can be removed from the database if desired — the UI no longer reads them.
+- `api/scripts/seed-once.js` no longer seeds any assistant flags — the three upserts were removed. Existing `ai_assistant_enabled`, `v2_assistant_dashboard`, and `v2_admin_assistant` records in the production DB are harmless and can be deleted if desired; the UI and API no longer read them.

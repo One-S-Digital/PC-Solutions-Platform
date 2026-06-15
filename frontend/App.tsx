@@ -161,6 +161,18 @@ const SubscriptionGatedRoute: React.FC<{
   );
 };
 
+const FoundationAssistantRoute: React.FC = () => {
+  const { enabled: assistantEnabled, isLoading } = useFeatureFlag('ai_assistant_enabled');
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-swiss-mint" />
+      </div>
+    );
+  }
+  return assistantEnabled ? <AssistantWorkspacePage /> : <Navigate to="/foundation/dashboard" replace />;
+};
+
 const RoleBasedDashboardRedirect: React.FC = () => {
   const { currentUser } = useAppContext();
   const { enabled: assistantEnabled, isLoading: flagLoading } = useFeatureFlag('ai_assistant_enabled');
@@ -551,7 +563,7 @@ const ProtectedLayout: React.FC = () => {
           <SubscriptionGatedRoute roles={[UserRole.FOUNDATION]}><FoundationDashboardPage /></SubscriptionGatedRoute>
         } />
         <Route path="/foundation/assistant" element={
-          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION]}><AssistantWorkspacePage /></SubscriptionGatedRoute>
+          <SubscriptionGatedRoute roles={[UserRole.FOUNDATION]}><FoundationAssistantRoute /></SubscriptionGatedRoute>
         } />
         <Route path="/foundation/orders-appointments" element={
           <SubscriptionGatedRoute roles={[UserRole.FOUNDATION]}><FoundationOrdersAppointmentsPage /></SubscriptionGatedRoute>

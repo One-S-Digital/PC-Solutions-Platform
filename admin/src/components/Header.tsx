@@ -258,7 +258,7 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
             <Menu className="h-6 w-6" />
           </button>
           <div className="ml-4 lg:ml-0">
-            {onAssistantPage ? (
+            {assistantEnabled && onAssistantPage ? (
               <>
                 <h1 className="text-base font-bold leading-tight text-swiss-charcoal sm:text-lg">
                   {t(greetingKey, greetingFallback, { name: greetingName })}
