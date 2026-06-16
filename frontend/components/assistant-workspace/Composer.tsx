@@ -30,7 +30,7 @@ export const Composer: React.FC<ComposerProps> = ({ onSend, disabled }) => {
   );
 
   return (
-    <div className="flex items-end gap-3 rounded-2xl border border-gray-200 bg-white px-5 py-3 shadow-sm transition-shadow focus-within:border-emerald-300 focus-within:shadow-md focus-within:ring-1 focus-within:ring-emerald-200">
+    <div className="flex items-end gap-3 rounded-2xl border border-gray-200 bg-white px-6 py-4 shadow-sm transition-shadow focus-within:border-emerald-300 focus-within:shadow-md focus-within:ring-1 focus-within:ring-emerald-200">
       <textarea
         value={inputText}
         onChange={(e) => setInputText(e.target.value)}
@@ -40,7 +40,7 @@ export const Composer: React.FC<ComposerProps> = ({ onSend, disabled }) => {
         placeholder={t('workspace.composerPlaceholder', "Ask me anything — I'll handle the rest…")}
         disabled={disabled}
         aria-label={t('workspace.composerPlaceholder', "Ask me anything — I'll handle the rest…")}
-        className="flex-1 resize-none self-center bg-transparent text-sm text-swiss-charcoal placeholder-gray-400 focus:outline-none disabled:opacity-50"
+        className="flex-1 resize-none self-center bg-transparent py-0.5 text-sm text-swiss-charcoal placeholder-gray-400 focus:outline-none disabled:opacity-50"
         style={{ maxHeight: '120px', overflowY: 'auto' }}
       />
       <button
