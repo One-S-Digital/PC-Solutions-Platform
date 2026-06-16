@@ -154,18 +154,18 @@ export const MorningBriefingCard: React.FC<MorningBriefingCardProps> = ({
   const narrativeParts = buildNarrativeParts(briefing.items);
 
   return (
-    <div className="relative mb-6 overflow-hidden rounded-2xl bg-[#163d2b] text-white shadow-xl">
+    <div className="relative mb-6 overflow-hidden rounded-2xl bg-gradient-to-br from-[#1e5c42] to-[#163d2b] text-white shadow-xl">
       {/* Decorative circles */}
       <div
-        className="pointer-events-none absolute -right-10 -top-10 h-48 w-48 rounded-full border border-white/5 bg-white/[0.03]"
+        className="pointer-events-none absolute -right-10 -top-10 h-48 w-48 rounded-full border border-white/10 bg-white/[0.07]"
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute right-10 top-16 h-32 w-32 rounded-full border border-white/5 bg-white/[0.04]"
+        className="pointer-events-none absolute right-10 top-16 h-32 w-32 rounded-full border border-white/10 bg-white/[0.09]"
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute -right-4 top-2 h-24 w-24 rounded-full bg-white/[0.025]"
+        className="pointer-events-none absolute -right-4 top-2 h-24 w-24 rounded-full bg-white/[0.06]"
         aria-hidden="true"
       />
 
@@ -196,7 +196,7 @@ export const MorningBriefingCard: React.FC<MorningBriefingCardProps> = ({
       <div className="relative flex flex-wrap items-center gap-2 px-6 pb-5 pt-2">
         <button
           onClick={() => onAction(HANDLE_ALL_PROMPT)}
-          className="inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-1.5 text-xs font-semibold text-[#163d2b] transition-colors hover:bg-white/90 focus:outline-none focus:ring-2 focus:ring-white/40"
+          className="inline-flex items-center gap-1.5 rounded-full bg-[#0f2d1e] px-4 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#0a2018] focus:outline-none focus:ring-2 focus:ring-white/30"
         >
           <SparklesIcon className="h-3 w-3" aria-hidden="true" />
           {t('workspace.briefing.handleAll', 'Handle everything with me')}

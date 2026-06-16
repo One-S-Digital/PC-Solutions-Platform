@@ -7,6 +7,47 @@ import { SearchResultCards, isResultCardTool } from './ResultCards';
 import { ActionPreviewCard, hasActionPreview } from './ActionPreviewCard';
 import { ChatMessage } from './useAssistantChat';
 
+// ─── Date / time helpers ──────────────────────────────────────────────────────
+
+function formatTime(date: Date): string {
+  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+}
+
+function isSameDay(a: Date, b: Date): boolean {
+  return (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  );
+}
+
+// ─── DateSeparator ────────────────────────────────────────────────────────────
+
+const DateSeparator: React.FC<{ date: Date }> = ({ date }) => {
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+
+  let label: string;
+  if (isSameDay(date, today)) {
+    label = 'TODAY';
+  } else if (isSameDay(date, yesterday)) {
+    label = 'YESTERDAY';
+  } else {
+    label = date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+  }
+
+  return (
+    <div className="my-1 flex items-center gap-3 py-3">
+      <div className="flex-1 border-t border-gray-200" />
+      <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+        {label} · {formatTime(date)}
+      </span>
+      <div className="flex-1 border-t border-gray-200" />
+    </div>
+  );
+};
+
 // ─── Markdown ─────────────────────────────────────────────────────────────────
 
 const markdownComponents = {
@@ -227,33 +268,45 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, pendingAssistantText]);
 
+  // Tracks the last rendered date to know when to insert a day separator
+  let lastRenderedDate: Date | undefined;
+
   return (
     <>
       {messages.length === 0 && !isStreaming && emptyState}
 
       {messages.map((msg) => {
+        const showSeparator =
+          msg.createdAt != null &&
+          (lastRenderedDate == null || !isSameDay(lastRenderedDate, msg.createdAt));
+        if (msg.createdAt) lastRenderedDate = msg.createdAt;
+
         // ── Tool call card ──────────────────────────────────────────────────
         if (msg.toolCall) {
           if (isResultCardTool(msg.toolCall.toolName)) {
             return (
-              <SearchResultCards
-                key={msg.id}
-                toolName={msg.toolCall.toolName}
-                result={msg.toolResult}
-                statusLabel={msg.toolStatus}
-              />
+              <React.Fragment key={msg.id}>
+                {showSeparator && msg.createdAt && <DateSeparator date={msg.createdAt} />}
+                <SearchResultCards
+                  toolName={msg.toolCall.toolName}
+                  result={msg.toolResult}
+                  statusLabel={msg.toolStatus}
+                />
+              </React.Fragment>
             );
           }
           return (
-            <ToolCallCard
-              key={msg.id}
-              toolCall={msg.toolCall}
-              result={msg.toolResult}
-              cancelled={msg.cancelled}
-              onConfirm={onConfirmTool}
-              onCancel={onCancelTool}
-              assistantName={assistantName}
-            />
+            <React.Fragment key={msg.id}>
+              {showSeparator && msg.createdAt && <DateSeparator date={msg.createdAt} />}
+              <ToolCallCard
+                toolCall={msg.toolCall}
+                result={msg.toolResult}
+                cancelled={msg.cancelled}
+                onConfirm={onConfirmTool}
+                onCancel={onCancelTool}
+                assistantName={assistantName}
+              />
+            </React.Fragment>
           );
         }
 
@@ -262,31 +315,40 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
         // ── User bubble ─────────────────────────────────────────────────────
         if (msg.sender === 'user') {
           return (
-            <div key={msg.id} className="mb-4 flex items-end justify-end gap-2.5">
-              <div className="flex min-w-0 flex-col items-end">
-                {userDisplayName && (
-                  <span className="mb-1.5 text-xs font-medium text-gray-400">
-                    {userDisplayName}
-                  </span>
-                )}
-                <div
-                  className={`max-w-[75%] rounded-2xl rounded-br-sm px-4 py-2.5 text-sm leading-relaxed ${userBubbleClassName}`}
-                >
-                  {msg.text}
+            <React.Fragment key={msg.id}>
+              {showSeparator && msg.createdAt && <DateSeparator date={msg.createdAt} />}
+              <div className="mb-1 flex items-end justify-end gap-2.5">
+                <div className="flex min-w-0 flex-col items-end">
+                  {userDisplayName && (
+                    <span className="mb-1.5 text-xs font-medium text-gray-400">
+                      {userDisplayName}
+                    </span>
+                  )}
+                  <div
+                    className={`max-w-[75%] rounded-2xl rounded-br-sm px-4 py-2.5 text-sm leading-relaxed ${userBubbleClassName}`}
+                  >
+                    {msg.text}
+                  </div>
                 </div>
+                {userInitials && (
+                  <div className="mb-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-emerald-600 text-xs font-bold text-white ring-2 ring-white">
+                    {userInitials}
+                  </div>
+                )}
               </div>
-              {userInitials && (
-                <div className="mb-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-emerald-600 text-xs font-bold text-white ring-2 ring-white">
-                  {userInitials}
+              {msg.createdAt && (
+                <div className="mb-4 flex justify-end pr-10">
+                  <span className="text-[10px] text-gray-400">{formatTime(msg.createdAt)}</span>
                 </div>
               )}
-            </div>
+            </React.Fragment>
           );
         }
 
         // ── Assistant bubble ────────────────────────────────────────────────
         return (
           <React.Fragment key={msg.id}>
+            {showSeparator && msg.createdAt && <DateSeparator date={msg.createdAt} />}
             <div className="mb-1 flex items-start gap-2.5">
               <div className="mt-[22px] flex-shrink-0">
                 <AssistantAvatar />

@@ -22,6 +22,7 @@ export interface ChatMessage {
   id: string;
   sender: 'user' | 'assistant';
   text: string;
+  createdAt?: Date;
   toolCall?: ToolCallEvent;
   toolResult?: ToolResultEvent;
   toolStatus?: string;
@@ -84,6 +85,7 @@ function mapConversationHistory(detail: ConversationDetail): ChatMessage[] {
         id: m.id,
         sender: m.sender === 'USER' ? 'user' : 'assistant',
         text: m.content,
+        createdAt: new Date(m.createdAt),
       },
     });
   }
@@ -98,6 +100,7 @@ function mapConversationHistory(detail: ConversationDetail): ChatMessage[] {
         id: tc.id,
         sender: 'assistant',
         text: '',
+        createdAt: new Date(tc.createdAt),
         toolCall: {
           toolCallId: tc.id,
           toolName: tc.toolName,
@@ -214,6 +217,7 @@ export function useAssistantChat(active: boolean, requestedConversationId?: stri
             id: genId(),
             sender: 'assistant',
             text: prev,
+            createdAt: new Date(),
             nextSteps: steps.length > 0 ? steps : undefined,
           },
         ]);
@@ -254,7 +258,7 @@ export function useAssistantChat(active: boolean, requestedConversationId?: stri
         }
       }
 
-      setMessages((prev) => [...prev, { id: genId(), sender: 'user', text: msg }]);
+      setMessages((prev) => [...prev, { id: genId(), sender: 'user', text: msg, createdAt: new Date() }]);
       setIsStreaming(true);
       setPendingAssistantText('');
       const labelKey = getThinkingLabelKey(msg);
