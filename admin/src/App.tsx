@@ -36,6 +36,7 @@ import ELearningContentPage from './pages/content/ELearningContentPage';
 import HrDocumentsPage from './pages/content/HrDocumentsPage';
 import StatePoliciesPage from './pages/content/StatePoliciesPage';
 import EducatorApprovalsPage from './pages/EducatorApprovals';
+import AiOperationsPage from './pages/AiOperationsPage';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -130,6 +131,8 @@ function App() {
           <Route path="translations" element={<Navigate to="/settings?tab=translations" replace />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="design-system" element={<Navigate to="/settings?tab=designSystem" replace />} />
+
+          <Route path="ai" element={<AiOperationsPage />} />
 
           <Route index element={<Navigate to="/dashboard" />} />
         </Route>
