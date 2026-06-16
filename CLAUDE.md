@@ -12,6 +12,11 @@
 Auth: Clerk (OAuth, email/password, invites, webhooks)
 Storage: Local or Cloudflare R2 via `UPLOAD_MODE`
 
+> **v2 staffing-first remodel:** there is a dedicated plan folder at `docs/v2-staffing-remodel/`.
+> Start any remodel-related task by reading `docs/v2-staffing-remodel/00-README.md` and
+> `docs/v2-staffing-remodel/01-current-state-inventory.md` **before** re-analysing the codebase.
+> The current-state inventory there is the canonical pre-remodel snapshot.
+
 ---
 
 ## Commands
