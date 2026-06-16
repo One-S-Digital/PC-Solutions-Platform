@@ -40,21 +40,19 @@ const LanguageSwitcher: React.FC = () => {
   };
 
   return (
-    <div className="relative inline-block text-left" ref={dropdownRef}>
-      <div>
-        <button
-          type="button"
-          className="inline-flex items-center justify-center w-full rounded-button border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-swiss-mint"
-          onClick={() => setIsOpen(!isOpen)}
-          aria-haspopup="true"
-          aria-expanded={isOpen}
-          aria-label={t('languageSwitcher.selectLanguage', { currentLanguage: currentLanguageDetails.name })}
-        >
-          <CurrentFlagIcon className="w-5 h-auto mr-2" />
-          {currentLanguageDetails.name}
-          <ChevronDownIcon className="ml-1.5 h-5 w-5 text-gray-400" />
-        </button>
-      </div>
+    <div className="relative shrink-0" ref={dropdownRef}>
+      <button
+        type="button"
+        className="inline-flex items-center gap-1.5 rounded-button border border-gray-200 bg-white px-2.5 py-1.5 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-swiss-mint focus:ring-offset-1"
+        onClick={() => setIsOpen(!isOpen)}
+        aria-haspopup="true"
+        aria-expanded={isOpen}
+        aria-label={t('languageSwitcher.selectLanguage', { currentLanguage: currentLanguageDetails.name })}
+      >
+        <CurrentFlagIcon className="h-4 w-5 flex-shrink-0" />
+        <span className="hidden sm:inline">{currentLanguageDetails.code}</span>
+        <ChevronDownIcon className="h-3.5 w-3.5 flex-shrink-0 text-gray-400" />
+      </button>
 
       {isOpen && (
         <div
@@ -76,7 +74,7 @@ const LanguageSwitcher: React.FC = () => {
                   role="menuitem"
                   aria-current={isCurrent ? "page" : undefined}
                 >
-                  <FlagIcon className="w-5 h-auto mr-3" />
+                  <FlagIcon className="h-4 w-5 flex-shrink-0 mr-2.5" />
                   {lang.name}
                 </button>
               );

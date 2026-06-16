@@ -21,6 +21,7 @@ export interface ChatMessage {
   id: string;
   sender: 'user' | 'assistant';
   text: string;
+  createdAt?: Date;
   toolCall?: ToolCallEvent;
   toolResult?: ToolResultEvent;
   toolStatus?: string;
@@ -77,6 +78,7 @@ function mapConversationHistory(detail: ConversationDetail): ChatMessage[] {
         id: m.id,
         sender: m.sender === 'USER' ? 'user' : 'assistant',
         text: m.content,
+        createdAt: new Date(m.createdAt),
       },
     });
   }
@@ -91,6 +93,7 @@ function mapConversationHistory(detail: ConversationDetail): ChatMessage[] {
         id: tc.id,
         sender: 'assistant',
         text: '',
+        createdAt: new Date(tc.createdAt),
         toolCall: {
           toolCallId: tc.id,
           toolName: tc.toolName,
@@ -150,6 +153,8 @@ export function useAssistantChat(active: boolean, requestedConversationId?: stri
   const [pendingModal, setPendingModal] = useState<PendingModal | null>(null);
 
   const doneFiredRef = useRef(false);
+  // Prevents a second send from firing while conversation creation is in-flight
+  const isCreatingConvRef = useRef(false);
   // Accumulates nextSteps from SSE until flush time
   const pendingNextStepsRef = useRef<string[]>([]);
   // Tracks the previous requested id so "param removed" (+ New) is distinguishable
@@ -188,16 +193,9 @@ export function useAssistantChat(active: boolean, requestedConversationId?: stri
       return; // the next effect run creates the new conversation
     }
 
-    if (conversationId) return;
-
-    const locale = i18n.language?.toLowerCase() ?? 'en';
-
-    createConversation(getToken, locale)
-      .then(({ id }) => setConversationId(id))
-      .catch((err: unknown) => {
-        const msg = err instanceof Error ? err.message : 'Failed to start conversation';
-        setInitError(msg);
-      });
+    // No active conversation and no requested one — conversation is created
+    // lazily on the first sendMessage so empty conversations never appear in
+    // the sidebar list.
   }, [active, requestedConversationId, conversationId, getToken, i18n.language]);
 
   // ─── Flush pending streaming text into messages ───────────────────────────
@@ -213,6 +211,7 @@ export function useAssistantChat(active: boolean, requestedConversationId?: stri
             id: genId(),
             sender: 'assistant',
             text: prev,
+            createdAt: new Date(),
             nextSteps: steps.length > 0 ? steps : undefined,
           },
         ]);
@@ -229,18 +228,40 @@ export function useAssistantChat(active: boolean, requestedConversationId?: stri
   const sendMessage = useCallback(
     async (text: string) => {
       const msg = text.trim();
-      if (!msg || isStreaming || !conversationId) return;
+      if (!msg || isStreaming || isCreatingConvRef.current) return;
 
       doneFiredRef.current = false;
       pendingNextStepsRef.current = [];
 
-      setMessages((prev) => [...prev, { id: genId(), sender: 'user', text: msg }]);
+      // Lazy conversation creation: create only on first send so empty
+      // conversations never appear in the sidebar list.
+      let activeConvId = conversationId;
+      if (!activeConvId) {
+        isCreatingConvRef.current = true;
+        const locale = i18n.language?.toLowerCase() ?? 'en';
+        try {
+          const { id } = await createConversation(getToken, locale);
+          setConversationId(id);
+          activeConvId = id;
+        } catch (err) {
+          const errMsg = err instanceof Error ? err.message : 'Failed to start conversation';
+          setMessages((prev) => [
+            ...prev,
+            { id: genId(), sender: 'assistant', text: `⚠️ ${errMsg}` },
+          ]);
+          isCreatingConvRef.current = false;
+          return;
+        }
+        isCreatingConvRef.current = false;
+      }
+
+      setMessages((prev) => [...prev, { id: genId(), sender: 'user', text: msg, createdAt: new Date() }]);
       setIsStreaming(true);
       setPendingAssistantText('');
       const labelKey = getThinkingLabelKey(msg);
       setThinkingLabel(t(labelKey.key, labelKey.fallback));
 
-      await streamMessage(getToken, conversationId, msg, {
+      await streamMessage(getToken, activeConvId, msg, {
         onToken: (chunk) => {
           setPendingAssistantText((prev) => prev + chunk);
         },
@@ -288,7 +309,7 @@ export function useAssistantChat(active: boolean, requestedConversationId?: stri
         },
       });
     },
-    [isStreaming, conversationId, getToken, flushPending, t]
+    [isStreaming, conversationId, i18n.language, getToken, flushPending, t]
   );
 
   // ─── L3 tool approval round-trip ───────────────────────────────────────────

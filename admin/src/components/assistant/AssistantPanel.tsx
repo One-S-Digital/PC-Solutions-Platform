@@ -90,11 +90,11 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
   const handleSend = useCallback(
     (text?: string) => {
       const msg = (text ?? inputText).trim();
-      if (!msg || isStreaming || !conversationId) return;
+      if (!msg || isStreaming) return;
       setInputText('');
       void sendMessage(msg);
     },
-    [inputText, isStreaming, conversationId, sendMessage]
+    [inputText, isStreaming, sendMessage]
   );
 
   const handleKeyDown = useCallback(
@@ -158,7 +158,7 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
               emptyState={
                 <WelcomeScreen
                   onSuggestion={(text) => handleSend(text)}
-                  disabled={!conversationId || !!initError}
+                  disabled={!!initError}
                 />
               }
             />
@@ -173,14 +173,14 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
                 onKeyDown={handleKeyDown}
                 rows={1}
                 placeholder={t('composer.placeholder', 'Ask me anything…')}
-                disabled={isStreaming || !!initError || !conversationId}
+                disabled={isStreaming || !!initError}
                 aria-label={t('composer.placeholder', 'Ask me anything…')}
                 className="flex-1 resize-none bg-transparent text-sm text-swiss-charcoal placeholder-gray-400 focus:outline-none disabled:opacity-50"
                 style={{ maxHeight: '120px', overflowY: 'auto' }}
               />
               <button
                 onClick={() => handleSend()}
-                disabled={!inputText.trim() || isStreaming || !!initError || !conversationId}
+                disabled={!inputText.trim() || isStreaming || !!initError}
                 aria-label={t('composer.send', 'Send')}
                 className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-swiss-teal text-white transition-colors hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-1 disabled:opacity-40"
               >

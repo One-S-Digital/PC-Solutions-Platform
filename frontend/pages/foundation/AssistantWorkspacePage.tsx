@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { SparklesIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
@@ -11,6 +11,7 @@ import {
   TrustFooter,
   useBriefing,
 } from '../../components/assistant-workspace';
+import { useAppContext } from '../../contexts/AppContext';
 
 const WorkspaceEmptyState: React.FC = () => {
   const { t } = useTranslation('assistant');
@@ -41,6 +42,21 @@ const WorkspaceEmptyState: React.FC = () => {
 const AssistantWorkspacePage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const requestedConversationId = searchParams.get('c');
+  const { currentUser } = useAppContext();
+
+  const userInitials = useMemo(() => {
+    const name = currentUser?.name?.trim();
+    if (!name) return 'U';
+    return name
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((n) => n[0].toUpperCase())
+      .join('');
+  }, [currentUser?.name]);
+
+  const userFirstName =
+    currentUser?.firstName || currentUser?.name?.split(' ')[0] || undefined;
 
   const {
     conversationId,
@@ -86,23 +102,25 @@ const AssistantWorkspacePage: React.FC = () => {
     [messages, confirmTool],
   );
 
-  const composerDisabled = isStreaming || isLoadingHistory || !!initError || !conversationId;
+  const composerDisabled = isStreaming || isLoadingHistory || !!initError;
   const showBriefing =
     messages.length === 0 && !isLoadingHistory && (briefing?.items.length ?? 0) > 0;
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col bg-gray-50/60">
       <AssistantModalHandler pendingModal={pendingModal} onHandled={clearPendingModal} />
 
       {initError && (
-        <div className="mb-3 rounded-card border border-red-100 bg-red-50 px-4 py-2 text-sm text-red-600">
-          {initError}
+        <div className="mx-auto mt-3 w-full max-w-3xl px-4">
+          <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-2 text-sm text-red-600">
+            {initError}
+          </div>
         </div>
       )}
 
       {/* Thread */}
       <div className="flex-1 overflow-y-auto">
-        <div className="mx-auto flex min-h-full w-full max-w-3xl flex-col justify-end py-2">
+        <div className="mx-auto flex min-h-full w-full max-w-3xl flex-col justify-end px-4 py-4 sm:px-6">
           {isLoadingHistory && (
             <div className="flex flex-1 items-center justify-center py-16">
               <ArrowPathIcon className="h-6 w-6 animate-spin text-emerald-600" aria-hidden="true" />
@@ -128,6 +146,8 @@ const AssistantWorkspacePage: React.FC = () => {
             onCancelTool={cancelTool}
             emptyState={isLoadingHistory ? undefined : <WorkspaceEmptyState />}
             userBubbleClassName="bg-emerald-700 text-white"
+            userDisplayName={userFirstName}
+            userInitials={userInitials}
           />
 
           {/* Draft approval card for pending draft_lead_reply tool calls */}
@@ -144,10 +164,12 @@ const AssistantWorkspacePage: React.FC = () => {
       </div>
 
       {/* Quick actions + composer + trust line */}
-      <div className="mx-auto w-full max-w-3xl pt-3">
-        <QuickActionChips onAction={sendMessage} disabled={composerDisabled} />
-        <Composer onSend={sendMessage} disabled={composerDisabled} />
-        <TrustFooter />
+      <div className="border-t border-gray-200/60 bg-white px-4 pb-4 pt-3 sm:px-6">
+        <div className="mx-auto w-full max-w-3xl">
+          <QuickActionChips onAction={sendMessage} disabled={composerDisabled} />
+          <Composer onSend={sendMessage} disabled={composerDisabled} />
+          <TrustFooter />
+        </div>
       </div>
     </div>
   );

@@ -61,9 +61,11 @@ function getSuggestionsForRole(role?: UserRole | string | null) {
 interface WelcomeScreenProps {
   onSuggestion: (text: string) => void;
   role?: UserRole | string | null;
+  /** True while the conversation is still being created — clicks would be dropped. */
+  disabled?: boolean;
 }
 
-const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSuggestion, role }) => {
+const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSuggestion, role, disabled }) => {
   const { t } = useTranslation('assistant');
   const suggestions = getSuggestionsForRole(role);
 
@@ -86,7 +88,8 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSuggestion, role }) => 
           <button
             key={key}
             onClick={() => onSuggestion(t(key, fallback))}
-            className="rounded-full border border-swiss-teal/40 bg-swiss-teal/5 px-3 py-1.5 text-sm text-swiss-teal transition-colors hover:bg-swiss-teal/10"
+            disabled={disabled}
+            className="rounded-full border border-swiss-teal/40 bg-swiss-teal/5 px-3 py-1.5 text-sm text-swiss-teal transition-colors hover:bg-swiss-teal/10 disabled:opacity-50"
           >
             {t(key, fallback)}
           </button>
@@ -128,11 +131,11 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
   const handleSend = useCallback(
     (text?: string) => {
       const msg = (text ?? inputText).trim();
-      if (!msg || isStreaming || !conversationId) return;
+      if (!msg || isStreaming) return;
       setInputText('');
       void sendMessage(msg);
     },
-    [inputText, isStreaming, conversationId, sendMessage]
+    [inputText, isStreaming, sendMessage]
   );
 
   const handleKeyDown = useCallback(
@@ -201,7 +204,11 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
               onConfirmTool={confirmTool}
               onCancelTool={cancelTool}
               emptyState={
-                <WelcomeScreen onSuggestion={(text) => handleSend(text)} role={currentUser?.role} />
+                <WelcomeScreen
+                  onSuggestion={(text) => handleSend(text)}
+                  role={currentUser?.role}
+                  disabled={!!initError}
+                />
               }
             />
           </div>
@@ -216,14 +223,14 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
                 onKeyDown={handleKeyDown}
                 rows={1}
                 placeholder={t('composer.placeholder', 'Ask me anything…')}
-                disabled={isStreaming || !!initError || !conversationId}
+                disabled={isStreaming || !!initError}
                 aria-label={t('composer.placeholder', 'Ask me anything…')}
                 className="flex-1 resize-none bg-transparent text-sm text-swiss-charcoal placeholder-gray-400 focus:outline-none disabled:opacity-50"
                 style={{ maxHeight: '120px', overflowY: 'auto' }}
               />
               <button
                 onClick={() => handleSend()}
-                disabled={!inputText.trim() || isStreaming || !!initError || !conversationId}
+                disabled={!inputText.trim() || isStreaming || !!initError}
                 aria-label={t('composer.send', 'Send')}
                 className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-swiss-teal text-white transition-colors hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-swiss-teal focus:ring-offset-1 disabled:opacity-40"
               >

@@ -305,6 +305,7 @@ export async function streamMessage(
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
   let buffer = '';
+  let doneFired = false;
 
   try {
     while (true) {
@@ -366,6 +367,7 @@ export async function streamMessage(
             handlers.onError((parsed.message as string) ?? 'Unknown error');
             break;
           case 'done':
+            doneFired = true;
             handlers.onDone();
             break;
           default:
@@ -380,6 +382,6 @@ export async function streamMessage(
     reader.releaseLock();
   }
 
-  // If the stream ended without a done event, call onDone to flush
-  handlers.onDone();
+  // Flush only if the stream ended without an explicit done event
+  if (!doneFired) handlers.onDone();
 }
