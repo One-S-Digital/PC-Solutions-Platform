@@ -21,6 +21,7 @@ export interface ChatMessage {
   id: string;
   sender: 'user' | 'assistant';
   text: string;
+  createdAt?: Date;
   toolCall?: ToolCallEvent;
   toolResult?: ToolResultEvent;
   toolStatus?: string;
@@ -77,6 +78,7 @@ function mapConversationHistory(detail: ConversationDetail): ChatMessage[] {
         id: m.id,
         sender: m.sender === 'USER' ? 'user' : 'assistant',
         text: m.content,
+        createdAt: new Date(m.createdAt),
       },
     });
   }
@@ -91,6 +93,7 @@ function mapConversationHistory(detail: ConversationDetail): ChatMessage[] {
         id: tc.id,
         sender: 'assistant',
         text: '',
+        createdAt: new Date(tc.createdAt),
         toolCall: {
           toolCallId: tc.id,
           toolName: tc.toolName,
@@ -150,6 +153,8 @@ export function useAssistantChat(active: boolean, requestedConversationId?: stri
   const [pendingModal, setPendingModal] = useState<PendingModal | null>(null);
 
   const doneFiredRef = useRef(false);
+  // Prevents a second send from firing while conversation creation is in-flight
+  const isCreatingConvRef = useRef(false);
   // Accumulates nextSteps from SSE until flush time
   const pendingNextStepsRef = useRef<string[]>([]);
   // Tracks the previous requested id so "param removed" (+ New) is distinguishable
@@ -206,6 +211,7 @@ export function useAssistantChat(active: boolean, requestedConversationId?: stri
             id: genId(),
             sender: 'assistant',
             text: prev,
+            createdAt: new Date(),
             nextSteps: steps.length > 0 ? steps : undefined,
           },
         ]);
@@ -222,7 +228,7 @@ export function useAssistantChat(active: boolean, requestedConversationId?: stri
   const sendMessage = useCallback(
     async (text: string) => {
       const msg = text.trim();
-      if (!msg || isStreaming) return;
+      if (!msg || isStreaming || isCreatingConvRef.current) return;
 
       doneFiredRef.current = false;
       pendingNextStepsRef.current = [];
@@ -231,6 +237,7 @@ export function useAssistantChat(active: boolean, requestedConversationId?: stri
       // conversations never appear in the sidebar list.
       let activeConvId = conversationId;
       if (!activeConvId) {
+        isCreatingConvRef.current = true;
         const locale = i18n.language?.toLowerCase() ?? 'en';
         try {
           const { id } = await createConversation(getToken, locale);
@@ -242,11 +249,13 @@ export function useAssistantChat(active: boolean, requestedConversationId?: stri
             ...prev,
             { id: genId(), sender: 'assistant', text: `⚠️ ${errMsg}` },
           ]);
+          isCreatingConvRef.current = false;
           return;
         }
+        isCreatingConvRef.current = false;
       }
 
-      setMessages((prev) => [...prev, { id: genId(), sender: 'user', text: msg }]);
+      setMessages((prev) => [...prev, { id: genId(), sender: 'user', text: msg, createdAt: new Date() }]);
       setIsStreaming(true);
       setPendingAssistantText('');
       const labelKey = getThinkingLabelKey(msg);

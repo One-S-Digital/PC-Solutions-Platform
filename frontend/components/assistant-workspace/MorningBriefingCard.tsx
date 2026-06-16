@@ -24,7 +24,9 @@ const ITEM_BUTTON_LABELS: Record<BriefingItemType, string> = {
 const HANDLE_ALL_PROMPT =
   "Give me a summary of everything that needs attention today and let's handle it together.";
 
-function buildNarrativeParts(items: BriefingItem[]): React.ReactNode[] {
+type TFn = (key: string, fallback: string, opts?: Record<string, unknown>) => string;
+
+function buildNarrativeParts(items: BriefingItem[], t: TFn): React.ReactNode[] {
   const nodes: React.ReactNode[] = [];
   const parts = items.map((item) => {
     const n = item.count;
@@ -33,7 +35,8 @@ function buildNarrativeParts(items: BriefingItem[]): React.ReactNode[] {
         return (
           <span key={item.type}>
             <strong className="font-semibold text-white">
-              {n} new parent lead{n !== 1 ? 's' : ''}
+              {t('briefing.narrative.parentLeads', '{{count}} new parent lead', { count: n })}
+              {n !== 1 ? t('briefing.narrative.plural_s', 's') : ''}
             </strong>
           </span>
         );
@@ -41,33 +44,36 @@ function buildNarrativeParts(items: BriefingItem[]): React.ReactNode[] {
         return (
           <span key={item.type}>
             <strong className="font-semibold text-white">
-              {n} application{n !== 1 ? 's' : ''}
+              {t('briefing.narrative.applications', '{{count}} application', { count: n })}
+              {n !== 1 ? t('briefing.narrative.plural_s', 's') : ''}
             </strong>{' '}
-            waiting for feedback
+            {t('briefing.narrative.waitingFeedback', 'waiting for feedback')}
           </span>
         );
       case 'pending_replacements':
         return (
           <span key={item.type}>
             <strong className="font-semibold text-white">
-              {n} pending replacement{n !== 1 ? 's' : ''}
+              {t('briefing.narrative.pendingReplacements', '{{count}} pending replacement', { count: n })}
+              {n !== 1 ? t('briefing.narrative.plural_s', 's') : ''}
             </strong>
           </span>
         );
       case 'canton_updates':
         return (
           <span key={item.type}>
-            a{' '}
-            <strong className="font-semibold text-white">
-              cantonal directive update
-            </strong>
+            {n === 1
+              ? <>{t('briefing.narrative.cantonPrefix', 'a')}{' '}<strong className="font-semibold text-white">{t('briefing.narrative.cantonUpdate', 'cantonal directive update')}</strong></>
+              : <strong className="font-semibold text-white">{n} {t('briefing.narrative.cantonUpdates', 'cantonal directive updates')}</strong>
+            }
           </span>
         );
       case 'unread_notifications':
         return (
           <span key={item.type}>
             <strong className="font-semibold text-white">
-              {n} unread notification{n !== 1 ? 's' : ''}
+              {t('briefing.narrative.unreadNotifications', '{{count}} unread notification', { count: n })}
+              {n !== 1 ? t('briefing.narrative.plural_s', 's') : ''}
             </strong>
           </span>
         );
@@ -78,13 +84,13 @@ function buildNarrativeParts(items: BriefingItem[]): React.ReactNode[] {
 
   if (parts.length === 0) return nodes;
 
-  nodes.push(<span key="prefix">Overnight: </span>);
+  nodes.push(<span key="prefix">{t('briefing.narrative.prefix', 'Overnight: ')}</span>);
   parts.forEach((part, i) => {
     nodes.push(part);
-    if (i < parts.length - 2) nodes.push(<span key={`sep-${i}`}>, </span>);
-    if (i === parts.length - 2) nodes.push(<span key="and"> and </span>);
+    if (i < parts.length - 2) nodes.push(<span key={`sep-${i}`}>{t('briefing.narrative.listSep', ', ')}</span>);
+    if (i === parts.length - 2) nodes.push(<span key="and">{t('briefing.narrative.and', ' and ')}</span>);
   });
-  nodes.push(<span key="suffix"> — I've already prepared the summary.</span>);
+  nodes.push(<span key="suffix">{t('briefing.narrative.suffix', ' — I\'ve already prepared the summary.')}</span>);
   return nodes;
 }
 
@@ -151,7 +157,7 @@ export const MorningBriefingCard: React.FC<MorningBriefingCardProps> = ({
       ? t('workspace.briefing.headline_one', '1 thing needs your attention today', { count })
       : t('workspace.briefing.headline_other', '{{count}} things need your attention today', { count });
 
-  const narrativeParts = buildNarrativeParts(briefing.items);
+  const narrativeParts = buildNarrativeParts(briefing.items, t);
 
   return (
     <div className="relative mb-6 overflow-hidden rounded-2xl bg-gradient-to-br from-[#1e5c42] to-[#163d2b] text-white shadow-xl">

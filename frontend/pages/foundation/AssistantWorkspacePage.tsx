@@ -45,8 +45,9 @@ const AssistantWorkspacePage: React.FC = () => {
   const { currentUser } = useAppContext();
 
   const userInitials = useMemo(() => {
-    if (!currentUser?.name) return 'U';
-    return currentUser.name
+    const name = currentUser?.name?.trim();
+    if (!name) return 'U';
+    return name
       .split(' ')
       .filter(Boolean)
       .slice(0, 2)

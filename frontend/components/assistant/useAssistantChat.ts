@@ -161,6 +161,8 @@ export function useAssistantChat(active: boolean, requestedConversationId?: stri
   const [pendingModal, setPendingModal] = useState<PendingModal | null>(null);
 
   const doneFiredRef = useRef(false);
+  // Prevents a second send from firing while conversation creation is in-flight
+  const isCreatingConvRef = useRef(false);
   // Accumulates nextSteps from SSE until flush time
   const pendingNextStepsRef = useRef<string[]>([]);
   // Tracks the previous requested id so "param removed" (+ New) is distinguishable
@@ -234,7 +236,7 @@ export function useAssistantChat(active: boolean, requestedConversationId?: stri
   const sendMessage = useCallback(
     async (text: string) => {
       const msg = text.trim();
-      if (!msg || isStreaming) return;
+      if (!msg || isStreaming || isCreatingConvRef.current) return;
 
       doneFiredRef.current = false;
       pendingNextStepsRef.current = [];
@@ -243,6 +245,7 @@ export function useAssistantChat(active: boolean, requestedConversationId?: stri
       // conversations never appear in the sidebar list.
       let activeConvId = conversationId;
       if (!activeConvId) {
+        isCreatingConvRef.current = true;
         const locale = (language as string)?.toLowerCase() ?? 'en';
         try {
           const { id } = await createConversation(getToken, locale);
@@ -254,8 +257,10 @@ export function useAssistantChat(active: boolean, requestedConversationId?: stri
             ...prev,
             { id: genId(), sender: 'assistant', text: `⚠️ ${errMsg}` },
           ]);
+          isCreatingConvRef.current = false;
           return;
         }
+        isCreatingConvRef.current = false;
       }
 
       setMessages((prev) => [...prev, { id: genId(), sender: 'user', text: msg, createdAt: new Date() }]);

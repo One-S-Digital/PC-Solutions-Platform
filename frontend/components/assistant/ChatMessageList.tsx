@@ -24,15 +24,16 @@ function isSameDay(a: Date, b: Date): boolean {
 // ─── DateSeparator ────────────────────────────────────────────────────────────
 
 const DateSeparator: React.FC<{ date: Date }> = ({ date }) => {
+  const { t } = useTranslation('assistant');
   const today = new Date();
   const yesterday = new Date(today);
   yesterday.setDate(today.getDate() - 1);
 
   let label: string;
   if (isSameDay(date, today)) {
-    label = 'TODAY';
+    label = t('dateSeparator.today', 'TODAY');
   } else if (isSameDay(date, yesterday)) {
-    label = 'YESTERDAY';
+    label = t('dateSeparator.yesterday', 'YESTERDAY');
   } else {
     label = date.toLocaleDateString([], { month: 'short', day: 'numeric' });
   }
