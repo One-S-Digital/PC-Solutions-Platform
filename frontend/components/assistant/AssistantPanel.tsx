@@ -61,9 +61,11 @@ function getSuggestionsForRole(role?: UserRole | string | null) {
 interface WelcomeScreenProps {
   onSuggestion: (text: string) => void;
   role?: UserRole | string | null;
+  /** True while the conversation is still being created — clicks would be dropped. */
+  disabled?: boolean;
 }
 
-const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSuggestion, role }) => {
+const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSuggestion, role, disabled }) => {
   const { t } = useTranslation('assistant');
   const suggestions = getSuggestionsForRole(role);
 
@@ -86,7 +88,8 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSuggestion, role }) => 
           <button
             key={key}
             onClick={() => onSuggestion(t(key, fallback))}
-            className="rounded-full border border-swiss-teal/40 bg-swiss-teal/5 px-3 py-1.5 text-sm text-swiss-teal transition-colors hover:bg-swiss-teal/10"
+            disabled={disabled}
+            className="rounded-full border border-swiss-teal/40 bg-swiss-teal/5 px-3 py-1.5 text-sm text-swiss-teal transition-colors hover:bg-swiss-teal/10 disabled:opacity-50"
           >
             {t(key, fallback)}
           </button>
@@ -201,7 +204,11 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({ isOpen, onClose 
               onConfirmTool={confirmTool}
               onCancelTool={cancelTool}
               emptyState={
-                <WelcomeScreen onSuggestion={(text) => handleSend(text)} role={currentUser?.role} />
+                <WelcomeScreen
+                  onSuggestion={(text) => handleSend(text)}
+                  role={currentUser?.role}
+                  disabled={!conversationId || !!initError}
+                />
               }
             />
           </div>
