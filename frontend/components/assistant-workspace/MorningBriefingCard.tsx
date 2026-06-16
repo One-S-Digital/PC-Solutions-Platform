@@ -1,24 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@clerk/clerk-react';
-import {
-  UserGroupIcon,
-  ClockIcon,
-  ArrowsRightLeftIcon,
-  DocumentTextIcon,
-  BellIcon,
-  SparklesIcon,
-} from '@heroicons/react/24/outline';
-import { getBriefing, Briefing, BriefingItemType } from '../../services/assistantService';
+import { SparklesIcon } from '@heroicons/react/24/outline';
+import { getBriefing, Briefing, BriefingItem, BriefingItemType } from '../../services/assistantService';
 import { useAppContext } from '../../contexts/AppContext';
-
-const ICONS: Record<BriefingItemType, React.ComponentType<{ className?: string; 'aria-hidden'?: boolean | 'true' | 'false' }>> = {
-  parent_leads: UserGroupIcon,
-  stale_applications: ClockIcon,
-  pending_replacements: ArrowsRightLeftIcon,
-  canton_updates: DocumentTextIcon,
-  unread_notifications: BellIcon,
-};
 
 const ITEM_PROMPTS: Record<BriefingItemType, string> = {
   parent_leads: 'Show my new parent leads and help me reply to them.',
@@ -28,8 +13,80 @@ const ITEM_PROMPTS: Record<BriefingItemType, string> = {
   unread_notifications: 'Show my unread notifications.',
 };
 
+const ITEM_BUTTON_LABELS: Record<BriefingItemType, string> = {
+  parent_leads: 'Respond to leads',
+  stale_applications: 'Review applications',
+  pending_replacements: 'Check replacements',
+  canton_updates: 'See update',
+  unread_notifications: 'View notifications',
+};
+
 const HANDLE_ALL_PROMPT =
   "Give me a summary of everything that needs attention today and let's handle it together.";
+
+function buildNarrativeParts(items: BriefingItem[]): React.ReactNode[] {
+  const nodes: React.ReactNode[] = [];
+  const parts = items.map((item) => {
+    const n = item.count;
+    switch (item.type) {
+      case 'parent_leads':
+        return (
+          <span key={item.type}>
+            <strong className="font-semibold text-white">
+              {n} new parent lead{n !== 1 ? 's' : ''}
+            </strong>
+          </span>
+        );
+      case 'stale_applications':
+        return (
+          <span key={item.type}>
+            <strong className="font-semibold text-white">
+              {n} application{n !== 1 ? 's' : ''}
+            </strong>{' '}
+            waiting for feedback
+          </span>
+        );
+      case 'pending_replacements':
+        return (
+          <span key={item.type}>
+            <strong className="font-semibold text-white">
+              {n} pending replacement{n !== 1 ? 's' : ''}
+            </strong>
+          </span>
+        );
+      case 'canton_updates':
+        return (
+          <span key={item.type}>
+            a{' '}
+            <strong className="font-semibold text-white">
+              cantonal directive update
+            </strong>
+          </span>
+        );
+      case 'unread_notifications':
+        return (
+          <span key={item.type}>
+            <strong className="font-semibold text-white">
+              {n} unread notification{n !== 1 ? 's' : ''}
+            </strong>
+          </span>
+        );
+      default:
+        return null;
+    }
+  }).filter(Boolean) as React.ReactNode[];
+
+  if (parts.length === 0) return nodes;
+
+  nodes.push(<span key="prefix">Overnight: </span>);
+  parts.forEach((part, i) => {
+    nodes.push(part);
+    if (i < parts.length - 2) nodes.push(<span key={`sep-${i}`}>, </span>);
+    if (i === parts.length - 2) nodes.push(<span key="and"> and </span>);
+  });
+  nodes.push(<span key="suffix"> — I've already prepared the summary.</span>);
+  return nodes;
+}
 
 // ─── useBriefing hook ─────────────────────────────────────────────────────────
 
@@ -71,11 +128,16 @@ export const MorningBriefingCard: React.FC<MorningBriefingCardProps> = ({
 
   if (isLoading) {
     return (
-      <div className="mb-6 animate-pulse rounded-2xl bg-emerald-800/20 p-6">
-        <div className="mb-4 h-5 w-2/3 rounded bg-emerald-800/30" />
-        <div className="space-y-2">
-          <div className="h-10 rounded-xl bg-emerald-800/20" />
-          <div className="h-10 rounded-xl bg-emerald-800/15" />
+      <div className="mb-6 animate-pulse rounded-2xl bg-emerald-900/30 p-6">
+        <div className="mb-2 h-3 w-24 rounded bg-emerald-700/40" />
+        <div className="mb-3 h-6 w-2/3 rounded bg-emerald-800/40" />
+        <div className="mb-4 space-y-1.5">
+          <div className="h-4 w-full rounded bg-emerald-800/30" />
+          <div className="h-4 w-4/5 rounded bg-emerald-800/20" />
+        </div>
+        <div className="flex gap-2">
+          <div className="h-8 w-44 rounded-full bg-emerald-700/40" />
+          <div className="h-8 w-32 rounded-full bg-emerald-800/30" />
         </div>
       </div>
     );
@@ -86,55 +148,68 @@ export const MorningBriefingCard: React.FC<MorningBriefingCardProps> = ({
   const count = briefing.items.length;
   const headline =
     count === 1
-      ? t('workspace.briefing.headline_one', '{{count}} thing needs your attention today', { count })
+      ? t('workspace.briefing.headline_one', '1 thing needs your attention today', { count })
       : t('workspace.briefing.headline_other', '{{count}} things need your attention today', { count });
 
+  const narrativeParts = buildNarrativeParts(briefing.items);
+
   return (
-    <div className="mb-6 overflow-hidden rounded-2xl bg-emerald-800 text-white shadow-lg">
-      {/* Header */}
-      <div className="flex items-start gap-3 px-5 py-4">
-        <div className="mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-white/15">
-          <SparklesIcon className="h-4 w-4 text-white" aria-hidden="true" />
+    <div className="relative mb-6 overflow-hidden rounded-2xl bg-[#163d2b] text-white shadow-xl">
+      {/* Decorative circles */}
+      <div
+        className="pointer-events-none absolute -right-10 -top-10 h-48 w-48 rounded-full border border-white/5 bg-white/[0.03]"
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute right-10 top-16 h-32 w-32 rounded-full border border-white/5 bg-white/[0.04]"
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute -right-4 top-2 h-24 w-24 rounded-full bg-white/[0.025]"
+        aria-hidden="true"
+      />
+
+      {/* Content */}
+      <div className="relative px-6 pt-5 pb-3">
+        {/* Section label */}
+        <div className="mb-3 flex items-center gap-1.5">
+          <SparklesIcon className="h-3.5 w-3.5 text-emerald-400" aria-hidden="true" />
+          <span className="text-[11px] font-bold uppercase tracking-widest text-emerald-400">
+            {t('workspace.briefing.label', 'Morning Briefing')}
+          </span>
         </div>
-        <h2 className="text-base font-semibold leading-snug">{headline}</h2>
+
+        {/* Headline */}
+        <h2 className="text-xl font-bold leading-tight capitalize-first">
+          {headline}.
+        </h2>
+
+        {/* Narrative */}
+        {narrativeParts.length > 0 && (
+          <p className="mt-2.5 text-sm leading-relaxed text-white/60">
+            {narrativeParts}
+          </p>
+        )}
       </div>
 
-      {/* Items */}
-      <div className="space-y-2 px-5 pb-3">
-        {briefing.items.map((item) => {
-          const Icon = ICONS[item.type];
-          const singularKey = `workspace.briefing.${item.type}`;
-          const pluralKey = `workspace.briefing.${item.type}_plural`;
-          const label = t(
-            item.count === 1 ? singularKey : pluralKey,
-            String(item.count),
-            { count: item.count },
-          );
-          return (
-            <button
-              key={item.type}
-              onClick={() => onAction(ITEM_PROMPTS[item.type])}
-              className="flex w-full items-center gap-3 rounded-xl bg-white/10 px-3 py-2.5 text-left text-sm font-medium transition-colors hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/40"
-            >
-              <Icon className="h-4 w-4 flex-shrink-0 text-white/80" aria-hidden="true" />
-              <span className="flex-1">{label}</span>
-              <span className="flex-shrink-0 rounded-full bg-white/20 px-2 py-0.5 text-xs font-semibold tabular-nums">
-                {item.count}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* CTA */}
-      <div className="border-t border-white/15 px-5 py-3">
+      {/* Action buttons */}
+      <div className="relative flex flex-wrap items-center gap-2 px-6 pb-5 pt-2">
         <button
           onClick={() => onAction(HANDLE_ALL_PROMPT)}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-emerald-800 transition-colors hover:bg-white/90 focus:outline-none focus:ring-2 focus:ring-white/40"
+          className="inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-1.5 text-xs font-semibold text-[#163d2b] transition-colors hover:bg-white/90 focus:outline-none focus:ring-2 focus:ring-white/40"
         >
-          <SparklesIcon className="h-4 w-4" aria-hidden="true" />
+          <SparklesIcon className="h-3 w-3" aria-hidden="true" />
           {t('workspace.briefing.handleAll', 'Handle everything with me')}
         </button>
+        {briefing.items.slice(0, 2).map((item) => (
+          <button
+            key={item.type}
+            onClick={() => onAction(ITEM_PROMPTS[item.type])}
+            className="inline-flex items-center rounded-full border border-white/25 px-4 py-1.5 text-xs font-medium text-white/90 transition-colors hover:border-white/40 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/30"
+          >
+            {t(`workspace.briefing.btn_${item.type}`, ITEM_BUTTON_LABELS[item.type])}
+          </button>
+        ))}
       </div>
     </div>
   );
