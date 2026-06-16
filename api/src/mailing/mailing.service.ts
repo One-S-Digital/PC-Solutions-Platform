@@ -571,6 +571,15 @@ export class MailingService {
     extraEmails?: string[],
     scheduledAt?: Date,
   ) {
+    if (scheduledAt) {
+      if (Number.isNaN(scheduledAt.getTime())) {
+        throw new BadRequestException('Invalid scheduledAt value');
+      }
+      if (scheduledAt.getTime() < Date.now() + 60_000) {
+        throw new BadRequestException('scheduledAt must be at least 1 minute in the future');
+      }
+    }
+
     let resolvedFilters = filters;
 
     // If segmentId is provided, load its filters
@@ -666,6 +675,7 @@ export class MailingService {
         sentCount: c.sentCount,
         failedCount: c.failedCount,
         segmentName: c.segment?.name || null,
+        scheduledAt: c.scheduledAt?.toISOString() || null,
         createdAt: c.createdAt.toISOString(),
         sentAt: c.sentAt?.toISOString() || null,
         completedAt: c.completedAt?.toISOString() || null,
@@ -999,21 +1009,22 @@ export class MailingService {
     const newSentCount = campaign.sentCount + sentThisBatch;
     const newFailedCount = campaign.failedCount + failedThisBatch;
 
-    await this.prisma.mailingCampaign.update({
-      where: { id: campaignId },
-      data: {
-        sentCount: newSentCount,
-        failedCount: newFailedCount,
-        cursor: lastUserId,
-        ...(dbDone && extraEmails.length > 0 ? { extraEmailsSent: true } : {}),
-        ...(done
-          ? {
-              status: MailingCampaignStatus.SENT,
-              completedAt: new Date(),
-            }
-          : {}),
-      },
-    });
+    const baseData: Prisma.MailingCampaignUpdateInput = {
+      sentCount: newSentCount,
+      failedCount: newFailedCount,
+      cursor: lastUserId,
+      ...(dbDone && extraEmails.length > 0 ? { extraEmailsSent: true } : {}),
+    };
+
+    if (done) {
+      // Use updateMany with a status guard so a concurrent cancel cannot be overwritten
+      await this.prisma.mailingCampaign.updateMany({
+        where: { id: campaignId, status: MailingCampaignStatus.SENDING },
+        data: { ...baseData, status: MailingCampaignStatus.SENT, completedAt: new Date() },
+      });
+    } else {
+      await this.prisma.mailingCampaign.update({ where: { id: campaignId }, data: baseData });
+    }
 
     return {
       sentCountThisBatch: sentThisBatch,

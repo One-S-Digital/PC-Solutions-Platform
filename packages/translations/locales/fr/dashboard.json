@@ -85,9 +85,14 @@
     "footerNote": "Les candidatures sont mises à jour en temps réel",
     "status": {
       "accepted": "Acceptée",
+      "hired": "Engagée",
+      "interview": "Entretien",
+      "offer": "Offre",
       "pending": "En attente",
       "rejected": "Refusée",
-      "reviewed": "Examinée"
+      "reviewed": "Examinée",
+      "shortlisted": "Présélectionnée",
+      "submitted": "Soumise"
     },
     "table": {
       "actions": "Actions",

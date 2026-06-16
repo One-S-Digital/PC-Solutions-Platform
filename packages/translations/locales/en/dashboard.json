@@ -326,9 +326,14 @@
     "footerNote": "Applications are updated in real-time",
     "status": {
       "accepted": "Accepted",
+      "hired": "Hired",
+      "interview": "Interview",
+      "offer": "Offer",
       "pending": "Pending",
       "rejected": "Rejected",
-      "reviewed": "Reviewed"
+      "reviewed": "Reviewed",
+      "shortlisted": "Shortlisted",
+      "submitted": "Submitted"
     },
     "table": {
       "actions": "Actions",

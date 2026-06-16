@@ -90,8 +90,8 @@ const MailingCampaignDetailPage: React.FC = () => {
           <p className="text-sm text-gray-500 mt-1">
             Created {new Date(campaign.createdAt).toLocaleString()}
             {campaign.segment && <> &middot; Segment: {campaign.segment.name}</>}
-            {(campaign as any).scheduledAt && (
-              <> &middot; <span className="text-purple-600 font-medium">Scheduled: {new Date((campaign as any).scheduledAt).toLocaleString()}</span></>
+            {campaign.scheduledAt && (
+              <> &middot; <span className="text-purple-600 font-medium">Scheduled: {new Date(campaign.scheduledAt).toLocaleString()}</span></>
             )}
           </p>
         </div>

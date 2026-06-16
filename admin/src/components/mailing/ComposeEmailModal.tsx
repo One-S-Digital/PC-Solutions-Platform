@@ -222,7 +222,11 @@ const ComposeEmailModal: React.FC<Props> = ({ isOpen, onClose, onSend, loading, 
                   <input
                     type="datetime-local"
                     value={scheduledAt}
-                    min={new Date(Date.now() + 60_000).toISOString().slice(0, 16)}
+                    min={(() => {
+                      const d = new Date(Date.now() + 60_000)
+                      const pad = (n: number) => String(n).padStart(2, '0')
+                      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+                    })()}
                     onChange={(e) => setScheduledAt(e.target.value)}
                     className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
                   />
