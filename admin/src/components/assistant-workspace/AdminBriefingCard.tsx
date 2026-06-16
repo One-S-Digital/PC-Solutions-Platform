@@ -23,8 +23,6 @@ const ICONS: Record<BriefingItemType, React.ComponentType<{ className?: string; 
   unread_notifications: BellIcon,
 };
 
-// Each briefing item CTA is just a prompt template submitted into the normal
-// chat pipeline — exactly as in the Foundation build.
 const ITEM_PROMPTS: Record<BriefingItemType, string> = {
   pending_educator_approvals: 'Review pending educator approvals with me.',
   stale_applications_platform: 'Show me applications waiting more than 5 days across the platform.',
@@ -69,11 +67,6 @@ interface AdminBriefingCardProps {
   onAction: (prompt: string) => void;
 }
 
-/**
- * Deep-teal hero card with the platform-wide review items ("N items need
- * review today"). Dumb renderer over GET /assistant/briefing — the items are
- * deterministic counts computed server-side (BriefingService admin branch).
- */
 export const AdminBriefingCard: React.FC<AdminBriefingCardProps> = ({
   briefing,
   isLoading,
@@ -83,8 +76,9 @@ export const AdminBriefingCard: React.FC<AdminBriefingCardProps> = ({
 
   if (isLoading) {
     return (
-      <div className="mb-6 animate-pulse rounded-2xl bg-emerald-800/20 p-6">
-        <div className="mb-4 h-5 w-2/3 rounded bg-emerald-800/30" />
+      <div className="mb-6 animate-pulse rounded-2xl bg-emerald-900/30 p-6">
+        <div className="mb-2 h-3 w-24 rounded bg-emerald-700/40" />
+        <div className="mb-3 h-6 w-2/3 rounded bg-emerald-800/40" />
         <div className="space-y-2">
           <div className="h-10 rounded-xl bg-emerald-800/20" />
           <div className="h-10 rounded-xl bg-emerald-800/15" />
@@ -102,17 +96,34 @@ export const AdminBriefingCard: React.FC<AdminBriefingCardProps> = ({
       : t('adminBriefing.headline_other', '{{count}} items need review today', { count });
 
   return (
-    <div className="mb-6 overflow-hidden rounded-2xl bg-emerald-800 text-white shadow-lg">
+    <div className="relative mb-6 overflow-hidden rounded-2xl bg-gradient-to-br from-[#1e5c42] to-[#163d2b] text-white shadow-xl">
+      {/* Decorative circles */}
+      <div
+        className="pointer-events-none absolute -right-10 -top-10 h-48 w-48 rounded-full border border-white/10 bg-white/[0.07]"
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute right-10 top-16 h-32 w-32 rounded-full border border-white/10 bg-white/[0.09]"
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute -right-4 top-2 h-24 w-24 rounded-full bg-white/[0.06]"
+        aria-hidden="true"
+      />
+
       {/* Header */}
-      <div className="flex items-start gap-3 px-5 py-4">
-        <div className="mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-white/15">
-          <SparklesIcon className="h-4 w-4 text-white" aria-hidden="true" />
+      <div className="relative px-6 pt-5 pb-3">
+        <div className="mb-3 flex items-center gap-1.5">
+          <SparklesIcon className="h-3.5 w-3.5 text-emerald-400" aria-hidden="true" />
+          <span className="text-[11px] font-bold uppercase tracking-widest text-emerald-400">
+            {t('adminBriefing.label', 'Platform Briefing')}
+          </span>
         </div>
-        <h2 className="text-base font-semibold leading-snug">{headline}</h2>
+        <h2 className="text-xl font-bold leading-tight">{headline}</h2>
       </div>
 
       {/* Items */}
-      <div className="space-y-2 px-5 pb-3">
+      <div className="relative space-y-1.5 px-6 pb-3">
         {briefing.items.map((item) => {
           const Icon = ICONS[item.type] ?? BellIcon;
           const singularKey = `adminBriefing.${item.type}`;
@@ -139,12 +150,12 @@ export const AdminBriefingCard: React.FC<AdminBriefingCardProps> = ({
       </div>
 
       {/* CTA */}
-      <div className="border-t border-white/15 px-5 py-3">
+      <div className="relative px-6 pb-5 pt-2">
         <button
           onClick={() => onAction(HANDLE_ALL_PROMPT)}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-emerald-800 transition-colors hover:bg-white/90 focus:outline-none focus:ring-2 focus:ring-white/40"
+          className="inline-flex items-center gap-1.5 rounded-full bg-[#0f2d1e] px-4 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#0a2018] focus:outline-none focus:ring-2 focus:ring-white/30"
         >
-          <SparklesIcon className="h-4 w-4" aria-hidden="true" />
+          <SparklesIcon className="h-3 w-3" aria-hidden="true" />
           {t('workspace.briefing.handleAll', 'Handle everything with me')}
         </button>
       </div>

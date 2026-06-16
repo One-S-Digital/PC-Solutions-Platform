@@ -72,18 +72,20 @@ const AssistantWorkspacePage: React.FC = () => {
     messages.length === 0 && !isLoadingHistory && (briefing?.items.length ?? 0) > 0;
 
   return (
-    <div className="flex h-full min-h-[calc(100dvh-8rem)] flex-col">
+    <div className="flex h-full flex-col bg-gray-50/60">
       <AssistantModalHandler pendingModal={pendingModal} onHandled={clearPendingModal} />
 
       {initError && (
-        <div className="mb-3 rounded-card border border-red-100 bg-red-50 px-4 py-2 text-sm text-red-600">
-          {initError}
+        <div className="mx-auto mt-3 w-full max-w-3xl px-4">
+          <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-2 text-sm text-red-600">
+            {initError}
+          </div>
         </div>
       )}
 
       {/* Thread */}
       <div className="flex-1 overflow-y-auto">
-        <div className="mx-auto flex min-h-full w-full max-w-3xl flex-col justify-end py-2">
+        <div className="mx-auto flex min-h-full w-full max-w-3xl flex-col justify-end px-4 py-4 sm:px-6">
           {isLoadingHistory && (
             <div className="flex flex-1 items-center justify-center py-16">
               <ArrowPathIcon className="h-6 w-6 animate-spin text-emerald-600" aria-hidden="true" />
@@ -114,10 +116,12 @@ const AssistantWorkspacePage: React.FC = () => {
       </div>
 
       {/* Quick actions + composer + trust line */}
-      <div className="mx-auto w-full max-w-3xl pt-3">
-        <QuickActionChips onAction={sendMessage} disabled={composerDisabled} />
-        <Composer onSend={sendMessage} disabled={composerDisabled} />
-        <TrustFooter />
+      <div className="border-t border-gray-200/60 bg-white px-4 pb-4 pt-3 sm:px-6">
+        <div className="mx-auto w-full max-w-3xl">
+          <QuickActionChips onAction={sendMessage} disabled={composerDisabled} />
+          <Composer onSend={sendMessage} disabled={composerDisabled} />
+          <TrustFooter />
+        </div>
       </div>
     </div>
   );
