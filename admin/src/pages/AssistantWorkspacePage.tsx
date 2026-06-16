@@ -67,7 +67,7 @@ const AssistantWorkspacePage: React.FC = () => {
     }
   }, [conversationId, messages.length, requestedConversationId, setSearchParams]);
 
-  const composerDisabled = isStreaming || isLoadingHistory || !!initError || !conversationId;
+  const composerDisabled = isStreaming || isLoadingHistory || !!initError;
   const showBriefing =
     messages.length === 0 && !isLoadingHistory && (briefing?.items.length ?? 0) > 0;
 

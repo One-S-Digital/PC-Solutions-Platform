@@ -188,16 +188,9 @@ export function useAssistantChat(active: boolean, requestedConversationId?: stri
       return; // the next effect run creates the new conversation
     }
 
-    if (conversationId) return;
-
-    const locale = i18n.language?.toLowerCase() ?? 'en';
-
-    createConversation(getToken, locale)
-      .then(({ id }) => setConversationId(id))
-      .catch((err: unknown) => {
-        const msg = err instanceof Error ? err.message : 'Failed to start conversation';
-        setInitError(msg);
-      });
+    // No active conversation and no requested one — conversation is created
+    // lazily on the first sendMessage so empty conversations never appear in
+    // the sidebar list.
   }, [active, requestedConversationId, conversationId, getToken, i18n.language]);
 
   // ─── Flush pending streaming text into messages ───────────────────────────
@@ -229,10 +222,29 @@ export function useAssistantChat(active: boolean, requestedConversationId?: stri
   const sendMessage = useCallback(
     async (text: string) => {
       const msg = text.trim();
-      if (!msg || isStreaming || !conversationId) return;
+      if (!msg || isStreaming) return;
 
       doneFiredRef.current = false;
       pendingNextStepsRef.current = [];
+
+      // Lazy conversation creation: create only on first send so empty
+      // conversations never appear in the sidebar list.
+      let activeConvId = conversationId;
+      if (!activeConvId) {
+        const locale = i18n.language?.toLowerCase() ?? 'en';
+        try {
+          const { id } = await createConversation(getToken, locale);
+          setConversationId(id);
+          activeConvId = id;
+        } catch (err) {
+          const errMsg = err instanceof Error ? err.message : 'Failed to start conversation';
+          setMessages((prev) => [
+            ...prev,
+            { id: genId(), sender: 'assistant', text: `⚠️ ${errMsg}` },
+          ]);
+          return;
+        }
+      }
 
       setMessages((prev) => [...prev, { id: genId(), sender: 'user', text: msg }]);
       setIsStreaming(true);
@@ -240,7 +252,7 @@ export function useAssistantChat(active: boolean, requestedConversationId?: stri
       const labelKey = getThinkingLabelKey(msg);
       setThinkingLabel(t(labelKey.key, labelKey.fallback));
 
-      await streamMessage(getToken, conversationId, msg, {
+      await streamMessage(getToken, activeConvId, msg, {
         onToken: (chunk) => {
           setPendingAssistantText((prev) => prev + chunk);
         },
@@ -288,7 +300,7 @@ export function useAssistantChat(active: boolean, requestedConversationId?: stri
         },
       });
     },
-    [isStreaming, conversationId, getToken, flushPending, t]
+    [isStreaming, conversationId, i18n.language, getToken, flushPending, t]
   );
 
   // ─── L3 tool approval round-trip ───────────────────────────────────────────
