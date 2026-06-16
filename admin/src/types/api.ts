@@ -621,7 +621,7 @@ export interface MailingSegmentListResponse {
   totalPages: number;
 }
 
-export type MailingCampaignStatus = 'DRAFT' | 'SENDING' | 'SENT' | 'FAILED' | 'CANCELLED';
+export type MailingCampaignStatus = 'DRAFT' | 'SCHEDULED' | 'SENDING' | 'SENT' | 'FAILED' | 'CANCELLED';
 
 export interface MailingCampaignSummary {
   id: string;
@@ -631,6 +631,7 @@ export interface MailingCampaignSummary {
   sentCount: number;
   failedCount: number;
   segmentName: string | null;
+  scheduledAt: string | null;
   createdAt: string;
   sentAt: string | null;
   completedAt: string | null;
@@ -649,6 +650,7 @@ export interface MailingCampaignDetail {
   failedCount: number;
   cursor: string | null;
   createdById: string;
+  scheduledAt: string | null;
   sentAt: string | null;
   completedAt: string | null;
   createdAt: string;

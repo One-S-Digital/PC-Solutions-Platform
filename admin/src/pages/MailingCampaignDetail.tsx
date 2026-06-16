@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
-  ArrowLeft, Send, XCircle, CheckCircle, AlertTriangle, Clock, Loader2, Mail,
+  ArrowLeft, Send, XCircle, CheckCircle, AlertTriangle, Clock, Loader2, Mail, Calendar,
 } from 'lucide-react'
 import DOMPurify from 'dompurify'
 import { toast } from 'sonner'
@@ -15,6 +15,7 @@ import SendProgressOverlay from '../components/mailing/SendProgressOverlay'
 
 const statusConfig: Record<string, { icon: React.ElementType; color: string; bg: string }> = {
   DRAFT: { icon: Clock, color: 'text-gray-600', bg: 'bg-gray-100' },
+  SCHEDULED: { icon: Calendar, color: 'text-purple-600', bg: 'bg-purple-100' },
   SENDING: { icon: Loader2, color: 'text-blue-600', bg: 'bg-blue-100' },
   SENT: { icon: CheckCircle, color: 'text-green-600', bg: 'bg-green-100' },
   FAILED: { icon: AlertTriangle, color: 'text-red-600', bg: 'bg-red-100' },
@@ -37,7 +38,7 @@ const MailingCampaignDetailPage: React.FC = () => {
     enabled: !!id,
     refetchInterval: (query) => {
       const d = query.state.data as CampaignType | undefined
-      return d?.status === 'SENDING' ? 3000 : false
+      return d?.status === 'SENDING' || d?.status === 'SCHEDULED' ? 5000 : false
     },
   })
 
@@ -57,7 +58,7 @@ const MailingCampaignDetailPage: React.FC = () => {
       : 0
 
   const canResume = campaign.status === 'DRAFT' || campaign.status === 'SENDING'
-  const canCancel = campaign.status === 'DRAFT' || campaign.status === 'SENDING'
+  const canCancel = campaign.status === 'DRAFT' || campaign.status === 'SCHEDULED' || campaign.status === 'SENDING'
 
   const handleCancel = async () => {
     if (!confirm('Cancel this campaign? This cannot be undone.')) return
@@ -89,6 +90,9 @@ const MailingCampaignDetailPage: React.FC = () => {
           <p className="text-sm text-gray-500 mt-1">
             Created {new Date(campaign.createdAt).toLocaleString()}
             {campaign.segment && <> &middot; Segment: {campaign.segment.name}</>}
+            {campaign.scheduledAt && (
+              <> &middot; <span className="text-purple-600 font-medium">Scheduled: {new Date(campaign.scheduledAt).toLocaleString()}</span></>
+            )}
           </p>
         </div>
         <div className="flex items-center gap-2">

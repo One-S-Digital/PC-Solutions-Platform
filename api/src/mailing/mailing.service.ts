@@ -1,4 +1,5 @@
 import { Injectable, Logger, BadRequestException, NotFoundException, ConflictException } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
 import { MailingTransportService } from './mailing-transport.service';
 import { MailingFiltersDto } from './dto/mailing-filters.dto';
@@ -568,7 +569,17 @@ export class MailingService {
     filters?: MailingFiltersDto,
     segmentId?: string,
     extraEmails?: string[],
+    scheduledAt?: Date,
   ) {
+    if (scheduledAt) {
+      if (Number.isNaN(scheduledAt.getTime())) {
+        throw new BadRequestException('Invalid scheduledAt value');
+      }
+      if (scheduledAt.getTime() < Date.now() + 60_000) {
+        throw new BadRequestException('scheduledAt must be at least 1 minute in the future');
+      }
+    }
+
     let resolvedFilters = filters;
 
     // If segmentId is provided, load its filters
@@ -620,7 +631,8 @@ export class MailingService {
         extraEmailsJson: normalizedExtras.length > 0 ? normalizedExtras : null,
         totalEstimated,
         createdById,
-        status: MailingCampaignStatus.DRAFT,
+        status: scheduledAt ? MailingCampaignStatus.SCHEDULED : MailingCampaignStatus.DRAFT,
+        scheduledAt: scheduledAt || null,
       },
     });
 
@@ -632,14 +644,14 @@ export class MailingService {
           entityId: campaign.id,
           action: 'create',
           actorId: createdById,
-          metadata: { subject, segmentId, totalEstimated, extraEmailCount: normalizedExtras.length },
+          metadata: { subject, segmentId, totalEstimated, extraEmailCount: normalizedExtras.length, scheduledAt },
         },
       });
     } catch (auditErr: any) {
       this.logger.warn(`Audit log failed for campaign ${campaign.id}: ${auditErr?.message}`);
     }
 
-    return { campaignId: campaign.id, estimatedCount: totalEstimated, status: campaign.status };
+    return { campaignId: campaign.id, estimatedCount: totalEstimated, status: campaign.status, scheduledAt: campaign.scheduledAt };
   }
 
   async listCampaigns(page = 1, pageSize = 20) {
@@ -663,6 +675,7 @@ export class MailingService {
         sentCount: c.sentCount,
         failedCount: c.failedCount,
         segmentName: c.segment?.name || null,
+        scheduledAt: c.scheduledAt?.toISOString() || null,
         createdAt: c.createdAt.toISOString(),
         sentAt: c.sentAt?.toISOString() || null,
         completedAt: c.completedAt?.toISOString() || null,
@@ -685,8 +698,12 @@ export class MailingService {
 
   async cancelCampaign(id: string, adminId: string) {
     const campaign = await this.getCampaign(id);
-    if (campaign.status !== MailingCampaignStatus.DRAFT && campaign.status !== MailingCampaignStatus.SENDING) {
-      throw new BadRequestException('Can only cancel DRAFT or SENDING campaigns');
+    if (
+      campaign.status !== MailingCampaignStatus.DRAFT &&
+      campaign.status !== MailingCampaignStatus.SCHEDULED &&
+      campaign.status !== MailingCampaignStatus.SENDING
+    ) {
+      throw new BadRequestException('Can only cancel DRAFT, SCHEDULED, or SENDING campaigns');
     }
 
     await this.prisma.auditLog.create({
@@ -706,6 +723,36 @@ export class MailingService {
   }
 
   /* ================================================================ */
+  /*  SCHEDULER                                                        */
+  /* ================================================================ */
+
+  @Cron(CronExpression.EVERY_MINUTE)
+  async processScheduledCampaigns() {
+    const due = await this.prisma.mailingCampaign.findMany({
+      where: {
+        status: MailingCampaignStatus.SCHEDULED,
+        scheduledAt: { lte: new Date() },
+      },
+      select: { id: true, subject: true },
+    });
+
+    for (const campaign of due) {
+      this.logger.log(`Auto-sending scheduled campaign ${campaign.id}: "${campaign.subject}"`);
+      this.runScheduledCampaign(campaign.id).catch((err) => {
+        this.logger.error(`Failed to auto-send campaign ${campaign.id}: ${err?.message}`);
+      });
+    }
+  }
+
+  private async runScheduledCampaign(campaignId: string) {
+    let done = false;
+    while (!done) {
+      const result = await this.sendBatch(campaignId, DEFAULT_BATCH_SIZE);
+      done = result.done;
+    }
+  }
+
+  /* ================================================================ */
   /*  BATCH SENDING                                                    */
   /* ================================================================ */
 
@@ -714,6 +761,7 @@ export class MailingService {
 
     if (
       campaign.status !== MailingCampaignStatus.DRAFT &&
+      campaign.status !== MailingCampaignStatus.SCHEDULED &&
       campaign.status !== MailingCampaignStatus.SENDING
     ) {
       throw new BadRequestException(`Cannot send: campaign status is ${campaign.status}`);
@@ -772,11 +820,11 @@ export class MailingService {
     }
 
     // SEC: optimistic concurrency — prevent duplicate batch sends from parallel requests
-    // Only one request should transition DRAFT -> SENDING; others will see SENDING and proceed safely
+    // Only one request should transition DRAFT/SCHEDULED -> SENDING; others will see SENDING and proceed safely
     // The cursor-based pagination prevents duplicate emails even if two batches run concurrently
-    if (campaign.status === MailingCampaignStatus.DRAFT) {
+    if (campaign.status === MailingCampaignStatus.DRAFT || campaign.status === MailingCampaignStatus.SCHEDULED) {
       const updated = await this.prisma.mailingCampaign.updateMany({
-        where: { id: campaignId, status: MailingCampaignStatus.DRAFT },
+        where: { id: campaignId, status: { in: [MailingCampaignStatus.DRAFT, MailingCampaignStatus.SCHEDULED] } },
         data: { status: MailingCampaignStatus.SENDING, sentAt: new Date() },
       });
       if (updated.count === 0) {
@@ -961,21 +1009,22 @@ export class MailingService {
     const newSentCount = campaign.sentCount + sentThisBatch;
     const newFailedCount = campaign.failedCount + failedThisBatch;
 
-    await this.prisma.mailingCampaign.update({
-      where: { id: campaignId },
-      data: {
-        sentCount: newSentCount,
-        failedCount: newFailedCount,
-        cursor: lastUserId,
-        ...(dbDone && extraEmails.length > 0 ? { extraEmailsSent: true } : {}),
-        ...(done
-          ? {
-              status: MailingCampaignStatus.SENT,
-              completedAt: new Date(),
-            }
-          : {}),
-      },
-    });
+    const baseData: Prisma.MailingCampaignUpdateInput = {
+      sentCount: newSentCount,
+      failedCount: newFailedCount,
+      cursor: lastUserId,
+      ...(dbDone && extraEmails.length > 0 ? { extraEmailsSent: true } : {}),
+    };
+
+    if (done) {
+      // Use updateMany with a status guard so a concurrent cancel cannot be overwritten
+      await this.prisma.mailingCampaign.updateMany({
+        where: { id: campaignId, status: MailingCampaignStatus.SENDING },
+        data: { ...baseData, status: MailingCampaignStatus.SENT, completedAt: new Date() },
+      });
+    } else {
+      await this.prisma.mailingCampaign.update({ where: { id: campaignId }, data: baseData });
+    }
 
     return {
       sentCountThisBatch: sentThisBatch,

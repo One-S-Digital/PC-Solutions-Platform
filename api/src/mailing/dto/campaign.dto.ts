@@ -1,4 +1,4 @@
-import { IsString, IsOptional, ValidateNested, IsInt, Min, Max, IsArray, IsEmail, ArrayMaxSize } from 'class-validator';
+import { IsString, IsOptional, ValidateNested, IsInt, Min, Max, IsArray, IsEmail, ArrayMaxSize, IsDateString } from 'class-validator';
 import { Type } from 'class-transformer';
 import { MailingFiltersDto } from './mailing-filters.dto';
 
@@ -31,6 +31,10 @@ export class CreateCampaignDto {
   @ArrayMaxSize(500)
   @IsEmail({}, { each: true })
   extraEmails?: string[];
+
+  @IsOptional()
+  @IsDateString()
+  scheduledAt?: string;
 }
 
 export class SendBatchDto {

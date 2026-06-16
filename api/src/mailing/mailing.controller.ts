@@ -266,6 +266,7 @@ export class MailingController {
       filters,
       body.customListId ? undefined : body.segmentId,
       body.extraEmails,
+      body.scheduledAt ? new Date(body.scheduledAt) : undefined,
     );
   }
 

@@ -2585,6 +2585,7 @@ model SeedRecord {
 
 enum MailingCampaignStatus {
   DRAFT
+  SCHEDULED
   SENDING
   SENT
   FAILED
@@ -2631,6 +2632,7 @@ model MailingCampaign {
 
   // Admin tracking
   createdById    String                @map("created_by_id")
+  scheduledAt    DateTime?             @map("scheduled_at")
   sentAt         DateTime?             @map("sent_at")
   completedAt    DateTime?             @map("completed_at")
 
@@ -2641,6 +2643,7 @@ model MailingCampaign {
   segment MailingSegment? @relation(fields: [segmentId], references: [id], onDelete: SetNull)
 
   @@index([status])
+  @@index([scheduledAt])
   @@index([createdById])
   @@index([segmentId])
   @@map("mailing_campaigns")

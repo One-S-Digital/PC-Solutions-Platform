@@ -86,9 +86,14 @@
     "footerNote": "Bewerbungen werden in Echtzeit aktualisiert",
     "status": {
       "accepted": "Angenommen",
+      "hired": "Eingestellt",
+      "interview": "Vorstellungsgespräch",
+      "offer": "Angebot",
       "pending": "Ausstehend",
       "rejected": "Abgelehnt",
-      "reviewed": "Gesehen"
+      "reviewed": "Gesehen",
+      "shortlisted": "Vorausgewählt",
+      "submitted": "Eingereicht"
     },
     "table": {
       "actions": "Aktionen",
