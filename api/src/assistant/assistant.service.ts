@@ -209,11 +209,13 @@ export class AssistantService {
       if (envOverride === 'true' || envOverride === '1') return;
       throw new ForbiddenException('AI Assistant is not enabled.');
     }
+    // No env var: kill-switch pattern — enabled by default unless a DB row
+    // explicitly marks it inactive. This mirrors the feature-flags controller.
     const flag = await this.prisma.featureFlag.findFirst({
-      where: { key: 'ai_assistant_enabled', isActive: true },
+      where: { key: 'ai_assistant_enabled' },
     });
-    if (!flag) {
-      throw new ForbiddenException('AI Assistant is not yet enabled.');
+    if (flag != null && !flag.isActive) {
+      throw new ForbiddenException('AI Assistant is not enabled.');
     }
   }
 }
