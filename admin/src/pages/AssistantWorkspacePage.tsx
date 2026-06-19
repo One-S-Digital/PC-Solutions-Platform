@@ -72,7 +72,7 @@ const AssistantWorkspacePage: React.FC = () => {
     messages.length === 0 && !isLoadingHistory && (briefing?.items.length ?? 0) > 0;
 
   return (
-    <div className="flex h-full flex-col bg-gray-50/60">
+    <div className="flex h-full min-h-[calc(100dvh-8rem)] flex-col bg-gray-50/60">
       <AssistantModalHandler pendingModal={pendingModal} onHandled={clearPendingModal} />
 
       {initError && (

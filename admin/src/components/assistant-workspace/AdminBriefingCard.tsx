@@ -153,7 +153,7 @@ export const AdminBriefingCard: React.FC<AdminBriefingCardProps> = ({
       <div className="relative px-6 pb-5 pt-2">
         <button
           onClick={() => onAction(HANDLE_ALL_PROMPT)}
-          className="inline-flex items-center gap-1.5 rounded-full bg-[#0f2d1e] px-4 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#0a2018] focus:outline-none focus:ring-2 focus:ring-white/30"
+          className="inline-flex items-center gap-1.5 rounded-full bg-[#0f2d1e] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#0a2018] focus:outline-none focus:ring-2 focus:ring-white/30"
         >
           <SparklesIcon className="h-3 w-3" aria-hidden="true" />
           {t('workspace.briefing.handleAll', 'Handle everything with me')}

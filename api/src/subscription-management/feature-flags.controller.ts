@@ -54,7 +54,7 @@ export class FeatureFlagsController {
     const envOverride = process.env.AI_ASSISTANT_ENABLED;
     if (envOverride !== undefined) {
       flags['ai_assistant_enabled'] = envOverride === 'true' || envOverride === '1';
-    } else if (flags['ai_assistant_enabled'] === undefined) {
+    } else if (flags['ai_assistant_enabled'] == null) {
       flags['ai_assistant_enabled'] = true;
     }
 
