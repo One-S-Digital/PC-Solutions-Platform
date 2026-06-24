@@ -30,7 +30,7 @@ export const Composer: React.FC<ComposerProps> = ({ onSend, disabled }) => {
   );
 
   return (
-    <div className="flex items-end gap-3 rounded-2xl border border-gray-200 bg-white px-6 py-4 shadow-sm transition-shadow focus-within:border-emerald-300 focus-within:shadow-md focus-within:ring-1 focus-within:ring-emerald-200">
+    <div className="flex items-end gap-3 rounded-2xl border border-gray-200 bg-white px-6 py-4 shadow-sm transition-shadow focus-within:border-emerald-300 focus-within:shadow-md focus-within:ring-2 focus-within:ring-emerald-200">
       <textarea
         value={inputText}
         onChange={(e) => setInputText(e.target.value)}

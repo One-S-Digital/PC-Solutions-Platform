@@ -49,10 +49,13 @@ export class FeatureFlagsController {
     }
 
     // AI_ASSISTANT_ENABLED env var overrides the DB for the master kill switch.
-    // Set to 'true' or 'false' in Render → Environment. If unset, DB value wins.
+    // Set to 'false' in Render → Environment to disable globally. If unset and
+    // the DB has no explicit value, the assistant defaults to ON (kill-switch pattern).
     const envOverride = process.env.AI_ASSISTANT_ENABLED;
     if (envOverride !== undefined) {
       flags['ai_assistant_enabled'] = envOverride === 'true' || envOverride === '1';
+    } else if (flags['ai_assistant_enabled'] == null) {
+      flags['ai_assistant_enabled'] = true;
     }
 
     return wrapResponse({ flags });
