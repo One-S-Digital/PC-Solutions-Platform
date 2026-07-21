@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   UserCircleIcon,
@@ -12,6 +12,7 @@ import {
 import Button from '../ui/Button';
 import FileUploadZone from '../ui/FileUploadZone';
 import { STANDARD_INPUT_FIELD, SWISS_CANTONS, EDUCATOR_JOB_ROLES, type EducatorJobRole } from '../../constants';
+import { readEducatorDraft, writeEducatorDraft } from '../../utils/signupDraft';
 
 export interface EducatorProfileStepData {
   firstName: string;
@@ -54,21 +55,35 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
 }) => {
   const { t } = useTranslation(['signup', 'common', 'settings']);
 
-  const [data, setData] = useState<EducatorProfileStepData>({
-    firstName: initialData.firstName || '',
-    lastName: initialData.lastName || '',
-    phone: initialData.phone || '',
-    email: initialData.email || '',
-    canton: initialData.canton || '',
-    city: initialData.city || '',
-    shortBio: initialData.shortBio || '',
-    professionalExperience: initialData.professionalExperience || '',
-    cvUrl: initialData.cvUrl || '',
-    cvAssetId: initialData.cvAssetId || '',
-    jobRole: initialData.jobRole || '',
+  const [data, setData] = useState<EducatorProfileStepData>(() => {
+    // Restore a previously saved draft (survives refresh / tab suspension / the
+    // verification link opening in another tab) and layer it over initialData so
+    // the educator never re-types their profile after signup information is lost.
+    const draft = readEducatorDraft<Partial<EducatorProfileStepData>>(initialData.email);
+    const pick = (field: keyof EducatorProfileStepData) =>
+      (draft?.[field] as string | undefined) || (initialData[field] as string | undefined) || '';
+    return {
+      firstName: pick('firstName'),
+      lastName: pick('lastName'),
+      phone: pick('phone'),
+      email: initialData.email || (draft?.email as string) || '',
+      canton: pick('canton'),
+      city: pick('city'),
+      shortBio: pick('shortBio'),
+      professionalExperience: pick('professionalExperience'),
+      cvUrl: pick('cvUrl'),
+      cvAssetId: pick('cvAssetId'),
+      jobRole: (draft?.jobRole as EducatorJobRole | '') || initialData.jobRole || '',
+    };
   });
 
   const [errors, setErrors] = useState<EducatorProfileStepErrors>({});
+
+  // Persist the draft as the user edits so nothing typed here is lost before the
+  // "Complete Setup" PATCH succeeds. The parent clears it once step 4 is reached.
+  useEffect(() => {
+    writeEducatorDraft(data.email, data);
+  }, [data]);
 
   const set = (field: keyof EducatorProfileStepData, value: string) => {
     setData(prev => ({ ...prev, [field]: value }));
