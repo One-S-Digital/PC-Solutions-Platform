@@ -1,4 +1,4 @@
-import React, { useState, FormEvent, useEffect } from 'react';
+import React, { useState, FormEvent, useEffect, useRef } from 'react';
 import { useNavigate, Link, useLocation, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSignUp, useAuth, useUser } from '@clerk/clerk-react';
@@ -230,10 +230,22 @@ const SignupPage: React.FC = () => {
     }
   }, [isSignedIn, currentUser, hasStartedSignup, isIncompleteEducator, navigate]);
 
-  // Restore any persisted wizard progress once on mount, before the redirect guard
-  // above can act. This brings back the role and the details the user already typed
-  // after a refresh or when the tab is restored from Safari's bfcache.
+  // Restore any persisted wizard progress once, before the redirect guard above can
+  // act. This brings back the role and the details the user already typed after a
+  // refresh or when the tab is restored from Safari's bfcache.
+  //
+  // Crucially, this must wait until Clerk AND the backend user have settled: Clerk
+  // loads asynchronously, so `isSignedIn` starts out false. If we restored a step-2
+  // draft during that window we would mark the signup "started" and then block the
+  // incomplete-educator resume effect once the real (signed-in) state arrives,
+  // stranding the user on the step-2 account-creation form. Gate on settled auth and
+  // only touch step-2 state for a genuinely anonymous draft.
+  const hasRestoredRef = useRef(false);
   useEffect(() => {
+    if (!isLoaded || isAuthLoading) return; // wait for auth to settle
+    if (hasRestoredRef.current) return;
+    hasRestoredRef.current = true;
+
     const saved = readWizardState();
     if (!saved) return;
 
@@ -244,16 +256,15 @@ const SignupPage: React.FC = () => {
       setFormData(prev => ({ ...prev, ...(saved.formData as Partial<SignupFormData>) }));
     }
     // Only restore an un-authenticated draft to step 2 (and mark the signup as
-    // started so the dashboard redirect guard leaves them alone). Resuming to step 3
-    // for a signed-in educator is server-driven by the resume effect below, so we
-    // never set hasStartedSignup here on a stale role alone — that would block the
-    // resume effect and strand the user on step 1.
-    if (saved.currentStep === 2 && !isSignedIn) {
+    // started so the dashboard redirect guard leaves them alone). A signed-in
+    // incomplete educator is resumed into step 3 by the effect below, so we must not
+    // set hasStartedSignup here for them — that would skip the resume.
+    if (saved.currentStep === 2 && !isSignedIn && !isIncompleteEducator) {
       setCurrentStep(2);
       setHasStartedSignup(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isLoaded, isAuthLoading, isSignedIn, isIncompleteEducator]);
 
   // Resume an incomplete educator straight into step 3 so they can finish saving
   // their profile instead of silently landing on the dashboard with their signup
