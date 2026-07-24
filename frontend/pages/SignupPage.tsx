@@ -1,4 +1,4 @@
-import React, { useState, FormEvent, useEffect } from 'react';
+import React, { useState, FormEvent, useEffect, useRef } from 'react';
 import { useNavigate, Link, useLocation, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSignUp, useAuth, useUser } from '@clerk/clerk-react';
@@ -17,6 +17,11 @@ import { API_ENDPOINTS } from '../services/api-endpoints';
 import { getHomePath } from '../utils/navigation';
 import LogoLink from '../components/shared/LogoLink';
 import EducatorProfileStep, { EducatorProfileStepData } from '../components/signup/EducatorProfileStep';
+import {
+  readWizardState,
+  writeWizardState,
+  clearSignupDrafts,
+} from '../utils/signupDraft';
 
 const SIGNUP_ROLE_TO_USER_ROLE: Record<SignupRole, UserRole> = {
   [SignupRole.FOUNDATION]: UserRole.FOUNDATION,
@@ -67,6 +72,19 @@ const SignupPage: React.FC = () => {
   
   // For backwards compatibility, keep isOAuthCompletion for OAuth-specific UI
   const isOAuthCompletion = needsProfileCompletion && hasOAuthAccount;
+
+  // An educator whose backend account exists (created by the Clerk webhook at the
+  // end of step 2) but who never submitted step 3 has an empty profile — no
+  // shortBio and no CV. Detect that so we can resume them into step 3 instead of
+  // dropping them on the dashboard with their signup information discarded.
+  const isIncompleteEducator = Boolean(
+    isSignedIn &&
+      currentUser &&
+      !isAuthLoading &&
+      currentUser.role === UserRole.EDUCATOR &&
+      !((currentUser as any).shortBio && String((currentUser as any).shortBio).trim()) &&
+      !((currentUser as any).cvUrl && String((currentUser as any).cvUrl).trim()),
+  );
 
   useEffect(() => {
     if (settingsError) {
@@ -201,11 +219,96 @@ const SignupPage: React.FC = () => {
 
   // Redirect if user is already logged in AND has a backend profile (currentUser is set)
   // If currentUser is null, it means they need to complete their profile (e.g. after Google Sign Up)
+  //
+  // Exception: an educator who never completed step 3 (empty profile) must NOT be
+  // redirected to the dashboard here — that is exactly how signup information gets
+  // lost on refresh / when the verification link opens in a new tab. Such users are
+  // resumed into step 3 by the effect below instead.
   useEffect(() => {
-    if (isSignedIn && currentUser && !hasStartedSignup) {
+    if (isSignedIn && currentUser && !hasStartedSignup && !isIncompleteEducator) {
       navigate('/dashboard', { replace: true });
     }
-  }, [isSignedIn, currentUser, hasStartedSignup, navigate]);
+  }, [isSignedIn, currentUser, hasStartedSignup, isIncompleteEducator, navigate]);
+
+  // Restore any persisted wizard progress once, before the redirect guard above can
+  // act. This brings back the role and the details the user already typed after a
+  // refresh or when the tab is restored from Safari's bfcache.
+  //
+  // Crucially, this must wait until Clerk AND the backend user have settled: Clerk
+  // loads asynchronously, so `isSignedIn` starts out false. If we restored a step-2
+  // draft during that window we would mark the signup "started" and then block the
+  // incomplete-educator resume effect once the real (signed-in) state arrives,
+  // stranding the user on the step-2 account-creation form. Gate on settled auth and
+  // only touch step-2 state for a genuinely anonymous draft.
+  const hasRestoredRef = useRef(false);
+  useEffect(() => {
+    if (!isLoaded || isAuthLoading) return; // wait for auth to settle
+    if (hasRestoredRef.current) return;
+    hasRestoredRef.current = true;
+
+    const saved = readWizardState();
+    if (!saved) return;
+
+    if (saved.selectedRole) {
+      setSelectedRole(saved.selectedRole as SignupRole);
+    }
+    if (saved.formData) {
+      setFormData(prev => ({ ...prev, ...(saved.formData as Partial<SignupFormData>) }));
+    }
+    // Only restore an un-authenticated draft to step 2 (and mark the signup as
+    // started so the dashboard redirect guard leaves them alone). A signed-in
+    // incomplete educator is resumed into step 3 by the effect below, so we must not
+    // set hasStartedSignup here for them — that would skip the resume.
+    if (saved.currentStep === 2 && !isSignedIn && !isIncompleteEducator) {
+      setCurrentStep(2);
+      setHasStartedSignup(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded, isAuthLoading, isSignedIn, isIncompleteEducator]);
+
+  // Resume an incomplete educator straight into step 3 so they can finish saving
+  // their profile instead of silently landing on the dashboard with their signup
+  // information discarded.
+  useEffect(() => {
+    if (!isIncompleteEducator || hasStartedSignup) return;
+    setSelectedRole(SignupRole.EDUCATOR);
+    setHasStartedSignup(true);
+    setShowVerificationStep(false);
+    setSuccessRedirect(getSuccessRedirectForRole());
+    // Seed the wizard from the authenticated account so a resume that has no
+    // persisted draft (e.g. the verification link opened in a fresh webview) still
+    // shows the educator's email/name rather than a blank read-only email field.
+    setFormData(prev => ({
+      ...prev,
+      email: prev.email || currentUser?.email || '',
+      contactPerson:
+        prev.contactPerson ||
+        `${currentUser?.firstName || ''} ${currentUser?.lastName || ''}`.trim(),
+      phone: prev.phone || (currentUser as any)?.phoneNumber || '',
+    }));
+    setCurrentStep(3);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isIncompleteEducator, hasStartedSignup]);
+
+  // Persist wizard progress (never the password) while a signup is in flight, so it
+  // survives a refresh, tab suspension, or the verification link opening elsewhere.
+  useEffect(() => {
+    if (!hasStartedSignup || currentStep === 4) return;
+    // writeWizardState strips password/confirmPassword before persisting.
+    writeWizardState({
+      selectedRole,
+      currentStep,
+      formData: formData as unknown as Record<string, unknown>,
+    });
+  }, [hasStartedSignup, currentStep, selectedRole, formData]);
+
+  // Once the signup is fully completed (step 4) the persisted draft is no longer
+  // needed — clear it so a later visit starts fresh.
+  useEffect(() => {
+    if (currentStep === 4) {
+      clearSignupDrafts(formData.email);
+    }
+  }, [currentStep, formData.email]);
 
   // Handle successful verification - redirect if user becomes authenticated after showing success
   useEffect(() => {
