@@ -1,0 +1,19 @@
+{
+  "input": {
+    "rawText": "Bonjour, nous cherchons une éducatrice diplômée EDE pour un remplacement de 3 semaines dès le 2 juin, 30h/semaine, dans notre crèche à Genève (GE). Les enfants ont entre 3 mois et 2 ans. Merci.",
+    "locale": "fr"
+  },
+  "expected": {
+    "roleRequired": "Educator",
+    "contractType": "REPLACEMENT",
+    "startDate": "2026-06-02",
+    "endDate": null,
+    "hoursPerWeek": 30,
+    "canton": "GE",
+    "city": "Genève",
+    "ageGroups": ["INFANT", "TODDLER"],
+    "languages": ["fr"],
+    "qualifications": ["EDE"],
+    "notes": "Duration: 3 weeks from start date"
+  }
+}

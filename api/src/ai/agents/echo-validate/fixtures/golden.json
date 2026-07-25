@@ -1,0 +1,8 @@
+{
+  "input": {
+    "message": "hello world"
+  },
+  "expected": {
+    "echo": "hello world"
+  }
+}

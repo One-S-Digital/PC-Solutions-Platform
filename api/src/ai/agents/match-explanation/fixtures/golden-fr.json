@@ -1,0 +1,20 @@
+{
+  "input": {
+    "roleScore": 100,
+    "availabilityScore": 80,
+    "locationScore": 90,
+    "distanceKm": 3.2,
+    "qualificationScore": 100,
+    "languageScore": 100,
+    "ageGroupScore": 100,
+    "contractScore": 80,
+    "responsivenessScore": 75,
+    "totalScore": 91,
+    "requestSummary": "EDE educator, replacement, 30h/week, Geneva, infants/toddlers, French",
+    "candidateSummary": "Certified EDE, 5 years experience with infants, based in Carouge (3km from Geneva), French native",
+    "locale": "fr"
+  },
+  "expected": {
+    "explanation": "Candidate est une éducatrice EDE certifiée avec 5 ans d'expérience auprès des nourrissons, parfaitement alignée avec les besoins du poste. Basée à Carouge, à seulement 3 km, elle est disponible aux horaires demandés et répond avec fiabilité. Sa maîtrise du français et son expérience en crèche en font une candidate de premier choix."
+  }
+}

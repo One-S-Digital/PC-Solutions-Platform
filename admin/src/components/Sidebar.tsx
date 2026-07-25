@@ -28,6 +28,7 @@ import {
   ChevronRight,
   GraduationCap,
   ClipboardCheck,
+  Brain,
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useSettings } from '../hooks/useSettings'
@@ -105,6 +106,7 @@ const navStructure: NavEntry[] = [
       { key: 'mailingLists',          href: '/mailing',                icon: Mail },
       { key: 'support',               href: '/support',                icon: LifeBuoy },
       { key: 'discountTerminations',  href: '/discount-terminations',  icon: Tag },
+      { key: 'aiOperations',          href: '/ai',                     icon: Brain },
       { key: 'settings',              href: '/settings',               icon: Settings },
     ],
   },
