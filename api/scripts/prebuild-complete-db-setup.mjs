@@ -211,6 +211,7 @@ const verifyCriticalTables = () => {
     'mailing_campaigns',
     'mailing_custom_lists',
     'mailing_custom_list_members',
+    'mailing_templates',
   ];
   
   const sql = `
