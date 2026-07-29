@@ -33,21 +33,28 @@ interface UserDeletePayload {
 @Injectable()
 export class OutboxWorker {
   private readonly logger = new Logger(OutboxWorker.name);
-  private clerk: any;
+  private clerk: any = null;
+  private isEnabled: boolean = false;
 
   constructor(
     private prisma: PrismaService,
     private configService: ConfigService,
   ) {
     const clerkSecretKey = this.configService.get<string>('CLERK_SECRET_KEY');
-    if (!clerkSecretKey) {
-      throw new Error('CLERK_SECRET_KEY is not configured');
+    if (clerkSecretKey) {
+      this.clerk = createClerkClient({ secretKey: clerkSecretKey });
+      this.isEnabled = true;
+    } else {
+      this.logger.warn('CLERK_SECRET_KEY not configured - outbox worker will be disabled');
     }
-    this.clerk = createClerkClient({ secretKey: clerkSecretKey });
   }
 
   @Cron(CronExpression.EVERY_10_SECONDS)
   async processOutbox() {
+    if (!this.isEnabled) {
+      return; // Skip processing if Clerk is not configured
+    }
+    
     try {
       // Use raw query with FOR UPDATE SKIP LOCKED for concurrent safety
       const jobs = await this.prisma.$queryRaw<
