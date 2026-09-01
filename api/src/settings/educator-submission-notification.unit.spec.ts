@@ -90,6 +90,63 @@ describe('educator first-submission trigger', () => {
   });
 });
 
+/**
+ * Mirrors the emptying check inside the settings transaction: a PATCH can clear
+ * the CV via `cvUrl: ''` just as DELETE /settings/educator/cv can, so both doors
+ * into "PENDING_REVIEW with an empty profile" are closed.
+ */
+const applyPatch = (
+  existing: { shortBio: string | null; cvUrl: string | null; approvalStatus: EducatorApprovalStatus | null },
+  incoming: { shortBio?: string; cvUrl?: string },
+): EducatorApprovalStatus | null => {
+  const resultingShortBio = incoming.shortBio !== undefined ? incoming.shortBio : existing.shortBio;
+  const resultingCvUrl = incoming.cvUrl !== undefined ? incoming.cvUrl : existing.cvUrl;
+  const wouldBeEmpty = !resultingShortBio?.trim() && !resultingCvUrl?.trim();
+
+  if (wouldBeEmpty && existing.approvalStatus === EducatorApprovalStatus.PENDING_REVIEW) {
+    return EducatorApprovalStatus.INCOMPLETE;
+  }
+  return promote(existing.approvalStatus, incoming).status;
+};
+
+describe('educator profile emptied via PATCH', () => {
+  it('reverts to INCOMPLETE when a PATCH clears the last substantive field', () => {
+    expect(
+      applyPatch(
+        { shortBio: null, cvUrl: 'https://x/cv.pdf', approvalStatus: EducatorApprovalStatus.PENDING_REVIEW },
+        { cvUrl: '' },
+      ),
+    ).toBe(EducatorApprovalStatus.INCOMPLETE);
+  });
+
+  it('keeps PENDING_REVIEW when a biography survives the patch', () => {
+    expect(
+      applyPatch(
+        { shortBio: 'I have taught for ten years', cvUrl: 'https://x/cv.pdf', approvalStatus: EducatorApprovalStatus.PENDING_REVIEW },
+        { cvUrl: '' },
+      ),
+    ).toBe(EducatorApprovalStatus.PENDING_REVIEW);
+  });
+
+  it('never reopens an educator an admin has already decided on', () => {
+    expect(
+      applyPatch(
+        { shortBio: null, cvUrl: 'https://x/cv.pdf', approvalStatus: EducatorApprovalStatus.APPROVED },
+        { cvUrl: '' },
+      ),
+    ).toBe(EducatorApprovalStatus.APPROVED);
+  });
+
+  it('still promotes an INCOMPLETE educator submitting through the same patch', () => {
+    expect(
+      applyPatch(
+        { shortBio: null, cvUrl: null, approvalStatus: EducatorApprovalStatus.INCOMPLETE },
+        { shortBio: 'I have taught for ten years' },
+      ),
+    ).toBe(EducatorApprovalStatus.PENDING_REVIEW);
+  });
+});
+
 describe('educator CV deletion', () => {
   it('sends a CV-only application back to INCOMPLETE when the CV is removed', () => {
     // Otherwise the profile keeps PENDING_REVIEW with nothing in it, and

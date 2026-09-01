@@ -527,6 +527,28 @@ export class SettingsController {
         isFirstSubmission = promotion.count === 1;
       }
 
+      // The mirror of the promotion above. A PATCH can also EMPTY an
+      // application — `cvUrl: ''` clears the CV, and a CV-only submission then
+      // has nothing left. Without this, the profile would keep PENDING_REVIEW
+      // with no content, and approveEducator (which only refuses INCOMPLETE)
+      // would let an admin approve a blank profile into the candidate pool.
+      // DELETE /settings/educator/cv is guarded the same way; this covers the
+      // other door into the same state.
+      const resultingShortBio =
+        settings.shortBio !== undefined ? settings.shortBio : existingCv?.shortBio;
+      const resultingCvUrl =
+        settings.cvUrl !== undefined ? normalizedIncomingCvUrl : existingCv?.cvUrl;
+      const wouldBeEmpty = !resultingShortBio?.trim() && !resultingCvUrl?.trim();
+
+      if (wouldBeEmpty) {
+        // Scoped to PENDING_REVIEW: an APPROVED or REJECTED educator has been
+        // decided on by an admin and is never reopened by clearing a field.
+        await tx.user.updateMany({
+          where: { id: profileId, approvalStatus: EducatorApprovalStatus.PENDING_REVIEW },
+          data: { approvalStatus: EducatorApprovalStatus.INCOMPLETE },
+        });
+      }
+
       await tx.user.update({
         where: { id: profileId },
         data: {
