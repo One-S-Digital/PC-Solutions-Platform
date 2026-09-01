@@ -587,6 +587,25 @@ export class UsersService {
         select: { id: true },
       });
       profileUserIdToLink = existingProfile?.id || null;
+
+      // Apply the signup intent here too. This branch runs when the AppUser
+      // already exists — for example the Clerk webhook provisioned the account
+      // (possibly under the fallback role) and the user is now completing their
+      // profile with the real role. Skipping it left those accounts without the
+      // organization, phone and parent fields the form had already collected.
+      if (existingProfile?.id) {
+        const [firstNamePart, ...lastNameParts] = (dto.contactPerson || '').trim().split(' ');
+        await this.prisma.$transaction(async (tx) => {
+          await this.signupProfileService.applySignupIntent(tx, {
+            userId: existingProfile.id,
+            role: dto.role,
+            firstName: firstNamePart || null,
+            lastName: lastNameParts.join(' ') || null,
+            phoneNumber: dto.phone,
+            intent: parseSignupIntent(dto),
+          });
+        });
+      }
     } else {
       // Check if an account with this email already exists (for a DIFFERENT clerkId)
       // This can happen when:

@@ -73,14 +73,10 @@ async function main() {
 
     // Belt and braces: match on the status the migration sets AND on the
     // underlying condition, so a row the migration missed is still caught.
-    const candidates = await prisma.user.findMany({
+    const rows = await prisma.user.findMany({
       where: {
         role: UserRole.EDUCATOR,
         approvalStatus: { in: [EducatorApprovalStatus.INCOMPLETE, EducatorApprovalStatus.PENDING_REVIEW] },
-        AND: [
-          { OR: [{ shortBio: null }, { shortBio: '' }] },
-          { OR: [{ cvUrl: null }, { cvUrl: '' }] },
-        ],
         email: { not: null },
       },
       select: {
@@ -90,10 +86,21 @@ async function main() {
         lastName: true,
         approvalStatus: true,
         createdAt: true,
+        shortBio: true,
+        cvUrl: true,
       },
       orderBy: { createdAt: 'asc' },
-      ...(options.limit ? { take: options.limit } : {}),
     });
+
+    // The blank test must match migration 20260701020000, which uses
+    // COALESCE(TRIM(...), '') = ''. A Prisma filter on NULL and '' alone would
+    // miss an account reclassified to INCOMPLETE for a whitespace-only value,
+    // leaving it permanently un-reminded. `trim()` here is exactly TRIM there.
+    // Filtering in JS (rather than in the query) also means --limit applies to
+    // the accounts that actually qualify, not to the rows read.
+    const isBlank = (value: string | null) => !value || value.trim() === '';
+    const matching = rows.filter((row) => isBlank(row.shortBio) && isBlank(row.cvUrl));
+    const candidates = options.limit ? matching.slice(0, options.limit) : matching;
 
     if (candidates.length === 0) {
       console.log('\nNo incomplete educator accounts found. Nothing to do.\n');

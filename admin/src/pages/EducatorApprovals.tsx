@@ -203,11 +203,13 @@ const EducatorApprovals: React.FC = () => {
             <User className="w-10 h-10 mx-auto mb-3 text-gray-300" />
             <p className="font-medium">No educators found</p>
             <p className="text-sm mt-1">
-              {activeTab === 'PENDING_REVIEW'
-                ? 'All educator applications have been reviewed.'
-                : activeTab === 'INCOMPLETE'
-                  ? 'Every educator who signed up has submitted their application.'
-                  : `No ${STATUS_LABELS[activeTab].toLowerCase()} educators.`}
+              {search
+                ? 'No educators match your search.'
+                : activeTab === 'PENDING_REVIEW'
+                  ? 'All educator applications have been reviewed.'
+                  : activeTab === 'INCOMPLETE'
+                    ? 'Every educator who signed up has submitted their application.'
+                    : `No ${STATUS_LABELS[activeTab].toLowerCase()} educators.`}
             </p>
           </div>
         ) : (

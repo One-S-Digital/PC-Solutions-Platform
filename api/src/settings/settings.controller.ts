@@ -448,9 +448,13 @@ export class SettingsController {
     const isSubmittingApplication = Boolean(
       settings.shortBio?.trim() || settings.cvUrl?.trim(),
     );
-    const isFirstSubmission =
-      isSubmittingApplication &&
-      existingCv?.approvalStatus === EducatorApprovalStatus.INCOMPLETE;
+
+    // Set inside the transaction below by a conditional update, NOT from the
+    // snapshot above: two concurrent submissions would both read INCOMPLETE and
+    // both send the applicant email and admin notification. The update targets
+    // `approvalStatus: INCOMPLETE` explicitly, so exactly one of them can report
+    // an affected row and the notifications fire once.
+    let isFirstSubmission = false;
 
     const previousCvUrl = existingCv?.cvUrl || '';
     const normalizedIncomingCvUrl =
@@ -513,13 +517,19 @@ export class SettingsController {
 
       // Promote inside the same transaction as the data, so the admin queue can
       // never show an application whose content failed to save (or miss one
-      // that did).
+      // that did). Conditional on the current status, so concurrent submissions
+      // cannot both claim the transition.
+      if (isSubmittingApplication) {
+        const promotion = await tx.user.updateMany({
+          where: { id: profileId, approvalStatus: EducatorApprovalStatus.INCOMPLETE },
+          data: { approvalStatus: EducatorApprovalStatus.PENDING_REVIEW },
+        });
+        isFirstSubmission = promotion.count === 1;
+      }
+
       await tx.user.update({
         where: { id: profileId },
         data: {
-          ...(isFirstSubmission
-            ? { approvalStatus: EducatorApprovalStatus.PENDING_REVIEW }
-            : {}),
           firstName: settings.firstName,
           lastName: settings.lastName,
           email: settings.email,
@@ -712,7 +722,7 @@ export class SettingsController {
 
     const user = await this.prisma.user.findUnique({
       where: { id: profileId },
-      select: { cvUrl: true },
+      select: { cvUrl: true, shortBio: true, approvalStatus: true },
     });
 
     const cvUrl = user?.cvUrl || '';
@@ -720,10 +730,25 @@ export class SettingsController {
       return { success: true, message: 'No CV to delete' };
     }
 
+    // Removing the CV can empty out an application that was only ever submitted
+    // as a CV. Without this, the profile would keep its PENDING_REVIEW status
+    // with nothing in it — and approveEducator only refuses INCOMPLETE, so an
+    // admin could approve a blank profile straight into the candidate pool.
+    // Send it back to INCOMPLETE in the same write, which also re-triggers the
+    // "finish your application" prompt for the educator.
+    const wouldBeEmpty = !user?.shortBio?.trim();
+    const shouldRevertToIncomplete =
+      wouldBeEmpty && user?.approvalStatus === EducatorApprovalStatus.PENDING_REVIEW;
+
     // Clear cvUrl first, then delete the underlying asset best-effort.
     await this.prisma.user.update({
       where: { id: profileId },
-      data: { cvUrl: null },
+      data: {
+        cvUrl: null,
+        ...(shouldRevertToIncomplete
+          ? { approvalStatus: EducatorApprovalStatus.INCOMPLETE }
+          : {}),
+      },
     });
 
     try {

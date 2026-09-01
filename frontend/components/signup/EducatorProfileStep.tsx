@@ -116,8 +116,16 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
     if (!email || hasRestoredRef.current) return;
     hasRestoredRef.current = true;
 
+    // Precedence matters: anything the user has ALREADY TYPED must win over the
+    // stored draft. `buildFrom` gives its first argument priority, so the typed
+    // values are layered on top of the draft there — not passed as `base`, which
+    // would let a stale draft silently overwrite live input. That window is real:
+    // the form is editable before `initialData.email` resolves, and the persist
+    // effect is skipped while the email is unknown.
     const draft = readEducatorDraft<Partial<EducatorProfileStepData>>(email);
-    setData(prev => buildFrom(draft, { ...initialData, ...stripEmpty(prev), email }));
+    setData(prev =>
+      buildFrom({ ...(draft ?? {}), ...stripEmpty(prev) }, { ...initialData, email }),
+    );
   }, [initialData.email]);
 
   // Persist the draft as the user edits so nothing typed here is lost before the
