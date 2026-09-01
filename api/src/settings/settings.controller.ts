@@ -499,9 +499,23 @@ export class SettingsController {
         'CV',
       );
 
+      // An educator whose account was created at email verification sits at
+      // INCOMPLETE until they actually submit their profile. Promote inside the
+      // same transaction as the data, so the admin queue can never show an
+      // application whose content failed to save (or miss one that did).
+      const isSubmittingApplication = Boolean(
+        settings.shortBio?.trim() || settings.cvUrl?.trim(),
+      );
+      const shouldPromoteToPendingReview =
+        isSubmittingApplication &&
+        existingCv?.approvalStatus === EducatorApprovalStatus.INCOMPLETE;
+
       await tx.user.update({
         where: { id: profileId },
         data: {
+          ...(shouldPromoteToPendingReview
+            ? { approvalStatus: EducatorApprovalStatus.PENDING_REVIEW }
+            : {}),
           firstName: settings.firstName,
           lastName: settings.lastName,
           email: settings.email,

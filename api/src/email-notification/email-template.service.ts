@@ -452,6 +452,47 @@ export class EmailTemplateService {
       },
       // ── Approbation des éducateur·trices ──────────────────────────────────
       {
+        name: 'Candidature éducateur·trice incomplète',
+        event: 'educator_profile_incomplete',
+        subject: 'Votre inscription est presque terminée',
+        category: 'userManagement',
+        variables: ['firstName', 'loginUrl', 'supportUrl'],
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Il ne reste qu'une étape</h2>
+            <p>Bonjour {{firstName}},</p>
+            <p>Votre compte Pro Crèche Solutions a bien été créé, mais votre candidature d'éducateur·trice n'a jamais été soumise : il nous manque encore votre biographie, votre expérience et votre CV.</p>
+            <p>Tant que ces informations sont manquantes, notre équipe ne peut pas examiner votre dossier et votre profil n'est visible par aucune crèche.</p>
+            <div style="background-color: #FFFBEB; border-left: 4px solid #F59E0B; padding: 12px 16px; margin: 20px 0; border-radius: 4px;">
+              <p style="margin: 0;">Comptez environ 5 minutes. Connectez-vous et vous serez guidé·e directement vers l'étape restante.</p>
+            </div>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="{{loginUrl}}" style="background-color: #10B981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Terminer ma candidature</a>
+            </div>
+            <p>Un problème ou une question ? <a href="{{supportUrl}}">Contactez notre assistance</a>.</p>
+            <p>Cordialement,<br>L'équipe Pro Crèche Solutions</p>
+          </div>
+        `.trim(),
+        textContent: `
+          Il ne reste qu'une étape
+
+          Bonjour {{firstName}},
+
+          Votre compte Pro Crèche Solutions a bien été créé, mais votre candidature d'éducateur·trice n'a jamais été soumise : il nous manque encore votre biographie, votre expérience et votre CV.
+
+          Tant que ces informations sont manquantes, notre équipe ne peut pas examiner votre dossier et votre profil n'est visible par aucune crèche.
+
+          Comptez environ 5 minutes. Connectez-vous et vous serez guidé·e directement vers l'étape restante :
+          {{loginUrl}}
+
+          Un problème ou une question ? Contactez notre assistance : {{supportUrl}}
+
+          Cordialement,
+          L'équipe Pro Crèche Solutions
+        `.trim(),
+        isActive: true,
+      },
+      {
         name: 'Candidature éducateur·trice reçue',
         event: 'educator_pending',
         subject: 'Candidature reçue — en attente de vérification',
@@ -1325,6 +1366,32 @@ export class EmailTemplateService {
           {{description}}
 
           Nous nous excusons pour tout inconvénient et vous remercions de votre patience.
+
+          Cordialement,
+          L'équipe Pro Crèche Solutions
+        `,
+      },
+      educator_profile_incomplete: {
+        subject: 'Votre inscription est presque terminée',
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Il ne reste qu'une étape</h2>
+            <p>Bonjour {{firstName}},</p>
+            <p>Votre compte a bien été créé, mais votre candidature d'éducateur·trice n'a jamais été soumise : il nous manque votre biographie, votre expérience et votre CV.</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="{{loginUrl}}" style="background-color: #10B981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Terminer ma candidature</a>
+            </div>
+            <p>Cordialement,<br>L'équipe Pro Crèche Solutions</p>
+          </div>
+        `,
+        textContent: `
+          Il ne reste qu'une étape
+
+          Bonjour {{firstName}},
+
+          Votre compte a bien été créé, mais votre candidature d'éducateur·trice n'a jamais été soumise : il nous manque votre biographie, votre expérience et votre CV.
+
+          Terminer ma candidature : {{loginUrl}}
 
           Cordialement,
           L'équipe Pro Crèche Solutions

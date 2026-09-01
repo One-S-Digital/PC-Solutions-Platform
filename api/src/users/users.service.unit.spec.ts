@@ -66,6 +66,8 @@ describe('UsersService.remove (soft delete)', () => {
       {} as any, // principal
       {} as any, // roleSyncService
       { get: jest.fn().mockReturnValue(undefined) } as any, // configService
+      {} as any, // emailNotificationService
+      {} as any, // signupProfileService
     );
 
     const result = await service.remove(appUser.id);
@@ -167,6 +169,8 @@ describe('UsersService.hardRemove (hard delete)', () => {
       {} as any,
       {} as any,
       { get: jest.fn().mockReturnValue(undefined) } as any,
+      {} as any, // emailNotificationService
+      {} as any, // signupProfileService
     );
 
     await expect(service.hardRemove(appUser.id)).rejects.toMatchObject({
@@ -189,6 +193,8 @@ describe('UsersService.hardRemove (hard delete)', () => {
     const profile = { id: 'profile-id', clerkId: appUser.clerkId } as any;
 
     const tx = {
+      // hardRemove issues raw SQL to break FK cycles before deleting.
+      $executeRawUnsafe: jest.fn().mockResolvedValue(0),
       // dependency deletes
       message: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
       conversationParticipant: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
@@ -197,7 +203,7 @@ describe('UsersService.hardRemove (hard delete)', () => {
       ticketResponse: { deleteMany: jest.fn() },
       supportTicket: { deleteMany: jest.fn() },
       userSubscription: { deleteMany: jest.fn() },
-      subscription: { deleteMany: jest.fn() },
+      subscription: { deleteMany: jest.fn(), findMany: jest.fn().mockResolvedValue([]) },
       certificate: { deleteMany: jest.fn() },
       discussionReply: { deleteMany: jest.fn() },
       courseDiscussion: { deleteMany: jest.fn() },
@@ -236,6 +242,8 @@ describe('UsersService.hardRemove (hard delete)', () => {
       {} as any,
       {} as any,
       { get: jest.fn().mockReturnValue(undefined) } as any,
+      {} as any, // emailNotificationService
+      {} as any, // signupProfileService
     );
     (service as any).clerk = { users: { deleteUser: jest.fn().mockResolvedValue(undefined) } };
 
@@ -264,6 +272,8 @@ describe('UsersService.hardRemove (hard delete)', () => {
     const profile = { id: 'profile-id', clerkId: appUser.clerkId } as any;
 
     const tx = {
+      // hardRemove issues raw SQL to break FK cycles before deleting.
+      $executeRawUnsafe: jest.fn().mockResolvedValue(0),
       userOrganization: { deleteMany: jest.fn() },
       userContactInfo: { deleteMany: jest.fn() },
       user: { delete: jest.fn(), deleteMany: jest.fn() },
@@ -291,6 +301,8 @@ describe('UsersService.hardRemove (hard delete)', () => {
       {} as any,
       {} as any,
       { get: jest.fn().mockReturnValue(undefined) } as any,
+      {} as any, // emailNotificationService
+      {} as any, // signupProfileService
     );
     (service as any).clerk = { users: { deleteUser: jest.fn().mockResolvedValue(undefined) } };
 

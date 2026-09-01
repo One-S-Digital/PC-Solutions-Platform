@@ -8,6 +8,7 @@ import {
   DocumentTextIcon,
   XMarkIcon,
   ArrowLeftIcon,
+  ArrowRightOnRectangleIcon,
 } from '@heroicons/react/24/outline';
 import Button from '../ui/Button';
 import FileUploadZone from '../ui/FileUploadZone';
@@ -49,6 +50,12 @@ interface EducatorProfileStepProps {
   submitError?: string | null;
   /** Set when the account is still being provisioned in the background. */
   provisioningDelayed?: boolean;
+  /**
+   * True once a Clerk account exists. There is then no earlier wizard step to
+   * return to — step 2 is the account-creation form and would reject the
+   * already-registered email — so "Go Back" becomes "Sign out".
+   */
+  accountExists?: boolean;
 }
 
 // Drop blank values so already-typed input wins over a stale draft field, but
@@ -67,6 +74,7 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
   isLoading,
   submitError = null,
   provisioningDelayed = false,
+  accountExists = false,
 }) => {
   const { t } = useTranslation(['signup', 'common', 'settings']);
 
@@ -431,10 +439,12 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
           type="button"
           variant="light"
           onClick={onBack}
-          leftIcon={ArrowLeftIcon}
+          leftIcon={accountExists ? ArrowRightOnRectangleIcon : ArrowLeftIcon}
           className="w-full sm:w-auto text-sm"
         >
-          {t('common:buttons.goBack', 'Go Back')}
+          {accountExists
+            ? t('common:loginPage.signOutButton', 'Sign Out')
+            : t('common:buttons.goBack', 'Go Back')}
         </Button>
         <Button
           type="submit"

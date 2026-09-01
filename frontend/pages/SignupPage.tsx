@@ -223,7 +223,6 @@ const SignupPage: React.FC = () => {
     confirmPassword: '',
     phone: '',
     canton: '',
-    languagesSpoken: [],
     capacity: undefined,
     category: '',
     serviceType: '',
@@ -253,6 +252,27 @@ const SignupPage: React.FC = () => {
   // Last step-3 save failure, shown inline on the form so the typed profile is
   // never discarded behind a dismissible alert().
   const [educatorSaveError, setEducatorSaveError] = useState<string | null>(null);
+
+  // The signup form is collected once but consumed by two different backend
+  // paths: `signUp.create` -> Clerk `user.created` webhook (email/password), and
+  // POST /users/complete-profile (OAuth / webhook recovery). They used to be
+  // built separately and drifted, so email/password signups silently lost
+  // capacity, category, service type and phone. One builder, both callers.
+  const buildSignupIntent = () => ({
+    organisationName: requiresOrganizationDetails ? formData.organisationName || undefined : undefined,
+    contactPerson: formData.contactPerson || undefined,
+    phone: formData.phone || undefined,
+    canton: formData.canton || undefined,
+    capacity: selectedRole === SignupRole.FOUNDATION ? formData.capacity : undefined,
+    category: selectedRole === SignupRole.SUPPLIER ? formData.category || undefined : undefined,
+    serviceType:
+      selectedRole === SignupRole.SERVICE_PROVIDER ? formData.serviceType || undefined : undefined,
+    childAge: selectedRole === SignupRole.PARENT ? formData.childAge : undefined,
+    childStartDate:
+      selectedRole === SignupRole.PARENT ? formData.childStartDate || undefined : undefined,
+    // Consent timestamp: the moment the form was submitted with the box ticked.
+    termsAcceptedAt: formData.termsAccepted ? new Date().toISOString() : undefined,
+  });
 
   const getSuccessRedirectForRole = () => ({ path: '/dashboard' });
 
@@ -317,6 +337,31 @@ const SignupPage: React.FC = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded, isAuthLoading, isSignedIn, isIncompleteEducator]);
+
+  // Once a Clerk account exists, step 2 IS the account-creation form and can
+  // never be completed again (`form_identifier_exists`). Reaching it is a dead
+  // end, so send the user forward instead: an educator with an unsubmitted
+  // profile back to step 3, anyone else to their dashboard. The one exception is
+  // `needsProfileCompletion`, where step 2 renders as a role/profile form for a
+  // Clerk account that has no backend user yet — that IS the way out for them.
+  useEffect(() => {
+    if (!isSignedIn || isAuthLoading || currentStep !== 2 || needsProfileCompletion) return;
+    if (isIncompleteEducator) {
+      setCurrentStep(3);
+      return;
+    }
+    if (currentUser) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [
+    isSignedIn,
+    isAuthLoading,
+    currentStep,
+    needsProfileCompletion,
+    isIncompleteEducator,
+    currentUser,
+    navigate,
+  ]);
 
   // Resume an incomplete educator straight into step 3 so they can finish saving
   // their profile instead of silently landing on the dashboard with their signup
@@ -595,15 +640,7 @@ const SignupPage: React.FC = () => {
        const payload = {
            role: SIGNUP_ROLE_TO_USER_ROLE[selectedRole!],
            email: formData.email || (clerkUser && clerkUser.primaryEmailAddress && clerkUser.primaryEmailAddress.emailAddress),  // Include email for pending users
-           organisationName: formData.organisationName || undefined,
-           contactPerson: formData.contactPerson || undefined,
-           phone: formData.phone || undefined,
-           canton: formData.canton || undefined,
-           capacity: formData.capacity,
-           category: formData.category || undefined,
-           serviceType: formData.serviceType || undefined,
-           childAge: formData.childAge,
-           childStartDate: formData.childStartDate || undefined,
+           ...buildSignupIntent(),
        };
 
        const makeCompleteProfileRequest = async (authToken: string) =>
@@ -715,13 +752,13 @@ const SignupPage: React.FC = () => {
         firstName: firstName,
         lastName: lastName,
         unsafeMetadata: {
-          // Store signup intent for backend webhook to process
-          // Backend will assign actual role via publicMetadata (secure)
-            signupType: selectedRole,
-            pendingRole: pendingUserRole,
-            organisationName: requiresOrganizationDetails ? formData.organisationName : undefined,
-            phone: formData.phone || undefined,
-            canton: formData.canton || undefined,
+          // Signup intent for the backend webhook to persist. The backend still
+          // assigns the real role via publicMetadata (secure) and scrubs any
+          // role written here; every other key is whitelisted and coerced
+          // server-side by parseSignupIntent().
+          signupType: selectedRole,
+          pendingRole: pendingUserRole,
+          ...buildSignupIntent(),
         },
       });
 
@@ -1484,7 +1521,18 @@ const SignupPage: React.FC = () => {
                   canton: formData.canton || '',
                 }}
                 onSubmit={handleEducatorProfileSubmit}
-                onBack={() => { setCurrentStep(2); setShowVerificationStep(false); }}
+                onBack={async () => {
+                  if (isSignedIn) {
+                    // The account already exists — there is no earlier step to
+                    // return to. Signing out is the only honest way back.
+                    await logout();
+                    navigate('/login', { replace: true });
+                    return;
+                  }
+                  setCurrentStep(2);
+                  setShowVerificationStep(false);
+                }}
+                accountExists={isSignedIn}
                 isLoading={isEducatorProfileLoading}
                 submitError={educatorSaveError}
                 provisioningDelayed={provisioningDelayed}

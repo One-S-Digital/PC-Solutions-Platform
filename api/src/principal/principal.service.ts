@@ -74,16 +74,27 @@ export class PrincipalService {
         email: emailForCreate,
         role: appUser.role,
         isActive: true,
-        ...(appUser.role === UserRole.EDUCATOR ? { approvalStatus: EducatorApprovalStatus.PENDING_REVIEW } : {}),
+        // INCOMPLETE: a profile bootstrapped here has no educator application on
+        // it yet. PATCH /settings/educator promotes it to PENDING_REVIEW.
+        ...(appUser.role === UserRole.EDUCATOR ? { approvalStatus: EducatorApprovalStatus.INCOMPLETE } : {}),
       },
       ...(include ? { include } : {}),
     } as Prisma.UserUpsertArgs);
 
-    // Backfill: educators created before this fix may have null approvalStatus
+    // Backfill: educators created before the approval workflow may have a null
+    // approvalStatus. Derive the right one from whether an application was ever
+    // submitted, rather than assuming there is something to review.
     if (appUser.role === UserRole.EDUCATOR && !(user as any).approvalStatus) {
+      const hasSubmittedApplication = Boolean(
+        (user as any).shortBio?.trim() || (user as any).cvUrl?.trim(),
+      );
       user = await this.prisma.user.update({
         where: { clerkId },
-        data: { approvalStatus: EducatorApprovalStatus.PENDING_REVIEW },
+        data: {
+          approvalStatus: hasSubmittedApplication
+            ? EducatorApprovalStatus.PENDING_REVIEW
+            : EducatorApprovalStatus.INCOMPLETE,
+        },
         ...(include ? { include } : {}),
       } as Prisma.UserUpdateArgs);
     }

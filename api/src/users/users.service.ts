@@ -12,6 +12,7 @@ import { RoleSyncService } from '../sync/role-sync.service';
 import { ConfigService } from '@nestjs/config';
 import { createClerkClient } from '@clerk/clerk-sdk-node';
 import { EmailNotificationService } from '../email-notification/email-notification.service';
+import { SignupProfileService, parseSignupIntent } from './signup-profile.service';
 
 /**
  * Roles considered "admin-level" roles in the system.
@@ -64,6 +65,7 @@ export class UsersService {
     private readonly roleSyncService: RoleSyncService,
     private readonly configService: ConfigService,
     private readonly emailNotificationService: EmailNotificationService,
+    private readonly signupProfileService: SignupProfileService,
   ) {
     const clerkSecretKey = this.configService.get<string>('CLERK_SECRET_KEY');
     if (clerkSecretKey) {
@@ -653,52 +655,28 @@ export class UsersService {
             lastName: lastName || null,
             phoneNumber: dto.phone,
             isActive: true,
+            // INCOMPLETE until the educator actually submits their profile
+            // (see PATCH /settings/educator), so the admin approval queue only
+            // ever contains real applications.
             ...(dto.role === UserRole.EDUCATOR && {
-              approvalStatus: EducatorApprovalStatus.PENDING_REVIEW,
+              approvalStatus: EducatorApprovalStatus.INCOMPLETE,
             }),
           },
         });
         profileUserIdToLink = user.id;
 
-        // Create organization and link user for organization-based roles
-        const orgBasedRoles: UserRole[] = [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER];
-        if (orgBasedRoles.includes(dto.role)) {
-          // Determine organization type from user role
-          const orgTypeMap: Record<string, 'FOUNDATION' | 'PRODUCT_SUPPLIER' | 'SERVICE_PROVIDER'> = {
-            [UserRole.FOUNDATION]: 'FOUNDATION',
-            [UserRole.PRODUCT_SUPPLIER]: 'PRODUCT_SUPPLIER',
-            [UserRole.SERVICE_PROVIDER]: 'SERVICE_PROVIDER',
-          };
-          const orgType = orgTypeMap[dto.role];
-          
-          // Create the organization with signup data
-          const organization = await tx.organization.create({
-            data: {
-              name: dto.organisationName || `${firstName} ${lastName}`.trim() || 'New Organization',
-              type: orgType,
-              contactPerson: dto.contactPerson || `${firstName} ${lastName}`.trim() || null,
-              phoneNumber: dto.phone || null,
-              canton: dto.canton || null,
-              region: dto.canton || null,
-              // Role-specific fields
-              ...(dto.role === UserRole.FOUNDATION && dto.capacity ? { capacity: dto.capacity } : {}),
-              ...(dto.role === UserRole.PRODUCT_SUPPLIER && dto.category ? { productCategory: dto.category } : {}),
-              ...(dto.role === UserRole.SERVICE_PROVIDER && dto.serviceType ? { serviceType: dto.serviceType } : {}),
-              isActive: true,
-            },
-          });
-
-          // Link user to organization
-          await tx.userOrganization.create({
-            data: {
-              userId: user.id,
-              organizationId: organization.id,
-              role: dto.role,
-            },
-          });
-
-          this.logger.log(`🏢 [COMPLETE PROFILE] Created organization "${organization.name}" (${orgType}) and linked to user ${user.id}`);
-        }
+        // Persist the rest of the signup form and create/link the organization.
+        // Shared with the Clerk `user.created` webhook path so both keep the
+        // same fields — they used to diverge, which is how email/password
+        // signups silently lost capacity, category, service type and phone.
+        await this.signupProfileService.applySignupIntent(tx, {
+          userId: user.id,
+          role: dto.role,
+          firstName,
+          lastName,
+          phoneNumber: dto.phone,
+          intent: parseSignupIntent(dto),
+        });
       });
 
       // Fire educator pending email after the transaction commits so the new

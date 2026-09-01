@@ -15,7 +15,7 @@ import { useApiClient, apiService } from '../services/api'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import { toast } from 'sonner'
 
-type ApprovalStatus = 'PENDING_REVIEW' | 'APPROVED' | 'REJECTED'
+type ApprovalStatus = 'INCOMPLETE' | 'PENDING_REVIEW' | 'APPROVED' | 'REJECTED'
 
 interface Educator {
   id: string
@@ -39,12 +39,14 @@ interface Educator {
 }
 
 const STATUS_LABELS: Record<ApprovalStatus, string> = {
+  INCOMPLETE: 'Incomplete',
   PENDING_REVIEW: 'Pending Review',
   APPROVED: 'Approved',
   REJECTED: 'Rejected',
 }
 
 const STATUS_STYLES: Record<ApprovalStatus, string> = {
+  INCOMPLETE: 'bg-gray-100 text-gray-700',
   PENDING_REVIEW: 'bg-amber-100 text-amber-800',
   APPROVED: 'bg-green-100 text-green-800',
   REJECTED: 'bg-red-100 text-red-800',
@@ -128,6 +130,10 @@ const EducatorApprovals: React.FC = () => {
 
   const tabs: { key: ApprovalStatus; label: string }[] = [
     { key: 'PENDING_REVIEW', label: 'Pending' },
+    // Accounts created at email verification whose owner never submitted an
+    // application. Kept out of the Pending queue so it only holds real
+    // submissions, but still visible so they can be chased.
+    { key: 'INCOMPLETE', label: 'Incomplete' },
     { key: 'APPROVED', label: 'Approved' },
     { key: 'REJECTED', label: 'Rejected' },
   ]
@@ -197,7 +203,11 @@ const EducatorApprovals: React.FC = () => {
             <User className="w-10 h-10 mx-auto mb-3 text-gray-300" />
             <p className="font-medium">No educators found</p>
             <p className="text-sm mt-1">
-              {activeTab === 'PENDING_REVIEW' ? 'All educator applications have been reviewed.' : `No ${STATUS_LABELS[activeTab].toLowerCase()} educators.`}
+              {activeTab === 'PENDING_REVIEW'
+                ? 'All educator applications have been reviewed.'
+                : activeTab === 'INCOMPLETE'
+                  ? 'Every educator who signed up has submitted their application.'
+                  : `No ${STATUS_LABELS[activeTab].toLowerCase()} educators.`}
             </p>
           </div>
         ) : (

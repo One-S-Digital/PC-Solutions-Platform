@@ -67,6 +67,16 @@ export class EducatorApprovalsService {
     });
   }
 
+  /**
+   * Educators whose account exists but who never submitted an application.
+   * Tracked separately so the review queue only contains real submissions.
+   */
+  async getIncompleteCount() {
+    return this.prisma.user.count({
+      where: { role: UserRole.EDUCATOR, approvalStatus: EducatorApprovalStatus.INCOMPLETE },
+    });
+  }
+
   async getEducatorById(id: string) {
     const educator = await this.prisma.user.findFirst({
       where: { id, role: UserRole.EDUCATOR },
@@ -109,6 +119,15 @@ export class EducatorApprovalsService {
 
     if (educator.approvalStatus === EducatorApprovalStatus.APPROVED) {
       throw new BadRequestException('Educator is already approved');
+    }
+
+    // Nothing was ever submitted for this account — there is no application to
+    // approve. Approving it would publish an empty profile into the candidate
+    // pool. The educator must finish signup first.
+    if (educator.approvalStatus === EducatorApprovalStatus.INCOMPLETE) {
+      throw new BadRequestException(
+        'This educator has not submitted an application yet. Their profile is incomplete.',
+      );
     }
 
     const updated = await this.prisma.user.update({

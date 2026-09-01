@@ -76,6 +76,15 @@ export class RolesGuard implements CanActivate {
 
     // 7. Handle educators pending admin approval
     if (userContext.role === UserRole.EDUCATOR) {
+      // INCOMPLETE means the account exists but the application was never
+      // submitted. It is gated exactly like PENDING_REVIEW — @AllowPendingEducator
+      // routes (profile, settings) stay reachable so the educator can finish.
+      if (userContext.approvalStatus === EducatorApprovalStatus.INCOMPLETE && !allowPendingEducator) {
+        throw new ForbiddenException({
+          message: 'Please complete your educator profile before accessing the platform.',
+          code: 'EDUCATOR_PROFILE_INCOMPLETE',
+        });
+      }
       if (userContext.approvalStatus === EducatorApprovalStatus.PENDING_REVIEW && !allowPendingEducator) {
         throw new ForbiddenException({
           message: 'Your educator profile is awaiting admin approval. You will be notified once reviewed.',

@@ -12,6 +12,8 @@ export enum UserRole {
 }
 
 export enum EducatorApprovalStatus {
+  /** Account created at email verification; the application was never submitted. */
+  INCOMPLETE = 'INCOMPLETE',
   PENDING_REVIEW = 'PENDING_REVIEW',
   APPROVED = 'APPROVED',
   REJECTED = 'REJECTED',
@@ -626,7 +628,6 @@ export interface SignupFormData {
     confirmPassword: string;
     phone: string;
     canton: SwissCanton | '';
-    languagesSpoken: SupportedLanguage[];
     capacity?: number;
     category: string; // For supplier
     serviceType: string; // For service provider

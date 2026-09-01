@@ -11,6 +11,7 @@ import { Public } from '../auth/decorators/public.decorator';
 import { Webhook } from 'svix';
 import { Request, Response } from 'express';
 import { PrismaService } from '../prisma/prisma.service';
+import { SignupProfileService, parseSignupIntent } from '../users/signup-profile.service';
 import { createClerkClient } from '@clerk/clerk-sdk-node';
 import { ConfigService } from '@nestjs/config';
 import { UserRole, EducatorApprovalStatus } from '@prisma/client';
@@ -34,6 +35,7 @@ export class ClerkWebhookController {
     private prisma: PrismaService,
     private configService: ConfigService,
     private emailNotificationService: EmailNotificationService,
+    private signupProfileService: SignupProfileService,
   ) {
     const clerkSecretKey = this.configService.get<string>('CLERK_SECRET_KEY');
     const webhookSecret = this.configService.get<string>('CLERK_WEBHOOK_SECRET');
@@ -578,7 +580,12 @@ ${'='.repeat(100)}`);
     
     const firstName = data.first_name || 'Unknown';
     const lastName = data.last_name || 'User';
-    const phoneNumber = data.phone_numbers?.[0]?.phone_number || null;
+    // Clerk only populates `phone_numbers` when the identity provider supplied
+    // one — it is empty for every email/password signup, so the phone typed on
+    // the signup form arrives in unsafe_metadata instead. Reading only the
+    // former silently dropped the phone number for all such accounts.
+    const signupIntent = parseSignupIntent(data.unsafe_metadata);
+    const phoneNumber = data.phone_numbers?.[0]?.phone_number || signupIntent.phone || null;
     const lastActiveAt = this.resolveLastActiveAt(data);
 
     console.log(`👤 [E2E DEBUG] USER DETAILS EXTRACTED:`, {
@@ -613,14 +620,9 @@ ${'='.repeat(100)}`);
       }
     });
 
-    // Extract organization data from unsafe_metadata (set during signup)
-    const organisationName = data.unsafe_metadata?.organisationName;
-    const signupCanton = data.unsafe_metadata?.canton;
-
-    console.log(`🏢 [E2E DEBUG] ORGANIZATION DATA FROM SIGNUP:`, {
-      organisationName,
-      signupCanton,
-      phone: phoneNumber,
+    console.log(`🏢 [E2E DEBUG] SIGNUP INTENT PARSED FROM METADATA:`, {
+      ...signupIntent,
+      resolvedPhone: phoneNumber,
       unsafeMetadataKeys: data.unsafe_metadata ? Object.keys(data.unsafe_metadata) : [],
     });
 
@@ -664,8 +666,11 @@ ${'='.repeat(100)}`);
           role: validRole as UserRole,
           phoneNumber,
           isActive: true,
+          // INCOMPLETE, not PENDING_REVIEW: this account is created at email
+          // verification, before the educator has submitted anything. It is
+          // promoted to PENDING_REVIEW by PATCH /settings/educator.
           ...(validRole === UserRole.EDUCATOR && {
-            approvalStatus: EducatorApprovalStatus.PENDING_REVIEW,
+            approvalStatus: EducatorApprovalStatus.INCOMPLETE,
           }),
         };
 
@@ -681,50 +686,17 @@ ${'='.repeat(100)}`);
         });
         profileUserId = user.id;
 
-        // Create organization and link user for organization-based roles
-        const orgBasedRoles: UserRole[] = [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER];
-        if (orgBasedRoles.includes(validRole as UserRole)) {
-          // Check if user already has an organization link (to avoid duplicates on updates)
-          const existingOrgLink = await tx.userOrganization.findFirst({
-            where: { userId: user.id },
-          });
-
-          if (!existingOrgLink) {
-            // Determine organization type from user role
-            const orgTypeMap: Record<string, 'FOUNDATION' | 'PRODUCT_SUPPLIER' | 'SERVICE_PROVIDER'> = {
-              [UserRole.FOUNDATION]: 'FOUNDATION',
-              [UserRole.PRODUCT_SUPPLIER]: 'PRODUCT_SUPPLIER',
-              [UserRole.SERVICE_PROVIDER]: 'SERVICE_PROVIDER',
-            };
-            const orgType = orgTypeMap[validRole as string];
-
-            // Create the organization with signup data
-            const organization = await tx.organization.create({
-              data: {
-                name: organisationName || `${firstName} ${lastName}`.trim() || 'New Organization',
-                type: orgType,
-                contactPerson: `${firstName} ${lastName}`.trim() || null,
-                phoneNumber: phoneNumber || null,
-                canton: signupCanton || null,
-                region: signupCanton || null,
-                isActive: true,
-              },
-            });
-
-            // Link user to organization
-            await tx.userOrganization.create({
-              data: {
-                userId: user.id,
-                organizationId: organization.id,
-                role: validRole as UserRole,
-              },
-            });
-
-            console.log(`🏢 [E2E DEBUG] Created organization "${organization.name}" (${orgType}) and linked to user ${user.id}`);
-          } else {
-            console.log(`⏭️ [E2E DEBUG] User already has an organization link, skipping org creation`);
-          }
-        }
+        // Persist the rest of the signup form (phone, terms, parent child data)
+        // and create/link the organization. Shared with the
+        // POST /users/complete-profile path so both keep the same fields.
+        await this.signupProfileService.applySignupIntent(tx, {
+          userId: user.id,
+          role: validRole as UserRole,
+          firstName,
+          lastName,
+          phoneNumber,
+          intent: signupIntent,
+        });
       });
 
       console.log(`✅ [E2E DEBUG] APPUSER & USER UPSERTED SUCCESSFULLY:`, {
