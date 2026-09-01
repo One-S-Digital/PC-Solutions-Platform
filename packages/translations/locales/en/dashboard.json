@@ -397,7 +397,11 @@
     "completeProfile": "Complete your profile",
     "completeProfileDesc": "While you wait for approval, make sure your profile is complete and up to date. A complete profile increases your chances of being matched with the right opportunities.",
     "contactSupport": "Contact Support",
-    "signOut": "Sign Out"
+    "signOut": "Sign Out",
+    "incompleteTitle": "Finish your application",
+    "incompleteDescription": "Your account was created, but your educator application was never submitted — we have no biography, experience or CV on file yet. Our team cannot review it until you complete this last step.",
+    "incompleteCta": "Complete my application",
+    "incompleteNote": "It takes about 5 minutes. Anything you already typed on this device has been saved and will be filled in for you."
   },
   "educatorProfilePage": {
     "availability": {

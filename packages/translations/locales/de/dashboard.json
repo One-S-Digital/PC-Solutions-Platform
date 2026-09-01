@@ -157,7 +157,11 @@
     "completeProfile": "Vervollständigen Sie Ihr Profil",
     "completeProfileDesc": "Stellen Sie während der Wartezeit auf die Genehmigung sicher, dass Ihr Profil vollständig und aktuell ist. Ein vollständiges Profil erhöht Ihre Chancen, mit den richtigen Möglichkeiten zusammengeführt zu werden.",
     "contactSupport": "Support kontaktieren",
-    "signOut": "Abmelden"
+    "signOut": "Abmelden",
+    "incompleteTitle": "Bewerbung abschliessen",
+    "incompleteDescription": "Ihr Konto wurde erstellt, aber Ihre Bewerbung als Erzieher/in wurde nie eingereicht — es liegen noch keine Biografie, Erfahrung oder Lebenslauf vor. Unser Team kann sie erst prüfen, wenn Sie diesen letzten Schritt abgeschlossen haben.",
+    "incompleteCta": "Bewerbung abschliessen",
+    "incompleteNote": "Es dauert etwa 5 Minuten. Was Sie auf diesem Gerät bereits eingegeben haben, wurde gespeichert und wird für Sie ausgefüllt."
   },
   "educatorProfilePage": {
     "availability": {

@@ -1,13 +1,73 @@
 import React from 'react';
-import { ClockIcon, EnvelopeIcon, UserCircleIcon } from '@heroicons/react/24/outline';
+import { ClockIcon, EnvelopeIcon, UserCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { useClerk } from '@clerk/clerk-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useAppContext } from '../../contexts/AppContext';
 
 const EducatorPendingApprovalPage: React.FC = () => {
   const { signOut } = useClerk();
   const navigate = useNavigate();
   const { t } = useTranslation('dashboard');
+  const { currentUser } = useAppContext();
+
+  // An educator who never completed step 3 of signup lands here too, because the
+  // account is created (and marked PENDING_REVIEW) at email verification, before
+  // any profile data is collected. Telling them their profile is "under review"
+  // is wrong and is why these accounts stayed empty forever: nothing ever asked
+  // them to finish. Detect the empty profile and route them back into the
+  // signup wizard, which resumes at step 3 with their saved draft.
+  const hasSubmittedApplication = Boolean(
+    (currentUser as any)?.shortBio?.trim() || (currentUser as any)?.cvUrl?.trim(),
+  );
+
+  if (currentUser && !hasSubmittedApplication) {
+    return (
+      <div className="min-h-screen bg-page-bg flex items-center justify-center p-4">
+        <div className="max-w-lg w-full bg-white rounded-2xl shadow-lg p-8 text-center">
+          <div className="flex justify-center mb-6">
+            <div className="w-20 h-20 rounded-full bg-amber-100 flex items-center justify-center">
+              <ExclamationTriangleIcon className="w-10 h-10 text-amber-500" />
+            </div>
+          </div>
+
+          <h1 className="text-2xl font-bold text-gray-900 mb-3">
+            {t('educatorPendingApprovalPage.incompleteTitle')}
+          </h1>
+          <p className="text-gray-600 mb-6">
+            {t('educatorPendingApprovalPage.incompleteDescription')}
+          </p>
+
+          <button
+            onClick={() => navigate('/signup')}
+            className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-swiss-mint text-white text-sm font-semibold hover:bg-opacity-90 transition-colors"
+          >
+            <UserCircleIcon className="w-4 h-4" />
+            {t('educatorPendingApprovalPage.incompleteCta')}
+          </button>
+          <p className="text-xs text-gray-500 mt-3">
+            {t('educatorPendingApprovalPage.incompleteNote')}
+          </p>
+
+          <div className="border-t border-gray-100 mt-6 pt-6 flex flex-col sm:flex-row gap-3 justify-center">
+            <a
+              href="mailto:support@procreche.ch"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors"
+            >
+              <EnvelopeIcon className="w-4 h-4" />
+              {t('educatorPendingApprovalPage.contactSupport')}
+            </a>
+            <button
+              onClick={() => signOut().catch((err) => console.error('Sign out failed:', err))}
+              className="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors"
+            >
+              {t('educatorPendingApprovalPage.signOut')}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-page-bg flex items-center justify-center p-4">

@@ -156,7 +156,11 @@
     "completeProfile": "Complétez votre profil",
     "completeProfileDesc": "En attendant l'approbation, assurez-vous que votre profil est complet et à jour. Un profil complet augmente vos chances d'être mis(e) en relation avec les bonnes opportunités.",
     "contactSupport": "Contacter le support",
-    "signOut": "Se déconnecter"
+    "signOut": "Se déconnecter",
+    "incompleteTitle": "Terminez votre candidature",
+    "incompleteDescription": "Votre compte a été créé, mais votre candidature d'éducateur/éducatrice n'a jamais été soumise — nous n'avons encore ni biographie, ni expérience, ni CV. Notre équipe ne peut pas l'examiner tant que vous n'avez pas terminé cette dernière étape.",
+    "incompleteCta": "Compléter ma candidature",
+    "incompleteNote": "Cela prend environ 5 minutes. Ce que vous avez déjà saisi sur cet appareil a été conservé et sera pré-rempli."
   },
   "educatorProfilePage": {
     "availability": {
