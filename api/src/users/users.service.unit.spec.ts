@@ -1,6 +1,54 @@
 import { UsersService } from './users.service';
 import { UserRole } from '@prisma/client';
 
+/**
+ * Build a Prisma transaction-client mock that auto-creates its models.
+ *
+ * `hardRemove({ force: true })` deliberately reaches across ~30 relations to
+ * clear FK constraints before a user row can be dropped, and it grows a new one
+ * every time a relation with a Restrict/SetNull FK is added to the schema. A
+ * hand-listed mock silently rots the moment that happens: this spec had already
+ * drifted far enough that it no longer compiled at all.
+ *
+ * So instead of enumerating models, unknown ones are vivified on access with
+ * neutral defaults. Adding a relation to hardRemove can no longer break this
+ * spec, while `overrides` still pins the specific calls the assertions check.
+ */
+function createTxMock(overrides: Record<string, Record<string, jest.Mock>> = {}): any {
+  const models = new Map<string, Record<string, jest.Mock>>();
+
+  const target: Record<string, any> = {
+    // safeDeleteMany / safeUpdateMany wrap each statement in a SAVEPOINT so a
+    // missing table cannot abort the surrounding transaction.
+    $executeRawUnsafe: jest.fn().mockResolvedValue(0),
+  };
+
+  return new Proxy(target, {
+    get(t, prop) {
+      if (typeof prop !== 'string' || prop === 'then') return (t as any)[prop];
+      if (prop in t) return t[prop];
+
+      if (!models.has(prop)) {
+        models.set(prop, {
+          findMany: jest.fn().mockResolvedValue([]),
+          findFirst: jest.fn().mockResolvedValue(null),
+          findUnique: jest.fn().mockResolvedValue(null),
+          count: jest.fn().mockResolvedValue(0),
+          create: jest.fn().mockResolvedValue({ id: `${prop}-id` }),
+          createMany: jest.fn().mockResolvedValue({ count: 0 }),
+          update: jest.fn().mockResolvedValue({ id: `${prop}-id` }),
+          updateMany: jest.fn().mockResolvedValue({ count: 0 }),
+          upsert: jest.fn().mockResolvedValue({ id: `${prop}-id` }),
+          delete: jest.fn().mockResolvedValue({ id: `${prop}-id` }),
+          deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+          ...(overrides[prop] ?? {}),
+        });
+      }
+      return models.get(prop);
+    },
+  });
+}
+
 describe('UsersService.remove (soft delete)', () => {
   it('suspends the user profile (isActive=false) without changing role', async () => {
     const appUser = {
@@ -192,33 +240,11 @@ describe('UsersService.hardRemove (hard delete)', () => {
     };
     const profile = { id: 'profile-id', clerkId: appUser.clerkId } as any;
 
-    const tx = {
-      // hardRemove issues raw SQL to break FK cycles before deleting.
-      $executeRawUnsafe: jest.fn().mockResolvedValue(0),
-      // dependency deletes
-      message: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
-      conversationParticipant: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
-      conversation: { deleteMany: jest.fn() },
-      jobApplication: { deleteMany: jest.fn() },
-      ticketResponse: { deleteMany: jest.fn() },
-      supportTicket: { deleteMany: jest.fn() },
-      userSubscription: { deleteMany: jest.fn() },
-      subscription: { deleteMany: jest.fn(), findMany: jest.fn().mockResolvedValue([]) },
-      certificate: { deleteMany: jest.fn() },
-      discussionReply: { deleteMany: jest.fn() },
-      courseDiscussion: { deleteMany: jest.fn() },
-      courseEnrollment: { deleteMany: jest.fn() },
-
-      // uploader reassignment
-      asset: { updateMany: jest.fn() },
-      course: { updateMany: jest.fn() },
-
-      // final deletes
-      userOrganization: { deleteMany: jest.fn() },
-      userContactInfo: { deleteMany: jest.fn() },
-      user: { delete: jest.fn(), deleteMany: jest.fn() },
-      appUser: { upsert: jest.fn().mockResolvedValue({ id: 'system-app-user' }), delete: jest.fn() },
-    } as any;
+    // Only the models the assertions below actually inspect need pinning; the
+    // rest are vivified with neutral defaults.
+    const tx = createTxMock({
+      appUser: { upsert: jest.fn().mockResolvedValue({ id: 'system-app-user' }) },
+    });
 
     const prisma = {
       appUser: { findUnique: jest.fn().mockResolvedValue(appUser) },
@@ -271,14 +297,7 @@ describe('UsersService.hardRemove (hard delete)', () => {
     };
     const profile = { id: 'profile-id', clerkId: appUser.clerkId } as any;
 
-    const tx = {
-      // hardRemove issues raw SQL to break FK cycles before deleting.
-      $executeRawUnsafe: jest.fn().mockResolvedValue(0),
-      userOrganization: { deleteMany: jest.fn() },
-      userContactInfo: { deleteMany: jest.fn() },
-      user: { delete: jest.fn(), deleteMany: jest.fn() },
-      appUser: { delete: jest.fn() },
-    };
+    const tx = createTxMock();
 
     const prisma = {
       appUser: { findUnique: jest.fn().mockResolvedValue(appUser) },
