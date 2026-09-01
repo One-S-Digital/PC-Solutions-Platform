@@ -440,6 +440,18 @@ export class SettingsController {
       where: { id: profileId },
       select: { cvUrl: true, shortBio: true, approvalStatus: true, email: true, firstName: true },
     });
+    // An educator whose account was created at email verification sits at
+    // INCOMPLETE until they actually submit their profile. This single flag
+    // drives both the status promotion (inside the transaction below) and the
+    // "application received" notifications (after it), so the admin queue and
+    // the emails can never disagree about whether an application exists.
+    const isSubmittingApplication = Boolean(
+      settings.shortBio?.trim() || settings.cvUrl?.trim(),
+    );
+    const isFirstSubmission =
+      isSubmittingApplication &&
+      existingCv?.approvalStatus === EducatorApprovalStatus.INCOMPLETE;
+
     const previousCvUrl = existingCv?.cvUrl || '';
     const normalizedIncomingCvUrl =
       settings.cvUrl !== undefined && typeof settings.cvUrl === 'string' && settings.cvUrl.trim().length === 0
@@ -499,21 +511,13 @@ export class SettingsController {
         'CV',
       );
 
-      // An educator whose account was created at email verification sits at
-      // INCOMPLETE until they actually submit their profile. Promote inside the
-      // same transaction as the data, so the admin queue can never show an
-      // application whose content failed to save (or miss one that did).
-      const isSubmittingApplication = Boolean(
-        settings.shortBio?.trim() || settings.cvUrl?.trim(),
-      );
-      const shouldPromoteToPendingReview =
-        isSubmittingApplication &&
-        existingCv?.approvalStatus === EducatorApprovalStatus.INCOMPLETE;
-
+      // Promote inside the same transaction as the data, so the admin queue can
+      // never show an application whose content failed to save (or miss one
+      // that did).
       await tx.user.update({
         where: { id: profileId },
         data: {
-          ...(shouldPromoteToPendingReview
+          ...(isFirstSubmission
             ? { approvalStatus: EducatorApprovalStatus.PENDING_REVIEW }
             : {}),
           firstName: settings.firstName,
@@ -630,16 +634,16 @@ export class SettingsController {
       }
     }
 
-    // Send "application received" email the first time an educator submits their profile.
-    // Fires when: profile was blank (no shortBio) and is now being filled in,
-    // AND the educator has not yet been approved or rejected.
-    // This covers the email/password signup path; OAuth educators get it via completeProfile.
-    const isFirstSubmission =
-      !existingCv?.shortBio?.trim() &&
-      settings.shortBio?.trim() &&
-      existingCv?.approvalStatus !== EducatorApprovalStatus.APPROVED &&
-      existingCv?.approvalStatus !== EducatorApprovalStatus.REJECTED;
-
+    // Send "application received" email and notify admins — exactly once, on the
+    // same condition that promoted the profile to PENDING_REVIEW above.
+    //
+    // This is the single trigger for BOTH signup paths. completeProfile used to
+    // send these too, for OAuth educators, but it only creates the account: the
+    // user is then routed into step 3 to submit the actual profile, so those
+    // notifications announced a blank application and then fired again here.
+    //
+    // Gating on the INCOMPLETE -> PENDING_REVIEW transition also means an
+    // educator editing an already-submitted profile never re-triggers them.
     // Use settings values (post-update) for name/email, falling back to pre-update snapshot.
     const recipientEmail = settings.email ?? existingCv?.email;
     const recipientName = settings.firstName ?? existingCv?.firstName;

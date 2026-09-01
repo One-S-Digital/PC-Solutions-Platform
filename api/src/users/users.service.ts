@@ -679,56 +679,22 @@ export class UsersService {
         });
       });
 
-      // Fire educator pending email after the transaction commits so the new
-      // user row is visible to EmailNotificationService.findUnique({ email }).
-      if (dto.role === UserRole.EDUCATOR) {
-        const appUrl = this.configService.get<string>('APP_URL') || this.configService.get<string>('FRONTEND_URL') || '';
-
-        // educator_pending email — gated by v2_staffing_emails (defaults enabled when flag absent)
-        this.prisma.featureFlag.findUnique({ where: { key: 'v2_staffing_emails' } }).then(async (flag) => {
-          if (flag && !flag.isActive) return;
-          await this.emailNotificationService.sendNotification({
-            event: 'educator_pending',
-            recipient: email,
-            recipientName: firstName || undefined,
-            payload: {
-              firstName: firstName || 'Educator',
-              supportUrl: appUrl ? `${appUrl}/support` : '',
-            },
-            bypassPreferences: true,
-            allowUnknownRecipient: false,
-          });
-        }).catch((err: any) => {
-          this.logger.warn(`Educator pending email failed: ${err?.message || err}`);
-        });
-
-        // Admin in-app notifications — gated by v2_in_app_notifications
-        const adminLink = appUrl ? `${appUrl}/admin/content-dashboard` : '/admin/content-dashboard';
-        this.prisma.featureFlag.findUnique({ where: { key: 'v2_in_app_notifications' } }).then(async (flag) => {
-          if (flag && !flag.isActive) return;
-          const admins = await this.prisma.user.findMany({
-            where: {
-              role: { in: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
-              isActive: { not: false },
-            },
-            select: { id: true },
-          });
-          const educatorName = firstName || email || 'An educator';
-          for (const admin of admins) {
-            await this.prisma.notification.create({
-              data: {
-                userId: admin.id,
-                type: 'GENERAL' as any,
-                title: 'New Educator Application',
-                body: `${educatorName} has submitted their profile and is awaiting approval.`,
-                link: adminLink,
-              },
-            }).catch(() => {});
-          }
-        }).catch((err: any) => {
-          this.logger.warn(`Admin notification for educator signup failed: ${err?.message || err}`);
-        });
-      }
+      // No educator notifications here on purpose.
+      //
+      // completeProfile creates the account only — the educator has not
+      // submitted anything yet, which is exactly why the profile is created
+      // INCOMPLETE above. The frontend then routes them into step 3 of the
+      // wizard to fill in the actual application.
+      //
+      // Announcing a "New Educator Application" at this point told admins a
+      // blank account was awaiting review, and sent the applicant a
+      // confirmation for something they had not submitted. Worse, the first
+      // successful PATCH /settings/educator fires the same email and admin
+      // notification again, so every OAuth educator got both twice.
+      //
+      // The single trigger is the promotion to PENDING_REVIEW in
+      // SettingsController.updateEducatorSettings, which runs when the profile
+      // is genuinely submitted.
     }
 
     if (dto.role === UserRole.PARENT) {
