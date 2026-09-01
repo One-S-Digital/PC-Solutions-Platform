@@ -35,8 +35,15 @@ export interface SignupIntent {
   childAge?: number;
   /** PARENT - desired start date. */
   childStartDate?: Date;
-  /** When the user ticked the terms checkbox during signup. */
-  termsAcceptedAt?: Date;
+  /**
+   * Whether the user ticked the terms checkbox during signup.
+   *
+   * Deliberately a boolean, not the client's timestamp: this value is consent
+   * evidence, and both transports are client-controlled (Clerk unsafe_metadata,
+   * or the complete-profile request body). A caller could otherwise record a
+   * consent time that never happened. The server stamps the actual time.
+   */
+  termsAccepted?: boolean;
 }
 
 export const ORGANIZATION_ROLES: UserRole[] = [
@@ -93,7 +100,8 @@ export function parseSignupIntent(raw: unknown): SignupIntent {
     serviceType: toTrimmedString(source.serviceType),
     childAge: toPositiveInt(source.childAge),
     childStartDate: toDate(source.childStartDate),
-    termsAcceptedAt: toDate(source.termsAcceptedAt),
+    // Presence of either signal marks acceptance; the timestamp itself is not trusted.
+    termsAccepted: source.termsAccepted === true || toDate(source.termsAcceptedAt) !== undefined,
   };
 }
 
@@ -128,7 +136,8 @@ export class SignupProfileService {
 
     const profileData: Prisma.UserUpdateInput = {};
     if (resolvedPhone) profileData.phoneNumber = resolvedPhone;
-    if (intent.termsAcceptedAt) profileData.termsAcceptedAt = intent.termsAcceptedAt;
+    // Server time, not the client's: see SignupIntent.termsAccepted.
+    if (intent.termsAccepted) profileData.termsAcceptedAt = new Date();
     if (role === UserRole.PARENT) {
       if (intent.childAge !== undefined) profileData.childAge = intent.childAge;
       if (intent.childStartDate) profileData.childStartDate = intent.childStartDate;

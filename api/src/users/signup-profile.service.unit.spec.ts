@@ -48,7 +48,18 @@ describe('SignupProfileService', () => {
       expect(intent.capacity).toBe(42);
       expect(intent.childAge).toBe(3);
       expect(intent.childStartDate).toEqual(new Date('2026-09-01'));
-      expect(intent.termsAcceptedAt).toEqual(new Date('2026-08-30T10:00:00.000Z'));
+    });
+
+    it('treats consent as a flag, never trusting the client timestamp', () => {
+      // Both transports are client-controlled, so a caller could otherwise
+      // record a consent time that never happened. The server stamps the time.
+      const backdated = parseSignupIntent({ termsAcceptedAt: '1999-01-01T00:00:00.000Z' });
+      expect(backdated.termsAccepted).toBe(true);
+      expect(backdated as Record<string, unknown>).not.toHaveProperty('termsAcceptedAt');
+
+      expect(parseSignupIntent({ termsAccepted: true }).termsAccepted).toBe(true);
+      expect(parseSignupIntent({}).termsAccepted).toBe(false);
+      expect(parseSignupIntent({ termsAcceptedAt: 'not-a-date' }).termsAccepted).toBe(false);
     });
 
     it('drops blank, malformed and unknown values', () => {
@@ -214,11 +225,20 @@ describe('SignupProfileService', () => {
         }),
       });
 
+      // Assert the writes actually happened before comparing them: `?.[0]` is
+      // undefined on both sides when neither path wrote, and
+      // expect(undefined).toEqual(undefined) would pass — silently turning this
+      // drift guard into a no-op.
+      expect(webhookTx.organization.create).toHaveBeenCalledTimes(1);
+      expect(completeProfileTx.organization.create).toHaveBeenCalledTimes(1);
+      expect(webhookTx.user.update).toHaveBeenCalledTimes(1);
+      expect(completeProfileTx.user.update).toHaveBeenCalledTimes(1);
+
       expect(webhookTx.organization.create.mock.calls[0][0]).toEqual(
         completeProfileTx.organization.create.mock.calls[0][0],
       );
-      expect(webhookTx.user.update.mock.calls[0]?.[0]).toEqual(
-        completeProfileTx.user.update.mock.calls[0]?.[0],
+      expect(webhookTx.user.update.mock.calls[0][0]).toEqual(
+        completeProfileTx.user.update.mock.calls[0][0],
       );
     });
   });

@@ -165,6 +165,17 @@ export class EducatorApprovalsService {
   async rejectEducator(id: string, notes: string) {
     const educator = await this.getEducatorById(id);
 
+    // Same guard as approveEducator: an INCOMPLETE account never submitted an
+    // application, so there is nothing to reject. Without this, an admin could
+    // formally reject a blank account and send its owner a rejection email for
+    // something they never applied for — and the REJECTED status would then
+    // lock them out of finishing their signup.
+    if (educator.approvalStatus === EducatorApprovalStatus.INCOMPLETE) {
+      throw new BadRequestException(
+        'This educator has not submitted an application yet. Their profile is incomplete.',
+      );
+    }
+
     if (!notes?.trim()) {
       throw new BadRequestException('Rejection notes are required');
     }
