@@ -1,0 +1,13 @@
+-- Add the INCOMPLETE educator approval status.
+--
+-- Educator accounts are created by the Clerk `user.created` webhook at email
+-- verification, which is BEFORE the profile (bio, experience, CV) is collected
+-- in step 3 of the signup wizard. Stamping those accounts PENDING_REVIEW filled
+-- the admin approval queue with blank records that could never be reviewed.
+-- INCOMPLETE marks "account exists, application never submitted"; the status is
+-- promoted to PENDING_REVIEW when the educator actually saves their profile.
+--
+-- This runs in its own migration on purpose: PostgreSQL cannot use a new enum
+-- value in the same transaction that adds it, so the data backfill that assigns
+-- INCOMPLETE lives in the migration that follows this one.
+ALTER TYPE "EducatorApprovalStatus" ADD VALUE IF NOT EXISTS 'INCOMPLETE' BEFORE 'PENDING_REVIEW';

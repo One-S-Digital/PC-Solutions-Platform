@@ -12,6 +12,7 @@ import { RoleSyncService } from '../sync/role-sync.service';
 import { ConfigService } from '@nestjs/config';
 import { createClerkClient } from '@clerk/clerk-sdk-node';
 import { EmailNotificationService } from '../email-notification/email-notification.service';
+import { SignupProfileService, parseSignupIntent } from './signup-profile.service';
 
 /**
  * Roles considered "admin-level" roles in the system.
@@ -64,6 +65,7 @@ export class UsersService {
     private readonly roleSyncService: RoleSyncService,
     private readonly configService: ConfigService,
     private readonly emailNotificationService: EmailNotificationService,
+    private readonly signupProfileService: SignupProfileService,
   ) {
     const clerkSecretKey = this.configService.get<string>('CLERK_SECRET_KEY');
     if (clerkSecretKey) {
@@ -585,6 +587,25 @@ export class UsersService {
         select: { id: true },
       });
       profileUserIdToLink = existingProfile?.id || null;
+
+      // Apply the signup intent here too. This branch runs when the AppUser
+      // already exists — for example the Clerk webhook provisioned the account
+      // (possibly under the fallback role) and the user is now completing their
+      // profile with the real role. Skipping it left those accounts without the
+      // organization, phone and parent fields the form had already collected.
+      if (existingProfile?.id) {
+        const [firstNamePart, ...lastNameParts] = (dto.contactPerson || '').trim().split(' ');
+        await this.prisma.$transaction(async (tx) => {
+          await this.signupProfileService.applySignupIntent(tx, {
+            userId: existingProfile.id,
+            role: dto.role,
+            firstName: firstNamePart || null,
+            lastName: lastNameParts.join(' ') || null,
+            phoneNumber: dto.phone,
+            intent: parseSignupIntent(dto),
+          });
+        });
+      }
     } else {
       // Check if an account with this email already exists (for a DIFFERENT clerkId)
       // This can happen when:
@@ -653,104 +674,46 @@ export class UsersService {
             lastName: lastName || null,
             phoneNumber: dto.phone,
             isActive: true,
+            // INCOMPLETE until the educator actually submits their profile
+            // (see PATCH /settings/educator), so the admin approval queue only
+            // ever contains real applications.
             ...(dto.role === UserRole.EDUCATOR && {
-              approvalStatus: EducatorApprovalStatus.PENDING_REVIEW,
+              approvalStatus: EducatorApprovalStatus.INCOMPLETE,
             }),
           },
         });
         profileUserIdToLink = user.id;
 
-        // Create organization and link user for organization-based roles
-        const orgBasedRoles: UserRole[] = [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER];
-        if (orgBasedRoles.includes(dto.role)) {
-          // Determine organization type from user role
-          const orgTypeMap: Record<string, 'FOUNDATION' | 'PRODUCT_SUPPLIER' | 'SERVICE_PROVIDER'> = {
-            [UserRole.FOUNDATION]: 'FOUNDATION',
-            [UserRole.PRODUCT_SUPPLIER]: 'PRODUCT_SUPPLIER',
-            [UserRole.SERVICE_PROVIDER]: 'SERVICE_PROVIDER',
-          };
-          const orgType = orgTypeMap[dto.role];
-          
-          // Create the organization with signup data
-          const organization = await tx.organization.create({
-            data: {
-              name: dto.organisationName || `${firstName} ${lastName}`.trim() || 'New Organization',
-              type: orgType,
-              contactPerson: dto.contactPerson || `${firstName} ${lastName}`.trim() || null,
-              phoneNumber: dto.phone || null,
-              canton: dto.canton || null,
-              region: dto.canton || null,
-              // Role-specific fields
-              ...(dto.role === UserRole.FOUNDATION && dto.capacity ? { capacity: dto.capacity } : {}),
-              ...(dto.role === UserRole.PRODUCT_SUPPLIER && dto.category ? { productCategory: dto.category } : {}),
-              ...(dto.role === UserRole.SERVICE_PROVIDER && dto.serviceType ? { serviceType: dto.serviceType } : {}),
-              isActive: true,
-            },
-          });
-
-          // Link user to organization
-          await tx.userOrganization.create({
-            data: {
-              userId: user.id,
-              organizationId: organization.id,
-              role: dto.role,
-            },
-          });
-
-          this.logger.log(`🏢 [COMPLETE PROFILE] Created organization "${organization.name}" (${orgType}) and linked to user ${user.id}`);
-        }
+        // Persist the rest of the signup form and create/link the organization.
+        // Shared with the Clerk `user.created` webhook path so both keep the
+        // same fields — they used to diverge, which is how email/password
+        // signups silently lost capacity, category, service type and phone.
+        await this.signupProfileService.applySignupIntent(tx, {
+          userId: user.id,
+          role: dto.role,
+          firstName,
+          lastName,
+          phoneNumber: dto.phone,
+          intent: parseSignupIntent(dto),
+        });
       });
 
-      // Fire educator pending email after the transaction commits so the new
-      // user row is visible to EmailNotificationService.findUnique({ email }).
-      if (dto.role === UserRole.EDUCATOR) {
-        const appUrl = this.configService.get<string>('APP_URL') || this.configService.get<string>('FRONTEND_URL') || '';
-
-        // educator_pending email — gated by v2_staffing_emails (defaults enabled when flag absent)
-        this.prisma.featureFlag.findUnique({ where: { key: 'v2_staffing_emails' } }).then(async (flag) => {
-          if (flag && !flag.isActive) return;
-          await this.emailNotificationService.sendNotification({
-            event: 'educator_pending',
-            recipient: email,
-            recipientName: firstName || undefined,
-            payload: {
-              firstName: firstName || 'Educator',
-              supportUrl: appUrl ? `${appUrl}/support` : '',
-            },
-            bypassPreferences: true,
-            allowUnknownRecipient: false,
-          });
-        }).catch((err: any) => {
-          this.logger.warn(`Educator pending email failed: ${err?.message || err}`);
-        });
-
-        // Admin in-app notifications — gated by v2_in_app_notifications
-        const adminLink = appUrl ? `${appUrl}/admin/content-dashboard` : '/admin/content-dashboard';
-        this.prisma.featureFlag.findUnique({ where: { key: 'v2_in_app_notifications' } }).then(async (flag) => {
-          if (flag && !flag.isActive) return;
-          const admins = await this.prisma.user.findMany({
-            where: {
-              role: { in: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
-              isActive: { not: false },
-            },
-            select: { id: true },
-          });
-          const educatorName = firstName || email || 'An educator';
-          for (const admin of admins) {
-            await this.prisma.notification.create({
-              data: {
-                userId: admin.id,
-                type: 'GENERAL' as any,
-                title: 'New Educator Application',
-                body: `${educatorName} has submitted their profile and is awaiting approval.`,
-                link: adminLink,
-              },
-            }).catch(() => {});
-          }
-        }).catch((err: any) => {
-          this.logger.warn(`Admin notification for educator signup failed: ${err?.message || err}`);
-        });
-      }
+      // No educator notifications here on purpose.
+      //
+      // completeProfile creates the account only — the educator has not
+      // submitted anything yet, which is exactly why the profile is created
+      // INCOMPLETE above. The frontend then routes them into step 3 of the
+      // wizard to fill in the actual application.
+      //
+      // Announcing a "New Educator Application" at this point told admins a
+      // blank account was awaiting review, and sent the applicant a
+      // confirmation for something they had not submitted. Worse, the first
+      // successful PATCH /settings/educator fires the same email and admin
+      // notification again, so every OAuth educator got both twice.
+      //
+      // The single trigger is the promotion to PENDING_REVIEW in
+      // SettingsController.updateEducatorSettings, which runs when the profile
+      // is genuinely submitted.
     }
 
     if (dto.role === UserRole.PARENT) {

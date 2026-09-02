@@ -56,6 +56,13 @@ export class EducatorApprovalsController {
     return { count };
   }
 
+  // Must stay above the `:id` route below, or 'incomplete-count' is parsed as an id.
+  @Get('incomplete-count')
+  async getIncompleteCount() {
+    const count = await this.educatorApprovalsService.getIncompleteCount();
+    return { count };
+  }
+
   @Get(':id')
   async getEducator(@Param('id', ParseUUIDPipe) id: string) {
     return this.educatorApprovalsService.getEducatorById(id);

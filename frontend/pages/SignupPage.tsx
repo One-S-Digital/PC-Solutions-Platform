@@ -114,7 +114,25 @@ const SignupPage: React.FC = () => {
   // Webhook status hook - no clerkId param needed, uses authenticated session
   const { error: webhookErrorFromHook, startPolling, checkWebhookStatus } = useWebhookStatus();
 
-  // Wait for webhook processing to complete
+  // Wait for webhook processing to complete.
+  //
+  // Two hard-won rules here, both of which previously caused educators to end up
+  // with completely empty profiles:
+  //
+  // 1. A single failed poll must NOT abort the signup. `checkWebhookStatus`
+  //    reports 'error' for any transient fetch failure — a dropped connection, a
+  //    cold-started backend returning 502, a mobile network hiccup. Treating the
+  //    first one as fatal ended the signup at step 2 for an account that was
+  //    provisioned moments later, and the educator never saw step 3 at all.
+  //
+  // 2. Slow provisioning must NOT dead-end an educator. Step 3 is where every
+  //    piece of educator profile data is collected; if we never show it, the
+  //    account exists with nothing in it. When the wait is exhausted we send
+  //    educators into step 3 anyway with a non-blocking notice — filling the form
+  //    takes minutes, by which time the webhook has long since landed, and the
+  //    save itself retries.
+  const TRANSIENT_POLL_FAILURE_LIMIT = 5;
+
   const waitForWebhookProcessing = async (_userId: string, _sessionId: string | null) => {
     let stopPollingCleanup: (() => void) | undefined;
 
@@ -122,9 +140,10 @@ const SignupPage: React.FC = () => {
       console.log('[Signup Debug] waitForWebhookProcessing: starting provisioning wait');
       stopPollingCleanup = startPolling();
 
-      const maxWaitTime = 30000;
-      const pollInterval = 1000;
+      const maxWaitTime = 60000;
+      const pollInterval = 1500;
       const startTime = Date.now();
+      let consecutiveFailures = 0;
 
       setWebhookError(null);
 
@@ -132,25 +151,52 @@ const SignupPage: React.FC = () => {
         await new Promise(resolve => setTimeout(resolve, pollInterval));
 
         const currentStatus = await checkWebhookStatus();
-        setWebhookStatus(currentStatus);
         console.log('[Signup Debug] waitForWebhookProcessing: poll result', {
           currentStatus,
+          consecutiveFailures,
           elapsedMs: Date.now() - startTime,
         });
 
         if (currentStatus === 'ready') {
+          setWebhookStatus('ready');
           setSuccessRedirect(getSuccessRedirectForRole());
           setCurrentStep(getPostSignupStep());
           return;
         }
 
         if (currentStatus === 'error') {
-          console.error('[Signup Debug] waitForWebhookProcessing: webhook status error', webhookErrorFromHook);
-          throw new Error(webhookErrorFromHook || 'Webhook processing failed');
+          consecutiveFailures += 1;
+          console.warn('[Signup Debug] waitForWebhookProcessing: transient poll failure', {
+            consecutiveFailures,
+            error: webhookErrorFromHook,
+          });
+          // Keep the user on the "setting up your account" state and try again;
+          // only a sustained run of failures is treated as real.
+          setWebhookStatus('processing');
+          if (consecutiveFailures >= TRANSIENT_POLL_FAILURE_LIMIT) {
+            break;
+          }
+          continue;
         }
+
+        consecutiveFailures = 0;
+        setWebhookStatus(currentStatus);
       }
 
-      console.error('[Signup Debug] waitForWebhookProcessing: timed out waiting for provisioning');
+      // Provisioning was not confirmed within the budget.
+      console.warn('[Signup Debug] waitForWebhookProcessing: provisioning not confirmed in time');
+
+      if (isEducatorRole()) {
+        // Never strand an educator here — everything they are about to type is
+        // the profile itself, and there is nowhere else it gets captured.
+        setWebhookStatus('processing');
+        setProvisioningDelayed(true);
+        setVerificationError('');
+        setSuccessRedirect(getSuccessRedirectForRole());
+        setCurrentStep(3);
+        return;
+      }
+
       throw new Error('Account setup timeout - please contact support');
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Account setup failed';
@@ -177,7 +223,6 @@ const SignupPage: React.FC = () => {
     confirmPassword: '',
     phone: '',
     canton: '',
-    languagesSpoken: [],
     capacity: undefined,
     category: '',
     serviceType: '',
@@ -201,6 +246,33 @@ const SignupPage: React.FC = () => {
   const [webhookError, setWebhookError] = useState<string | null>(null);
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
   const [isEducatorProfileLoading, setIsEducatorProfileLoading] = useState(false);
+  // Set when the backend account was not confirmed before we let the educator
+  // into step 3 anyway (see waitForWebhookProcessing).
+  const [provisioningDelayed, setProvisioningDelayed] = useState(false);
+  // Last step-3 save failure, shown inline on the form so the typed profile is
+  // never discarded behind a dismissible alert().
+  const [educatorSaveError, setEducatorSaveError] = useState<string | null>(null);
+
+  // The signup form is collected once but consumed by two different backend
+  // paths: `signUp.create` -> Clerk `user.created` webhook (email/password), and
+  // POST /users/complete-profile (OAuth / webhook recovery). They used to be
+  // built separately and drifted, so email/password signups silently lost
+  // capacity, category, service type and phone. One builder, both callers.
+  const buildSignupIntent = () => ({
+    organisationName: requiresOrganizationDetails ? formData.organisationName || undefined : undefined,
+    contactPerson: formData.contactPerson || undefined,
+    phone: formData.phone || undefined,
+    canton: formData.canton || undefined,
+    capacity: selectedRole === SignupRole.FOUNDATION ? formData.capacity : undefined,
+    category: selectedRole === SignupRole.SUPPLIER ? formData.category || undefined : undefined,
+    serviceType:
+      selectedRole === SignupRole.SERVICE_PROVIDER ? formData.serviceType || undefined : undefined,
+    childAge: selectedRole === SignupRole.PARENT ? formData.childAge : undefined,
+    childStartDate:
+      selectedRole === SignupRole.PARENT ? formData.childStartDate || undefined : undefined,
+    // Consent timestamp: the moment the form was submitted with the box ticked.
+    termsAcceptedAt: formData.termsAccepted ? new Date().toISOString() : undefined,
+  });
 
   const getSuccessRedirectForRole = () => ({ path: '/dashboard' });
 
@@ -265,6 +337,31 @@ const SignupPage: React.FC = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded, isAuthLoading, isSignedIn, isIncompleteEducator]);
+
+  // Once a Clerk account exists, step 2 IS the account-creation form and can
+  // never be completed again (`form_identifier_exists`). Reaching it is a dead
+  // end, so send the user forward instead: an educator with an unsubmitted
+  // profile back to step 3, anyone else to their dashboard. The one exception is
+  // `needsProfileCompletion`, where step 2 renders as a role/profile form for a
+  // Clerk account that has no backend user yet — that IS the way out for them.
+  useEffect(() => {
+    if (!isSignedIn || isAuthLoading || currentStep !== 2 || needsProfileCompletion) return;
+    if (isIncompleteEducator) {
+      setCurrentStep(3);
+      return;
+    }
+    if (currentUser) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [
+    isSignedIn,
+    isAuthLoading,
+    currentStep,
+    needsProfileCompletion,
+    isIncompleteEducator,
+    currentUser,
+    navigate,
+  ]);
 
   // Resume an incomplete educator straight into step 3 so they can finish saving
   // their profile instead of silently landing on the dashboard with their signup
@@ -543,15 +640,7 @@ const SignupPage: React.FC = () => {
        const payload = {
            role: SIGNUP_ROLE_TO_USER_ROLE[selectedRole!],
            email: formData.email || (clerkUser && clerkUser.primaryEmailAddress && clerkUser.primaryEmailAddress.emailAddress),  // Include email for pending users
-           organisationName: formData.organisationName || undefined,
-           contactPerson: formData.contactPerson || undefined,
-           phone: formData.phone || undefined,
-           canton: formData.canton || undefined,
-           capacity: formData.capacity,
-           category: formData.category || undefined,
-           serviceType: formData.serviceType || undefined,
-           childAge: formData.childAge,
-           childStartDate: formData.childStartDate || undefined,
+           ...buildSignupIntent(),
        };
 
        const makeCompleteProfileRequest = async (authToken: string) =>
@@ -663,13 +752,13 @@ const SignupPage: React.FC = () => {
         firstName: firstName,
         lastName: lastName,
         unsafeMetadata: {
-          // Store signup intent for backend webhook to process
-          // Backend will assign actual role via publicMetadata (secure)
-            signupType: selectedRole,
-            pendingRole: pendingUserRole,
-            organisationName: requiresOrganizationDetails ? formData.organisationName : undefined,
-            phone: formData.phone || undefined,
-            canton: formData.canton || undefined,
+          // Signup intent for the backend webhook to persist. The backend still
+          // assigns the real role via publicMetadata (secure) and scrubs any
+          // role written here; every other key is whitelisted and coerced
+          // server-side by parseSignupIntent().
+          signupType: selectedRole,
+          pendingRole: pendingUserRole,
+          ...buildSignupIntent(),
         },
       });
 
@@ -847,48 +936,116 @@ const SignupPage: React.FC = () => {
     }
   };
   
+  // This PATCH is the *only* place educator profile data is ever persisted, so a
+  // failure here means the account keeps an empty profile. Retry hard: the
+  // realistic failures are all transient and all recoverable.
+  //
+  //  - 401  stale/not-yet-valid Clerk token (cold-started backend, clock skew)
+  //  - 403  request arrived before the role/context was readable
+  //  - 404  the user.created webhook has not landed yet
+  //  - 5xx / network  backend restart, dropped mobile connection
+  //
+  // A 400 is a genuine validation problem and is surfaced immediately.
+  const EDUCATOR_SAVE_MAX_ATTEMPTS = 5;
+  const isRetryableSaveStatus = (status: number) =>
+    status === 401 || status === 403 || status === 404 || status === 408 || status === 429 || status >= 500;
+
   const handleEducatorProfileSubmit = async (profileData: EducatorProfileStepData) => {
     setIsEducatorProfileLoading(true);
+    setEducatorSaveError(null);
+
+    const payload = {
+      firstName: profileData.firstName,
+      lastName: profileData.lastName,
+      phoneNumber: profileData.phone,
+      region: profileData.canton,
+      cities: profileData.city ? [profileData.city] : [],
+      shortBio: profileData.shortBio,
+      workExperience: profileData.professionalExperience,
+      jobRole: profileData.jobRole || undefined,
+      cvUrl: profileData.cvUrl || undefined,
+      cvAssetId: profileData.cvAssetId || undefined,
+    };
+
+    let lastError = '';
+    let saved = false;
+
     try {
-      const token = await getToken();
-      if (!token) throw new Error('Authentication token not available');
+      for (let attempt = 0; attempt < EDUCATOR_SAVE_MAX_ATTEMPTS; attempt++) {
+        if (attempt > 0) {
+          // 1s, 2s, 4s, 8s — long enough to outlast a webhook that is merely slow.
+          await new Promise(resolve => setTimeout(resolve, 1000 * 2 ** (attempt - 1)));
+        }
 
-      const payload = {
-        firstName: profileData.firstName,
-        lastName: profileData.lastName,
-        phoneNumber: profileData.phone,
-        region: profileData.canton,
-        cities: profileData.city ? [profileData.city] : [],
-        shortBio: profileData.shortBio,
-        workExperience: profileData.professionalExperience,
-        jobRole: profileData.jobRole || undefined,
-        cvUrl: profileData.cvUrl || undefined,
-        cvAssetId: profileData.cvAssetId || undefined,
-      };
+        try {
+          // Always fetch a fresh token; a retry after a 401 with the same token
+          // would simply fail the same way.
+          const token = await getToken();
+          if (!token) {
+            lastError = 'Authentication token not available';
+            continue;
+          }
 
-      const response = await fetch(
-        `${apiService.apiBaseUrl}${API_ENDPOINTS.settings.educator}`,
-        {
-          method: 'PATCH',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-        },
-      );
+          const response = await fetch(
+            `${apiService.apiBaseUrl}${API_ENDPOINTS.settings.educator}`,
+            {
+              method: 'PATCH',
+              headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(payload),
+            },
+          );
 
-      if (!response.ok) {
-        const err = await response.json().catch(() => ({}));
-        throw new Error(err.message || 'Failed to save profile');
+          if (response.ok) {
+            saved = true;
+            break;
+          }
+
+          const err = await response.json().catch(() => ({}));
+          const rawMsg = err?.message;
+          lastError =
+            (typeof rawMsg === 'string' ? rawMsg : rawMsg?.message) ||
+            `Failed to save profile (HTTP ${response.status})`;
+
+          if (!isRetryableSaveStatus(response.status)) {
+            break;
+          }
+
+          console.warn('[Signup Debug] educator profile save: retryable failure', {
+            attempt: attempt + 1,
+            status: response.status,
+          });
+        } catch (networkErr: any) {
+          // fetch() rejected — always worth another try.
+          lastError = networkErr?.message || 'Network error while saving your profile';
+          console.warn('[Signup Debug] educator profile save: network failure', {
+            attempt: attempt + 1,
+            error: lastError,
+          });
+        }
       }
 
-      await refreshCurrentUser();
-      setCurrentStep(4);
-    } catch (err: any) {
-      console.error('Educator profile save error:', err);
-      // Surface the error – the component stays on step 3 so the user can retry
-      alert(err.message || 'An error occurred while saving your profile. Please try again.');
+      if (saved) {
+        setProvisioningDelayed(false);
+        // Clear the draft only once the server has actually accepted the data.
+        clearSignupDrafts(profileData.email || formData.email);
+        // A failure to refresh the local user must not look like a failed save —
+        // the profile is already persisted at this point.
+        await refreshCurrentUser().catch((refreshErr: any) => {
+          console.warn('[Signup Debug] refreshCurrentUser after profile save failed', refreshErr);
+        });
+        setCurrentStep(4);
+        return;
+      }
+
+      console.error('Educator profile save failed after retries:', lastError);
+      // Stay on step 3 with the draft intact so the educator can simply press
+      // "Complete Setup" again — nothing they typed is thrown away.
+      setEducatorSaveError(
+        lastError || 'An error occurred while saving your profile. Please try again.',
+      );
     } finally {
       setIsEducatorProfileLoading(false);
     }
@@ -1364,8 +1521,21 @@ const SignupPage: React.FC = () => {
                   canton: formData.canton || '',
                 }}
                 onSubmit={handleEducatorProfileSubmit}
-                onBack={() => { setCurrentStep(2); setShowVerificationStep(false); }}
+                onBack={async () => {
+                  if (isSignedIn) {
+                    // The account already exists — there is no earlier step to
+                    // return to. Signing out is the only honest way back.
+                    await logout();
+                    navigate('/login', { replace: true });
+                    return;
+                  }
+                  setCurrentStep(2);
+                  setShowVerificationStep(false);
+                }}
+                accountExists={isSignedIn}
                 isLoading={isEducatorProfileLoading}
+                submitError={educatorSaveError}
+                provisioningDelayed={provisioningDelayed}
               />
             )}
 

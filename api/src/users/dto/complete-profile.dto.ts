@@ -50,4 +50,9 @@ export class CompleteProfileDto {
   @IsString()
   @IsOptional()
   childStartDate?: string;
+
+  // Consent timestamp captured when the user ticked the terms box at signup.
+  @IsString()
+  @IsOptional()
+  termsAcceptedAt?: string;
 }

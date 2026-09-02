@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   UserCircleIcon,
@@ -8,6 +8,7 @@ import {
   DocumentTextIcon,
   XMarkIcon,
   ArrowLeftIcon,
+  ArrowRightOnRectangleIcon,
 } from '@heroicons/react/24/outline';
 import Button from '../ui/Button';
 import FileUploadZone from '../ui/FileUploadZone';
@@ -45,43 +46,94 @@ interface EducatorProfileStepProps {
   onSubmit: (data: EducatorProfileStepData) => Promise<void>;
   onBack: () => void;
   isLoading: boolean;
+  /** Set when the last save attempt failed, so the user can retry without retyping. */
+  submitError?: string | null;
+  /** Set when the account is still being provisioned in the background. */
+  provisioningDelayed?: boolean;
+  /**
+   * True once a Clerk account exists. There is then no earlier wizard step to
+   * return to — step 2 is the account-creation form and would reject the
+   * already-registered email — so "Go Back" becomes "Sign out".
+   */
+  accountExists?: boolean;
 }
+
+// Drop blank values so already-typed input wins over a stale draft field, but
+// an untouched field still falls back to the draft.
+const stripEmpty = (
+  value: Partial<EducatorProfileStepData>,
+): Partial<EducatorProfileStepData> =>
+  Object.fromEntries(
+    Object.entries(value).filter(([, v]) => typeof v === 'string' && v.trim() !== ''),
+  ) as Partial<EducatorProfileStepData>;
 
 const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
   initialData,
   onSubmit,
   onBack,
   isLoading,
+  submitError = null,
+  provisioningDelayed = false,
+  accountExists = false,
 }) => {
   const { t } = useTranslation(['signup', 'common', 'settings']);
 
-  const [data, setData] = useState<EducatorProfileStepData>(() => {
-    // Restore a previously saved draft (survives refresh / tab suspension / the
-    // verification link opening in another tab) and layer it over initialData so
-    // the educator never re-types their profile after signup information is lost.
-    const draft = readEducatorDraft<Partial<EducatorProfileStepData>>(initialData.email);
+  const buildFrom = (
+    draft: Partial<EducatorProfileStepData> | null,
+    base: Partial<EducatorProfileStepData>,
+  ): EducatorProfileStepData => {
     const pick = (field: keyof EducatorProfileStepData) =>
-      (draft?.[field] as string | undefined) || (initialData[field] as string | undefined) || '';
+      (draft?.[field] as string | undefined) || (base[field] as string | undefined) || '';
     return {
       firstName: pick('firstName'),
       lastName: pick('lastName'),
       phone: pick('phone'),
-      email: initialData.email || (draft?.email as string) || '',
+      email: base.email || (draft?.email as string) || '',
       canton: pick('canton'),
       city: pick('city'),
       shortBio: pick('shortBio'),
       professionalExperience: pick('professionalExperience'),
       cvUrl: pick('cvUrl'),
       cvAssetId: pick('cvAssetId'),
-      jobRole: (draft?.jobRole as EducatorJobRole | '') || initialData.jobRole || '',
+      jobRole: (draft?.jobRole as EducatorJobRole | '') || base.jobRole || '',
     };
-  });
+  };
+
+  const [data, setData] = useState<EducatorProfileStepData>(() =>
+    buildFrom(readEducatorDraft<Partial<EducatorProfileStepData>>(initialData.email), initialData),
+  );
 
   const [errors, setErrors] = useState<EducatorProfileStepErrors>({});
 
+  // The authenticated account often resolves *after* this form first mounts, so
+  // `initialData.email` starts empty and no draft can be looked up yet. Restore
+  // once, as soon as the email is known, layering the saved draft over whatever
+  // the user has already typed. Without this the draft written during an earlier
+  // visit is never found and the educator silently re-types everything.
+  const hasRestoredRef = useRef(false);
+  useEffect(() => {
+    const email = initialData.email;
+    if (!email || hasRestoredRef.current) return;
+    hasRestoredRef.current = true;
+
+    // Precedence matters: anything the user has ALREADY TYPED must win over the
+    // stored draft. `buildFrom` gives its first argument priority, so the typed
+    // values are layered on top of the draft there — not passed as `base`, which
+    // would let a stale draft silently overwrite live input. That window is real:
+    // the form is editable before `initialData.email` resolves, and the persist
+    // effect is skipped while the email is unknown.
+    const draft = readEducatorDraft<Partial<EducatorProfileStepData>>(email);
+    setData(prev =>
+      buildFrom({ ...(draft ?? {}), ...stripEmpty(prev) }, { ...initialData, email }),
+    );
+  }, [initialData.email]);
+
   // Persist the draft as the user edits so nothing typed here is lost before the
   // "Complete Setup" PATCH succeeds. The parent clears it once step 4 is reached.
+  // Skipped while the email is unknown — an anonymous draft could never be
+  // safely matched back to its owner.
   useEffect(() => {
+    if (!data.email) return;
     writeEducatorDraft(data.email, data);
   }, [data]);
 
@@ -134,6 +186,37 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
+
+      {/* Account still provisioning — non-blocking. The educator can fill the
+          form now; the save retries until the backend account is ready. */}
+      {provisioningDelayed && !submitError && (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-3">
+          <p className="text-sm text-amber-800">
+            {t(
+              'signup:educatorProfile.provisioningDelayed',
+              'Your account is still being set up. You can fill in your details now — we will save them as soon as it is ready.',
+            )}
+          </p>
+        </div>
+      )}
+
+      {/* Save failure — surfaced inline (never as an alert() that can be
+          dismissed while the typed data is discarded). The draft is kept, so
+          "Complete Setup" can simply be pressed again. */}
+      {submitError && (
+        <div className="rounded-lg border border-swiss-coral bg-red-50 p-3" role="alert">
+          <p className="text-sm font-medium text-swiss-coral">
+            {t('signup:educatorProfile.saveFailedTitle', 'We could not save your profile')}
+          </p>
+          <p className="text-sm text-gray-700 mt-1">{submitError}</p>
+          <p className="text-xs text-gray-600 mt-2">
+            {t(
+              'signup:educatorProfile.saveFailedHint',
+              'Your answers have been kept on this device. Press "Complete Setup" again to retry.',
+            )}
+          </p>
+        </div>
+      )}
 
       {/* Basic Information */}
       <div className="bg-gray-50 rounded-lg p-4 space-y-4">
@@ -364,10 +447,12 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
           type="button"
           variant="light"
           onClick={onBack}
-          leftIcon={ArrowLeftIcon}
+          leftIcon={accountExists ? ArrowRightOnRectangleIcon : ArrowLeftIcon}
           className="w-full sm:w-auto text-sm"
         >
-          {t('common:buttons.goBack', 'Go Back')}
+          {accountExists
+            ? t('common:loginPage.signOutButton', 'Sign Out')
+            : t('common:buttons.goBack', 'Go Back')}
         </Button>
         <Button
           type="submit"

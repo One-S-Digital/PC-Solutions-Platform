@@ -84,7 +84,7 @@ interface UserProfile {
   avatarAssetId: string | null;
   coverImageUrl: string | null;
   coverAssetId: string | null;
-  approvalStatus?: 'PENDING_REVIEW' | 'APPROVED' | 'REJECTED' | null;
+  approvalStatus?: 'INCOMPLETE' | 'PENDING_REVIEW' | 'APPROVED' | 'REJECTED' | null;
   approvalNotes?: string | null;
   approvedAt?: string | null;
   organization?: {
@@ -1226,6 +1226,16 @@ const AdminUserProfileEdit: React.FC = () => {
         {/* ── Tab content ─────────────────────────────────────────── */}
         <div className="p-6">
           {/* Educator approval banner */}
+          {isEducator && profile.approvalStatus === 'INCOMPLETE' && (
+            <div className="mb-4 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm">
+              <p className="font-medium text-gray-800">Application not submitted</p>
+              <p className="mt-1 text-gray-600">
+                This account was created at email verification but the educator never completed
+                their profile, so there is nothing to review yet. They are prompted to finish it
+                on their next sign-in.
+              </p>
+            </div>
+          )}
           {isEducator && profile.approvalStatus === 'PENDING_REVIEW' && (
             <div className="mb-4 flex items-center justify-between gap-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3">
               <div className="flex items-center gap-3 text-sm text-amber-800">
