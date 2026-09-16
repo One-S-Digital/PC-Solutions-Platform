@@ -33,6 +33,10 @@ export const SignupTraceEvent = {
   VERIFICATION_SENT: 'client.verification_sent',
   VERIFICATION_SUBMITTED: 'client.verification_submitted',
   ACCOUNT_FAILED: 'client.account_failed',
+  /** Account provisioned, but this session could not load it. */
+  SESSION_SYNC_FAILED: 'client.session_sync_failed',
+  /** A stale session recovered instead of dead-ending the user. */
+  SESSION_SYNC_RECOVERED: 'client.session_sync_recovered',
   STEP3_ENTERED: 'client.step3_entered',
   DRAFT_SAVED: 'client.draft_saved',
   DRAFT_RESTORED: 'client.draft_restored',

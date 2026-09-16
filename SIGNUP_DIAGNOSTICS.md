@@ -156,6 +156,12 @@ past tense, one event per real occurrence.
 | REVIEW | `admin.educator_approved`, `admin.educator_rejected`, `admin.decision_blocked_incomplete` |
 | SYSTEM | `system.stuck_incomplete` |
 
+Two of the ACCOUNT events cover a failure with **no server-side symptom at
+all** — `client.session_sync_failed` and `client.session_sync_recovered`. The
+account is complete in the database; only the browser session is stale. Users
+report it as "it made me sign up twice", which is unfindable from the API logs,
+so the browser has to say so itself.
+
 The three that carry most of the diagnostic weight:
 
 - **`client.wizard_abandoned`** — sent with `navigator.sendBeacon` on `pagehide`
@@ -204,6 +210,40 @@ authenticated: the event name must be on a fixed allow-list, the body is
 validated and then scrubbed to primitives, and it is rate-limited to 60/min per
 IP. Nothing it writes is ever read back as a fact about a user — these rows are
 evidence for a human reading a timeline, never an input to authorization.
+
+---
+
+## The stale-session failure
+
+Distinct from the incomplete-profile bug above, and worth understanding
+separately because the account is **never** at fault.
+
+The signup wizard and `AuthProvider` wait for the same provisioning webhook on
+separate clocks. Until this was fixed, `AuthProvider` allowed ~5s and the wizard
+allowed 60s, so on a cold-started backend the wizard won, showed "Account
+created!", and navigated to a protected route where `AuthProvider` still held
+the `currentUser = null` it had already given up with. The route then offered a
+"Complete Your Profile" card, and the user re-entered details the platform
+already had.
+
+Only educators escaped it, and only by accident: their step-3 save calls
+`refreshCurrentUser()`, so the staleness was cleared as a side effect. Every
+other role went straight from the poller to the success screen.
+
+Three layers now stop it, each catching what the one before it misses:
+
+1. **`syncAccountIntoSession()`** in `SignupPage` — every path that declares a
+   signup successful pulls the account into the session first.
+2. **A provisioning-aware retry budget** (`frontend/utils/webhookRetry.ts`) —
+   a Clerk account younger than 3 minutes gets ~49s, comparable to the wizard's
+   60s, so the two cannot disagree. An established account keeps a ~3s budget so
+   an OAuth user still reaches the role picker immediately.
+3. **`AccountProvisioningGate`** — the protected-route card retries the fetch
+   before ever offering the signup form, and leads with "Try again" rather than
+   with re-entering details.
+
+Follow-up reads pass `{ quick: true }` so a caller that has already waited does
+not spend a second full budget and strand the user on a spinner.
 
 ---
 

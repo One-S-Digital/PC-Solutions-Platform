@@ -126,6 +126,14 @@ purge). Answers "why did this account land in the incomplete list" — see
 - Read it at **Admin → Signup Diagnostics**, or via "Why incomplete?" on the
   Educator Approvals incomplete tab.
 
+**Stale-session guard (all roles).** The wizard and `AuthProvider` wait for the
+same webhook on separate clocks. Every path that declares a signup successful
+must call `syncAccountIntoSession()` first, or the session keeps the
+`currentUser = null` it gave up with and the protected route asks the user to
+re-enter details for an account that already exists. Retry budgets live in
+`frontend/utils/webhookRetry.ts`; `AccountProvisioningGate` is the last resort
+and retries before ever offering the signup form.
+
 ---
 
 ## Environment Notes

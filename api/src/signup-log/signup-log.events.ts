@@ -50,6 +50,17 @@ export const SignupEvent = {
    */
   CLIENT_WIZARD_ABANDONED: 'client.wizard_abandoned',
 
+  /**
+   * The backend account exists, but this browser session could not load it.
+   *
+   * Nothing is wrong server-side when this fires — the account is complete in
+   * the database. It is purely stale client state, which is why the symptom
+   * users report ("it made me sign up again") is unfindable from the API logs.
+   */
+  CLIENT_SESSION_SYNC_FAILED: 'client.session_sync_failed',
+  /** A stale session recovered itself instead of dead-ending the user. */
+  CLIENT_SESSION_SYNC_RECOVERED: 'client.session_sync_recovered',
+
   // ---- ACCOUNT (Clerk webhook) ------------------------------------------
   /** `user.created` arrived at the webhook endpoint. */
   WEBHOOK_USER_CREATED_RECEIVED: 'webhook.user_created_received',
@@ -145,6 +156,8 @@ export const CLIENT_REPORTABLE_EVENTS: ReadonlySet<string> = new Set([
   SignupEvent.CLIENT_VERIFICATION_SENT,
   SignupEvent.CLIENT_VERIFICATION_SUBMITTED,
   SignupEvent.CLIENT_ACCOUNT_FAILED,
+  SignupEvent.CLIENT_SESSION_SYNC_FAILED,
+  SignupEvent.CLIENT_SESSION_SYNC_RECOVERED,
   SignupEvent.CLIENT_STEP3_ENTERED,
   SignupEvent.CLIENT_DRAFT_SAVED,
   SignupEvent.CLIENT_DRAFT_RESTORED,
@@ -163,6 +176,8 @@ export const CLIENT_EVENT_STAGE: Record<string, SignupStageName> = {
   [SignupEvent.CLIENT_VERIFICATION_SENT]: SignupStage.ACCOUNT,
   [SignupEvent.CLIENT_VERIFICATION_SUBMITTED]: SignupStage.ACCOUNT,
   [SignupEvent.CLIENT_ACCOUNT_FAILED]: SignupStage.ACCOUNT,
+  [SignupEvent.CLIENT_SESSION_SYNC_FAILED]: SignupStage.ACCOUNT,
+  [SignupEvent.CLIENT_SESSION_SYNC_RECOVERED]: SignupStage.ACCOUNT,
   [SignupEvent.CLIENT_STEP3_ENTERED]: SignupStage.PROFILE,
   [SignupEvent.CLIENT_DRAFT_SAVED]: SignupStage.PROFILE,
   [SignupEvent.CLIENT_DRAFT_RESTORED]: SignupStage.PROFILE,
