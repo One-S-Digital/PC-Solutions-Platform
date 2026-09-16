@@ -41,6 +41,27 @@ import { normalizeRegionsServed } from '../common/utils/regions.util';
 import { AllowPendingEducator } from '../auth/decorators/allow-pending-educator.decorator';
 import { EmailNotificationService } from '../email-notification/email-notification.service';
 import { ConfigService } from '@nestjs/config';
+import { SignupLogService } from '../signup-log/signup-log.service';
+import {
+  SignupEvent,
+  SignupOutcome,
+  SignupSource,
+  SignupStage,
+} from '../signup-log/signup-log.events';
+import { readClientIp, readCorrelationId } from '../signup-log/signup-log.request';
+
+/**
+ * What `PATCH /settings/educator` did to the educator's approval status.
+ * Recorded on the signup trace so "why is this profile still incomplete" has a
+ * stored answer rather than needing the code to be re-read each time.
+ */
+type PromotionOutcome =
+  /** INCOMPLETE -> PENDING_REVIEW: a real application was submitted. */
+  | 'PROMOTED'
+  /** The account was not INCOMPLETE — already submitted, or already decided. */
+  | 'ALREADY_SUBMITTED_OR_DECIDED'
+  /** The request carried neither a bio nor a CV, so it cannot promote. */
+  | 'NOT_AN_APPLICATION';
 
 @ApiTags('settings')
 @Controller('settings')
@@ -57,6 +78,7 @@ export class SettingsController {
     private readonly uploadService: UploadService,
     private readonly emailNotificationService: EmailNotificationService,
     private readonly configService: ConfigService,
+    private readonly signupLog: SignupLogService,
   ) {}
 
   /**
@@ -449,12 +471,44 @@ export class SettingsController {
       settings.shortBio?.trim() || settings.cvUrl?.trim(),
     );
 
+    // Diagnostics: this is the single request that decides whether an educator
+    // leaves INCOMPLETE. Record that it arrived and what it carried BEFORE the
+    // transaction, so a request that then fails to commit is still visible —
+    // "the PATCH never arrived" and "the PATCH arrived and we lost it" are
+    // different bugs and the log has to be able to tell them apart.
+    const signupCorrelationId = readCorrelationId(req);
+    void this.signupLog.record({
+      correlationId: signupCorrelationId,
+      event: SignupEvent.API_EDUCATOR_PATCH_RECEIVED,
+      stage: SignupStage.PROFILE,
+      source: SignupSource.API,
+      role: UserRole.EDUCATOR,
+      userId: profileId,
+      email: existingCv?.email,
+      approvalStatusBefore: existingCv?.approvalStatus ?? null,
+      detail: {
+        // Presence only — never the text itself. See SignupLogService.
+        hasShortBio: Boolean(settings.shortBio?.trim()),
+        hasCvUrl: Boolean(settings.cvUrl?.trim()),
+        hasCvAssetId: Boolean(settings.cvAssetId),
+        hasWorkExperience: Boolean(settings.workExperience?.trim()),
+        hasJobRole: Boolean(settings.jobRole?.trim()),
+        hasRegion: Boolean(settings.region?.trim()),
+        citiesCount: Array.isArray(settings.cities) ? settings.cities.length : 0,
+        isSubmittingApplication,
+        profileExisted: Boolean(existingCv),
+      },
+      ipAddress: readClientIp(req),
+      userAgent: req?.headers?.['user-agent'],
+    });
+
     // Set inside the transaction below by a conditional update, NOT from the
     // snapshot above: two concurrent submissions would both read INCOMPLETE and
     // both send the applicant email and admin notification. The update targets
     // `approvalStatus: INCOMPLETE` explicitly, so exactly one of them can report
     // an affected row and the notifications fire once.
     let isFirstSubmission = false;
+
 
     const previousCvUrl = existingCv?.cvUrl || '';
     const normalizedIncomingCvUrl =
@@ -490,7 +544,17 @@ export class SettingsController {
         ? normalizedCertificationItems.map((item) => item.name)
         : settings.certifications;
 
-    await this.prisma.$transaction(async (tx) => {
+    // The transaction RETURNS what it decided about the approval status rather
+    // than assigning to an outer variable: TypeScript cannot see through a
+    // callback, so an outer `let` would stay narrowed to its initializer and
+    // the checks after the commit would be typed as impossible.
+    const statusVerdict = await this.prisma.$transaction(async (tx): Promise<{
+      promotionOutcome: PromotionOutcome;
+      revertedToIncomplete: boolean;
+    }> => {
+      let promotionOutcome: PromotionOutcome = 'NOT_AN_APPLICATION';
+      let revertedToIncomplete = false;
+
       // Validate asset ownership and kind before updating
       // Use accountId (AppUser.id) since Asset.uploadedById references AppUser
       await this.validateAssetForUsage(
@@ -525,6 +589,19 @@ export class SettingsController {
           data: { approvalStatus: EducatorApprovalStatus.PENDING_REVIEW },
         });
         isFirstSubmission = promotion.count === 1;
+        promotionOutcome = isFirstSubmission
+          ? 'PROMOTED'
+          : // The update matched nothing: the account was not INCOMPLETE. Either
+            // a concurrent submission won the race, or the educator was already
+            // reviewed. Both are fine; recording which is what stops this being
+            // guesswork later.
+            'ALREADY_SUBMITTED_OR_DECIDED';
+      } else {
+        // The PATCH carried neither a bio nor a CV, so by design it cannot
+        // promote. If a stuck educator's timeline shows this, they reached
+        // step 3 and saved something that did not count as an application —
+        // a frontend/DTO problem, not an abandonment.
+        promotionOutcome = 'NOT_AN_APPLICATION';
       }
 
       // The mirror of the promotion above. A PATCH can also EMPTY an
@@ -543,10 +620,11 @@ export class SettingsController {
       if (wouldBeEmpty) {
         // Scoped to PENDING_REVIEW: an APPROVED or REJECTED educator has been
         // decided on by an admin and is never reopened by clearing a field.
-        await tx.user.updateMany({
+        const reverted = await tx.user.updateMany({
           where: { id: profileId, approvalStatus: EducatorApprovalStatus.PENDING_REVIEW },
           data: { approvalStatus: EducatorApprovalStatus.INCOMPLETE },
         });
+        revertedToIncomplete = reverted.count === 1;
       }
 
       await tx.user.update({
@@ -652,7 +730,67 @@ export class SettingsController {
           });
         }
       }
+
+      return { promotionOutcome, revertedToIncomplete };
     });
+
+    // The transaction committed. Record what it decided — this pair of events
+    // (PATCH received, then promoted/skipped) is what turns "landed in
+    // incomplete" from a mystery into a one-line answer.
+    if (statusVerdict.promotionOutcome === 'PROMOTED') {
+      void this.signupLog.record({
+        correlationId: signupCorrelationId,
+        event: SignupEvent.API_EDUCATOR_PROMOTED,
+        stage: SignupStage.PROFILE,
+        source: SignupSource.API,
+        role: UserRole.EDUCATOR,
+        userId: profileId,
+        email: settings.email ?? existingCv?.email,
+        approvalStatusBefore: EducatorApprovalStatus.INCOMPLETE,
+        approvalStatusAfter: EducatorApprovalStatus.PENDING_REVIEW,
+      });
+    } else {
+      void this.signupLog.record({
+        correlationId: signupCorrelationId,
+        event: SignupEvent.API_EDUCATOR_PROMOTION_SKIPPED,
+        stage: SignupStage.PROFILE,
+        source: SignupSource.API,
+        // SKIP, not FAIL: an educator editing an already-approved profile hits
+        // this on every save. The sweeper is what decides an account is stuck.
+        outcome: SignupOutcome.SKIP,
+        role: UserRole.EDUCATOR,
+        userId: profileId,
+        email: settings.email ?? existingCv?.email,
+        approvalStatusBefore: existingCv?.approvalStatus ?? null,
+        errorCode: statusVerdict.promotionOutcome,
+        detail: {
+          hasShortBio: Boolean(settings.shortBio?.trim()),
+          hasCvUrl: Boolean(settings.cvUrl?.trim()),
+        },
+      });
+    }
+
+    if (statusVerdict.revertedToIncomplete) {
+      void this.signupLog.record({
+        correlationId: signupCorrelationId,
+        event: SignupEvent.API_EDUCATOR_REVERTED_TO_INCOMPLETE,
+        stage: SignupStage.PROFILE,
+        source: SignupSource.API,
+        // FAIL: an account going backwards into the incomplete list is exactly
+        // the symptom that was reported, so it must be findable by outcome.
+        outcome: SignupOutcome.FAIL,
+        role: UserRole.EDUCATOR,
+        userId: profileId,
+        email: settings.email ?? existingCv?.email,
+        approvalStatusBefore: EducatorApprovalStatus.PENDING_REVIEW,
+        approvalStatusAfter: EducatorApprovalStatus.INCOMPLETE,
+        errorCode: 'PROFILE_EMPTIED_BY_PATCH',
+        detail: {
+          clearedCv: settings.cvUrl !== undefined && !settings.cvUrl?.trim(),
+          clearedShortBio: settings.shortBio !== undefined && !settings.shortBio?.trim(),
+        },
+      });
+    }
 
     if (shouldDeletePreviousCv) {
       try {
@@ -771,6 +909,27 @@ export class SettingsController {
           ? { approvalStatus: EducatorApprovalStatus.INCOMPLETE }
           : {}),
       },
+    });
+
+    // The second door into the incomplete list. An educator who deletes their
+    // CV from settings — not from the wizard — silently rejoins the incomplete
+    // queue, which looks identical to a failed signup unless it is recorded.
+    void this.signupLog.record({
+      correlationId: readCorrelationId(req),
+      event: SignupEvent.API_EDUCATOR_CV_DELETED,
+      stage: SignupStage.PROFILE,
+      source: SignupSource.API,
+      outcome: shouldRevertToIncomplete ? SignupOutcome.FAIL : SignupOutcome.OK,
+      role: UserRole.EDUCATOR,
+      userId: profileId,
+      approvalStatusBefore: user?.approvalStatus ?? null,
+      approvalStatusAfter: shouldRevertToIncomplete
+        ? EducatorApprovalStatus.INCOMPLETE
+        : (user?.approvalStatus ?? null),
+      errorCode: shouldRevertToIncomplete ? 'PROFILE_EMPTIED_BY_CV_DELETE' : undefined,
+      detail: { hadShortBio: Boolean(user?.shortBio?.trim()) },
+      ipAddress: readClientIp(req),
+      userAgent: req?.headers?.['user-agent'],
     });
 
     try {

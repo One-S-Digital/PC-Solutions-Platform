@@ -120,6 +120,8 @@ In your Render API service, set the following environment variables:
 | `FRONTEND_URL` | Frontend URL for email links | `https://app.yourdomain.com` |
 | `ADMIN_URL` | Admin URL for email links | `https://admin.yourdomain.com` |
 | `PROMETHEUS_SCRAPE_TOKEN` | Token for metrics scraping | `random_token_string` |
+| `SIGNUP_LOG_ENABLED` | Signup diagnostics trace. Opt-out: anything other than `false` leaves it on | `true` |
+| `SIGNUP_LOG_RETENTION_DAYS` | How long signup events are kept before the nightly purge deletes them | `90` |
 
 ### 3. Frontend Service Environment Variables
 

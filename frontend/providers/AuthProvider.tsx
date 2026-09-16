@@ -12,11 +12,10 @@ import { Organization, User, UserRole } from '../types';
 import { API_ENDPOINTS } from '../services/api-endpoints';
 import { apiService, ApiError } from '../services/api';
 import { getAvatarFallback } from '../utils/avatar';
+import { isFreshAccount, webhookRetryDelayMs } from '../utils/webhookRetry';
 
 const BACKEND_SYNC_ERROR_KEY = 'common:loginPage.backendSyncError';
 const BACKEND_USER_CREATION_ERROR_KEY = 'common:loginPage.backendUserCreationError';
-const WEBHOOK_RETRY_ATTEMPTS = 2;
-const WEBHOOK_RETRY_DELAY_MS = 2000;
 const SYNC_RETRY_DELAY_MS = 5000;
 
 interface SyncAttemptState {
@@ -45,7 +44,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   signup: (formData: any, role: any) => Promise<{ success: boolean; message?: string; redirectTo?: string }>;
   updateCurrentUserInfo: (updatedInfo: Partial<User>) => Promise<void>;
-  refreshCurrentUser: () => Promise<void>;
+  refreshCurrentUser: (options?: { quick?: boolean }) => Promise<void>;
   changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
   changeEmail: (newEmail: string) => Promise<void>;
   verifyEmailChange: (code: string, emailAddressId: string) => Promise<void>;
@@ -71,6 +70,18 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
 
   const clerkUserId = clerkUser?.id ?? null;
   const isAuthenticated = Boolean(clerkUser && isSignedIn);
+
+  /**
+   * Is this Clerk account new enough that its provisioning webhook could still
+   * be in flight? Decides which retry budget the fetch below uses.
+   *
+   * Read through a ref so `fetchUserFromBackend` does not have to depend on a
+   * value that changes every render — the callback's identity is a dependency
+   * of the sync effect, and churning it would re-run the sync.
+   */
+  const accountIsFreshRef = useRef(false);
+  const createdAt = clerkUser?.createdAt;
+  accountIsFreshRef.current = isFreshAccount(createdAt);
 
     const transformBackendUser = useCallback((user: any): User => {
       const normalizedOrganizations: Array<Organization & { membershipRole?: UserRole }> = Array.isArray(user.organizations)
@@ -158,8 +169,22 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
     return BACKEND_SYNC_ERROR_KEY;
   }, []);
 
+  /**
+   * Delay before retry number `attempt`, or `null` when the budget is spent.
+   *
+   * `quick` forces the short schedule regardless of how new the account is.
+   * It is for a FOLLOW-UP read, after something else has already done the
+   * waiting — a second full budget there would stack two ~50s waits back to
+   * back and leave the user staring at a spinner for over a minute.
+   */
+  const webhookRetryDelay = useCallback(
+    (attempt: number, quick: boolean): number | null =>
+      webhookRetryDelayMs(attempt, quick ? false : accountIsFreshRef.current),
+    [],
+  );
+
   const fetchUserFromBackend = useCallback(
-    async (clerkId: string, attempt = 0): Promise<User> => {
+    async (clerkId: string, attempt = 0, quick = false): Promise<User> => {
       const token = await getToken();
 
       
@@ -234,16 +259,19 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
         console.error('Failed to read response body:', bodyError);
       }
 
-      if (response.status === 404 && attempt < WEBHOOK_RETRY_ATTEMPTS) {
-        await new Promise(resolve => setTimeout(resolve, WEBHOOK_RETRY_DELAY_MS));
-        return fetchUserFromBackend(clerkId, attempt + 1);
+      if (response.status === 404) {
+        const delay = webhookRetryDelay(attempt, quick);
+        if (delay !== null) {
+          await new Promise(resolve => setTimeout(resolve, delay));
+          return fetchUserFromBackend(clerkId, attempt + 1, quick);
+        }
       }
 
       // Retry once on 401 — may be a transient JWT-key resolution failure on a
       // cold-started backend instance (e.g. Render.com free tier spin-up).
       if (response.status === 401 && attempt === 0) {
         await new Promise(resolve => setTimeout(resolve, 2500));
-        return fetchUserFromBackend(clerkId, attempt + 1);
+        return fetchUserFromBackend(clerkId, attempt + 1, quick);
       }
 
       if (!response.ok) {
@@ -274,9 +302,10 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       // Handle pending user case (200 response with isPending: true)
       if (data?.success && data?.data?.isPending) {
         
-        if (attempt < WEBHOOK_RETRY_ATTEMPTS) {
-          await new Promise(resolve => setTimeout(resolve, WEBHOOK_RETRY_DELAY_MS));
-          return fetchUserFromBackend(clerkId, attempt + 1);
+        const delay = webhookRetryDelay(attempt, quick);
+        if (delay !== null) {
+          await new Promise(resolve => setTimeout(resolve, delay));
+          return fetchUserFromBackend(clerkId, attempt + 1, quick);
         } else {
           throw new ApiError(
             data.data.message || 'User account is being processed. Please wait a moment and refresh.',
@@ -301,7 +330,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
 
       return transformBackendUser(data.data);
     },
-    [getToken, transformBackendUser]
+    [getToken, transformBackendUser, webhookRetryDelay]
   );
 
   useEffect(() => {
@@ -737,7 +766,14 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
     [clerkUser, currentUser?.email]
   );
 
-  const refreshCurrentUser = useCallback(async () => {
+  /**
+   * Re-read the backend account into the session.
+   *
+   * `quick` skips the long provisioning wait, for callers that already waited
+   * (the signup wizard after its own poll succeeded, and the protected-route
+   * gate after the initial sync gave up).
+   */
+  const refreshCurrentUser = useCallback(async (options?: { quick?: boolean }) => {
     if (!clerkIsLoaded) {
       throw new Error('Clerk is not loaded yet');
     }
@@ -746,7 +782,7 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
       throw new Error('No authenticated user to refresh');
     }
 
-    const backendUser = await fetchUserFromBackend(clerkUserId);
+    const backendUser = await fetchUserFromBackend(clerkUserId, 0, options?.quick ?? false);
     setCurrentUser(backendUser);
     setAuthError(null);
     syncAttemptRef.current = {

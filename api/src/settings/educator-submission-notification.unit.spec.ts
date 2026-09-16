@@ -175,3 +175,75 @@ describe('educator CV deletion', () => {
     );
   });
 });
+
+/**
+ * Mirrors the `promotionOutcome` the settings transaction now records on the
+ * signup trace.
+ *
+ * The promotion rules above say what the status BECOMES; this says WHY, which
+ * is the part that was missing when an educator turned up in the incomplete
+ * list after the last round of fixes. The three outcomes need different
+ * responses, so collapsing them would put the log right back where it started:
+ *
+ *   NOT_AN_APPLICATION          -> the save carried nothing promotable (a form
+ *                                  or DTO bug — the user did their part)
+ *   PROMOTED                    -> worked
+ *   ALREADY_SUBMITTED_OR_DECIDED-> a later edit, or a concurrent submission
+ *                                  that lost the race; not a failure
+ */
+const classifyPromotion = (
+  current: EducatorApprovalStatus | null,
+  incoming: { shortBio?: string; cvUrl?: string },
+): 'PROMOTED' | 'ALREADY_SUBMITTED_OR_DECIDED' | 'NOT_AN_APPLICATION' => {
+  const isSubmittingApplication = Boolean(incoming.shortBio?.trim() || incoming.cvUrl?.trim());
+  if (!isSubmittingApplication) return 'NOT_AN_APPLICATION';
+  return current === EducatorApprovalStatus.INCOMPLETE
+    ? 'PROMOTED'
+    : 'ALREADY_SUBMITTED_OR_DECIDED';
+};
+
+describe('signup trace: why a profile did not leave INCOMPLETE', () => {
+  it('reports PROMOTED for a real first submission', () => {
+    expect(
+      classifyPromotion(EducatorApprovalStatus.INCOMPLETE, { shortBio: 'Ten years in early years' }),
+    ).toBe('PROMOTED');
+  });
+
+  it('distinguishes an unpromotable save from an abandoned signup', () => {
+    // This is the case a human could not previously tell apart: the educator
+    // DID press Complete Setup, the request DID reach us, and the account still
+    // sat in the incomplete list. That is our bug, not their drop-off.
+    expect(classifyPromotion(EducatorApprovalStatus.INCOMPLETE, {})).toBe('NOT_AN_APPLICATION');
+    expect(
+      classifyPromotion(EducatorApprovalStatus.INCOMPLETE, { shortBio: '   ', cvUrl: '' }),
+    ).toBe('NOT_AN_APPLICATION');
+  });
+
+  it('does not report a failure when the educator simply edits later', () => {
+    expect(
+      classifyPromotion(EducatorApprovalStatus.PENDING_REVIEW, { shortBio: 'Updated bio' }),
+    ).toBe('ALREADY_SUBMITTED_OR_DECIDED');
+    expect(classifyPromotion(EducatorApprovalStatus.APPROVED, { shortBio: 'Updated bio' })).toBe(
+      'ALREADY_SUBMITTED_OR_DECIDED',
+    );
+  });
+
+  it('agrees with the promotion rule it explains', () => {
+    // The trace must never say PROMOTED for a transition that did not happen —
+    // a log that disagrees with the code is worse than no log.
+    const cases: Array<[EducatorApprovalStatus | null, { shortBio?: string; cvUrl?: string }]> = [
+      [EducatorApprovalStatus.INCOMPLETE, { shortBio: 'bio' }],
+      [EducatorApprovalStatus.INCOMPLETE, { cvUrl: 'https://x/cv.pdf' }],
+      [EducatorApprovalStatus.INCOMPLETE, {}],
+      [EducatorApprovalStatus.PENDING_REVIEW, { shortBio: 'bio' }],
+      [EducatorApprovalStatus.APPROVED, { cvUrl: 'https://x/cv.pdf' }],
+      [null, { shortBio: 'bio' }],
+    ];
+
+    for (const [current, incoming] of cases) {
+      expect(classifyPromotion(current, incoming) === 'PROMOTED').toBe(
+        promote(current, incoming).promoted,
+      );
+    }
+  });
+});

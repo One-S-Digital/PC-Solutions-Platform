@@ -43,6 +43,7 @@ import { HealthModule } from './health/health.module';
 import { RoleManagementModule } from './admin/role-management/role-management.module';
 import { SyncModule } from './sync/sync.module';
 import { WebhooksModule } from './webhooks/webhooks.module';
+import { SignupLogModule } from './signup-log/signup-log.module';
 import { CompatModule } from './compat/compat.module';
 import { PlatformSettingsModule } from './platform-settings/platform-settings.module';
 import { ContentManagementModule } from './content-management/content-management.module';
@@ -141,6 +142,7 @@ import {
     RoleManagementModule,
     SyncModule,
     WebhooksModule,
+    SignupLogModule,
     CompatModule,
     PlatformSettingsModule,
     ContentManagementModule,

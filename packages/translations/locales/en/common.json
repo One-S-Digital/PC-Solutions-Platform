@@ -1113,6 +1113,20 @@
     "viewPlans": "View Plans",
     "viewPlansPrompt": "Want to see our plans?"
   },
+  "accountSetup": {
+    "welcome": "Welcome, {{name}}!",
+    "finishing": "Finishing your account setup...",
+    "finishingHint": "This only takes a moment.",
+    "oauthPrompt": "You've signed in successfully. To get started, please complete your profile by selecting your role and providing a few details.",
+    "loadFailed": "We couldn't load your account details just yet. This is usually temporary — trying again will normally sort it out.",
+    "signedInAs": "Signed in as",
+    "tryAgain": "Try again",
+    "completeProfile": "Complete your profile",
+    "setUpInstead": "Set up my profile instead",
+    "signOutDifferent": "Sign out and use a different account",
+    "havingTrouble": "Having trouble?",
+    "contactSupport": "Contact support"
+  },
   "marketplace": {
     "contactForPricing": "Contact for pricing",
     "variousProducts": "various Products",

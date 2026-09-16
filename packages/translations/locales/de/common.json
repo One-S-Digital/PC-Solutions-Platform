@@ -1098,6 +1098,20 @@
     "viewPlans": "Angebote anzeigen",
     "viewPlansPrompt": "Möchten Sie unsere Angebote sehen?"
   },
+  "accountSetup": {
+    "welcome": "Willkommen, {{name}}!",
+    "finishing": "Ihr Konto wird eingerichtet...",
+    "finishingHint": "Das dauert nur einen Moment.",
+    "oauthPrompt": "Sie haben sich erfolgreich angemeldet. Vervollständigen Sie zum Start bitte Ihr Profil, indem Sie Ihre Rolle auswählen und einige Angaben machen.",
+    "loadFailed": "Ihre Kontodaten konnten noch nicht geladen werden. Das ist in der Regel vorübergehend — ein erneuter Versuch genügt meistens.",
+    "signedInAs": "Angemeldet als",
+    "tryAgain": "Erneut versuchen",
+    "completeProfile": "Profil vervollständigen",
+    "setUpInstead": "Stattdessen Profil einrichten",
+    "signOutDifferent": "Abmelden und anderes Konto verwenden",
+    "havingTrouble": "Probleme?",
+    "contactSupport": "Support kontaktieren"
+  },
   "marketplace": {
     "contactForPricing": "Für Preise kontaktieren",
     "variousProducts": "various Products",
