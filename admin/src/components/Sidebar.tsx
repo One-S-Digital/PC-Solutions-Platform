@@ -28,6 +28,7 @@ import {
   ChevronRight,
   GraduationCap,
   ClipboardCheck,
+  Activity,
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useSettings } from '../hooks/useSettings'
@@ -72,6 +73,9 @@ const navStructure: NavEntry[] = [
     type: 'group', key: 'recruitment', icon: Briefcase,
     items: [
       { key: 'educatorApprovals', href: '/educator-approvals', icon: ClipboardCheck },
+      // Sits next to the approvals queue on purpose: it is the page you open
+      // when something in that queue does not look right.
+      { key: 'signupDiagnostics', href: '/signup-diagnostics', icon: Activity },
       { key: 'jobListings',       href: '/job-listings',       icon: Briefcase },
       { key: 'candidatePool',     href: '/candidates',         icon: UserCheck },
       { key: 'replacements',      href: '/replacements',       icon: RefreshCw },

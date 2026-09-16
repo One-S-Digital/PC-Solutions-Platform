@@ -22,6 +22,15 @@ import {
   writeWizardState,
   clearSignupDrafts,
 } from '../utils/signupDraft';
+import {
+  SignupTraceEvent,
+  clearSignupCorrelationId,
+  getSignupCorrelationId,
+  resetSignupCorrelationId,
+  signupTraceHeaders,
+  traceSignup,
+  traceSignupBeacon,
+} from '../utils/signupTrace';
 
 const SIGNUP_ROLE_TO_USER_ROLE: Record<SignupRole, UserRole> = {
   [SignupRole.FOUNDATION]: UserRole.FOUNDATION,
@@ -404,8 +413,69 @@ const SignupPage: React.FC = () => {
   useEffect(() => {
     if (currentStep === 4) {
       clearSignupDrafts(formData.email);
+      clearSignupCorrelationId();
     }
   }, [currentStep, formData.email]);
+
+  // Educator step 3 is the only part of signup with no server-side footprint
+  // until the very last request, so it is instrumented at both ends: arriving
+  // here, and leaving without having saved.
+  const hasTracedStep3Ref = useRef(false);
+  useEffect(() => {
+    if (currentStep !== 3 || !isEducatorRole() || hasTracedStep3Ref.current) return;
+    hasTracedStep3Ref.current = true;
+    traceSignup(SignupTraceEvent.STEP3_ENTERED, {
+      role: selectedRole,
+      email: formData.email || currentUser?.email,
+      detail: {
+        // Distinguishes a fresh arrival from a resumed one. A resume that finds
+        // no draft is a persistence failure, not a user who changed their mind.
+        resumedFromIncomplete: Boolean(isIncompleteEducator),
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStep, selectedRole, isIncompleteEducator]);
+
+  // Report a step-3 exit that leaves the profile unsaved.
+  //
+  // `pagehide` and a hidden `visibilitychange` are the only signals a browser
+  // reliably gives before a tab goes away, and `sendBeacon` is the only way to
+  // get a request out during one. Without this pair, an abandoned signup is
+  // indistinguishable from a signup that never reached step 3 at all.
+  const educatorSavedRef = useRef(false);
+  useEffect(() => {
+    if (currentStep !== 3 || !isEducatorRole()) return;
+
+    const reportAbandon = () => {
+      if (educatorSavedRef.current) return;
+      traceSignupBeacon(SignupTraceEvent.WIZARD_ABANDONED, {
+        role: selectedRole,
+        email: formData.email || currentUser?.email,
+        // SKIP, not FAIL. On mobile, switching apps fires `visibilitychange`
+        // too, so this event alone does not prove the signup was lost — the
+        // user may well come back and finish. It is conclusive only combined
+        // with the absence of a later submit, which is how the admin timeline
+        // reads it. Marking it FAIL would flood the problems list with signups
+        // that completed fine. The daily stuck-account sweep is the
+        // authoritative failure signal.
+        outcome: 'SKIP',
+        errorCode: 'STEP3_LEFT_UNSAVED',
+        detail: { step: 3 },
+      });
+    };
+
+    const onVisibility = () => {
+      if (document.visibilityState === 'hidden') reportAbandon();
+    };
+
+    window.addEventListener('pagehide', reportAbandon);
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => {
+      window.removeEventListener('pagehide', reportAbandon);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStep, selectedRole, formData.email, currentUser?.email]);
 
   // Handle successful verification - redirect if user becomes authenticated after showing success
   useEffect(() => {
@@ -483,6 +553,12 @@ const SignupPage: React.FC = () => {
     setCurrentStep(2);
     setHasStartedSignup(true);
     setSuccessRedirect(getSuccessRedirectForRole());
+
+    // Picking a role is the true start of a signup, so mint the id here rather
+    // than reusing whatever a previous abandoned attempt left behind — two
+    // attempts by the same person must not collapse into one timeline.
+    resetSignupCorrelationId();
+    traceSignup(SignupTraceEvent.WIZARD_STARTED, { role });
   };
 
   const handleBackToRoleSelection = () => {
@@ -648,7 +724,8 @@ const SignupPage: React.FC = () => {
                method: 'POST',
                headers: {
                    'Authorization': `Bearer ${authToken}`,
-                   'Content-Type': 'application/json'
+                   'Content-Type': 'application/json',
+                   ...signupTraceHeaders(),
                },
                body: JSON.stringify(payload)
            });
@@ -746,6 +823,11 @@ const SignupPage: React.FC = () => {
       const lastName = nameParts.slice(1).join(' ') || '';
 
 
+      traceSignup(SignupTraceEvent.ACCOUNT_SUBMITTED, {
+        role: selectedRole,
+        email: formData.email,
+      });
+
       const result = await signUp.create({
         emailAddress: formData.email,
         password: formData.password,
@@ -758,6 +840,11 @@ const SignupPage: React.FC = () => {
           // server-side by parseSignupIntent().
           signupType: selectedRole,
           pendingRole: pendingUserRole,
+          // Carried so the `user.created` webhook — which runs in another
+          // process with no access to this browser — can stamp its rows with
+          // the same journey id. Without it the server-side half of the trace
+          // cannot be joined to the browser's.
+          signupCorrelationId: getSignupCorrelationId(),
           ...buildSignupIntent(),
         },
       });
@@ -775,13 +862,28 @@ const SignupPage: React.FC = () => {
         // Email verification required
         try {
           await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
-          
+
+          traceSignup(SignupTraceEvent.VERIFICATION_SENT, {
+            role: selectedRole,
+            email: formData.email,
+          });
+
           setShowVerificationStep(true);
           
           setIsLoading(false);
           
           return;
         } catch (verifyError: any) {
+          // The account exists in Clerk but the user never gets the code, so
+          // the webhook never fires and no backend account is created. Silent
+          // until now; this is the row that explains it.
+          traceSignup(SignupTraceEvent.ACCOUNT_FAILED, {
+            role: selectedRole,
+            email: formData.email,
+            outcome: 'FAIL',
+            errorCode: 'VERIFICATION_EMAIL_FAILED',
+            errorMessage: verifyError?.message,
+          });
           setErrors({ email: 'Failed to send verification email. Please try again.' });
         }
       }
@@ -818,6 +920,14 @@ const SignupPage: React.FC = () => {
         }
       }
       
+      traceSignup(SignupTraceEvent.ACCOUNT_FAILED, {
+        role: selectedRole,
+        email: formData.email,
+        outcome: 'FAIL',
+        errorCode: err?.errors?.[0]?.code || 'CLERK_SIGNUP_FAILED',
+        errorMessage,
+      });
+
       setErrors({ [errorField]: errorMessage });
     } finally {
       setIsLoading(false);
@@ -841,6 +951,14 @@ const SignupPage: React.FC = () => {
     setVerificationError('');
     
     try {
+      // Verification is the moment the backend account is created (by the
+      // webhook). An educator whose journey stops right here has an account
+      // and nothing else — which is precisely the incomplete-list case.
+      traceSignup(SignupTraceEvent.VERIFICATION_SUBMITTED, {
+        role: selectedRole,
+        email: formData.email,
+      });
+
       const result = await signUp.attemptEmailAddressVerification({
         code: verificationCode,
       });
@@ -986,6 +1104,19 @@ const SignupPage: React.FC = () => {
             continue;
           }
 
+          traceSignup(SignupTraceEvent.PROFILE_SUBMIT_ATTEMPT, {
+            role: selectedRole,
+            email: profileData.email || formData.email,
+            detail: {
+              attempt: attempt + 1,
+              // The two fields the server checks to decide whether this counts
+              // as an application. If a stuck educator's timeline shows both
+              // false, the wizard let them submit something unpromotable.
+              hasShortBio: Boolean(profileData.shortBio?.trim()),
+              hasCvUrl: Boolean(profileData.cvUrl?.trim()),
+            },
+          });
+
           const response = await fetch(
             `${apiService.apiBaseUrl}${API_ENDPOINTS.settings.educator}`,
             {
@@ -993,6 +1124,9 @@ const SignupPage: React.FC = () => {
               headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
+                // Joins this request to the browser's own events and to the
+                // webhook that created the account minutes earlier.
+                ...signupTraceHeaders(),
               },
               body: JSON.stringify(payload),
             },
@@ -1013,6 +1147,15 @@ const SignupPage: React.FC = () => {
             break;
           }
 
+          traceSignup(SignupTraceEvent.PROFILE_SUBMIT_RETRY, {
+            role: selectedRole,
+            email: profileData.email || formData.email,
+            outcome: 'FAIL',
+            errorCode: `HTTP_${response.status}`,
+            errorMessage: lastError,
+            detail: { attempt: attempt + 1, status: response.status },
+          });
+
           console.warn('[Signup Debug] educator profile save: retryable failure', {
             attempt: attempt + 1,
             status: response.status,
@@ -1020,6 +1163,14 @@ const SignupPage: React.FC = () => {
         } catch (networkErr: any) {
           // fetch() rejected — always worth another try.
           lastError = networkErr?.message || 'Network error while saving your profile';
+          traceSignup(SignupTraceEvent.PROFILE_SUBMIT_RETRY, {
+            role: selectedRole,
+            email: profileData.email || formData.email,
+            outcome: 'FAIL',
+            errorCode: 'NETWORK_ERROR',
+            errorMessage: lastError,
+            detail: { attempt: attempt + 1 },
+          });
           console.warn('[Signup Debug] educator profile save: network failure', {
             attempt: attempt + 1,
             error: lastError,
@@ -1028,6 +1179,14 @@ const SignupPage: React.FC = () => {
       }
 
       if (saved) {
+        // Stops the abandonment beacon firing on the navigation that follows a
+        // successful save — otherwise every completed signup would also report
+        // itself abandoned.
+        educatorSavedRef.current = true;
+        traceSignup(SignupTraceEvent.PROFILE_SUBMIT_SUCCEEDED, {
+          role: selectedRole,
+          email: profileData.email || formData.email,
+        });
         setProvisioningDelayed(false);
         // Clear the draft only once the server has actually accepted the data.
         clearSignupDrafts(profileData.email || formData.email);
@@ -1039,6 +1198,19 @@ const SignupPage: React.FC = () => {
         setCurrentStep(4);
         return;
       }
+
+      // Every retry is spent and the educator is sitting on step 3 with an
+      // account that is still INCOMPLETE. This is the exact moment the reported
+      // bug becomes real, and until now it produced nothing but a console line
+      // on the user's own machine.
+      traceSignup(SignupTraceEvent.PROFILE_SUBMIT_FAILED, {
+        role: selectedRole,
+        email: profileData.email || formData.email,
+        outcome: 'FAIL',
+        errorCode: 'RETRIES_EXHAUSTED',
+        errorMessage: lastError,
+        detail: { attempts: EDUCATOR_SAVE_MAX_ATTEMPTS },
+      });
 
       console.error('Educator profile save failed after retries:', lastError);
       // Stay on step 3 with the draft intact so the educator can simply press

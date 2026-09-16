@@ -32,6 +32,7 @@ import { AllowPending } from '../auth/decorators/allow-pending.decorator';
 import { ConfigService } from '@nestjs/config';
 import { createClerkClient } from '@clerk/clerk-sdk-node';
 import { EmailNotificationService } from '../email-notification/email-notification.service';
+import { readCorrelationId } from '../signup-log/signup-log.request';
 
 @Controller('users')
 @UseGuards(ClerkAuthGuard, RolesGuard)
@@ -83,7 +84,12 @@ export class UsersController {
       throw new BadRequestException('Email is required to complete profile');
     }
     
-    return this.usersService.completeProfile(clerkId, email, completeProfileDto);
+    return this.usersService.completeProfile(
+      clerkId,
+      email,
+      completeProfileDto,
+      readCorrelationId(request),
+    );
   }
 
   @Post()

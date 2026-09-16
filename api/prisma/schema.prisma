@@ -2871,3 +2871,69 @@ model InternPoolApplication {
   @@index([applicantId])
   @@map("intern_pool_applications")
 }
+
+// ---------------------------------------------------------------------------
+// Signup diagnostics
+// ---------------------------------------------------------------------------
+
+/// Append-only trace of everything that happens during a signup, from the
+/// moment a role is picked in the browser to the moment an admin decides on the
+/// resulting account.
+///
+/// Why a dedicated table rather than the Winston console logger: a signup
+/// spans three processes that never share a request — the browser wizard, the
+/// Clerk `user.created` webhook, and the authenticated PATCH that submits the
+/// educator profile. Console lines from those three cannot be stitched back
+/// together after the fact, and they are gone on the next redeploy. Answering
+/// "why did THIS educator land in INCOMPLETE" needs a durable, queryable,
+/// per-journey record — which is exactly what this is.
+///
+/// Deliberately has NO foreign key to `User`: rows are written before the user
+/// exists (client events, webhook receipt) and must survive the user being
+/// deleted, since "the account was never created" is itself a finding.
+model SignupEventLog {
+  id String @id @default(uuid())
+
+  /// Stitches the whole journey together. Minted in the browser when the role
+  /// is chosen, carried into Clerk `unsafe_metadata` so the webhook stamps the
+  /// same value, and sent on the step-3 PATCH via `X-Signup-Correlation-Id`.
+  correlationId String
+
+  /// Event name from the catalogue in `signup-log.events.ts`.
+  event String
+  /// Coarse phase: WIZARD | ACCOUNT | PROFILE | REVIEW | SYSTEM.
+  stage String
+  /// Which process emitted this: CLIENT | WEBHOOK | API | ADMIN | SYSTEM.
+  source String
+  /// OK | FAIL | SKIP — lets you find broken journeys without parsing detail.
+  outcome String @default("OK")
+
+  role     String?
+  userId   String?
+  clerkId  String?
+  email    String?
+
+  /// Approval status on either side of the event, so a status regression is
+  /// visible without diffing adjacent rows.
+  approvalStatusBefore String?
+  approvalStatusAfter  String?
+
+  /// Structured context. Holds field PRESENCE (hasShortBio, hasCvUrl, attempt
+  /// number, http status), never field values — see SIGNUP_LOG_REDACT.
+  detail Json?
+
+  errorCode    String?
+  errorMessage String?
+
+  ipAddress String?
+  userAgent String?
+
+  createdAt DateTime @default(now())
+
+  @@index([correlationId, createdAt])
+  @@index([email])
+  @@index([userId])
+  @@index([createdAt])
+  @@index([outcome, createdAt])
+  @@map("signup_event_logs")
+}

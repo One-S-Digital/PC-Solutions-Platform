@@ -69,6 +69,7 @@ Role-based dashboard redirect: `frontend/App.tsx:151` (`RoleBasedDashboardRedire
 | Mailing transport | `api/src/mailing/mailing-transport.service.ts` |
 | Admin API service | `admin/src/services/api.ts` |
 | Prisma schema | `api/prisma/schema.prisma` |
+| Signup diagnostics | `api/src/signup-log/` · `frontend/utils/signupTrace.ts` · `admin/src/pages/SignupDiagnostics.tsx` |
 
 ---
 
@@ -110,6 +111,23 @@ Scheduled emails: cron runs every minute dispatching `ScheduledEmail` records pa
 
 ---
 
+## Signup Diagnostics
+
+Durable trace of every signup, stored in the `signup_event_logs` table (90-day
+purge). Answers "why did this account land in the incomplete list" — see
+`SIGNUP_DIAGNOSTICS.md`.
+
+- Educators are the only role with a two-phase signup, so only they can reach
+  `INCOMPLETE`. Other roles are finished when the webhook commits; their failure
+  mode is silent field loss, not a stuck status. Both are instrumented.
+- A correlation id minted in the browser is carried through Clerk
+  `unsafe_metadata.signupCorrelationId` and the `X-Signup-Correlation-Id` header
+  so the wizard, webhook and API land on one timeline.
+- Read it at **Admin → Signup Diagnostics**, or via "Why incomplete?" on the
+  Educator Approvals incomplete tab.
+
+---
+
 ## Environment Notes
 
 | Var | Purpose |
@@ -120,5 +138,7 @@ Scheduled emails: cron runs every minute dispatching `ScheduledEmail` records pa
 | `CRAWLER_ENABLED` | Default `false` — canton policy crawler |
 | `MALWARE_SCANNING_ENABLED` | Default `false` — ClamAV |
 | `REDIS_URL` / `REDIS_HOST` | Optional; queue workers disabled if unset |
+| `SIGNUP_LOG_ENABLED` | Signup trace; opt-out (`false` disables) |
+| `SIGNUP_LOG_RETENTION_DAYS` | Default `90` — nightly purge of `signup_event_logs` |
 
 See `ENVIRONMENT_SETUP.md` for full env var reference.
