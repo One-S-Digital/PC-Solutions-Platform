@@ -1083,6 +1083,20 @@
     "viewPlans": "Voir les offres",
     "viewPlansPrompt": "Vous voulez voir nos offres ?"
   },
+  "accountSetup": {
+    "welcome": "Bienvenue, {{name}} !",
+    "finishing": "Finalisation de la configuration de votre compte...",
+    "finishingHint": "Cela ne prend qu'un instant.",
+    "oauthPrompt": "Vous êtes bien connecté. Pour commencer, veuillez compléter votre profil en sélectionnant votre rôle et en renseignant quelques informations.",
+    "loadFailed": "Nous n'avons pas encore pu charger les informations de votre compte. C'est généralement temporaire — réessayer suffit le plus souvent.",
+    "signedInAs": "Connecté en tant que",
+    "tryAgain": "Réessayer",
+    "completeProfile": "Compléter mon profil",
+    "setUpInstead": "Configurer mon profil à la place",
+    "signOutDifferent": "Se déconnecter et utiliser un autre compte",
+    "havingTrouble": "Un problème ?",
+    "contactSupport": "Contacter le support"
+  },
   "marketplace": {
     "contactForPricing": "Contactez pour les tarifs",
     "variousProducts": "various Products",

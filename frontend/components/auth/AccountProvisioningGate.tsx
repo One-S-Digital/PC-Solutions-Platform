@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useUser, useClerk } from '@clerk/clerk-react';
+import { useTranslation } from 'react-i18next';
 import { useAuthContext } from '../../providers/AuthProvider';
 import { SignupTraceEvent, traceSignup } from '../../utils/signupTrace';
 
@@ -25,6 +26,7 @@ import { SignupTraceEvent, traceSignup } from '../../utils/signupTrace';
  * recover and offer the form.
  */
 const AccountProvisioningGate: React.FC = () => {
+  const { t } = useTranslation('common');
   const { refreshCurrentUser } = useAuthContext();
   const { user: clerkUser } = useUser();
   const { signOut } = useClerk();
@@ -68,8 +70,8 @@ const AccountProvisioningGate: React.FC = () => {
       <div className="min-h-screen bg-page-bg flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-swiss-mint mx-auto mb-4"></div>
-          <p className="text-gray-600">Finishing your account setup...</p>
-          <p className="text-sm text-gray-400 mt-2">This only takes a moment.</p>
+          <p className="text-gray-600">{t('accountSetup.finishing')}</p>
+          <p className="text-sm text-gray-400 mt-2">{t('accountSetup.finishingHint')}</p>
         </div>
       </div>
     );
@@ -89,22 +91,23 @@ const AccountProvisioningGate: React.FC = () => {
         </div>
 
         <h1 className="text-2xl font-bold text-swiss-charcoal mb-2">
-          Welcome, {userName}!
+          {t('accountSetup.welcome', { name: userName })}
         </h1>
 
         <p className="text-gray-600 mb-6">
+          {/* Deliberately no longer "your profile setup wasn't completed".
+              For a user whose account exists and whose session is simply stale,
+              that was false, and it read as an instruction to start over —
+              which is exactly what they should not do. */}
           {hasOAuthAccount
-            ? "You've signed in successfully. To get started, please complete your profile by selecting your role and providing a few details."
-            : // Deliberately not "your profile setup wasn't completed" any more.
-              // For a user whose account exists and whose session is simply
-              // stale, that was false, and it read as an instruction to start
-              // over — which is exactly what they should not do.
-              "We couldn't load your account details just yet. This is usually temporary — trying again will normally sort it out."}
+            ? t('accountSetup.oauthPrompt')
+            : t('accountSetup.loadFailed')}
         </p>
 
         {userEmail && (
           <p className="text-sm text-gray-500 mb-6">
-            Signed in as <span className="font-medium text-swiss-charcoal">{userEmail}</span>
+            {t('accountSetup.signedInAs')}{' '}
+            <span className="font-medium text-swiss-charcoal">{userEmail}</span>
           </p>
         )}
 
@@ -114,14 +117,16 @@ const AccountProvisioningGate: React.FC = () => {
           onClick={() => void attemptRecovery()}
           className="w-full bg-swiss-mint text-white font-semibold py-3 px-6 rounded-lg hover:bg-swiss-mint/90 transition-colors mb-3"
         >
-          Try again
+          {t('accountSetup.tryAgain')}
         </button>
 
         <button
           onClick={() => navigate('/signup', { state: { from: location, isPending: true } })}
           className="w-full bg-white text-swiss-charcoal font-medium py-3 px-6 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors mb-4"
         >
-          {hasOAuthAccount ? 'Complete Your Profile' : 'Set up my profile instead'}
+          {hasOAuthAccount
+            ? t('accountSetup.completeProfile')
+            : t('accountSetup.setUpInstead')}
         </button>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center text-sm">
@@ -137,12 +142,15 @@ const AccountProvisioningGate: React.FC = () => {
             }}
             className="text-gray-500 hover:text-gray-700 underline"
           >
-            Sign out and use a different account
+            {t('accountSetup.signOutDifferent')}
           </button>
         </div>
 
         <p className="mt-6 text-xs text-gray-400">
-          Having trouble? <Link to="/support" className="text-swiss-mint hover:underline">Contact support</Link>
+          {t('accountSetup.havingTrouble')}{' '}
+          <Link to="/support" className="text-swiss-mint hover:underline">
+            {t('accountSetup.contactSupport')}
+          </Link>
         </p>
       </div>
     </div>
