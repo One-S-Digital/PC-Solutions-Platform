@@ -457,6 +457,36 @@ export const apiService = {
     apiClient.post<ApiResponse<any>>(`/admin/educator-approvals/${id}/approve`),
   rejectEducator: (apiClient: AxiosInstance, id: string, notes: string) =>
     apiClient.post<ApiResponse<any>>(`/admin/educator-approvals/${id}/reject`, { notes }),
+
+  // Signup diagnostics — the durable trace of what happened during a signup.
+  // See api/src/signup-log for the event catalogue.
+  getSignupJourneys: (
+    apiClient: AxiosInstance,
+    params?: { limit?: number; onlyFailed?: boolean; days?: number },
+  ) => apiClient.get<ApiResponse<any>>('/admin/signup-log/journeys', { params }),
+  getSignupFunnel: (apiClient: AxiosInstance, params?: { days?: number }) =>
+    apiClient.get<ApiResponse<any>>('/admin/signup-log/funnel', { params }),
+  getSignupEvents: (
+    apiClient: AxiosInstance,
+    params?: {
+      email?: string;
+      correlationId?: string;
+      role?: string;
+      outcome?: string;
+      event?: string;
+      page?: number;
+      limit?: number;
+    },
+  ) => apiClient.get<ApiResponse<any>>('/admin/signup-log/events', { params }),
+  getSignupTimeline: (apiClient: AxiosInstance, correlationId: string) =>
+    apiClient.get<ApiResponse<any>>(
+      `/admin/signup-log/timeline/${encodeURIComponent(correlationId)}`,
+    ),
+  /** Every signup event for one account, across all of its attempts. */
+  getSignupTimelineForUser: (apiClient: AxiosInstance, userId: string, email?: string) =>
+    apiClient.get<ApiResponse<any>>(`/admin/signup-log/user/${encodeURIComponent(userId)}`, {
+      params: email ? { email } : undefined,
+    }),
   createCandidate: (apiClient: AxiosInstance, candidateData: {
     firstName: string;
     lastName: string;

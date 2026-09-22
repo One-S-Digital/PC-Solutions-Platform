@@ -20,6 +20,12 @@ export const API_ENDPOINTS = {
     completeProfile: "/users/complete-profile",
   },
 
+  // Signup diagnostics — browser-reported milestones for the signup trace.
+  // Public by design: most of these fire before the user has a session.
+  signupLog: {
+    clientEvent: "/signup-log/client-event",
+  },
+
   profiles: {
     get: "/profiles/me",
     update: "/profiles/me",

@@ -16,6 +16,13 @@ import { createClerkClient } from '@clerk/clerk-sdk-node';
 import { ConfigService } from '@nestjs/config';
 import { UserRole, EducatorApprovalStatus } from '@prisma/client';
 import { EmailNotificationService } from '../email-notification/email-notification.service';
+import { SignupLogService } from '../signup-log/signup-log.service';
+import {
+  SignupEvent,
+  SignupOutcome,
+  SignupSource,
+  SignupStage,
+} from '../signup-log/signup-log.events';
 
 // Simple in-memory set for idempotency (replace with Redis in production)
 const processedEvents = new Set<string>();
@@ -36,6 +43,7 @@ export class ClerkWebhookController {
     private configService: ConfigService,
     private emailNotificationService: EmailNotificationService,
     private signupProfileService: SignupProfileService,
+    private signupLog: SignupLogService,
   ) {
     const clerkSecretKey = this.configService.get<string>('CLERK_SECRET_KEY');
     const webhookSecret = this.configService.get<string>('CLERK_WEBHOOK_SECRET');
@@ -531,11 +539,59 @@ ${'='.repeat(100)}`);
       }
     });
 
+    // The wizard mints this and stashes it in unsafe_metadata precisely so the
+    // webhook — a different process, with no request context — can stamp the
+    // same id and join its rows to the browser's.
+    const correlationId =
+      typeof data.unsafe_metadata?.signupCorrelationId === 'string'
+        ? data.unsafe_metadata.signupCorrelationId
+        : undefined;
+    const webhookEmail = data.email_addresses?.[0]?.email_address;
+
+    void this.signupLog.record({
+      correlationId,
+      event: SignupEvent.WEBHOOK_USER_CREATED_RECEIVED,
+      stage: SignupStage.ACCOUNT,
+      source: SignupSource.WEBHOOK,
+      clerkId,
+      email: webhookEmail,
+      role: typeof rawIntendedRole === 'string' ? rawIntendedRole : undefined,
+      detail: {
+        // Which metadata slots actually arrived. When a signup silently
+        // produces no account, this row is the evidence for whether the
+        // browser's metadata reached Clerk at all.
+        hasPrivateIntendedRole: Boolean(data.private_metadata?.intendedRole),
+        hasUnsafeRole: Boolean(data.unsafe_metadata?.role),
+        hasUnsafePendingRole: Boolean(data.unsafe_metadata?.pendingRole),
+        hasUnsafeSignupType: Boolean(data.unsafe_metadata?.signupType),
+        hasPublicRole: Boolean(data.public_metadata?.role),
+        hasCorrelationId: Boolean(correlationId),
+        unsafeMetadataKeys: data.unsafe_metadata ? Object.keys(data.unsafe_metadata).length : 0,
+      },
+    });
+
     // If no role is specified (e.g. Google Sign Up), skip automatic creation
     // The user will be redirected to the signup page to complete their profile
     if (!rawIntendedRole) {
       this.logger.log(`⚠️ [USER CREATION] No role specified for user ${clerkId} (likely OAuth). Skipping automatic backend creation.`);
       console.log(`⚠️ [USER CREATION] Skipping creation for ${clerkId} - waiting for role selection on frontend.`);
+
+      // Expected for OAuth (the role is chosen afterwards at /signup), but a
+      // red flag for email/password — there it means the wizard's metadata
+      // never made it to Clerk and the account will never be created here.
+      // SKIP rather than FAIL because we cannot tell the two apart from inside
+      // the webhook; the browser's own events resolve it on the timeline.
+      void this.signupLog.record({
+        correlationId,
+        event: SignupEvent.WEBHOOK_ROLE_MISSING,
+        stage: SignupStage.ACCOUNT,
+        source: SignupSource.WEBHOOK,
+        outcome: SignupOutcome.SKIP,
+        clerkId,
+        email: webhookEmail,
+        errorCode: 'NO_ROLE_IN_METADATA',
+        errorMessage: 'No role in any metadata slot; backend account creation skipped',
+      });
       return;
     }
     
@@ -707,6 +763,41 @@ ${'='.repeat(100)}`);
         role: validRole,
         hasPhone: !!phoneNumber,
       });
+
+      void this.signupLog.record({
+        correlationId,
+        event: SignupEvent.WEBHOOK_ACCOUNT_CREATED,
+        stage: SignupStage.ACCOUNT,
+        source: SignupSource.WEBHOOK,
+        role: validRole as string,
+        userId: profileUserId ?? undefined,
+        clerkId,
+        email: primaryEmail,
+        // Educators start here and must be promoted later; every other role is
+        // finished at this point. Recording the status makes that asymmetry
+        // legible on the timeline instead of tribal knowledge.
+        approvalStatusAfter:
+          validRole === UserRole.EDUCATOR ? EducatorApprovalStatus.INCOMPLETE : null,
+        detail: {
+          roleRequestedByClient: String(rawIntendedRole),
+          roleWasCoercedToDefault: !this.isValidRole(intendedRole),
+          hasPhone: Boolean(phoneNumber),
+          // Which step-2 fields survived the trip through unsafe_metadata.
+          // This is the all-roles half of the diagnosis: a Foundation losing
+          // its capacity here is the same class of bug as an educator losing
+          // their bio, just with a different symptom.
+          intentOrganisationName: Boolean(signupIntent.organisationName),
+          intentContactPerson: Boolean(signupIntent.contactPerson),
+          intentPhone: Boolean(signupIntent.phone),
+          intentCanton: Boolean(signupIntent.canton),
+          intentCapacity: signupIntent.capacity !== undefined,
+          intentCategory: Boolean(signupIntent.category),
+          intentServiceType: Boolean(signupIntent.serviceType),
+          intentChildAge: signupIntent.childAge !== undefined,
+          intentChildStartDate: Boolean(signupIntent.childStartDate),
+          intentTermsAccepted: Boolean(signupIntent.termsAccepted),
+        },
+      });
     } catch (error) {
       console.error(`❌ [E2E DEBUG] FAILED TO UPSERT ACCOUNT/PROFILE:`, {
         error: error.message,
@@ -717,6 +808,22 @@ ${'='.repeat(100)}`);
         lastName,
         role: validRole,
         stack: error.stack,
+      });
+
+      // The account does not exist. Nothing downstream will ever run for this
+      // user, and without this row the only trace is a console line that is
+      // gone by the next deploy.
+      void this.signupLog.record({
+        correlationId,
+        event: SignupEvent.WEBHOOK_FAILED,
+        stage: SignupStage.ACCOUNT,
+        source: SignupSource.WEBHOOK,
+        outcome: SignupOutcome.FAIL,
+        role: validRole as string,
+        clerkId,
+        email: primaryEmail,
+        errorCode: error?.constructor?.name || 'WEBHOOK_TRANSACTION_FAILED',
+        errorMessage: error?.message,
       });
       throw error;
     }

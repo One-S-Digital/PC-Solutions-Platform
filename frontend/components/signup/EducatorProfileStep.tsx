@@ -14,6 +14,7 @@ import Button from '../ui/Button';
 import FileUploadZone from '../ui/FileUploadZone';
 import { STANDARD_INPUT_FIELD, SWISS_CANTONS, EDUCATOR_JOB_ROLES, type EducatorJobRole } from '../../constants';
 import { readEducatorDraft, writeEducatorDraft } from '../../utils/signupDraft';
+import { SignupTraceEvent, traceSignup } from '../../utils/signupTrace';
 
 export interface EducatorProfileStepData {
   firstName: string;
@@ -123,6 +124,28 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
     // the form is editable before `initialData.email` resolves, and the persist
     // effect is skipped while the email is unknown.
     const draft = readEducatorDraft<Partial<EducatorProfileStepData>>(email);
+
+    // Whether the draft came back is the difference between "the user walked
+    // away" and "we lost what they typed". Both end in an INCOMPLETE profile
+    // and look identical in the admin list, so the trace has to record which.
+    traceSignup(
+      draft ? SignupTraceEvent.DRAFT_RESTORED : SignupTraceEvent.DRAFT_MISSING,
+      {
+        email,
+        outcome: draft ? 'OK' : 'SKIP',
+        detail: draft
+          ? {
+              // Presence only. Enough to tell a full draft from a stub that
+              // would not have promoted the profile anyway.
+              hasShortBio: Boolean(draft.shortBio?.trim()),
+              hasCvUrl: Boolean(draft.cvUrl?.trim()),
+              hasProfessionalExperience: Boolean(draft.professionalExperience?.trim()),
+              fieldCount: Object.keys(draft).length,
+            }
+          : undefined,
+      },
+    );
+
     setData(prev =>
       buildFrom({ ...(draft ?? {}), ...stripEmpty(prev) }, { ...initialData, email }),
     );
@@ -132,9 +155,18 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
   // "Complete Setup" PATCH succeeds. The parent clears it once step 4 is reached.
   // Skipped while the email is unknown — an anonymous draft could never be
   // safely matched back to its owner.
+  const hasTracedDraftSaveRef = useRef(false);
   useEffect(() => {
     if (!data.email) return;
     writeEducatorDraft(data.email, data);
+
+    // Once per mount, not per keystroke: this only needs to confirm that
+    // persistence is working at all for this user, and a row per character
+    // would drown the timeline it is meant to make readable.
+    if (!hasTracedDraftSaveRef.current) {
+      hasTracedDraftSaveRef.current = true;
+      traceSignup(SignupTraceEvent.DRAFT_SAVED, { email: data.email });
+    }
   }, [data]);
 
   const set = (field: keyof EducatorProfileStepData, value: string) => {

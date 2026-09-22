@@ -13,6 +13,13 @@ import { ConfigService } from '@nestjs/config';
 import { createClerkClient } from '@clerk/clerk-sdk-node';
 import { EmailNotificationService } from '../email-notification/email-notification.service';
 import { SignupProfileService, parseSignupIntent } from './signup-profile.service';
+import { SignupLogService } from '../signup-log/signup-log.service';
+import {
+  SignupEvent,
+  SignupOutcome,
+  SignupSource,
+  SignupStage,
+} from '../signup-log/signup-log.events';
 
 /**
  * Roles considered "admin-level" roles in the system.
@@ -66,6 +73,7 @@ export class UsersService {
     private readonly configService: ConfigService,
     private readonly emailNotificationService: EmailNotificationService,
     private readonly signupProfileService: SignupProfileService,
+    private readonly signupLog: SignupLogService,
   ) {
     const clerkSecretKey = this.configService.get<string>('CLERK_SECRET_KEY');
     if (clerkSecretKey) {
@@ -543,9 +551,43 @@ export class UsersService {
     };
   }
 
-  async completeProfile(clerkId: string, email: string, dto: CompleteProfileDto) {
+  /**
+   * @param correlationId Signup-wizard correlation id, forwarded from the
+   *   `X-Signup-Correlation-Id` header so this path — the OAuth / recovery half
+   *   of account creation — joins the same timeline as the webhook path.
+   */
+  async completeProfile(
+    clerkId: string,
+    email: string,
+    dto: CompleteProfileDto,
+    correlationId?: string,
+  ) {
     this.logger.log(`👤 [COMPLETE PROFILE] Completing profile for ${clerkId}`);
     let profileUserIdToLink: string | null = null;
+
+    void this.signupLog.record({
+      correlationId,
+      event: SignupEvent.API_COMPLETE_PROFILE_RECEIVED,
+      stage: SignupStage.ACCOUNT,
+      source: SignupSource.API,
+      role: dto.role,
+      clerkId,
+      email,
+      detail: {
+        // Same presence map as the webhook records, so the two account-creation
+        // paths can be compared directly on the timeline rather than by reading
+        // both implementations.
+        hasContactPerson: Boolean(dto.contactPerson),
+        hasOrganisationName: Boolean((dto as any).organisationName),
+        hasPhone: Boolean((dto as any).phone),
+        hasCanton: Boolean((dto as any).canton),
+        hasCapacity: (dto as any).capacity !== undefined,
+        hasCategory: Boolean((dto as any).category),
+        hasServiceType: Boolean((dto as any).serviceType),
+        hasChildAge: (dto as any).childAge !== undefined,
+        hasTermsAccepted: Boolean((dto as any).termsAccepted ?? (dto as any).termsAcceptedAt),
+      },
+    });
     
     // Check if user already exists by clerkId
     const existingUser = await this.prisma.appUser.findUnique({
@@ -624,6 +666,20 @@ export class UsersService {
         // Mask email in logs for PII protection (show first 3 chars + domain)
         const maskedEmail = email ? `${email.substring(0, 3)}***@${email.split('@')[1] || '***'}` : '***';
         this.logger.warn(`🚫 [COMPLETE PROFILE] Email conflict detected! Email ${maskedEmail} already exists for a different account (existing clerkId: ${existingEmailUser.clerkId}, new clerkId: ${clerkId}).`);
+        void this.signupLog.record({
+          correlationId,
+          event: SignupEvent.API_COMPLETE_PROFILE_FAILED,
+          stage: SignupStage.ACCOUNT,
+          source: SignupSource.API,
+          outcome: SignupOutcome.FAIL,
+          role: dto.role,
+          clerkId,
+          email,
+          errorCode: 'EMAIL_ALREADY_EXISTS',
+          errorMessage:
+            'Email already belongs to another account; no profile was created for this Clerk user',
+        });
+
         throw new ConflictException({
           message: 'An account with this email address already exists. Please sign out and sign in with your existing account.',
           code: 'EMAIL_ALREADY_EXISTS',
@@ -719,6 +775,23 @@ export class UsersService {
     if (dto.role === UserRole.PARENT) {
       await this.linkParentLeadsToProfile(profileUserIdToLink, email);
     }
+
+    void this.signupLog.record({
+      correlationId,
+      event: SignupEvent.API_COMPLETE_PROFILE_SUCCEEDED,
+      stage: SignupStage.ACCOUNT,
+      source: SignupSource.API,
+      role: dto.role,
+      userId: profileUserIdToLink ?? undefined,
+      clerkId,
+      email,
+      // Educators are NOT finished here — they still owe a step-3 submission.
+      // Everyone else is done at this point, which is why only educators can
+      // end up on the incomplete list.
+      approvalStatusAfter:
+        dto.role === UserRole.EDUCATOR ? EducatorApprovalStatus.INCOMPLETE : null,
+      detail: { stillNeedsProfileSubmission: dto.role === UserRole.EDUCATOR },
+    });
 
     return this.findByClerkId(clerkId);
   }

@@ -281,6 +281,22 @@ const EducatorApprovals: React.FC = () => {
                       >
                         Review
                       </button>
+                      {/* The whole point of the signup trace: from the symptom
+                          (an account sitting in this list) to the recorded
+                          cause, in one click. */}
+                      {educator.approvalStatus === 'INCOMPLETE' && (
+                        <button
+                          onClick={() =>
+                            navigate(
+                              `/signup-diagnostics?userId=${encodeURIComponent(educator.id)}`,
+                            )
+                          }
+                          className="text-xs px-3 py-1.5 rounded-lg border border-amber-300 text-amber-700 hover:bg-amber-50 transition-colors"
+                          title="Show the recorded signup timeline for this account"
+                        >
+                          Why incomplete?
+                        </button>
+                      )}
                       {educator.approvalStatus === 'PENDING_REVIEW' && (
                         <>
                           <button

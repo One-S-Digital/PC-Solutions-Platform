@@ -3,6 +3,13 @@ import { PrismaService } from '../prisma/prisma.service';
 import { EducatorApprovalStatus, UserRole } from '@prisma/client';
 import { EmailNotificationService } from '../email-notification/email-notification.service';
 import { ConfigService } from '@nestjs/config';
+import { SignupLogService } from '../signup-log/signup-log.service';
+import {
+  SignupEvent,
+  SignupOutcome,
+  SignupSource,
+  SignupStage,
+} from '../signup-log/signup-log.events';
 
 @Injectable()
 export class EducatorApprovalsService {
@@ -12,6 +19,7 @@ export class EducatorApprovalsService {
     private readonly prisma: PrismaService,
     private readonly emailNotificationService: EmailNotificationService,
     private readonly configService: ConfigService,
+    private readonly signupLog: SignupLogService,
   ) {}
 
   async listEducators(status?: EducatorApprovalStatus, page = 1, limit = 20) {
@@ -125,6 +133,29 @@ export class EducatorApprovalsService {
     // approve. Approving it would publish an empty profile into the candidate
     // pool. The educator must finish signup first.
     if (educator.approvalStatus === EducatorApprovalStatus.INCOMPLETE) {
+      // An admin reaching this guard is a strong signal: someone is looking at
+      // an account they expected to be reviewable. Recording it turns each
+      // occurrence into a dated, attributable data point instead of a support
+      // message weeks later.
+      void this.signupLog.record({
+        event: SignupEvent.ADMIN_DECISION_BLOCKED_INCOMPLETE,
+        stage: SignupStage.REVIEW,
+        source: SignupSource.ADMIN,
+        outcome: SignupOutcome.FAIL,
+        role: UserRole.EDUCATOR,
+        userId: id,
+        email: educator.email,
+        approvalStatusBefore: EducatorApprovalStatus.INCOMPLETE,
+        errorCode: 'APPROVE_BLOCKED_INCOMPLETE',
+        detail: {
+          hasShortBio: Boolean(educator.shortBio?.trim()),
+          hasCvUrl: Boolean(educator.cvUrl?.trim()),
+          accountAgeHours: Math.floor(
+            (Date.now() - new Date(educator.createdAt).getTime()) / 3_600_000,
+          ),
+        },
+      });
+
       throw new BadRequestException(
         'This educator has not submitted an application yet. Their profile is incomplete.',
       );
@@ -140,6 +171,17 @@ export class EducatorApprovalsService {
     });
 
     this.logger.log(`Educator ${id} (${educator.email}) approved`);
+
+    void this.signupLog.record({
+      event: SignupEvent.ADMIN_EDUCATOR_APPROVED,
+      stage: SignupStage.REVIEW,
+      source: SignupSource.ADMIN,
+      role: UserRole.EDUCATOR,
+      userId: id,
+      email: educator.email,
+      approvalStatusBefore: educator.approvalStatus ?? null,
+      approvalStatusAfter: EducatorApprovalStatus.APPROVED,
+    });
 
     const appUrl = this.configService.get<string>('APP_URL') || this.configService.get<string>('FRONTEND_URL') || '';
 
@@ -171,6 +213,22 @@ export class EducatorApprovalsService {
     // something they never applied for — and the REJECTED status would then
     // lock them out of finishing their signup.
     if (educator.approvalStatus === EducatorApprovalStatus.INCOMPLETE) {
+      void this.signupLog.record({
+        event: SignupEvent.ADMIN_DECISION_BLOCKED_INCOMPLETE,
+        stage: SignupStage.REVIEW,
+        source: SignupSource.ADMIN,
+        outcome: SignupOutcome.FAIL,
+        role: UserRole.EDUCATOR,
+        userId: id,
+        email: educator.email,
+        approvalStatusBefore: EducatorApprovalStatus.INCOMPLETE,
+        errorCode: 'REJECT_BLOCKED_INCOMPLETE',
+        detail: {
+          hasShortBio: Boolean(educator.shortBio?.trim()),
+          hasCvUrl: Boolean(educator.cvUrl?.trim()),
+        },
+      });
+
       throw new BadRequestException(
         'This educator has not submitted an application yet. Their profile is incomplete.',
       );
@@ -190,6 +248,17 @@ export class EducatorApprovalsService {
     });
 
     this.logger.log(`Educator ${id} (${educator.email}) rejected: ${notes}`);
+
+    void this.signupLog.record({
+      event: SignupEvent.ADMIN_EDUCATOR_REJECTED,
+      stage: SignupStage.REVIEW,
+      source: SignupSource.ADMIN,
+      role: UserRole.EDUCATOR,
+      userId: id,
+      email: educator.email,
+      approvalStatusBefore: educator.approvalStatus ?? null,
+      approvalStatusAfter: EducatorApprovalStatus.REJECTED,
+    });
 
     const appUrl = this.configService.get<string>('APP_URL') || this.configService.get<string>('FRONTEND_URL') || '';
 

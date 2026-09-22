@@ -116,6 +116,9 @@ describe('UsersService.remove (soft delete)', () => {
       { get: jest.fn().mockReturnValue(undefined) } as any, // configService
       {} as any, // emailNotificationService
       {} as any, // signupProfileService
+      // Diagnostics only — `record` is fire-and-forget, so a no-op stub that
+      // returns a promise is all the service under test needs.
+      { record: jest.fn().mockResolvedValue(undefined) } as any, // signupLog
     );
 
     const result = await service.remove(appUser.id);
@@ -219,6 +222,9 @@ describe('UsersService.hardRemove (hard delete)', () => {
       { get: jest.fn().mockReturnValue(undefined) } as any,
       {} as any, // emailNotificationService
       {} as any, // signupProfileService
+      // Diagnostics only — `record` is fire-and-forget, so a no-op stub that
+      // returns a promise is all the service under test needs.
+      { record: jest.fn().mockResolvedValue(undefined) } as any, // signupLog
     );
 
     await expect(service.hardRemove(appUser.id)).rejects.toMatchObject({
@@ -270,6 +276,9 @@ describe('UsersService.hardRemove (hard delete)', () => {
       { get: jest.fn().mockReturnValue(undefined) } as any,
       {} as any, // emailNotificationService
       {} as any, // signupProfileService
+      // Diagnostics only — `record` is fire-and-forget, so a no-op stub that
+      // returns a promise is all the service under test needs.
+      { record: jest.fn().mockResolvedValue(undefined) } as any, // signupLog
     );
     (service as any).clerk = { users: { deleteUser: jest.fn().mockResolvedValue(undefined) } };
 
@@ -322,6 +331,9 @@ describe('UsersService.hardRemove (hard delete)', () => {
       { get: jest.fn().mockReturnValue(undefined) } as any,
       {} as any, // emailNotificationService
       {} as any, // signupProfileService
+      // Diagnostics only — `record` is fire-and-forget, so a no-op stub that
+      // returns a promise is all the service under test needs.
+      { record: jest.fn().mockResolvedValue(undefined) } as any, // signupLog
     );
     (service as any).clerk = { users: { deleteUser: jest.fn().mockResolvedValue(undefined) } };
 

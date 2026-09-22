@@ -1,8 +1,8 @@
 
 
 import React from 'react';
-import { Routes, Route, Navigate, useLocation, useNavigate, Link } from 'react-router-dom';
-import { useAuth, useUser, useClerk, AuthenticateWithRedirectCallback } from '@clerk/clerk-react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useAuth, AuthenticateWithRedirectCallback } from '@clerk/clerk-react';
 import MainLayout from './components/layout/MainLayout';
 import DashboardPage from './pages/DashboardPage'; // This will be the Foundation default dashboard
 import MarketplacePage from './pages/MarketplacePage';
@@ -22,6 +22,7 @@ import { InAppNotificationProvider } from './contexts/InAppNotificationContext';
 import { SubscriptionProvider, SubscriptionProviderE2E } from './contexts/SubscriptionContext';
 import { SubscriptionPaywall } from './components/shared/SubscriptionPaywall';
 import { useAuthContext } from './providers/AuthProvider';
+import AccountProvisioningGate from './components/auth/AccountProvisioningGate';
 import { UserRole } from './types';
 import { useFrontendSettings } from './hooks/useFrontendSettings';
 
@@ -187,11 +188,8 @@ const RoleBasedDashboardRedirect: React.FC = () => {
 const ProtectedLayout: React.FC = () => {
   const { currentUser } = useAppContext();
   const { isLoaded, isSignedIn } = useAuth();
-  const { user: clerkUser } = useUser();
-  const { signOut } = useClerk();
   const { isLoading: isAuthLoading } = useAuthContext();
   const location = useLocation();
-  const navigate = useNavigate();
 
   // Wait for Clerk to load before checking authentication
   if (!isLoaded) {
@@ -207,9 +205,10 @@ const ProtectedLayout: React.FC = () => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Signed in to Clerk but no currentUser yet
+  // Signed in to Clerk but no currentUser yet.
   if (!currentUser) {
-    // Still loading from backend ? show loading screen (prevents redirect during sync)
+    // Still loading from the backend — show a loading screen rather than
+    // redirecting mid-sync.
     if (isAuthLoading) {
       return (
         <div className="min-h-screen bg-page-bg flex items-center justify-center">
@@ -220,78 +219,12 @@ const ProtectedLayout: React.FC = () => {
         </div>
       );
     }
-    
-    
-    // Backend sync failed (not loading anymore, but no user)
-    // Show a manual "Complete Profile" page instead of auto-redirecting
-    // This handles OAuth users and email/password users whose webhook failed
-    const hasOAuthAccount = clerkUser?.externalAccounts && clerkUser.externalAccounts.length > 0;
-    const userEmail = clerkUser?.primaryEmailAddress?.emailAddress;
-    const userName = clerkUser?.firstName || userEmail?.split('@')[0] || 'there';
-    
-    return (
-      <div className="min-h-screen bg-page-bg flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8 text-center">
-          {/* Icon */}
-          <div className="w-16 h-16 bg-swiss-mint/10 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg className="w-8 h-8 text-swiss-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-          </div>
-          
-          {/* Title */}
-          <h1 className="text-2xl font-bold text-swiss-charcoal mb-2">
-            Welcome, {userName}!
-          </h1>
-          
-          {/* Message */}
-          <p className="text-gray-600 mb-6">
-            {hasOAuthAccount 
-              ? "You've signed in successfully. To get started, please complete your profile by selecting your role and providing a few details."
-              : "Your account was created but your profile setup wasn't completed. Please complete your profile to continue."}
-          </p>
-          
-          {/* Email display */}
-          {userEmail && (
-            <p className="text-sm text-gray-500 mb-6">
-              Signed in as <span className="font-medium text-swiss-charcoal">{userEmail}</span>
-            </p>
-          )}
-          
-          {/* Complete Profile Button */}
-          <button
-            onClick={() => navigate('/signup', { state: { from: location, isPending: true } })}
-            className="w-full bg-swiss-mint text-white font-semibold py-3 px-6 rounded-lg hover:bg-swiss-mint/90 transition-colors mb-4"
-          >
-            Complete Your Profile
-          </button>
-          
-          {/* Secondary actions */}
-          <div className="flex flex-col sm:flex-row gap-3 justify-center text-sm">
-            <button
-              onClick={async () => {
-                try {
-                  await signOut();
-                  navigate('/login', { replace: true });
-                } catch (error) {
-                  console.error('Sign out failed:', error);
-                  // Force navigate to login even if sign-out fails
-                  navigate('/login', { replace: true });
-                }
-              }}
-              className="text-gray-500 hover:text-gray-700 underline"
-            >
-              Sign out and use a different account
-            </button>
-          </div>
-          
-          {/* Help text */}
-          <p className="mt-6 text-xs text-gray-400">
-            Having trouble? <Link to="/support" className="text-swiss-mint hover:underline">Contact support</Link>
-          </p>
-        </div>
-      </div>
-    );
+
+    // Not loading, and still no user. This used to immediately offer the signup
+    // form, which made anyone whose session had merely fallen behind their own
+    // account creation re-enter every detail. The gate retries the fetch first
+    // and only offers the form once there is genuinely nothing to recover.
+    return <AccountProvisioningGate />;
   }
 
   const isMaintenanceMode = import.meta.env.VITE_MAINTENANCE_MODE === 'true';

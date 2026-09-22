@@ -668,6 +668,7 @@
     "suppliersServices": "Lieferanten & Dienste",
     "platformOps": "Plattformbetrieb",
     "educatorApprovals": "Pädagogen-Genehmigungen",
+    "signupDiagnostics": "Anmelde-Diagnose",
     "internPool": "Praktikantenpool",
     "internPoolSubtitle": "Praktikumsstellen — {{count}} Eintrag/Einträge",
     "noInterns": "Noch keine Praktikumsstellen.",

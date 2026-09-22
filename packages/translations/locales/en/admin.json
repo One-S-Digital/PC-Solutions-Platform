@@ -655,6 +655,7 @@
     "platformOps": "Platform Ops",
     "replacements": "Replacements",
     "educatorApprovals": "Educator Approvals",
+    "signupDiagnostics": "Signup Diagnostics",
     "internPool": "Intern Pool",
     "internPoolSubtitle": "Internship positions — {{count}} listing(s)",
     "noInterns": "No internship listings yet.",
