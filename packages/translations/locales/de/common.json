@@ -1100,6 +1100,7 @@
   },
   "accountSetup": {
     "welcome": "Willkommen, {{name}}!",
+    "welcomeNoName": "Willkommen!",
     "finishing": "Ihr Konto wird eingerichtet...",
     "finishingHint": "Das dauert nur einen Moment.",
     "oauthPrompt": "Sie haben sich erfolgreich angemeldet. Vervollständigen Sie zum Start bitte Ihr Profil, indem Sie Ihre Rolle auswählen und einige Angaben machen.",
@@ -1107,7 +1108,6 @@
     "signedInAs": "Angemeldet als",
     "tryAgain": "Erneut versuchen",
     "completeProfile": "Profil vervollständigen",
-    "setUpInstead": "Stattdessen Profil einrichten",
     "signOutDifferent": "Abmelden und anderes Konto verwenden",
     "havingTrouble": "Probleme?",
     "contactSupport": "Support kontaktieren"

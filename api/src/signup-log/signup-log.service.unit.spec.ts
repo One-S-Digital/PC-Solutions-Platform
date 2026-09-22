@@ -30,11 +30,54 @@ describe('SignupLogService', () => {
   });
 
   it('records the event even when no correlation id is known', async () => {
-    await service.record({ ...baseArgs, correlationId: undefined });
+    await service.record({ ...baseArgs, correlationId: undefined, userId: 'user-1' });
 
     expect(create).toHaveBeenCalledTimes(1);
-    // An orphan row is still evidence — it is joinable by email and userId.
-    expect(create.mock.calls[0][0].data.correlationId).toBe('unlinked');
+    // An orphan row is still evidence, and it lands on its own account's
+    // timeline rather than being dropped.
+    expect(create.mock.calls[0][0].data.correlationId).toBe('unlinked:user-1');
+  });
+
+  it('keeps orphan events from different accounts apart', async () => {
+    // correlationId is the grouping key for listJourneys and getTimeline. A
+    // single shared literal would collapse every unlinked event on the
+    // platform into one meaningless journey, and `getTimeline` for it would
+    // hand back strangers' events.
+    await service.record({ ...baseArgs, correlationId: undefined, userId: 'user-1' });
+    await service.record({ ...baseArgs, correlationId: undefined, userId: 'user-2' });
+
+    const [first, second] = create.mock.calls.map((call) => call[0].data.correlationId);
+    expect(first).not.toBe(second);
+  });
+
+  it('groups an account\'s own orphan events together', async () => {
+    // Admin decisions and the nightly sweep both arrive without a correlation
+    // id, and both should land on the account's existing timeline.
+    await service.record({ ...baseArgs, correlationId: undefined, userId: 'user-1' });
+    await service.record({ ...baseArgs, correlationId: undefined, userId: 'user-1' });
+
+    const [first, second] = create.mock.calls.map((call) => call[0].data.correlationId);
+    expect(first).toBe(second);
+  });
+
+  it('falls back through clerkId and email when there is no userId', async () => {
+    await service.record({ ...baseArgs, correlationId: undefined, clerkId: 'clerk-9' });
+    await service.record({ ...baseArgs, correlationId: undefined, email: 'Someone@Example.com' });
+
+    const ids = create.mock.calls.map((call) => call[0].data.correlationId);
+    expect(ids[0]).toBe('unlinked:clerk-9');
+    // Lower-cased, so the same person does not split across two timelines.
+    expect(ids[1]).toBe('unlinked:someone@example.com');
+  });
+
+  it('gives a wholly anonymous event its own id rather than a shared bucket', async () => {
+    await service.record({ ...baseArgs, correlationId: undefined });
+    await service.record({ ...baseArgs, correlationId: undefined });
+
+    const [first, second] = create.mock.calls.map((call) => call[0].data.correlationId);
+    // An isolated single-event journey is honest; a merged one is misleading.
+    expect(first).not.toBe(second);
+    expect(first).toMatch(/^unlinked:/);
   });
 
   it('normalises email so a journey can be found regardless of casing', async () => {

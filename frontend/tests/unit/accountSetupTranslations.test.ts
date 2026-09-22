@@ -83,6 +83,8 @@ describe('accountSetup translations', () => {
       'Sign out and use a different account',
       "We couldn't load your account",
       "You've signed in successfully",
+      // The English name fallback that produced "Willkommen, there!".
+      "|| 'there'",
     ];
     for (const phrase of previouslyHardcoded) {
       expect(source.includes(phrase), `hardcoded string in gate: "${phrase}"`).toBe(false);

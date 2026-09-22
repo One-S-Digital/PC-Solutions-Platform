@@ -94,7 +94,12 @@ export function getSignupCorrelationId(): string {
     store.setItem(CORRELATION_KEY, minted);
     return minted;
   } catch {
-    return randomId();
+    // Same fallback as the no-storage path above, and for the same reason: a
+    // fresh id per call would give the browser events and the request headers
+    // different ids, so the timeline could never be joined — which is the one
+    // thing this value exists to do.
+    inMemoryCorrelationId ??= randomId();
+    return inMemoryCorrelationId;
   }
 }
 

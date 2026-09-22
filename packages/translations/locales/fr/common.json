@@ -1085,6 +1085,7 @@
   },
   "accountSetup": {
     "welcome": "Bienvenue, {{name}} !",
+    "welcomeNoName": "Bienvenue !",
     "finishing": "Finalisation de la configuration de votre compte...",
     "finishingHint": "Cela ne prend qu'un instant.",
     "oauthPrompt": "Vous êtes bien connecté. Pour commencer, veuillez compléter votre profil en sélectionnant votre rôle et en renseignant quelques informations.",
@@ -1092,7 +1093,6 @@
     "signedInAs": "Connecté en tant que",
     "tryAgain": "Réessayer",
     "completeProfile": "Compléter mon profil",
-    "setUpInstead": "Configurer mon profil à la place",
     "signOutDifferent": "Se déconnecter et utiliser un autre compte",
     "havingTrouble": "Un problème ?",
     "contactSupport": "Contacter le support"

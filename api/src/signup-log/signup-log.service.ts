@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { randomUUID } from 'node:crypto';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import {
@@ -74,8 +75,12 @@ export class SignupLogService {
   private async write(args: RecordSignupEventArgs): Promise<void> {
     const row = {
       // A missing correlation id must not drop the event — an orphan row still
-      // tells you the event happened, and it is joinable by email/userId.
-      correlationId: trim(args.correlationId) || 'unlinked',
+      // tells you the event happened. But it must not merge with other
+      // people's orphans either: correlationId is the grouping key for
+      // `listJourneys` and `getTimeline`, so a single shared literal would
+      // collapse every unlinked event on the platform into one meaningless
+      // "journey" and make that timeline unreadable. Derive one per account.
+      correlationId: trim(args.correlationId) || fallbackCorrelationId(args),
       event: String(args.event).slice(0, MAX_STRING),
       stage: args.stage,
       source: args.source,
@@ -272,6 +277,22 @@ export class SignupLogService {
       stuckIncomplete: byEvent[SignupEvent.SYSTEM_STUCK_INCOMPLETE] ?? 0,
     }));
   }
+}
+
+/**
+ * A correlation id for an event that arrived without one.
+ *
+ * Keyed on whatever identity the event does carry, so every orphan event for
+ * one account lands on that account's own timeline (admin decisions and the
+ * nightly sweep both arrive this way) and never on a stranger's. With no
+ * identity at all — rare, since the browser mints an id before anything else —
+ * it gets a unique id rather than joining a shared bucket: an isolated
+ * single-event journey is honest, a merged one is actively misleading.
+ */
+function fallbackCorrelationId(args: RecordSignupEventArgs): string {
+  const identity =
+    trim(args.userId) || trim(args.clerkId) || trim(args.email)?.toLowerCase();
+  return identity ? `unlinked:${identity}` : `unlinked:${randomUUID()}`;
 }
 
 function trim(value: unknown): string | null {
