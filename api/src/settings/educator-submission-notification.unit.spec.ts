@@ -149,9 +149,8 @@ describe('educator profile emptied via PATCH', () => {
 
 describe('educator CV deletion', () => {
   it('sends a CV-only application back to INCOMPLETE when the CV is removed', () => {
-    // Otherwise the profile keeps PENDING_REVIEW with nothing in it, and
-    // approveEducator (which only refuses INCOMPLETE) would let an admin
-    // approve a blank profile into the candidate pool.
+    // Otherwise the profile keeps PENDING_REVIEW with nothing in it, and an
+    // admin could approve a blank profile from the review queue unwarned.
     expect(deleteCv({ shortBio: null, approvalStatus: EducatorApprovalStatus.PENDING_REVIEW })).toBe(
       EducatorApprovalStatus.INCOMPLETE,
     );
