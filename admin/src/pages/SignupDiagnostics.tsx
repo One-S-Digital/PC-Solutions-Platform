@@ -6,6 +6,7 @@ import {
   CheckCircle2,
   ChevronRight,
   Clock,
+  Download,
   MinusCircle,
   RefreshCw,
   Search,
@@ -207,6 +208,7 @@ const SignupDiagnostics: React.FC = () => {
   const [emailFilter, setEmailFilter] = useState('')
   const [onlyFailed, setOnlyFailed] = useState(true)
   const [days, setDays] = useState(30)
+  const [exporting, setExporting] = useState(false)
 
   const journeysQuery = useQuery({
     queryKey: ['signup-journeys', onlyFailed, days],
@@ -247,6 +249,21 @@ const SignupDiagnostics: React.FC = () => {
 
   const select = (journey: Journey) => {
     setSearchParams({ cid: journey.correlationId })
+  }
+
+  const handleExport = async () => {
+    setExporting(true)
+    try {
+      const res = await apiService.exportSignupLog(apiClient, { onlyFailed, days })
+      const url = URL.createObjectURL(res.data as Blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `signup-log-${new Date().toISOString().split('T')[0]}.csv`
+      a.click()
+      URL.revokeObjectURL(url)
+    } finally {
+      setExporting(false)
+    }
   }
 
   return (
@@ -318,14 +335,26 @@ const SignupDiagnostics: React.FC = () => {
           <div className="p-4 border-b border-gray-200 space-y-3">
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-semibold text-gray-900">Signup journeys</h2>
-              <button
-                type="button"
-                onClick={() => journeysQuery.refetch()}
-                className="text-gray-500 hover:text-gray-900"
-                aria-label="Refresh"
-              >
-                <RefreshCw className="w-4 h-4" />
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={handleExport}
+                  disabled={exporting || visibleJourneys.length === 0}
+                  className="text-gray-500 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+                  aria-label="Export CSV"
+                  title="Export the journeys below as CSV"
+                >
+                  <Download className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => journeysQuery.refetch()}
+                  className="text-gray-500 hover:text-gray-900"
+                  aria-label="Refresh"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                </button>
+              </div>
             </div>
             <div className="flex flex-wrap gap-3 items-center">
               <div className="relative flex-1 min-w-[200px]">

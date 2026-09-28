@@ -277,6 +277,21 @@ export class SignupLogService {
       stuckIncomplete: byEvent[SignupEvent.SYSTEM_STUCK_INCOMPLETE] ?? 0,
     }));
   }
+
+  /**
+   * Every event belonging to the journeys `listJourneys` would return for the
+   * same filters — the export button is a literal download of what is on
+   * screen, not a separate query an admin has to reason about.
+   */
+  async exportEvents(params: { limit?: number; onlyFailed?: boolean; since: Date }) {
+    const journeys = await this.listJourneys(params);
+    if (journeys.length === 0) return [];
+
+    return this.prisma.signupEventLog.findMany({
+      where: { correlationId: { in: journeys.map((j) => j.correlationId) } },
+      orderBy: [{ correlationId: 'asc' }, { createdAt: 'asc' }],
+    });
+  }
 }
 
 /**

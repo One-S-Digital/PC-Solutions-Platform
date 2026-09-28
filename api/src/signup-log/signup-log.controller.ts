@@ -7,6 +7,7 @@ import {
   Post,
   Query,
   Req,
+  Res,
   UseGuards,
   BadRequestException,
 } from '@nestjs/common';
@@ -18,7 +19,7 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import type { Request } from 'express';
+import type { Request, Response } from 'express';
 import { Public } from '../auth/decorators/public.decorator';
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -158,6 +159,65 @@ export class SignupLogAdminController {
         new Date(Date.now() - windowDays * 24 * 60 * 60 * 1000),
       ),
     };
+  }
+
+  /** CSV of every event behind the journeys list, for the same filters. */
+  @Get('export')
+  async exportCsv(
+    @Res() res: Response,
+    @Query('onlyFailed') onlyFailed?: string,
+    @Query('days') days?: string,
+    @Query('limit') limit?: string,
+  ) {
+    const windowDays = parseBoundedInt(days, 30, 1, 365);
+    const events = await this.signupLog.exportEvents({
+      limit: parseBoundedInt(limit, 200, 1, 200),
+      onlyFailed: onlyFailed === 'true',
+      since: new Date(Date.now() - windowDays * 24 * 60 * 60 * 1000),
+    });
+
+    const headers = [
+      'Correlation ID',
+      'Timestamp',
+      'Event',
+      'Stage',
+      'Source',
+      'Outcome',
+      'Role',
+      'User ID',
+      'Email',
+      'Status Before',
+      'Status After',
+      'Error Code',
+      'Error Message',
+      'IP Address',
+      'Detail',
+    ];
+    const rows = events.map((e) => [
+      e.correlationId,
+      e.createdAt.toISOString(),
+      e.event,
+      e.stage,
+      e.source,
+      e.outcome,
+      e.role ?? '',
+      e.userId ?? '',
+      e.email ?? '',
+      e.approvalStatusBefore ?? '',
+      e.approvalStatusAfter ?? '',
+      e.errorCode ?? '',
+      e.errorMessage ?? '',
+      e.ipAddress ?? '',
+      e.detail ? JSON.stringify(e.detail) : '',
+    ]);
+    const csv = [headers, ...rows]
+      .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+      .join('\n');
+
+    const filename = `signup-log-${new Date().toISOString().split('T')[0]}.csv`;
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.send(csv);
   }
 
   @Get('events')

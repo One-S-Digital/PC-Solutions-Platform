@@ -487,6 +487,11 @@ export const apiService = {
     apiClient.get<ApiResponse<any>>(`/admin/signup-log/user/${encodeURIComponent(userId)}`, {
       params: email ? { email } : undefined,
     }),
+  /** CSV of every event behind the journeys list, for the same filters. */
+  exportSignupLog: (
+    apiClient: AxiosInstance,
+    params?: { onlyFailed?: boolean; days?: number },
+  ) => apiClient.get('/admin/signup-log/export', { params, responseType: 'blob' }),
   createCandidate: (apiClient: AxiosInstance, candidateData: {
     firstName: string;
     lastName: string;
