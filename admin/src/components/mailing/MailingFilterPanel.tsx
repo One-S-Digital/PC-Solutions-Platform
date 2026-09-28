@@ -17,6 +17,7 @@ const SUBSCRIPTION_STATUSES = [
 ]
 
 const EDUCATOR_APPROVAL_STATUSES = [
+  { value: 'INCOMPLETE', label: 'Incomplete' },
   { value: 'PENDING_REVIEW', label: 'Pending Review' },
   { value: 'APPROVED', label: 'Approved' },
   { value: 'REJECTED', label: 'Rejected' },
@@ -226,7 +227,9 @@ const MailingFilterPanel: React.FC<Props> = ({ filters, onChange }) => {
                       ? 'text-green-700'
                       : status.value === 'REJECTED'
                         ? 'text-red-700'
-                        : 'text-amber-700'
+                        : status.value === 'INCOMPLETE'
+                          ? 'text-gray-500'
+                          : 'text-amber-700'
                   }`}
                 >
                   {status.label}
