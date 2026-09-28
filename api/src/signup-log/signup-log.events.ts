@@ -169,6 +169,28 @@ export const CLIENT_REPORTABLE_EVENTS: ReadonlySet<string> = new Set([
   SignupEvent.CLIENT_WIZARD_ABANDONED,
 ]);
 
+/**
+ * The signup wizard's display labels, which browsers sent as `role` before
+ * the client was fixed to send the enum. Rows written that way are still in
+ * the table, and cached bundles may keep sending them for a while.
+ */
+const LEGACY_CLIENT_ROLE_LABELS: Record<string, string> = {
+  'Foundation (Daycare)': 'FOUNDATION',
+  'Product Supplier': 'PRODUCT_SUPPLIER',
+  'Service Provider': 'SERVICE_PROVIDER',
+  'Educator/Candidate': 'EDUCATOR',
+  Parent: 'PARENT',
+};
+
+/**
+ * One role vocabulary for every source, so a journey's client and server
+ * events group under the same role in the funnel.
+ */
+export function normalizeSignupRole(role: string | null | undefined): string | null {
+  if (!role) return null;
+  return LEGACY_CLIENT_ROLE_LABELS[role] ?? role;
+}
+
 /** Which stage a client-reported event belongs to. */
 export const CLIENT_EVENT_STAGE: Record<string, SignupStageName> = {
   [SignupEvent.CLIENT_WIZARD_STARTED]: SignupStage.WIZARD,

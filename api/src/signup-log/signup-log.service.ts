@@ -9,6 +9,7 @@ import {
   SignupOutcomeName,
   SignupSourceName,
   SignupStageName,
+  normalizeSignupRole,
 } from './signup-log.events';
 
 /** Anything longer than this is truncated before it reaches the column. */
@@ -91,7 +92,7 @@ export class SignupLogService {
       stage: args.stage,
       source: args.source,
       outcome: args.outcome ?? SignupOutcome.OK,
-      role: trim(args.role),
+      role: normalizeSignupRole(trim(args.role)),
       userId: trim(args.userId),
       clerkId: trim(args.clerkId),
       email: trim(args.email)?.toLowerCase() ?? null,
@@ -248,6 +249,7 @@ export class SignupLogService {
 
     return rows.map((r) => ({
       ...r,
+      role: normalizeSignupRole(r.role),
       eventCount: Number(r.eventCount),
       failures: Number(r.failures),
     }));
@@ -266,9 +268,10 @@ export class SignupLogService {
 
     const counts: Record<string, Record<string, number>> = {};
     for (const row of rows) {
-      const role = row.role ?? 'UNKNOWN';
+      // `+=`, not `=`: a legacy label and its enum now fold into one key.
+      const role = normalizeSignupRole(row.role) ?? 'UNKNOWN';
       counts[role] ??= {};
-      counts[role][row.event] = row._count._all;
+      counts[role][row.event] = (counts[role][row.event] ?? 0) + row._count._all;
     }
 
     return Object.entries(counts).map(([role, byEvent]) => ({
