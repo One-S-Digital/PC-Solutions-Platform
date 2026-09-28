@@ -109,6 +109,62 @@ describe('SignupLogService', () => {
     expect(create.mock.calls[0][0].data.errorMessage).toHaveLength(500);
   });
 
+  it('stores the role enum when a browser sends the wizard display label', async () => {
+    await service.record({ ...baseArgs, role: 'Educator/Candidate' });
+    await service.record({ ...baseArgs, role: 'Product Supplier' });
+
+    const roles = create.mock.calls.map((call) => call[0].data.role);
+    expect(roles).toEqual(['EDUCATOR', 'PRODUCT_SUPPLIER']);
+  });
+
+  it('folds legacy role labels into the enum when building the funnel', async () => {
+    const groupBy = jest.fn().mockResolvedValue([
+      { event: SignupEvent.CLIENT_WIZARD_STARTED, role: 'Educator/Candidate', _count: { _all: 4 } },
+      { event: SignupEvent.CLIENT_WIZARD_STARTED, role: 'EDUCATOR', _count: { _all: 1 } },
+      { event: SignupEvent.WEBHOOK_ACCOUNT_CREATED, role: 'EDUCATOR', _count: { _all: 3 } },
+    ]);
+    const reader = new SignupLogService({ signupEventLog: { groupBy } } as any);
+
+    const funnel = await reader.getFunnel(new Date(0));
+
+    // Started and created must share a row, or the funnel cannot show drop-off.
+    expect(funnel).toEqual([
+      expect.objectContaining({ role: 'EDUCATOR', started: 5, accountCreated: 3 }),
+    ]);
+  });
+
+  it('stores inherited property names as plain strings, not prototype values', async () => {
+    await service.record({ ...baseArgs, role: 'constructor' });
+
+    expect(create.mock.calls[0][0].data.role).toBe('constructor');
+  });
+
+  it('gives a role named after an Object.prototype key its own funnel row', async () => {
+    const groupBy = jest.fn().mockResolvedValue([
+      { event: SignupEvent.CLIENT_WIZARD_STARTED, role: 'constructor', _count: { _all: 2 } },
+    ]);
+    const reader = new SignupLogService({ signupEventLog: { groupBy } } as any);
+
+    const funnel = await reader.getFunnel(new Date(0));
+
+    expect(funnel).toEqual([expect.objectContaining({ role: 'constructor', started: 2 })]);
+  });
+
+  it('matches legacy role labels when searching by the enum', async () => {
+    const findMany = jest.fn().mockResolvedValue([]);
+    const count = jest.fn().mockResolvedValue(0);
+    const reader = new SignupLogService({
+      signupEventLog: { findMany, count },
+      $transaction: (ops: Promise<unknown>[]) => Promise.all(ops),
+    } as any);
+
+    await reader.search({ role: 'EDUCATOR' });
+
+    expect(findMany.mock.calls[0][0].where.role).toEqual({
+      in: ['EDUCATOR', 'Educator/Candidate'],
+    });
+  });
+
   it('writes nothing when disabled by environment', async () => {
     const previous = process.env.SIGNUP_LOG_ENABLED;
     process.env.SIGNUP_LOG_ENABLED = 'false';

@@ -169,6 +169,41 @@ export const CLIENT_REPORTABLE_EVENTS: ReadonlySet<string> = new Set([
   SignupEvent.CLIENT_WIZARD_ABANDONED,
 ]);
 
+/**
+ * The signup wizard's display labels, which browsers sent as `role` before
+ * the client was fixed to send the enum. Rows written that way are still in
+ * the table, and cached bundles may keep sending them for a while.
+ */
+const LEGACY_CLIENT_ROLE_LABELS: Record<string, string> = {
+  'Foundation (Daycare)': 'FOUNDATION',
+  'Product Supplier': 'PRODUCT_SUPPLIER',
+  'Service Provider': 'SERVICE_PROVIDER',
+  'Educator/Candidate': 'EDUCATOR',
+  Parent: 'PARENT',
+};
+
+/**
+ * One role vocabulary for every source, so a journey's client and server
+ * events group under the same role in the funnel.
+ */
+export function normalizeSignupRole(role: string | null | undefined): string | null {
+  if (!role) return null;
+  // Own-key check: `role` arrives from a public endpoint, and a plain lookup
+  // would resolve 'constructor' or 'toString' to an inherited function.
+  return Object.prototype.hasOwnProperty.call(LEGACY_CLIENT_ROLE_LABELS, role)
+    ? LEGACY_CLIENT_ROLE_LABELS[role]
+    : role;
+}
+
+/** Every stored spelling of a role — the value itself plus its legacy labels. */
+export function signupRoleAliases(role: string): string[] {
+  const canonical = normalizeSignupRole(role) ?? role;
+  const legacy = Object.keys(LEGACY_CLIENT_ROLE_LABELS).filter(
+    (label) => LEGACY_CLIENT_ROLE_LABELS[label] === canonical,
+  );
+  return [canonical, ...legacy];
+}
+
 /** Which stage a client-reported event belongs to. */
 export const CLIENT_EVENT_STAGE: Record<string, SignupStageName> = {
   [SignupEvent.CLIENT_WIZARD_STARTED]: SignupStage.WIZARD,

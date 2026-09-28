@@ -9,6 +9,8 @@ import {
   SignupOutcomeName,
   SignupSourceName,
   SignupStageName,
+  normalizeSignupRole,
+  signupRoleAliases,
 } from './signup-log.events';
 
 /** Anything longer than this is truncated before it reaches the column. */
@@ -91,7 +93,7 @@ export class SignupLogService {
       stage: args.stage,
       source: args.source,
       outcome: args.outcome ?? SignupOutcome.OK,
-      role: trim(args.role),
+      role: normalizeSignupRole(trim(args.role)),
       userId: trim(args.userId),
       clerkId: trim(args.clerkId),
       email: trim(args.email)?.toLowerCase() ?? null,
@@ -162,7 +164,7 @@ export class SignupLogService {
     const where: any = {};
     if (params.email) where.email = { contains: params.email.trim().toLowerCase() };
     if (params.correlationId) where.correlationId = params.correlationId.trim();
-    if (params.role) where.role = params.role;
+    if (params.role) where.role = { in: signupRoleAliases(params.role) };
     if (params.outcome) where.outcome = params.outcome;
     if (params.event) where.event = params.event;
     if (params.since || params.until) {
@@ -248,6 +250,7 @@ export class SignupLogService {
 
     return rows.map((r) => ({
       ...r,
+      role: normalizeSignupRole(r.role),
       eventCount: Number(r.eventCount),
       failures: Number(r.failures),
     }));
@@ -264,11 +267,14 @@ export class SignupLogService {
       _count: { _all: true },
     });
 
-    const counts: Record<string, Record<string, number>> = {};
+    // Null prototype: role keys come from stored client input, and a role
+    // named 'constructor' must get its own bucket, not Object's.
+    const counts = Object.create(null) as Record<string, Record<string, number>>;
     for (const row of rows) {
-      const role = row.role ?? 'UNKNOWN';
+      // `+=`, not `=`: a legacy label and its enum now fold into one key.
+      const role = normalizeSignupRole(row.role) ?? 'UNKNOWN';
       counts[role] ??= {};
-      counts[role][row.event] = row._count._all;
+      counts[role][row.event] = (counts[role][row.event] ?? 0) + row._count._all;
     }
 
     return Object.entries(counts).map(([role, byEvent]) => ({

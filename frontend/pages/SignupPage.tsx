@@ -40,6 +40,12 @@ const SIGNUP_ROLE_TO_USER_ROLE: Record<SignupRole, UserRole> = {
   [SignupRole.PARENT]: UserRole.PARENT,
 };
 
+// SignupRole values are display labels ('Educator/Candidate'); the trace must
+// carry the backend enum or client and server events for one journey land
+// under different roles and the diagnostics funnel can never line up.
+const toTraceRole = (role: SignupRole | null): UserRole | null =>
+  role ? SIGNUP_ROLE_TO_USER_ROLE[role] : null;
+
 interface LeadSignupState {
   leadSubmission?: {
     fromLeadSubmission?: boolean;
@@ -164,7 +170,7 @@ const SignupPage: React.FC = () => {
     // symptom users report ("it asked me to sign up again") looks nothing like
     // the cause, and nothing server-side is wrong to find.
     traceSignup(SignupTraceEvent.SESSION_SYNC_FAILED, {
-      role: selectedRole,
+      role: toTraceRole(selectedRole),
       email: formData.email,
       outcome: 'FAIL',
       errorCode: 'ACCOUNT_CREATED_BUT_SESSION_STALE',
@@ -487,7 +493,7 @@ const SignupPage: React.FC = () => {
     if (currentStep !== 3 || !isEducatorRole() || hasTracedStep3Ref.current) return;
     hasTracedStep3Ref.current = true;
     traceSignup(SignupTraceEvent.STEP3_ENTERED, {
-      role: selectedRole,
+      role: toTraceRole(selectedRole),
       email: formData.email || currentUser?.email,
       detail: {
         // Distinguishes a fresh arrival from a resumed one. A resume that finds
@@ -511,7 +517,7 @@ const SignupPage: React.FC = () => {
     const reportAbandon = () => {
       if (educatorSavedRef.current) return;
       traceSignupBeacon(SignupTraceEvent.WIZARD_ABANDONED, {
-        role: selectedRole,
+        role: toTraceRole(selectedRole),
         email: formData.email || currentUser?.email,
         // SKIP, not FAIL. On mobile, switching apps fires `visibilitychange`
         // too, so this event alone does not prove the signup was lost — the
@@ -620,7 +626,7 @@ const SignupPage: React.FC = () => {
     // than reusing whatever a previous abandoned attempt left behind — two
     // attempts by the same person must not collapse into one timeline.
     resetSignupCorrelationId();
-    traceSignup(SignupTraceEvent.WIZARD_STARTED, { role });
+    traceSignup(SignupTraceEvent.WIZARD_STARTED, { role: toTraceRole(role) });
   };
 
   const handleBackToRoleSelection = () => {
@@ -886,7 +892,7 @@ const SignupPage: React.FC = () => {
 
 
       traceSignup(SignupTraceEvent.ACCOUNT_SUBMITTED, {
-        role: selectedRole,
+        role: toTraceRole(selectedRole),
         email: formData.email,
       });
 
@@ -929,7 +935,7 @@ const SignupPage: React.FC = () => {
           await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
 
           traceSignup(SignupTraceEvent.VERIFICATION_SENT, {
-            role: selectedRole,
+            role: toTraceRole(selectedRole),
             email: formData.email,
           });
 
@@ -943,7 +949,7 @@ const SignupPage: React.FC = () => {
           // the webhook never fires and no backend account is created. Silent
           // until now; this is the row that explains it.
           traceSignup(SignupTraceEvent.ACCOUNT_FAILED, {
-            role: selectedRole,
+            role: toTraceRole(selectedRole),
             email: formData.email,
             outcome: 'FAIL',
             errorCode: 'VERIFICATION_EMAIL_FAILED',
@@ -986,7 +992,7 @@ const SignupPage: React.FC = () => {
       }
       
       traceSignup(SignupTraceEvent.ACCOUNT_FAILED, {
-        role: selectedRole,
+        role: toTraceRole(selectedRole),
         email: formData.email,
         outcome: 'FAIL',
         errorCode: err?.errors?.[0]?.code || 'CLERK_SIGNUP_FAILED',
@@ -1020,7 +1026,7 @@ const SignupPage: React.FC = () => {
       // webhook). An educator whose journey stops right here has an account
       // and nothing else — which is precisely the incomplete-list case.
       traceSignup(SignupTraceEvent.VERIFICATION_SUBMITTED, {
-        role: selectedRole,
+        role: toTraceRole(selectedRole),
         email: formData.email,
       });
 
@@ -1170,7 +1176,7 @@ const SignupPage: React.FC = () => {
           }
 
           traceSignup(SignupTraceEvent.PROFILE_SUBMIT_ATTEMPT, {
-            role: selectedRole,
+            role: toTraceRole(selectedRole),
             email: profileData.email || formData.email,
             detail: {
               attempt: attempt + 1,
@@ -1213,7 +1219,7 @@ const SignupPage: React.FC = () => {
           }
 
           traceSignup(SignupTraceEvent.PROFILE_SUBMIT_RETRY, {
-            role: selectedRole,
+            role: toTraceRole(selectedRole),
             email: profileData.email || formData.email,
             outcome: 'FAIL',
             errorCode: `HTTP_${response.status}`,
@@ -1229,7 +1235,7 @@ const SignupPage: React.FC = () => {
           // fetch() rejected — always worth another try.
           lastError = networkErr?.message || 'Network error while saving your profile';
           traceSignup(SignupTraceEvent.PROFILE_SUBMIT_RETRY, {
-            role: selectedRole,
+            role: toTraceRole(selectedRole),
             email: profileData.email || formData.email,
             outcome: 'FAIL',
             errorCode: 'NETWORK_ERROR',
@@ -1249,7 +1255,7 @@ const SignupPage: React.FC = () => {
         // itself abandoned.
         educatorSavedRef.current = true;
         traceSignup(SignupTraceEvent.PROFILE_SUBMIT_SUCCEEDED, {
-          role: selectedRole,
+          role: toTraceRole(selectedRole),
           email: profileData.email || formData.email,
         });
         setProvisioningDelayed(false);
@@ -1269,7 +1275,7 @@ const SignupPage: React.FC = () => {
       // bug becomes real, and until now it produced nothing but a console line
       // on the user's own machine.
       traceSignup(SignupTraceEvent.PROFILE_SUBMIT_FAILED, {
-        role: selectedRole,
+        role: toTraceRole(selectedRole),
         email: profileData.email || formData.email,
         outcome: 'FAIL',
         errorCode: 'RETRIES_EXHAUSTED',
