@@ -15,6 +15,12 @@ import {
 const MAX_STRING = 500;
 /** Ceiling on `detail` keys, so a rogue client cannot store a document. */
 const MAX_DETAIL_KEYS = 40;
+/**
+ * Ceiling on rows a single CSV export can pull into memory. Journeys are
+ * already capped at 200; this guards against the same journeys carrying an
+ * unusually long combined event history.
+ */
+const MAX_EXPORT_EVENTS = 5000;
 
 export interface RecordSignupEventArgs {
   correlationId?: string | null;
@@ -279,17 +285,30 @@ export class SignupLogService {
   }
 
   /**
-   * Every event belonging to the journeys `listJourneys` would return for the
-   * same filters — the export button is a literal download of what is on
-   * screen, not a separate query an admin has to reason about.
+   * Every event belonging to a set of journeys.
+   *
+   * When the caller already knows which journeys it wants — the admin UI
+   * passes the exact correlation ids it has on screen, so an export matches
+   * what an admin filtered to (an email search included, which is applied
+   * client-side and never reaches `listJourneys`) — those are used as-is.
+   * Otherwise this falls back to the same filters `listJourneys` uses, so an
+   * export triggered without a specific scope still means the same thing.
    */
-  async exportEvents(params: { limit?: number; onlyFailed?: boolean; since: Date }) {
-    const journeys = await this.listJourneys(params);
-    if (journeys.length === 0) return [];
+  async exportEvents(params: {
+    limit?: number;
+    onlyFailed?: boolean;
+    since: Date;
+    correlationIds?: string[];
+  }) {
+    const correlationIds = params.correlationIds?.length
+      ? params.correlationIds
+      : (await this.listJourneys(params)).map((j) => j.correlationId);
+    if (correlationIds.length === 0) return [];
 
     return this.prisma.signupEventLog.findMany({
-      where: { correlationId: { in: journeys.map((j) => j.correlationId) } },
+      where: { correlationId: { in: correlationIds } },
       orderBy: [{ correlationId: 'asc' }, { createdAt: 'asc' }],
+      take: MAX_EXPORT_EVENTS,
     });
   }
 }

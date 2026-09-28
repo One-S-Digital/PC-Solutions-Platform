@@ -161,19 +161,33 @@ export class SignupLogAdminController {
     };
   }
 
-  /** CSV of every event behind the journeys list, for the same filters. */
+  /**
+   * CSV of every event behind the journeys list.
+   *
+   * `correlationIds`, when present, scopes the export to exactly those
+   * journeys — what the admin UI sends, since its email filter is applied
+   * client-side. Without it, this falls back to the same onlyFailed/days
+   * filters `journeys` uses.
+   */
   @Get('export')
   async exportCsv(
     @Res() res: Response,
     @Query('onlyFailed') onlyFailed?: string,
     @Query('days') days?: string,
     @Query('limit') limit?: string,
+    @Query('correlationIds') correlationIds?: string,
   ) {
     const windowDays = parseBoundedInt(days, 30, 1, 365);
+    const ids = correlationIds
+      ?.split(',')
+      .map((id) => id.trim())
+      .filter(Boolean)
+      .slice(0, 300);
     const events = await this.signupLog.exportEvents({
       limit: parseBoundedInt(limit, 200, 1, 200),
       onlyFailed: onlyFailed === 'true',
       since: new Date(Date.now() - windowDays * 24 * 60 * 60 * 1000),
+      correlationIds: ids,
     });
 
     const headers = [
@@ -211,7 +225,7 @@ export class SignupLogAdminController {
       e.detail ? JSON.stringify(e.detail) : '',
     ]);
     const csv = [headers, ...rows]
-      .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+      .map((row) => row.map((cell) => `"${escapeCsvCell(cell).replace(/"/g, '""')}"`).join(','))
       .join('\n');
 
     const filename = `signup-log-${new Date().toISOString().split('T')[0]}.csv`;
@@ -271,4 +285,18 @@ function parseBoundedInt(
   if (!raw) return fallback;
   if (!/^\d+$/.test(raw)) throw new BadRequestException('Expected a positive integer');
   return Math.min(max, Math.max(min, parseInt(raw, 10)));
+}
+
+/**
+ * Neutralizes CSV formula injection (CWE-1236).
+ *
+ * `errorCode` and `errorMessage` originate from the public client-event
+ * endpoint, so an attacker can make either begin with `=`, `+`, `-` or `@`
+ * and have it execute as a formula the moment an admin opens the exported
+ * file in a spreadsheet. Prefixing a guard apostrophe forces those tools to
+ * read the cell as text; quote-escaping alone does not.
+ */
+function escapeCsvCell(value: unknown): string {
+  const str = String(value ?? '');
+  return /^[=+\-@\t\r]/.test(str) ? `'${str}` : str;
 }

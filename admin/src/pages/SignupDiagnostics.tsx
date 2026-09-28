@@ -12,6 +12,7 @@ import {
   Search,
   XCircle,
 } from 'lucide-react'
+import { toast } from 'sonner'
 import { useApiClient, apiService } from '../services/api'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 
@@ -254,13 +255,22 @@ const SignupDiagnostics: React.FC = () => {
   const handleExport = async () => {
     setExporting(true)
     try {
-      const res = await apiService.exportSignupLog(apiClient, { onlyFailed, days })
+      // Scoped to exactly what's on screen, including the email filter —
+      // that filter is applied client-side and the server has no way to
+      // reapply it on its own.
+      const res = await apiService.exportSignupLog(apiClient, {
+        onlyFailed,
+        days,
+        correlationIds: visibleJourneys.map((j) => j.correlationId),
+      })
       const url = URL.createObjectURL(res.data as Blob)
       const a = document.createElement('a')
       a.href = url
       a.download = `signup-log-${new Date().toISOString().split('T')[0]}.csv`
       a.click()
       URL.revokeObjectURL(url)
+    } catch {
+      toast.error('Export failed — please try again.')
     } finally {
       setExporting(false)
     }
