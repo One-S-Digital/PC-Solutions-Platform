@@ -3,7 +3,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
 import { MailingTransportService } from './mailing-transport.service';
 import { MailingFiltersDto } from './dto/mailing-filters.dto';
-import { UserRole, Prisma, MailingCampaignStatus, EducatorApprovalStatus } from '@prisma/client';
+import { UserRole, Prisma, MailingCampaignStatus } from '@prisma/client';
 import * as crypto from 'crypto';
 
 const MAX_RECIPIENTS_PER_CAMPAIGN = 2000;
@@ -128,13 +128,18 @@ export class MailingService {
 
     // C3) Profile completion -----------------------------------------
     // "Complete" is defined per role, since each role's signup collects
-    // different required fields and there is no single stored flag for it
-    // (EducatorApprovalStatus.INCOMPLETE only exists for EDUCATOR):
+    // different required fields and there is no single stored flag for it:
     //   PARENT: phone number, child's age and desired start date (collected at signup)
     //   FOUNDATION / PRODUCT_SUPPLIER / SERVICE_PROVIDER: organization phone
     //     number, description, and a canton or city
-    //   EDUCATOR: has submitted their profile at least once, i.e. approvalStatus
-    //     has moved past INCOMPLETE
+    //   EDUCATOR: has shortBio or cvUrl content. This mirrors
+    //     `isSubmittingApplication` in settings.controller.ts#updateEducatorSettings
+    //     — the platform's own definition of "a real application exists" — rather
+    //     than approvalStatus, because an admin can approve an educator straight
+    //     out of INCOMPLETE (EducatorApprovalsService.approveEducator's
+    //     "approved while incomplete" override) while shortBio/cvUrl stay empty,
+    //     which would otherwise read as a complete profile.
+    const nonEmptyString: Prisma.StringNullableFilter = { not: null, notIn: [''] };
     if (filters.profileIncomplete !== undefined) {
       const orgProfileComplete: Prisma.OrganizationWhereInput = {
         phoneNumber: { not: null },
@@ -154,9 +159,7 @@ export class MailingService {
         },
         {
           role: UserRole.EDUCATOR,
-          approvalStatus: {
-            in: [EducatorApprovalStatus.PENDING_REVIEW, EducatorApprovalStatus.APPROVED, EducatorApprovalStatus.REJECTED],
-          },
+          OR: [{ shortBio: nonEmptyString }, { cvUrl: nonEmptyString }],
         },
       ];
 
