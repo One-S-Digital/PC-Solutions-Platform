@@ -188,7 +188,20 @@ const LEGACY_CLIENT_ROLE_LABELS: Record<string, string> = {
  */
 export function normalizeSignupRole(role: string | null | undefined): string | null {
   if (!role) return null;
-  return LEGACY_CLIENT_ROLE_LABELS[role] ?? role;
+  // Own-key check: `role` arrives from a public endpoint, and a plain lookup
+  // would resolve 'constructor' or 'toString' to an inherited function.
+  return Object.prototype.hasOwnProperty.call(LEGACY_CLIENT_ROLE_LABELS, role)
+    ? LEGACY_CLIENT_ROLE_LABELS[role]
+    : role;
+}
+
+/** Every stored spelling of a role — the value itself plus its legacy labels. */
+export function signupRoleAliases(role: string): string[] {
+  const canonical = normalizeSignupRole(role) ?? role;
+  const legacy = Object.keys(LEGACY_CLIENT_ROLE_LABELS).filter(
+    (label) => LEGACY_CLIENT_ROLE_LABELS[label] === canonical,
+  );
+  return [canonical, ...legacy];
 }
 
 /** Which stage a client-reported event belongs to. */
