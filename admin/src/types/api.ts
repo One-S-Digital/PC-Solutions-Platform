@@ -574,6 +574,7 @@ export interface MailingFilters {
   lastActiveFrom?: string;
   lastActiveTo?: string;
   educatorApprovalStatuses?: string[];
+  profileIncomplete?: boolean;
   search?: string;
 }
 

@@ -269,6 +269,31 @@ const MailingFilterPanel: React.FC<Props> = ({ filters, onChange }) => {
         </div>
       </Section>
 
+      <Section title="Profile Completion" defaultOpen={filters.profileIncomplete !== undefined}>
+        <p className="text-xs text-gray-500 mb-2">
+          Whether the account finished the fields required for its role (contact details, organization
+          info, or — for Educators — a submitted profile). Applies across all roles.
+        </p>
+        <div className="space-y-1.5">
+          {[
+            { label: 'All', value: undefined },
+            { label: 'Complete profiles only', value: false },
+            { label: 'Incomplete profiles only', value: true },
+          ].map((opt) => (
+            <label key={String(opt.value)} className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+              <input
+                type="radio"
+                name="profileIncomplete"
+                checked={filters.profileIncomplete === opt.value}
+                onChange={() => update({ profileIncomplete: opt.value })}
+                className="border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              {opt.label}
+            </label>
+          ))}
+        </div>
+      </Section>
+
       <Section title="Subscription">
         <div className="space-y-2">
           <select

@@ -87,6 +87,12 @@ export class MailingFiltersDto {
   @IsEnum(EducatorApprovalStatus, { each: true })
   educatorApprovalStatuses?: EducatorApprovalStatus[];
 
+  // true = incomplete profiles only, false = complete profiles only, unset = no filter.
+  // "Complete" is defined per role — see MailingService.buildRecipientWhere.
+  @IsOptional()
+  @IsBoolean()
+  profileIncomplete?: boolean;
+
   @IsOptional()
   @IsString()
   search?: string;

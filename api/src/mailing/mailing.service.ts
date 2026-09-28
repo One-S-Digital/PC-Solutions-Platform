@@ -3,7 +3,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
 import { MailingTransportService } from './mailing-transport.service';
 import { MailingFiltersDto } from './dto/mailing-filters.dto';
-import { UserRole, Prisma, MailingCampaignStatus } from '@prisma/client';
+import { UserRole, Prisma, MailingCampaignStatus, EducatorApprovalStatus } from '@prisma/client';
 import * as crypto from 'crypto';
 
 const MAX_RECIPIENTS_PER_CAMPAIGN = 2000;
@@ -124,6 +124,48 @@ export class MailingService {
           { approvalStatus: { in: filters.educatorApprovalStatuses } },
         ],
       });
+    }
+
+    // C3) Profile completion -----------------------------------------
+    // "Complete" is defined per role, since each role's signup collects
+    // different required fields and there is no single stored flag for it
+    // (EducatorApprovalStatus.INCOMPLETE only exists for EDUCATOR):
+    //   PARENT: phone number, child's age and desired start date (collected at signup)
+    //   FOUNDATION / PRODUCT_SUPPLIER / SERVICE_PROVIDER: organization phone
+    //     number, description, and a canton or city
+    //   EDUCATOR: has submitted their profile at least once, i.e. approvalStatus
+    //     has moved past INCOMPLETE
+    if (filters.profileIncomplete !== undefined) {
+      const orgProfileComplete: Prisma.OrganizationWhereInput = {
+        phoneNumber: { not: null },
+        description: { not: null },
+        OR: [{ canton: { not: null } }, { city: { not: null } }],
+      };
+      const completeConditions: Prisma.UserWhereInput[] = [
+        {
+          role: UserRole.PARENT,
+          phoneNumber: { not: null },
+          childAge: { not: null },
+          childStartDate: { not: null },
+        },
+        {
+          role: { in: [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER] },
+          organizations: { some: { organization: orgProfileComplete } },
+        },
+        {
+          role: UserRole.EDUCATOR,
+          approvalStatus: {
+            in: [EducatorApprovalStatus.PENDING_REVIEW, EducatorApprovalStatus.APPROVED, EducatorApprovalStatus.REJECTED],
+          },
+        },
+      ];
+
+      // "Incomplete" is simply the negation: a user who satisfies none of the
+      // role-specific "complete" conditions above (including a role/org state
+      // we don't otherwise recognize, which is safest treated as incomplete).
+      andConditions.push(
+        filters.profileIncomplete ? { NOT: { OR: completeConditions } } : { OR: completeConditions },
+      );
     }
 
     // D) Location & language ------------------------------------------
