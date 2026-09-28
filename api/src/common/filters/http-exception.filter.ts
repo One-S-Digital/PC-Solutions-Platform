@@ -87,7 +87,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       response.setHeader('Access-Control-Allow-Origin', origin || '*');
       response.setHeader('Access-Control-Allow-Credentials', 'true');
       response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
-      response.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, svix-id, svix-timestamp, svix-signature, X-Trace-Id');
+      response.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, svix-id, svix-timestamp, svix-signature, X-Trace-Id, X-Signup-Correlation-Id');
     }
 
     response.status(status).json({

@@ -47,6 +47,11 @@ async function bootstrap() {
       'svix-timestamp',
       'svix-signature',
       'X-Trace-Id',
+      // Sent by the signup wizard's profile PATCH and complete-profile POST.
+      // Missing from this list, the preflight fails and the browser reports
+      // the request as a bare network error — every educator profile submit
+      // failed that way until it was added.
+      'X-Signup-Correlation-Id',
     ],
     exposedHeaders: ['Content-Type', 'Authorization', 'x-build-commit', 'X-Trace-Id'],
     maxAge: 86400,
