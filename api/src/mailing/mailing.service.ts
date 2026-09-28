@@ -126,6 +126,51 @@ export class MailingService {
       });
     }
 
+    // C3) Profile completion -----------------------------------------
+    // "Complete" is defined per role, since each role's signup collects
+    // different required fields and there is no single stored flag for it:
+    //   PARENT: phone number, child's age and desired start date (collected at signup)
+    //   FOUNDATION / PRODUCT_SUPPLIER / SERVICE_PROVIDER: organization phone
+    //     number, description, and a canton or city
+    //   EDUCATOR: has shortBio or cvUrl content. This mirrors
+    //     `isSubmittingApplication` in settings.controller.ts#updateEducatorSettings
+    //     — the platform's own definition of "a real application exists" — rather
+    //     than approvalStatus, because an admin can approve an educator straight
+    //     out of INCOMPLETE (EducatorApprovalsService.approveEducator's
+    //     "approved while incomplete" override) while shortBio/cvUrl stay empty,
+    //     which would otherwise read as a complete profile.
+    const nonEmptyString: Prisma.StringNullableFilter = { not: null, notIn: [''] };
+    if (filters.profileIncomplete !== undefined) {
+      const orgProfileComplete: Prisma.OrganizationWhereInput = {
+        phoneNumber: { not: null },
+        description: { not: null },
+        OR: [{ canton: { not: null } }, { city: { not: null } }],
+      };
+      const completeConditions: Prisma.UserWhereInput[] = [
+        {
+          role: UserRole.PARENT,
+          phoneNumber: { not: null },
+          childAge: { not: null },
+          childStartDate: { not: null },
+        },
+        {
+          role: { in: [UserRole.FOUNDATION, UserRole.PRODUCT_SUPPLIER, UserRole.SERVICE_PROVIDER] },
+          organizations: { some: { organization: orgProfileComplete } },
+        },
+        {
+          role: UserRole.EDUCATOR,
+          OR: [{ shortBio: nonEmptyString }, { cvUrl: nonEmptyString }],
+        },
+      ];
+
+      // "Incomplete" is simply the negation: a user who satisfies none of the
+      // role-specific "complete" conditions above (including a role/org state
+      // we don't otherwise recognize, which is safest treated as incomplete).
+      andConditions.push(
+        filters.profileIncomplete ? { NOT: { OR: completeConditions } } : { OR: completeConditions },
+      );
+    }
+
     // D) Location & language ------------------------------------------
     // Canton / city: match via organization OR via user's direct fields
     // so that educators and parents without org links are also found.
