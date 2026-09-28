@@ -117,6 +117,19 @@ const EducatorApprovals: React.FC = () => {
     },
   })
 
+  const approveIncomplete = (educator: { id: string; firstName?: string | null; email?: string | null }) => {
+    const who = educator.firstName || educator.email || 'this educator'
+    if (
+      !window.confirm(
+        `${who} has not submitted an application — their profile may be empty. ` +
+          'Approve anyway? They will be emailed and appear in the candidate pool.',
+      )
+    ) {
+      return
+    }
+    approveMutation.mutate(educator.id)
+  }
+
   const openRejectModal = (id: string) => {
     setRejectTarget(id)
     setRejectNotes('')
@@ -285,17 +298,26 @@ const EducatorApprovals: React.FC = () => {
                           (an account sitting in this list) to the recorded
                           cause, in one click. */}
                       {educator.approvalStatus === 'INCOMPLETE' && (
-                        <button
-                          onClick={() =>
-                            navigate(
-                              `/signup-diagnostics?userId=${encodeURIComponent(educator.id)}`,
-                            )
-                          }
-                          className="text-xs px-3 py-1.5 rounded-lg border border-amber-300 text-amber-700 hover:bg-amber-50 transition-colors"
-                          title="Show the recorded signup timeline for this account"
-                        >
-                          Why incomplete?
-                        </button>
+                        <>
+                          <button
+                            onClick={() =>
+                              navigate(
+                                `/signup-diagnostics?userId=${encodeURIComponent(educator.id)}`,
+                              )
+                            }
+                            className="text-xs px-3 py-1.5 rounded-lg border border-amber-300 text-amber-700 hover:bg-amber-50 transition-colors"
+                            title="Show the recorded signup timeline for this account"
+                          >
+                            Why incomplete?
+                          </button>
+                          <button
+                            onClick={() => approveIncomplete(educator)}
+                            disabled={approveMutation.isPending}
+                            className="text-xs px-3 py-1.5 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors disabled:opacity-50"
+                          >
+                            Approve
+                          </button>
+                        </>
                       )}
                       {educator.approvalStatus === 'PENDING_REVIEW' && (
                         <>

@@ -607,8 +607,8 @@ export class SettingsController {
       // The mirror of the promotion above. A PATCH can also EMPTY an
       // application — `cvUrl: ''` clears the CV, and a CV-only submission then
       // has nothing left. Without this, the profile would keep PENDING_REVIEW
-      // with no content, and approveEducator (which only refuses INCOMPLETE)
-      // would let an admin approve a blank profile into the candidate pool.
+      // with no content, sitting in the review queue as if it were a real
+      // application an admin could approve without being warned it is blank.
       // DELETE /settings/educator/cv is guarded the same way; this covers the
       // other door into the same state.
       const resultingShortBio =
@@ -892,8 +892,8 @@ export class SettingsController {
 
     // Removing the CV can empty out an application that was only ever submitted
     // as a CV. Without this, the profile would keep its PENDING_REVIEW status
-    // with nothing in it — and approveEducator only refuses INCOMPLETE, so an
-    // admin could approve a blank profile straight into the candidate pool.
+    // with nothing in it, and an admin could approve a blank profile from the
+    // review queue without the warning the Incomplete tab gives.
     // Send it back to INCOMPLETE in the same write, which also re-triggers the
     // "finish your application" prompt for the educator.
     const wouldBeEmpty = !user?.shortBio?.trim();

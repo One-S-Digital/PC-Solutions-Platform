@@ -129,37 +129,11 @@ export class EducatorApprovalsService {
       throw new BadRequestException('Educator is already approved');
     }
 
-    // Nothing was ever submitted for this account — there is no application to
-    // approve. Approving it would publish an empty profile into the candidate
-    // pool. The educator must finish signup first.
-    if (educator.approvalStatus === EducatorApprovalStatus.INCOMPLETE) {
-      // An admin reaching this guard is a strong signal: someone is looking at
-      // an account they expected to be reviewable. Recording it turns each
-      // occurrence into a dated, attributable data point instead of a support
-      // message weeks later.
-      void this.signupLog.record({
-        event: SignupEvent.ADMIN_DECISION_BLOCKED_INCOMPLETE,
-        stage: SignupStage.REVIEW,
-        source: SignupSource.ADMIN,
-        outcome: SignupOutcome.FAIL,
-        role: UserRole.EDUCATOR,
-        userId: id,
-        email: educator.email,
-        approvalStatusBefore: EducatorApprovalStatus.INCOMPLETE,
-        errorCode: 'APPROVE_BLOCKED_INCOMPLETE',
-        detail: {
-          hasShortBio: Boolean(educator.shortBio?.trim()),
-          hasCvUrl: Boolean(educator.cvUrl?.trim()),
-          accountAgeHours: Math.floor(
-            (Date.now() - new Date(educator.createdAt).getTime()) / 3_600_000,
-          ),
-        },
-      });
-
-      throw new BadRequestException(
-        'This educator has not submitted an application yet. Their profile is incomplete.',
-      );
-    }
+    // Approving an INCOMPLETE account is a deliberate admin override (the UI
+    // confirms first): it lets an educator whose submission never arrived in
+    // without redoing signup. It is the only way out of INCOMPLETE besides
+    // submitting, since RolesGuard keeps INCOMPLETE educators off the app.
+    const wasIncomplete = educator.approvalStatus === EducatorApprovalStatus.INCOMPLETE;
 
     const updated = await this.prisma.user.update({
       where: { id },
@@ -181,6 +155,15 @@ export class EducatorApprovalsService {
       email: educator.email,
       approvalStatusBefore: educator.approvalStatus ?? null,
       approvalStatusAfter: EducatorApprovalStatus.APPROVED,
+      // Marks the override on the timeline, and whether it published an empty
+      // profile into the candidate pool.
+      detail: wasIncomplete
+        ? {
+            approvedWhileIncomplete: true,
+            hasShortBio: Boolean(educator.shortBio?.trim()),
+            hasCvUrl: Boolean(educator.cvUrl?.trim()),
+          }
+        : null,
     });
 
     const appUrl = this.configService.get<string>('APP_URL') || this.configService.get<string>('FRONTEND_URL') || '';
