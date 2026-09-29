@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Param, Body, Query, ParseUUIDPipe, UseGuards, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, Body, Query, ParseUUIDPipe, UseGuards, BadRequestException } from '@nestjs/common';
 import { IsNotEmpty, IsString, MinLength } from 'class-validator';
 import { ClerkAuthGuard } from '../auth/guards/clerk-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -79,5 +79,13 @@ export class EducatorApprovalsController {
     @Body() dto: RejectEducatorDto,
   ) {
     return this.educatorApprovalsService.rejectEducator(id, dto.notes);
+  }
+
+  // Permanent delete, scoped to accounts that never submitted an application.
+  // A submitted application must go through POST :id/reject instead — see
+  // EducatorApprovalsService.removeIncompleteEducator.
+  @Delete(':id')
+  async removeIncompleteEducator(@Param('id', ParseUUIDPipe) id: string) {
+    return this.educatorApprovalsService.removeIncompleteEducator(id);
   }
 }

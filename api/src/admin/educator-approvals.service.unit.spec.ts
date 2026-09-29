@@ -20,15 +20,20 @@ describe('EducatorApprovalsService', () => {
         findUnique: jest.fn().mockResolvedValue({ ...baseEducator, approvalStatus }),
         update: jest.fn().mockResolvedValue({ id: baseEducator.id }),
       },
+      appUser: {
+        findUnique: jest.fn().mockResolvedValue({ id: 'app-user-1', clerkId: 'clerk-1' }),
+      },
     };
     const record = jest.fn().mockResolvedValue(undefined);
+    const hardRemove = jest.fn().mockResolvedValue({ success: true });
     const service = new EducatorApprovalsService(
       prisma as any,
       { sendNotification: jest.fn().mockResolvedValue(undefined) } as any,
       { get: jest.fn() } as any,
       { record } as any,
+      { hardRemove } as any,
     );
-    return { service, prisma, record };
+    return { service, prisma, record, hardRemove };
   }
 
   it('approves an INCOMPLETE educator and marks the override on the trace', async () => {
@@ -66,5 +71,27 @@ describe('EducatorApprovalsService', () => {
       BadRequestException,
     );
     expect(prisma.user.update).not.toHaveBeenCalled();
+  });
+
+  it('removes an INCOMPLETE educator account entirely', async () => {
+    const { service, prisma, record, hardRemove } = build(EducatorApprovalStatus.INCOMPLETE);
+
+    await service.removeIncompleteEducator(baseEducator.id);
+
+    expect(prisma.appUser.findUnique).toHaveBeenCalledWith({ where: { clerkId: 'clerk-1' } });
+    expect(hardRemove).toHaveBeenCalledWith('app-user-1');
+    const removed = record.mock.calls.find(
+      ([args]) => args.event === SignupEvent.ADMIN_EDUCATOR_INCOMPLETE_REMOVED,
+    )?.[0];
+    expect(removed).toMatchObject({ approvalStatusBefore: EducatorApprovalStatus.INCOMPLETE });
+  });
+
+  it('refuses to remove a PENDING_REVIEW educator this way', async () => {
+    const { service, hardRemove } = build(EducatorApprovalStatus.PENDING_REVIEW);
+
+    await expect(service.removeIncompleteEducator(baseEducator.id)).rejects.toBeInstanceOf(
+      BadRequestException,
+    );
+    expect(hardRemove).not.toHaveBeenCalled();
   });
 });

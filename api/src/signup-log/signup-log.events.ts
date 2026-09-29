@@ -106,6 +106,8 @@ export const SignupEvent = {
   ADMIN_EDUCATOR_REJECTED: 'admin.educator_rejected',
   /** An admin tried to decide on an INCOMPLETE account and was blocked. */
   ADMIN_DECISION_BLOCKED_INCOMPLETE: 'admin.decision_blocked_incomplete',
+  /** An admin permanently deleted an account that never submitted an application. */
+  ADMIN_EDUCATOR_INCOMPLETE_REMOVED: 'admin.educator_incomplete_removed',
 
   // ---- SYSTEM (sweeper) -------------------------------------------------
   /**

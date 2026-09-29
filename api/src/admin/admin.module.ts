@@ -10,9 +10,10 @@ import { RoleManagementModule } from './role-management/role-management.module';
 import { MarketplaceModule } from '../marketplace/marketplace.module';
 import { UploadModule } from '../upload/upload.module';
 import { EmailNotificationModule } from '../email-notification/email-notification.module';
+import { UsersModule } from '../users/users.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, RoleManagementModule, MarketplaceModule, UploadModule, EmailNotificationModule],
+  imports: [PrismaModule, AuthModule, RoleManagementModule, MarketplaceModule, UploadModule, EmailNotificationModule, UsersModule],
   controllers: [AdminController, AdminProfilesController, AdminSubresourcesController, EducatorApprovalsController],
   providers: [EducatorApprovalsService],
 })

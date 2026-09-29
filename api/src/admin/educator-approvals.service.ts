@@ -4,6 +4,7 @@ import { EducatorApprovalStatus, UserRole } from '@prisma/client';
 import { EmailNotificationService } from '../email-notification/email-notification.service';
 import { ConfigService } from '@nestjs/config';
 import { SignupLogService } from '../signup-log/signup-log.service';
+import { UsersService } from '../users/users.service';
 import {
   SignupEvent,
   SignupOutcome,
@@ -20,6 +21,7 @@ export class EducatorApprovalsService {
     private readonly emailNotificationService: EmailNotificationService,
     private readonly configService: ConfigService,
     private readonly signupLog: SignupLogService,
+    private readonly usersService: UsersService,
   ) {}
 
   async listEducators(status?: EducatorApprovalStatus, page = 1, limit = 20) {
@@ -263,5 +265,55 @@ export class EducatorApprovalsService {
     }
 
     return updated;
+  }
+
+  /**
+   * Permanently deletes an educator account that never submitted an
+   * application. Scoped tightly to INCOMPLETE: `rejectEducator` above
+   * refuses to touch these accounts because REJECTED is a decision on an
+   * application that was never made, and would permanently lock the person
+   * out (RolesGuard blocks REJECTED unconditionally) with no way back in.
+   * Deleting the account instead — rather than rejecting it — avoids both
+   * problems: no rejection email for something never applied for, and no
+   * dead-end account left behind. A submitted application (PENDING_REVIEW,
+   * APPROVED, REJECTED) must go through the normal reject flow.
+   */
+  async removeIncompleteEducator(id: string) {
+    const educator = await this.getEducatorById(id);
+
+    if (educator.approvalStatus !== EducatorApprovalStatus.INCOMPLETE) {
+      throw new BadRequestException(
+        'Only accounts that never submitted an application (Incomplete) can be removed this way. Use Reject for a submitted application.',
+      );
+    }
+
+    const appUser = await this.prisma.appUser.findUnique({ where: { clerkId: educator.clerkId } });
+    if (!appUser) {
+      throw new NotFoundException('No auth account found for this educator');
+    }
+
+    // Reuses UsersService's hard-delete: it refuses (409) if the account has
+    // any dependent data (messages, tickets, subscriptions, ...) rather than
+    // silently destroying it, deletes the Clerk account, and is the same
+    // path the platform already trusts for permanent user removal.
+    await this.usersService.hardRemove(appUser.id);
+
+    this.logger.log(`Incomplete educator ${id} (${educator.email}) removed by admin`);
+
+    void this.signupLog.record({
+      event: SignupEvent.ADMIN_EDUCATOR_INCOMPLETE_REMOVED,
+      stage: SignupStage.REVIEW,
+      source: SignupSource.ADMIN,
+      role: UserRole.EDUCATOR,
+      userId: id,
+      email: educator.email,
+      approvalStatusBefore: EducatorApprovalStatus.INCOMPLETE,
+      detail: {
+        hasShortBio: Boolean(educator.shortBio?.trim()),
+        hasCvUrl: Boolean(educator.cvUrl?.trim()),
+      },
+    });
+
+    return { success: true };
   }
 }

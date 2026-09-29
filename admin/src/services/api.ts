@@ -457,6 +457,11 @@ export const apiService = {
     apiClient.post<ApiResponse<any>>(`/admin/educator-approvals/${id}/approve`),
   rejectEducator: (apiClient: AxiosInstance, id: string, notes: string) =>
     apiClient.post<ApiResponse<any>>(`/admin/educator-approvals/${id}/reject`, { notes }),
+  // Permanent delete, scoped server-side to accounts that never submitted an
+  // application (approvalStatus INCOMPLETE). A submitted application must go
+  // through rejectEducator above instead.
+  removeIncompleteEducator: (apiClient: AxiosInstance, id: string) =>
+    apiClient.delete<ApiResponse<{ success: boolean }>>(`/admin/educator-approvals/${id}`),
 
   // Signup diagnostics — the durable trace of what happened during a signup.
   // See api/src/signup-log for the event catalogue.

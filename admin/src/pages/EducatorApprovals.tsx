@@ -117,6 +117,20 @@ const EducatorApprovals: React.FC = () => {
     },
   })
 
+  // "Reject" for an Incomplete account can't be a status change — there is no
+  // application to reject, and REJECTED would lock the person out for good
+  // with no way to ever finish signing up. So it deletes the account instead.
+  const removeIncompleteMutation = useMutation({
+    mutationFn: (id: string) => apiService.removeIncompleteEducator(apiClient, id),
+    onSuccess: () => {
+      toast.success('Educator account removed')
+      queryClient.invalidateQueries({ queryKey: ['educator-approvals'] })
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message || 'Failed to remove educator account')
+    },
+  })
+
   const approveIncomplete = (educator: { id: string; firstName?: string | null; email?: string | null }) => {
     const who = educator.firstName || educator.email || 'this educator'
     if (
@@ -128,6 +142,19 @@ const EducatorApprovals: React.FC = () => {
       return
     }
     approveMutation.mutate(educator.id)
+  }
+
+  const rejectIncomplete = (educator: { id: string; firstName?: string | null; email?: string | null }) => {
+    const who = educator.firstName || educator.email || 'this educator'
+    if (
+      !window.confirm(
+        `${who} never submitted an application. Rejecting here permanently deletes their ` +
+          'account — login, profile, everything. This cannot be undone. Continue?',
+      )
+    ) {
+      return
+    }
+    removeIncompleteMutation.mutate(educator.id)
   }
 
   const openRejectModal = (id: string) => {
@@ -316,6 +343,14 @@ const EducatorApprovals: React.FC = () => {
                             className="text-xs px-3 py-1.5 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors disabled:opacity-50"
                           >
                             Approve
+                          </button>
+                          <button
+                            onClick={() => rejectIncomplete(educator)}
+                            disabled={removeIncompleteMutation.isPending}
+                            title="Permanently deletes this account — there is no application to reject"
+                            className="text-xs px-3 py-1.5 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors disabled:opacity-50"
+                          >
+                            Reject
                           </button>
                         </>
                       )}
