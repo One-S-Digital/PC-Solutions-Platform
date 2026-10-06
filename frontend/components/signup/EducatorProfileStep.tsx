@@ -515,9 +515,13 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
       <div
         {...fieldProps('cvUrl')}
         tabIndex={-1}
+        // Focus lands here when the CV is the only thing missing, so a screen
+        // reader has to be told what this group is.
+        role="group"
+        aria-labelledby={`${fieldId('cvUrl')}-label`}
         className={`bg-gray-50 rounded-lg p-4 space-y-3 focus:outline-none ${errors.cvUrl ? 'ring-1 ring-swiss-coral' : ''}`}
       >
-        <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+        <h3 id={`${fieldId('cvUrl')}-label`} className="text-sm font-semibold text-gray-700 flex items-center gap-2">
           <PaperClipIcon className="w-4 h-4 text-swiss-mint" />
           {t('signup:educatorProfile.cvUpload', 'Upload your CV')}<span className="text-swiss-coral">*</span>
         </h3>

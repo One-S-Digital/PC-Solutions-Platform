@@ -204,6 +204,26 @@ describe('EducatorProfileStep — fields', () => {
     expect(byIdSuffix(container, 'city')).toHaveAttribute('autocomplete', 'address-level2');
   });
 
+  it('names the two focus-target groups, so a screen reader knows what it has landed on', () => {
+    // Focus goes to the profile-type group or the CV group when one of them is
+    // what is missing. An unnamed group would be announced as just "group".
+    const { container, form } = mount();
+    fill(container, ['jobRole']);
+    submit(form);
+    fill(container);
+    submit(form);
+
+    for (const field of ['jobRole', 'cvUrl']) {
+      const group = byIdSuffix(container, field);
+      expect(group).toHaveAttribute('role', 'group');
+      const heading = document.getElementById(group.getAttribute('aria-labelledby') as string);
+      expect(heading?.textContent?.length, `${field} group has no name`).toBeGreaterThan(0);
+    }
+    expect(byIdSuffix(container, 'cvUrl').getAttribute('aria-labelledby')).not.toBe(
+      byIdSuffix(container, 'jobRole').getAttribute('aria-labelledby'),
+    );
+  });
+
   it('marks the selected profile type for assistive tech', () => {
     const { container } = mount();
     const buttons = Array.from(byIdSuffix(container, 'jobRole').querySelectorAll('button'));
