@@ -18,6 +18,10 @@ export class MaintenanceModeMiddleware {
       /^\/api\/maintenance(\/|$)/,
       /^\/api\/auth(\/|$)/,
       /^\/api\/webhooks(\/|$)/,
+      // An opt-out request must never be refused: the person following the link in a
+      // campaign email is asking us to stop writing to them.
+      // `\?` too: `originalUrl` carries the query string, and the token may be in it.
+      /^\/api\/mailing\/unsubscribe(\/|\?|$)/,
       /^\/api\/static-translations\/public(\/|$)/,
       /^\/api\/static-translations\/admin\/full-sync(\/|$)/,
       /^\/api\/docs(\/|$)/,

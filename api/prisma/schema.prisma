@@ -2704,6 +2704,22 @@ model MailingTemplate {
   @@map("mailing_templates")
 }
 
+// Addresses that must not receive campaign mail, keyed by email rather than by
+// user. An unsubscribe link in a campaign can be sent to an "extra" address that
+// has no User row (admins can add out-of-DB recipients), so there is no
+// UserNotificationPreferences.mailingListOptOut to flip for it — without this
+// table the opt-out would be acknowledged on screen and then ignored.
+// Emails are stored lowercase.
+model MailingSuppression {
+  id         String   @id @default(uuid())
+  email      String   @unique
+  reason     String   @default("unsubscribe")
+  campaignId String?  @map("campaign_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("mailing_suppressions")
+}
+
 // ─── Replacement Staffing (Phase 3) ───────────────────────────────────────────
 
 enum UrgencyLevel {

@@ -983,7 +983,25 @@ export class MailingService {
     const dbDone = !filters || recipients.length < batchSize;
 
     if (dbDone && !campaign.extraEmailsSent && extraEmails.length > 0) {
+      // Extra addresses have no user row, so an unsubscribe from one of them is
+      // recorded by address (see MailingUnsubscribeService). Honour it here, or a
+      // person who already opted out is mailed again the next time an admin pastes
+      // them into a campaign.
+      const suppressed = new Set(
+        (
+          await this.prisma.mailingSuppression.findMany({
+            where: { email: { in: extraEmails.map((e) => e.trim().toLowerCase()) } },
+            select: { email: true },
+          })
+        ).map((row) => row.email),
+      );
+
       for (const extraEmail of extraEmails) {
+        if (suppressed.has(extraEmail.trim().toLowerCase())) {
+          this.logger.log(`Skipping an unsubscribed extra address on campaign ${campaignId}`);
+          continue;
+        }
+
         // Reuse signUnsubscribeToken with the email address as the identifier so the token
         // is in the same base64url(payload).hmac format that verifyUnsubscribeToken expects.
         const unsubToken = this.signUnsubscribeToken(extraEmail, campaignId);
@@ -1155,7 +1173,7 @@ export class MailingService {
     const footer = `
       <div style="margin-top:32px;padding-top:16px;border-top:1px solid #e5e7eb;font-size:12px;color:#6b7280;text-align:center;">
         <p>${escapedName} &mdash; ${escapedEmail}</p>
-        <p><a href="${escapedUrl}" style="color:#6b7280;text-decoration:underline;">Unsubscribe</a></p>
+        <p><a href="${escapedUrl}" style="color:#6b7280;text-decoration:underline;">Se désabonner &middot; Abmelden &middot; Unsubscribe</a></p>
       </div>`;
     // Insert before closing body or append
     if (html.includes('</body>')) {
