@@ -356,10 +356,13 @@
     "professionalExperienceHint": "You can add structured work experience entries later from your profile settings.",
     "cvUpload": "Upload your CV",
     "cvDocument": "CV document",
-    "cvDragDrop": "Drag & drop your CV here, or click to browse",
-    "cvHint": "PDF, DOC or DOCX — max 5 MB. Optional but strongly recommended.",
+    "cvSelect": "Select your CV",
+    "cvHint": "PDF, DOC or DOCX — max 5 MB. Required.",
     "savingProfile": "Saving Profile...",
-    "completeSetup": "Complete Setup"
+    "completeSetup": "Complete Setup",
+    "provisioningDelayed": "Your account is still being set up. You can fill in your details now — we will save them as soon as it is ready.",
+    "saveFailedTitle": "We could not save your profile",
+    "saveFailedHint": "Your answers have been kept on this device. Press \"Complete Setup\" again to retry."
   },
   "detailsTitle": "Enter Your Details for {{role}}",
   "termsLabel": "I accept the terms and conditions",

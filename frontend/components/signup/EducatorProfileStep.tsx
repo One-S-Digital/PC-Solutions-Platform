@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   UserCircleIcon,
@@ -59,6 +59,26 @@ interface EducatorProfileStepProps {
   accountExists?: boolean;
 }
 
+// Top-to-bottom order of the fields on screen. The first one with an error is
+// the one the user is taken to.
+const FIELD_ORDER: Array<keyof EducatorProfileStepErrors> = [
+  'firstName',
+  'lastName',
+  'phone',
+  'canton',
+  'city',
+  'jobRole',
+  'shortBio',
+  'professionalExperience',
+  'cvUrl',
+];
+
+/** Bring an element to the middle of the screen, without animation if the user asks for none. */
+const scrollToCenter = (el: HTMLElement) => {
+  const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+  el.scrollIntoView?.({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+};
+
 // Drop blank values so already-typed input wins over a stale draft field, but
 // an untouched field still falls back to the draft.
 const stripEmpty = (
@@ -78,6 +98,11 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
   accountExists = false,
 }) => {
   const { t } = useTranslation(['signup', 'common', 'settings']);
+
+  // Ids tie each label, input and error message together, and give the submit
+  // handler something to scroll to.
+  const uid = useId();
+  const fieldId = (field: string) => `${uid}-${field}`;
 
   const buildFrom = (
     draft: Partial<EducatorProfileStepData> | null,
@@ -187,7 +212,7 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
     setData(prev => ({ ...prev, cvUrl: '', cvAssetId: '' }));
   };
 
-  const validate = (): boolean => {
+  const computeErrors = (): EducatorProfileStepErrors => {
     const newErrors: EducatorProfileStepErrors = {};
 
     if (!data.firstName.trim()) newErrors.firstName = t('signup:errors.firstNameRequired', 'First name is required');
@@ -200,21 +225,59 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
     if (!data.jobRole) newErrors.jobRole = t('signup:errors.jobRoleRequired', 'Please select your profile type');
     if (!data.cvUrl) newErrors.cvUrl = t('signup:errors.cvRequired', 'Please upload your CV');
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return newErrors;
+  };
+
+  /**
+   * Take the user to the field that needs attention.
+   *
+   * The form is two to three screens tall on a phone and the submit button is at
+   * the bottom, so without this a failed submit changes nothing the user can
+   * see: every error but the last one or two is above the fold.
+   */
+  const focusField = (field: keyof EducatorProfileStepErrors) => {
+    const el = document.getElementById(fieldId(field));
+    if (!el) return;
+    scrollToCenter(el);
+    // preventScroll: the smooth scroll above is the one that should win.
+    el.focus({ preventScroll: true });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
+    const found = computeErrors();
+    setErrors(found);
+
+    const firstInvalid = FIELD_ORDER.find(field => found[field]);
+    if (firstInvalid) {
+      focusField(firstInvalid);
+      return;
+    }
     await onSubmit(data);
   };
+
+  // A failed save is reported in a banner at the TOP of the form, but it is the
+  // button at the bottom that was just pressed — so bring the banner to the user.
+  const submitErrorRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (submitError && submitErrorRef.current) scrollToCenter(submitErrorRef.current);
+  }, [submitError]);
+
+  const fieldProps = (field: keyof EducatorProfileStepErrors) => ({
+    id: fieldId(field),
+    'aria-invalid': errors[field] ? true : undefined,
+    'aria-describedby': errors[field] ? `${fieldId(field)}-error` : undefined,
+  });
 
   const inputClass = (field: keyof EducatorProfileStepErrors) =>
     `${STANDARD_INPUT_FIELD} ${errors[field] ? 'border-swiss-coral' : ''}`;
 
   const ErrorMsg = ({ field }: { field: keyof EducatorProfileStepErrors }) =>
-    errors[field] ? <p className="text-xs text-swiss-coral mt-1">{errors[field]}</p> : null;
+    errors[field] ? (
+      <p id={`${fieldId(field)}-error`} className="text-xs text-swiss-coral mt-1">
+        {errors[field]}
+      </p>
+    ) : null;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
@@ -236,7 +299,7 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
           dismissed while the typed data is discarded). The draft is kept, so
           "Complete Setup" can simply be pressed again. */}
       {submitError && (
-        <div className="rounded-lg border border-swiss-coral bg-red-50 p-3" role="alert">
+        <div ref={submitErrorRef} className="rounded-lg border border-swiss-coral bg-red-50 p-3" role="alert">
           <p className="text-sm font-medium text-swiss-coral">
             {t('signup:educatorProfile.saveFailedTitle', 'We could not save your profile')}
           </p>
@@ -259,11 +322,14 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor={fieldId('firstName')} className="block text-sm font-medium text-gray-700 mb-1">
               {t('signup:educatorProfile.firstName', 'First Name')}<span className="text-swiss-coral">*</span>
             </label>
             <input
+              {...fieldProps('firstName')}
               type="text"
+              autoComplete="given-name"
+              autoCapitalize="words"
               value={data.firstName}
               onChange={e => set('firstName', e.target.value)}
               className={inputClass('firstName')}
@@ -273,11 +339,14 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor={fieldId('lastName')} className="block text-sm font-medium text-gray-700 mb-1">
               {t('signup:educatorProfile.lastName', 'Last Name')}<span className="text-swiss-coral">*</span>
             </label>
             <input
+              {...fieldProps('lastName')}
               type="text"
+              autoComplete="family-name"
+              autoCapitalize="words"
               value={data.lastName}
               onChange={e => set('lastName', e.target.value)}
               className={inputClass('lastName')}
@@ -289,11 +358,13 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor={fieldId('phone')} className="block text-sm font-medium text-gray-700 mb-1">
               {t('signup:educatorProfile.phone', 'Phone Number')}<span className="text-swiss-coral">*</span>
             </label>
             <input
+              {...fieldProps('phone')}
               type="tel"
+              autoComplete="tel"
               value={data.phone}
               onChange={e => set('phone', e.target.value)}
               className={inputClass('phone')}
@@ -303,11 +374,13 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor={fieldId('email')} className="block text-sm font-medium text-gray-700 mb-1">
               {t('signup:labels.email', 'Email Address')}<span className="text-swiss-coral">*</span>
             </label>
             <input
+              id={fieldId('email')}
               type="email"
+              autoComplete="email"
               value={data.email}
               readOnly
               className={`${STANDARD_INPUT_FIELD} bg-gray-100 cursor-not-allowed`}
@@ -328,10 +401,12 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor={fieldId('canton')} className="block text-sm font-medium text-gray-700 mb-1">
               {t('signup:labels.canton', 'Canton')}<span className="text-swiss-coral">*</span>
             </label>
             <select
+              {...fieldProps('canton')}
+              autoComplete="address-level1"
               value={data.canton}
               onChange={e => set('canton', e.target.value)}
               className={inputClass('canton')}
@@ -345,11 +420,14 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor={fieldId('city')} className="block text-sm font-medium text-gray-700 mb-1">
               {t('signup:educatorProfile.city', 'City')}<span className="text-swiss-coral">*</span>
             </label>
             <input
+              {...fieldProps('city')}
               type="text"
+              autoComplete="address-level2"
+              autoCapitalize="words"
               value={data.city}
               onChange={e => set('city', e.target.value)}
               className={inputClass('city')}
@@ -361,8 +439,14 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
       </div>
 
       {/* Profile Type */}
-      <div className="bg-gray-50 rounded-lg p-4 space-y-3">
-        <h3 className="text-sm font-semibold text-gray-700">
+      <div
+        {...fieldProps('jobRole')}
+        tabIndex={-1}
+        role="group"
+        aria-labelledby={`${fieldId('jobRole')}-label`}
+        className="bg-gray-50 rounded-lg p-4 space-y-3 focus:outline-none"
+      >
+        <h3 id={`${fieldId('jobRole')}-label`} className="text-sm font-semibold text-gray-700">
           {t('signup:educatorProfile.profileType', 'Your Profile Type')}<span className="text-swiss-coral">*</span>
         </h3>
         <p className="text-xs text-gray-500">
@@ -373,6 +457,7 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
             <button
               key={role}
               type="button"
+              aria-pressed={data.jobRole === role}
               onClick={() => set('jobRole', role)}
               className={`p-3 border-2 rounded-lg text-center text-sm font-semibold transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-swiss-mint focus:ring-offset-1 ${
                 data.jobRole === role
@@ -389,11 +474,13 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
 
       {/* Biography */}
       <div className="bg-gray-50 rounded-lg p-4 space-y-3">
-        <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+        <h3 id={`${fieldId('shortBio')}-label`} className="text-sm font-semibold text-gray-700 flex items-center gap-2">
           <UserCircleIcon className="w-4 h-4 text-swiss-mint" />
           {t('signup:educatorProfile.biography', 'Short Biography')}<span className="text-swiss-coral">*</span>
         </h3>
         <textarea
+          {...fieldProps('shortBio')}
+          aria-labelledby={`${fieldId('shortBio')}-label`}
           rows={3}
           value={data.shortBio}
           onChange={e => set('shortBio', e.target.value)}
@@ -405,11 +492,13 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
 
       {/* Professional Experience */}
       <div className="bg-gray-50 rounded-lg p-4 space-y-3">
-        <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+        <h3 id={`${fieldId('professionalExperience')}-label`} className="text-sm font-semibold text-gray-700 flex items-center gap-2">
           <BriefcaseIcon className="w-4 h-4 text-swiss-mint" />
           {t('signup:educatorProfile.professionalExperience', 'Professional Experience')}<span className="text-swiss-coral">*</span>
         </h3>
         <textarea
+          {...fieldProps('professionalExperience')}
+          aria-labelledby={`${fieldId('professionalExperience')}-label`}
           rows={4}
           value={data.professionalExperience}
           onChange={e => set('professionalExperience', e.target.value)}
@@ -423,7 +512,11 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
       </div>
 
       {/* CV Upload */}
-      <div className={`bg-gray-50 rounded-lg p-4 space-y-3 ${errors.cvUrl ? 'ring-1 ring-swiss-coral' : ''}`}>
+      <div
+        {...fieldProps('cvUrl')}
+        tabIndex={-1}
+        className={`bg-gray-50 rounded-lg p-4 space-y-3 focus:outline-none ${errors.cvUrl ? 'ring-1 ring-swiss-coral' : ''}`}
+      >
         <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
           <PaperClipIcon className="w-4 h-4 text-swiss-mint" />
           {t('signup:educatorProfile.cvUpload', 'Upload your CV')}<span className="text-swiss-coral">*</span>
@@ -459,7 +552,7 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
           </div>
         ) : (
           <FileUploadZone
-            label={t('signup:educatorProfile.cvDragDrop', 'Drag & drop your CV here, or click to browse')}
+            label={t('signup:educatorProfile.cvSelect', 'Select your CV')}
             acceptedMimeTypes=".pdf,.doc,.docx"
             maxFileSizeMB={5}
             assetKind="CV"
@@ -467,25 +560,19 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
             autoUpload={true}
           />
         )}
-        {errors.cvUrl && <p className="text-xs text-swiss-coral">{errors.cvUrl}</p>}
+        {errors.cvUrl && (
+          <p id={`${fieldId('cvUrl')}-error`} className="text-xs text-swiss-coral">{errors.cvUrl}</p>
+        )}
         <p className="text-xs text-gray-500">
-          {t('signup:educatorProfile.cvHint', 'PDF, DOC or DOCX — max 5 MB.')}
+          {t('signup:educatorProfile.cvHint', 'PDF, DOC or DOCX — max 5 MB. Required.')}
         </p>
       </div>
 
-      {/* Actions */}
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-2">
-        <Button
-          type="button"
-          variant="light"
-          onClick={onBack}
-          leftIcon={accountExists ? ArrowRightOnRectangleIcon : ArrowLeftIcon}
-          className="w-full sm:w-auto text-sm"
-        >
-          {accountExists
-            ? t('common:loginPage.signOutButton', 'Sign Out')
-            : t('common:buttons.goBack', 'Go Back')}
-        </Button>
+      {/* Actions. The submit button comes first in the DOM so it is the top one when
+          they stack on a phone — with "Sign out" directly above it, one slipped tap
+          ended the session — and `sm:flex-row-reverse` puts it back on the right
+          from the sm breakpoint up. */}
+      <div className="flex flex-col sm:flex-row-reverse justify-between items-center gap-3 pt-2">
         <Button
           type="submit"
           variant="primary"
@@ -496,6 +583,17 @@ const EducatorProfileStep: React.FC<EducatorProfileStepProps> = ({
           {isLoading
             ? t('signup:educatorProfile.savingProfile', 'Saving Profile...')
             : t('signup:educatorProfile.completeSetup', 'Complete Setup')}
+        </Button>
+        <Button
+          type="button"
+          variant="light"
+          onClick={onBack}
+          leftIcon={accountExists ? ArrowRightOnRectangleIcon : ArrowLeftIcon}
+          className="w-full sm:w-auto text-sm"
+        >
+          {accountExists
+            ? t('common:loginPage.signOutButton', 'Sign Out')
+            : t('common:buttons.goBack', 'Go Back')}
         </Button>
       </div>
     </form>
