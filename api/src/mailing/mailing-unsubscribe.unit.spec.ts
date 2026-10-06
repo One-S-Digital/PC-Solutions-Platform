@@ -1,6 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
-import { MailingCampaignStatus } from '@prisma/client';
-import { MailingService } from './mailing.service';
+import { MailingCampaignStatus, Prisma } from '@prisma/client';
+import { MailingService, resolveAppBaseUrl } from './mailing.service';
 import {
   MailingUnsubscribeService,
   isEmailAddress,
@@ -246,14 +246,24 @@ describe('address helpers', () => {
 });
 
 describe('campaign sending honours suppressions', () => {
-  function sendHarness(extraEmails: string[], suppressedEmails: string[]) {
+  interface HarnessOptions {
+    /** Audience filters; omit for an extras-only campaign. */
+    filters?: Record<string, unknown>;
+    /** Users the audience query returns. */
+    recipients?: Array<{ id: string; email: string }>;
+    /** Registered users (by email) whose own preference says they opted out. */
+    optedOutUserEmails?: string[];
+  }
+
+  function sendHarness(extraEmails: string[], suppressedEmails: string[], options: HarnessOptions = {}) {
+    const { filters, recipients = [], optedOutUserEmails = [] } = options;
     const campaign = {
       id: CAMPAIGN_ID,
       subject: 'Hello',
       bodyHtml: '<p>Hi</p>',
       bodyText: 'Hi',
       status: MailingCampaignStatus.SENDING,
-      filtersJson: null,
+      filtersJson: filters ?? null,
       segmentId: null,
       extraEmailsJson: extraEmails,
       extraEmailsSent: false,
@@ -270,7 +280,21 @@ describe('campaign sending honours suppressions', () => {
       },
       frontendSettings: { findFirst: jest.fn().mockResolvedValue(null) },
       mailingSuppression: {
-        findMany: jest.fn().mockResolvedValue(suppressedEmails.map(email => ({ email }))),
+        // Answers only for the addresses it is asked about, as the database would.
+        findMany: jest.fn(async ({ where }: any) =>
+          suppressedEmails.filter(email => where.email.in.includes(email)).map(email => ({ email })),
+        ),
+      },
+      user: {
+        // Two different queries share this method: the audience query (it pages
+        // with `take`) and the lookup of opted-out users behind extra addresses.
+        findMany: jest.fn(async (args: any) =>
+          args.take
+            ? recipients.map(r => ({ ...r, firstName: '', lastName: '', role: 'EDUCATOR', organizations: [] }))
+            : optedOutUserEmails
+                .filter(email => args.where.email.in.includes(email.toLowerCase()))
+                .map(email => ({ email })),
+        ),
       },
       emailLog: { create: jest.fn().mockResolvedValue({}) },
     };
@@ -314,6 +338,84 @@ describe('campaign sending honours suppressions', () => {
     expect(sendEmail).toHaveBeenCalledTimes(2);
   });
 
+  it('does not mail a database recipient whose address is suppressed', async () => {
+    // Unsubscribed as an extra address, registered afterwards: no per-user
+    // preference exists, only the suppression row.
+    const { service, sendEmail } = sendHarness([], ['late@example.com'], {
+      filters: { roles: ['EDUCATOR'] },
+      recipients: [
+        { id: 'u1', email: 'Late@Example.com' },
+        { id: 'u2', email: 'stay@example.com' },
+      ],
+    });
+
+    await service.sendBatch(CAMPAIGN_ID, 10);
+
+    expect(sendEmail.mock.calls.map(c => c[0].to)).toEqual(['stay@example.com']);
+  });
+
+  it('advances past a suppressed recipient instead of stalling on it', async () => {
+    const { service, prisma } = sendHarness([], ['late@example.com'], {
+      filters: { roles: ['EDUCATOR'] },
+      recipients: [{ id: 'u9', email: 'late@example.com' }],
+    });
+
+    await service.sendBatch(CAMPAIGN_ID, 10);
+
+    const written = [...prisma.mailingCampaign.update.mock.calls, ...prisma.mailingCampaign.updateMany.mock.calls]
+      .map(c => c[0].data)
+      .find(data => 'cursor' in data);
+    expect(written?.cursor).toBe('u9');
+  });
+
+  it.each([
+    ['a deliberate broadcast to everyone', { roles: ['EDUCATOR'], excludeUnsubscribed: false }],
+    ['a list of the people who opted out', { roles: ['EDUCATOR'], marketingOptIn: false }],
+  ])('leaves %s as the admin asked for it', async (_label, filters) => {
+    const { service, sendEmail, prisma } = sendHarness([], ['late@example.com'], {
+      filters,
+      recipients: [{ id: 'u1', email: 'late@example.com' }],
+    });
+
+    await service.sendBatch(CAMPAIGN_ID, 10);
+
+    expect(sendEmail).toHaveBeenCalledTimes(1);
+    expect(prisma.mailingSuppression.findMany).not.toHaveBeenCalled();
+  });
+
+  it('applies suppressions when the audience is explicitly the subscribed ones', async () => {
+    const { service, sendEmail } = sendHarness([], ['late@example.com'], {
+      filters: { roles: ['EDUCATOR'], marketingOptIn: true },
+      recipients: [{ id: 'u1', email: 'late@example.com' }],
+    });
+    await service.sendBatch(CAMPAIGN_ID, 10);
+    expect(sendEmail).not.toHaveBeenCalled();
+  });
+
+  it('does not mail an extra address that belongs to a registered user who opted out', async () => {
+    // The user unsubscribed with their own link, so the opt-out lives on their
+    // preference. An admin pasting their address in as an extra must not undo it.
+    const { service, sendEmail } = sendHarness(['Ada@Example.com', 'other@example.com'], [], {
+      optedOutUserEmails: ['ada@example.com'],
+    });
+
+    await service.sendBatch(CAMPAIGN_ID, 10);
+
+    expect(sendEmail.mock.calls.map(c => c[0].to)).toEqual(['other@example.com']);
+  });
+
+  it('asks about opted-out users case-insensitively', async () => {
+    const { service, prisma } = sendHarness(['Ada@Example.com'], []);
+    await service.sendBatch(CAMPAIGN_ID, 10);
+    expect(prisma.user.findMany).toHaveBeenCalledWith({
+      where: {
+        email: { in: ['ada@example.com'], mode: 'insensitive' },
+        notificationPreferences: { mailingListOptOut: true },
+      },
+      select: { email: true },
+    });
+  });
+
   it('puts a working, three-language unsubscribe link in the footer', async () => {
     const { service, sendEmail } = sendHarness(['a@example.com'], []);
     await service.sendBatch(CAMPAIGN_ID, 10);
@@ -323,5 +425,99 @@ describe('campaign sending honours suppressions', () => {
     expect(html).toContain('Se désabonner');
     expect(html).toContain('Abmelden');
     expect(html).toContain('Unsubscribe');
+  });
+});
+
+describe('unsubscribe link base URL', () => {
+  const saved = { APP_URL: process.env.APP_URL, FRONTEND_URL: process.env.FRONTEND_URL };
+
+  afterEach(() => {
+    for (const [key, value] of Object.entries(saved)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  });
+
+  it('prefers APP_URL, then FRONTEND_URL, then the app host — never the apex domain', () => {
+    expect(resolveAppBaseUrl({ APP_URL: 'https://a.example', FRONTEND_URL: 'https://f.example' })).toBe('https://a.example');
+    expect(resolveAppBaseUrl({ FRONTEND_URL: 'https://f.example' })).toBe('https://f.example');
+    expect(resolveAppBaseUrl({})).toBe('https://app.procrechesolutions.com');
+    expect(resolveAppBaseUrl({ APP_URL: '   ', FRONTEND_URL: '' })).toBe('https://app.procrechesolutions.com');
+  });
+
+  it('strips trailing slashes so the link has no double slash', () => {
+    expect(resolveAppBaseUrl({ APP_URL: 'https://a.example///' })).toBe('https://a.example');
+  });
+
+  it('puts the link in the campaign footer on the configured frontend, as the checked-in Render config needs', async () => {
+    // render.yaml sets neither variable for the API; FRONTEND_URL is what a
+    // deployment would add. APP_URL unset must not send people to the apex domain.
+    delete process.env.APP_URL;
+    process.env.FRONTEND_URL = 'https://dash.example.test/';
+    process.env.MAILING_SMTP_RATE_LIMIT_MS = '0';
+
+    const sendEmail = jest.fn().mockResolvedValue({ success: true, provider: 'test' });
+    const prisma = {
+      mailingCampaign: {
+        findUnique: jest.fn().mockResolvedValue({
+          id: CAMPAIGN_ID, subject: 's', bodyHtml: '<p>x</p>', bodyText: 'x', status: MailingCampaignStatus.SENDING,
+          filtersJson: null, segmentId: null, extraEmailsJson: ['a@example.com'], extraEmailsSent: false,
+          sentCount: 0, failedCount: 0, cursor: null,
+        }),
+        updateMany: jest.fn().mockResolvedValue({ count: 1 }),
+        update: jest.fn().mockResolvedValue({}),
+      },
+      frontendSettings: { findFirst: jest.fn().mockResolvedValue(null) },
+      mailingSuppression: { findMany: jest.fn().mockResolvedValue([]) },
+      user: { findMany: jest.fn().mockResolvedValue([]) },
+      emailLog: { create: jest.fn().mockResolvedValue({}) },
+    };
+    const service = new MailingService(prisma as any, { isConfigured: () => true, sendEmail } as any);
+
+    await service.sendBatch(CAMPAIGN_ID, 10);
+
+    const { html } = sendEmail.mock.calls[0][0];
+    expect(html).toContain('https://dash.example.test/unsubscribe?token=');
+    expect(html).not.toContain('https://procrechesolutions.com/unsubscribe');
+  });
+});
+
+describe('concurrent unsubscribes for the same address', () => {
+  const duplicate = () =>
+    new Prisma.PrismaClientKnownRequestError('Unique constraint failed on the fields: (`email`)', {
+      code: 'P2002',
+      clientVersion: 'test',
+    });
+
+  it('treats losing the insert race as success, and still opts out the matching user', async () => {
+    const { service, mailing, prisma } = build();
+    prisma.mailingSuppression.upsert.mockRejectedValue(duplicate());
+    prisma.user.findFirst.mockResolvedValue({ id: USER_ID });
+
+    await expect(service.unsubscribe(mailing.signUnsubscribeToken('ada@example.com', CAMPAIGN_ID))).resolves.toBe(true);
+
+    expect(prisma.userNotificationPreferences.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { userId: USER_ID } }),
+    );
+  });
+
+  it('does not swallow other database errors', async () => {
+    const { service, mailing, prisma } = build();
+    prisma.mailingSuppression.upsert.mockRejectedValue(new Error('connection terminated'));
+
+    await expect(service.unsubscribe(mailing.signUnsubscribeToken('ada@example.com', CAMPAIGN_ID))).rejects.toThrow(
+      'connection terminated',
+    );
+  });
+
+  it('does not swallow a different Prisma error code either', async () => {
+    const { service, mailing, prisma } = build();
+    prisma.mailingSuppression.upsert.mockRejectedValue(
+      new Prisma.PrismaClientKnownRequestError('Record not found', { code: 'P2025', clientVersion: 'test' }),
+    );
+
+    await expect(service.unsubscribe(mailing.signUnsubscribeToken('ada@example.com', CAMPAIGN_ID))).rejects.toThrow(
+      'Record not found',
+    );
   });
 });

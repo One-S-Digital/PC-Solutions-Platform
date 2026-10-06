@@ -97,7 +97,7 @@ Two subsystems sharing `MailingTransportService` (priority: **SMTP → Mailgun �
 
 Scheduled emails: cron runs every minute dispatching `ScheduledEmail` records past their `scheduledAt`.
 
-**Campaign unsubscribe.** The footer link is `/unsubscribe?token=…` (public frontend page `UnsubscribePage`). Opening it only reads (`GET /mailing/unsubscribe/status`); the button sends `POST /mailing/unsubscribe`, so link scanners cannot opt anyone out. A token names a user id (→ `mailingListOptOut`) or an out-of-DB "extra" email (→ `mailing_suppressions`, skipped in `sendBatch`). Code: `api/src/mailing/mailing-unsubscribe.*`.
+**Campaign unsubscribe.** The footer link is `/unsubscribe?token=…` (public frontend page `UnsubscribePage`). Opening it only reads (`GET /mailing/unsubscribe/status`); the button sends `POST /mailing/unsubscribe`, so link scanners cannot opt anyone out. A token names a user id (→ `mailingListOptOut`) or an out-of-DB "extra" email (→ `mailing_suppressions`, plus the matching user's preference if one exists). Both are honoured at send time in `sendBatch`: extras are skipped if suppressed *or* if their address belongs to an opted-out user; database recipients are skipped if suppressed, in the same audiences that already honour `mailingListOptOut` (not in an explicit "everyone" broadcast). Re-subscribing in settings clears the user's suppression row (`PrincipalService.updateNotificationSettings`). The footer link's base is `APP_URL` → `FRONTEND_URL` → `https://app.procrechesolutions.com` (`resolveAppBaseUrl`). Code: `api/src/mailing/mailing-unsubscribe.*`.
 
 ---
 
@@ -141,7 +141,7 @@ and retries before ever offering the signup form.
 
 | Var | Purpose |
 |---|---|
-| `APP_URL` | Platform base URL; used for invite redirect defaults |
+| `APP_URL` | Platform base URL; used for invite redirect defaults and the campaign unsubscribe link |
 | `FRONTEND_URL` | Alternative to `APP_URL` |
 | `UPLOAD_MODE` | `local` or `r2` |
 | `CRAWLER_ENABLED` | Default `false` — canton policy crawler |

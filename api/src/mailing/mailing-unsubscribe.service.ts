@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { MailingService } from './mailing.service';
 
@@ -80,11 +81,7 @@ export class MailingUnsubscribeService {
 
     if (isEmailAddress(claim.userId)) {
       const email = normaliseEmail(claim.userId);
-      await this.prisma.mailingSuppression.upsert({
-        where: { email },
-        update: {},
-        create: { email, reason: 'unsubscribe', campaignId: claim.campaignId },
-      });
+      await this.suppress(email, claim.campaignId);
 
       // The same address may also belong to a registered user, whose place in
       // database audiences comes from their preference rather than from here.
@@ -101,6 +98,28 @@ export class MailingUnsubscribeService {
       this.logger.log(`Unsubscribed user ${user.id} via campaign ${claim.campaignId}`);
     }
     return true;
+  }
+
+  /**
+   * Record that this address must not be mailed. Safe to call twice at once.
+   *
+   * An upsert with an empty `update` is not a database-level upsert — Prisma
+   * does a read and then a write — so two first-time requests for one address
+   * (a mail client's one-click POST racing the page's) can both miss the row, and
+   * the second insert hits the unique index. Both wanted the same end state, so
+   * that is success, not the 409 the global exception filter would turn it into.
+   */
+  private async suppress(email: string, campaignId: string): Promise<void> {
+    try {
+      await this.prisma.mailingSuppression.upsert({
+        where: { email },
+        update: {},
+        create: { email, reason: 'unsubscribe', campaignId },
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') return;
+      throw error;
+    }
   }
 
   private findUserByEmail(email: string) {

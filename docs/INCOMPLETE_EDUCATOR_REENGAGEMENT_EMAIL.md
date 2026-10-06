@@ -24,8 +24,13 @@ They pre-date the diagnostics, so no fix can complete them — only the person c
    own address under *extra emails* (no filters), send it, and tap the button on
    a phone. It must land on the login page. Do the unsubscribe check from this same
    email, then send yourself another to confirm you are no longer mailed.
-3. **Confirm the base URL.** The button below uses `https://app.procrechesolutions.com`.
-   Change it if production serves the app elsewhere.
+3. **Confirm the base URL, in two places.** The button below is hard-coded to
+   `https://app.procrechesolutions.com`; change it if production serves the app
+   elsewhere. The footer's unsubscribe link is built by the API from `APP_URL`,
+   then `FRONTEND_URL`, then falls back to `https://app.procrechesolutions.com`.
+   `render.yaml` sets neither variable, so unless production does, the fallback is
+   what recipients get — fine if that is where the app lives, wrong otherwise. Your
+   test email (step 2) shows exactly which link was generated.
 
 ## Audience
 
