@@ -1083,6 +1083,25 @@
     "viewPlans": "Voir les offres",
     "viewPlansPrompt": "Vous voulez voir nos offres ?"
   },
+  "unsubscribe": {
+    "title": "Se désabonner de nos e-mails",
+    "checking": "Vérification de votre lien…",
+    "confirmWithEmail": "Vous ne recevrez plus les newsletters et annonces de ProCrèche Solutions à l'adresse {{email}}.",
+    "confirmNoEmail": "Vous ne recevrez plus les newsletters et annonces de ProCrèche Solutions.",
+    "confirmNote": "Les e-mails concernant votre compte, comme la réinitialisation du mot de passe, ne sont pas concernés.",
+    "confirmButton": "Me désabonner",
+    "working": "Désabonnement en cours…",
+    "doneTitle": "Vous êtes désabonné·e",
+    "doneBody": "Vous ne recevrez plus nos newsletters et annonces. Un message déjà en cours d'envoi peut encore vous parvenir.",
+    "alreadyTitle": "Vous êtes déjà désabonné·e",
+    "alreadyBody": "Aucune autre action n'est nécessaire.",
+    "invalidTitle": "Ce lien n'est pas valide",
+    "invalidBody": "Il a peut-être été copié de façon incomplète. Rouvrez le lien depuis l'e-mail d'origine, ou écrivez à support@procreche.ch.",
+    "errorTitle": "Nous n'avons pas pu terminer l'opération",
+    "errorBody": "Un problème est survenu de notre côté. Veuillez réessayer dans un instant.",
+    "retry": "Réessayer",
+    "backToSite": "Retour à ProCrèche Solutions"
+  },
   "accountSetup": {
     "welcome": "Bienvenue, {{name}} !",
     "welcomeNoName": "Bienvenue !",

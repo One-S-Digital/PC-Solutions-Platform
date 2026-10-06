@@ -1098,6 +1098,25 @@
     "viewPlans": "Angebote anzeigen",
     "viewPlansPrompt": "Möchten Sie unsere Angebote sehen?"
   },
+  "unsubscribe": {
+    "title": "E-Mails abbestellen",
+    "checking": "Ihr Link wird geprüft …",
+    "confirmWithEmail": "Sie erhalten unter {{email}} keine Newsletter und Mitteilungen von ProCrèche Solutions mehr.",
+    "confirmNoEmail": "Sie erhalten keine Newsletter und Mitteilungen von ProCrèche Solutions mehr.",
+    "confirmNote": "E-Mails zu Ihrem Konto, etwa zum Zurücksetzen des Passworts, sind davon nicht betroffen.",
+    "confirmButton": "Abbestellen",
+    "working": "Wird abbestellt …",
+    "doneTitle": "Sie wurden abgemeldet",
+    "doneBody": "Sie erhalten unsere Newsletter und Mitteilungen nicht mehr. Eine Nachricht, die bereits unterwegs ist, kann Sie noch erreichen.",
+    "alreadyTitle": "Sie sind bereits abgemeldet",
+    "alreadyBody": "Es ist nichts weiter zu tun.",
+    "invalidTitle": "Dieser Link ist ungültig",
+    "invalidBody": "Er wurde möglicherweise unvollständig kopiert. Öffnen Sie den Link erneut aus der ursprünglichen E-Mail oder schreiben Sie an support@procreche.ch.",
+    "errorTitle": "Das hat leider nicht geklappt",
+    "errorBody": "Auf unserer Seite ist ein Fehler aufgetreten. Bitte versuchen Sie es gleich noch einmal.",
+    "retry": "Erneut versuchen",
+    "backToSite": "Zurück zu ProCrèche Solutions"
+  },
   "accountSetup": {
     "welcome": "Willkommen, {{name}}!",
     "welcomeNoName": "Willkommen!",

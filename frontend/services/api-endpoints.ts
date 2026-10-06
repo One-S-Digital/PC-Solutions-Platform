@@ -11,6 +11,12 @@ export const API_ENDPOINTS = {
     sync: "/auth/sync-user",
   },
 
+  // Public mailing endpoints (no auth: reached from the link in a campaign email)
+  mailing: {
+    unsubscribeStatus: "/mailing/unsubscribe/status",
+    unsubscribe: "/mailing/unsubscribe",
+  },
+
   // Users & Profiles
   users: {
     me: "/users/me",
