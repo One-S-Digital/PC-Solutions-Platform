@@ -31,6 +31,7 @@ import {
   traceSignup,
   traceSignupBeacon,
 } from '../utils/signupTrace';
+import { signupProgressPercent } from '../utils/signupProgress';
 
 const SIGNUP_ROLE_TO_USER_ROLE: Record<SignupRole, UserRole> = {
   [SignupRole.FOUNDATION]: UserRole.FOUNDATION,
@@ -1368,7 +1369,13 @@ const SignupPage: React.FC = () => {
     currentStep === 1
       ? (needsProfileCompletion ? t('signup:progress.oauthStep1', 'Step 1: Select your role') : t('signup:progress.step1'))
       : currentStep === 2
-        ? (needsProfileCompletion ? t('signup:progress.oauthStep2', 'Step 2: Complete your profile') : t('signup:progress.step2'))
+        ? (needsProfileCompletion
+            ? t('signup:progress.oauthStep2', 'Step 2: Complete your profile')
+            // An educator has a third step still to come; "2 of 2" followed by a
+            // "Step 3" told them the form they were on was the last one.
+            : isEducatorRole()
+              ? t('signup:progress.step2Educator', 'Step 2 of 3')
+              : t('signup:progress.step2'))
         : currentStep === 3
           ? t('signup:progress.step3Educator', 'Step 3: Set up your educator profile')
           : '';
@@ -1452,9 +1459,7 @@ const SignupPage: React.FC = () => {
             <div className="w-full bg-gray-200 rounded-full h-1.5 sm:h-2 mb-4 sm:mb-6">
               <div
                 className="bg-swiss-mint h-1.5 sm:h-2 rounded-full transition-all duration-300 ease-in-out"
-                style={{
-                  width: currentStep === 1 ? '33%' : currentStep === 2 ? '66%' : '100%',
-                }}
+                style={{ width: `${signupProgressPercent(currentStep, isEducatorRole())}%` }}
               />
             </div>
 

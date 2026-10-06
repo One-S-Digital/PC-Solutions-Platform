@@ -331,6 +331,7 @@
   "progress": {
     "step1": "Step 1 of 2",
     "step2": "Step 2 of 2",
+    "step2Educator": "Step 2 of 3",
     "step3Educator": "Step 3: Set up your educator profile",
     "oauthStep1": "Step 1: Sign in",
     "oauthStep2": "Step 2: Complete your details"

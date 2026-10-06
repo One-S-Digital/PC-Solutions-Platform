@@ -331,6 +331,7 @@
   "progress": {
     "step1": "Étape 1 de 2",
     "step2": "Étape 2 de 2",
+    "step2Educator": "Étape 2 de 3",
     "step3Educator": "Étape 3 : Configurez votre profil d'éducateur",
     "oauthStep1": "Étape 1 : Connexion",
     "oauthStep2": "Étape 2 : Complétez vos informations"

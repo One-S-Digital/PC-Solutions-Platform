@@ -331,6 +331,7 @@
   "progress": {
     "step1": "Schritt 1 von 2",
     "step2": "Schritt 2 von 2",
+    "step2Educator": "Schritt 2 von 3",
     "step3Educator": "Schritt 3: Erzieherprofil einrichten",
     "oauthStep1": "Schritt 1: Anmelden",
     "oauthStep2": "Schritt 2: Daten vervollständigen"
