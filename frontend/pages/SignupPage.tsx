@@ -147,6 +147,8 @@ const SignupPage: React.FC = () => {
    * for itself if this does not land.
    */
   const syncAccountIntoSession = async (): Promise<boolean> => {
+    let lastFailure = '';
+
     // Two attempts: the common failure is a cold backend rejecting the first
     // read, and a single short pause clears it.
     for (let attempt = 0; attempt < 2; attempt++) {
@@ -159,9 +161,10 @@ const SignupPage: React.FC = () => {
         await refreshCurrentUser({ quick: true });
         return true;
       } catch (err: any) {
+        lastFailure = err?.message || String(err);
         console.warn('[Signup Debug] syncAccountIntoSession failed', {
           attempt: attempt + 1,
-          error: err?.message || String(err),
+          error: lastFailure,
         });
       }
     }
@@ -174,7 +177,12 @@ const SignupPage: React.FC = () => {
       email: formData.email,
       outcome: 'FAIL',
       errorCode: 'ACCOUNT_CREATED_BUT_SESSION_STALE',
-      errorMessage: 'Backend account provisioned but refreshCurrentUser did not land',
+      // The cause rides along: without it, "did not land" cannot tell a cold
+      // backend from a caller that was never signed in, which is the failure
+      // this event reported on every signup before it was found.
+      errorMessage: `Backend account provisioned but refreshCurrentUser did not land${
+        lastFailure ? `: ${lastFailure}` : ''
+      }`,
     });
     return false;
   };
