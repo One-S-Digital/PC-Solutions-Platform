@@ -242,6 +242,18 @@ Three layers now stop it, each catching what the one before it misses:
    before ever offering the signup form, and leads with "Try again" rather than
    with re-entering details.
 
+**Layer 1 did nothing for the first weeks it existed.** `refreshCurrentUser`
+read the signed-in user from render-time state, and the wizard captures it while
+the visitor is still signed out, then calls it after `setActive()`. Every call
+threw "No authenticated user to refresh", so `client.session_sync_failed` fired
+in 5 of 5 educator journeys (30 Sep – 5 Oct 2026) with no
+`client.session_sync_recovered` among them. Educators were not stranded — the
+account loaded through `AuthProvider`'s own sync — which is why it looked like
+noise. `refreshCurrentUser` now reads Clerk at call time, and the trace carries
+the underlying error so a recurrence says why. Pinned by
+`frontend/tests/unit/refreshCurrentUser.test.ts`, which reproduces the
+capture-then-sign-in sequence.
+
 Follow-up reads pass `{ quick: true }` so a caller that has already waited does
 not spend a second full budget and strand the user on a spinner.
 
