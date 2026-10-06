@@ -97,6 +97,8 @@ Two subsystems sharing `MailingTransportService` (priority: **SMTP → Mailgun �
 
 Scheduled emails: cron runs every minute dispatching `ScheduledEmail` records past their `scheduledAt`.
 
+**Campaign unsubscribe.** The footer link is `/unsubscribe?token=…` (public frontend page `UnsubscribePage`). Opening it only reads (`GET /mailing/unsubscribe/status`); the button sends `POST /mailing/unsubscribe`, so link scanners cannot opt anyone out. A token names a user id (→ `mailingListOptOut`) or an out-of-DB "extra" email (→ `mailing_suppressions`, skipped in `sendBatch`). Code: `api/src/mailing/mailing-unsubscribe.*`.
+
 ---
 
 ## Known Issues
@@ -104,7 +106,6 @@ Scheduled emails: cron runs every minute dispatching `ScheduledEmail` records pa
 - Webhook idempotency uses in-memory `Set` — lost on restart (needs Redis)
 - Support ticket emails use separate `api/src/support/mailgun.service.ts` — not consolidated
 - `EmailLog.status` only tracks `sent`/`failed`, not delivery/open/click events
-- Unsubscribe endpoint (`/unsubscribe`) not implemented — token generation works
 - `admin/src/pages/Messaging.tsx` — `unreadCount` hard-coded to `0`
 - `frontend/pages/educator/EducatorApplicationsPage.tsx:55` — `alert()` stub on "View details"
 - Missing `@Roles` guards on `GET /applications` and `GET /applications/:id` in `api/src/recruitment/recruitment.controller.ts`

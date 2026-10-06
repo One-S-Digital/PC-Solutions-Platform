@@ -12,16 +12,18 @@ They pre-date the diagnostics, so no fix can complete them — only the person c
 
 ## Before sending
 
-1. **The unsubscribe link does not work yet.** Every campaign footer links to
-   `/unsubscribe?token=…`, and that route exists in neither the frontend nor the
-   API (token signing/verification is implemented, the endpoint is not — see
-   *Known Issues* in `CLAUDE.md`). Build it before a bulk send, or accept that
-   the footer link goes nowhere. Recipients can still opt out from their notification
-   settings (`mailingListOptOut`), but nothing in this email says so.
+1. **Deploy the unsubscribe flow first, and run the migration.** The footer link
+   (`/unsubscribe?token=…`) used to lead nowhere; it now opens a page that asks
+   for confirmation, then opts the recipient out. That needs the new
+   `mailing_suppressions` table (`pnpm db:migrate`), and the API and frontend
+   deployed together. Check it end to end with the test in step 2: open the footer
+   link, press the button, then open the link again — it should say you are
+   already unsubscribed.
 2. **Send a test to yourself first.** There is no "send test" button; create a
    separate campaign with the same subject and body whose only recipient is your
    own address under *extra emails* (no filters), send it, and tap the button on
-   a phone. It must land on the login page.
+   a phone. It must land on the login page. Do the unsubscribe check from this same
+   email, then send yourself another to confirm you are no longer mailed.
 3. **Confirm the base URL.** The button below uses `https://app.procrechesolutions.com`.
    Change it if production serves the app elsewhere.
 
