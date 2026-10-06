@@ -15,6 +15,19 @@ interface FileUploadZoneProps {
   autoUpload?: boolean; // If true, uploads immediately on file select
 }
 
+/**
+ * Is the primary input a finger? Drag-and-drop does not exist there, so offering
+ * "or drag and drop" on a phone is an instruction nobody can follow. Read once:
+ * a device does not change its primary pointer mid-form.
+ */
+const isTouchFirstDevice = (): boolean => {
+  try {
+    return typeof window !== 'undefined' && Boolean(window.matchMedia?.('(pointer: coarse)').matches);
+  } catch {
+    return false;
+  }
+};
+
 const FileUploadZone: React.FC<FileUploadZoneProps> = ({
   onFileUpload,
   onUploadSuccess,
@@ -34,6 +47,7 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
   const [isUploading, setIsUploading] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showDragHint] = useState(() => !isTouchFirstDevice());
 
   const setValidationError = (message: string | null) => {
     setError(message);
@@ -199,13 +213,16 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
           ) : (
             <>
               <ArrowUpTrayIcon className={`mx-auto h-10 w-10 ${dragging ? 'text-swiss-mint' : 'text-gray-400'}`} />
-              <div className="flex text-sm text-gray-600">
+              {/* Wraps rather than splitting into two cramped columns on a narrow screen. */}
+              <div className="flex flex-wrap justify-center text-sm text-gray-600">
                 <span
                   className="relative cursor-pointer bg-transparent rounded-md font-medium text-swiss-mint hover:text-opacity-80 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-swiss-mint"
                 >
                   <span>{displayLabel}</span>
                 </span>
-                <p className="pl-1 text-gray-500">{t("common:fileUploadZone.dragAndDrop")}</p>
+                {showDragHint && (
+                  <p className="pl-1 text-gray-500">{t("common:fileUploadZone.dragAndDrop")}</p>
+                )}
               </div>
               <p className="text-xs text-gray-500">
                 {acceptedMimeTypes.replace(/\/\*/g, '').split(',').join(', ').toUpperCase()}. Max {maxFileSizeMB}MB.

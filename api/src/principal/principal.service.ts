@@ -236,6 +236,18 @@ export class PrincipalService {
           ? true
           : undefined;
 
+    // Opting back in is explicit consent, and it has to undo the address-level
+    // opt-out as well. A campaign unsubscribe can leave a row in
+    // `mailing_suppressions` (an address that unsubscribed as an out-of-database
+    // "extra" and registered afterwards), and the sender honours that row for
+    // everyone — so clearing only this preference would leave the user
+    // "subscribed" in settings and never mailed.
+    if (resolvedMailingListOptOut === false) {
+      const owner = await this.prisma.user.findUnique({ where: { id: userId }, select: { email: true } });
+      const email = owner?.email?.trim().toLowerCase();
+      if (email) await this.prisma.mailingSuppression.deleteMany({ where: { email } });
+    }
+
     const updated = await this.prisma.userNotificationPreferences.upsert({
       where: { userId },
       update: {

@@ -12,6 +12,25 @@ const MAX_PAGE_SIZE = 100;
 const MAX_SEARCH_LENGTH = 200;
 const DEFAULT_BATCH_SIZE = 100;
 const INTER_EMAIL_DELAY_MS = parseInt(process.env.MAILING_SMTP_RATE_LIMIT_MS || '100', 10);
+/**
+ * Where links back into the app point (today: the unsubscribe link in every
+ * campaign footer).
+ *
+ * `APP_URL`, then `FRONTEND_URL` — the same precedence the rest of the API uses
+ * for links in email — and finally the app's own host. The fallback used to be
+ * the apex domain, which does not serve the SPA, and the checked-in Render config
+ * sets neither variable, so the footer link would have led somewhere the
+ * unsubscribe page does not exist.
+ */
+export function resolveAppBaseUrl(env: NodeJS.ProcessEnv = process.env): string {
+  const configured = (env.APP_URL || env.FRONTEND_URL || '').trim();
+  return (configured || 'https://app.procrechesolutions.com').replace(/\/+$/, '');
+}
+
+function normalisedAddresses(emails: Array<string | null | undefined>): string[] {
+  return [...new Set(emails.map((e) => (e ?? '').trim().toLowerCase()).filter(Boolean))];
+}
+
 const UNSUBSCRIBE_SECRET = process.env.MAILING_UNSUBSCRIBE_SECRET || process.env.CLERK_SECRET_KEY || 'mailing-default-secret';
 
 /** All columns that can appear in an export. */
@@ -885,7 +904,7 @@ export class MailingService {
     let failedThisBatch = 0;
     let lastUserId: string | null = null;
 
-    const unsubscribeBaseUrl = process.env.APP_URL || 'https://procrechesolutions.com';
+    const unsubscribeBaseUrl = resolveAppBaseUrl();
 
     // Fetch platform branding once for logo/icon tokens (same for all recipients)
     const platformSettings = await this.prisma.frontendSettings.findFirst({
@@ -899,11 +918,28 @@ export class MailingService {
       platformSettings?.faviconAsset?.publicUrl ||
       (frontendUrl ? `${frontendUrl}/favicon.ico` : '');
 
+    // Address-level opt-outs (see MailingUnsubscribeService) apply to database
+    // recipients too: someone who unsubscribed while only an "extra" address and
+    // registered afterwards has no per-user preference, only the suppression row.
+    // Applied in exactly the audiences that already honour the per-user
+    // preference — a deliberate "everyone" broadcast, or a list of the opted-out,
+    // is left as the admin asked for it.
+    const suppressedRecipients =
+      filters && this.honoursOptOut(filters)
+        ? await this.findSuppressedEmails(recipients.map((r) => r.email))
+        : new Set<string>();
+    let skippedSuppressed = 0;
+
     for (const recipient of recipients) {
       lastUserId = recipient.id;
 
       if (!recipient.email) {
         failedThisBatch++;
+        continue;
+      }
+
+      if (suppressedRecipients.has(recipient.email.trim().toLowerCase())) {
+        skippedSuppressed++;
         continue;
       }
 
@@ -983,7 +1019,23 @@ export class MailingService {
     const dbDone = !filters || recipients.length < batchSize;
 
     if (dbDone && !campaign.extraEmailsSent && extraEmails.length > 0) {
+      // Two ways an extra address can already have opted out. By address: extras
+      // may have no user row, so their unsubscribe is recorded in
+      // `mailing_suppressions` (see MailingUnsubscribeService). By account: an admin
+      // can paste in the address of a registered user who unsubscribed with their
+      // own link, and that opt-out lives on the user's preference. Honour both, or
+      // the next campaign mails someone who has already said no.
+      const suppressed = new Set<string>([
+        ...(await this.findSuppressedEmails(extraEmails)),
+        ...(await this.findOptedOutUserEmails(extraEmails)),
+      ]);
+
       for (const extraEmail of extraEmails) {
+        if (suppressed.has(extraEmail.trim().toLowerCase())) {
+          skippedSuppressed++;
+          continue;
+        }
+
         // Reuse signUnsubscribeToken with the email address as the identifier so the token
         // is in the same base64url(payload).hmac format that verifyUnsubscribeToken expects.
         const unsubToken = this.signUnsubscribeToken(extraEmail, campaignId);
@@ -1047,6 +1099,10 @@ export class MailingService {
           await sleep(INTER_EMAIL_DELAY_MS);
         }
       }
+    }
+
+    if (skippedSuppressed > 0) {
+      this.logger.log(`Campaign ${campaignId}: skipped ${skippedSuppressed} recipient(s) who had unsubscribed`);
     }
 
     // Campaign is fully done when: DB batch exhausted AND extra emails sent (or none to send)
@@ -1113,6 +1169,42 @@ export class MailingService {
     return cleaned;
   }
 
+  /**
+   * Does this audience leave out people who opted out? Mirrors, branch for branch,
+   * section E of `buildRecipientWhere` — the two must agree about who counts as
+   * unsubscribed, so whoever changes one should change the other.
+   */
+  private honoursOptOut(filters: MailingFiltersDto): boolean {
+    if (filters.marketingOptIn === true) return true;
+    if (filters.marketingOptIn === false) return false;
+    return filters.excludeUnsubscribed !== false;
+  }
+
+  /** Which of these addresses are on the suppression list. Lowercase in, lowercase out. */
+  private async findSuppressedEmails(emails: Array<string | null | undefined>): Promise<Set<string>> {
+    const wanted = normalisedAddresses(emails);
+    if (wanted.length === 0) return new Set();
+    const rows = await this.prisma.mailingSuppression.findMany({
+      where: { email: { in: wanted } },
+      select: { email: true },
+    });
+    return new Set(rows.map((row) => row.email));
+  }
+
+  /** Which of these addresses belong to a registered user who has opted out of the mailing list. */
+  private async findOptedOutUserEmails(emails: Array<string | null | undefined>): Promise<Set<string>> {
+    const wanted = normalisedAddresses(emails);
+    if (wanted.length === 0) return new Set();
+    const rows = await this.prisma.user.findMany({
+      where: {
+        email: { in: wanted, mode: 'insensitive' },
+        notificationPreferences: { mailingListOptOut: true },
+      },
+      select: { email: true },
+    });
+    return new Set(rows.map((row) => (row.email ?? '').trim().toLowerCase()).filter(Boolean));
+  }
+
   /** SEC: create HMAC-signed unsubscribe token encoding userId + campaignId. */
   signUnsubscribeToken(userId: string, campaignId: string): string {
     const payload = `${userId}:${campaignId}`;
@@ -1155,7 +1247,7 @@ export class MailingService {
     const footer = `
       <div style="margin-top:32px;padding-top:16px;border-top:1px solid #e5e7eb;font-size:12px;color:#6b7280;text-align:center;">
         <p>${escapedName} &mdash; ${escapedEmail}</p>
-        <p><a href="${escapedUrl}" style="color:#6b7280;text-decoration:underline;">Unsubscribe</a></p>
+        <p><a href="${escapedUrl}" style="color:#6b7280;text-decoration:underline;">Se désabonner &middot; Abmelden &middot; Unsubscribe</a></p>
       </div>`;
     // Insert before closing body or append
     if (html.includes('</body>')) {

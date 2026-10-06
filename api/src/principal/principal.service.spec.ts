@@ -10,6 +10,7 @@ describe('PrincipalService', () => {
     appUser: { findUnique: jest.Mock; upsert: jest.Mock };
     user: { findUnique: jest.Mock; upsert: jest.Mock; update: jest.Mock };
     userNotificationPreferences: { upsert: jest.Mock; findUnique: jest.Mock };
+    mailingSuppression: { deleteMany: jest.Mock };
   };
 
   beforeEach(async () => {
@@ -31,6 +32,9 @@ describe('PrincipalService', () => {
             userNotificationPreferences: {
               upsert: jest.fn(),
               findUnique: jest.fn(),
+            },
+            mailingSuppression: {
+              deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
             },
           },
         },
@@ -348,6 +352,56 @@ describe('PrincipalService', () => {
           marketing: true,
         }),
       });
+    });
+  });
+  describe('updateNotificationSettings — mailing list opt-out', () => {
+    const saved = {
+      leadManagement: true,
+      frequency: 'immediate',
+      marketing: true,
+      mailingListOptOut: false,
+    };
+
+    beforeEach(() => {
+      prisma.userNotificationPreferences.upsert.mockResolvedValue(saved as any);
+      prisma.user.findUnique.mockResolvedValue({ email: 'Ada@Example.com' });
+    });
+
+    it('clears the address-level suppression when the user opts back in', async () => {
+      // A campaign unsubscribe can leave a row in mailing_suppressions that the
+      // sender honours for everyone. Re-subscribing in settings is explicit
+      // consent and has to undo it, or the user looks subscribed and is never mailed.
+      await service.updateNotificationSettings('user-1', { mailingListOptOut: false });
+
+      expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: 'user-1' }, select: { email: true } });
+      expect(prisma.mailingSuppression.deleteMany).toHaveBeenCalledWith({ where: { email: 'ada@example.com' } });
+    });
+
+    it.each([
+      ['opting out', { mailingListOptOut: true }],
+      ['switching promo emails off, which opts out too', { promoRedemptionAlertsToggle: false }],
+      ['changing an unrelated setting', { digestRadio: 'Weekly' as const }],
+      ['switching promo emails back on, which is not a mailing-list opt-in', { promoRedemptionAlertsToggle: true }],
+    ])('leaves suppressions alone when %s', async (_label, data) => {
+      await service.updateNotificationSettings('user-1', data);
+      expect(prisma.mailingSuppression.deleteMany).not.toHaveBeenCalled();
+    });
+
+    it('still saves the preference for a user with no email on file', async () => {
+      prisma.user.findUnique.mockResolvedValue({ email: null });
+
+      await service.updateNotificationSettings('user-1', { mailingListOptOut: false });
+
+      expect(prisma.mailingSuppression.deleteMany).not.toHaveBeenCalled();
+      expect(prisma.userNotificationPreferences.upsert).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not report success when the suppression cannot be cleared', async () => {
+      prisma.mailingSuppression.deleteMany.mockRejectedValue(new Error('db down'));
+
+      await expect(service.updateNotificationSettings('user-1', { mailingListOptOut: false })).rejects.toThrow('db down');
+      // Nothing was changed: the user is still opted out, which is the safe side.
+      expect(prisma.userNotificationPreferences.upsert).not.toHaveBeenCalled();
     });
   });
 });

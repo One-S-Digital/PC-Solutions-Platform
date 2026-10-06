@@ -71,6 +71,12 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
   const clerkUserId = clerkUser?.id ?? null;
   const isAuthenticated = Boolean(clerkUser && isSignedIn);
 
+  // Clerk identity as of the latest render, for callbacks that outlive a render
+  // (see `refreshCurrentUser`). A ref, so reading it never goes stale and the
+  // callbacks that use it keep a stable identity.
+  const clerkIdentityRef = useRef({ isLoaded: clerkIsLoaded, userId: clerkUserId });
+  clerkIdentityRef.current = { isLoaded: clerkIsLoaded, userId: clerkUserId };
+
   /**
    * Is this Clerk account new enough that its provisioning webhook could still
    * be in flight? Decides which retry budget the fetch below uses.
@@ -774,23 +780,35 @@ const AuthProviderInner: React.FC<AuthProviderProps> = ({ children }) => {
    * gate after the initial sync gave up).
    */
   const refreshCurrentUser = useCallback(async (options?: { quick?: boolean }) => {
-    if (!clerkIsLoaded) {
+    // Resolve who is signed in when this RUNS, not when the callback was built.
+    //
+    // The signup wizard grabs this function while the visitor is still signed
+    // out, then calls it from inside an async chain that outlives the render —
+    // across `setActive()`, which is what signs them in. A `clerkUserId` closed
+    // over at render time is therefore the signed-out `null` for the whole
+    // chain, so every call threw "No authenticated user" for an account that
+    // existed and was signed in. `clerk` is a live handle, and the ref covers
+    // the gap in which Clerk has not yet exposed the user but a render has.
+    const liveClerkId = clerk.user?.id ?? clerkIdentityRef.current.userId;
+    const liveIsLoaded = Boolean(clerk.loaded) || clerkIdentityRef.current.isLoaded;
+
+    if (!liveIsLoaded) {
       throw new Error('Clerk is not loaded yet');
     }
 
-    if (!clerkUserId) {
+    if (!liveClerkId) {
       throw new Error('No authenticated user to refresh');
     }
 
-    const backendUser = await fetchUserFromBackend(clerkUserId, 0, options?.quick ?? false);
+    const backendUser = await fetchUserFromBackend(liveClerkId, 0, options?.quick ?? false);
     setCurrentUser(backendUser);
     setAuthError(null);
     syncAttemptRef.current = {
-      clerkId: clerkUserId,
+      clerkId: liveClerkId,
       status: 'success',
       lastAttempt: Date.now(),
     };
-  }, [clerkIsLoaded, clerkUserId, fetchUserFromBackend]);
+  }, [clerk, fetchUserFromBackend]);
 
   const verifyEmailChange = useCallback(
     async (code: string, emailAddressId: string) => {

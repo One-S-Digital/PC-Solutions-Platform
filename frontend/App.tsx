@@ -104,6 +104,7 @@ import LoginPageE2E from './pages/LoginPageE2E';
 import SignupPageE2E from './pages/SignupPageE2E';
 import PricingPage from './pages/PricingPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import UnsubscribePage from './pages/UnsubscribePage';
 import MaintenancePage from './pages/MaintenancePage';
 
 
@@ -632,6 +633,9 @@ const App: React.FC = () => {
                 <Route path="/partners" element={<PublicPartnersPage />} />
                 <Route path="/parent-lead-form" element={<ParentLeadFormPage />} />
                 <Route path="/reset-password" element={<ResetPasswordPage />} />
+                {/* Target of the unsubscribe link in campaign emails. Public: the
+                    person is usually signed out, and often not a user at all. */}
+                <Route path="/unsubscribe" element={<UnsubscribePage />} />
                 {/* Handles the OAuth callback from Clerk after Google SSO */}
                 <Route path="/sso-callback" element={<AuthenticateWithRedirectCallback />} />
                 <Route path="/*" element={<ProtectedLayout />} />

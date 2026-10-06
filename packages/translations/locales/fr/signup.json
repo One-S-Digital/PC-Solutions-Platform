@@ -331,6 +331,7 @@
   "progress": {
     "step1": "Étape 1 de 2",
     "step2": "Étape 2 de 2",
+    "step2Educator": "Étape 2 de 3",
     "step3Educator": "Étape 3 : Configurez votre profil d'éducateur",
     "oauthStep1": "Étape 1 : Connexion",
     "oauthStep2": "Étape 2 : Complétez vos informations"
@@ -356,10 +357,13 @@
     "professionalExperienceHint": "Vous pourrez ajouter des expériences professionnelles structurées plus tard depuis vos paramètres de profil.",
     "cvUpload": "Téléchargez votre CV",
     "cvDocument": "Document CV",
-    "cvDragDrop": "Glissez-déposez votre CV ici, ou cliquez pour parcourir",
-    "cvHint": "PDF, DOC ou DOCX — max 5 Mo. Optionnel mais fortement recommandé.",
+    "cvSelect": "Sélectionner votre CV",
+    "cvHint": "PDF, DOC ou DOCX — max 5 Mo. Obligatoire.",
     "savingProfile": "Enregistrement du profil...",
-    "completeSetup": "Terminer la configuration"
+    "completeSetup": "Terminer la configuration",
+    "provisioningDelayed": "Votre compte est encore en cours de création. Vous pouvez déjà remplir vos informations — nous les enregistrerons dès qu'il sera prêt.",
+    "saveFailedTitle": "Nous n'avons pas pu enregistrer votre profil",
+    "saveFailedHint": "Vos réponses ont été conservées sur cet appareil. Appuyez à nouveau sur « Terminer la configuration » pour réessayer."
   },
   "detailsTitle": "Entrez vos détails pour {{role}}",
   "termsLabel": "J'accepte les termes et conditions",

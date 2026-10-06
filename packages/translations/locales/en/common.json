@@ -1113,6 +1113,25 @@
     "viewPlans": "View Plans",
     "viewPlansPrompt": "Want to see our plans?"
   },
+  "unsubscribe": {
+    "title": "Unsubscribe from our emails",
+    "checking": "Checking your link…",
+    "confirmWithEmail": "You will stop receiving newsletters and announcements from ProCrèche Solutions at {{email}}.",
+    "confirmNoEmail": "You will stop receiving newsletters and announcements from ProCrèche Solutions.",
+    "confirmNote": "Emails about your account, such as password resets, are not affected.",
+    "confirmButton": "Unsubscribe",
+    "working": "Unsubscribing…",
+    "doneTitle": "You have been unsubscribed",
+    "doneBody": "You will no longer receive our newsletters and announcements. A message that is already on its way may still reach you.",
+    "alreadyTitle": "You are already unsubscribed",
+    "alreadyBody": "No further action is needed.",
+    "invalidTitle": "This link is not valid",
+    "invalidBody": "It may have been copied incompletely. Open the link from the original email again, or write to support@procreche.ch.",
+    "errorTitle": "We could not complete this",
+    "errorBody": "Something went wrong on our side. Please try again in a moment.",
+    "retry": "Try again",
+    "backToSite": "Back to ProCrèche Solutions"
+  },
   "accountSetup": {
     "welcome": "Welcome, {{name}}!",
     "welcomeNoName": "Welcome!",

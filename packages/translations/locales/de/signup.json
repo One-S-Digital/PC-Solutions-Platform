@@ -331,6 +331,7 @@
   "progress": {
     "step1": "Schritt 1 von 2",
     "step2": "Schritt 2 von 2",
+    "step2Educator": "Schritt 2 von 3",
     "step3Educator": "Schritt 3: Erzieherprofil einrichten",
     "oauthStep1": "Schritt 1: Anmelden",
     "oauthStep2": "Schritt 2: Daten vervollständigen"
@@ -356,10 +357,13 @@
     "professionalExperienceHint": "Sie können strukturierte Berufserfahrungen später in Ihren Profileinstellungen hinzufügen.",
     "cvUpload": "Lebenslauf hochladen",
     "cvDocument": "Lebenslauf-Dokument",
-    "cvDragDrop": "Ziehen Sie Ihren Lebenslauf hierher oder klicken Sie zum Durchsuchen",
-    "cvHint": "PDF, DOC oder DOCX — max 5 MB. Optional, aber sehr empfohlen.",
+    "cvSelect": "Lebenslauf auswählen",
+    "cvHint": "PDF, DOC oder DOCX — max. 5 MB. Erforderlich.",
     "savingProfile": "Profil wird gespeichert...",
-    "completeSetup": "Einrichtung abschließen"
+    "completeSetup": "Einrichtung abschließen",
+    "provisioningDelayed": "Ihr Konto wird noch eingerichtet. Sie können Ihre Angaben bereits ausfüllen – wir speichern sie, sobald es bereit ist.",
+    "saveFailedTitle": "Wir konnten Ihr Profil nicht speichern",
+    "saveFailedHint": "Ihre Angaben wurden auf diesem Gerät gespeichert. Tippen Sie erneut auf „Einrichtung abschließen“, um es noch einmal zu versuchen."
   },
   "detailsTitle": "Geben Sie Ihre Details ein für {{role}}",
   "termsLabel": "Ich akzeptiere die Geschäftsbedingungen",
