@@ -7,8 +7,10 @@ import {
   Body, 
   Param, 
   Query, 
-  UseGuards 
+  UseGuards,
+  Res,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import { UserManagementService, UserFilters, BulkUserOperation } from './user-management.service';
 
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -98,22 +100,74 @@ export class UserManagementController {
     );
   }
 
-  @Get('export/csv')
+  /**
+   * Export users as CSV or XLSX. Pass `userIds` to export a hand-picked
+   * selection, otherwise the filters decide which users are included.
+   */
+  @Post('export')
   async exportUsers(
-    @Query('role') role?: string,
-    @Query('isActive') isActive?: string,
-    @Query('search') search?: string,
-    @Query('dateFrom') dateFrom?: string,
-    @Query('dateTo') dateTo?: string,
+    @Body()
+    body: {
+      format?: 'csv' | 'xlsx';
+      userIds?: string[];
+      filters?: {
+        role?: string;
+        isActive?: boolean | string;
+        search?: string;
+        dateFrom?: string;
+        dateTo?: string;
+      };
+    },
+    @Res() res: Response,
   ) {
-    const filters: UserFilters = {
-      role: role as UserRole,
-      isActive: isActive as any,
-      search,
-      dateFrom: dateFrom ? new Date(dateFrom) : undefined,
-      dateTo: dateTo ? new Date(dateTo) : undefined,
-    };
+    const format = body?.format === 'xlsx' ? 'xlsx' : 'csv';
+    const userIds = Array.isArray(body?.userIds)
+      ? body.userIds.filter(id => typeof id === 'string')
+      : undefined;
+    const f = body?.filters ?? {};
 
-    return this.userManagementService.exportUsers(filters);
+    const result = await this.userManagementService.exportUsers({
+      format,
+      userIds,
+      filters: {
+        role: f.role as UserRole | undefined,
+        isActive:
+          f.isActive === undefined || f.isActive === ''
+            ? undefined
+            : f.isActive === true || f.isActive === 'true',
+        search: f.search || undefined,
+        dateFrom: f.dateFrom ? new Date(f.dateFrom) : undefined,
+        dateTo: f.dateTo ? new Date(f.dateTo) : undefined,
+      },
+    });
+
+    res.setHeader('Content-Type', result.contentType);
+    res.setHeader('Content-Disposition', `attachment; filename="${result.filename}"`);
+    res.setHeader('X-Export-Count', String(result.count));
+    return res.send(result.buffer);
+  }
+
+  @Get('export/csv')
+  async exportUsersCsv(
+    @Query('role') role: string | undefined,
+    @Query('isActive') isActive: string | undefined,
+    @Query('search') search: string | undefined,
+    @Query('dateFrom') dateFrom: string | undefined,
+    @Query('dateTo') dateTo: string | undefined,
+    @Res() res: Response,
+  ) {
+    const result = await this.userManagementService.exportUsers({
+      format: 'csv',
+      filters: {
+        role: role as UserRole | undefined,
+        isActive: isActive === undefined || isActive === '' ? undefined : isActive === 'true',
+        search,
+        dateFrom: dateFrom ? new Date(dateFrom) : undefined,
+        dateTo: dateTo ? new Date(dateTo) : undefined,
+      },
+    });
+    res.setHeader('Content-Type', result.contentType);
+    res.setHeader('Content-Disposition', `attachment; filename="${result.filename}"`);
+    return res.send(result.buffer);
   }
 }

@@ -1374,6 +1374,19 @@
       "removeSuccess": "Organization removed",
       "removeFailed": "Failed to remove organization",
       "optional": "Assign to organization (optional)"
+    },
+    "export": {
+      "success": "Users exported",
+      "failed": "Export failed",
+      "selected": "{{count}} selected",
+      "clear": "Clear selection",
+      "hint": "Tick rows to export specific users, or export everyone matching the filters.",
+      "csvSelected": "Export selected (CSV)",
+      "csvAll": "Export CSV",
+      "xlsxSelected": "Export selected (XLSX)",
+      "xlsxAll": "Export XLSX",
+      "selectPage": "Select all users on this page",
+      "selectRow": "Select user"
     }
   },
   "translations": {

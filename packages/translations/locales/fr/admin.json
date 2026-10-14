@@ -1421,6 +1421,19 @@
       "removeSuccess": "Organisation retirée",
       "removeFailed": "Impossible de retirer l'organisation",
       "optional": "Assigner à une organisation (optionnel)"
+    },
+    "export": {
+      "success": "Utilisateurs exportés",
+      "failed": "Échec de l'export",
+      "selected": "{{count}} sélectionné(s)",
+      "clear": "Effacer la sélection",
+      "hint": "Cochez des lignes pour exporter des utilisateurs précis, ou exportez tous les résultats des filtres.",
+      "csvSelected": "Exporter la sélection (CSV)",
+      "csvAll": "Exporter en CSV",
+      "xlsxSelected": "Exporter la sélection (XLSX)",
+      "xlsxAll": "Exporter en XLSX",
+      "selectPage": "Sélectionner tous les utilisateurs de cette page",
+      "selectRow": "Sélectionner l'utilisateur"
     }
   },
   "jobListings": {
