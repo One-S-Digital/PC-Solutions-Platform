@@ -9,9 +9,10 @@ import {
   Query, 
   UseGuards,
   Res,
+  BadRequestException,
 } from '@nestjs/common';
 import type { Response } from 'express';
-import { UserManagementService, UserFilters, BulkUserOperation } from './user-management.service';
+import { UserManagementService, UserFilters, BulkUserOperation, USER_EXPORT_MAX_ROWS } from './user-management.service';
 
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -122,27 +123,33 @@ export class UserManagementController {
   ) {
     const format = body?.format === 'xlsx' ? 'xlsx' : 'csv';
     const userIds = Array.isArray(body?.userIds)
-      ? body.userIds.filter(id => typeof id === 'string')
+      ? body.userIds.filter((id): id is string => typeof id === 'string')
       : undefined;
+    if (userIds && userIds.length > USER_EXPORT_MAX_ROWS) {
+      throw new BadRequestException(
+        `Cannot export more than ${USER_EXPORT_MAX_ROWS} selected users at once`,
+      );
+    }
     const f = body?.filters ?? {};
 
     const result = await this.userManagementService.exportUsers({
       format,
       userIds,
       filters: {
-        role: f.role as UserRole | undefined,
+        role: this.parseRole(f.role),
         isActive:
           f.isActive === undefined || f.isActive === ''
             ? undefined
             : f.isActive === true || f.isActive === 'true',
-        search: f.search || undefined,
-        dateFrom: f.dateFrom ? new Date(f.dateFrom) : undefined,
-        dateTo: f.dateTo ? new Date(f.dateTo) : undefined,
+        search: typeof f.search === 'string' && f.search ? f.search : undefined,
+        dateFrom: this.parseDate(f.dateFrom, 'dateFrom'),
+        dateTo: this.parseDate(f.dateTo, 'dateTo'),
       },
     });
 
     res.setHeader('Content-Type', result.contentType);
     res.setHeader('Content-Disposition', `attachment; filename="${result.filename}"`);
+    res.setHeader('Cache-Control', 'no-store');
     res.setHeader('X-Export-Count', String(result.count));
     return res.send(result.buffer);
   }
@@ -159,15 +166,33 @@ export class UserManagementController {
     const result = await this.userManagementService.exportUsers({
       format: 'csv',
       filters: {
-        role: role as UserRole | undefined,
+        role: this.parseRole(role),
         isActive: isActive === undefined || isActive === '' ? undefined : isActive === 'true',
-        search,
-        dateFrom: dateFrom ? new Date(dateFrom) : undefined,
-        dateTo: dateTo ? new Date(dateTo) : undefined,
+        search: search || undefined,
+        dateFrom: this.parseDate(dateFrom, 'dateFrom'),
+        dateTo: this.parseDate(dateTo, 'dateTo'),
       },
     });
     res.setHeader('Content-Type', result.contentType);
     res.setHeader('Content-Disposition', `attachment; filename="${result.filename}"`);
+    res.setHeader('Cache-Control', 'no-store');
     return res.send(result.buffer);
+  }
+
+  private parseDate(value: unknown, field: string): Date | undefined {
+    if (value === undefined || value === null || value === '') return undefined;
+    const date = typeof value === 'string' ? new Date(value) : new Date(NaN);
+    if (Number.isNaN(date.getTime())) {
+      throw new BadRequestException(`Invalid ${field}`);
+    }
+    return date;
+  }
+
+  private parseRole(value: unknown): UserRole | undefined {
+    if (value === undefined || value === null || value === '') return undefined;
+    if (typeof value !== 'string' || !(Object.values(UserRole) as string[]).includes(value)) {
+      throw new BadRequestException('Invalid role');
+    }
+    return value as UserRole;
   }
 }

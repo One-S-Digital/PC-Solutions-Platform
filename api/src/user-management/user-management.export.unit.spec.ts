@@ -48,8 +48,24 @@ describe('UserManagementService.exportUsers', () => {
     expect(res.count).toBe(1);
   });
 
+  it('neutralises formulas hidden behind leading whitespace', async () => {
+    findMany.mockResolvedValue([makeUser({ firstName: ' =1+1', lastName: '\t@SUM(A1)' })]);
+    const text = (await service.exportUsers({ format: 'csv' })).buffer.toString('utf8');
+    expect(text).toContain('"\' =1+1"');
+    expect(text).toContain('"\'\t@SUM(A1)"');
+  });
+
+  it('rejects oversized selections', async () => {
+    const ids = Array.from({ length: 50001 }, (_, i) => `u${i}`);
+    await expect(service.exportUsers({ userIds: ids })).rejects.toThrow(/more than/);
+    expect(findMany).not.toHaveBeenCalled();
+  });
+
   it('produces a valid XLSX workbook', async () => {
-    findMany.mockResolvedValue([makeUser(), makeUser({ id: 'u2', isActive: false })]);
+    findMany.mockResolvedValue([
+      makeUser({ firstName: '=HYPERLINK("x")' }),
+      makeUser({ id: 'u2', isActive: false }),
+    ]);
     const res = await service.exportUsers({ format: 'xlsx' });
     expect(res.filename).toMatch(/\.xlsx$/);
     expect(res.buffer.subarray(0, 2).toString()).toBe('PK');
@@ -58,6 +74,7 @@ describe('UserManagementService.exportUsers', () => {
     await wb.xlsx.load(res.buffer);
     const sheet = wb.getWorksheet('Users');
     expect(sheet.rowCount).toBe(3);
+    expect(sheet.getRow(2).getCell(3).value).toBe("'=HYPERLINK(\"x\")");
     expect(sheet.getRow(3).getCell(6).value).toBe('Inactive');
   });
 });

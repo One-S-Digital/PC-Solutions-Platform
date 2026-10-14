@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { SubscriptionStatus } from '@prisma/client';
 import { UserRole } from '@workspace/types';
@@ -28,11 +28,12 @@ export interface UserExportResult {
   count: number;
 }
 
-const USER_EXPORT_MAX_ROWS = 50000;
+export const USER_EXPORT_MAX_ROWS = 50000;
 
 /** Stop spreadsheet apps from evaluating user-supplied text as a formula. */
 function neutralizeSpreadsheetFormula(value: string): string {
-  return /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
+  // Spreadsheet apps may skip leading whitespace/control chars before a trigger.
+  return /^[\s\u0000-\u001f]*[=+\-@]/.test(value) ? `'${value}` : value;
 }
 
 export interface BulkUserOperation {
@@ -428,6 +429,12 @@ export class UserManagementService {
     const { format = 'csv', userIds, filters = {} } = options;
 
     const where: any = {};
+
+    if (userIds && userIds.length > USER_EXPORT_MAX_ROWS) {
+      throw new BadRequestException(
+        `Cannot export more than ${USER_EXPORT_MAX_ROWS} selected users at once`,
+      );
+    }
 
     if (userIds && userIds.length > 0) {
       // An explicit selection wins over filters: export exactly what was ticked.
