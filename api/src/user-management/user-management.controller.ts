@@ -122,9 +122,19 @@ export class UserManagementController {
     @Res() res: Response,
   ) {
     const format = body?.format === 'xlsx' ? 'xlsx' : 'csv';
-    const userIds = Array.isArray(body?.userIds)
-      ? body.userIds.filter((id): id is string => typeof id === 'string')
-      : undefined;
+    // Omitted userIds means "export by filters"; a present value must be a
+    // well-formed, non-empty selection so a bad payload never widens the export.
+    let userIds: string[] | undefined;
+    if (body?.userIds !== undefined) {
+      if (
+        !Array.isArray(body.userIds) ||
+        body.userIds.length === 0 ||
+        !body.userIds.every((id: unknown) => typeof id === 'string' && id.length > 0)
+      ) {
+        throw new BadRequestException('userIds must be a non-empty array of user ids');
+      }
+      userIds = body.userIds;
+    }
     if (userIds && userIds.length > USER_EXPORT_MAX_ROWS) {
       throw new BadRequestException(
         `Cannot export more than ${USER_EXPORT_MAX_ROWS} selected users at once`,

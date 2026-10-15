@@ -430,13 +430,17 @@ export class UserManagementService {
 
     const where: any = {};
 
+    if (userIds && userIds.length === 0) {
+      throw new BadRequestException('Select at least one user to export');
+    }
+
     if (userIds && userIds.length > USER_EXPORT_MAX_ROWS) {
       throw new BadRequestException(
         `Cannot export more than ${USER_EXPORT_MAX_ROWS} selected users at once`,
       );
     }
 
-    if (userIds && userIds.length > 0) {
+    if (userIds) {
       // An explicit selection wins over filters: export exactly what was ticked.
       where.id = { in: userIds };
     } else {
@@ -469,7 +473,8 @@ export class UserManagementService {
 
     const users = await this.prisma.user.findMany({
       where,
-      take: USER_EXPORT_MAX_ROWS,
+      // One extra row lets us detect truncation instead of silently dropping users.
+      take: USER_EXPORT_MAX_ROWS + 1,
       include: {
         organizations: {
           include: {
@@ -479,6 +484,12 @@ export class UserManagementService {
       },
       orderBy: { createdAt: 'desc' },
     });
+
+    if (users.length > USER_EXPORT_MAX_ROWS) {
+      throw new BadRequestException(
+        `More than ${USER_EXPORT_MAX_ROWS} users match; narrow the filters and try again`,
+      );
+    }
 
     const headers = [
       'ID',

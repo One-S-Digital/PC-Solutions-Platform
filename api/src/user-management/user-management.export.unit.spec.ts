@@ -55,6 +55,17 @@ describe('UserManagementService.exportUsers', () => {
     expect(text).toContain('"\'\t@SUM(A1)"');
   });
 
+  it('rejects an explicitly empty selection instead of exporting everyone', async () => {
+    await expect(service.exportUsers({ userIds: [] })).rejects.toThrow(/at least one/);
+    expect(findMany).not.toHaveBeenCalled();
+  });
+
+  it('rejects filtered exports that would be truncated', async () => {
+    findMany.mockResolvedValue(Array.from({ length: 50001 }, (_, i) => makeUser({ id: `u${i}` })));
+    await expect(service.exportUsers({ filters: {} })).rejects.toThrow(/narrow the filters/);
+    expect(findMany.mock.calls[0][0].take).toBe(50001);
+  });
+
   it('rejects oversized selections', async () => {
     const ids = Array.from({ length: 50001 }, (_, i) => `u${i}`);
     await expect(service.exportUsers({ userIds: ids })).rejects.toThrow(/more than/);
