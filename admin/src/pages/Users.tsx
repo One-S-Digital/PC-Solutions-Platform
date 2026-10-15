@@ -25,6 +25,7 @@ import {
   ChevronUp,
   Mail,
   Upload,
+  Download,
 } from 'lucide-react'
 import { useApiClient, apiService } from '../services/api'
 import { useTranslation } from 'react-i18next';
@@ -1102,6 +1103,9 @@ const Users: React.FC = () => {
   const [isQuickEditModalOpen, setIsQuickEditModalOpen] = useState(false)
   const [quickEditUser, setQuickEditUser] = useState<QuickEditUserData | null>(null)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
+  // Selection is keyed by DB user id (profileId) and survives paging/filtering.
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [isExporting, setIsExporting] = useState(false)
 
   const apiClient = useApiClient()
   const queryClient = useQueryClient()
@@ -1422,6 +1426,58 @@ const Users: React.FC = () => {
     [UserRole.PARENT]: 'bg-swiss-coral/10 text-swiss-coral',
   }
 
+  const rowKey = (u: User) => ((u as any).profileId || u.id) as string
+  const pageKeys: string[] = users.map(rowKey)
+  const allOnPageSelected = pageKeys.length > 0 && pageKeys.every((k: string) => selectedIds.has(k))
+  const someOnPageSelected = pageKeys.some((k: string) => selectedIds.has(k))
+
+  const toggleRow = (key: string) =>
+    setSelectedIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(key)) next.delete(key)
+      else next.add(key)
+      return next
+    })
+
+  const toggleAllOnPage = () =>
+    setSelectedIds((prev) => {
+      const next = new Set(prev)
+      if (allOnPageSelected) pageKeys.forEach((k: string) => next.delete(k))
+      else pageKeys.forEach((k: string) => next.add(k))
+      return next
+    })
+
+  const handleExport = async (format: 'csv' | 'xlsx') => {
+    setIsExporting(true)
+    try {
+      const hasSelection = selectedIds.size > 0
+      const res = await apiService.exportAdminUsers(apiClient, {
+        format,
+        userIds: hasSelection ? Array.from(selectedIds) : undefined,
+        filters: hasSelection
+          ? undefined
+          : {
+              role: selectedRole || undefined,
+              search: debouncedSearch.trim() ? debouncedSearch.trim() : undefined,
+            },
+      })
+      const url = window.URL.createObjectURL(res.data)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `users_export_${new Date().toISOString().slice(0, 10)}.${format}`
+      a.click()
+      window.URL.revokeObjectURL(url)
+      toast.success(
+        t('admin:users.export.success', 'Users exported'),
+      )
+    } catch (err: any) {
+      logger.error('User export failed', err)
+      toast.error(t('admin:users.export.failed', 'Export failed'))
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
   const totalUsers = typeof meta?.total === 'number' ? meta.total : users.length
   const totalPages = typeof meta?.totalPages === 'number' ? meta.totalPages : 1
   const showingFrom = totalUsers === 0 ? 0 : (page - 1) * pageSize + 1
@@ -1688,6 +1744,36 @@ const Users: React.FC = () => {
             </select>
           </div>
         </div>
+        <div className="mt-4 flex flex-col gap-2 border-t border-gray-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="text-sm text-gray-600">
+            {selectedIds.size > 0 ? (
+              <>
+                {t('admin:users.export.selected', '{{count}} selected', { count: selectedIds.size })}
+                <button
+                  type="button"
+                  className="ml-3 text-swiss-teal hover:underline"
+                  onClick={() => setSelectedIds(new Set())}
+                >
+                  {t('admin:users.export.clear', 'Clear selection')}
+                </button>
+              </>
+            ) : (
+              t('admin:users.export.hint', 'Tick rows to export specific users, or export everyone matching the filters.')
+            )}
+          </div>
+          <div className="flex gap-2">
+            <Button variant="secondary" leftIcon={Download} disabled={isExporting} onClick={() => handleExport('csv')}>
+              {selectedIds.size > 0
+                ? t('admin:users.export.csvSelected', 'Export selected (CSV)')
+                : t('admin:users.export.csvAll', 'Export CSV')}
+            </Button>
+            <Button variant="secondary" leftIcon={Download} disabled={isExporting} onClick={() => handleExport('xlsx')}>
+              {selectedIds.size > 0
+                ? t('admin:users.export.xlsxSelected', 'Export selected (XLSX)')
+                : t('admin:users.export.xlsxAll', 'Export XLSX')}
+            </Button>
+          </div>
+        </div>
       </Card>
 
       {/* Users Table */}
@@ -1696,6 +1782,18 @@ const Users: React.FC = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
+                <th className="w-10 px-4 py-3">
+                  <input
+                    type="checkbox"
+                    aria-label={t('admin:users.export.selectPage', 'Select all users on this page')}
+                    className="h-4 w-4 rounded border-gray-300"
+                    checked={allOnPageSelected}
+                    ref={(el) => {
+                      if (el) el.indeterminate = !allOnPageSelected && someOnPageSelected
+                    }}
+                    onChange={toggleAllOnPage}
+                  />
+                </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   {t('admin:users.table.user', 'User')}
                 </th>
@@ -1719,7 +1817,7 @@ const Users: React.FC = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {isLoading && users.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-10">
+                  <td colSpan={7} className="px-6 py-10">
                     <div className="flex items-center justify-center">
                       <LoadingSpinner size="large" />
                     </div>
@@ -1727,6 +1825,15 @@ const Users: React.FC = () => {
                 </tr>
               ) : users.map((user) => (
                 <tr key={user.id} className="hover:bg-gray-50">
+                  <td className="w-10 px-4 py-4">
+                    <input
+                      type="checkbox"
+                      aria-label={t('admin:users.export.selectRow', 'Select user')}
+                      className="h-4 w-4 rounded border-gray-300"
+                      checked={selectedIds.has(rowKey(user))}
+                      onChange={() => toggleRow(rowKey(user))}
+                    />
+                  </td>
                   <td className="px-6 py-4">
                     <button
                       onClick={() => navigate(`/users/${user.id}/profile`)}

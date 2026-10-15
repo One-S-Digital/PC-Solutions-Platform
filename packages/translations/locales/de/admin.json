@@ -1398,6 +1398,19 @@
       "removeSuccess": "Organisation entfernt",
       "removeFailed": "Organisation konnte nicht entfernt werden",
       "optional": "Organisation zuweisen (optional)"
+    },
+    "export": {
+      "success": "Benutzer exportiert",
+      "failed": "Export fehlgeschlagen",
+      "selected": "{{count}} ausgewählt",
+      "clear": "Auswahl aufheben",
+      "hint": "Zeilen ankreuzen, um bestimmte Benutzer zu exportieren, oder alle Treffer der Filter exportieren.",
+      "csvSelected": "Auswahl exportieren (CSV)",
+      "csvAll": "CSV exportieren",
+      "xlsxSelected": "Auswahl exportieren (XLSX)",
+      "xlsxAll": "XLSX exportieren",
+      "selectPage": "Alle Benutzer auf dieser Seite auswählen",
+      "selectRow": "Benutzer auswählen"
     }
   },
   "translations": {

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { SubscriptionStatus } from '@prisma/client';
 import { UserRole } from '@workspace/types';
@@ -12,6 +12,28 @@ export interface UserFilters {
   dateTo?: Date;
   lastActiveFrom?: Date;
   lastActiveTo?: Date;
+}
+
+export interface UserExportOptions {
+  format?: 'csv' | 'xlsx';
+  /** Export exactly these users (DB User.id); filters are ignored when set. */
+  userIds?: string[];
+  filters?: UserFilters;
+}
+
+export interface UserExportResult {
+  buffer: Buffer;
+  filename: string;
+  contentType: string;
+  count: number;
+}
+
+export const USER_EXPORT_MAX_ROWS = 50000;
+
+/** Stop spreadsheet apps from evaluating user-supplied text as a formula. */
+function neutralizeSpreadsheetFormula(value: string): string {
+  // Spreadsheet apps may skip leading whitespace/control chars before a trigger.
+  return /^[\s\u0000-\u001f]*[=+\-@]/.test(value) ? `'${value}` : value;
 }
 
 export interface BulkUserOperation {
@@ -403,37 +425,56 @@ export class UserManagementService {
     };
   }
 
-  async exportUsers(filters: UserFilters = {}) {
+  async exportUsers(options: UserExportOptions = {}): Promise<UserExportResult> {
+    const { format = 'csv', userIds, filters = {} } = options;
+
     const where: any = {};
 
-    if (filters.role) {
-      where.role = filters.role;
+    if (userIds && userIds.length === 0) {
+      throw new BadRequestException('Select at least one user to export');
     }
 
-    if (filters.isActive !== undefined) {
-      where.isActive = filters.isActive;
+    if (userIds && userIds.length > USER_EXPORT_MAX_ROWS) {
+      throw new BadRequestException(
+        `Cannot export more than ${USER_EXPORT_MAX_ROWS} selected users at once`,
+      );
     }
 
-    if (filters.search) {
-      where.OR = [
-        { firstName: { contains: filters.search, mode: 'insensitive' } },
-        { lastName: { contains: filters.search, mode: 'insensitive' } },
-        { email: { contains: filters.search, mode: 'insensitive' } },
-      ];
-    }
-
-    if (filters.dateFrom || filters.dateTo) {
-      where.createdAt = {};
-      if (filters.dateFrom) {
-        where.createdAt.gte = filters.dateFrom;
+    if (userIds) {
+      // An explicit selection wins over filters: export exactly what was ticked.
+      where.id = { in: userIds };
+    } else {
+      if (filters.role) {
+        where.role = filters.role;
       }
-      if (filters.dateTo) {
-        where.createdAt.lte = filters.dateTo;
+
+      if (filters.isActive !== undefined) {
+        where.isActive = filters.isActive;
+      }
+
+      if (filters.search) {
+        where.OR = [
+          { firstName: { contains: filters.search, mode: 'insensitive' } },
+          { lastName: { contains: filters.search, mode: 'insensitive' } },
+          { email: { contains: filters.search, mode: 'insensitive' } },
+        ];
+      }
+
+      if (filters.dateFrom || filters.dateTo) {
+        where.createdAt = {};
+        if (filters.dateFrom) {
+          where.createdAt.gte = filters.dateFrom;
+        }
+        if (filters.dateTo) {
+          where.createdAt.lte = filters.dateTo;
+        }
       }
     }
 
     const users = await this.prisma.user.findMany({
       where,
+      // One extra row lets us detect truncation instead of silently dropping users.
+      take: USER_EXPORT_MAX_ROWS + 1,
       include: {
         organizations: {
           include: {
@@ -444,38 +485,70 @@ export class UserManagementService {
       orderBy: { createdAt: 'desc' },
     });
 
-    // Convert to CSV format
-    const csvHeaders = [
+    if (users.length > USER_EXPORT_MAX_ROWS) {
+      throw new BadRequestException(
+        `More than ${USER_EXPORT_MAX_ROWS} users match; narrow the filters and try again`,
+      );
+    }
+
+    const headers = [
       'ID',
       'Email',
       'First Name',
       'Last Name',
       'Role',
-      'Is Active',
+      'Status',
       'Created At',
       'Last Active',
       'Organization',
     ];
 
-    const csvRows = users.map(user => [
+    const rows: string[][] = users.map(user => [
       user.id,
       user.email,
       user.firstName || '',
       user.lastName || '',
       user.role,
-      user.isActive,
+      user.isActive ? 'Active' : 'Inactive',
       user.createdAt.toISOString(),
       user.lastActiveAt?.toISOString() || '',
       user.organizations[0]?.organization?.name || '',
     ]);
 
-    const csvContent = [csvHeaders, ...csvRows]
-      .map(row => row.map(field => `"${field}"`).join(','))
-      .join('\n');
+    const date = new Date().toISOString().split('T')[0];
+
+    if (format === 'xlsx') {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const ExcelJS = require('exceljs');
+      const workbook = new ExcelJS.Workbook();
+      const sheet = workbook.addWorksheet('Users');
+      sheet.columns = headers.map(header => ({ header, key: header, width: 24 }));
+      sheet.getRow(1).font = { bold: true };
+      for (const row of rows) {
+        sheet.addRow(row.map(neutralizeSpreadsheetFormula));
+      }
+      const buffer = Buffer.from(await workbook.xlsx.writeBuffer());
+      return {
+        buffer,
+        filename: `users_export_${date}.xlsx`,
+        contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        count: users.length,
+      };
+    }
+
+    const csvContent = [headers, ...rows]
+      .map(row =>
+        row
+          .map(field => `"${neutralizeSpreadsheetFormula(field).replace(/"/g, '""')}"`)
+          .join(','),
+      )
+      .join('\r\n');
 
     return {
-      csvContent,
-      filename: `users_export_${new Date().toISOString().split('T')[0]}.csv`,
+      // BOM so Excel opens UTF-8 names (umlauts, accents) correctly.
+      buffer: Buffer.from(`\uFEFF${csvContent}`, 'utf8'),
+      filename: `users_export_${date}.csv`,
+      contentType: 'text/csv; charset=utf-8',
       count: users.length,
     };
   }

@@ -319,6 +319,14 @@ export const apiService = {
     }
   ) =>
     apiClient.get<ApiResponse<{ users: User[]; total: number; page: number; limit: number; totalPages: number }>>('/admin/users', { params }),
+  exportAdminUsers: (
+    apiClient: AxiosInstance,
+    data: {
+      format: 'csv' | 'xlsx';
+      userIds?: string[];
+      filters?: { role?: string; search?: string; isActive?: boolean; dateFrom?: string; dateTo?: string };
+    },
+  ) => apiClient.post<Blob>('/admin/users/export', data, { responseType: 'blob' }),
   getAdminUserStats: (apiClient: AxiosInstance) =>
     apiClient.get<any>('/admin/users/stats'),
   getUserById: (apiClient: AxiosInstance, id: string) => apiClient.get<ApiResponse<User>>(`/users/${id}`),
